@@ -106,9 +106,7 @@ public class CloudServer {
     {
         List<String> list = new CopyOnWriteArrayList<>();
         for (Player all : Bukkit.getOnlinePlayers())
-        {
             list.add(all.getName());
-        }
 
         ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(), hostAdress,
                 port, true, list, memory, motd, Bukkit.getOnlinePlayers().size(), maxPlayers, serverState, serverConfig, template);
@@ -119,9 +117,7 @@ public class CloudServer {
     {
         List<String> list = new CopyOnWriteArrayList<>();
         for (Player all : Bukkit.getOnlinePlayers())
-        {
             list.add(all.getName());
-        }
 
         ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(), hostAdress, port, false, list, memory, motd, Bukkit.getOnlinePlayers().size(), maxPlayers, serverState, serverConfig, template);
         CloudAPI.getInstance().getNetworkConnection().sendPacketSynchronized(new PacketOutUpdateServerInfo(serverInfo));
@@ -359,13 +355,9 @@ public class CloudServer {
             Class<?> clazz = ReflectionUtil.reflectCraftClazz(".CraftServer");
             CommandMap commandMap;
             if(clazz != null)
-            {
                 commandMap = (CommandMap) clazz.getMethod("getCommandMap").invoke(Bukkit.getServer());
-            }
             else
-            {
                 commandMap = (CommandMap) Class.forName("net.glowstone.GlowServer").getMethod("getCommandMap").invoke(Bukkit.getServer());
-            }
             commandMap.register("cloudnet", command);
         } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | ClassNotFoundException e)
         {
@@ -433,9 +425,7 @@ public class CloudServer {
         for (Player all : Bukkit.getOnlinePlayers())
         {
             if (all.getScoreboard() == null)
-            {
                 all.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
-            }
 
             {
                 PermissionGroup permissionGroup = playerWhereAmI.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());

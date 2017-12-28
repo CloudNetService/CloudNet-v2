@@ -6,12 +6,11 @@ package de.dytanic.cloudnet;
 
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.lib.server.ServerState;
-import org.bukkit.event.Listener;
 
 /**
  * Created by Tareko on 15.10.2017.
  */
-public class GameAPIExample implements Listener {
+public class GameAPIExample {
 
     public void updateGameMode()
     {

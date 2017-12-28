@@ -76,9 +76,7 @@ public final class CloudBootstrap {
         }
 
         if (optionSet.has("systemTimer"))
-        {
             new SystemTimer();
-        }
 
         if (optionSet.has("version"))
         {
@@ -102,9 +100,7 @@ public final class CloudBootstrap {
         CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, consolePreInit, Arrays.asList(args));
 
         if (!cloudNetCore.bootstrap())
-        {
             System.exit(0);
-        }
 
         if (!optionSet.has("noconsole"))
         {
