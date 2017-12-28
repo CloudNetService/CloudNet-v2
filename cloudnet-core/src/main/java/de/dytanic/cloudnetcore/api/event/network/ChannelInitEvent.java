@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) Tarek Hosni El Alaoui 2017
+ */
+
+package de.dytanic.cloudnetcore.api.event.network;
+
+import de.dytanic.cloudnet.event.Event;
+import de.dytanic.cloudnet.event.async.AsyncEvent;
+import de.dytanic.cloudnet.event.async.AsyncPosterAdapter;
+import de.dytanic.cloudnetcore.network.components.INetworkComponent;
+import io.netty.channel.Channel;
+import lombok.Getter;
+
+/**
+ * Calls if a channel of some INetworkComponent is connected
+ */
+@Getter
+public class ChannelInitEvent extends Event {
+
+    private Channel channel;
+
+    private INetworkComponent iNetworkComponent;
+
+    public ChannelInitEvent(Channel channel, INetworkComponent iNetworkComponent)
+    {
+        this.channel = channel;
+        this.iNetworkComponent = iNetworkComponent;
+    }
+}

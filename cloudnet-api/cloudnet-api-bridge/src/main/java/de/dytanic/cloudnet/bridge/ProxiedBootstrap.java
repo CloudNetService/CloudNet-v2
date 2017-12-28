@@ -1,0 +1,94 @@
+/*
+ * Copyright (c) Tarek Hosni El Alaoui 2017
+ */
+
+package de.dytanic.cloudnet.bridge;
+
+import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.api.config.CloudConfigLoader;
+import de.dytanic.cloudnet.api.config.ConfigTypeLoader;
+import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandCloudDev;
+import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandCloud;
+import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandHub;
+import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandPermissions;
+import de.dytanic.cloudnet.bridge.internal.listener.proxied.ProxiedListener;
+import de.dytanic.cloudnet.lib.player.OfflinePlayer;
+import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
+import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
+import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ListenerInfo;
+import net.md_5.bungee.api.plugin.Plugin;
+
+import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Created by Tareko on 17.08.2017.
+ */
+public class ProxiedBootstrap extends Plugin {
+
+    @Override
+    public void onLoad()
+    {
+        new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"), Paths.get("CLOUD/config.json"), ConfigTypeLoader.INTERNAL), new Runnable() {
+            @Override
+            public void run()
+            {
+                getProxy().stop("CloudNet-Stop!");
+            }
+        });
+    }
+
+    @Override
+    public void onEnable()
+    {
+
+        getProxy().registerChannel("CloudNet");
+        CloudAPI.getInstance().bootstrap();
+
+        CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {
+            @Override
+            public void run(ListenerInfo obj)
+            {
+                obj.getServerPriority().clear();
+            }
+        });
+
+        getProxy().getPluginManager().registerListener(this, new ProxiedListener());
+
+        getProxy().getPluginManager().registerCommand(this, new CommandHub());
+        getProxy().getPluginManager().registerCommand(this, new CommandCloud());
+
+        new CloudProxy(this, CloudAPI.getInstance());
+        CloudProxy.getInstance().updateAsync();
+
+        getProxy().getScheduler().schedule(this, new Runnable() {
+            @Override
+            public void run()
+            {
+                if(CloudAPI.getInstance().getPermissionPool() != null && CloudAPI.getInstance().getPermissionPool().isAvailable())
+                getProxy().getPluginManager().registerCommand(ProxiedBootstrap.this, new CommandPermissions());
+
+                if(CloudAPI.getInstance().getModuleProperties().contains("devservice"))
+                getProxy().getPluginManager().registerCommand(ProxiedBootstrap.this, new CommandCloudDev());
+
+                if(CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance().getProxyGroup().getProxyConfig().getCustomPayloadFixer())
+                {
+                    getProxy().registerChannel("MC|BSign");
+                    getProxy().registerChannel("MC|BEdit");
+                }
+            }
+        }, 1, TimeUnit.SECONDS);
+
+    }
+
+    @Override
+    public void onDisable()
+    {
+        if (CloudAPI.getInstance() != null)
+        {
+            CloudAPI.getInstance().shutdown();
+        }
+    }
+}

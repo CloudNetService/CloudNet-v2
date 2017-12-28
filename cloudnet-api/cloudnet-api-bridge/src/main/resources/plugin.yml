@@ -1,0 +1,12 @@
+name: CloudNetAPI
+version: 2.0
+author: Dytanic
+website: http://cloud.dytanic.de/download
+
+main: de.dytanic.cloudnet.bridge.BukkitBootstrap
+
+softdepend: [Vault, VaultAPI]
+
+commands:
+  cloudserver:
+    aliases: ["cs"]

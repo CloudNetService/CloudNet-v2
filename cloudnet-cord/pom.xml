@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>cloudnet</artifactId>
+        <groupId>de.dytanic.cloudnet</groupId>
+        <version>${service.version}-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+
+    <name>CloudNet-Cord</name>
+    <modules>
+        <module>cloudnet-module</module>
+        <module>cloudnet-event</module>
+        <module>cloudnet-command</module>
+        <module>cloudnet-log</module>
+        <module>cloudnet-web</module>
+        <module>cloudnet-libloader</module>
+        <module>cloudnet-database</module>
+        <module>cloudnet-cloudflare</module>
+        <module>cloudnet-snakeconfig</module>
+        <module>cloudnet-help</module>
+        <module>cloudnet-setup</module>
+    </modules>
+    <artifactId>cloudnet-cord</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.dytanic.cloudnet</groupId>
+            <artifactId>cloudnet-lib</artifactId>
+            <version>${service.version}-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <version>4.0.40.Final</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>

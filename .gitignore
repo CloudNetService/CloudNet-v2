@@ -1,0 +1,47 @@
+# Eclipse stuff
+.classpath
+.project
+.settings/
+
+# netbeans
+nbproject/
+nbactions.xml
+.idea
+src/main/test
+
+# we use maven!
+build.xml
+
+# maven
+target/
+dependency-reduced-pom.xml
+src/test
+
+# vim
+.*.sw[a-p]
+
+# various other potential build files
+build/
+bin/
+dist/
+manifest.mf
+
+# Mac filesystem dust
+.DS_Store/
+
+# intellij
+*.iml
+*.ipr
+*.iws
+.idea/
+CloudNet2.1.zip
+
+# other files
+*.log*
+
+# delombok
+*/src/main/lombok
+
+#Testing in the IDEA
+# *.json
+# *.properties

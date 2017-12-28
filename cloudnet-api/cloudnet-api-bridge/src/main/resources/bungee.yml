@@ -1,0 +1,5 @@
+name: CloudNetAPI
+version: 2.0
+author: Dytanic
+
+main: de.dytanic.cloudnet.bridge.ProxiedBootstrap

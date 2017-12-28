@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Tarek Hosni El Alaoui 2017
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>cloudnet</artifactId>
+        <groupId>de.dytanic.cloudnet</groupId>
+        <version>${service.version}-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+
+    <name>CloudNet-API-Parent</name>
+    <modules>
+        <module>cloudnet-api-core</module>
+        <module>cloudnet-api-bridge</module>
+    </modules>
+    <artifactId>cloudnet-api</artifactId>
+
+    <repositories>
+        <repository>
+            <id>cloudnet-repo</id>
+            <url>http://dytanic.de/repositories</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-bootstrap</artifactId>
+            <version>1.8-1.12</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.dytanic.cloudnet</groupId>
+    <artifactId>cloudnet</artifactId>
+    <packaging>pom</packaging>
+    <version>${service.version}-SNAPSHOT</version>
+    <name>CloudNet-Parent</name>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
+        <netty.version>4.0.40.Final</netty.version>
+        <service.version>2.1.PXVIII</service.version>
+        <service.type>PRE</service.type>
+    </properties>
+
+    <developers>
+        <developer>
+            <id>Dytanic</id>
+            <name>Tarek H.</name>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>cloudnet-lib</module>
+        <module>cloudnet-core</module>
+        <module>cloudnet-cord</module>
+        <module>cloudnet-wrapper</module>
+        <module>cloudnet-api</module>
+        <module>cloudnet-tools</module>
+        <module>cloudnet-examples</module>
+        <module>cloudnet-modules</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.6</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>
