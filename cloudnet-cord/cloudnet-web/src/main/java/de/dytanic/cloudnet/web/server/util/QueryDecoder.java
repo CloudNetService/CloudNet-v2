@@ -7,7 +7,7 @@ package de.dytanic.cloudnet.web.server.util;
 import lombok.Getter;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.WeakHashMap;
 
 /**
  * Created by Tareko on 16.09.2017.
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 public class QueryDecoder {
 
-    private Map<String, String> queryParams = new ConcurrentHashMap<>();
+    private final Map<String, String> queryParams = new WeakHashMap<>();
 
     public QueryDecoder(String query)
     {

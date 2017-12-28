@@ -115,13 +115,13 @@ public class CloudConfig {
         if (Files.exists(configPath)) return;
 
         String hostName = NetworkUtils.getHostName();
-        if (hostName.equalsIgnoreCase("127.0.0.1") || hostName.equalsIgnoreCase("127.0.1.1") || hostName.split("\\.").length != 4)
+        if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4)
         {
             String input;
             System.out.println("Your IP address where located is 127.0.0.1 please write your service ip");
             while ((input = consoleReader.readLine()) != null)
             {
-                if ((input.equalsIgnoreCase("127.0.0.1") || input.equalsIgnoreCase("127.0.0.1")) || input.split("\\.").length != 4)
+                if ((input.equals("127.0.0.1") || input.equals("127.0.1.1")) || input.split("\\.").length != 4)
                 {
                     System.out.println("Please write your real ip address :)");
                     continue;

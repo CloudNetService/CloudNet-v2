@@ -112,49 +112,47 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         if (instance == null)
         {
             instance = this;
-    }
+        }
 
         this.wrapperConfig = cloudNetWrapperConfig;
         this.cloudNetLogging = cloudNetLogging;
         this.networkConnection = new NetworkConnection(new ConnectableAddress(
-            cloudNetWrapperConfig.getCloudnetHost(), cloudNetWrapperConfig.getCloudnetPort()), new Runnable() {
-        @Override
-        public void run()
-        {
-            try
+                cloudNetWrapperConfig.getCloudnetHost(), cloudNetWrapperConfig.getCloudnetPort()), new Runnable() {
+            @Override
+            public void run()
             {
-                onShutdownCentral();
-            } catch (Exception e)
-            {
-                e.printStackTrace();
+                try
+                {
+                    onShutdownCentral();
+                } catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
-        }
-    });
+        });
 
-    String key = NetworkUtils.readWrapperKey();
+        String key = NetworkUtils.readWrapperKey();
 
         if (key == null)
-    {
-        System.out.println("Please copy the WRAPPER_KEY.cnd for the auth!");
-        System.out.println("The Wrapper stop in 5 seconds");
-        NetworkUtils.sleepUninterruptedly(5000);
-        System.exit(0);
-        return;
-    }
+        {
+            System.out.println("Please copy the WRAPPER_KEY.cnd for the auth!");
+            System.out.println("The Wrapper stop in 5 seconds");
+            NetworkUtils.sleepUninterruptedly(5000);
+            System.exit(0);
+            return;
+        }
 
         this.auth = new Auth(key, cloudNetWrapperConfig.getWrapperId());
         this.serverProcessQueue = new ServerProcessQueue(cloudNetWrapperConfig.getProcessQueueSize());
         this.maxMemory = cloudNetWrapperConfig.getMaxMemory();
         this.optionSet = optionSet;
-}
+    }
 
     @Override
     public boolean bootstrap() throws Exception
     {
         if (!optionSet.has("disallow_bukkit_download") && !Files.exists(Paths.get("local/spigot.jar")))
-        {
             new SetupSpigotVersion().run(cloudNetLogging.getReader());
-        }
 
         Thread thread = new Thread(scheduler);
         thread.setDaemon(true);
@@ -189,10 +187,9 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
                 break;
             }
             Thread.sleep(2000);
+
             if (networkConnection.getConnectionTrys() == 5)
-            {
                 System.exit(0);
-            }
         }
 
         if (!Files.exists(Paths.get("local/server-icon.png")))
@@ -249,14 +246,10 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
     {
         int m = 0;
         for (GameServer gameServer : servers.values())
-        {
             m = m + gameServer.getServerProcess().getMeta().getMemory();
-        }
 
         for (BungeeCord bungeeCord : proxys.values())
-        {
             m = m + bungeeCord.getProxyProcessMeta().getMemory();
-        }
 
         return m;
     }
@@ -315,28 +308,22 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         if (!RUNNING) return false;
         System.out.println("Wrapper shutdown...");
 
-        if(scheduler != null)
+        if (scheduler != null)
             scheduler.cancelAllTasks();
-        if(serverProcessQueue != null)
+        if (serverProcessQueue != null)
             serverProcessQueue.setRunning(false);
 
         for (GameServer gameServer : servers.values())
-        {
             gameServer.shutdown();
-        }
 
         for (BungeeCord gameServer : proxys.values())
-        {
             gameServer.shutdown();
-        }
 
         for (CloudGameServer gameServer : cloudservers.values())
-        {
             gameServer.shutdown();
-        }
 
         this.cloudNetLogging.shutdownAll();
-        if(networkConnection.getChannel() != null)
+        if (networkConnection.getChannel() != null)
             networkConnection.tryDisconnect();
         try
         {
@@ -372,7 +359,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
     public void onShutdownCentral() throws Exception
     {
         canDeployed = false;
-        if(serverProcessQueue != null)
+        if (serverProcessQueue != null)
         {
             serverProcessQueue.getStartups().clear();
             serverProcessQueue.getProxys().clear();
@@ -381,23 +368,21 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         }
 
         for (GameServer gameServer : servers.values())
-        {
             gameServer.shutdown();
-        }
 
         for (BungeeCord gameServer : proxys.values())
-        {
             gameServer.shutdown();
-        }
 
         proxyGroups.clear();
         serverGroups.clear();
 
         System.out.println("Wrapper try to connect to the CloudNet-Core");
 
-        try {
+        try
+        {
             FileUtils.deleteDirectory(new File("temp"));
-        }catch (Exception ex) {
+        } catch (Exception ex)
+        {
 
         }
 
@@ -415,19 +400,18 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         }
 
         canDeployed = true;
-        if(serverProcessQueue != null)
+        if (serverProcessQueue != null)
             serverProcessQueue.setRunning(true);
 
     }
 
-    public double getCpuUsage() {
+    public double getCpuUsage()
+    {
 
         double cpu = 0;
 
-        for(double entry : cpuUsageEntries)
-        {
-            cpu = cpu + entry;
-        }
+        for (double entry : cpuUsageEntries)
+            cpu += entry;
 
         return cpu / cpuUsageEntries.size();
     }

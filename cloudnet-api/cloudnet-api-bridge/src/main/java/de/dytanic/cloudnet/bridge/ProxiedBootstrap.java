@@ -87,8 +87,6 @@ public class ProxiedBootstrap extends Plugin {
     public void onDisable()
     {
         if (CloudAPI.getInstance() != null)
-        {
             CloudAPI.getInstance().shutdown();
-        }
     }
 }

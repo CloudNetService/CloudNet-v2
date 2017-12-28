@@ -126,7 +126,6 @@ public class BukkitListener implements Listener {
                 {
                     CloudServer.getInstance().getCloudPlayers().remove(e.getPlayer().getUniqueId());
                     e.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("joinpower-deny")));
-                    return;
                 }
             }
         }
