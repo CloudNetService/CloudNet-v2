@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/Dytanic/CloudNet.svg?branch=master)](https://travis-ci.org/Dytanic/CloudNet)
+[![star this repo](http://githubbadges.com/star.svg?user=Dytanic&repo=CloudNet)](https://github.com/Dytanic/CloudNet)
+[![fork this repo](http://githubbadges.com/fork.svg?user=Dytanic&repo=CloudNet)](https://github.com/Dytanic/CloudNet/fork)
 
 # CloudNet | The Cloud Network Environment Technology
 ![Image of CloudNet](https://proxy.spigotmc.org/04918abd59c8a2d6eb0818cd79eebc7947254e88?url=https%3A%2F%2Fcdn.discordapp.com%2Fattachments%2F325383142464552972%2F354670548292206594%2FCloudNet.png)
