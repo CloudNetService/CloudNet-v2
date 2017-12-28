@@ -19,7 +19,7 @@
     <repositories>
         <repository>
             <id>cloudnet-repo</id>
-            <url>http://repo.dytanic.de/content/repositories/minecraft/</url>
+            <url>http://dytanic.de/repositories</url>
         </repository>
     </repositories>
 
@@ -37,15 +37,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.md_5.bungee</groupId>
+            <groupId>net.md-5</groupId>
             <artifactId>bungeecord-bootstrap</artifactId>
-            <version>1.12</version>
+            <version>1.8-1.12</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.8.8</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

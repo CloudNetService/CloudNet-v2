@@ -24,8 +24,23 @@
     <repositories>
         <repository>
             <id>cloudnet-repo</id>
-            <url>http://repo.dytanic.de/content/repositories/minecraft/</url>
+            <url>http://dytanic.de/repositories</url>
         </repository>
     </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>de.dytanic.cloudnet</groupId>
+            <artifactId>cloudnet-api-bridge</artifactId>
+            <version>${service.version}-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.8.8</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 </project>
