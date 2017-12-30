@@ -24,9 +24,8 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.entity.Player;
@@ -354,7 +353,7 @@ public class CloudServer {
         {
             Class<?> clazz = ReflectionUtil.reflectCraftClazz(".CraftServer");
             CommandMap commandMap;
-            if(clazz != null)
+            if (clazz != null)
                 commandMap = (CommandMap) clazz.getMethod("getCommandMap").invoke(Bukkit.getServer());
             else
                 commandMap = (CommandMap) Class.forName("net.glowstone.GlowServer").getMethod("getCommandMap").invoke(Bukkit.getServer());
@@ -397,7 +396,8 @@ public class CloudServer {
      */
     public ServerProcessMeta getServerProcessMeta()
     {
-        return CloudAPI.getInstance().getConfig().getObject("serverProcess", new TypeToken<ServerProcessMeta>(){}.getType());
+        return CloudAPI.getInstance().getConfig().getObject("serverProcess", new TypeToken<ServerProcessMeta>() {
+        }.getType());
     }
 
     /**
@@ -417,47 +417,47 @@ public class CloudServer {
      */
     public void updateNameTags(Player player)
     {
-        if(CloudAPI.getInstance().getPermissionPool() == null) return;
-        if (!CloudAPI.getInstance().getPermissionPool().isAvailable()) return;
-        CloudPlayer playerWhereAmI = CloudServer.getInstance().getCloudPlayers().get(player.getUniqueId());
+        if (CloudAPI.getInstance().getPermissionPool() == null || !CloudAPI.getInstance().getPermissionPool().isAvailable())
+            return;
 
-        if (player.getScoreboard() == null) player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
-        for (Player all : Bukkit.getOnlinePlayers())
+        PermissionGroup playerPermissionGroup = CloudServer.getInstance().getCloudPlayers().get(player.getUniqueId())
+                .getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
+
+        initScoreboard(player);
+
+        for (Player all : player.getServer().getOnlinePlayers())
         {
-            if (all.getScoreboard() == null)
-                all.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+            initScoreboard(all);
 
-            {
-                PermissionGroup permissionGroup = playerWhereAmI.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
-                if (permissionGroup != null)
-                {
-                    Team team = all.getScoreboard().getTeam(permissionGroup.getTagId() + permissionGroup.getName());
-                    if (team == null)
-                        team = all.getScoreboard().registerNewTeam(permissionGroup.getTagId() + permissionGroup.getName());
-                    team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
-                    team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
-                    player.setDisplayName(ChatColor.translateAlternateColorCodes('&', permissionGroup.getDisplay() + player.getName()));
-                    team.addEntry(player.getName());
-                }
-            }
-            {
-                CloudPlayer playerWhereAmI1 = CloudServer.getInstance().getCloudPlayers().get(all.getUniqueId());
-                if (playerWhereAmI1 != null)
-                {
-                    PermissionGroup permissionGroup = playerWhereAmI1.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
-                    if (permissionGroup != null)
-                    {
-                        Team team = player.getScoreboard().getTeam(permissionGroup.getTagId() + permissionGroup.getName());
-                        if (team == null)
-                            team = player.getScoreboard().registerNewTeam(permissionGroup.getTagId() + permissionGroup.getName());
-                        team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
-                        team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
-                        all.setDisplayName(ChatColor.translateAlternateColorCodes('&', permissionGroup.getDisplay() + all.getName()));
-                        team.addEntry(all.getName());
-                    }
-                }
-            }
+            if (playerPermissionGroup != null)
+                addTeamEntry(player, all, playerPermissionGroup);
+
+            PermissionGroup targetPermissionGroup = CloudServer.getInstance().getCachedPlayer(all.getUniqueId())
+                    .getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
+
+            if (targetPermissionGroup != null)
+                addTeamEntry(all, player, targetPermissionGroup);
+
         }
+    }
+
+    private void addTeamEntry(Player target, Player all, PermissionGroup permissionGroup)
+    {
+        Team team = all.getScoreboard().getTeam(permissionGroup.getTagId() + permissionGroup.getName());
+        if (team == null)
+            team = all.getScoreboard().registerNewTeam(permissionGroup.getTagId() + permissionGroup.getName());
+
+        team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
+        team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
+
+        team.addEntry(target.getName());
+
+        target.setDisplayName(ChatColor.translateAlternateColorCodes('&', permissionGroup.getDisplay() + target.getName()));
+    }
+
+    private void initScoreboard(Player all)
+    {
+        if (all.getScoreboard() == null) all.setScoreboard(all.getServer().getScoreboardManager().getNewScoreboard());
     }
 
     //API Handler
@@ -517,9 +517,9 @@ public class CloudServer {
         {
             Bukkit.getPluginManager().callEvent(new BukkitSubChannelMessageEvent(channel, message, document));
 
-            if(channel.equalsIgnoreCase("cloudnet_internal"))
+            if (channel.equalsIgnoreCase("cloudnet_internal"))
             {
-                if(message.equalsIgnoreCase("install_plugin"))
+                if (message.equalsIgnoreCase("install_plugin"))
                 {
                     String url = document.getString("url");
                     try
@@ -563,7 +563,7 @@ public class CloudServer {
         @Override
         public void onPlayerUpdate(CloudPlayer cloudPlayer)
         {
-            if(cloudPlayers.containsKey(cloudPlayer.getUniqueId()))
+            if (cloudPlayers.containsKey(cloudPlayer.getUniqueId()))
             {
                 cloudPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
             }

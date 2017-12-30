@@ -64,15 +64,6 @@ public class BukkitBootstrap extends JavaPlugin implements Runnable {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "CloudNet");
         enableTasks();
 
-        if(getServer().getPluginManager().isPluginEnabled("VaultAPI") || getServer().getPluginManager().isPluginEnabled("Vault"))
-            try
-            {
-                Class.forName("de.dytanic.cloudnet.bridge.vault.VaultInvoker").getMethod("invoke", new Class[0]).invoke(null, new Object[0]);
-            } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e)
-            {
-                e.printStackTrace();
-            }
-
     }
 
     @Override
@@ -165,6 +156,15 @@ public class BukkitBootstrap extends JavaPlugin implements Runnable {
                     }, 0, 5);
                 }
 
+                if (CloudAPI.getInstance().getPermissionPool() != null &&
+                        (getServer().getPluginManager().isPluginEnabled("VaultAPI") || getServer().getPluginManager().isPluginEnabled("Vault")))
+                    try
+                    {
+                        Class.forName("de.dytanic.cloudnet.bridge.vault.VaultInvoker").getMethod("invoke", new Class[0]).invoke(null, new Object[0]);
+                    } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e)
+                    {
+                        e.printStackTrace();
+                    }
             }
         });
     }

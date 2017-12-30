@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * Created by Tareko on 26.08.2017.
  */
-public class ChatPlugin extends JavaPlugin {
+public final class ChatPlugin extends JavaPlugin {
 
     @Override
     public void onEnable()
@@ -18,6 +18,6 @@ public class ChatPlugin extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
 
-        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        getServer().getPluginManager().registerEvents(new ChatListener(), this);
     }
 }

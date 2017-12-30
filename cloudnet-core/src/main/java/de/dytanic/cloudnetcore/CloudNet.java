@@ -245,13 +245,10 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         }
 
         if (!optionSet.has("disable-modules"))
-        {
             System.out.println("Enabling Modules...");
             moduleManager.enableModules();
-        }
 
         if (!optionSet.has("disable-autoupdate"))
-        {
             scheduler.runTaskAsync(new Runnable() {
                 @Override
                 public void run()
@@ -259,13 +256,11 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
                     checkForUpdates();
                 }
             });
-        }
 
         //Event Init
         eventManager.callEvent(new CloudInitEvent());
 
         new LocalCloudWrapper().run(optionSet);
-
         return true;
     }
 
@@ -314,15 +309,11 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         this.initPacketHandlers();
 
         if (!optionSet.has("disable-modules"))
-        {
             this.moduleManager.loadModules().enableModules();
-        }
 
         System.out.println("Updating wrappers...");
         for (Wrapper wrapper : wrappers.values())
-        {
             wrapper.updateWrapper();
-        }
 
         networkManager.reload();
         networkManager.updateAll();
@@ -419,6 +410,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
                 "   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/\n" +
                 "                                                          \n" +
                 "                                                          ");
+
         RUNNING = false;
         this.logger.shutdownAll();
         if (downTown)

@@ -27,6 +27,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +44,6 @@ public final class CommandCloud extends Command {
     @Override
     public void execute(CommandSender commandSender, String[] args)
     {
-        /*
         if (args.length > 2)
         {
             if (args[0].equalsIgnoreCase("cmds"))
@@ -74,7 +74,7 @@ public final class CommandCloud extends Command {
                 commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The information was send to the cloud");
                 return;
             }
-        }*/
+        }
 
         switch (args.length)
         {
@@ -91,6 +91,8 @@ public final class CommandCloud extends Command {
                     commandSender.sendMessage("§7/cloud start <group> <count>");
                     commandSender.sendMessage("§7/cloud start <group> <template>");
                     commandSender.sendMessage("§7/cloud startcs <name> <memory> <priorityStop>");
+                    commandSender.sendMessage("§7/cloud cmds (command server) <server> <command>");
+                    commandSender.sendMessage("§7/cloud cmdp (command proxy) <proxy> <command>");
                     commandSender.sendMessage("§7/cloud stop <serverId>");
                     commandSender.sendMessage("§7/cloud stopGroup <group>");
                     commandSender.sendMessage("§7/cloud listProxys");
@@ -98,9 +100,6 @@ public final class CommandCloud extends Command {
                     commandSender.sendMessage("§7/cloud listServers");
                     commandSender.sendMessage("§7/cloud log <server>");
                     commandSender.sendMessage("§7/cloud listGroups");
-                    //commandSender.sendMessage("§7/cloud cmds <server> <command>");
-                    //commandSender.sendMessage("§7/cloud cmdp <proxy> <command>");
-
                     commandSender.sendMessage("§7/cloud rl");
                     commandSender.sendMessage("§7/cloud rlconfig");
                     commandSender.sendMessage("§7/cloud list");
@@ -296,6 +295,17 @@ public final class CommandCloud extends Command {
                         CloudAPI.getInstance().stopServer(args[1]);
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
                                 "The information was send to the cloud");
+                    } else if (CollectionWrapper.filter(CloudAPI.getInstance().getProxys(), new Acceptable<ProxyInfo>() {
+                        @Override
+                        public boolean isAccepted(ProxyInfo proxyInfo)
+                        {
+                            return proxyInfo.getServiceId().getServerId().equalsIgnoreCase(args[1]);
+                        }
+                    }) != null)
+                    {
+                        CloudAPI.getInstance().stopProxy(args[1]);
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
+                                "The information was send to the cloud");
                     } else
                     {
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The server isn't online.");
@@ -304,13 +314,31 @@ public final class CommandCloud extends Command {
                 }
                 if (args[0].equalsIgnoreCase("stopGroup"))
                 {
-                    List<String> servers = CloudProxy.getInstance().getServers(args[1]);
-                    for (String server : servers)
+                    if(CloudAPI.getInstance().getServerGroupMap().containsKey(args[1]))
                     {
-                        CloudAPI.getInstance().stopServer(server);
+                        List<String> servers = CloudProxy.getInstance().getServers(args[1]);
+
+                        for (String server : servers)
+                            CloudAPI.getInstance().stopServer(server);
+
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
+                                "The information was send to the cloud");
+                        return;
                     }
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                            "The information was send to the cloud");
+
+                    if(CloudAPI.getInstance().getProxyGroupMap().containsKey(args[1]))
+                    {
+                        Collection<ProxyInfo> servers = CloudAPI.getInstance().getProxys();
+
+                        for(ProxyInfo proxyInfo : servers)
+                            if(proxyInfo.getServiceId().getGroup().equalsIgnoreCase(args[1]))
+                                CloudAPI.getInstance().stopProxy(proxyInfo.getServiceId().getServerId());
+
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
+                                "The information was send to the cloud");
+                        return;
+                    }
+
                     return;
                 }
                 if (args[0].equalsIgnoreCase("copy"))
@@ -404,7 +432,7 @@ public final class CommandCloud extends Command {
                     if (args[1].equalsIgnoreCase("add"))
                     {
                         ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
-                        if(proxyGroup.getProxyConfig().getWhitelist().contains(args[2]))
+                        if (proxyGroup.getProxyConfig().getWhitelist().contains(args[2]))
                         {
                             commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + " The user " + args[2] + " is already on the whitelist.");
                             return;
@@ -429,8 +457,7 @@ public final class CommandCloud extends Command {
                         CloudAPI.getInstance().startCloudServer(args[1], Integer.parseInt(args[2]), args[3].equalsIgnoreCase("true"));
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
                                 "The information was send to the cloud");
-                    }
-                    else
+                    } else
                     {
                         commandSender.sendMessage("Invalid arguments!");
                     }
