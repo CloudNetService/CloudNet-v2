@@ -259,47 +259,18 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         if (!wrapperConfig.isAutoUpdate()) return;
 
         String version = webClient.getNewstVersion();
+
         if (version != null)
         {
             if (!version.equals(CloudNetWrapper.class.getPackage().getImplementationVersion()))
             {
                 System.out.println("prepare update...");
-                if (System.getProperty("os.name").toLowerCase().contains("windows"))
-                {
-                    try
-                    {
-                        System.out.println("Downloading update...");
-                        URLConnection urlConnection = new URL(WebClient.DEFAULT_URL + "cloud/wrapper").openConnection();
-                        urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-                        urlConnection.connect();
-                        Files.copy(urlConnection.getInputStream(), Paths.get("CloudNet-Wrapper-Update#" + version + "-" + NetworkUtils.RANDOM.nextLong() + ".jar"));
-                        shutdown();
-                    } catch (Exception ex)
-                    {
-                    }
-                } else
-                {
-                    try
-                    {
-                        System.out.println("Downloading update...");
-                        URLConnection urlConnection = new URL(WebClient.DEFAULT_URL + "cloud/wrapper").openConnection();
-                        urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-                        urlConnection.connect();
-                        new File("CloudNet-Wrapper.jar").delete();
-                        Files.copy(urlConnection.getInputStream(), Paths.get(CloudNetWrapper.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
-                        shutdown();
-                    } catch (Exception ex)
-                    {
-                    }
-                }
-            } else
-            {
-                System.out.println("No updates found!");
-            }
-        } else
-        {
-            System.out.println("Failed to check updates");
-        }
+                webClient.update(version);
+                shutdown();
+
+            } else System.out.println("No updates found!");
+        } else System.out.println("Failed to check updates");
+
     }
 
     @Override

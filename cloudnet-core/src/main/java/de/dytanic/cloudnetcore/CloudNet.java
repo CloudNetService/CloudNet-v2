@@ -246,7 +246,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
         if (!optionSet.has("disable-modules"))
             System.out.println("Enabling Modules...");
-            moduleManager.enableModules();
+        moduleManager.enableModules();
 
         if (!optionSet.has("disable-autoupdate"))
             scheduler.runTaskAsync(new Runnable() {
@@ -329,47 +329,17 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         if (!config.isAutoUpdate()) return;
 
         String version = webClient.getNewstVersion();
+
         if (version != null)
         {
             if (!version.equals(CloudNet.class.getPackage().getImplementationVersion()))
             {
                 System.out.println("prepare update...");
-                if (System.getProperty("os.name").toLowerCase().contains("windows"))
-                {
-                    try
-                    {
-                        System.out.println("Downloading update...");
-                        URLConnection urlConnection = new URL(WebClient.DEFAULT_URL + "cloud/core").openConnection();
-                        urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-                        urlConnection.connect();
-                        Files.copy(urlConnection.getInputStream(), Paths.get("CloudNet-Master-Update#" + version + "-" + NetworkUtils.RANDOM.nextLong() + ".jar"));
-                        shutdown();
-                    } catch (Exception ex)
-                    {
-                    }
-                } else
-                {
-                    try
-                    {
-                        System.out.println("Downloading update...");
-                        URLConnection urlConnection = new URL(WebClient.DEFAULT_URL + "cloud/core").openConnection();
-                        urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-                        urlConnection.connect();
-                        new File(CloudNet.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).delete();
-                        Files.copy(urlConnection.getInputStream(), Paths.get(CloudNet.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
-                        shutdown();
-                    } catch (Exception ex)
-                    {
-                    }
-                }
-            } else
-            {
-                System.out.println("No updates found!");
-            }
-        } else
-        {
-            System.out.println("Failed to check updates");
-        }
+                webClient.update(version);
+                shutdown();
+
+            } else System.out.println("No updates found!");
+        } else System.out.println("Failed to check updates");
     }
 
     @Deprecated
@@ -1012,7 +982,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
     {
         Map<String, CloudServer> cloudServerMap = new HashMap<>();
 
-        for(Wrapper wrapper : wrappers.values())
+        for (Wrapper wrapper : wrappers.values())
         {
             NetworkUtils.addAll(cloudServerMap, wrapper.getCloudServers());
         }
@@ -1348,9 +1318,9 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
                                  Properties properties, ServerGroupType serverGroupType)
     {
         Collection<Wrapper> wrappers = toWrapperInstances(config.getCloudServerWrapperList());
-        if(wrappers.size() == 0) return;
+        if (wrappers.size() == 0) return;
         Wrapper wrapper = fetchPerformanceWrapper(memory, wrappers);
-        if(wrapper == null) return;
+        if (wrapper == null) return;
         startCloudServer(wrapper, serverName, serverConfig, memory, priorityStop, processPreParameters, plugins, properties, serverGroupType);
     }
 
@@ -1380,7 +1350,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
     }
 
     public void startCloudServer(Wrapper wrapper, String serverName, ServerConfig serverConfig, int memory, boolean priorityStop, String[] processPreParameters,
-                                Collection<ServerInstallablePlugin> plugins, Properties properties, ServerGroupType serverGroupType, int port, boolean async)
+                                 Collection<ServerInstallablePlugin> plugins, Properties properties, ServerGroupType serverGroupType, int port, boolean async)
     {
         CloudServerMeta cloudServerMeta = new CloudServerMeta(
                 new ServiceId("_null_", -1, UUID.randomUUID(), wrapper.getServerId(), serverName),
@@ -1393,10 +1363,10 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
                 serverName,
                 properties,
                 serverGroupType);
-        if(async)
-        wrapper.startCloudServer(cloudServerMeta);
+        if (async)
+            wrapper.startCloudServer(cloudServerMeta);
         else
-        wrapper.startCloudServerAsync(cloudServerMeta);
+            wrapper.startCloudServerAsync(cloudServerMeta);
     }
 
     public void startGameServer(ServerGroup serverGroup)
@@ -1603,7 +1573,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         }
 
         ServerProcessMeta serverProcessMeta;
-        if(customServerName != null)
+        if (customServerName != null)
             serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, customServerName), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
         else
             serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
@@ -1705,7 +1675,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         }
 
         ServerProcessMeta serverProcessMeta;
-        if(customServerName != null)
+        if (customServerName != null)
             serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, customServerName), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
         else
             serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
@@ -1735,7 +1705,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         }
 
         ServerProcessMeta serverProcessMeta;
-        if(customServerName != null)
+        if (customServerName != null)
             serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, customServerName), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
         else
             serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
@@ -1811,7 +1781,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         }
 
         ServerProcessMeta serverProcessMeta;
-        if(customServerName != null)
+        if (customServerName != null)
             serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, customServerName), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
         else
             serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
