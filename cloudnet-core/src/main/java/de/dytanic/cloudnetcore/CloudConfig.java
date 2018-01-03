@@ -178,13 +178,13 @@ public class CloudConfig {
         if (Files.exists(servicePath)) return;
 
         String hostName = NetworkUtils.getHostName();
-        if (hostName.equalsIgnoreCase("127.0.0.1") || hostName.equalsIgnoreCase("127.0.1.1") || hostName.split("\\.").length != 4)
+        if (hostName.equals("127.0.0.1") || hostName.equalsIgnoreCase("127.0.1.1") || hostName.split("\\.").length != 4)
         {
             String input;
             System.out.println("Please write the first Wrapper IP address:");
             while ((input = consoleReader.readLine()) != null)
             {
-                if ((input.equalsIgnoreCase("127.0.0.1") || input.equalsIgnoreCase("127.0.0.1") || input.split("\\.").length != 4))
+                if ((input.equals("127.0.0.1") || input.equalsIgnoreCase("127.0.1.1") || input.split("\\.").length != 4))
                 {
                     System.out.println("Please write the real ip address :)");
                     continue;
