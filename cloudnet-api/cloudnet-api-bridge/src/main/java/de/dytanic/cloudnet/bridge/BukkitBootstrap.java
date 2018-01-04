@@ -32,7 +32,7 @@ import java.nio.file.Paths;
 /**
  * Created by Tareko on 17.08.2017.
  */
-public class BukkitBootstrap extends JavaPlugin implements Runnable {
+public final class BukkitBootstrap extends JavaPlugin implements Runnable {
 
     @Override
     public void onLoad()

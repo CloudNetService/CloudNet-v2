@@ -35,6 +35,7 @@ public final class CommandHub extends Command {
         if(!(commandSender instanceof ProxiedPlayer)) return;
 
         ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(((ProxiedPlayer)commandSender).getServer().getInfo().getName());
+
         if(serverInfo != null)
         if(CloudProxy.getInstance().getProxyGroup().getProxyConfig().getDynamicFallback().getNamedFallbackes().contains(serverInfo.getServiceId().getGroup()))
         {
@@ -46,13 +47,8 @@ public final class CommandHub extends Command {
                 .fallbackOnEnabledKick((((ProxiedPlayer)commandSender)),
                         CloudAPI.getInstance().getGroup(), ((ProxiedPlayer)commandSender).getServer().getInfo().getName());
 
-        if(fallback == null)
-        {
-            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("hubCommandNoServerFound")));
-        }
-        else
-        {
-            ((ProxiedPlayer) commandSender).connect(ProxyServer.getInstance().getServerInfo(fallback));
-        }
+        if(fallback == null) commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    CloudAPI.getInstance().getCloudNetwork().getMessages().getString("hubCommandNoServerFound")));
+        else ((ProxiedPlayer) commandSender).connect(ProxyServer.getInstance().getServerInfo(fallback));
     }
 }

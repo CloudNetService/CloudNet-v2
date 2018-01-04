@@ -141,6 +141,7 @@ public class CloudNetWrapperConfig {
             {
                 cloudNetHost = System.getProperty("cloudnet-host");
             }
+
             if (cloudNetHost.equals("127.0.0.1") || cloudNetHost.equals("127.0.1.1") || cloudNetHost.split("\\.").length != 4)
             {
                 String input;
@@ -172,7 +173,7 @@ public class CloudNetWrapperConfig {
             configuration.set("general.internalIp", hostName);
             configuration.set("general.max-memory", memory);
             configuration.set("general.startPort", 41570);
-            configuration.set("general.auto-update", false);
+            configuration.set("general.auto-update", true);
             configuration.set("general.saving-records", false);
             configuration.set("general.viaversion", false);
             configuration.set("general.maintenance-copy", false);
@@ -181,25 +182,6 @@ public class CloudNetWrapperConfig {
             configuration.set("general.percentOfCPUForANewServer", 70D);
             configuration.set("general.percentOfCPUForANewCloudServer", 70D);
             configuration.set("general.percentOfCPUForANewProxy", 80D);
-
-            if (Files.exists(Paths.get("config.properties")))
-            {
-                Properties properties = new Properties();
-                try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get("config.properties")), StandardCharsets.UTF_8))
-                {
-                    properties.load(inputStreamReader);
-                }
-                configuration.set("general.internalIp", properties.getProperty("internal_ip"));
-                configuration.set("general.saving-records", Boolean.parseBoolean(properties.getProperty("saving_records")));
-                configuration.set("general.auto-update", Boolean.parseBoolean(properties.getProperty("autoupdate")));
-                configuration.set("general.viaversion", Boolean.parseBoolean(properties.getProperty("viaversion")));
-                configuration.set("general.max-memory", Integer.parseInt(properties.getProperty("max-memory")));
-                configuration.set("general.startPort", Integer.parseInt(properties.getProperty("startPort")));
-                configuration.set("general.processQueueSize", Integer.parseInt(properties.getProperty("process-queue-size")));
-                configuration.set("connection.cloudnet-host", properties.getProperty("cloudnet-host"));
-                configuration.set("connection.cloudnet-port", Integer.parseInt(properties.getProperty("cloudnet-port")));
-                Files.deleteIfExists(Paths.get("config.properties"));
-            }
 
             try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8))
             {

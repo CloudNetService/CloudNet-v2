@@ -9,6 +9,7 @@ import de.dytanic.cloudnet.lib.map.NetorHashMap;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
+import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by Tareko on 04.10.2017.
  */
 @Getter
-public class ServerLogManager implements Runnable {
+public final class ServerLogManager implements Runnable {
 
     private final NetorHashMap<String, MultiValue<String, Long>, Collection<ScreenInfo>> screenInfos = new NetorHashMap<>();
 
@@ -38,13 +39,20 @@ public class ServerLogManager implements Runnable {
         {
             minecraftServer.getWrapper().enableScreen(minecraftServer.getServerInfo());
             screenInfos.add(rnd, new MultiValue<>(serverId, (System.currentTimeMillis() + 600000L)), new ConcurrentLinkedQueue<>());
+            return;
+        }
+
+        ProxyServer proxyServer = CloudNet.getInstance().getProxy(serverId);
+        if(proxyServer != null)
+        {
+            proxyServer.getWrapper().enableScreen(proxyServer.getProxyInfo());
+            screenInfos.add(rnd, new MultiValue<>(serverId, (System.currentTimeMillis() + 600000L)), new ConcurrentLinkedQueue<>());
         }
     }
 
     public void appendScreenData(Collection<ScreenInfo> screenInfos)
     {
         if(screenInfos.size() != 0)
-        {
             for(ScreenInfo screenInfo : screenInfos)
             {
                 for(String key : this.screenInfos.keySet())
@@ -56,17 +64,17 @@ public class ServerLogManager implements Runnable {
                 }
                 break;
             }
-        }
     }
 
     public String dispatch(String rnd)
     {
         if(!this.screenInfos.contains(rnd)) return null;
+
         StringBuilder stringBuilder = new StringBuilder();
+
         for(ScreenInfo screenInfo : this.screenInfos.getS(rnd))
-        {
             stringBuilder.append("<p>").append(screenInfo.getLine()).append("</p>");
-        }
+
         return stringBuilder.toString();
     }
 
@@ -75,17 +83,19 @@ public class ServerLogManager implements Runnable {
     public void run()
     {
         for(String key : screenInfos.keySet())
-        {
             if(screenInfos.getF(key).getSecond() < System.currentTimeMillis())
             {
                 String server = screenInfos.getF(key).getFirst();
+
                 MinecraftServer minecraftServer = CloudNet.getInstance().getServer(server);
                 if(minecraftServer != null)
-                {
                     minecraftServer.getWrapper().disableScreen(minecraftServer.getServerInfo());
-                }
+
+                ProxyServer proxyServer = CloudNet.getInstance().getProxy(server);
+                if(proxyServer != null)
+                    proxyServer.getWrapper().disableScreen(proxyServer.getProxyInfo());
+
                 screenInfos.remove(key);
             }
-        }
     }
 }

@@ -99,8 +99,10 @@ public class CloudConfig {
         if (!Files.exists(Paths.get("local/plugins"))) Files.createDirectory(Paths.get("local/plugins"));
         if (!Files.exists(Paths.get("local/cache"))) Files.createDirectory(Paths.get("local/cache"));
         if (!Files.exists(Paths.get("local/servers"))) Files.createDirectory(Paths.get("local/servers"));
-        if (!Files.exists(Paths.get("local/servers/TestServer"))) Files.createDirectory(Paths.get("local/servers/TestServer"));
-        if (!Files.exists(Paths.get("local/servers/TestServer/plugins"))) Files.createDirectory(Paths.get("local/servers/TestServer/plugins"));
+        if (!Files.exists(Paths.get("local/servers/TestServer")))
+            Files.createDirectory(Paths.get("local/servers/TestServer"));
+        if (!Files.exists(Paths.get("local/servers/TestServer/plugins")))
+            Files.createDirectory(Paths.get("local/servers/TestServer/plugins"));
 
         NetworkUtils.writeWrapperKey();
 
@@ -133,7 +135,7 @@ public class CloudConfig {
 
         Configuration configuration = new Configuration();
 
-        configuration.set("general.auto-update", false);
+        configuration.set("general.auto-update", true);
         configuration.set("general.dynamicservices", false);
         configuration.set("general.server-name-splitter", "-");
         configuration.set("general.notify-service", true);
@@ -149,23 +151,6 @@ public class CloudConfig {
         configuration.set("cloudnet-statistics.uuid", UUID.randomUUID().toString());
 
         configuration.set("networkproperties.test", true);
-
-        if(Files.exists(Paths.get("config.properties")))
-        {
-            Properties properties = new Properties();
-            try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get("config.properties"))))
-            {
-                properties.load(inputStreamReader);
-            }
-            configuration.set("general.auto-update", Boolean.parseBoolean(properties.getProperty("autoupdate")));
-            configuration.set("server.hostaddress", properties.getProperty("hostName"));
-            configuration.set("server.webservice.hostaddress", properties.getProperty("hostName"));
-            configuration.set("general.server-name-splitter", properties.getProperty("server-name-splitter"));
-            Collection<Integer> integers = new ArrayList<>();
-            for(JsonElement jsonElement : new JsonParser().parse(properties.getProperty("port")).getAsJsonArray()) integers.add(jsonElement.getAsInt());
-            configuration.set("server.ports", integers);
-            Files.deleteIfExists(Paths.get("config.properties"));
-        }
 
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8))
         {
@@ -194,57 +179,10 @@ public class CloudConfig {
                 break;
             }
         }
-
-        if(Files.exists(Paths.get("groups.json")) && Files.exists(Paths.get("wrapper.json")))
-        {
-            Document service = new Document();
-
-            {
-                Document document = Document.loadDocument(Paths.get("wrapper.json"));
-                Collection<WrapperMeta> wrapperMetas = new ArrayList<>();
-                for(String wrapper : document.keys())
-                {
-                    wrapperMetas.add(new WrapperMeta(wrapper, document.getString(wrapper), "admin"));
-                }
-                service.append("wrapper", wrapperMetas);
-            }
-
-            {
-                Document document = Document.loadDocument(Paths.get("groups.json"));
-                Collection<ServerGroup> serverGroups = document.getObject("serverGroups", new TypeToken<Collection<ServerGroup>>(){}.getType());
-                for(ServerGroup serverGroup : serverGroups) {
-                    serverGroup.setAdvancedServerConfig(new AdvancedServerConfig(
-                            false, false, false, !serverGroup.getGroupMode().equals(ServerGroupMode.STATIC)));
-                    for(Template template : serverGroup.getTemplates())
-                    {
-                        template.setInstallablePlugins(Arrays.asList());
-                        template.setProcessPreParameters(new String[]{});
-                    }
-                    serverGroup.setGlobalTemplate(new Template("globaltemplate", TemplateResource.LOCAL, null, new String[]{}, Arrays.asList()));
-                }
-                service.append("serverGroups", serverGroups);
-                Collection<ProxyGroup> collection = document.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>(){}.getType());
-                for(ProxyGroup proxyGroup : collection)
-                {
-                    proxyGroup.getProxyConfig().setDynamicFallback(new DynamicFallback("Lobby", Arrays.asList(new ServerFallback("Lobby", null))));
-                    proxyGroup.getTemplate().setProcessPreParameters(new String[]{});
-                    proxyGroup.getTemplate().setInstallablePlugins(Arrays.asList());
-                    proxyGroup.getProxyConfig().setCustomPayloadFixer(true);
-                }
-                service.append("proxyGroups", collection);
-            }
-
-            service.saveAsConfig(servicePath);
-            Files.deleteIfExists(Paths.get("groups.json"));
-            Files.deleteIfExists(Paths.get("wrapper.json"));
-        }
-        else
-        {
-            new Document("wrapper", Arrays.asList(new WrapperMeta("Wrapper-1", hostName, "admin")))
-                    .append("serverGroups", Arrays.asList(new LobbyGroup()))
-                    .append("proxyGroups", Arrays.asList(new BungeeGroup()))
-                    .saveAsConfig(servicePath);
-        }
+        new Document("wrapper", Arrays.asList(new WrapperMeta("Wrapper-1", hostName, "admin")))
+                .append("serverGroups", Arrays.asList(new LobbyGroup()))
+                .append("proxyGroups", Arrays.asList(new BungeeGroup()))
+                .saveAsConfig(servicePath);
     }
 
     private void defaultInitUsers(ConsoleReader consoleReader)
@@ -286,7 +224,7 @@ public class CloudConfig {
             this.formatSplitter = configuration.getString("general.server-name-splitter");
             this.networkProperties = configuration.getSection("networkproperties").self;
             //        configuration.set("general.disabled-modules", new ArrayList<>());
-            if(!configuration.getSection("general").self.containsKey("disabled-modules"))
+            if (!configuration.getSection("general").self.containsKey("disabled-modules"))
             {
                 configuration.set("general.disabled-modules", new ArrayList<>());
 
@@ -296,7 +234,7 @@ public class CloudConfig {
                 }
             }
 
-            if(!configuration.getSection("general").self.containsKey("cloudGameServer-wrapperList"))
+            if (!configuration.getSection("general").self.containsKey("cloudGameServer-wrapperList"))
             {
                 configuration.set("general.cloudGameServer-wrapperList", Arrays.asList("Wrapper-1"));
 
@@ -323,7 +261,8 @@ public class CloudConfig {
 
     public void createWrapper(WrapperMeta wrapperMeta)
     {
-        Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>(){}.getType());
+        Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>() {
+        }.getType());
         WrapperMeta is = CollectionWrapper.filter(wrapperMetas, new Acceptable<WrapperMeta>() {
             @Override
             public boolean isAccepted(WrapperMeta wrapperMeta_)
@@ -331,7 +270,7 @@ public class CloudConfig {
                 return wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId());
             }
         });
-        if(is != null) wrapperMetas.remove(is);
+        if (is != null) wrapperMetas.remove(is);
 
         wrapperMetas.add(wrapperMeta);
         this.serviceDocument.append("wrapper", wrapperMetas).saveAsConfig(servicePath);
@@ -430,26 +369,6 @@ public class CloudConfig {
     {
         Collection<ProxyGroup> collection = serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
-
-        boolean value = false;
-        for(ProxyGroup proxyGroup : collection)
-        {
-            if(proxyGroup.getProxyConfig().getDynamicFallback() == null)
-            {
-                proxyGroup.getProxyConfig().setDynamicFallback(new DynamicFallback("Lobby", Arrays.asList(new ServerFallback("Lobby", null))));
-                value = true;
-            }
-            if(proxyGroup.getProxyConfig().getCustomPayloadFixer() == null)
-            {
-                proxyGroup.getProxyConfig().setCustomPayloadFixer(false);
-                value = true;
-            }
-        }
-
-        if(value)
-        {
-            serviceDocument.append("proxyGroups", collection).saveAsConfig(servicePath);
-        }
 
         return MapWrapper.collectionCatcherHashMap(collection, new Catcher<String, ProxyGroup>() {
             @Override

@@ -51,8 +51,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Getter
 public final class NetworkManager {
 
-    //group, prioritystop, template, memory
-
     private java.util.Map<UUID, CloudPlayer> waitingPlayers = new ConcurrentHashMap<>();
     private java.util.Map<UUID, CloudPlayer> onlinePlayers = new ConcurrentHashMap<>();
     private Document moduleProperties = new Document();
@@ -199,11 +197,6 @@ public final class NetworkManager {
         minecraftServer.setServerInfo(incoming);
         //CloudNet.getInstance().getEventManager().callEvent(new ServerInfoUpdateEvent(minecraftServer, incoming));
         this.sendAllUpdate(new PacketOutUpdateServerInfo(incoming));
-
-        if (!minecraftServer.getLastServerInfo().isIngame() && incoming.isIngame())
-        {
-
-        }
     }
 
     public void handleProxyInfoUpdate(ProxyServer proxyServer, ProxyInfo incoming)
@@ -294,9 +287,8 @@ public final class NetworkManager {
         int atomicInteger = 0;
 
         for(ProxyServer proxyServer : CloudNet.getInstance().getProxys().values())
-        {
-            atomicInteger = atomicInteger + proxyServer.getProxyInfo().getOnlineCount();
-        }
+            atomicInteger += proxyServer.getProxyInfo().getOnlineCount();
+
         return atomicInteger;
     }
 
@@ -321,33 +313,19 @@ public final class NetworkManager {
                 for (Wrapper cn : CloudNet.getInstance().getWrappers().values())
                 {
                     if (cn.getChannel() != null && filter.accept(cn))
-                    {
                         cn.sendPacket(packet);
-                    }
 
                     for (ProxyServer proxyServer : cn.getProxys().values())
-                    {
                         if (proxyServer.getChannel() != null && filter.accept(proxyServer))
-                        {
                             proxyServer.sendPacket(packet);
-                        }
-                    }
 
                     for (MinecraftServer minecraftServer : cn.getServers().values())
-                    {
                         if (minecraftServer.getChannel() != null && filter.accept(minecraftServer))
-                        {
                             minecraftServer.sendPacket(packet);
-                        }
-                    }
 
                     for(CloudServer cloudServer : cn.getCloudServers().values())
-                    {
                         if(cloudServer.getChannel() != null && filter.accept(cloudServer))
-                        {
                             cloudServer.sendPacket(packet);
-                        }
-                    }
 
                 }
             }
@@ -384,21 +362,15 @@ public final class NetworkManager {
                     {
                         if (serverGroup.getAdvancedServerConfig().isNotifyProxyUpdates() &&
                                 (packet instanceof PacketOutUpdateProxyInfo || packet instanceof PacketOutProxyAdd || packet instanceof PacketOutProxyRemove))
-                        {
                             return true;
-                        }
 
                         if (serverGroup.getAdvancedServerConfig().isNotifyServerUpdates() &&
                                 (packet instanceof PacketOutUpdateServerInfo || packet instanceof PacketOutServerAdd || packet instanceof PacketOutServerRemove))
-                        {
                             return true;
-                        }
 
                         if (serverGroup.getAdvancedServerConfig().isNotifyPlayerUpdatesFromNoCurrentPlayer() &&
                                 (packet instanceof PacketOutUpdatePlayer || packet instanceof PacketOutLoginPlayer || packet instanceof PacketOutLogoutPlayer))
-                        {
                             return true;
-                        }
 
                     }
                 }

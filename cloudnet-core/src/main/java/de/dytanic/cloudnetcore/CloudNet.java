@@ -1022,9 +1022,8 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
     {
         Collection<String> x = new LinkedList<>();
         for (Wrapper wrapper : wrappers.values())
-        {
             for (MinecraftServer minecraftServer : wrapper.getServers().values()) x.add(minecraftServer.getServerId());
-        }
+
         return x;
     }
 
@@ -1032,51 +1031,48 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
     {
         Collection<String> x = new LinkedList<>();
         for (Wrapper wrapper : wrappers.values())
-        {
             for (ProxyServer minecraftServer : wrapper.getProxys().values()) x.add(minecraftServer.getServerId());
-        }
+
         return x;
     }
 
     public java.util.Map<String, MinecraftServer> getServers()
     {
         java.util.Map<String, MinecraftServer> minecraftServerMap = new HashMap<>();
+
         for (Wrapper wrapper : wrappers.values())
-        {
             for (MinecraftServer minecraftServer : wrapper.getServers().values())
                 minecraftServerMap.put(minecraftServer.getServerId(), minecraftServer);
-        }
+
         return minecraftServerMap;
     }
 
     public java.util.Map<String, ProxyServer> getProxys()
     {
         java.util.Map<String, ProxyServer> minecraftServerMap = new HashMap<>();
+
         for (Wrapper wrapper : wrappers.values())
-        {
             for (ProxyServer minecraftServer : wrapper.getProxys().values())
                 minecraftServerMap.put(minecraftServer.getServerId(), minecraftServer);
-        }
+
         return minecraftServerMap;
     }
 
     public MinecraftServer getServer(String serverId)
     {
         for (Wrapper wrapper : wrappers.values())
-        {
             for (MinecraftServer minecraftServer : wrapper.getServers().values())
                 if (minecraftServer.getServerId().equals(serverId)) return minecraftServer;
-        }
+
         return null;
     }
 
     public ProxyServer getProxy(String serverId)
     {
         for (Wrapper wrapper : wrappers.values())
-        {
             for (ProxyServer minecraftServer : wrapper.getProxys().values())
                 if (minecraftServer.getServerId().equals(serverId)) return minecraftServer;
-        }
+
         return null;
     }
 
@@ -1542,11 +1538,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         Map.Entry<String, Integer> entry = null;
         for (Map.Entry<String, Integer> values : templateMap.entrySet())
         {
-            if (entry == null)
-            {
-                entry = values;
-            } else
-            {
+            if (entry == null) entry = values; else {
                 if (entry.getValue() >= values.getValue())
                 {
                     entry = values;
@@ -1556,13 +1548,11 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
         Template template = null;
         for (Template t : serverGroup.getTemplates())
-        {
             if (entry.getKey().equalsIgnoreCase(t.getName()))
             {
                 template = t;
                 break;
             }
-        }
 
         if (template == null) return;
         int startport = wrapper.getWrapperInfo().getStartPort();

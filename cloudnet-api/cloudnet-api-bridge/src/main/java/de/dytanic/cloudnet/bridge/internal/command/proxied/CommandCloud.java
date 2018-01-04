@@ -228,7 +228,14 @@ public final class CommandCloud extends Command {
                 }
                 if (args[0].equalsIgnoreCase("log"))
                 {
-                    if (CloudProxy.getInstance().getCachedServers().containsKey(args[1]))
+                    if (CloudProxy.getInstance().getCachedServers().containsKey(args[1]) ||
+                            CollectionWrapper.filter(CloudAPI.getInstance().getProxys(), new Acceptable<ProxyInfo>() {
+                                @Override
+                                public boolean isAccepted(ProxyInfo proxyInfo)
+                                {
+                                    return proxyInfo.getServiceId().getServerId().equalsIgnoreCase(args[1]);
+                                }
+                            }) != null)
                     {
                         String url = CloudAPI.getInstance().createServerLogUrl(args[1]);
                         TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText("§n§l§b" + url));

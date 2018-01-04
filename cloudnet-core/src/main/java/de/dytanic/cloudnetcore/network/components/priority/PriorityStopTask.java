@@ -4,6 +4,8 @@
 
 package de.dytanic.cloudnetcore.network.components.priority;
 
+import de.dytanic.cloudnet.lib.utility.Acceptable;
+import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.threading.ScheduledTask;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.INetworkComponent;
@@ -13,11 +15,13 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collection;
+
 /**
  * Created by Tareko on 20.08.2017.
  */
 @Getter
-public class PriorityStopTask implements Runnable {
+public final class PriorityStopTask implements Runnable {
 
     private String wrapper;
 
@@ -35,40 +39,27 @@ public class PriorityStopTask implements Runnable {
         this.time = time;
     }
 
-    public Wrapper getWrapperInstance()
-    {
-        return CloudNet.getInstance().getWrappers().get(wrapper);
-    }
-
     @Override
     public void run()
     {
 
         if (iNetworkComponent instanceof ProxyServer)
             if (!getWrapperInstance().getProxys().containsKey(iNetworkComponent.getServerId()) && scheduledTask != null)
-            {
                 scheduledTask.cancel();
-            }
 
         if (iNetworkComponent instanceof MinecraftServer)
             if (!getWrapperInstance().getServers().containsKey(iNetworkComponent.getServerId()) && scheduledTask != null)
-            {
                 scheduledTask.cancel();
-            }
 
         if (iNetworkComponent.getChannel() != null)
         {
             if (iNetworkComponent instanceof ProxyServer)
-            {
                 if (((ProxyServer) iNetworkComponent).getProxyInfo().getOnlineCount() == 0)
                     time--;
-            }
 
             if (iNetworkComponent instanceof MinecraftServer)
-            {
                 if (((MinecraftServer) iNetworkComponent).getServerInfo().getOnlineCount() == 0)
                     time--;
-            }
         }
 
         if (time == 0)
@@ -83,4 +74,10 @@ public class PriorityStopTask implements Runnable {
                 scheduledTask.cancel();
         }
     }
+
+    private Wrapper getWrapperInstance()
+    {
+        return CloudNet.getInstance().getWrappers().get(wrapper);
+    }
+
 }
