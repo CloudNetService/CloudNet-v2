@@ -32,13 +32,12 @@ public class PacketInStartServer extends PacketInHandler {
                 {
                     CloudNet.getInstance().startGameServer(
                             CloudNet.getInstance().getServerGroups().get(data.getString("group")),
-                            data.getString("customServer"),
                             data.getObject("serverConfig", new TypeToken<ServerConfig>() {
                             }.getType()), data.getInt("memory"), data.getBoolean("priorityStop"),
                             data.getString("url"), data.getObject("processParameters", new TypeToken<String[]>() {
                             }.getType()), data.getBoolean("onlinemode"),
                             data.getObject("plugins", new TypeToken<Collection<ServerInstallablePlugin>>() {
-                            }.getType()), null, data.getObject("properties",
+                            }.getType()), data.getString("customServer"), data.getObject("properties",
                                     new TypeToken<Properties>() {
                                     }.getType()) );
                 } else
@@ -79,14 +78,13 @@ public class PacketInStartServer extends PacketInHandler {
                         {
                             CloudNet.getInstance().startGameServer(
                                     CloudNet.getInstance().getWrappers().get(data.getString("wrapper")),
-                                    data.getString("customServer"),
                                     CloudNet.getInstance().getServerGroups().get(data.getString("group")),
                                     data.getObject("serverConfig", new TypeToken<ServerConfig>() {
                                     }.getType()), data.getInt("memory"), data.getBoolean("priorityStop"),
                                     data.getString("url"), data.getObject("processParameters", new TypeToken<String[]>() {
                                     }.getType()), data.getBoolean("onlinemode"),
                                     data.getObject("plugins", new TypeToken<Collection<ServerInstallablePlugin>>() {
-                                    }.getType()), null, data.getObject("properties",
+                                    }.getType()), data.getString("customServer"), data.getObject("properties",
                                             new TypeToken<Properties>() {
                                             }.getType()));
                         }
@@ -94,13 +92,12 @@ public class PacketInStartServer extends PacketInHandler {
                         {
                             CloudNet.getInstance().startGameServer(
                                     CloudNet.getInstance().getServerGroups().get(data.getString("group")),
-                                    data.getString("customServer"),
                                     data.getObject("serverConfig", new TypeToken<ServerConfig>() {
                                     }.getType()), data.getInt("memory"), data.getBoolean("priorityStop"),
                                     data.getString("url"), data.getObject("processParameters", new TypeToken<String[]>() {
                                     }.getType()), data.getBoolean("onlinemode"),
                                     data.getObject("plugins", new TypeToken<Collection<ServerInstallablePlugin>>() {
-                                    }.getType()), null, data.getObject("properties",
+                                    }.getType()), data.getString("customServer"), data.getObject("properties",
                                             new TypeToken<Properties>() {
                                             }.getType()));
                         }
