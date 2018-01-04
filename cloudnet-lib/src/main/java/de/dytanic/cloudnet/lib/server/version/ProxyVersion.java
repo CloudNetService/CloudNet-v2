@@ -25,7 +25,7 @@ public enum ProxyVersion {
             case HEXACORD:
                 return new MultiValue<>("https://yivesmirror.com/files/hexacord/HexaCord-v180.jar", "HexaCord.jar");
             case WATERFALL:
-                return new MultiValue<>("https://yivesmirror.com/files/waterfall/Waterfall-160.jar", "Waterfall.jar");
+                return new MultiValue<>("https://ci.destroystokyo.com/job/Waterfall/lastSuccessfulBuild/artifact/Waterfall-Proxy/bootstrap/target/Waterfall.jar", "Waterfall.jar");
             default:
                 return new MultiValue<>("https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar", "BungeeCord.jar");
         }
