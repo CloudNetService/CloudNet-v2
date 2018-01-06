@@ -16,6 +16,7 @@ import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -42,6 +43,14 @@ public class BukkitListener implements Listener {
         CloudServer.getInstance().getPlayerAndCache(e.getUniqueId());
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void handle0(AsyncPlayerPreLoginEvent e)
+    {
+        for(Player all : Bukkit.getOnlinePlayers())
+            if(all.getUniqueId().equals(e.getUniqueId()))
+                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, "§cYou must connect from a internal proxy server!");
+    }
+
     @EventHandler
     public void handle(BukkitSubChannelMessageEvent e)
     {
@@ -58,7 +67,7 @@ public class BukkitListener implements Listener {
                     {
                         requests.remove(uniqueId);
                     }
-                }, 40L);
+                }, 20L);
             }
         }
     }
@@ -91,7 +100,8 @@ public class BukkitListener implements Listener {
                 }
         } else
         {
-            e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "§cYou must connect from a internal CloudNet proxy server!");
+            e.getPlayer().kickPlayer("§cYou must connect from a internal proxy server!");
+            e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "§cYou must connect from a internal proxy server!");
             return;
         }
 
