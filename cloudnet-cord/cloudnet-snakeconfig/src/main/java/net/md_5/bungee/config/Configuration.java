@@ -1,6 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
 
 package net.md_5.bungee.config;
 
