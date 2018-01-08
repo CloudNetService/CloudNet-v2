@@ -28,11 +28,11 @@ import java.util.Properties;
 /**
  * Created by Tareko on 14.10.2017.
  */
-public class CommandCloudDev extends Command implements TabExecutor {
+public final class CommandCloudDev extends Command implements TabExecutor {
 
     public CommandCloudDev()
     {
-        super("cdev");
+        super("cdev", "cloudnet.command.cdev");
     }
 
     @Override
