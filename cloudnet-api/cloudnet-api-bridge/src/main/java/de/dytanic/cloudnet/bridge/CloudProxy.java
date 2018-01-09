@@ -390,48 +390,15 @@ public class CloudProxy {
         @Override
         public void onCustomChannelMessageReceive(String channel, String message, Document document)
         {
+            if(handle(channel, message, document)) return;
             ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedCustomChannelMessageReceiveEvent(channel, message, document));
         }
 
         @Override
         public void onCustomSubChannelMessageReceive(String channel, String message, Document document)
         {
+            if(handle(channel, message, document)) return;
             ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedSubChannelMessageEvent(channel, message, document));
-
-            if (channel.equalsIgnoreCase("cloudnet_internal"))
-            {
-                if (message.equalsIgnoreCase("kickPlayer"))
-                {
-                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(document.getString("name"));
-                    if (proxiedPlayer != null)
-                    {
-                        proxiedPlayer.disconnect(document.getString("reason"));
-                    }
-                    return;
-                }
-
-                if (message.equalsIgnoreCase("sendPlayer"))
-                {
-                    net.md_5.bungee.api.config.ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(document.getString("server"));
-                    if (serverInfo != null)
-                    {
-                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(document.getString("name"));
-                        if (proxiedPlayer != null)
-                        {
-                            proxiedPlayer.connect(serverInfo);
-                        }
-                    }
-                }
-
-                if (message.equalsIgnoreCase("sendMessage"))
-                {
-                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(document.getString("name"));
-                    if (proxiedPlayer != null)
-                    {
-                        proxiedPlayer.sendMessage(document.getString("message"));
-                    }
-                }
-            }
         }
 
         @Override
@@ -469,5 +436,39 @@ public class CloudProxy {
         {
             ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOnlineCountUpdateEvent(onlineCount));
         }
+
+        private boolean handle(String channel, String message, Document document)
+        {
+            if (channel.equalsIgnoreCase("cloudnet_internal"))
+            {
+                if (message.equalsIgnoreCase("kickPlayer"))
+                {
+                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(document.getObject("uniqueId", UUID.class));
+                    if (proxiedPlayer != null)
+                        proxiedPlayer.disconnect(document.getString("reason"));
+                }
+
+                if (message.equalsIgnoreCase("sendPlayer"))
+                {
+                    net.md_5.bungee.api.config.ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(document.getString("server"));
+                    if (serverInfo != null)
+                    {
+                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(document.getObject("uniqueId", UUID.class));
+                        if (proxiedPlayer != null)
+                            proxiedPlayer.connect(serverInfo);
+                    }
+                }
+
+                if (message.equalsIgnoreCase("sendMessage"))
+                {
+                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(document.getObject("uniqueId", UUID.class));
+                    if (proxiedPlayer != null)
+                        proxiedPlayer.sendMessage(document.getString("message"));
+                }
+                return true;
+            }
+            else return false;
+        }
+
     }
 }

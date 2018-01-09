@@ -35,7 +35,7 @@ public class PlayerExecutorBridge extends PlayerExecutor {
     @Override
     public void sendMessage(CloudPlayer cloudPlayer, String message)
     {
-        CloudAPI.getInstance().sendCustomSubProxyMessage("cloudnet_internal", "sendMessage", new Document("message", message).append("uniqueId", cloudPlayer.getUniqueId()));
+        CloudAPI.getInstance().sendCustomSubProxyMessage("cloudnet_internal", "sendMessage", new Document("message", message).append("name", cloudPlayer.getName()).append("uniqueId", cloudPlayer.getUniqueId()));
     }
 
 }
