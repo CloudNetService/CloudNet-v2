@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
         <netty.version>4.0.40.Final</netty.version>
-        <service.version>2.1.PXXI-5</service.version>
+        <service.version>2.1.PXXII</service.version>
         <service.type>PRE</service.type>
     </properties>
 

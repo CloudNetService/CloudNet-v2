@@ -13,10 +13,7 @@ import de.dytanic.cloudnet.api.network.packet.api.sync.*;
 import de.dytanic.cloudnet.api.network.packet.in.*;
 import de.dytanic.cloudnet.api.network.packet.out.*;
 import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
-import de.dytanic.cloudnet.lib.CloudNetwork;
-import de.dytanic.cloudnet.lib.ConnectableAddress;
-import de.dytanic.cloudnet.lib.DefaultType;
-import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.*;
 import de.dytanic.cloudnet.lib.network.NetDispatcher;
 import de.dytanic.cloudnet.lib.network.NetworkConnection;
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
@@ -59,6 +56,7 @@ public final class CloudAPI implements MetaObj {
 
     private Scheduler scheduler = new Scheduler(20);
     private Thread thread = new Thread(scheduler);
+    private ICloudService cloudService = null;
 
     //Init
     private CloudNetwork cloudNetwork = new CloudNetwork();
@@ -154,6 +152,18 @@ public final class CloudAPI implements MetaObj {
             }
         });
         return integer.get();
+    }
+
+    @Deprecated
+    public void setCloudService(ICloudService cloudService)
+    {
+        this.cloudService = cloudService;
+    }
+
+    @Deprecated
+    public ICloudService getCloudService()
+    {
+        return cloudService;
     }
 
     /**
@@ -342,7 +352,7 @@ public final class CloudAPI implements MetaObj {
      */
     public PermissionPool getPermissionPool()
     {
-        return cloudNetwork.getModules().getObject("permissionPool", new TypeToken<PermissionPool>(){}.getType());
+        return cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE);
     }
 
     /**
@@ -359,7 +369,7 @@ public final class CloudAPI implements MetaObj {
     public PermissionGroup getPermissionGroup(String group)
     {
         if(cloudNetwork.getModules().contains("permissionPool"))
-            return ((PermissionPool)cloudNetwork.getModules().getObject("permissionPool", new TypeToken<PermissionPool>(){}.getType())).getGroups().get(group);
+            return ((PermissionPool)cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE)).getGroups().get(group);
         return null;
     }
 
@@ -989,6 +999,8 @@ public final class CloudAPI implements MetaObj {
      */
     public Collection<ServerInfo> getServers()
     {
+        if(cloudService != null && cloudService.isProxyInstance()) return new LinkedList<>(cloudService.getServers().values());
+
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(), networkConnection);
         return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {
         }.getType());
@@ -999,6 +1011,14 @@ public final class CloudAPI implements MetaObj {
      */
     public Collection<ServerInfo> getCloudServers()
     {
+        if(cloudService != null && cloudService.isProxyInstance()) return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
+            @Override
+            public boolean isAccepted(ServerInfo serverInfo)
+            {
+                return serverInfo.getServiceId().getGroup() == null;
+            }
+        });
+
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetCloudServers(), networkConnection);
         return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>(){}.getType());
     }
@@ -1010,6 +1030,14 @@ public final class CloudAPI implements MetaObj {
      */
     public Collection<ServerInfo> getServers(String group)
     {
+        if(cloudService != null && cloudService.isProxyInstance()) return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
+            @Override
+            public boolean isAccepted(ServerInfo serverInfo)
+            {
+                return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
+            }
+        });
+
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(group), networkConnection);
         return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {
         }.getType());
@@ -1046,7 +1074,7 @@ public final class CloudAPI implements MetaObj {
         Collection<CloudPlayer> cloudPlayers = result.getResult().getObject("players", new TypeToken<Collection<CloudPlayer>>() {
         }.getType());
 
-        if(cloudPlayers == null) return null;
+        if(cloudPlayers == null) return new ArrayList<>();
 
         for(CloudPlayer cloudPlayer : cloudPlayers)
         {
@@ -1060,6 +1088,9 @@ public final class CloudAPI implements MetaObj {
      */
     public CloudPlayer getOnlinePlayer(UUID uniqueId)
     {
+        CloudPlayer instance = checkAndGet(uniqueId);
+        if(instance != null) return instance;
+
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayer(uniqueId), networkConnection);
         CloudPlayer cloudPlayer = result.getResult().getObject("player", CloudPlayer.TYPE);
         if(cloudPlayer == null) return null;
@@ -1074,6 +1105,9 @@ public final class CloudAPI implements MetaObj {
      */
     public OfflinePlayer getOfflinePlayer(UUID uniqueId)
     {
+        CloudPlayer cloudPlayer = checkAndGet(uniqueId);
+        if(cloudPlayer != null) return cloudPlayer;
+
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(uniqueId), networkConnection);
         return result.getResult().getObject("player", new TypeToken<OfflinePlayer>() {
         }.getType());
@@ -1086,6 +1120,9 @@ public final class CloudAPI implements MetaObj {
      */
     public OfflinePlayer getOfflinePlayer(String name)
     {
+        CloudPlayer cloudPlayer = checkAndGet(name);
+        if(cloudPlayer != null) return cloudPlayer;
+
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(name), networkConnection);
         return result.getResult().getObject("player", new TypeToken<OfflinePlayer>() {
         }.getType());
@@ -1132,5 +1169,15 @@ public final class CloudAPI implements MetaObj {
     }
 
     /*================================================================================*/
+
+    private CloudPlayer checkAndGet(UUID uniqueId)
+    {
+        return cloudService != null ? cloudService.getCachedPlayer(uniqueId) : null;
+    }
+
+    private CloudPlayer checkAndGet(String name)
+    {
+        return cloudService != null ? cloudService.getCachedPlayer(name) : null;
+    }
 
 }

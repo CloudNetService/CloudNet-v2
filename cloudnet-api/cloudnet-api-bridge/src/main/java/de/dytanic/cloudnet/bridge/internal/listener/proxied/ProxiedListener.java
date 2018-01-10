@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.network.packet.out.*;
 import de.dytanic.cloudnet.bridge.CloudProxy;
 import de.dytanic.cloudnet.bridge.event.proxied.ProxiedOnlineCountUpdateEvent;
+import de.dytanic.cloudnet.bridge.internal.util.CloudPlayerCommandSender;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
@@ -27,6 +28,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -119,13 +121,17 @@ public class ProxiedListener implements Listener {
         CloudPlayer cloudPlayer = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketOutPlayerLoginRequest(playerConnection),
                 CloudAPI.getInstance().getNetworkConnection()).getResult().getObject("player", new TypeToken<CloudPlayer>() {}.getType());
 
+        CommandSender cloudCommandSender = new CloudPlayerCommandSender(cloudPlayer);
+
         if (CloudProxy.getInstance().getProxyGroup() != null)
         {
             ProxyConfig proxyConfig = CloudProxy.getInstance().getProxyGroup().getProxyConfig();
             if ((proxyConfig.isEnabled() && proxyConfig.isMaintenance()))
             {
+                PermissionCheckEvent permissionCheckEvent = new PermissionCheckEvent(cloudCommandSender, "cloudnet.maintenance", false);
+
                 if (!proxyConfig.getWhitelist().contains(e.getConnection().getName()) &&
-                        !cloudPlayer.getPermissionEntity().hasPermission(CloudAPI.getInstance().getPermissionPool(), "cloudnet.maintenance", CloudAPI.getInstance().getGroup()))
+                        !ProxyServer.getInstance().getPluginManager().callEvent(permissionCheckEvent).hasPermission())
                 {
                     e.setCancelled(true);
                     e.setCancelReason(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("kick-maintenance")));
@@ -136,13 +142,18 @@ public class ProxiedListener implements Listener {
 
         ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
         if (proxyGroup.getProxyConfig().isEnabled())
-            if (ProxyServer.getInstance().getOnlineCount() >= CloudProxy.getInstance().getProxyGroup().getProxyConfig().getMaxPlayers() &&
-                    !cloudPlayer.getPermissionEntity().hasPermission(CloudAPI.getInstance().getPermissionPool(), "cloudnet.fulljoin", CloudAPI.getInstance().getGroup()))
+            if (ProxyServer.getInstance().getOnlineCount() >= CloudProxy.getInstance().getProxyGroup().getProxyConfig().getMaxPlayers())
             {
-                e.setCancelled(true);
-                e.setCancelReason(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("full-join")));
-                return;
+                PermissionCheckEvent permissionCheckEvent = new PermissionCheckEvent(cloudCommandSender, "cloudnet.fulljoin", false);
+
+                if(!ProxyServer.getInstance().getPluginManager().callEvent(permissionCheckEvent).hasPermission())
+                {
+                    e.setCancelled(true);
+                    e.setCancelReason(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("full-join")));
+                    return;
+                }
             }
+
         CloudProxy.getInstance().getCloudPlayers().put(cloudPlayer.getUniqueId(), cloudPlayer);
     }
 
@@ -151,6 +162,7 @@ public class ProxiedListener implements Listener {
     {
         CloudProxy.getInstance().update();
         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutLoginSuccess(e.getPlayer().getUniqueId()));
+
         if (CloudProxy.getInstance().getProxyGroup().getProxyConfig().isFastConnect())
         {
             try
@@ -212,13 +224,19 @@ public class ProxiedListener implements Listener {
     @EventHandler
     public void handlePermissionCheck(PermissionCheckEvent e)
     {
-        if(CloudAPI.getInstance().getPermissionPool() == null) return;
-        if (!CloudAPI.getInstance().getPermissionPool().isAvailable()) return;
-        if (CloudProxy.getInstance().getCloudPlayers().containsKey(((ProxiedPlayer) e.getSender()).getUniqueId()))
-            e.setHasPermission(CloudProxy.getInstance().getCloudPlayers().get(((ProxiedPlayer) e.getSender()).getUniqueId())
-                    .getPermissionEntity().hasPermission(CloudAPI.getInstance().getPermissionPool(), e.getPermission(), CloudAPI.getInstance().getGroup()));
-        else
-            e.setHasPermission(false);
+        if(CloudAPI.getInstance().getPermissionPool() == null || !CloudAPI.getInstance().getPermissionPool().isAvailable()) return;
+
+        if(e.getSender() instanceof ProxiedPlayer)
+        {
+            if (CloudProxy.getInstance().getCloudPlayers().containsKey(((ProxiedPlayer) e.getSender()).getUniqueId()))
+                e.setHasPermission(CloudProxy.getInstance().getCloudPlayers().get(((ProxiedPlayer) e.getSender()).getUniqueId())
+                        .getPermissionEntity().hasPermission(CloudAPI.getInstance().getPermissionPool(), e.getPermission(), CloudAPI.getInstance().getGroup()));
+        }
+        else if(e.getSender() instanceof CloudPlayerCommandSender)
+        {
+                e.setHasPermission(((CloudPlayerCommandSender) e.getSender()).getCloudPlayer()
+                        .getPermissionEntity().hasPermission(CloudAPI.getInstance().getPermissionPool(), e.getPermission(), CloudAPI.getInstance().getGroup()));
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -351,4 +369,5 @@ public class ProxiedListener implements Listener {
                         .replace("%proxy_group%", CloudProxy.getInstance().getProxyGroup().getName())
                 )));
     }
+
 }

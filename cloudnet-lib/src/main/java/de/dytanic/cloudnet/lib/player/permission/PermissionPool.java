@@ -1,11 +1,13 @@
 package de.dytanic.cloudnet.lib.player.permission;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -14,6 +16,8 @@ import java.util.HashMap;
  */
 @Getter
 public class PermissionPool {
+
+    public static final Type TYPE = new TypeToken<PermissionPool>(){}.getType();
 
     @Setter private boolean available = true;
 

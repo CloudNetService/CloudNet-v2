@@ -68,9 +68,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * This is the main class of the CloudNet Project, a most of util methods
- */
 @Getter
 public final class CloudNet implements Executeable, Runnable, Reloadable {
 

@@ -25,7 +25,7 @@ public final class CollectionWrapper {
 
     public static <E> Collection<E> filterMany(Collection<E> elements, Acceptable<E> acceptable)
     {
-        Collection<E> collection = new CopyOnWriteArrayList<>();
+        Collection<E> collection = new LinkedList<>();
         for(E element : elements)
         {
             if(acceptable.isAccepted(element))

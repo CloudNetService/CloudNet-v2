@@ -6,6 +6,7 @@ package de.dytanic.cloudnet.bridge;
 
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.bridge.event.proxied.*;
 import de.dytanic.cloudnet.lib.CloudNetwork;
@@ -39,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * This Class represents the Proxy Instance on based on cloudnet
  */
-public class CloudProxy {
+public class CloudProxy implements ICloudService {
 
     private static CloudProxy instance;
 
@@ -81,6 +82,9 @@ public class CloudProxy {
                         return key.getServiceId().getServerId();
                     }
                 }));
+
+                cloudAPI.setCloudService(CloudProxy.this);
+
             }
         }, 250, TimeUnit.MILLISECONDS);
     }
@@ -285,6 +289,35 @@ public class CloudProxy {
     public Plugin getPlugin()
     {
         return proxiedBootstrap;
+    }
+
+    @Override
+    public CloudPlayer getCachedPlayer(UUID uniqueId)
+    {
+        return cloudPlayers.get(uniqueId);
+    }
+
+    public CloudPlayer getCachedPlayer(String name)
+    {
+        return CollectionWrapper.filter(this.cloudPlayers.values(), new Acceptable<CloudPlayer>() {
+            @Override
+            public boolean isAccepted(CloudPlayer cloudPlayer)
+            {
+                return cloudPlayer.getName().equalsIgnoreCase(name);
+            }
+        });
+    }
+
+    @Override
+    public boolean isProxyInstance()
+    {
+        return true;
+    }
+
+    @Override
+    public Map<String, ServerInfo> getServers()
+    {
+        return this.getCachedServers();
     }
 
     private class NetworkHandlerImpl implements NetworkHandler {

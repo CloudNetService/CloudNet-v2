@@ -6,6 +6,7 @@ package de.dytanic.cloudnet.bridge;
 
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.api.network.packet.out.PacketOutUpdateServerInfo;
 import de.dytanic.cloudnet.bridge.event.bukkit.*;
@@ -51,7 +52,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Cloud-Server represents
  */
-public class CloudServer {
+public class CloudServer implements ICloudService {
 
     private static CloudServer instance;
 
@@ -81,7 +82,9 @@ public class CloudServer {
 
     public CloudServer(BukkitBootstrap bukkitBootstrap, CloudAPI cloudAPI)
     {
-        this.instance = this;
+        instance = this;
+        cloudAPI.setCloudService(this);
+
         this.bukkitBootstrap = bukkitBootstrap;
         ServerInfo serverInfo = cloudAPI.getConfig().getObject("serverInfo", new TypeToken<ServerInfo>() {
         }.getType());
@@ -194,6 +197,18 @@ public class CloudServer {
                 return cloudPlayer.getName().equalsIgnoreCase(name);
             }
         });
+    }
+
+    @Override
+    public boolean isProxyInstance()
+    {
+        return false;
+    }
+
+    @Override
+    public Map<String, ServerInfo> getServers()
+    {
+        throw new UnsupportedOperationException();
     }
 
     /**
