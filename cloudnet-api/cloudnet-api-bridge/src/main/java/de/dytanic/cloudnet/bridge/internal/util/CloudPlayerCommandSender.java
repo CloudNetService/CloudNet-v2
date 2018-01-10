@@ -10,6 +10,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.event.PermissionCheckEvent;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -85,6 +86,6 @@ public class CloudPlayerCommandSender implements CommandSender {
     @Override
     public Collection<String> getPermissions()
     {
-        return null;
+        return new ArrayDeque<>();
     }
 }
