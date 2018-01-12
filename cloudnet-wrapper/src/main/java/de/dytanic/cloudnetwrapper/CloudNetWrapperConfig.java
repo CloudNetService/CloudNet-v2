@@ -82,6 +82,8 @@ public class CloudNetWrapperConfig {
             Files.createDirectory(Paths.get("modules"));
         if (!Files.exists(Paths.get("local/global")))
             Files.createDirectory(Paths.get("local/global"));
+        if (!Files.exists(Paths.get("local/global_cloudserver")))
+            Files.createDirectory(Paths.get("local/global_cloudserver"));
         if (!Files.exists(Paths.get("local/global/plugins")))
             Files.createDirectory(Paths.get("local/global/plugins"));
         if (!Files.exists(Paths.get("local/proxy_versions")))

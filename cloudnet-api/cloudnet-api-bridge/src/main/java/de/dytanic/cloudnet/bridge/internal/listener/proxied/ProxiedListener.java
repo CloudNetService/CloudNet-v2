@@ -142,7 +142,7 @@ public class ProxiedListener implements Listener {
 
         ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
         if (proxyGroup.getProxyConfig().isEnabled())
-            if (ProxyServer.getInstance().getOnlineCount() >= CloudProxy.getInstance().getProxyGroup().getProxyConfig().getMaxPlayers())
+            if (CloudAPI.getInstance().getOnlineCount() >= CloudProxy.getInstance().getProxyGroup().getProxyConfig().getMaxPlayers())
             {
                 PermissionCheckEvent permissionCheckEvent = new PermissionCheckEvent(cloudCommandSender, "cloudnet.fulljoin", false);
 
