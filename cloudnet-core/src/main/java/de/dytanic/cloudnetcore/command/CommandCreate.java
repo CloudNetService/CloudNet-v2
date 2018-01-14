@@ -72,7 +72,7 @@ public class CommandCreate extends Command {
                         sender.sendMessage("Trying to startup a proxy server...");
                     } else
                     {
-                        sender.sendMessage("The group doesn't exists");
+                        sender.sendMessage("The proxy group doesn't exist");
                     }
                     return;
                 }
@@ -84,7 +84,7 @@ public class CommandCreate extends Command {
                         sender.sendMessage("Trying to startup a game server...");
                     } else
                     {
-                        sender.sendMessage("The group doesn't exists");
+                        sender.sendMessage("The server group doesn't exists");
                     }
                     return;
                 }
@@ -117,7 +117,7 @@ public class CommandCreate extends Command {
                         sender.sendMessage("Trying to startup a proxy server...");
                     } else
                     {
-                        sender.sendMessage("The group doesn't exists");
+                        sender.sendMessage("The proxy group doesn't exists");
                     }
                     return;
                 }
@@ -133,7 +133,7 @@ public class CommandCreate extends Command {
                         sender.sendMessage("Trying to startup a game server...");
                     } else
                     {
-                        sender.sendMessage("The group doesn't exists");
+                        sender.sendMessage("The server group doesn't exists");
                     }
                     return;
                 }
@@ -144,7 +144,7 @@ public class CommandCreate extends Command {
                         User user = new BasicUser(args[1], args[2], Arrays.asList());
                         CloudNet.getInstance().getUsers().add(user);
                         CloudNet.getInstance().getConfig().save(CloudNet.getInstance().getUsers());
-                        sender.sendMessage("This user is now created!");
+                        sender.sendMessage("The user was created!");
                     } else
                     {
                         sender.sendMessage("The user already exists!");
@@ -197,7 +197,7 @@ public class CommandCreate extends Command {
                                     wrapper.updateWrapper();
                                 }
                             });
-                            sender.sendMessage("Template created and update all wrappers!");
+                            sender.sendMessage("The template was created and all wrappers were updated!");
                         }
                         if (args[3].equalsIgnoreCase("MASTER"))
                         {
@@ -227,11 +227,11 @@ public class CommandCreate extends Command {
                                     wrapper.updateWrapper();
                                 }
                             });
-                            sender.sendMessage("Template created and update all wrappers!");
+                            sender.sendMessage("The template was created and all wrappers were updated!");
                         }
                     } else
                     {
-                        sender.sendMessage("The group doesn't exists");
+                        sender.sendMessage("The server group doesn't exist");
                     }
                 }
                 break;
@@ -268,27 +268,27 @@ public class CommandCreate extends Command {
                                     wrapper.updateWrapper();
                                 }
                             });
-                            sender.sendMessage("Template created and update all wrapper!");
+                            sender.sendMessage("The template was created and all wrappers were updated!");
                         }
                     } else
                     {
-                        sender.sendMessage("The group doesn't exists");
+                        sender.sendMessage("The server group doesn't exists");
                     }
                 }
                 break;
             default:
                 sender.sendMessage(
-                        "create PROXY <proxyGroup> <count> | Creates a proxy server from a proxy group. <count> is not mandatory",
-                        "create SERVER <serverGroup> <count> | Creates a game server from a server group. <count> is not mandatory",
+                        "create PROXY <proxyGroup> <count> | Creates a proxy server of a proxy group. <count> is not mandatory",
+                        "create SERVER <serverGroup> <count> | Creates a game server of a server group. <count> is not mandatory",
                         "create CLOUDSERVER <name> <memory> <priorityStop>",
-                        "create USER <name> <password> | Creates a new user with the name and password",
+                        "create USER <name> <password> | Creates a new user with specified name and password",
                         "create PROXYGROUP <name> | Creates a completely new proxy group for BungeeCord with its own configurations, etc.",
                         "create SERVERGROUP <name> | Creates a completely new server group for Minecraft servers with its own configurations, etc.",
-                        "create DISPATCHCOMMAND <main-command> <command> | Creates a simple command aliases",
+                        "create DISPATCHCOMMAND <main-command> <command> | Creates a simple command alias",
                         "create WRAPPER <name> | Creates and whitelists a new wrapper. The wrapper can also have the same IP of a previous wrapper",
-                        "create TEMPLATE <name> <group> LOCAL | Creates a new locales (Wrapper locales) template for a server group",
+                        "create TEMPLATE <name> <group> LOCAL | Creates a new locale (Wrapper locales) template for a server group",
                         "create TEMPLATE <name> <group> MASTER | Creates a new master backend (Master locales) template for a server group",
-                        "create TEMPLATE <name> <group> URL <url> | Creates a new template for a server group via url"
+                        "create TEMPLATE <name> <group> URL <url> | Creates a new template of a server group via url"
                 );
                 break;
         }

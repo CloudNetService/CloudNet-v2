@@ -79,7 +79,7 @@ public class SetupProxyGroup {
 
                         CloudNet.getInstance().getConfig().createGroup(proxyGroup);
                         CloudNet.getInstance().getProxyGroups().put(proxyGroup.getName(), proxyGroup);
-                        commandSender.sendMessage("The proxy group " + proxyGroup.getName() + " is now created!");
+                        commandSender.sendMessage("The proxy group " + proxyGroup.getName() + " was created!");
                         CloudNet.getInstance().setupProxy(proxyGroup);
                         for (Wrapper wrapper : CloudNet.getInstance().toWrapperInstances(wrappers))
                         {
@@ -87,22 +87,22 @@ public class SetupProxyGroup {
                         }
                     }
                 })
-                .request(new SetupRequest("memory", "How many MB RAM should the group have?", "Memory is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("memory", "How many MB of RAM should the proxy group have?", "Specified memory is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {
                         return NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 64;
                     }
                 }))
-                .request(new SetupRequest("startport", "What´s the startport of the proxygroup?", "Startport is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("startport", "What's the starting port of the proxygroup?", "Specified starting port is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {
                         return NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 128 && Integer.parseInt(key) < 70000;
                     }
                 }))
-                .request(new SetupRequest("startup", "How many proxys should always be online?", "Startport is invalid", SetupResponseType.NUMBER, null))
-                .request(new SetupRequest("mode", "Should the group be STATIC or DYNAMIC?", "GroupMode is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("startup", "How many proxys should always be online?", "Specified startup count is invalid", SetupResponseType.NUMBER, null))
+                .request(new SetupRequest("mode", "Should the group be STATIC or DYNAMIC?", "Group mode is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {
@@ -116,7 +116,7 @@ public class SetupProxyGroup {
                         return key.equals("MASTER") || key.equals("LOCAL");
                     }
                 }))
-                .request(new SetupRequest("wrapper", "Which wrappers should be used for this Group?", "String is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("wrapper", "Which wrappers should be used for this group?", "String is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {

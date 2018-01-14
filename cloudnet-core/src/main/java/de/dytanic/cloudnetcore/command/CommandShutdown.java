@@ -37,10 +37,10 @@ public class CommandShutdown extends Command {
                         {
                             wrapper.writeCommand("stop");
                         }
-                        sender.sendMessage("Stop wrapper " + args[1]);
+                        sender.sendMessage("Wrapper " + args[1] + " was stopped");
                     } else
                     {
-                        sender.sendMessage("Wrapper doesn't exists");
+                        sender.sendMessage("Wrapper doesn't exist");
                     }
                     return;
                 }
@@ -48,7 +48,7 @@ public class CommandShutdown extends Command {
                 {
                     if (CloudNet.getInstance().getServerGroups().containsKey(args[1]))
                     {
-                        System.out.println("Stop all servers from group " + args[1]);
+                        System.out.println("All servers of the server group " + args[1] + " will be stopped...");
                         CollectionWrapper.iterator(CloudNet.getInstance().getServers(args[1]), new Runnabled<MinecraftServer>() {
                             @Override
                             public void run(MinecraftServer obj)
@@ -61,7 +61,7 @@ public class CommandShutdown extends Command {
                     }
                     if (CloudNet.getInstance().getProxyGroups().containsKey(args[1]))
                     {
-                        System.out.println("Stop all servers from group " + args[1]);
+                        System.out.println("All proxies of the proxy group " + args[1] + " will be stopped");
                         CollectionWrapper.iterator(CloudNet.getInstance().getProxys(args[1]), new Runnabled<ProxyServer>() {
                             @Override
                             public void run(ProxyServer obj)
@@ -73,7 +73,7 @@ public class CommandShutdown extends Command {
                         return;
                     }
 
-                    sender.sendMessage("Group doesn't exists");
+                    sender.sendMessage("Group doesn't exist");
                     return;
                 }
                 if (args[0].equalsIgnoreCase("server"))
@@ -82,7 +82,7 @@ public class CommandShutdown extends Command {
                     if (proxyServer != null)
                     {
                         proxyServer.getWrapper().stopServer(proxyServer);
-                        sender.sendMessage("Stop server " + args[1]);
+                        sender.sendMessage("Server " + args[1] + " was stopped!");
                     } else
                     {
                         CloudServer proxyServers = CloudNet.getInstance().getCloudGameServer(args[1]);
@@ -92,7 +92,7 @@ public class CommandShutdown extends Command {
                         }
                         else
                         {
-                            sender.sendMessage("The server doesn't exists");
+                            sender.sendMessage("The server doesn't exist");
                         }
                     }
                     return;
@@ -103,10 +103,10 @@ public class CommandShutdown extends Command {
                     if (proxyServer != null)
                     {
                         proxyServer.getWrapper().stopProxy(proxyServer);
-                        sender.sendMessage("Stop proxy server " + args[1]);
+                        sender.sendMessage("Proxy server " + args[1] + " was stopped!");
                     } else
                     {
-                        sender.sendMessage("The proxy doesn't exists");
+                        sender.sendMessage("The proxy doesn't exist");
                     }
                     return;
                 }

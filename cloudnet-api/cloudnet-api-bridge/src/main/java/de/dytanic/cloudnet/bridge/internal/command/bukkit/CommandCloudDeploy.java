@@ -29,7 +29,7 @@ public class CommandCloudDeploy extends Command {
             case 1:
             {
                 CloudAPI.getInstance().sendCloudCommand("copy " + CloudAPI.getInstance().getServerId() + " " + args[0]);
-                commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "Server will deployed to " + args[0]);
+                commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "Server will be deployed to " + args[0]);
             }
                 break;
             default:

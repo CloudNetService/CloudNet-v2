@@ -27,7 +27,7 @@ public class PacketInWrapperInfo extends PacketInHandler {
             @Override
             public boolean isAccepted(ServerGroup value)
             {
-                System.out.println("Import server group [" + value.getName() + "] from CloudNet-Root");
+                System.out.println("Importing server group [" + value.getName() + "] from CloudNet-Master");
                 return true;
             }
         });
@@ -36,7 +36,7 @@ public class PacketInWrapperInfo extends PacketInHandler {
             @Override
             public boolean isAccepted(ProxyGroup value)
             {
-                System.out.println("Import proxy group [" + value.getName() + "] from CloudNet-Root");
+                System.out.println("Importing proxy group [" + value.getName() + "] from CloudNet-Master");
                 return true;
             }
         });

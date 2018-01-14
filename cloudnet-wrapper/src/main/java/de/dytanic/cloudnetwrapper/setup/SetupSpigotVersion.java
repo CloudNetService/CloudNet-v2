@@ -29,7 +29,7 @@ public class SetupSpigotVersion
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
                 connection.connect();
                 Files.copy(connection.getInputStream(), Paths.get("local/spigot.jar"));
-                System.out.println("Downloading Complete!");
+                System.out.println("Download was successfully completed!");
             } catch (Exception e)
             {
                 e.printStackTrace();
@@ -40,7 +40,7 @@ public class SetupSpigotVersion
     @Override
     public void run(ConsoleReader reader)
     {
-        System.out.println("A spigot.jar cannot be found!");
+        System.out.println("No spigot.jar has been found!");
 
         System.out.println("Choose a minecraft server version [\"taco\", \"paper\", \"hose\", \"spigot\"]");
 

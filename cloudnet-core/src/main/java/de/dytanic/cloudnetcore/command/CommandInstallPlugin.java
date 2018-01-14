@@ -33,7 +33,7 @@ public class CommandInstallPlugin extends Command {
                     sender.sendMessage("Plugin will install on " + args[0] + "...");
                 }
                 else {
-                    sender.sendMessage("Server doesn't exists");
+                    sender.sendMessage("Server doesn't exist");
                 }
                 break;
             default:

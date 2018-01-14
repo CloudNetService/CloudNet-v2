@@ -246,7 +246,7 @@ public final class MobSelector {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
         {
             e.printStackTrace();
-            System.out.println("[CLOUD] Disabling NoAI and Silent Support for " + entity.getEntityId());
+            System.out.println("[CLOUD] Disabling NoAI and Silent support for " + entity.getEntityId());
             ((LivingEntity) entity).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 100));
         }
     }

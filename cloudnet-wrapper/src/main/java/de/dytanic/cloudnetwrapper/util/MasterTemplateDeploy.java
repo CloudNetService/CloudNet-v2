@@ -47,7 +47,7 @@ public class MasterTemplateDeploy {
 
     public void deploy() throws Exception
     {
-        System.out.println("Try to setup the new template... [" + template.getName() + "]");
+        System.out.println("Trying to setup the new template... [" + template.getName() + "]");
         Path file = Paths.get("local/cache/" + NetworkUtils.randomString(10) + ".zip");
         if (!Files.exists(file))
         {
@@ -78,7 +78,7 @@ public class MasterTemplateDeploy {
         urlConnection.setUseCaches(false);
         urlConnection.setDoOutput(true);
         urlConnection.connect();
-        System.out.println("Connected and deploy template... [" + template.getName() + "]");
+        System.out.println("Connected and deployed template... [" + template.getName() + "]");
         try (OutputStream outputStream = urlConnection.getOutputStream())
         {
             byte[] data = new byte[16344];

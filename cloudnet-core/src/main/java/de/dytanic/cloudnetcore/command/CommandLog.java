@@ -34,11 +34,11 @@ public class CommandLog extends Command {
                     CloudNet.getInstance().getServerLogManager().append(rndm, minecraftServer.getServerId());
                     String x = new StringBuilder(CloudNet.getInstance().getOptionSet().has("ssl") ? "https://" : "http://").append(CloudNet.getInstance().getConfig().getWebServerConfig().getAddress()).append(":").append(CloudNet.getInstance().getConfig().getWebServerConfig().getPort()).append("/cloudnet/log?server=").append(rndm).substring(0);
                     sender.sendMessage("You can see the log at: " + x);
-                    sender.sendMessage("The log is dynamic and will delete on 10 minutes");
+                    sender.sendMessage("The log is dynamic and will be deleted in 10 minutes");
                 }
                 else
                 {
-                    sender.sendMessage("The server doesn't exists!");
+                    sender.sendMessage("The server doesn't exist!");
                 }
             }
                 break;

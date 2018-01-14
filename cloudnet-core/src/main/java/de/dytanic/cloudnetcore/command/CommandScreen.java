@@ -106,9 +106,9 @@ public class CommandScreen extends Command {
                 break;
             default:
                 sender.sendMessage(
-                        "screen server (-s) | proxy (-p) <name> | The output from the console of the service is transferred to the console of this instance",
-                        "screen leave | The console output is closed again",
-                        "screen write <command> | You write a command directly into the console of the services"
+                        "screen server (-s) | proxy (-p) <name> | The output of the console of the service is transferred to the console of this instance",
+                        "screen leave | The console output closes",
+                        "screen write <command> | You write a command directly into the console of the service"
                 );
                 break;
         }

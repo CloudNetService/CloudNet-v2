@@ -107,52 +107,52 @@ public class SetupServerGroup {
                         commandSender.sendMessage("The server group " + serverGroup.getName() + " is now created!");
                     }
                 })
-                .request(new SetupRequest("memory", "How many MB RAM should the group have?", "Memory is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("memory", "How many MB RAM should the server group have?", "Specified Memory is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {
                         return NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 64;
                     }
                 }))
-                .request(new SetupRequest("startup", "How many servers should always be online?", "Startup count is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("startup", "How many servers should always be online?", "Specified startup count is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {
                         return true;
                     }
                 }))
-                .request(new SetupRequest("percent", "How full does the server need to be until a new server is started? (In Percent)?", "Percent count is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("percent", "How full does the server have to be until a new server is started? (In Percent)?", "Specified percent count is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {
                         return NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) <= 100;
                     }
                 }))
-                .request(new SetupRequest("mode", "Which servergroup mode should be used? [STATIC, STATIC_LOBBY, LOBBY, DYNAMIC]", "GroupMode is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("mode", "Which server group mode should be used? [STATIC, STATIC_LOBBY, LOBBY, DYNAMIC]", "Specified server group mode is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {
                         return key.equalsIgnoreCase("STATIC") || key.equalsIgnoreCase("STATIC_LOBBY") || key.equalsIgnoreCase("LOBBY") || key.equalsIgnoreCase("DYNAMIC");
                     }
                 }))
-                .request(new SetupRequest("type", "Which servergroup type should be used? [BUKKIT, CAULDRON, GLOWSTONE]", "GroupType is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("type", "Which servergroup type should be used? [BUKKIT, CAULDRON, GLOWSTONE]", "Specified group type is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {
                         return key.equals("BUKKIT") || key.equals("GLOWSTONE") || key.equals("CAULDRON");
                     }
                 }))
-                .request(new SetupRequest("template", "What is the backend of the group default template? [\"LOCAL\" for the wrapper local | \"MASTER\" for the master backend]", "String is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("template", "What is the backend of the group default template? [\"LOCAL\" for the wrapper local | \"MASTER\" for the master backend]", "Specified string is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {
                         return key.equals("MASTER") || key.equals("LOCAL");
                     }
                 }))
-                .request(new SetupRequest("onlineGroup", "How many servers should be online if 100 players are online in the group?", "String is invalid", SetupResponseType.NUMBER, null))
-                .request(new SetupRequest("onlineGlobal", "How many servers should be online if 100 global players are online?", "String is invalid", SetupResponseType.NUMBER, null))
+                .request(new SetupRequest("onlineGroup", "How many servers should be online if 100 players are online in the group?", "Specified string is invalid", SetupResponseType.NUMBER, null))
+                .request(new SetupRequest("onlineGlobal", "How many servers should be online if 100 global players are online?", "Specified string is invalid", SetupResponseType.NUMBER, null))
 
-                .request(new SetupRequest("wrapper", "Which wrappers should be used for this Group?", "String is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("wrapper", "Which wrappers should be used for this group?", "Specified string is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
                     public Boolean doCatch(String key)
                     {

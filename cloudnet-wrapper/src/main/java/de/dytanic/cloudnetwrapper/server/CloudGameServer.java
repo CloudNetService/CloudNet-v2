@@ -120,7 +120,7 @@ public class CloudGameServer implements ServerDispatcher {
                             urlConnection.connect();
                             System.out.println("Downloading " + url.getName() + ".jar");
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
-                            System.out.println("Download complete!");
+                            System.out.println("Download was completed successfully!");
                         } catch (Exception ex)
                         {
                             ex.printStackTrace();
@@ -162,7 +162,7 @@ public class CloudGameServer implements ServerDispatcher {
                 connection.connect();
                 Files.copy(connection.getInputStream(), Paths.get(path + "/cauldron.zip"));
                 ((HttpURLConnection) connection).disconnect();
-                System.out.println("Downloading Complete!");
+                System.out.println("Download was completed successfully!");
 
                 ZipFile zip = new ZipFile(file);
                 Enumeration<? extends ZipEntry> entryEnumeration = zip.entries();
@@ -206,7 +206,7 @@ public class CloudGameServer implements ServerDispatcher {
                     connection.connect();
                     System.out.println("Downloading glowstone.jar...");
                     Files.copy(connection.getInputStream(), path);
-                    System.out.println("Download complete");
+                    System.out.println("Download was completed successfully");
                     ((HttpURLConnection) connection).disconnect();
                 } catch (Exception ex)
                 {
@@ -268,7 +268,7 @@ public class CloudGameServer implements ServerDispatcher {
                     url.connect();
                     Files.copy(url.getInputStream(), Paths.get("local/viaversion.jar"));
                     ((HttpURLConnection) url).disconnect();
-                    System.out.println("Download complete!");
+                    System.out.println("Download was completed successfully!");
                 } catch (Exception ex)
                 {
 
@@ -443,7 +443,7 @@ public class CloudGameServer implements ServerDispatcher {
 
         CloudNetWrapper.getInstance().getCloudservers().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveCloudServer(serverInfo));
-        System.out.println("Server " + toString() + " is stopped");
+        System.out.println("Server " + toString() + " was stopped");
 
         try
         {

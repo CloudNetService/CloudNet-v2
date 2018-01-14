@@ -106,12 +106,12 @@ public class CloudNetWrapperConfig {
             if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4)
             {
                 String input;
-                System.out.println("Your IP address where located is 127.0.0.1 please write your service ip");
+                System.out.println("Your local IP address is 127.0.0.1, please provide your service ip");
                 while ((input = reader.readLine()) != null)
                 {
                     if ((input.equals("127.0.0.1") || input.equals("127.0.1.1") || input.split("\\.").length != 4))
                     {
-                        System.out.println("Please write your real ip address :)");
+                        System.out.println("Please provide your real ip address :)");
                         continue;
                     }
 
@@ -128,7 +128,7 @@ public class CloudNetWrapperConfig {
 
             if (wrapperId == null)
             {
-                System.out.println("Bitte schreiben sie den Namen des Wrappers (example: Wrapper-1)");
+                System.out.println("Please provide the name of this wrapper (example: Wrapper-1)");
                 wrapperId = reader.readLine().replace(" ", "");
 
                 if (wrapperId.isEmpty() || wrapperId.equals(""))
@@ -147,12 +147,12 @@ public class CloudNetWrapperConfig {
             if (cloudNetHost.equals("127.0.0.1") || cloudNetHost.equals("127.0.1.1") || cloudNetHost.split("\\.").length != 4)
             {
                 String input;
-                System.out.println("Write the cloudnet-core ip address, please");
+                System.out.println("Provide the ip address of the cloudnet-master, please");
                 while ((input = reader.readLine()) != null)
                 {
                     if ((input.equals("127.0.0.1") || input.equals("127.0.1.1") || input.split("\\.").length != 4))
                     {
-                        System.out.println("Please write the real ip address :)");
+                        System.out.println("Please provide the real ip address :)");
                         continue;
                     }
 
@@ -164,7 +164,7 @@ public class CloudNetWrapperConfig {
             long memory = ((NetworkUtils.systemMemory() / 1048576) - 2048);
             if (memory < 1024)
             {
-                System.out.println("WARINING: YOU CAN'T USE THE CLOUD NETWORK SOFTWARE WITH A SMALL MEMORY SIZE!");
+                System.out.println("WARINING: YOU CAN'T USE THE CLOUD NETWORK SOFTWARE WITH SUCH A SMALL MEMORY SIZE!");
             }
 
             Configuration configuration = new Configuration();

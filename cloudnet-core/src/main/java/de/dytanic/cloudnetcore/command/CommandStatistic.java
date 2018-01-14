@@ -32,15 +32,15 @@ public class CommandStatistic extends Command {
                 "CloudStartups: " + StatisticManager.getInstance().getStatistics().getInt("cloudStartup"),
                 "Cloud online time: " + TimeUnit.MILLISECONDS.toMinutes(document.getInt("cloudOnlineTime")) + "min",
                 "Wrapper connections: " + document.getInt("wrapperConnections"),
-                "Highest server Onlinecount: " + document.getInt("highestServerOnlineCount"),
+                "Highest server online count: " + document.getInt("highestServerOnlineCount"),
                 "Started servers: " + document.getLong("startedServers"),
                 " ",
                 "Player Statistics:",
                 " ",
                 "Registered: " + CloudNet.getInstance().getDbHandlers().getPlayerDatabase().getDatabase().size(),
-                "Highest OnlineCount: " + document.getInt("highestPlayerOnline"),
+                "Highest online count: " + document.getInt("highestPlayerOnline"),
                 "Logins: " + document.getInt("playerLogin"),
-                "Command Executions: " + document.getInt("playerCommandExecutions"),
+                "Command executions: " + document.getInt("playerCommandExecutions"),
                 " "
         );
     }

@@ -137,7 +137,7 @@ public class GameServer implements ServerDispatcher {
                             urlConnection.connect();
                             System.out.println("Downloading " + url.getName() + ".jar");
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
-                            System.out.println("Download complete!");
+                            System.out.println("Download was completed successfully!");
                         } catch (Exception ex)
                         {
                             ex.printStackTrace();
@@ -192,7 +192,7 @@ public class GameServer implements ServerDispatcher {
                             urlConnection.connect();
                             System.out.println("Downloading " + url.getName() + ".jar");
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
-                            System.out.println("Download complete!");
+                            System.out.println("Download was completed successfully!");
                         } catch (Exception ex)
                         {
                             ex.printStackTrace();
@@ -269,7 +269,7 @@ public class GameServer implements ServerDispatcher {
                     url.connect();
                     Files.copy(url.getInputStream(), Paths.get("local/viaversion.jar"));
                     ((HttpURLConnection) url).disconnect();
-                    System.out.println("Download complete!");
+                    System.out.println("Download was completed successfully!");
                 } catch (Exception ex)
                 {
 
@@ -383,7 +383,7 @@ public class GameServer implements ServerDispatcher {
         }
 
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddServer(this.serverInfo, this.serverProcess.getMeta()));
-        System.out.println("Server " + toString() + " start [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
+        System.out.println("Server " + toString() + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
         this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(" "), null, new File(path));
         serverProcess.setServerStage(ServerStage.PROCESS);
         CloudNetWrapper.getInstance().getServers().put(this.serverProcess.getMeta().getServiceId().getServerId(), this);
@@ -455,7 +455,7 @@ public class GameServer implements ServerDispatcher {
 
         CloudNetWrapper.getInstance().getServers().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveServer(serverInfo));
-        System.out.println("Server " + toString() + " is stopped");
+        System.out.println("Server " + toString() + " was stopped");
 
         try
         {
@@ -522,7 +522,7 @@ public class GameServer implements ServerDispatcher {
             }
         } else
         {
-            System.out.println("Copy Template from " + this.serverProcess.getMeta().getServiceId() + " to local directory...");
+            System.out.println("Copying template from " + this.serverProcess.getMeta().getServiceId() + " to local directory...");
             try
             {
                 FileCopy.copyFilesInDirectory(new File(this.path), new File("local/templates/" + serverGroup.getName() + "/" + template.getName()));
@@ -531,7 +531,7 @@ public class GameServer implements ServerDispatcher {
             } catch (Exception e)
             {
             }
-            System.out.println("Template " + template.getName() + " is now copied!");
+            System.out.println("Template " + template.getName() + " was copied!");
         }
     }
 
@@ -557,7 +557,7 @@ public class GameServer implements ServerDispatcher {
                         .append(CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())
                         .append("/cloudnet/api/v1/download").toString()
                         , dir.toString() + "/template.zip", CloudNetWrapper.getInstance().getSimpledUser(), template, serverGroup.getName(), custom);
-                System.out.println("Downloading Template for " + this.serverProcess.getMeta().getServiceId().getGroup());
+                System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup());
                 templateLoader.load();
                 templateLoader.unZip(dir.toString());
                 FileCopy.copyFilesInDirectory(new File(dir.toString()), new File(path));
@@ -568,7 +568,7 @@ public class GameServer implements ServerDispatcher {
                 {
                     Files.createDirectories(Paths.get(groupTemplates));
                     TemplateLoader templateLoader = new TemplateLoader(template.getUrl(), groupTemplates + "/template.zip");
-                    System.out.println("Downloading Template for " + this.serverProcess.getMeta().getServiceId().getGroup());
+                    System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup());
                     templateLoader.load();
                     templateLoader.unZip(groupTemplates);
                 }
@@ -588,7 +588,7 @@ public class GameServer implements ServerDispatcher {
                             .append(CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())
                             .append("/cloudnet/api/v1/download").substring(0)
                             , groupTemplates + "/template.zip", CloudNetWrapper.getInstance().getSimpledUser(), template, serverGroup.getName(), custom);
-                    System.out.println("Downloading Template for " + this.serverProcess.getMeta().getServiceId().getGroup());
+                    System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup());
                     templateLoader.load();
                     templateLoader.unZip(groupTemplates);
                 }
@@ -608,7 +608,7 @@ public class GameServer implements ServerDispatcher {
                 Files.createDirectory(Paths.get(path + "/plugins"));
 
             TemplateLoader templateLoader = new TemplateLoader(serverProcess.getMeta().getUrl(), path + "/template.zip");
-            System.out.println("Downloading Template for " + this.serverProcess.getMeta().getServiceId().getServerId());
+            System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getServerId());
             templateLoader.load();
             templateLoader.unZip(path);
         } else
@@ -627,7 +627,7 @@ public class GameServer implements ServerDispatcher {
                 {
                     Files.createDirectories(Paths.get(groupTemplates));
                     TemplateLoader templateLoader = new TemplateLoader(template.getUrl(), groupTemplates + "/template.zip");
-                    System.out.println("Downloading Template for " + this.serverProcess.getMeta().getServiceId().getGroup());
+                    System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup());
                     templateLoader.load();
                     templateLoader.unZip(groupTemplates);
                 }
@@ -646,7 +646,7 @@ public class GameServer implements ServerDispatcher {
                             .append(CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())
                             .append("/cloudnet/api/v1/download").substring(0)
                             , groupTemplates + "/template.zip", CloudNetWrapper.getInstance().getSimpledUser(), template, serverGroup.getName(), custom);
-                    System.out.println("Downloading Template for " + this.serverProcess.getMeta().getServiceId().getGroup());
+                    System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup());
                     templateLoader.load();
                     templateLoader.unZip(groupTemplates);
                 }

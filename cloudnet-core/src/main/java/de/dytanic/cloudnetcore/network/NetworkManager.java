@@ -168,7 +168,7 @@ public final class NetworkManager {
 
     public void handleServerAdd(MinecraftServer minecraftServer)
     {
-        System.out.println("Server [" + minecraftServer.getServerId() + "] is registerd on CloudNet");
+        System.out.println("Server [" + minecraftServer.getServerId() + "] is registered on CloudNet");
         CloudNet.getInstance().getEventManager().callEvent(new ServerAddEvent(minecraftServer));
         this.sendAllUpdate(new PacketOutServerAdd(minecraftServer.getServerInfo()));
         StatisticManager.getInstance().addStartedServers();
@@ -177,7 +177,7 @@ public final class NetworkManager {
 
     public void handleServerAdd(CloudServer minecraftServer)
     {
-        System.out.println("CloudServer [" + minecraftServer.getServerId() + "] is registerd on CloudNet");
+        System.out.println("CloudServer [" + minecraftServer.getServerId() + "] is registered on CloudNet");
         this.sendAllUpdate(new PacketOutServerAdd(minecraftServer.getServerInfo()));
         CloudNet.getInstance().getEventManager().callEvent(new CloudServerAddEvent(minecraftServer));
         StatisticManager.getInstance().addStartedServers();
@@ -209,21 +209,21 @@ public final class NetworkManager {
 
     public void handleServerRemove(MinecraftServer minecraftServer)
     {
-        System.out.println("Server [" + minecraftServer.getServerId() + "] is unregisterd on CloudNet");
+        System.out.println("Server [" + minecraftServer.getServerId() + "] is unregistered on CloudNet");
         CloudNet.getInstance().getEventManager().callEvent(new ServerRemoveEvent(minecraftServer));
         this.sendAllUpdate(new PacketOutServerRemove(minecraftServer.getServerInfo()));
     }
 
     public void handleServerRemove(CloudServer minecraftServer)
     {
-        System.out.println("CloudServer [" + minecraftServer.getServerId() + "] is unregisterd on CloudNet");
+        System.out.println("CloudServer [" + minecraftServer.getServerId() + "] is unregistered on CloudNet");
         CloudNet.getInstance().getEventManager().callEvent(new CloudServerRemoveEvent(minecraftServer));
         this.sendAllUpdate(new PacketOutServerRemove(minecraftServer.getServerInfo()));
     }
 
     public void handleProxyAdd(ProxyServer proxyServer)
     {
-        System.out.println("Server [" + proxyServer.getServerId() + "] is registerd on CloudNet");
+        System.out.println("Server [" + proxyServer.getServerId() + "] is registered on CloudNet");
         this.sendToLobbys(new PacketOutProxyAdd(proxyServer.getProxyInfo()));
         CloudNet.getInstance().getEventManager().callEvent(new ProxyAddEvent(proxyServer));
         StatisticManager.getInstance().addStartedProxys();
@@ -232,7 +232,7 @@ public final class NetworkManager {
 
     public void handleProxyRemove(ProxyServer proxyServer)
     {
-        System.out.println("Server [" + proxyServer.getServerId() + "] is unregisterd on CloudNet");
+        System.out.println("Server [" + proxyServer.getServerId() + "] is unregistered on CloudNet");
         this.sendAllUpdate(new PacketOutProxyRemove(proxyServer.getProxyInfo()));
         CloudNet.getInstance().getEventManager().callEvent(new ProxyRemoveEvent(proxyServer));
 
@@ -240,7 +240,7 @@ public final class NetworkManager {
 
     public void handleCommandExecute(PlayerCommandExecution playerCommandExecutor)
     {
-        CloudNet.getLogger().debug("Player [" + playerCommandExecutor.getName() + "] execute command [" + playerCommandExecutor.getCommandLine() + "]");
+        CloudNet.getLogger().debug("Player [" + playerCommandExecutor.getName() + "] executed command [" + playerCommandExecutor.getCommandLine() + "]");
         CloudNet.getInstance().getEventManager().callEvent(new CommandExecutionEvent(playerCommandExecutor));
         StatisticManager.getInstance().playerCommandExecutions();
     }

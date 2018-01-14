@@ -113,7 +113,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                             new File("local/templates/" + serverGroup.getName() + "/" + template.getName() + "/cauldron-1.7.10-2.1403.1.54-server.jar")
                                     .renameTo(new File("local/templates/" + serverGroup.getName() + "/" + template.getName() + "/cauldron.jar"));
 
-                            System.out.println("Use a cauldron.jar for your minecraft service template " + serverGroup.getName() + " please add a eula.txt into the template or into the global folder");
+                            System.out.println("Using a cauldron.jar for your minecraft service template " + serverGroup.getName() + ", please copy a eula.txt into the template or into the global folder");
                         } catch (Exception e)
                         {
                             e.printStackTrace();
@@ -132,7 +132,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                         connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
                         connection.connect();
                         Files.copy(connection.getInputStream(), Paths.get("local/templates/" + serverGroup.getName() + "/" + template.getName() + "/cauldron.zip"));
-                        System.out.println("Downloading Complete!");
+                        System.out.println("Download was completed successfully!");
 
                         ZipFile zip = new ZipFile(file);
                         Enumeration<? extends ZipEntry> entryEnumeration = zip.entries();
@@ -152,7 +152,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                         new File("local/templates/" + serverGroup.getName() + "/" + template.getName() + "/cauldron-1.7.10-2.1403.1.54-server.jar")
                                 .renameTo(new File("local/templates/" + serverGroup.getName() + "/" + template.getName() + "/cauldron.jar"));
 
-                        System.out.println("Use a cauldron.jar for your minecraft service template " + serverGroup.getName() + " please add a eula.txt into the template or into the global folder");
+                        System.out.println("Using a cauldron.jar for your minecraft service template " + serverGroup.getName() + ", please copy a eula.txt into the template or into the global folder");
                     } catch (Exception e)
                     {
                         e.printStackTrace();
@@ -175,7 +175,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                             connection.connect();
                             System.out.println("Downloading glowstone.jar...");
                             Files.copy(connection.getInputStream(), path);
-                            System.out.println("Download complete");
+                            System.out.println("Download was completed successfully");
                             ((HttpURLConnection)connection).disconnect();
                         }catch (Exception ex) {
                             ex.printStackTrace();
@@ -194,7 +194,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                         connection.connect();
                         System.out.println("Downloading glowstone.jar...");
                         Files.copy(connection.getInputStream(), path);
-                        System.out.println("Download complete");
+                        System.out.println("Download was completed successfully");
                         ((HttpURLConnection)connection).disconnect();
                     }catch (Exception ex) {
                         ex.printStackTrace();

@@ -24,14 +24,14 @@ public class MessageConfig {
             new Document()
                     .append("prefix", "§bCloud §8|§7 ")
                     .append("kick-maintenance", "§cThe network is currently in maintenance mode")
-                    .append("full-join", "§cThe Network is full! you can join with a higher permissions!")
-                    .append("hubCommandNoServerFound", "§cNo Server was founded please waiting")
+                    .append("full-join", "§cThe Network is full! You can join with a higher permissions!")
+                    .append("hubCommandNoServerFound", "§cNo server was found, please wait")
                     .append("joinpower-deny", "You don't have any permissions to enter this server")
-                    .append("server-group-maintenance-kick", "§cThis group is currently in maintenance!")
+                    .append("server-group-maintenance-kick", "§cThis group is currently in maintenance mode!")
                     .append("mob-selector-maintenance-message", "§cThis group is currently in maintenance mode, please wait, before you can play!")
-                    .append("notify-message-server-add", "§cThe server %server% starting...")
-                    .append("notify-message-server-remove", "§cThe server %server% is now stopped!")
-                    .append("hub-already", "§cYou are already on the hub server")
+                    .append("notify-message-server-add", "§cThe server %server% is starting now...")
+                    .append("notify-message-server-remove", "§cThe server %server% is now stopping!")
+                    .append("hub-already", "§cYou are already connected to a hub server")
                     .saveAsConfig(path);
         }
     }
@@ -48,17 +48,17 @@ public class MessageConfig {
 
         if(!document.contains("notify-message-server-add"))
         {
-            document.append("notify-message-server-add", "§cThe server %server% starting...").saveAsConfig(path);
+            document.append("notify-message-server-add", "§cThe server %server% is starting now...").saveAsConfig(path);
         }
 
         if(!document.contains("notify-message-server-remove"))
         {
-            document.append("notify-message-server-remove", "§cThe server %server% is now stopped!").saveAsConfig(path);
+            document.append("notify-message-server-remove", "§cThe server %server% is now stopping!").saveAsConfig(path);
         }
 
         if(!document.contains("hub-already"))
         {
-            document.append("hub-already", "§cYou are already on the hub server").saveAsConfig(path);
+            document.append("hub-already", "§cYou are already connected to a hub server").saveAsConfig(path);
         }
 
         return document;
