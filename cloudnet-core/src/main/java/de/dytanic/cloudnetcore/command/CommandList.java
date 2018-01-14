@@ -55,7 +55,7 @@ public class CommandList extends Command {
 
         sender.sendMessage(" ");
 
-        sender.sendMessage("CloudNet used " + memory + "/" + maxMemory + "MB ");
+        sender.sendMessage("CloudNet uses " + memory + "/" + maxMemory + "MB ");
 
     }
 }

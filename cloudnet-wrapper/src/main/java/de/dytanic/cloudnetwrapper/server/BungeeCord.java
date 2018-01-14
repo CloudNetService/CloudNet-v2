@@ -158,7 +158,7 @@ public class BungeeCord implements ServerDispatcher {
                     }
 
                     TemplateLoader templateLoader = new TemplateLoader(proxyProcessMeta.getUrl(), path + "/template.zip");
-                    System.out.println("Downloading Template for " + this.proxyProcessMeta.getServiceId().getServerId());
+                    System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getServerId());
                     templateLoader.load();
                     templateLoader.unZip(path);
                 } else
@@ -180,7 +180,7 @@ public class BungeeCord implements ServerDispatcher {
                     {
                         String groupTemplates = "local/cache/web_templates/" + proxyGroup.getName();
                         TemplateLoader templateLoader = new TemplateLoader(template.getUrl(), groupTemplates + "/template.zip");
-                        System.out.println("Downloading Template for " + this.proxyProcessMeta.getServiceId().getGroup());
+                        System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getGroup());
                         templateLoader.load();
                         templateLoader.unZip(groupTemplates);
                         FileCopy.copyFilesInDirectory(new File("local/cache/web_templates/" + proxyGroup.getName()), new File(path));
@@ -198,7 +198,7 @@ public class BungeeCord implements ServerDispatcher {
                                     .append(CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())
                                     .append("/cloudnet/api/v1/download").substring(0)
                                     , groupTemplates + "/template.zip", CloudNetWrapper.getInstance().getSimpledUser(), template, proxyGroup.getName(), null);
-                            System.out.println("Downloading Template for " + this.proxyProcessMeta.getServiceId().getGroup());
+                            System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getGroup());
                             templateLoader.load();
                             templateLoader.unZip(groupTemplates);
                         }
@@ -238,7 +238,7 @@ public class BungeeCord implements ServerDispatcher {
                 }
 
                 TemplateLoader templateLoader = new TemplateLoader(proxyProcessMeta.getUrl(), "local/templates/" + proxyGroup.getName() + "/template.zip");
-                System.out.println("Downloading Template for " + this.proxyProcessMeta.getServiceId().getServerId());
+                System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getServerId());
                 templateLoader.load();
                 templateLoader.unZip(path);
             } else
@@ -255,7 +255,7 @@ public class BungeeCord implements ServerDispatcher {
                 {
                     String groupTemplates = "local/cache/web_templates/" + proxyGroup.getName();
                     TemplateLoader templateLoader = new TemplateLoader(template.getUrl(), groupTemplates + "/template.zip");
-                    System.out.println("Downloading Template for " + this.proxyProcessMeta.getServiceId().getGroup());
+                    System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getGroup());
                     templateLoader.load();
                     templateLoader.unZip(groupTemplates);
                     FileCopy.copyFilesInDirectory(new File("local/cache/web_templates/" + proxyGroup.getName()), new File(path));
@@ -273,7 +273,7 @@ public class BungeeCord implements ServerDispatcher {
                                 .append(CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())
                                 .append("/cloudnet/api/v1/download").substring(0)
                                 , groupTemplates + "/template.zip", CloudNetWrapper.getInstance().getSimpledUser(), template, proxyGroup.getName(), null);
-                        System.out.println("Downloading Template for " + this.proxyProcessMeta.getServiceId().getGroup());
+                        System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getGroup());
                         templateLoader.load();
                         templateLoader.unZip(groupTemplates);
                     }
@@ -363,7 +363,7 @@ public class BungeeCord implements ServerDispatcher {
         commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -Dio.netty.leakDetectionLevel=DISABLED -Dfile.encoding=UTF-8 -Dio.netty.maxDirectMemory=0 -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -DIReallyKnowWhatIAmDoingISwear=true -Xmx" + proxyProcessMeta.getMemory() + "M -jar BungeeCord.jar -o true -p");
 
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddProxy(proxyInfo, proxyProcessMeta));
-        System.out.println("Proxy " + toString() + " start [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
+        System.out.println("Proxy " + toString() + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
 
         this.instance = Runtime.getRuntime().exec(commandBuilder.substring(0).split(" "), null, new File(path));
         CloudNetWrapper.getInstance().getProxys().put(this.proxyProcessMeta.getServiceId().getServerId(), this);
@@ -420,7 +420,7 @@ public class BungeeCord implements ServerDispatcher {
 
         CloudNetWrapper.getInstance().getProxys().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveProxy(proxyInfo));
-        System.out.println("Proxy " + toString() + " is stopped");
+        System.out.println("Proxy " + toString() + " was stopped");
 
         try
         {

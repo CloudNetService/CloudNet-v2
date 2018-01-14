@@ -30,11 +30,11 @@ public class CommandReload extends Command {
             case 1:
                 if (args[0].equalsIgnoreCase("all"))
                 {
-                    sender.sendMessage("[RELOAD] Trying to reloading the CloudNet...");
+                    sender.sendMessage("[RELOAD] Trying to reload CloudNet...");
                     try
                     {
                         CloudNet.getInstance().reload();
-                        sender.sendMessage("[RELOAD] Reloading complete!");
+                        sender.sendMessage("[RELOAD] Reloading was completed successfully!");
                     } catch (Exception e)
                     {
                         sender.sendMessage("[RELOAD] Failed to reload CloudNet");
@@ -44,7 +44,7 @@ public class CommandReload extends Command {
                 }
                 if (args[0].equalsIgnoreCase("config"))
                 {
-                    sender.sendMessage("[RELOAD] Trying to reloading config");
+                    sender.sendMessage("[RELOAD] Trying to reload config");
                     try
                     {
                         CloudNet.getInstance().getConfig().load();
@@ -86,7 +86,7 @@ public class CommandReload extends Command {
                             wrapper.updateWrapper();
                         }
                     });
-                    sender.sendMessage("[RELOAD] reloading complete");
+                    sender.sendMessage("[RELOAD] Reloading was completed successfully");
                 }
                 if(args[0].equalsIgnoreCase("wrapper"))
                 {

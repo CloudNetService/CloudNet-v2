@@ -38,10 +38,10 @@ public final class CommandCopy extends Command {
                 if (minecraftServer != null)
                 {
                     minecraftServer.getWrapper().copyServer(minecraftServer.getServerInfo());
-                    sender.sendMessage("The server " + args[0] + " is now copied");
+                    sender.sendMessage("The server " + args[0] + " was copied");
                 } else
                 {
-                    sender.sendMessage("The server doesn't exists");
+                    sender.sendMessage("The specified server doesn't exist");
                 }
             }
             break;
@@ -73,10 +73,10 @@ public final class CommandCopy extends Command {
                             }
                         }
                         minecraftServer.getWrapper().copyServer(minecraftServer.getServerInfo());
-                        sender.sendMessage("Creating Template \"" + template.getName() + "\" for " + serverGroup.getName() + " and copy server " + minecraftServer.getServiceId().getServerId() + "...");
+                        sender.sendMessage("Creating Template \"" + template.getName() + "\" for " + serverGroup.getName() + " and copying server " + minecraftServer.getServiceId().getServerId() + "...");
                     } else
                     {
-                        sender.sendMessage("The group doesn't exists");
+                        sender.sendMessage("The group doesn't exist");
                     }
                     return;
                 }

@@ -58,7 +58,7 @@ public final class CommandCloud extends Command {
 
                     CloudAPI.getInstance().sendConsoleMessage(DefaultType.BUKKIT, args[1], builder.substring(0, builder.length() - 1));
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                            "The information was send to the cloud");
+                            "The information was sent to the cloud");
                     return;
                 }
             }
@@ -71,7 +71,7 @@ public final class CommandCloud extends Command {
                 }
 
                 CloudAPI.getInstance().sendConsoleMessage(DefaultType.BUNGEE_CORD, args[1], builder.substring(0, builder.length() - 1));
-                commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The information was send to the cloud");
+                commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The information was sent to the cloud");
                 return;
             }
         }
@@ -112,14 +112,14 @@ public final class CommandCloud extends Command {
                 {
                     CloudAPI.getInstance().sendCloudCommand("reload all");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                            "The information was send to the cloud");
+                            "The information was sent to the cloud");
                     return;
                 }
                 if (args[0].equalsIgnoreCase("rlconfig"))
                 {
                     CloudAPI.getInstance().sendCloudCommand("reload config");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                            "The information was send to the cloud");
+                            "The information was sent to the cloud");
                     return;
                 }
                 if (args[0].equalsIgnoreCase("list"))
@@ -156,7 +156,7 @@ public final class CommandCloud extends Command {
                 {
                     CloudAPI.getInstance().sendCloudCommand("reload config");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                            "The information was send to the cloud");
+                            "The information was sent to the cloud");
                     return;
                 }
                 if (args[0].equalsIgnoreCase("listProxys"))
@@ -183,7 +183,7 @@ public final class CommandCloud extends Command {
                 {
                     for (CloudPlayer playerWhereAmI : CloudAPI.getInstance().getOnlinePlayers())
                     {
-                        commandSender.sendMessage("§7- §e" + playerWhereAmI.getName() + " §7auf §e" + playerWhereAmI.getServer() + "/" + playerWhereAmI.getProxy());
+                        commandSender.sendMessage("§7- §e" + playerWhereAmI.getName() + " §7on §e" + playerWhereAmI.getServer() + "/" + playerWhereAmI.getProxy());
                     }
                     return;
                 }
@@ -196,7 +196,7 @@ public final class CommandCloud extends Command {
                         builder.append((!group.isMaintenance() ? "§e" : "§c")).append(group.getName()).append("§7, ");
                     }
 
-                    commandSender.sendMessage("§7The network has the following groups:");
+                    commandSender.sendMessage("§7The following server groups are registered:");
                     commandSender.sendMessage(builder.substring(0));
                     return;
                 }
@@ -212,7 +212,7 @@ public final class CommandCloud extends Command {
                             proxyGroup.getProxyConfig().setAutoSlot(new AutoSlot(proxyGroup.getProxyConfig().getAutoSlot().getDynamicSlotSize(),
                                     !proxyGroup.getProxyConfig().getAutoSlot().isEnabled()));
                             CloudAPI.getInstance().updateProxyGroup(proxyGroup);
-                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "the autoslot state is updatet.");
+                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The autoslot state was updated.");
                         }
                         return;
                         case "maintenance":
@@ -220,7 +220,7 @@ public final class CommandCloud extends Command {
                             ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
                             proxyGroup.getProxyConfig().setMaintenance(!proxyGroup.getProxyConfig().isMaintenance());
                             CloudAPI.getInstance().updateProxyGroup(proxyGroup);
-                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "the maintenance state is updatet.");
+                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The maintenance state was updated.");
                             return;
                         }
                     }
@@ -240,11 +240,11 @@ public final class CommandCloud extends Command {
                         String url = CloudAPI.getInstance().createServerLogUrl(args[1]);
                         TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText("§n§l§b" + url));
                         textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
-                        commandSender.sendMessage(new TextComponent(TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "You can see the log at: ")), textComponent);
-                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The log is dynamic and will delete on 10 minutes");
+                        commandSender.sendMessage(new TextComponent(TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "You can review the log at: ")), textComponent);
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The log is dynamic and will be deleted on 10 minutes");
                     } else
                     {
-                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The server doesn't exists.");
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The server doesn't exist.");
                     }
                     return;
                 }
@@ -255,10 +255,10 @@ public final class CommandCloud extends Command {
                         ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
                         proxyGroup.getProxyConfig().setMaxPlayers(Integer.parseInt(args[1]));
                         CloudAPI.getInstance().updateProxyGroup(proxyGroup);
-                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "the max onlinecount is updatet.");
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The maximum onlinecount was updated.");
                     } else
                     {
-                        commandSender.sendMessage("§7The argument 2 is not a number.");
+                        commandSender.sendMessage("§7The second argument is not a number.");
                     }
                     return;
                 }
@@ -268,15 +268,15 @@ public final class CommandCloud extends Command {
                     {
                         CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData(args[1]), new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()), true);
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                "The information was send to the cloud");
+                                "The information was sent to the cloud");
                     } else if (CloudAPI.getInstance().getCloudNetwork().getProxyGroups().containsKey(args[1]))
                     {
                         CloudAPI.getInstance().startProxy(CloudAPI.getInstance().getProxyGroupData(args[1]));
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                "The information was send to the cloud");
+                                "The information was sent to the cloud");
                     } else
                     {
-                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The group does'nt exist.");
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The group doesn't exist.");
                     }
                     return;
                 }
@@ -288,10 +288,10 @@ public final class CommandCloud extends Command {
                         serverGroup.setMaintenance(!serverGroup.isMaintenance());
                         CloudAPI.getInstance().updateServerGroup(serverGroup);
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                "The information was send to the cloud");
+                                "The information was sent to the cloud");
                     } else
                     {
-                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The group does'nt exist.");
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The group doesn't exist.");
                     }
                     return;
                 }
@@ -301,7 +301,7 @@ public final class CommandCloud extends Command {
                     {
                         CloudAPI.getInstance().stopServer(args[1]);
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                "The information was send to the cloud");
+                                "The information was sent to the cloud");
                     } else if (CollectionWrapper.filter(CloudAPI.getInstance().getProxys(), new Acceptable<ProxyInfo>() {
                         @Override
                         public boolean isAccepted(ProxyInfo proxyInfo)
@@ -312,10 +312,10 @@ public final class CommandCloud extends Command {
                     {
                         CloudAPI.getInstance().stopProxy(args[1]);
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                "The information was send to the cloud");
+                                "The information was sent to the cloud");
                     } else
                     {
-                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The server isn't online.");
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The specified server isn't online.");
                     }
                     return;
                 }
@@ -329,7 +329,7 @@ public final class CommandCloud extends Command {
                             CloudAPI.getInstance().stopServer(server);
 
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                "The information was send to the cloud");
+                                "The information was sent to the cloud");
                         return;
                     }
 
@@ -342,7 +342,7 @@ public final class CommandCloud extends Command {
                                 CloudAPI.getInstance().stopProxy(proxyInfo.getServiceId().getServerId());
 
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                "The information was send to the cloud");
+                                "The information was sent to the cloud");
                         return;
                     }
 
@@ -352,7 +352,7 @@ public final class CommandCloud extends Command {
                 {
                     CloudAPI.getInstance().sendCloudCommand("copy " + args[1]);
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                            "The information was send to the cloud");
+                            "The information was sent to the cloud");
                     return;
                 }
                 break;
@@ -371,10 +371,10 @@ public final class CommandCloud extends Command {
                                     ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
                                     proxyGroup.getProxyConfig().setMaintenance(!proxyGroup.getProxyConfig().isMaintenance());
                                     CloudAPI.getInstance().updateProxyGroup(proxyGroup);
-                                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "the maintenance state is updatet.");
+                                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The maintenance state was updated.");
                                 }
                             }, Integer.parseInt(args[2]), TimeUnit.SECONDS);
-                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "the maintenance will be changed at " + args[2] + " seconds");
+                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The maintenance will be changed in " + args[2] + " seconds");
                             return;
                         }
                     }
@@ -391,7 +391,7 @@ public final class CommandCloud extends Command {
                                 CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData(args[1]), new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()), true);
                             }
                             commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                    "The information was send to the cloud");
+                                    "The information was sent to the cloud");
                         } else
                         {
                             ServerGroup serverGroup = CloudAPI.getInstance().getServerGroup(args[1]);
@@ -411,7 +411,7 @@ public final class CommandCloud extends Command {
                                     }
                                 }));
                                 commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                        "The information was send to the cloud");
+                                        "The information was sent to the cloud");
                             }
                         }
                     } else if (CloudAPI.getInstance().getProxyGroupMap().containsKey(args[1]))
@@ -423,16 +423,16 @@ public final class CommandCloud extends Command {
                                 CloudAPI.getInstance().startProxy(CloudAPI.getInstance().getProxyGroupData(args[1]));
                             }
                             commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                    "The information was send to the cloud");
+                                    "The information was sent to the cloud");
                         } else
                         {
                             CloudAPI.getInstance().startProxy(CloudAPI.getInstance().getProxyGroupData(args[1]));
                             commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                    "The information was send to the cloud");
+                                    "The information was sent to the cloud");
                         }
                     } else
                     {
-                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The group does'nt exist.");
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The group doesn't exist.");
                     }
                 } else if (args[0].equalsIgnoreCase("whitelist"))
                 {
@@ -446,13 +446,13 @@ public final class CommandCloud extends Command {
                         }
                         proxyGroup.getProxyConfig().getWhitelist().add(args[2]);
                         CloudAPI.getInstance().updateProxyGroup(proxyGroup);
-                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + " you added " + args[2] + " to the whitelist from the maintenance mode.");
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + " You added " + args[2] + " to the whitelist of the maintenance mode.");
                     } else if (args[1].equalsIgnoreCase("remove"))
                     {
                         ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
                         proxyGroup.getProxyConfig().getWhitelist().remove(args[2]);
                         CloudAPI.getInstance().updateProxyGroup(proxyGroup);
-                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + " you removed " + args[2] + " to the whitelist from the maintenance mode.");
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + " You removed " + args[2] + " from the whitelist of the maintenance mode.");
                     }
                 }
                 break;
@@ -463,7 +463,7 @@ public final class CommandCloud extends Command {
                     {
                         CloudAPI.getInstance().startCloudServer(args[1], Integer.parseInt(args[2]), args[3].equalsIgnoreCase("true"));
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                                "The information was send to the cloud");
+                                "The information was sent to the cloud");
                     } else
                     {
                         commandSender.sendMessage("Invalid arguments!");

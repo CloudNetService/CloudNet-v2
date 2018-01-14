@@ -42,7 +42,7 @@ public class PacketInUpdateProxyGroup extends PacketInHandler {
             @Override
             public boolean isAccepted(ServerGroup value)
             {
-                System.out.println("Loading ServerGroup: " + value.getName());
+                System.out.println("Loading server group: " + value.getName());
                 return true;
             }
         });
@@ -51,7 +51,7 @@ public class PacketInUpdateProxyGroup extends PacketInHandler {
             @Override
             public boolean isAccepted(ProxyGroup value)
             {
-                System.out.println("Loading ProxyGroup: " + value.getName());
+                System.out.println("Loading proxy group: " + value.getName());
                 return true;
             }
         });

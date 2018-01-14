@@ -17,6 +17,6 @@ public class CommandHelp extends Command {
     @Override
     public void onExecuteCommand(CommandSender sender, String[] args)
     {
-        sender.sendMessage("You can use the command \"reload\", \"clear\", \"stop\" and \"clearcache\"");
+        sender.sendMessage("You can use the commands \"reload\", \"clear\", \"stop\" and \"clearcache\"");
     }
 }

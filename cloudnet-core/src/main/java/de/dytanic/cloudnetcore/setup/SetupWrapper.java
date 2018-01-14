@@ -31,7 +31,7 @@ public class SetupWrapper {
             @Override
             public void cancel()
             {
-                System.out.println("Setup is cancelled");
+                System.out.println("Setup was cancelled");
             }
         }).setupComplete(new ISetupComplete() {
             @Override
@@ -42,18 +42,18 @@ public class SetupWrapper {
 
                 WrapperMeta wrapperMeta = new WrapperMeta(name, host, user);
                 CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
-                commandSender.sendMessage("Wrapper [" + wrapperMeta.getId() + "] is now registerd on CloudNet");
+                commandSender.sendMessage("Wrapper [" + wrapperMeta.getId() + "] was registered on CloudNet");
             }
         });
         Consumer<SetupRequest> request = setup::request;
-        request.accept(new SetupRequest("address", "What´s the IP adress of you wrapper?", "IP isn invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+        request.accept(new SetupRequest("address", "What's the IP address of the wrapper?", "Specified IP address is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
             @Override
             public Boolean doCatch(String key)
             {
                 return key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1");
             }
         }));
-        request.accept(new SetupRequest("user", "What´s the username of this wrapper?", "Username is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+        request.accept(new SetupRequest("user", "What's the name of the wrapper?", "Specified name is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
             @Override
             public Boolean doCatch(String key)
             {

@@ -135,8 +135,8 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
 
         if (key == null)
         {
-            System.out.println("Please copy the WRAPPER_KEY.cnd for the auth!");
-            System.out.println("The Wrapper stop in 5 seconds");
+            System.out.println("Please copy the WRAPPER_KEY.cnd for authentication!");
+            System.out.println("The Wrapper stops in 5 seconds");
             NetworkUtils.sleepUninterruptedly(5000);
             System.exit(0);
             return;
@@ -177,7 +177,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
 
         networkConnection.getPacketManager().registerHandler(PacketRC.TEST + 1, PacketInTestResult.class);
 
-        System.out.println("trying to connect " + networkConnection.getConnectableAddress().getHostName() + ":" + networkConnection.getConnectableAddress().getPort());
+        System.out.println("Trying to connect " + networkConnection.getConnectableAddress().getHostName() + ":" + networkConnection.getConnectableAddress().getPort());
         while (networkConnection.getConnectionTrys() < 5 && networkConnection.getChannel() == null)
         {
             networkConnection.tryConnect(optionSet.has("ssl"), new NetDispatcher(networkConnection, false), auth);
@@ -195,7 +195,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         if (!Files.exists(Paths.get("local/server-icon.png")))
             FileCopy.insertData("files/server-icon.png", "local/server-icon.png");
 
-        System.out.println("starting process queue... with " + wrapperConfig.getProcessQueueSize() + " server server");
+        System.out.println("Starting process queue... with " + wrapperConfig.getProcessQueueSize() + " server server");
         scheduler.runTaskRepeatSync(serverProcessQueue, 0, 40);
 
         //Server Handlers
@@ -264,12 +264,12 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         {
             if (!version.equals(CloudNetWrapper.class.getPackage().getImplementationVersion()))
             {
-                System.out.println("prepare update...");
+                System.out.println("Preparing update...");
                 webClient.update(version);
                 shutdown();
 
             } else System.out.println("No updates found!");
-        } else System.out.println("Failed to check updates");
+        } else System.out.println("Failed to check for updates");
 
     }
 

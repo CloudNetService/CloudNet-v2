@@ -22,7 +22,7 @@ public class BasicProxyConfig extends ProxyConfig {
                         " \n §7Twitter §8» §f@Dytanic §8▎ §7Discord §8» §fdiscord.gg/UNQ4wET \n §7powered by §8» §b§b§lCloud§f§lNet \n "), new String[]{
                         " ",
                         "§b§lCloud§f§lNet §8× §7your §bfree §7cloudsystem",
-                        "§7Twitter §8» §f@Dytanic",
+                        "§7Twitter §8» §f@CloudNetService",
                         "§7Discord §8» §fdiscord.gg/UNQ4wET",
                         " "
                 }, Arrays.asList("Dytanic"), new DynamicFallback("Lobby", Arrays.asList(new ServerFallback("Lobby", null))));

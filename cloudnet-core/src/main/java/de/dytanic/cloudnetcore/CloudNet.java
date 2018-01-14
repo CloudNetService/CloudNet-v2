@@ -286,7 +286,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         NetworkUtils.addAll(this.serverGroups, config.getServerGroups(), new Acceptable<ServerGroup>() {
             public boolean isAccepted(ServerGroup value)
             {
-                System.out.println("Loading ServerGroup: " + value.getName());
+                System.out.println("Loading server group: " + value.getName());
                 setupGroup(value);
                 return true;
             }
@@ -295,7 +295,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         NetworkUtils.addAll(this.proxyGroups, config.getProxyGroups(), new Acceptable<ProxyGroup>() {
             public boolean isAccepted(ProxyGroup value)
             {
-                System.out.println("Loading ProxyGroup: " + value.getName());
+                System.out.println("Loading proxy group: " + value.getName());
                 setupProxy(value);
                 return true;
             }
@@ -331,12 +331,12 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         {
             if (!version.equals(CloudNet.class.getPackage().getImplementationVersion()))
             {
-                System.out.println("prepare update...");
+                System.out.println("Preparing update...");
                 webClient.update(version);
                 shutdown();
 
-            } else System.out.println("No updates found!");
-        } else System.out.println("Failed to check updates");
+            } else System.out.println("No updates were found!");
+        } else System.out.println("Failed to check for updates");
     }
 
     @Deprecated
@@ -349,13 +349,13 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
         for (Wrapper wrapper : wrappers.values())
         {
-            System.out.println("Disconnecting Wrapper " + wrapper.getServerId());
+            System.out.println("Disconnecting wrapper " + wrapper.getServerId());
             wrapper.disconnct();
         }
 
         if (!optionSet.has("disable-modules"))
         {
-            System.out.println("Disable Modules...");
+            System.out.println("Disabling Modules...");
             this.moduleManager.disableModules();
         }
         dbHandlers.getStatisticManager().cloudOnlineTime(startupTime);

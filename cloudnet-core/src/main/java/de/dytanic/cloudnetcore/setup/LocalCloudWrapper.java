@@ -33,15 +33,15 @@ public class LocalCloudWrapper implements Runnabled<OptionSet> {
                 try
                 {
                     Files.createDirectories(Paths.get("wrapper"));
-                    System.out.println("Downloading Wrapper...");
+                    System.out.println("Downloading wrapper...");
                     URLConnection urlConnection = new URL(WebClient.DEFAULT_URL + "cloud/wrapper").openConnection();
                     urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
                     urlConnection.connect();
                     Files.copy(urlConnection.getInputStream(), Paths.get("wrapper/CloudNet-Wrapper.jar"));
-                    System.out.println("Download complete!");
+                    System.out.println("Download completed!");
                 } catch (Exception ex)
                 {
-                    System.out.println("Error on setup Wrapper: " + ex.getMessage());
+                    System.out.println("Error on setting up wrapper: " + ex.getMessage());
                     return;
                 }
             }

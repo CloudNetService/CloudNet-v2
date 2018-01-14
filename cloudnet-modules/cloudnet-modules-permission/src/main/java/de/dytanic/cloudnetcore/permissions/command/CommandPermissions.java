@@ -44,7 +44,7 @@ public class CommandPermissions extends Command {
             {
                 if(args.length == 1)
                 {
-                    sender.sendMessage(" ", "Permission Groups:");
+                    sender.sendMessage(" ", "Permission groups:");
                     for(PermissionGroup permissionGroup : PermissionModule.getInstance().getPermissionPool().getGroups().values())
                     {
                         sender.sendMessage(permissionGroup.getName() + " [" + permissionGroup.getJoinPower() + "] implements " + permissionGroup.getImplementGroups());
@@ -65,7 +65,7 @@ public class CommandPermissions extends Command {
                         for(Map.Entry<String, Boolean> x : permissionGroup.getPermissions().entrySet())
                         sender.sendMessage("- " + x.getKey() + ":" + x.getValue());
                         sender.sendMessage(" ");
-                        sender.sendMessage("Permissions for groups:");
+                        sender.sendMessage("Permissions for server groups:");
                         for(Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet())
                         {
                             sender.sendMessage(x.getKey() + ":");
@@ -81,7 +81,7 @@ public class CommandPermissions extends Command {
                     }
                     else
                     {
-                        sender.sendMessage("The group doesn't exists");
+                        sender.sendMessage("The specified permission group doesn't exist");
                     }
                 }
 
@@ -96,11 +96,11 @@ public class CommandPermissions extends Command {
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You set for " + permissionGroup.getName() + " the display \"" + permissionGroup.getDisplay() + "\"");
+                            sender.sendMessage("You set the display for the permission group " + permissionGroup.getName() + " to \"" + permissionGroup.getDisplay() + "\"");
                         }
                         else
                         {
-                            sender.sendMessage("The group doesn't exists");
+                            sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
 
@@ -113,11 +113,11 @@ public class CommandPermissions extends Command {
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You set for " + permissionGroup.getName() + " the prefix \"" + permissionGroup.getPrefix() + "\"");
+                            sender.sendMessage("You set the prefix for the permission group " + permissionGroup.getName() + " to \"" + permissionGroup.getPrefix() + "\"");
                         }
                         else
                         {
-                            sender.sendMessage("The group doesn't exists");
+                            sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
 
@@ -130,11 +130,11 @@ public class CommandPermissions extends Command {
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You set for " + permissionGroup.getName() + " the suffix \"" + permissionGroup.getSuffix() + "\"");
+                            sender.sendMessage("You set the suffix for the permission group " + permissionGroup.getName() + " to \"" + permissionGroup.getSuffix() + "\"");
                         }
                         else
                         {
-                            sender.sendMessage("The group doesn't exists");
+                            sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
 
@@ -147,11 +147,11 @@ public class CommandPermissions extends Command {
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You set for " + permissionGroup.getName() + " the default \"" + permissionGroup.isDefaultGroup() + "\"");
+                            sender.sendMessage("You set the default group attribute for the permission group " + permissionGroup.getName() + " to \"" + permissionGroup.isDefaultGroup() + "\"");
                         }
                         else
                         {
-                            sender.sendMessage("The group doesn't exists");
+                            sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
 
@@ -164,11 +164,11 @@ public class CommandPermissions extends Command {
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You set for " + permissionGroup.getName() + " the joinPower \"" + permissionGroup.getJoinPower() + "\"");
+                            sender.sendMessage("You set the join power for the permission group " + permissionGroup.getName() + " to \"" + permissionGroup.getJoinPower() + "\"");
                         }
                         else
                         {
-                            sender.sendMessage("The group doesn't exists");
+                            sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
 
@@ -181,11 +181,11 @@ public class CommandPermissions extends Command {
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You set for " + permissionGroup.getName() + " the tagId \"" + permissionGroup.getTagId() + "\"");
+                            sender.sendMessage("You set the tagID for the permission group " + permissionGroup.getName() + " to \"" + permissionGroup.getTagId() + "\"");
                         }
                         else
                         {
-                            sender.sendMessage("The group doesn't exists");
+                            sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
                     return;
@@ -202,11 +202,11 @@ public class CommandPermissions extends Command {
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You add for " + permissionGroup.getName() + " the permission \"" + args[4] + "\"");
+                            sender.sendMessage("You added the permission " + args[4] + " to the permission group \"" + permissionGroup.getName() + "\"");
                         }
                         else
                         {
-                            sender.sendMessage("The group doesn't exists");
+                            sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
 
@@ -219,11 +219,11 @@ public class CommandPermissions extends Command {
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You removed for " + permissionGroup.getName() + " the permission \"" + args[4] + "\"");
+                            sender.sendMessage("You removed the permission " + args[4] + " from the permission group \"" + permissionGroup.getName() + "\"");
                         }
                         else
                         {
-                            sender.sendMessage("The group doesn't exists");
+                            sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
                 }
@@ -245,11 +245,11 @@ public class CommandPermissions extends Command {
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You add for " + permissionGroup.getName() + " the permission \"" + args[4] + "\" on " + args[5]);
+                            sender.sendMessage("You added the permission " + args[4] + " to the permission group \"" + permissionGroup.getName() + "\" on the server group " + args[5]);
                         }
                         else
                         {
-                            sender.sendMessage("The group doesn't exists");
+                            sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
 
@@ -268,11 +268,11 @@ public class CommandPermissions extends Command {
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You removed for  " + permissionGroup.getName() + " the permission \"" + args[4] + "\" on " + args[5]);
+                            sender.sendMessage("You removed the permission " + args[4] + " from the permission group \"" + permissionGroup.getName() + "\" on the server group " + args[5]);
                         }
                         else
                         {
-                            sender.sendMessage("The group doesn't exists");
+                            sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
                 }
@@ -312,12 +312,12 @@ public class CommandPermissions extends Command {
                         }
                         else
                         {
-                            sender.sendMessage("The player doesn't registered");
+                            sender.sendMessage("The player isn't registered in permissions database");
                         }
                     }
                     else
                     {
-                        sender.sendMessage("The player doesn't registered");
+                        sender.sendMessage("The player isn't registered in permissions database");
                     }
                     return;
                 }
@@ -357,7 +357,7 @@ public class CommandPermissions extends Command {
                                             offlinePlayer.getPermissionEntity().getGroups().add(new GroupEntityData(permissionPool.getDefaultGroup().getName(), 0));
                                         }
                                         updatePlayer(offlinePlayer);
-                                        sender.sendMessage("The player " + offlinePlayer.getName() + " has removed the group " + args[4]);
+                                        sender.sendMessage("The player " + offlinePlayer.getName() + " is no longer a member of the group " + args[4]);
                                     }
                                 }
                             }
@@ -368,7 +368,7 @@ public class CommandPermissions extends Command {
                                 {
                                     offlinePlayer.getPermissionEntity().getPermissions().put(args[4].replaceFirst("-", ""), !args[4].startsWith("-"));
                                     updatePlayer(offlinePlayer);
-                                    sender.sendMessage("The permission \"" + args[4] + "\" was add for " + offlinePlayer.getName());
+                                    sender.sendMessage("The player \"" + offlinePlayer.getName() + "\" now has the permission " + args[4]);
                                 }
                             }
 
@@ -378,18 +378,18 @@ public class CommandPermissions extends Command {
                                 {
                                     offlinePlayer.getPermissionEntity().getPermissions().remove(args[4]);
                                     updatePlayer(offlinePlayer);
-                                    sender.sendMessage("The permission \"" + args[4] + "\" was removed for " + offlinePlayer.getName());
+                                    sender.sendMessage("The players \"" + offlinePlayer.getName() + "\" no longer has the permission " + args[4]);
                                 }
                             }
                         }
                         else
                         {
-                            sender.sendMessage("The player doesn't registered");
+                            sender.sendMessage("The player isn't registered in permissions database");
                         }
                     }
                     else
                     {
-                        sender.sendMessage("The player doesn't registered");
+                        sender.sendMessage("The player isn't registered in permissions database");
                     }
                     return;
                 }
@@ -417,7 +417,7 @@ public class CommandPermissions extends Command {
                                     }
                                     else
                                     {
-                                        sender.sendMessage("The group doesn't exists");
+                                        sender.sendMessage("The specified permission group doesn't exist");
                                     }
                                     return;
                                 }
@@ -429,11 +429,11 @@ public class CommandPermissions extends Command {
                                                 .add(new GroupEntityData(args[4],
                                                         (args[5].equalsIgnoreCase("lifetime") ? 0L : NetworkUtils.checkIsNumber(args[4]) ? calcDays(Integer.parseInt(args[4])) : 0L)));
                                         updatePlayer(offlinePlayer);
-                                        sender.sendMessage("The player " + offlinePlayer.getName() + " has now the group " + args[4] + ", too");
+                                        sender.sendMessage("The player " + offlinePlayer.getName() + " is now also a member of the group " + args[4]);
                                     }
                                     else
                                     {
-                                        sender.sendMessage("The group doesn't exists");
+                                        sender.sendMessage("The specified permission group doesn't exist");
                                     }
                                     return;
                                 }
@@ -441,12 +441,12 @@ public class CommandPermissions extends Command {
                         }
                         else
                         {
-                            sender.sendMessage("The player doesn't registered");
+                            sender.sendMessage("The player isn't registered in permissions database");
                         }
                     }
                     else
                     {
-                        sender.sendMessage("The player doesn't registered");
+                        sender.sendMessage("The player isn't registered in permissions database");
                     }
                     return;
                 }
@@ -464,7 +464,7 @@ public class CommandPermissions extends Command {
                         PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                         CloudNet.getInstance().getNetworkManager().reload();
                         CloudNet.getInstance().getNetworkManager().updateAll0();
-                        sender.sendMessage("The group " + args[1] + " is now created!");
+                        sender.sendMessage("The group " + args[1] + " was created!");
                     }
                     else
                     {

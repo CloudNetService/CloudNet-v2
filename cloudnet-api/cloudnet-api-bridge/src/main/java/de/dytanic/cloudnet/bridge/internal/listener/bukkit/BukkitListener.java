@@ -48,7 +48,7 @@ public class BukkitListener implements Listener {
     {
         for(Player all : Bukkit.getOnlinePlayers())
             if(all.getUniqueId().equals(e.getUniqueId()))
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, "§cYou must connect from a internal proxy server!");
+                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, "§cYou have to connect from a internal proxy server!");
     }
 
     @EventHandler
@@ -100,8 +100,8 @@ public class BukkitListener implements Listener {
                 }
         } else
         {
-            e.getPlayer().kickPlayer("§cYou must connect from a internal proxy server!");
-            e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "§cYou must connect from a internal proxy server!");
+            e.getPlayer().kickPlayer("§cYou have to connect from a internal proxy server!");
+            e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "§cYou have to connect from a internal proxy server!");
             return;
         }
 

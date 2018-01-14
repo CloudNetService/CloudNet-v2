@@ -217,7 +217,7 @@ public class CloudFlareService {
                 JsonObject jsonObject = toJsonInput(inputStream);
                 if (jsonObject.get("success").getAsBoolean())
                 {
-                    System.out.println(prefix + "DNSRecord [" + dnsRecord.getName() + "/" + dnsRecord.getType() + "] is created");
+                    System.out.println(prefix + "DNSRecord [" + dnsRecord.getName() + "/" + dnsRecord.getType() + "] was created");
                 } else
                 {
                     throw new CloudFlareDNSRecordException("Failed to create DNSRecord \n " + jsonObject.toString());
@@ -254,7 +254,7 @@ public class CloudFlareService {
                 JsonObject jsonObject = toJsonInput(inputStream);
                 if (jsonObject.get("success").getAsBoolean())
                 {
-                    System.out.println(prefix + " DNSRecord [" + recordId + "] is now removed");
+                    System.out.println(prefix + " DNSRecord [" + recordId + "] was removed");
                 }
                 inputStream.close();
             }

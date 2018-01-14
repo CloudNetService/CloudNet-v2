@@ -83,7 +83,7 @@ public class CommandCloudServer implements CommandExecutor {
                                 ,args[5].equalsIgnoreCase("true"),
                                 MobSelector.getInstance().toPosition(CloudAPI.getInstance().getGroup(), player.getLocation()), "§8#§c%group% &bPlayers online §8|§7 %group_online% of %max_players%", new Document());
                         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(serverMob));
-                        player.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob will create please wait...");
+                        player.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob will be created, please wait...");
                     }
                     else
                     {
@@ -164,10 +164,10 @@ public class CommandCloudServer implements CommandExecutor {
                             {
                                 Sign sign = new Sign(args[1], SignSelector.getInstance().toPosition(block.getLocation()));
                                 CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddSign(sign));
-                                commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Sign is successfully created!");
+                                commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The sign was successfully created!");
                             } else
                             {
-                                commandSender.sendMessage("The group doesn't exists");
+                                commandSender.sendMessage("The group doesn't exist");
                             }
                         } else
                         {
@@ -189,9 +189,9 @@ public class CommandCloudServer implements CommandExecutor {
                     if(mob != null)
                     {
                         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveMob(mob.getMob()));
-                        player.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob is now removed");
+                        player.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob has been removed");
                     }
-                    else player.sendMessage(CloudAPI.getInstance().getPrefix() + "The Mob doesn't exists on this group");
+                    else player.sendMessage(CloudAPI.getInstance().getPrefix() + "The Mob doesn't exist on this group");
                 }
                 break;
             case 1:
@@ -208,7 +208,7 @@ public class CommandCloudServer implements CommandExecutor {
                             {
                                 CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveSign(sign));
                             }
-                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The sign is now removed");
+                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The sign has been removed");
                         }
                     }
 
