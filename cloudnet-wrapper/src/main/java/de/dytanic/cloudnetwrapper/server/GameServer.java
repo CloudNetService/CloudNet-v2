@@ -55,15 +55,11 @@ public class GameServer implements ServerDispatcher {
 
     private ServerInfo serverInfo;
 
+    private long startupTimeStamp = 0;
+
     private Path dir;
 
-    private String path;
-
-    private String custom;
-
-    // standalone server = local/servers/custom/
-    //gameserver /temp/group/gameserver-1
-    //static local/severs/group/gameserver-1
+    private String path, custom;
 
     public GameServer(ServerProcess serverProcess, ServerStage serverStage, ServerGroup serverGroup)
     {
@@ -351,50 +347,40 @@ public class GameServer implements ServerDispatcher {
                         CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
                         CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetPort())).saveAsConfig(Paths.get(path + "/CLOUD/connection.json"));
 
-        StringBuilder commandBuilder = new StringBuilder();
-        commandBuilder.append("java ");
-        for (String command : serverProcess.getMeta().getProcessParameters())
-        {
-            commandBuilder.append(command).append(" ");
-        }
-
-        for (String command : serverProcess.getMeta().getTemplate().getProcessPreParameters())
-        {
-            commandBuilder.append(command).append(" ");
-        }
-
-        commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -Dcom.mojang.eula.agree=true -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -Xmx" +
-                serverProcess.getMeta().getMemory() + "M -jar ");
-
-        switch (serverGroup.getServerType())
-        {
-            case CAULDRON:
-                commandBuilder.append("cauldron.jar nogui");
-                break;
-            case GLOWSTONE:
-                commandBuilder.append("glowstone.jar nogui");
-                break;
-            case CUSTOM:
-                commandBuilder.append("minecraft_server.jar nogui");
-                break;
-            default:
-                commandBuilder.append("spigot.jar nogui");
-                break;
-        }
-
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddServer(this.serverInfo, this.serverProcess.getMeta()));
         System.out.println("Server " + toString() + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
-        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(" "), null, new File(path));
+        this.startupTimeStamp = System.currentTimeMillis();
+
+        startProcess();
+
         serverProcess.setServerStage(ServerStage.PROCESS);
         CloudNetWrapper.getInstance().getServers().put(this.serverProcess.getMeta().getServiceId().getServerId(), this);
         serverProcess.setServerStage(ServerStage.NET_INIT);
         return true;
     }
 
+    public void restart()
+    {
+
+        kill();
+        System.out.println("Server " + toString() + " was killed and restart at 2 Seconds");
+        NetworkUtils.sleepUninterruptedly(2000);
+        try
+        {
+            startProcess();
+            startupTimeStamp = System.currentTimeMillis();
+            System.out.println("Server " + toString() + " restarted now!");
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public boolean shutdown()
     {
         CloudNetWrapper.getInstance().getServerProcessQueue().getStartups().remove(this);
+
         if (instance == null)
         {
             if (serverGroup.getGroupMode().equals(ServerGroupMode.DYNAMIC))
@@ -409,18 +395,7 @@ public class GameServer implements ServerDispatcher {
             return true;
         }
 
-        if (instance.isAlive())
-        {
-            executeCommand("stop");
-            try
-            {
-                Thread.sleep(1000);
-            } catch (InterruptedException e)
-            {
-            }
-        }
-
-        instance.destroyForcibly();
+        kill();
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isSavingRecords())
         {
@@ -434,12 +409,9 @@ public class GameServer implements ServerDispatcher {
         }
 
         if (serverGroup.isMaintenance() && (CloudNetWrapper.getInstance().getWrapperConfig().isMaintenance_copy() && !serverGroup.getGroupMode().equals(ServerGroupMode.STATIC)))
-        {
             copy();
-        }
 
         if (!serverGroup.getGroupMode().equals(ServerGroupMode.STATIC) && !serverGroup.getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))
-        {
             try
             {
                 try
@@ -451,7 +423,6 @@ public class GameServer implements ServerDispatcher {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
 
         CloudNetWrapper.getInstance().getServers().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveServer(serverInfo));
@@ -513,6 +484,7 @@ public class GameServer implements ServerDispatcher {
                     CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
                     CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()
             ), CloudNetWrapper.getInstance().getSimpledUser(), CloudNetWrapper.getInstance().getOptionSet().has("ssl"), template, serverGroup.getName(), custom);
+
             try
             {
                 masterTemplateDeploy.deploy();
@@ -523,6 +495,7 @@ public class GameServer implements ServerDispatcher {
         } else
         {
             System.out.println("Copying template from " + this.serverProcess.getMeta().getServiceId() + " to local directory...");
+
             try
             {
                 FileCopy.copyFilesInDirectory(new File(this.path), new File("local/templates/" + serverGroup.getName() + "/" + template.getName()));
@@ -531,6 +504,7 @@ public class GameServer implements ServerDispatcher {
             } catch (Exception e)
             {
             }
+
             System.out.println("Template " + template.getName() + " was copied!");
         }
     }
@@ -539,6 +513,58 @@ public class GameServer implements ServerDispatcher {
     public String toString()
     {
         return "[" + serverProcess.getMeta().getServiceId().getServerId() + "/port=" + serverProcess.getMeta().getPort() + "/memory=" + serverProcess.getMeta().getMemory() + "]";
+    }
+
+    public void kill()
+    {
+        if (instance.isAlive())
+        {
+            executeCommand("stop");
+            try
+            {
+                Thread.sleep(1000);
+            } catch (InterruptedException e)
+            {
+            }
+        }
+
+        instance.destroyForcibly();
+    }
+
+    private void startProcess() throws Exception
+    {
+        StringBuilder commandBuilder = new StringBuilder();
+        commandBuilder.append("java ");
+        for (String command : serverProcess.getMeta().getProcessParameters())
+        {
+            commandBuilder.append(command).append(" ");
+        }
+
+        for (String command : serverProcess.getMeta().getTemplate().getProcessPreParameters())
+        {
+            commandBuilder.append(command).append(" ");
+        }
+
+        commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -Dcom.mojang.eula.agree=true -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -Xmx" +
+                serverProcess.getMeta().getMemory() + "M -jar ");
+
+        switch (serverGroup.getServerType())
+        {
+            case CAULDRON:
+                commandBuilder.append("cauldron.jar nogui");
+                break;
+            case GLOWSTONE:
+                commandBuilder.append("glowstone.jar nogui");
+                break;
+            case CUSTOM:
+                commandBuilder.append("minecraft_server.jar nogui");
+                break;
+            default:
+                commandBuilder.append("spigot.jar nogui");
+                break;
+        }
+
+        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(" "), null, new File(path));
     }
 
     private boolean a() throws Exception

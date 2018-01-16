@@ -49,10 +49,7 @@ public final class PacketManager {
                 try
                 {
                     packetIn.add(handlers.newInstance());
-                } catch (InstantiationException e)
-                {
-                    return null;
-                } catch (IllegalAccessException e)
+                } catch (InstantiationException | IllegalAccessException e)
                 {
                     return null;
                 }
@@ -92,7 +89,7 @@ public final class PacketManager {
         {
             try
             {
-                Thread.sleep(0, 500000);
+                Thread.sleep(0, 300000);
             } catch (InterruptedException e)
             {
             }

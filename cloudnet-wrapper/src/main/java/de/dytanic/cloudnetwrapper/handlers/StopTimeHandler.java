@@ -19,7 +19,22 @@ public final class StopTimeHandler implements IWrapperHandler {
             try
             {
                 if (!gameServer.isAlive())
-                    gameServer.shutdown();
+                {
+                    if(System.currentTimeMillis() > (gameServer.getStartupTimeStamp() + 5000))
+                    {
+                        gameServer.shutdown();
+                    }
+                    else
+                    {
+                        CloudNetWrapper.getInstance().getScheduler().runTaskAsync(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                gameServer.restart();
+                            }
+                        });
+                    }
+                }
             } catch (Exception ex) {
 
             }

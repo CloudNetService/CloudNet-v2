@@ -196,7 +196,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
             FileCopy.insertData("files/server-icon.png", "local/server-icon.png");
 
         System.out.println("Starting process queue... with " + wrapperConfig.getProcessQueueSize() + " server server");
-        scheduler.runTaskRepeatSync(serverProcessQueue, 0, 40);
+        scheduler.runTaskRepeatSync(serverProcessQueue, 0, 20);
 
         //Server Handlers
         {

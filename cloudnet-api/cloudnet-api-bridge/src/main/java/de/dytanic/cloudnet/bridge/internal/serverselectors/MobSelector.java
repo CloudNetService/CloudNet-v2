@@ -403,41 +403,26 @@ public final class MobSelector {
 
             if (mobImpl != null)
             {
-
+                e.setCancelled(true);
                 if (!CloudAPI.getInstance().getServerGroupData(mobImpl.getMob().getTargetGroup()).isMaintenance())
                 {
-
                     if(mobImpl.getMob().getAutoJoin() != null && mobImpl.getMob().getAutoJoin())
                     {
-
                         ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
                         byteArrayDataOutput.writeUTF("Connect");
 
                         List<ServerInfo> serverInfos = getServers(mobImpl.getMob().getTargetGroup());
-                        Iterator<ServerInfo> iterator = serverInfos.iterator();
 
-                        while (iterator.hasNext())
-                        {
-                            ServerInfo serverInfo = iterator.next();
-                            if(serverInfo.getOnlineCount() < serverInfo.getMaxPlayers() && serverInfo.getServerState().equals(ServerState.LOBBY))
+                        for (ServerInfo serverInfo : serverInfos)
+                            if (serverInfo.getOnlineCount() < serverInfo.getMaxPlayers() && serverInfo.getServerState().equals(ServerState.LOBBY))
                             {
                                 byteArrayDataOutput.writeUTF(serverInfo.getServiceId().getServerId());
                                 e.getPlayer().sendPluginMessage(CloudServer.getInstance().getPlugin(), "BungeeCord", byteArrayDataOutput.toByteArray());
                                 return;
                             }
-                        }
-                        e.setCancelled(true);
                     }
-                    else
-                    {
-                        e.getPlayer().openInventory(mobImpl.getInventory());
-                        e.setCancelled(true);
-                    }
-                } else
-                {
-                    e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("mob-selector-maintenance-message")));
-                    e.setCancelled(true);
-                }
+                    else e.getPlayer().openInventory(mobImpl.getInventory());
+                } else e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("mob-selector-maintenance-message")));
             }
         }
 

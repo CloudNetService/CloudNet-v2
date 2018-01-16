@@ -240,7 +240,7 @@ public final class NetworkManager {
 
     public void handleCommandExecute(PlayerCommandExecution playerCommandExecutor)
     {
-        CloudNet.getLogger().debug("Player [" + playerCommandExecutor.getName() + "] executed command [" + playerCommandExecutor.getCommandLine() + "]");
+        CloudNet.getLogger().info("Player [" + playerCommandExecutor.getName() + "] executed command [" + playerCommandExecutor.getCommandLine() + "]");
         CloudNet.getInstance().getEventManager().callEvent(new CommandExecutionEvent(playerCommandExecutor));
         StatisticManager.getInstance().playerCommandExecutions();
     }
@@ -253,11 +253,14 @@ public final class NetworkManager {
 
         if (cloudPlayer.getServer() != null)
         {
+            System.out.println("Player [" + cloudPlayer.getName() + "/" + cloudPlayer.getUniqueId() + "/] update [server=" + cloudPlayer.getServer() + ", proxy=" + cloudPlayer.getProxy() + ", address=" + cloudPlayer.getPlayerConnection().getHost() + "]");
+
+            /*
             MinecraftServer minecraftServer = CloudNet.getInstance().getServer(cloudPlayer.getServer());
             if (minecraftServer != null)
             {
                 minecraftServer.sendPacket(new PacketOutUpdatePlayer(cloudPlayer));
-            }
+            }*/
         }
     }
 

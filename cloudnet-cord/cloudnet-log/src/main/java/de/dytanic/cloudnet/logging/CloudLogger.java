@@ -62,8 +62,15 @@ public class CloudLogger
         this.reader = new ConsoleReader(System.in, System.out);
         this.reader.setExpandEvents(false);
 
+        /*
         FileLoggerHandler handler = new FileLoggerHandler(new FileFormatter(), "local/logs");
-        addHandler(handler);
+        addHandler(handler);*/
+
+        FileHandler fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, true);
+        fileHandler.setEncoding(StandardCharsets.UTF_8.name());
+        fileHandler.setFormatter(new LoggingFormatter());
+
+        addHandler(fileHandler);
 
         LoggingHandler loggingHandler = new LoggingHandler();
         loggingHandler.setFormatter(formatter);
@@ -210,6 +217,7 @@ public class CloudLogger
         }
     }
 
+    /*
     @Getter
     public class FileLoggerHandler extends Handler {
 
@@ -261,6 +269,6 @@ public class CloudLogger
                 new File(directory + "/latest.log").renameTo(new File(directory + "/latest_" + new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss").format(System.currentTimeMillis()) + ".log"));
             }
         }
-    }
+    }*/
 
 }

@@ -217,14 +217,10 @@ public class CloudGameServer implements ServerDispatcher {
 
         //Init
         for (ServerInstallablePlugin plugin : cloudServerMeta.getPlugins())
-        {
             FileCopy.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
-        }
 
         for (ServerInstallablePlugin plugin : cloudServerMeta.getPlugins())
-        {
             FileCopy.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
-        }
 
         if (cloudServerMeta.getServerGroupType().equals(ServerGroupType.BUKKIT))
             if (!Files.exists(Paths.get(path + "/spigot.jar")))
@@ -255,6 +251,14 @@ public class CloudGameServer implements ServerDispatcher {
 
         Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
         FileCopy.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
+
+        try
+        {
+            FileCopy.copyFilesInDirectory(new File("local/global_cloudserver"), new File(path));
+        }
+        catch (Exception ex)
+        {
+        }
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isViaVersion())
         {

@@ -126,34 +126,28 @@ public final class Wrapper
         this.wrapperInfo = null;
         this.maxMemory = 0;
         for (MinecraftServer minecraftServer : servers.values())
-        {
             try
             {
                 minecraftServer.disconnect();
             }catch (Exception ex){
 
             }
-        }
 
         for(CloudServer cloudServer : cloudServers.values())
-        {
             try
             {
                 cloudServer.disconnect();
             }catch (Exception ex) {
 
             }
-        }
 
         for (ProxyServer minecraftServer : proxys.values())
-        {
             try
             {
                 minecraftServer.disconnect();
             }catch (Exception ex){
 
             }
-        }
 
         waitingServices.clear();
         servers.clear();
@@ -168,23 +162,19 @@ public final class Wrapper
 
         java.util.Map<String, ServerGroup> groups = new ConcurrentHashMap<>();
         for (ServerGroup serverGroup : CloudNet.getInstance().getServerGroups().values())
-        {
             if (serverGroup.getWrapper().contains(networkInfo.getId()))
             {
                 groups.put(serverGroup.getName(), serverGroup);
                 sendPacket(new PacketOutCreateTemplate(serverGroup));
             }
-        }
 
         java.util.Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
         for (ProxyGroup serverGroup : CloudNet.getInstance().getProxyGroups().values())
-        {
             if (serverGroup.getWrapper().contains(networkInfo.getId()))
             {
                 proxyGroups.put(serverGroup.getName(), serverGroup);
                 sendPacket(new PacketOutCreateTemplate(serverGroup));
             }
-        }
 
         SimpledUser simpledUser = null;
         User user = CollectionWrapper.filter(CloudNet.getInstance().getUsers(), new Acceptable<User>() {
@@ -242,36 +232,48 @@ public final class Wrapper
     public void startProxy(ProxyProcessMeta proxyProcessMeta)
     {
         sendPacket(new PacketOutStartProxy(proxyProcessMeta));
+        System.out.println("Proxy [" + proxyProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
+
         this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(), new Trio<>(proxyProcessMeta.getPort(), proxyProcessMeta.getMemory(), proxyProcessMeta.getServiceId()));
     }
 
     public void startProxyAsync(ProxyProcessMeta proxyProcessMeta)
     {
         sendPacket(new PacketOutStartProxy(proxyProcessMeta, true));
+        System.out.println("Proxy [" + proxyProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
+
         this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(), new Trio<>(proxyProcessMeta.getPort(), proxyProcessMeta.getMemory(), proxyProcessMeta.getServiceId()));
     }
 
     public void startGameServer(ServerProcessMeta serverProcessMeta)
     {
         sendPacket(new PacketOutStartServer(serverProcessMeta));
+        System.out.println("Server [" + serverProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
+
         this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(), new Trio<>(serverProcessMeta.getPort(), serverProcessMeta.getMemory(), serverProcessMeta.getServiceId()));
     }
 
     public void startGameServerAsync(ServerProcessMeta serverProcessMeta)
     {
         sendPacket(new PacketOutStartServer(serverProcessMeta, true));
+        System.out.println("Server [" + serverProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
+
         this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(), new Trio<>(serverProcessMeta.getPort(), serverProcessMeta.getMemory(), serverProcessMeta.getServiceId()));
     }
 
     public void startCloudServer(CloudServerMeta cloudServerMeta)
     {
         sendPacket(new PacketOutStartCloudServer(cloudServerMeta));
+        System.out.println("CloudServer [" + cloudServerMeta.getServiceId() + "] is now in " + serverId + " queue.");
+
         this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(), new Trio<>(cloudServerMeta.getPort(), cloudServerMeta.getMemory(), cloudServerMeta.getServiceId()));
     }
 
     public void startCloudServerAsync(CloudServerMeta cloudServerMeta)
     {
         sendPacket(new PacketOutStartCloudServer(cloudServerMeta, true));
+        System.out.println("CloudServer [" + cloudServerMeta.getServiceId() + "] is now in " + serverId + " queue.");
+
         this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(), new Trio<>(cloudServerMeta.getPort(), cloudServerMeta.getMemory(), cloudServerMeta.getServiceId()));
     }
 

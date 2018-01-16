@@ -349,15 +349,12 @@ public class BungeeCord implements ServerDispatcher {
 
         StringBuilder commandBuilder = new StringBuilder();
         commandBuilder.append("java ");
+
         for (String command : proxyProcessMeta.getProcessParameters())
-        {
             commandBuilder.append(command).append(" ");
-        }
 
         for (String command : proxyGroup.getTemplate().getProcessPreParameters())
-        {
             commandBuilder.append(command).append(" ");
-        }
 
         //commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -Djline.terminal=jline.UnsupportedTerminal -XX:MaxPermSize=256M -DIReallyKnowWhatIAmDoingISwear=true -Xmx" + proxyProcessMeta.getMemory() + "M -jar BungeeCord.jar -o true -p");
         commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -Dio.netty.leakDetectionLevel=DISABLED -Dfile.encoding=UTF-8 -Dio.netty.maxDirectMemory=0 -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -DIReallyKnowWhatIAmDoingISwear=true -Xmx" + proxyProcessMeta.getMemory() + "M -jar BungeeCord.jar -o true -p");
@@ -373,6 +370,7 @@ public class BungeeCord implements ServerDispatcher {
     @Override
     public boolean shutdown()
     {
+
         if (instance == null)
         {
             if (proxyGroup.getProxyGroupMode().equals(ProxyGroupMode.DYNAMIC))
@@ -394,7 +392,7 @@ public class BungeeCord implements ServerDispatcher {
             NetworkUtils.sleepUninterruptedly(500);
         }
 
-        instance.destroy();
+        instance.destroyForcibly();
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isSavingRecords())
         {
