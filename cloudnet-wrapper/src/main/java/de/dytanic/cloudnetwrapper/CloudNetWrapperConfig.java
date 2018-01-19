@@ -196,7 +196,7 @@ public class CloudNetWrapperConfig {
 
             if(!configuration.getSection("general").self.containsKey("proxy-config-host"))
             {
-                configuration.set("proxy-config-host", this.internalIP);
+                configuration.set("general.proxy-config-host", this.internalIP);
                 save();
             }
 
