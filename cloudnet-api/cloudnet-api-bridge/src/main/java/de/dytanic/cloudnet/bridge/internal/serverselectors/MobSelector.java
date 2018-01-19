@@ -14,6 +14,7 @@ import de.dytanic.cloudnet.bridge.event.bukkit.BukkitMobUpdateEvent;
 import de.dytanic.cloudnet.bridge.internal.util.ItemStackBuilder;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.Value;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobPosition;
@@ -240,6 +241,7 @@ public final class MobSelector {
             {
                 entityClazz.getMethod("save", nbt).invoke(nmsEntity, object);
             }
+
             object.getClass().getMethod("setInt", String.class, int.class).invoke(object, "NoAI", 1);
             object.getClass().getMethod("setInt", String.class, int.class).invoke(object, "Silent", 1);
             entityClazz.getMethod("f", nbt).invoke(nmsEntity, object);
@@ -264,27 +266,32 @@ public final class MobSelector {
 
     public void handleUpdate(ServerInfo serverInfo)
     {
+        if(serverInfo.getServiceId().getGroup() == null) return;
+
         for (MobImpl mob : this.mobs.values())
-        {
             if (mob.getMob().getTargetGroup().equals(serverInfo.getServiceId().getGroup()))
             {
+                mob.getEntity().setTicksLived(Integer.MAX_VALUE);
                 updateCustom(mob.getMob(), mob.getDisplayMessage());
                 Bukkit.getPluginManager().callEvent(new BukkitMobUpdateEvent(mob.getMob()));
+
                 mob.getServerPosition().clear();
                 filter(serverInfo.getServiceId().getGroup());
                 Collection<ServerInfo> serverInfos = filter(serverInfo.getServiceId().getGroup());
-                final AtomicInteger index = new AtomicInteger(0);
+
+                final Value<Integer> index = new Value<>(0);
+
                 for (ServerInfo server : serverInfos)
                 {
-                    if (server.isOnline() && server.getServerState().equals(ServerState.LOBBY) && !server.getServerConfig().isHideServer())
+                    if (server.isOnline() && server.getServerState().equals(ServerState.LOBBY) && !server.getServerConfig().isHideServer() && !server.getServerConfig()
+                            .getProperties().contains(NetworkUtils.DEV_PROPERTY))
                     {
-                        while (mobConfig.getDefaultItemInventory().containsKey((index.get() + 1)))
-                        {
-                            index.addAndGet(1);
-                        }
-                        if ((mobConfig.getInventorySize() - 1) <= index.get()) break;
+                        while (mobConfig.getDefaultItemInventory().containsKey((index.getValue() + 1)))
+                            index.setValue(index.getValue() + 1);
 
-                        final int value = index.get();
+                        if ((mobConfig.getInventorySize() - 1) <= index.getValue()) break;
+
+                        final int value = index.getValue();
                         Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
                             @Override
                             public void run()
@@ -293,18 +300,15 @@ public final class MobSelector {
                                 mob.getServerPosition().put(value, server.getServiceId().getServerId());
                             }
                         });
-                        index.addAndGet(1);
+                        index.setValue(index.getValue() + 1);
                     }
                 }
 
-                while (index.get() < (mob.getInventory().getSize()))
-                {
-                    if (!mobConfig.getDefaultItemInventory().containsKey(index.get() + 1))
-                        mob.getInventory().setItem(index.get(), new ItemStack(Material.AIR));
-                    index.addAndGet(1);
-                }
+                while (index.getValue() < (mob.getInventory().getSize()))
+                    if (!mobConfig.getDefaultItemInventory().containsKey(index.getValue() + 1))
+                        mob.getInventory().setItem(index.getValue(), new ItemStack(Material.AIR));
+                    index.setValue(index.getValue() + 1);
             }
-        }
     }
 
     public void updateCustom(ServerMob serverMob, Object armorStand)

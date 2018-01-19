@@ -54,7 +54,7 @@ public final class Wrapper
     @Setter
     private boolean ready;
     @Setter
-    private double cpuUsage = 0;
+    private double cpuUsage = -1;
 
     private final java.util.Map<String, ProxyServer> proxys = new ConcurrentHashMap<>();
     private final java.util.Map<String, MinecraftServer> servers = new ConcurrentHashMap<>();

@@ -26,13 +26,7 @@ public final class StopTimeHandler implements IWrapperHandler {
                     }
                     else
                     {
-                        CloudNetWrapper.getInstance().getScheduler().runTaskAsync(new Runnable() {
-                            @Override
-                            public void run()
-                            {
-                                gameServer.restart();
-                            }
-                        });
+                        gameServer.restart();
                     }
                 }
             } catch (Exception ex) {

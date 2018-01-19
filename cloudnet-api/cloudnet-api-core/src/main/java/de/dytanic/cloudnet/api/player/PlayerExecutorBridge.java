@@ -14,6 +14,8 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PlayerExecutorBridge extends PlayerExecutor {
 
+    public static final PlayerExecutorBridge INSTANCE = new PlayerExecutorBridge();
+
     public PlayerExecutorBridge()
     {
         this.available = true;
@@ -22,7 +24,8 @@ public class PlayerExecutorBridge extends PlayerExecutor {
     @Override
     public void kickPlayer(CloudPlayer cloudPlayer, String reason)
     {
-        CloudAPI.getInstance().sendCustomSubProxyMessage("cloudnet_internal", "kickPlayer", new Document("uniqueId", cloudPlayer.getUniqueId()).append("name", cloudPlayer.getName()).append("reason", reason));
+        CloudAPI.getInstance().sendCustomSubProxyMessage("cloudnet_internal", "kickPlayer",
+                new Document("uniqueId", cloudPlayer.getUniqueId()).append("name", cloudPlayer.getName()).append("reason", reason));
     }
 
     @Override
@@ -35,7 +38,8 @@ public class PlayerExecutorBridge extends PlayerExecutor {
     @Override
     public void sendMessage(CloudPlayer cloudPlayer, String message)
     {
-        CloudAPI.getInstance().sendCustomSubProxyMessage("cloudnet_internal", "sendMessage", new Document("message", message).append("name", cloudPlayer.getName()).append("uniqueId", cloudPlayer.getUniqueId()));
+        CloudAPI.getInstance().sendCustomSubProxyMessage("cloudnet_internal", "sendMessage",
+                new Document("message", message).append("name", cloudPlayer.getName()).append("uniqueId", cloudPlayer.getUniqueId()));
     }
 
 }

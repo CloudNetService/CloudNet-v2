@@ -16,22 +16,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class FileCopy {
 
-    public static final void copyFileToDirectory(File file, File to) throws IOException
+    private FileCopy()
     {
-        if (!to.exists())
-        {
-            to.mkdirs();
-        }
+    }
+
+    public static void copyFileToDirectory(File file, File to) throws IOException
+    {
+        if (!to.exists()) to.mkdirs();
+
         File n = new File(to.getAbsolutePath() + "/" + file.getName());
         Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
-    public static final void copyFilesInDirectory(File from, File to) throws IOException
+    public static void copyFilesInDirectory(File from, File to) throws IOException
     {
-        if (!to.exists())
-        {
-            to.mkdirs();
-        }
+        if (!to.exists()) to.mkdirs();
+
         for (File file : from.listFiles())
         {
             if (file.isDirectory())

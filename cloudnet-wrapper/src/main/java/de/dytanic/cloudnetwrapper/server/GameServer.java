@@ -74,12 +74,9 @@ public class GameServer implements ServerDispatcher {
         } else
         {
             if (serverGroup.getGroupMode().equals(ServerGroupMode.STATIC) || serverGroup.getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))
-            {
                 this.path = "local/servers/" + serverGroup.getName() + "/" + this.serverProcess.getMeta().getServiceId().getServerId();
-            } else
-            {
+            else
                 this.path = "temp/" + serverGroup.getName() + "/" + serverProcess.getMeta().getServiceId();
-            }
         }
 
         this.dir = Paths.get(path);
@@ -205,24 +202,14 @@ public class GameServer implements ServerDispatcher {
 
         if (serverGroup.getGroupMode().equals(ServerGroupMode.STATIC))
         {
-            if (!Files.exists(dir))
-            {
-                if (!a()) return false;
-            }
-        } else
-        {
-            if (!a()) return false;
-        }
+            if (!Files.exists(dir)) if (!a()) return false;
+        } else if (!a()) return false;
 
         for (ServerInstallablePlugin plugin : serverProcess.getMeta().getDownloadablePlugins())
-        {
             FileCopy.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
-        }
 
         for (ServerInstallablePlugin plugin : serverProcess.getMeta().getTemplate().getInstallablePlugins())
-        {
             FileCopy.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
-        }
 
         serverProcess.setServerStage(ServerStage.COPY);
 
@@ -251,28 +238,6 @@ public class GameServer implements ServerDispatcher {
         Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
         FileCopy.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
-
-
-        if (CloudNetWrapper.getInstance().getWrapperConfig().isViaVersion())
-        {
-            if (!Files.exists(Paths.get("local/viaversion.jar")))
-            {
-                try
-                {
-                    System.out.println("Downloading ViaVersion...");
-                    URLConnection url = new URL("https://ci.viaversion.com/job/ViaVersion/177/artifact/jar/target/ViaVersion-1.2.0.jar").openConnection();
-                    url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-                    url.connect();
-                    Files.copy(url.getInputStream(), Paths.get("local/viaversion.jar"));
-                    ((HttpURLConnection) url).disconnect();
-                    System.out.println("Download was completed successfully!");
-                } catch (Exception ex)
-                {
-
-                }
-            }
-            FileCopy.copyFileToDirectory(new File("local/viaversion.jar"), new File(path + "/plugins"));
-        }
         FileCopy.copyFilesInDirectory(new File("local/global"), new File(path));
 
         String motd = "Default Motd";
@@ -363,8 +328,7 @@ public class GameServer implements ServerDispatcher {
     {
 
         kill();
-        System.out.println("Server " + toString() + " was killed and restart at 2 Seconds");
-        NetworkUtils.sleepUninterruptedly(2000);
+        System.out.println("Server " + toString() + " was killed and restart...");
         try
         {
             startProcess();

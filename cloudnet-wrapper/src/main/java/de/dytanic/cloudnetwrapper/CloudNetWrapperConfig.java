@@ -27,37 +27,13 @@ public class CloudNetWrapperConfig {
 
     private Configuration configuration;
 
-    private String internalIP;
+    private String internalIP, wrapperId, cloudnetHost, devServicePath, proxy_config_host;
 
-    private boolean savingRecords;
+    private boolean savingRecords,viaVersion, autoUpdate, maintenance_copy;
 
-    private String wrapperId;
+    private int cloudnetPort, startPort, processQueueSize, maxMemory, webPort;
 
-    private String cloudnetHost;
-
-    private int cloudnetPort;
-
-    private int startPort;
-
-    private int processQueueSize;
-
-    private int maxMemory;
-
-    private boolean viaVersion;
-
-    private boolean autoUpdate;
-
-    private double percentOfCPUForANewServer;
-
-    private double percentOfCPUForANewCloudServer;
-
-    private double percentOfCPUForANewProxy;
-
-    private int webPort;
-
-    private boolean maintenance_copy;
-
-    private String devServicePath;
+    private double percentOfCPUForANewServer, percentOfCPUForANewCloudServer,  percentOfCPUForANewProxy;
 
     public CloudNetWrapperConfig(ConsoleReader reader) throws Exception
     {
@@ -173,6 +149,7 @@ public class CloudNetWrapperConfig {
             configuration.set("connection.cloudnet-web", 1420);
             configuration.set("general.wrapperId", wrapperId);
             configuration.set("general.internalIp", hostName);
+            configuration.set("general.proxy-config-host", hostName);
             configuration.set("general.max-memory", memory);
             configuration.set("general.startPort", 41570);
             configuration.set("general.auto-update", true);
@@ -214,21 +191,19 @@ public class CloudNetWrapperConfig {
             this.cloudnetHost = configuration.getString("connection.cloudnet-host");
             this.cloudnetPort = configuration.getInt("connection.cloudnet-port");
             this.webPort = configuration.getInt("connection.cloudnet-web");
-
-            if(!configuration.getSection("general").self.containsKey("percentOfCPUForANewCloudServer"))
-            {
-                configuration.set("general.percentOfCPUForANewCloudServer", 70D);
-                save();
-            }
-
-            if(!configuration.getSection("general").self.containsKey("devservicePath"))
-            {
-                configuration.set("general.devservicePath", new File("Development").getAbsolutePath());
-                save();
-            }
-
             this.percentOfCPUForANewCloudServer = configuration.getDouble("general.percentOfCPUForANewCloudServer");
             this.devServicePath = configuration.getString("general.devservicePath");
+
+            if(!configuration.getSection("general").self.containsKey("proxy-config-host"))
+            {
+                configuration.set("proxy-config-host", this.internalIP);
+                save();
+            }
+
+            //generatated configurations
+
+            this.proxy_config_host = configuration.getString("general.proxy-config-host");
+
             if(!Files.exists(Paths.get(devServicePath)))
             {
                 Files.createDirectories(Paths.get(devServicePath));

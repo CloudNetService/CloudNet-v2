@@ -15,8 +15,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
-        <netty.version>4.0.40.Final</netty.version>
-        <service.version>2.1.PXXIII</service.version>
+        <netty.version>4.0.54.Final</netty.version>
+        <service.version>2.1.Pv24F0</service.version>
         <service.type>PRE</service.type>
     </properties>
 

@@ -28,6 +28,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -229,7 +230,8 @@ public class CloudProxy implements ICloudService {
 
     public void update()
     {
-        ProxyInfo proxyInfo = new ProxyInfo(CloudAPI.getInstance().getServiceId(), "localhost", 0, true,
+        ProxyInfo proxyInfo = new ProxyInfo(CloudAPI.getInstance().getServiceId(),
+                CloudAPI.getInstance().getConfig().getString("host"), 0, true,
                 new ArrayList<>(CollectionWrapper.transform(ProxyServer.getInstance().getPlayers(), new Catcher<MultiValue<UUID, String>, ProxiedPlayer>() {
                     @Override
                     public MultiValue<UUID, String> doCatch(ProxiedPlayer key)
@@ -472,13 +474,30 @@ public class CloudProxy implements ICloudService {
 
         private boolean handle(String channel, String message, Document document)
         {
+
             if (channel.equalsIgnoreCase("cloudnet_internal"))
             {
+
+                if (message.equalsIgnoreCase("sendMessage"))
+                {
+                    UUID uniqueId = document.getObject("uniqueId", UUID.class);
+                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+
+                    if (proxiedPlayer != null)
+                        proxiedPlayer.sendMessage(new TextComponent(TextComponent.fromLegacyText(document.getString("message"))));
+
+                    return true;
+                }
+
                 if (message.equalsIgnoreCase("kickPlayer"))
                 {
-                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(document.getObject("uniqueId", UUID.class));
+                    UUID uniqueId = document.getObject("uniqueId", UUID.class);
+                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+
                     if (proxiedPlayer != null)
                         proxiedPlayer.disconnect(document.getString("reason"));
+
+                    return true;
                 }
 
                 if (message.equalsIgnoreCase("sendPlayer"))
@@ -490,14 +509,19 @@ public class CloudProxy implements ICloudService {
                         if (proxiedPlayer != null)
                             proxiedPlayer.connect(serverInfo);
                     }
+                    return true;
                 }
 
-                if (message.equalsIgnoreCase("sendMessage"))
+                if(message.equalsIgnoreCase("player_server_switch"))
                 {
-                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(document.getObject("uniqueId", UUID.class));
-                    if (proxiedPlayer != null)
-                        proxiedPlayer.sendMessage(document.getString("message"));
+                    ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerServerSwitchEvent(
+                            document.getObject("player", CloudPlayer.TYPE),
+                            document.getString("server")));
+
+                    return true;
                 }
+
+
                 return true;
             }
             else return false;

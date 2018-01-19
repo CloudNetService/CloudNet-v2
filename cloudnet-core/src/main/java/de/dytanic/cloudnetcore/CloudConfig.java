@@ -4,19 +4,11 @@
 
 package de.dytanic.cloudnetcore;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.proxylayout.DynamicFallback;
-import de.dytanic.cloudnet.lib.proxylayout.ServerFallback;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.server.ServerGroupMode;
-import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
-import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.user.BasicUser;
 import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
@@ -36,11 +28,9 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
-import javax.print.Doc;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,41 +43,25 @@ import java.util.*;
 @Getter
 public class CloudConfig {
 
-    private static final ConfigurationProvider configurationProvider = ConfigurationProvider.getProvider(YamlConfiguration.class);
+    private static final ConfigurationProvider CONFIGURATION_PROVIDER = ConfigurationProvider.getProvider(YamlConfiguration.class);
 
-    private final Path configPath = Paths.get("config.yml");
-
-    private final Path servicePath = Paths.get("services.json");
-
-    private final Path usersPath = Paths.get("users.json");
+    private final Path configPath = Paths.get("config.yml"), servicePath = Paths.get("services.json"),  usersPath = Paths.get("users.json");
 
     private Collection<ConnectableAddress> addresses;
 
-    private boolean autoUpdate;
+    private boolean autoUpdate, notifyService, cloudDynamicServices,  cloudDevServices;
 
-    private String formatSplitter;
-
-    private boolean notifyService;
-
-    private String wrapperKey;
+    private String formatSplitter, wrapperKey;
 
     private WebServerConfig webServerConfig;
 
     private List<WrapperMeta> wrappers;
 
-    private boolean cloudDynamicServices;
-
-    private boolean cloudDevServices;
-
     private Configuration config;
 
-    private Document serviceDocument;
+    private Document serviceDocument, userDocument;
 
-    private Document userDocument;
-
-    private List<String> disabledModules;
-
-    private List<String> cloudServerWrapperList;
+    private List<String> disabledModules, cloudServerWrapperList;
 
     private Map<String, Object> networkProperties;
 
@@ -154,7 +128,7 @@ public class CloudConfig {
 
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8))
         {
-            configurationProvider.save(configuration, outputStreamWriter);
+            CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
         }
     }
 
@@ -200,7 +174,7 @@ public class CloudConfig {
 
         try (InputStream inputStream = Files.newInputStream(configPath); InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8))
         {
-            Configuration configuration = configurationProvider.load(inputStreamReader);
+            Configuration configuration = CONFIGURATION_PROVIDER.load(inputStreamReader);
             this.config = configuration;
 
             String host = configuration.getString("server.hostaddress");
@@ -230,7 +204,7 @@ public class CloudConfig {
 
                 try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8))
                 {
-                    configurationProvider.save(configuration, outputStreamWriter);
+                    CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
                 }
             }
 
@@ -240,7 +214,7 @@ public class CloudConfig {
 
                 try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8))
                 {
-                    configurationProvider.save(configuration, outputStreamWriter);
+                    CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
                 }
             }
 

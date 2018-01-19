@@ -100,12 +100,19 @@ public class ProxiedListener implements Listener {
     {
         CloudPlayer cloudPlayer = CloudProxy.getInstance().getCloudPlayers().get(e.getPlayer().getUniqueId());
         cloudPlayer.setServer(e.getPlayer().getServer().getInfo().getName());
+
         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutUpdateOnlinePlayer(cloudPlayer));
+
+        CloudAPI.getInstance().sendCustomSubProxyMessage(
+                "cloudnet_internal",
+                "player_server_switch",
+                new Document("player", cloudPlayer)
+                .append("server", e.getPlayer().getServer().getInfo().getName())
+        );
+
         if (CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance().getProxyGroup().getProxyConfig().isEnabled() &&
                 CloudProxy.getInstance().getProxyGroup().getProxyConfig().getTabList().isEnabled())
-        {
             initTabHeaderFooter(e.getPlayer());
-        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

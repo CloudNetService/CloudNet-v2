@@ -228,14 +228,10 @@ public class BungeeCord implements ServerDispatcher {
 
                 Files.createDirectory(Paths.get(path + "/plugins"));
                 for (ServerInstallablePlugin plugin : proxyProcessMeta.getDownloadablePlugins())
-                {
                     FileCopy.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
-                }
 
                 for (ServerInstallablePlugin plugin : proxyGroup.getTemplate().getInstallablePlugins())
-                {
                     FileCopy.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
-                }
 
                 TemplateLoader templateLoader = new TemplateLoader(proxyProcessMeta.getUrl(), "local/templates/" + proxyGroup.getName() + "/template.zip");
                 System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getServerId());
@@ -318,27 +314,45 @@ public class BungeeCord implements ServerDispatcher {
         }
 
         if (!Files.exists(Paths.get(path + "/server-icon.png")) && Files.exists(Paths.get("local/server-icon.png")))
-        {
             FileCopy.copyFileToDirectory(new File("local/server-icon.png"), new File(path));
-        }
 
         Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
         FileCopy.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
-        FileCopy.rewriteFileUtils(new File(path + "/config.yml"), CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP() + ":" + this.proxyProcessMeta.getPort());
+        FileCopy.rewriteFileUtils(new File(path + "/config.yml"), CloudNetWrapper.getInstance().getWrapperConfig().getProxy_config_host() + ":" + this.proxyProcessMeta.getPort());
+
+        if (CloudNetWrapper.getInstance().getWrapperConfig().isViaVersion())
+        {
+            if (!Files.exists(Paths.get("local/ViaVersion-Proxied.jar")))
+            {
+                try
+                {
+                    System.out.println("Downloading ViaVersion...");
+                    URLConnection url = new URL("https://ci.viaversion.com/job/ViaVersion/lastSuccessfulBuild/artifact/jar/target/ViaVersion-1.3.0.jar").openConnection();
+                    url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                    url.connect();
+                    Files.copy(url.getInputStream(), Paths.get("local/ViaVersion-Proxied.jar"));
+                    ((HttpURLConnection) url).disconnect();
+                    System.out.println("Download complete successfully!");
+                } catch (Exception ex)
+                {
+
+                }
+            }
+            FileCopy.copyFileToDirectory(new File("local/ViaVersion-Proxied.jar"), new File(path + "/plugins"));
+        }
 
         this.proxyInfo = new ProxyInfo(proxyProcessMeta.getServiceId(),
                 CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP(),
                 proxyProcessMeta.getPort(), false, new LinkedList<>(), proxyProcessMeta.getMemory(), 0);
 
         if (!Files.exists(Paths.get(path + "/CLOUD")))
-        {
             Files.createDirectory(Paths.get(path + "/CLOUD"));
-        }
 
         new Document()
                 .append("serviceId", proxyProcessMeta.getServiceId())
                 .append("proxyProcess", proxyProcessMeta)
+                .append("host", CloudNetWrapper.getInstance().getWrapperConfig().getProxy_config_host() + ":" + this.proxyProcessMeta.getPort())
                 .append("proxyInfo", proxyInfo)
                 .append("ssl", CloudNetWrapper.getInstance().getOptionSet().has("ssl"))
                 .append("memory", proxyProcessMeta.getMemory()).saveAsConfig(Paths.get(path + "/CLOUD/config.json"));

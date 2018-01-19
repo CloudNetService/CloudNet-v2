@@ -158,7 +158,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         thread.setDaemon(true);
         thread.start();
 
-        commandManager.registerCommand(new CommandHelp()).registerCommand(new CommandClear()).registerCommand(new CommandClearCache()).registerCommand(new CommandStop()).registerCommand(new CommandReload());
+        commandManager.registerCommand(new CommandHelp()).registerCommand(new CommandClear()).registerCommand(new CommandVersion()).registerCommand(new CommandClearCache()).registerCommand(new CommandStop()).registerCommand(new CommandReload());
 
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE, PacketInWrapperInfo.class);
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 1, PacketInStartProxy.class);
@@ -203,6 +203,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
             networkConnection.sendPacket(new PacketOutSetReadyWrapper(true));
             IWrapperHandler iWrapperHandler = new StopTimeHandler();
             IWrapperHandler iWrapperHandler1 = new CPUUsageHandler();
+
             scheduler.runTaskRepeatSync(iWrapperHandler.toExecutor(), 0, iWrapperHandler.getTicks());
             scheduler.runTaskRepeatSync(iWrapperHandler1.toExecutor(), 0, iWrapperHandler1.getTicks());
 

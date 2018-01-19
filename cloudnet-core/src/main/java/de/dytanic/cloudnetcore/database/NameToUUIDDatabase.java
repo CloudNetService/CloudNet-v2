@@ -26,22 +26,20 @@ public class NameToUUIDDatabase extends DatabaseUseable {
 
     public DatabaseImpl a()
     {
-        return ((DatabaseImpl)database);
+        return ((DatabaseImpl) database);
     }
 
     public void append(MultiValue<String, UUID> values)
     {
-        if(!a().containsDoc(values.getFirst()))
-        {
-            Document document = new DatabaseDocument(values.getFirst()).append("uniqueId", values.getSecond());
-            database.insert(document);
-        }
+        if (!a().containsDoc(values.getFirst()))
+            database.insert(new DatabaseDocument(values.getFirst()).append("uniqueId", values.getSecond()));
+        else
+            database.insert(database.getDocument(values.getFirst()).append("uniqueId", values.getSecond()));
 
-        if(!a().containsDoc(values.getSecond().toString()))
-        {
-            Document document = new DatabaseDocument(values.getSecond().toString()).append("name", values.getFirst());
-            database.insert(document);
-        }
+        if (!a().containsDoc(values.getSecond().toString()))
+            database.insert(new DatabaseDocument(values.getSecond().toString()).append("name", values.getFirst()));
+        else
+            database.insert(database.getDocument(values.getSecond().toString()).append("name", values.getFirst()));
     }
 
     public void replace(MultiValue<UUID, String> replacer)
@@ -53,17 +51,18 @@ public class NameToUUIDDatabase extends DatabaseUseable {
 
     public UUID get(String name)
     {
-        if(a().containsDoc(name))
+        if (a().containsDoc(name))
         {
             Document document = database.getDocument(name);
-            return document.getObject("uniqueId", new TypeToken<UUID>(){}.getType());
+            return document.getObject("uniqueId", new TypeToken<UUID>() {
+            }.getType());
         }
         return null;
     }
 
     public String get(UUID uniqueId)
     {
-        if(a().containsDoc(uniqueId.toString()))
+        if (a().containsDoc(uniqueId.toString()))
         {
             Document document = database.getDocument(uniqueId.toString());
             return document.getString("name");

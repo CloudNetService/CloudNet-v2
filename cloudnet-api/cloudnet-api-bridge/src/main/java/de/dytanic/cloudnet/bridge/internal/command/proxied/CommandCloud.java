@@ -26,15 +26,17 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 02.06.2017.
  */
-public final class CommandCloud extends Command {
+public final class CommandCloud extends Command implements TabExecutor {
 
     public CommandCloud()
     {
@@ -51,10 +53,8 @@ public final class CommandCloud extends Command {
                 if (CloudProxy.getInstance().getCachedServers().containsKey(args[1]))
                 {
                     StringBuilder builder = new StringBuilder();
-                    for (short i = 2; i < args.length; i++)
-                    {
-                        builder.append(args[i]).append(" ");
-                    }
+
+                    for (short i = 2; i < args.length; i++) builder.append(args[i]).append(" ");
 
                     CloudAPI.getInstance().sendConsoleMessage(DefaultType.BUKKIT, args[1], builder.substring(0, builder.length() - 1));
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
@@ -65,10 +65,8 @@ public final class CommandCloud extends Command {
             if (args[0].equalsIgnoreCase("cmdp"))
             {
                 StringBuilder builder = new StringBuilder();
-                for (short i = 2; i < args.length; i++)
-                {
-                    builder.append(args[i]).append(" ");
-                }
+
+                for (short i = 2; i < args.length; i++) builder.append(args[i]).append(" ");
 
                 CloudAPI.getInstance().sendConsoleMessage(DefaultType.BUNGEE_CORD, args[1], builder.substring(0, builder.length() - 1));
                 commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The information was sent to the cloud");
@@ -105,6 +103,7 @@ public final class CommandCloud extends Command {
                     commandSender.sendMessage("§7/cloud list");
                     commandSender.sendMessage("§7/cloud maintenance <group>");
                     commandSender.sendMessage("§7/cloud copy <server>");
+                    commandSender.sendMessage("§7/cloud version");
                     commandSender.sendMessage(" ");
                     return;
                 }
@@ -113,6 +112,11 @@ public final class CommandCloud extends Command {
                     CloudAPI.getInstance().sendCloudCommand("reload all");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
                             "The information was sent to the cloud");
+                    return;
+                }
+                if(args[0].equalsIgnoreCase("version"))
+                {
+                    commandSender.sendMessage("CloudNet " + NetworkUtils.class.getPackage().getSpecificationVersion() + " #" + NetworkUtils.class.getPackage().getImplementationVersion() + " by Dytanic");
                     return;
                 }
                 if (args[0].equalsIgnoreCase("rlconfig"))
@@ -489,4 +493,9 @@ public final class CommandCloud extends Command {
         }
     }
 
+    @Override
+    public Iterable<String> onTabComplete(CommandSender commandSender, String[] args)
+    {
+        return new LinkedList<>(CloudProxy.getInstance().getCachedServers().keySet());
+    }
 }

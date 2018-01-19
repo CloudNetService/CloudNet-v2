@@ -1077,9 +1077,8 @@ public final class CloudAPI implements MetaObj {
         if(cloudPlayers == null) return new ArrayList<>();
 
         for(CloudPlayer cloudPlayer : cloudPlayers)
-        {
-            cloudPlayer.setPlayerExecutor(new PlayerExecutorBridge());
-        }
+            cloudPlayer.setPlayerExecutor(PlayerExecutorBridge.INSTANCE);
+
         return cloudPlayers;
     }
 
@@ -1094,7 +1093,7 @@ public final class CloudAPI implements MetaObj {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayer(uniqueId), networkConnection);
         CloudPlayer cloudPlayer = result.getResult().getObject("player", CloudPlayer.TYPE);
         if(cloudPlayer == null) return null;
-        cloudPlayer.setPlayerExecutor(new PlayerExecutorBridge());
+        cloudPlayer.setPlayerExecutor(PlayerExecutorBridge.INSTANCE);
         return cloudPlayer;
     }
 

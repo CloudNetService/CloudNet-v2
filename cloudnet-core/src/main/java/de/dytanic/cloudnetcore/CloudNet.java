@@ -168,7 +168,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         webServer = new WebServer(optionSet.has("ssl"), config.getWebServerConfig().getAddress(), config.getWebServerConfig().getPort());
 
         //CommandManager Appending
-        this.initCommands();
+        this.initialCommands();
         this.initWebHandlers();
         this.initPacketHandlers();
 
@@ -301,7 +301,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
             }
         });
 
-        this.initCommands();
+        this.initialCommands();
         this.initWebHandlers();
         this.initPacketHandlers();
 
@@ -410,7 +410,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         webServer.getWebServerProvider().registerHandler(new WebsiteLog());
     }
 
-    private boolean initCommands()
+    private void initialCommands()
     {
         this.commandManager
                 .registerCommand(new CommandReload())
@@ -429,8 +429,9 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
                 .registerCommand(new CommandInstallPlugin())
                 .registerCommand(new CommandCopy())
                 .registerCommand(new CommandLog())
-                .registerCommand(new CommandCreate());
-        return true;
+                .registerCommand(new CommandCreate())
+                .registerCommand(new CommandVersion())
+                .registerCommand(new CommandInfo());
     }
 
     private void initPacketHandlers()

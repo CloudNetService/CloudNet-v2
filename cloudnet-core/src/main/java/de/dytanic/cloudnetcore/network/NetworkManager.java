@@ -94,6 +94,7 @@ public final class NetworkManager {
         }
 
         CloudPlayer cloudPlayer = new CloudPlayer(playerDatabase.getPlayer(cloudPlayerConnection.getUniqueId()), cloudPlayerConnection, proxyServer.getServerId());
+        cloudPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
         if(cloudPlayer.getFirstLogin() != null) cloudPlayer.setFirstLogin(System.currentTimeMillis());
 
@@ -101,6 +102,7 @@ public final class NetworkManager {
 
         CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().append(new MultiValue<>(cloudPlayerConnection.getName(), cloudPlayerConnection.getUniqueId()));
         CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().replace(new MultiValue<>(cloudPlayerConnection.getUniqueId(), cloudPlayerConnection.getName()));
+
         cloudPlayer.setName(cloudPlayerConnection.getName());
         CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(CloudPlayer.newOfflinePlayer(cloudPlayer));
 
@@ -111,11 +113,14 @@ public final class NetworkManager {
 
     public void handlePlayerLogin(CloudPlayer loginPlayer)
     {
-        loginPlayer.setPlayerExecutor(new CorePlayerExecutor());
+        loginPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
+
         CloudNet.getInstance().getEventManager().callEvent(new LoginEvent(loginPlayer));
         System.out.println("Player [" + loginPlayer.getName() + "/" + loginPlayer.getUniqueId() + "/" + loginPlayer.getPlayerConnection().getHost() + "] is connected on " + loginPlayer.getProxy());
+
         this.sendAllUpdate(new PacketOutLoginPlayer(loginPlayer));
         this.sendAll(new PacketOutUpdateOnlineCount(getOnlineCount()));
+
         StatisticManager.getInstance().addPlayerLogin();
         StatisticManager.getInstance().highestPlayerOnlineCount(getOnlineCount());
     }
@@ -156,12 +161,14 @@ public final class NetworkManager {
         CloudNet.getInstance().getEventManager().callEvent(new LogoutEventUnique(uniqueId));
         String name = CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().get(uniqueId);
         System.out.println("Player [" + name + "/" + uniqueId + "/] is disconnected on " + proxyServer.getServerId());
+
         try
         {
             this.onlinePlayers.remove(uniqueId);
         } catch (Exception ex)
         {
         }
+
         this.sendAllUpdate(new PacketOutLogoutPlayer(uniqueId));
         this.sendAll(new PacketOutUpdateOnlineCount(getOnlineCount()));
     }
@@ -195,7 +202,6 @@ public final class NetworkManager {
     public void handleServerInfoUpdate(CloudServer minecraftServer, ServerInfo incoming)
     {
         minecraftServer.setServerInfo(incoming);
-        //CloudNet.getInstance().getEventManager().callEvent(new ServerInfoUpdateEvent(minecraftServer, incoming));
         this.sendAllUpdate(new PacketOutUpdateServerInfo(incoming));
     }
 
@@ -254,13 +260,6 @@ public final class NetworkManager {
         if (cloudPlayer.getServer() != null)
         {
             System.out.println("Player [" + cloudPlayer.getName() + "/" + cloudPlayer.getUniqueId() + "/] update [server=" + cloudPlayer.getServer() + ", proxy=" + cloudPlayer.getProxy() + ", address=" + cloudPlayer.getPlayerConnection().getHost() + "]");
-
-            /*
-            MinecraftServer minecraftServer = CloudNet.getInstance().getServer(cloudPlayer.getServer());
-            if (minecraftServer != null)
-            {
-                minecraftServer.sendPacket(new PacketOutUpdatePlayer(cloudPlayer));
-            }*/
         }
     }
 
@@ -422,6 +421,17 @@ public final class NetworkManager {
             }
         });
         return this;
+    }
+
+    public CloudPlayer getOnlinePlayer(UUID uniqueId)
+    {
+        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
+            @Override
+            public boolean isAccepted(CloudPlayer cloudPlayer)
+            {
+                return cloudPlayer.getUniqueId().equals(uniqueId);
+            }
+        });
     }
 
     public NetworkManager handleServerUpdate(ServerInfo serverInfo)

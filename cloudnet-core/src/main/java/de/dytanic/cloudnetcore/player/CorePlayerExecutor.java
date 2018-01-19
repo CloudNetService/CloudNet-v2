@@ -14,11 +14,13 @@ import de.dytanic.cloudnetcore.CloudNet;
  */
 public class CorePlayerExecutor extends PlayerExecutor {
 
+    public static final PlayerExecutor INSTANCE = new CorePlayerExecutor();
+
     @Override
     public void sendMessage(CloudPlayer cloudPlayer, String message)
     {
         CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "sendMessage",
-                new Document("uniqueId", cloudPlayer.getUniqueId()).append("name", cloudPlayer.getName()).append("message", message));
+                new Document("message", message).append("name", cloudPlayer.getName()).append("uniqueId", cloudPlayer.getUniqueId()));
     }
 
     @Override

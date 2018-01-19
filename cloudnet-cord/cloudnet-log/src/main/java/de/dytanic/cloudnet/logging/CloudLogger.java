@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet.logging;
 
-import de.dytanic.cloudnet.logging.async.AsyncPrintStream;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import jline.console.ConsoleReader;
 import lombok.Getter;
@@ -111,46 +110,43 @@ public class CloudLogger
             String contents = toString(StandardCharsets.UTF_8.name());
             super.reset();
             if (!contents.isEmpty() && !contents.equals(separator))
-            {
                 logp(level, "", "", contents);
-            }
         }
     }
 
     private class LoggingHandler
             extends Handler {
 
-        public LoggingHandler()
+        public LoggingHandler() throws Exception
         {
-            try
-            {
-                setEncoding(StandardCharsets.UTF_8.name());
-            } catch (UnsupportedEncodingException e)
-            {
-            }
+            setEncoding(StandardCharsets.UTF_8.name());
         }
 
         @Override
         public void publish(LogRecord record)
         {
-            String formatet = formatter.formatMessage(record);
-            for (ICloudLoggerHandler handler : CloudLogger.this.getHandler())
-            {
-                handler.handleConsole(formatet);
-            }
+            String formatMessage = getFormatter().formatMessage(record);
+            for (ICloudLoggerHandler handler : CloudLogger.this.getHandler()) handler.handleConsole(formatMessage);
+
             if (isLoggable(record)) handle(getFormatter().format(record));
         }
 
         public void handle(String message)
         {
-            try
-            {
-                reader.print(ConsoleReader.RESET_LINE + message);
-                reader.drawLine();
-                reader.flush();
-            } catch (Exception ex)
-            {
-            }
+            AsyncPrintStream.ASYNC_QUEUE.offer(new Runnable() {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        reader.print(ConsoleReader.RESET_LINE + message);
+                        reader.drawLine();
+                        reader.flush();
+                    } catch (Exception ex)
+                    {
+                    }
+                }
+            });
         }
 
         @Override

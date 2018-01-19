@@ -46,19 +46,19 @@ public final class CloudNetServer
             ServerBootstrap serverBootstrap = new ServerBootstrap()
                     .group(bossGroup, workerGroup)
 
-                    .option(ChannelOption.IP_TOS, 24)
+                    //.option(ChannelOption.IP_TOS, 24)
                     .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                    .option(ChannelOption.TCP_NODELAY, true)
+                    //.option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.AUTO_READ, true)
-                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    //.option(ChannelOption.SO_KEEPALIVE, true)
 
                     .channel(NetworkUtils.serverSocketChannel())
 
-                    .childOption(ChannelOption.IP_TOS, 24)
+                    //.childOption(ChannelOption.IP_TOS, 24)
                     .childOption(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                    .childOption(ChannelOption.TCP_NODELAY, true)
+                    //.childOption(ChannelOption.TCP_NODELAY, true)
                     .childOption(ChannelOption.AUTO_READ, true)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    //.childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childHandler(this);
 
             CloudNet.getLogger().debug("Using " + (Epoll.isAvailable() ? "Epoll native transport" : "NIO transport"));
@@ -111,10 +111,7 @@ public final class CloudNetServer
         {
             if (cn.getChannel() == null && cn.getNetworkInfo().getHostName().equalsIgnoreCase(host))
             {
-                if (sslContext != null)
-                {
-                    channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
-                }
+                if (sslContext != null) channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
 
                 NetworkUtils.initChannel(channel);
                 channel.pipeline().addLast("client", new CloudNetClientAuth(channel, this));
@@ -123,10 +120,8 @@ public final class CloudNetServer
 
             if(cn.getNetworkInfo().getHostName().equals(host))
             {
-                if (sslContext != null)
-                {
-                    channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
-                }
+                if (sslContext != null) channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
+
                 NetworkUtils.initChannel(channel);
                 CloudNetClientAuth cloudNetProxyClientAuth = new CloudNetClientAuth(channel, this);
                 channel.pipeline().addLast("client", cloudNetProxyClientAuth);

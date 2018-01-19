@@ -2,7 +2,7 @@
  * Copyright (c) Tarek Hosni El Alaoui 2017
  */
 
-package de.dytanic.cloudnet.logging.async;
+package de.dytanic.cloudnet.logging;
 
 import lombok.Getter;
 
@@ -19,7 +19,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Getter
 public class AsyncPrintStream extends PrintStream {
 
-    private static final BlockingQueue<Runnable> asyncQueue = new LinkedBlockingQueue<>();
+    static final BlockingQueue<Runnable> ASYNC_QUEUE = new LinkedBlockingQueue<>();
+
     private static final Thread worker = new Thread() {
 
         {
@@ -35,7 +36,7 @@ public class AsyncPrintStream extends PrintStream {
             {
                 try
                 {
-                    Runnable runnable = asyncQueue.take();
+                    Runnable runnable = ASYNC_QUEUE.take();
                     runnable.run();
                 } catch (InterruptedException e)
                 {
@@ -58,7 +59,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println()
     {
-        asyncQueue.offer(new Runnable() {
+        ASYNC_QUEUE.offer(new Runnable() {
             @Override
             public void run()
             {
@@ -76,7 +77,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(int x)
     {
-        asyncQueue.offer(new Runnable() {
+        ASYNC_QUEUE.offer(new Runnable() {
             @Override
             public void run()
             {
@@ -94,7 +95,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(String x)
     {
-        asyncQueue.offer(new Runnable() {
+        ASYNC_QUEUE.offer(new Runnable() {
             @Override
             public void run()
             {
@@ -111,7 +112,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(long x)
     {
-        asyncQueue.offer(new Runnable() {
+        ASYNC_QUEUE.offer(new Runnable() {
             @Override
             public void run()
             {
@@ -129,7 +130,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(char x)
     {
-        asyncQueue.offer(new Runnable() {
+        ASYNC_QUEUE.offer(new Runnable() {
             @Override
             public void run()
             {
@@ -147,7 +148,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(double x)
     {
-        asyncQueue.offer(new Runnable() {
+        ASYNC_QUEUE.offer(new Runnable() {
             @Override
             public void run()
             {
@@ -165,7 +166,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(float x)
     {
-        asyncQueue.offer(new Runnable() {
+        ASYNC_QUEUE.offer(new Runnable() {
             @Override
             public void run()
             {
@@ -183,7 +184,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(Object x)
     {
-        asyncQueue.offer(new Runnable() {
+        ASYNC_QUEUE.offer(new Runnable() {
             @Override
             public void run()
             {
@@ -201,7 +202,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(char[] x)
     {
-        asyncQueue.offer(new Runnable() {
+        ASYNC_QUEUE.offer(new Runnable() {
             @Override
             public void run()
             {
@@ -219,7 +220,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(boolean x)
     {
-        asyncQueue.offer(new Runnable() {
+        ASYNC_QUEUE.offer(new Runnable() {
             @Override
             public void run()
             {
@@ -241,7 +242,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            asyncQueue.offer(new Runnable() {
+            ASYNC_QUEUE.offer(new Runnable() {
                 @Override
                 public void run()
                 {
@@ -265,7 +266,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            asyncQueue.offer(new Runnable() {
+            ASYNC_QUEUE.offer(new Runnable() {
                 @Override
                 public void run()
                 {
@@ -289,7 +290,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            asyncQueue.offer(new Runnable() {
+            ASYNC_QUEUE.offer(new Runnable() {
                 @Override
                 public void run()
                 {
@@ -313,7 +314,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            asyncQueue.offer(new Runnable() {
+            ASYNC_QUEUE.offer(new Runnable() {
                 @Override
                 public void run()
                 {
@@ -337,7 +338,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            asyncQueue.offer(new Runnable() {
+            ASYNC_QUEUE.offer(new Runnable() {
                 @Override
                 public void run()
                 {
@@ -361,7 +362,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            asyncQueue.offer(new Runnable() {
+            ASYNC_QUEUE.offer(new Runnable() {
                 @Override
                 public void run()
                 {
@@ -385,7 +386,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            asyncQueue.offer(new Runnable() {
+            ASYNC_QUEUE.offer(new Runnable() {
                 @Override
                 public void run()
                 {
@@ -409,7 +410,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            asyncQueue.offer(new Runnable() {
+            ASYNC_QUEUE.offer(new Runnable() {
                 @Override
                 public void run()
                 {
@@ -433,7 +434,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            asyncQueue.offer(new Runnable() {
+            ASYNC_QUEUE.offer(new Runnable() {
                 @Override
                 public void run()
                 {
