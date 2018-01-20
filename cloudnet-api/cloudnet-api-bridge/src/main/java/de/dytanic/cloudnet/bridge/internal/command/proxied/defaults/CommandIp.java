@@ -14,7 +14,7 @@ public class CommandIp extends Command {
 
     public CommandIp()
     {
-        super("ip");
+        super("ip", "bungeecord.command.ip");
     }
 
     @Override
