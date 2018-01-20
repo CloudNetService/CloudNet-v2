@@ -619,7 +619,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
             {
                 atomicInteger.addAndGet(obj.getUsedMemory());
 
-                for (Trio<Integer, Integer, ServiceId> serviceIdTrio : obj.getWaitingServices().values())
+                for (Quad<Integer, Integer, ServiceId, Template> serviceIdTrio : obj.getWaitingServices().values())
                 {
                     atomicInteger.addAndGet(serviceIdTrio.getSecond());
                 }
@@ -852,7 +852,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
         for (Wrapper wrapper : wrappers.values())
         {
-            for (Map.Entry<String, Trio<Integer, Integer, ServiceId>> serviceId : wrapper.getWaitingServices().entrySet())
+            for (Map.Entry<String, Quad<Integer, Integer, ServiceId, Template>> serviceId : wrapper.getWaitingServices().entrySet())
             {
                 if (serviceId.getValue().getThird().getGroup().equalsIgnoreCase(group))
                     strings.add(serviceId.getKey());
@@ -873,7 +873,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
         for (Wrapper wrapper : wrappers.values())
         {
-            for (Map.Entry<String, Trio<Integer, Integer, ServiceId>> serviceId : wrapper.getWaitingServices().entrySet())
+            for (Map.Entry<String, Quad<Integer, Integer, ServiceId, Template>> serviceId : wrapper.getWaitingServices().entrySet())
             {
                 if (serviceId.getValue().getThird().getGroup().equalsIgnoreCase(group))
                     strings.add(new Trio<>(serviceId.getKey(), 0, 0));
@@ -894,7 +894,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
         for (Wrapper wrapper : wrappers.values())
         {
-            for (Map.Entry<String, Trio<Integer, Integer, ServiceId>> serviceId : wrapper.getWaitingServices().entrySet())
+            for (Map.Entry<String, Quad<Integer, Integer, ServiceId, Template>> serviceId : wrapper.getWaitingServices().entrySet())
             {
                 if (serviceId.getValue().getThird().getGroup().equalsIgnoreCase(group))
                     strings.add(serviceId.getValue().getThird());
@@ -915,7 +915,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
         for (Wrapper wrapper : wrappers.values())
         {
-            for (Map.Entry<String, Trio<Integer, Integer, ServiceId>> serviceId : wrapper.getWaitingServices().entrySet())
+            for (Map.Entry<String, Quad<Integer, Integer, ServiceId, Template>> serviceId : wrapper.getWaitingServices().entrySet())
             {
                 strings.add(serviceId.getKey());
             }
@@ -935,7 +935,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
         for (Wrapper wrapper : wrappers.values())
         {
-            for (Trio<Integer, Integer, ServiceId> serviceId : wrapper.getWaitingServices().values())
+            for (Quad<Integer, Integer, ServiceId, Template> serviceId : wrapper.getWaitingServices().values())
             {
                 if (serviceId.getThird().getGroup().equalsIgnoreCase(group))
                     strings.add(serviceId.getThird().getServerId());
@@ -956,7 +956,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
         for (Wrapper wrapper : wrappers.values())
         {
-            for (Trio<Integer, Integer, ServiceId> serviceId : wrapper.getWaitingServices().values())
+            for (Quad<Integer, Integer, ServiceId, Template> serviceId : wrapper.getWaitingServices().values())
             {
                 if (serviceId.getThird().getGroup().equalsIgnoreCase(group))
                     strings.add(serviceId.getThird());
@@ -981,9 +981,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         Map<String, CloudServer> cloudServerMap = new HashMap<>();
 
         for (Wrapper wrapper : wrappers.values())
-        {
             NetworkUtils.addAll(cloudServerMap, wrapper.getCloudServers());
-        }
 
         return cloudServerMap;
     }
@@ -1525,6 +1523,19 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
             }
         });
 
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+            @Override
+            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            {
+                Template template = obj.getFourth();
+                if(template != null)
+                {
+                    if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
+                    else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+                }
+            }
+        });
+
         for (Template template : serverGroup.getTemplates())
         {
             if (!templateMap.containsKey(template.getName()))
@@ -1592,6 +1603,19 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
                     templateMap.put(template.getName(), 1);
                 else
                     templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+            }
+        });
+
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+            @Override
+            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            {
+                Template template = obj.getFourth();
+                if(template != null)
+                {
+                    if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
+                    else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+                }
             }
         });
 
@@ -1727,6 +1751,19 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
             }
         });
 
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+            @Override
+            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            {
+                Template template = obj.getFourth();
+                if(template != null)
+                {
+                    if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
+                    else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+                }
+            }
+        });
+
         for (Template template : serverGroup.getTemplates())
         {
             if (!templateMap.containsKey(template.getName()))
@@ -1791,24 +1828,34 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
             }
         });
         collection.addAll(wrapper.getBinndedPorts());
+
         CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
             @Override
             public void run(MinecraftServer obj)
             {
                 Template template = obj.getProcessMeta().getTemplate();
-                if (!templateMap.containsKey(template.getName()))
-                    templateMap.put(template.getName(), 1);
-                else
-                    templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+                if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
+                else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+            }
+        });
+
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+            @Override
+            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            {
+                Template template = obj.getFourth();
+                if(template != null)
+                {
+                    if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
+                    else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+                }
             }
         });
 
         for (Template template : serverGroup.getTemplates())
         {
-            if (!templateMap.containsKey(template.getName()))
-                templateMap.put(template.getName(), 1);
-            else
-                templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+            if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
+            else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
         }
 
         Map.Entry<String, Integer> entry = null;
@@ -2149,6 +2196,19 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
             }
         });
 
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+            @Override
+            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            {
+                Template template = obj.getFourth();
+                if(template != null)
+                {
+                    if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
+                    else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+                }
+            }
+        });
+
         for (Template template : serverGroup.getTemplates())
         {
             if (!templateMap.containsKey(template.getName()))
@@ -2218,6 +2278,19 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
                     templateMap.put(template.getName(), 1);
                 else
                     templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+            }
+        });
+
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+            @Override
+            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            {
+                Template template = obj.getFourth();
+                if(template != null)
+                {
+                    if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
+                    else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+                }
             }
         });
 
@@ -2293,6 +2366,19 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
                     templateMap.put(template.getName(), 1);
                 else
                     templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+            }
+        });
+
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+            @Override
+            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            {
+                Template template = obj.getFourth();
+                if(template != null)
+                {
+                    if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
+                    else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
+                }
             }
         });
 

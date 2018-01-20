@@ -12,6 +12,7 @@ import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
+import de.dytanic.cloudnet.lib.utility.Quad;
 import de.dytanic.cloudnet.lib.utility.Trio;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
@@ -61,7 +62,7 @@ public final class Wrapper
     private final java.util.Map<String, CloudServer> cloudServers = new ConcurrentHashMap<>();
 
     // Group, ServiceId
-    private final java.util.Map<String, Trio<Integer, Integer, ServiceId>> waitingServices = new ConcurrentHashMap<>();
+    private final java.util.Map<String, Quad<Integer, Integer, ServiceId, Template>> waitingServices = new ConcurrentHashMap<>();
 
     @Setter
     private int maxMemory = 0;
@@ -105,9 +106,9 @@ public final class Wrapper
     {
         AtomicInteger integer = new AtomicInteger(getUsedMemory());
 
-        CollectionWrapper.iterator(this.waitingServices.values(), new Runnabled<Trio<Integer, Integer, ServiceId>>() {
+        CollectionWrapper.iterator(this.waitingServices.values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
             @Override
-            public void run(Trio<Integer, Integer, ServiceId> obj)
+            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 integer.addAndGet(obj.getSecond());
             }
@@ -211,7 +212,7 @@ public final class Wrapper
     public Collection<Integer> getBinndedPorts()
     {
         Collection<Integer> ports = new ArrayList<>();
-        for(Trio<Integer, Integer, ServiceId> serviceIdValues : waitingServices.values())
+        for(Quad<Integer, Integer, ServiceId, Template> serviceIdValues : waitingServices.values())
         {
             ports.add(serviceIdValues.getFirst());
         }
@@ -234,7 +235,7 @@ public final class Wrapper
         sendPacket(new PacketOutStartProxy(proxyProcessMeta));
         System.out.println("Proxy [" + proxyProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
-        this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(), new Trio<>(proxyProcessMeta.getPort(), proxyProcessMeta.getMemory(), proxyProcessMeta.getServiceId()));
+        this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(), new Quad<>(proxyProcessMeta.getPort(), proxyProcessMeta.getMemory(), proxyProcessMeta.getServiceId(), null));
     }
 
     public void startProxyAsync(ProxyProcessMeta proxyProcessMeta)
@@ -242,7 +243,7 @@ public final class Wrapper
         sendPacket(new PacketOutStartProxy(proxyProcessMeta, true));
         System.out.println("Proxy [" + proxyProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
-        this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(), new Trio<>(proxyProcessMeta.getPort(), proxyProcessMeta.getMemory(), proxyProcessMeta.getServiceId()));
+        this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(), new Quad<>(proxyProcessMeta.getPort(), proxyProcessMeta.getMemory(), proxyProcessMeta.getServiceId(), null));
     }
 
     public void startGameServer(ServerProcessMeta serverProcessMeta)
@@ -250,7 +251,7 @@ public final class Wrapper
         sendPacket(new PacketOutStartServer(serverProcessMeta));
         System.out.println("Server [" + serverProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
-        this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(), new Trio<>(serverProcessMeta.getPort(), serverProcessMeta.getMemory(), serverProcessMeta.getServiceId()));
+        this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(), new Quad<>(serverProcessMeta.getPort(), serverProcessMeta.getMemory(), serverProcessMeta.getServiceId(), serverProcessMeta.getTemplate()));
     }
 
     public void startGameServerAsync(ServerProcessMeta serverProcessMeta)
@@ -258,7 +259,7 @@ public final class Wrapper
         sendPacket(new PacketOutStartServer(serverProcessMeta, true));
         System.out.println("Server [" + serverProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
-        this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(), new Trio<>(serverProcessMeta.getPort(), serverProcessMeta.getMemory(), serverProcessMeta.getServiceId()));
+        this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(), new Quad<>(serverProcessMeta.getPort(), serverProcessMeta.getMemory(), serverProcessMeta.getServiceId(), serverProcessMeta.getTemplate()));
     }
 
     public void startCloudServer(CloudServerMeta cloudServerMeta)
@@ -266,7 +267,7 @@ public final class Wrapper
         sendPacket(new PacketOutStartCloudServer(cloudServerMeta));
         System.out.println("CloudServer [" + cloudServerMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
-        this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(), new Trio<>(cloudServerMeta.getPort(), cloudServerMeta.getMemory(), cloudServerMeta.getServiceId()));
+        this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(), new Quad<>(cloudServerMeta.getPort(), cloudServerMeta.getMemory(), cloudServerMeta.getServiceId(), cloudServerMeta.getTemplate()));
     }
 
     public void startCloudServerAsync(CloudServerMeta cloudServerMeta)
@@ -274,7 +275,7 @@ public final class Wrapper
         sendPacket(new PacketOutStartCloudServer(cloudServerMeta, true));
         System.out.println("CloudServer [" + cloudServerMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
-        this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(), new Trio<>(cloudServerMeta.getPort(), cloudServerMeta.getMemory(), cloudServerMeta.getServiceId()));
+        this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(), new Quad<>(cloudServerMeta.getPort(), cloudServerMeta.getMemory(), cloudServerMeta.getServiceId(), cloudServerMeta.getTemplate()));
     }
 
     public Wrapper stopServer(MinecraftServer minecraftServer)
