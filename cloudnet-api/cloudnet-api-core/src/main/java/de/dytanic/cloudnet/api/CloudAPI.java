@@ -54,14 +54,12 @@ public final class CloudAPI implements MetaObj {
     private int memory;
     private Runnable shutdownTask;
 
-    private Scheduler scheduler = new Scheduler(20);
-    private Thread thread = new Thread(scheduler);
     private ICloudService cloudService = null;
 
     //Init
     private CloudNetwork cloudNetwork = new CloudNetwork();
     private NetworkHandlerProvider networkHandlerProvider = new NetworkHandlerProvider();
-    private DatabaseManager databaseManager = new DatabaseManager(scheduler);
+    private DatabaseManager databaseManager = new DatabaseManager();
 
     public CloudAPI(CloudConfigLoader loader, Runnable cancelTask)
     {
@@ -107,17 +105,12 @@ public final class CloudAPI implements MetaObj {
     {
         this.networkConnection.tryConnect(config.getBoolean("ssl"), new NetDispatcher(networkConnection, false), new Auth(serviceId), shutdownTask);
         NetworkUtils.header();
-
-        thread.setDaemon(true);
-        thread.start();
     }
 
     @Deprecated
     public void shutdown()
     {
         this.networkConnection.tryDisconnect();
-        scheduler.cancelAllTasks();
-        thread.stop();
     }
 
     @Deprecated
@@ -164,15 +157,6 @@ public final class CloudAPI implements MetaObj {
     public ICloudService getCloudService()
     {
         return cloudService;
-    }
-
-    /**
-     * Returns the Scheduler from the cloudnet with 20 ticks
-     * @return
-     */
-    public Scheduler getScheduler()
-    {
-        return scheduler;
     }
 
     /**

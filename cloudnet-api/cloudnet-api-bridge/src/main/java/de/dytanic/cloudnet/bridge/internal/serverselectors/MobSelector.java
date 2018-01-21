@@ -305,9 +305,11 @@ public final class MobSelector {
                 }
 
                 while (index.getValue() < (mob.getInventory().getSize()))
+                {
                     if (!mobConfig.getDefaultItemInventory().containsKey(index.getValue() + 1))
                         mob.getInventory().setItem(index.getValue(), new ItemStack(Material.AIR));
                     index.setValue(index.getValue() + 1);
+                }
             }
     }
 

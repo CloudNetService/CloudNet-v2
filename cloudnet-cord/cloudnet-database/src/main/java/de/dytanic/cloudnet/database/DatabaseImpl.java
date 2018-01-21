@@ -168,9 +168,7 @@ public class DatabaseImpl
     public void save()
     {
         for(Document document : documents.values())
-        {
-            document.saveAsConfig(new File("database/" + this.name + "/" + document.getString(UNIQUE_NAME_KEY)));
-        }
+            document.saveAsConfig0(new File("database/" + this.name + "/" + document.getString(UNIQUE_NAME_KEY)));
     }
 
     public void clear()

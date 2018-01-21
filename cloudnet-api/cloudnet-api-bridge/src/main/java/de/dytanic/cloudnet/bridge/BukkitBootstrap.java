@@ -125,7 +125,7 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
 
                 if (CloudServer.getInstance().getGroupData() != null)
                 {
-                    CloudAPI.getInstance().getScheduler().runTaskRepeatSync(new Runnable() {
+                    getServer().getScheduler().runTaskTimer(BukkitBootstrap.this, new Runnable() {
                         @Override
                         public void run()
                         {

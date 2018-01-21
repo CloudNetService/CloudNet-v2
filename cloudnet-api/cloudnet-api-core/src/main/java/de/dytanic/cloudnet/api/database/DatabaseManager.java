@@ -18,15 +18,9 @@ public class DatabaseManager {
 
     private Map<String, Database> databaseMap = new ConcurrentHashMap<>();
 
-    public DatabaseManager(Scheduler scheduler)
+    public DatabaseManager()
     {
-        scheduler.runTaskRepeatSync(new Runnable() {
-            @Override
-            public void run()
-            {
-                databaseMap.clear();
-            }
-        }, 0, 1000);
+
     }
 
     public Collection<Database> getCachedDatabases()

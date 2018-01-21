@@ -294,7 +294,6 @@ public class Document
 
     public boolean saveAsConfig(File backend)
     {
-
         if (backend == null) return false;
 
         if (backend.exists())
@@ -305,6 +304,27 @@ public class Document
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(backend), "UTF-8"))
         {
             GSON.toJson(dataCatcher, (writer));
+            return true;
+        } catch (IOException ex)
+        {
+            ex.getStackTrace();
+        }
+        return false;
+    }
+
+    @Deprecated
+    public boolean saveAsConfig0(File backend)
+    {
+        if (backend == null) return false;
+
+        if (backend.exists())
+        {
+            backend.delete();
+        }
+
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(backend), "UTF-8"))
+        {
+            NetworkUtils.GSON.toJson(dataCatcher, (writer));
             return true;
         } catch (IOException ex)
         {
