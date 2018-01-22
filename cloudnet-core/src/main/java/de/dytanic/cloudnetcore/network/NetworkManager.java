@@ -258,9 +258,7 @@ public final class NetworkManager {
         this.sendAllUpdate(new PacketOutUpdatePlayer(cloudPlayer));
 
         if (cloudPlayer.getServer() != null)
-        {
             System.out.println("Player [" + cloudPlayer.getName() + "/" + cloudPlayer.getUniqueId() + "/] update [server=" + cloudPlayer.getServer() + ", proxy=" + cloudPlayer.getProxy() + ", address=" + cloudPlayer.getPlayerConnection().getHost() + "]");
-        }
     }
 
     public void handleCustomChannelMessage(String channel, String message, Document document, PacketSender packetSender)
@@ -274,9 +272,7 @@ public final class NetworkManager {
         CloudNet.getInstance().getEventManager().callEvent(new WrapperLineInputEvent(wrapper, wrapperScreen));
 
         if (CloudNet.getInstance().getOptionSet().has("notifyWrappers"))
-        {
             System.out.println("[WRAPPER] " + wrapper.getServerId() + ": " + wrapperScreen.getConsoleLine());
-        }
     }
 
     public void sendProxyMessage(String channel, String message, Document document)

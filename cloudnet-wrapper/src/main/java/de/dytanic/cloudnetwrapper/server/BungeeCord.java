@@ -319,7 +319,7 @@ public class BungeeCord implements ServerDispatcher {
         Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
         FileCopy.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
-        FileCopy.rewriteFileUtils(new File(path + "/config.yml"), CloudNetWrapper.getInstance().getWrapperConfig().getProxy_config_host() + ":" + this.proxyProcessMeta.getPort());
+        FileCopy.rewriteFileUtils(new File(path + "/config.yml"),  "\""+ CloudNetWrapper.getInstance().getWrapperConfig().getProxy_config_host() + ":" + this.proxyProcessMeta.getPort() + "\"");
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isViaVersion())
         {

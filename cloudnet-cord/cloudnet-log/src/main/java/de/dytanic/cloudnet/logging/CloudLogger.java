@@ -177,7 +177,7 @@ public class CloudLogger
             }
 
             return "[" + format.format(System.currentTimeMillis()) + "/" + name + "] " + record.getLevel().getLocalizedName() + ": " +
-                    " " + formatMessage(record) + "\n" + builder.substring(0);
+                    " " + formatMessage(record) + "\n" + builder.toString();
         }
 
     }

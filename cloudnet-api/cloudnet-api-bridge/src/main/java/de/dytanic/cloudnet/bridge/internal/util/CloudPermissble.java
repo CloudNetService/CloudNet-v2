@@ -47,10 +47,8 @@ public class CloudPermissble extends PermissibleBase {
     @Override
     public boolean hasPermission(String inName)
     {
-        if(inName.equalsIgnoreCase("bukkit.broadcast.user"))
-        {
-            return true;
-        }
+        if(inName.equalsIgnoreCase("bukkit.broadcast.user")) return true;
+
         CloudPlayer cloudPlayer = CloudServer.getInstance().getCloudPlayers().get(this.unqiueId);
         if(cloudPlayer != null)
         return cloudPlayer.getPermissionEntity().hasPermission(CloudAPI.getInstance().getPermissionPool(), inName, CloudAPI.getInstance().getGroup());

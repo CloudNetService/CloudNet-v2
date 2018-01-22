@@ -20,10 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -164,6 +161,13 @@ public class BukkitListener implements Listener {
             }, 6000);
         }
 
+    }
+
+    @EventHandler
+    public void handle(PlayerKickEvent e)
+    {
+        CloudServer.getInstance().getCloudPlayers().remove(e.getPlayer().getUniqueId());
+        CloudServer.getInstance().updateAsync();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
