@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.network.packet.out.*;
 import de.dytanic.cloudnet.bridge.CloudProxy;
 import de.dytanic.cloudnet.bridge.event.proxied.ProxiedOnlineCountUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedPlayerFallbackEvent;
 import de.dytanic.cloudnet.bridge.internal.util.CloudPlayerCommandSender;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
@@ -274,6 +275,15 @@ public class ProxiedListener implements Listener {
         if (event.getPlayer().getServer() == null)
         {
             String fallback = CloudProxy.getInstance().fallback(event.getPlayer());
+            ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent(
+                    event.getPlayer(),
+                    CloudAPI.getInstance().getOnlinePlayer(event.getPlayer().getUniqueId()),
+                    fallback
+            );
+
+            ProxyServer.getInstance().getPluginManager().callEvent(proxiedPlayerFallbackEvent);
+            fallback = proxiedPlayerFallbackEvent.getFallback();
+
             if (fallback != null)
             {
                 event.setTarget(ProxyServer.getInstance().getServerInfo(fallback));
@@ -304,6 +314,16 @@ public class ProxiedListener implements Listener {
             {
                 fallback = CloudProxy.getInstance().fallback(e.getPlayer(), e.getKickedFrom().getName());
             }
+
+            ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent(
+                    e.getPlayer(),
+                    CloudAPI.getInstance().getOnlinePlayer(e.getPlayer().getUniqueId()),
+                    fallback
+            );
+
+            ProxyServer.getInstance().getPluginManager().callEvent(proxiedPlayerFallbackEvent);
+            fallback = proxiedPlayerFallbackEvent.getFallback();
+
             if (fallback != null)
             {
                 e.setCancelled(true);
