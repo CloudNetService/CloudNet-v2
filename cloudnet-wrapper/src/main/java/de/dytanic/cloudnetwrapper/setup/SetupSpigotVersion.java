@@ -153,7 +153,7 @@ public class SetupSpigotVersion
                     }
                 }
             case "paper":
-                System.out.println("Choose a PaperSpigot version [\"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\"]");
+                System.out.println("Choose a PaperSpigot version [\"1.8.8\", \"1.11.2\", \"1.12.2\"]");
                 while (true)
                 {
                     try
@@ -161,19 +161,13 @@ public class SetupSpigotVersion
                         switch (cancer == null ? reader.readLine().toLowerCase() : cancer)
                         {
                             case "1.8.8":
-                                download.run("https://ci.destroystokyo.com/job/PaperSpigot/443/artifact/paperclip-1.8.8-fix.jar");
-                                return;
-                            case "1.9.4":
-                                download.run("https://ci.destroystokyo.com/job/PaperSpigot/773/artifact/paperclip-773.jar");
-                                return;
-                            case "1.10.2":
-                                download.run("https://ci.destroystokyo.com/job/PaperSpigot/916/artifact/paperclip-916.2.jar");
+                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
                                 return;
                             case "1.11.2":
-                                download.run("https://ci.destroystokyo.com/job/PaperSpigot/1104/artifact/paperclip-1104.jar");
+                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.11.2-b1104.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://ci.destroystokyo.com/job/PaperSpigot/lastSuccessfulBuild/artifact/paperclip.jar");
+                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.12.2-b1298.jar");
                                 break;
                             default:
                                 System.out.println("This version is not supported!");
