@@ -353,26 +353,38 @@ public class Document
 
     public static Document loadDocument(File backend)
     {
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(backend), "UTF-8"))
+        return loadDocument(backend.toPath());
+    }
+
+    public static Document $loadDocument(File backend) throws Exception
+    {
+        try
         {
-            JsonObject object = PARSER.parse(new BufferedReader(reader)).getAsJsonObject();
+            return new Document(PARSER.parse(new String(Files.readAllBytes(backend.toPath()), StandardCharsets.UTF_8)).getAsJsonObject());
+        }catch (Exception ex) {
+            throw new Exception(ex);
+        }
+    }
+
+    public static Document loadDocument(Path backend)
+    {
+        /*
+        try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(backend), "UTF-8");
+             BufferedReader bufferedReader = new BufferedReader(reader))
+        {
+            JsonObject object = PARSER.parse(bufferedReader).getAsJsonObject();
             return new Document(object);
         } catch (Exception ex)
         {
             ex.getStackTrace();
         }
         return new Document();
-    }
-
-    public static Document loadDocument(Path backend)
-    {
-        try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(backend), "UTF-8"))
+        */
+        try
         {
-            JsonObject object = PARSER.parse(new BufferedReader(reader)).getAsJsonObject();
-            return new Document(object);
-        } catch (Exception ex)
-        {
-            ex.getStackTrace();
+            return new Document(PARSER.parse(new String(Files.readAllBytes(backend), StandardCharsets.UTF_8)).getAsJsonObject());
+        }catch (Exception ex) {
+            ex.printStackTrace();
         }
         return new Document();
     }

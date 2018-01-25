@@ -267,6 +267,7 @@ public final class NetworkUtils {
         System.out.println("                                                              ");
         System.out.println("«» The Cloud Network Environment Technology");
         System.out.println("«» Support https://discord.gg/5NUhKuR      [" + NetworkUtils.class.getPackage().getSpecificationVersion() + "]");
+        System.out.println("«» Java " + System.getProperty("java.version") + " @" + System.getProperty("user.name") + " " + System.getProperty("os.name") + " ");
         System.out.println(" ");
     }
 
@@ -274,6 +275,7 @@ public final class NetworkUtils {
     {
         System.out.println("«» The Cloud Network Environment Technology");
         System.out.println("«» Support https://discord.gg/5NUhKuR      [" + NetworkUtils.class.getPackage().getSpecificationVersion() + "]");
+        System.out.println("«» Java " + System.getProperty("java.version") + " @" + System.getProperty("user.name") + " " + System.getProperty("os.name") + " ");
         System.out.println(" ");
     }
 

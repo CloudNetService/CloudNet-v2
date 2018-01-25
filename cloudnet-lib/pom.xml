@@ -14,7 +14,7 @@
         <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
     </properties>
 
-    <name>CloudNet-Libary</name>
+    <name>CloudNet-Library</name>
     <url>http://dytanic.de</url>
     <description>The Dynamic API Version of the CloudNet-System</description>
     <artifactId>cloudnet-lib</artifactId>

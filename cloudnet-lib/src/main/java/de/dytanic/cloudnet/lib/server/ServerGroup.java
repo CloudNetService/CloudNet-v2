@@ -1,5 +1,6 @@
 package de.dytanic.cloudnet.lib.server;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
 import de.dytanic.cloudnet.lib.map.WrappedMap;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
@@ -10,6 +11,7 @@ import de.dytanic.cloudnet.lib.server.priority.PriorityService;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -19,6 +21,8 @@ import java.util.*;
 @Setter
 public class ServerGroup
         implements Nameable{
+
+    public static final Type TYPE = new TypeToken<ServerGroup>(){}.getType();
 
     protected String name;
     protected Collection<String> wrapper;

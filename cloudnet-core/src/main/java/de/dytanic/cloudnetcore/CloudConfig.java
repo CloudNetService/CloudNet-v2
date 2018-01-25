@@ -28,6 +28,7 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -36,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Tareko on 16.09.2017.
@@ -45,11 +47,11 @@ public class CloudConfig {
 
     private static final ConfigurationProvider CONFIGURATION_PROVIDER = ConfigurationProvider.getProvider(YamlConfiguration.class);
 
-    private final Path configPath = Paths.get("config.yml"), servicePath = Paths.get("services.json"),  usersPath = Paths.get("users.json");
+    private final Path configPath = Paths.get("config.yml"), servicePath = Paths.get("services.json"), usersPath = Paths.get("users.json");
 
     private Collection<ConnectableAddress> addresses;
 
-    private boolean autoUpdate, notifyService, cloudDynamicServices,  cloudDevServices;
+    private boolean autoUpdate, notifyService, cloudDynamicServices, cloudDevServices;
 
     private String formatSplitter, wrapperKey;
 
@@ -67,6 +69,7 @@ public class CloudConfig {
 
     public CloudConfig(ConsoleReader consoleReader) throws Exception
     {
+        if (!Files.exists(Paths.get("groups"))) Files.createDirectory(Paths.get("groups"));
         if (!Files.exists(Paths.get("local"))) Files.createDirectory(Paths.get("local"));
         if (!Files.exists(Paths.get("local/libs"))) Files.createDirectory(Paths.get("local/libs"));
         if (!Files.exists(Paths.get("local/templates"))) Files.createDirectory(Paths.get("local/templates"));
@@ -154,9 +157,11 @@ public class CloudConfig {
             }
         }
         new Document("wrapper", Arrays.asList(new WrapperMeta("Wrapper-1", hostName, "admin")))
-                .append("serverGroups", Arrays.asList(new LobbyGroup()))
+                //.append("serverGroups", Arrays.asList(new LobbyGroup()))
                 .append("proxyGroups", Arrays.asList(new BungeeGroup()))
                 .saveAsConfig(servicePath);
+
+        new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
     }
 
     private void defaultInitUsers(ConsoleReader consoleReader)
@@ -267,6 +272,7 @@ public class CloudConfig {
 
     public void createGroup(@NonNull ServerGroup serverGroup)
     {
+        /*
         Collection<ServerGroup> groups = this.serviceDocument.getObject("serverGroups", new TypeToken<Collection<ServerGroup>>() {
         }.getType());
         CollectionWrapper.checkAndRemove(groups, new Acceptable<ServerGroup>() {
@@ -279,6 +285,10 @@ public class CloudConfig {
 
         groups.add(serverGroup);
         this.serviceDocument.append("serverGroups", groups).saveAsConfig(servicePath);
+        */
+
+        new Document("group", serverGroup).saveAsConfig(Paths.get("groups/" + serverGroup.getName() + ".json"));
+
     }
 
     public void createGroup(@NonNull ProxyGroup serverGroup)
@@ -299,6 +309,7 @@ public class CloudConfig {
 
     public void deleteGroup(ServerGroup serverGroup)
     {
+        /*
         Collection<ServerGroup> groups = this.serviceDocument.getObject("serverGroups", new TypeToken<Collection<ServerGroup>>() {
         }.getType());
         CollectionWrapper.checkAndRemove(groups, new Acceptable<ServerGroup>() {
@@ -310,6 +321,9 @@ public class CloudConfig {
         });
 
         this.serviceDocument.append("serverGroups", groups).saveAsConfig(servicePath);
+        */
+
+        new File("groups/" + serverGroup.getName() + ".json").delete();
     }
 
     public void deleteGroup(ProxyGroup proxyGroup)
@@ -328,6 +342,7 @@ public class CloudConfig {
 
     public java.util.Map<String, ServerGroup> getServerGroups()
     {
+        /*
         Collection<ServerGroup> collection = serviceDocument.getObject("serverGroups", new TypeToken<Collection<ServerGroup>>() {
         }.getType());
         return MapWrapper.collectionCatcherHashMap(collection, new Catcher<String, ServerGroup>() {
@@ -337,6 +352,40 @@ public class CloudConfig {
                 return key.getName();
             }
         });
+        */
+
+        Map<String, ServerGroup> groups = new ConcurrentHashMap<>();
+
+        if (serviceDocument.contains("serverGroups"))
+        {
+
+            Collection<ServerGroup> collection = serviceDocument.getObject("serverGroups", new TypeToken<Collection<ServerGroup>>() {
+            }.getType());
+
+            for (ServerGroup serverGroup : collection)
+                createGroup(serverGroup);
+
+            serviceDocument.remove("serverGroups");
+            serviceDocument.saveAsConfig(servicePath);
+        }
+
+        File groupsDirectory = new File("groups");
+        Document entry;
+
+        if(groupsDirectory.isDirectory())
+        for(File file : groupsDirectory.listFiles())
+        {
+            try
+            {
+                entry = Document.$loadDocument(file);
+                ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
+                groups.put(serverGroup.getName(), serverGroup);
+            } catch (Throwable ex) {
+                System.out.println("Cannot load servergroup file [" + file.getName() + "]");
+            }
+        }
+
+        return groups;
     }
 
     public Map<String, ProxyGroup> getProxyGroups()

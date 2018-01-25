@@ -38,7 +38,7 @@ public final class ChatListener implements Listener {
                         .replace("%message%", e.getPlayer().hasPermission("cloudnet.chat.color") ?
                                 ChatColor.translateAlternateColorCodes('&', e.getMessage())
                                 :
-                                e.getMessage())
+                                ChatColor.stripColor(e.getMessage()))
         );
     }
 }

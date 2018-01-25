@@ -1498,6 +1498,8 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
     public void startGameServer(ServerGroup serverGroup, ServerConfig config, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
+        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(serverGroup.getWrapper()));
         if (wrapper == null) return;
 
@@ -1581,6 +1583,8 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
     public void startGameServer(ServerGroup serverGroup, String serverId, ServerConfig config, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
+        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(serverGroup.getWrapper()));
         if (wrapper == null) return;
 
@@ -1666,6 +1670,8 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
     public void startGameServer(ServerGroup serverGroup, ServerConfig config, Template template, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
+        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(serverGroup.getWrapper()));
         if (wrapper == null) return;
 
@@ -1697,6 +1703,8 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
     public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, ServerConfig config, Template template, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
+        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+
         if (wrapper == null) return;
 
         if (serverGroup.getTemplates().size() == 0) return;
@@ -1727,6 +1735,8 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
     public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, ServerConfig config, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
+        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+
         if (wrapper == null) return;
 
         if (serverGroup.getTemplates().size() == 0) return;
@@ -1816,6 +1826,8 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
 
     public void startGameServer(Wrapper wrapper, String serverId, ServerGroup serverGroup, ServerConfig config, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
+        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+
         if (wrapper == null) return;
 
         if (serverGroup.getTemplates().size() == 0) return;
