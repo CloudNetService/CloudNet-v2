@@ -375,6 +375,7 @@ public class CloudConfig {
         if(groupsDirectory.isDirectory())
         for(File file : groupsDirectory.listFiles())
         {
+            if(file.getName().endsWith(".json"))
             try
             {
                 entry = Document.$loadDocument(file);
