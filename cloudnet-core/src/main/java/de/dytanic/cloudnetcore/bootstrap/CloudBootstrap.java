@@ -113,9 +113,14 @@ public final class CloudBootstrap {
                         String dispatcher = cloudNetCore.getDbHandlers().getCommandDispatcherDatabase().findDispatcher(commandLine);
                         if (dispatcher != null)
                         {
-                            if (!cloudNetCore.getCommandManager().dispatchCommand(dispatcher))
+                            try
                             {
-                                continue;
+                                if (!cloudNetCore.getCommandManager().dispatchCommand(dispatcher))
+                                {
+                                    continue;
+                                }
+                            }catch (Exception ex) {
+                                ex.printStackTrace();
                             }
                         }
 

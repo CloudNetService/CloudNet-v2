@@ -29,7 +29,7 @@ public final class ArmorStandListener implements Listener {
             {
                 try
                 {
-                    return e.getRightClicked().getEntityId() == (int) value.getDisplayMessage().getClass().getMethod("getEntityId").invoke(value.getDisplayMessage());
+                    return e.getRightClicked().getUniqueId().equals(value.getDisplayMessage().getClass().getMethod("getUniqueId").invoke(value.getDisplayMessage()));
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1)
                 {
                     return false;

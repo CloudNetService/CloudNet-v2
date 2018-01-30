@@ -73,6 +73,7 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                         {
                             MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
                             Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
+                            entity.setFireTicks(0);
                             Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);
 
                             if(armorStand != null)
@@ -84,6 +85,7 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                                         Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(key.getItemId()));
                                         item.setTicksLived(Integer.MAX_VALUE);
                                         item.setPickupDelay(Integer.MAX_VALUE);
+                                        item.setFireTicks(0);
                                         armor.setPassenger(item);
                                     }
                             }

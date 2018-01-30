@@ -18,9 +18,7 @@ public class CustomServerConfig {
 
     private int memory;
 
-    private String group;
-
-    private String wrapper;
+    private String group, wrapper;
 
     private boolean onlineMode;
 

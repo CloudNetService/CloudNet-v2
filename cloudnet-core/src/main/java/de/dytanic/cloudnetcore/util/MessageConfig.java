@@ -41,26 +41,6 @@ public class MessageConfig {
 
         Document document = Document.loadDocument(path);
 
-        if(!document.contains("mob-selector-maintenance-message"))
-        {
-            document.append("mob-selector-maintenance-message", "§cThis group is currently in maintenance mode, please wait, before you can play!").saveAsConfig(path);
-        }
-
-        if(!document.contains("notify-message-server-add"))
-        {
-            document.append("notify-message-server-add", "§cThe server %server% is starting now...").saveAsConfig(path);
-        }
-
-        if(!document.contains("notify-message-server-remove"))
-        {
-            document.append("notify-message-server-remove", "§cThe server %server% is now stopping!").saveAsConfig(path);
-        }
-
-        if(!document.contains("hub-already"))
-        {
-            document.append("hub-already", "§cYou are already connected to a hub server").saveAsConfig(path);
-        }
-
         return document;
     }
 }

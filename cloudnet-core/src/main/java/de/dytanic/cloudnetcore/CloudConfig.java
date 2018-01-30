@@ -112,7 +112,7 @@ public class CloudConfig {
 
         Configuration configuration = new Configuration();
 
-        configuration.set("general.auto-update", true);
+        configuration.set("general.auto-update", false);
         configuration.set("general.dynamicservices", false);
         configuration.set("general.server-name-splitter", "-");
         configuration.set("general.notify-service", true);

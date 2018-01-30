@@ -368,7 +368,7 @@ public class Document
 
     public static Document loadDocument(Path backend)
     {
-        /*
+
         try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(backend), "UTF-8");
              BufferedReader bufferedReader = new BufferedReader(reader))
         {
@@ -379,7 +379,8 @@ public class Document
             ex.getStackTrace();
         }
         return new Document();
-        */
+
+        /*
         try
         {
             return new Document(PARSER.parse(new String(Files.readAllBytes(backend), StandardCharsets.UTF_8)).getAsJsonObject());
@@ -387,6 +388,7 @@ public class Document
             ex.printStackTrace();
         }
         return new Document();
+        */
     }
 
     public Document loadToExistingDocument(File backend)

@@ -47,14 +47,18 @@ public class StatisticManager extends DatabaseUseable {
     public void addPlayerLogin()
     {
         if(!statistic) return;
-        Document document = database.getDocument(NAME);
-        if (!document.contains("playerLogin"))
+        try
         {
-            document.append("playerLogin", 0L);
+            Document document = database.getDocument(NAME);
+            if (!document.contains("playerLogin"))
+            {
+                document.append("playerLogin", 0L);
+            }
+
+            document.append("playerLogin", document.getLong("playerLogin") + 1L);
+        }catch (Exception ex) {
+
         }
-
-        document.append("playerLogin", document.getLong("playerLogin") + 1L);
-
     }
 
     public void addStartedProxys()

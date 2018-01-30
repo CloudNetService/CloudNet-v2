@@ -403,7 +403,7 @@ public final class MobSelector {
                 @Override
                 public boolean isAccepted(MobImpl value)
                 {
-                    return value.getEntity().getEntityId() == e.getRightClicked().getEntityId();
+                    return value.getEntity().getUniqueId().equals(e.getRightClicked().getUniqueId());
                 }
             });
 
@@ -439,11 +439,12 @@ public final class MobSelector {
                 @Override
                 public boolean isAccepted(MobImpl value)
                 {
-                    return e.getEntity().getEntityId() == value.getEntity().getEntityId();
+                    return e.getEntity().getUniqueId().equals(value.getEntity().getUniqueId());
                 }
             });
             if (mob != null)
             {
+                e.getEntity().setFireTicks(0);
                 e.setCancelled(true);
             }
         }

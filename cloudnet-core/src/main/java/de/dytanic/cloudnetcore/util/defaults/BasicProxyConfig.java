@@ -6,6 +6,7 @@ package de.dytanic.cloudnetcore.util.defaults;
 
 import de.dytanic.cloudnet.lib.proxylayout.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BasicProxyConfig extends ProxyConfig {
@@ -25,6 +26,6 @@ public class BasicProxyConfig extends ProxyConfig {
                         "§7Twitter §8» §f@CloudNetService",
                         "§7Discord §8» §fdiscord.gg/UNQ4wET",
                         " "
-                }, Arrays.asList("Dytanic"), new DynamicFallback("Lobby", Arrays.asList(new ServerFallback("Lobby", null))));
+                }, new ArrayList<>(), new DynamicFallback("Lobby", Arrays.asList(new ServerFallback("Lobby", null))));
     }
 }

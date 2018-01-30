@@ -7,10 +7,12 @@ import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import jline.console.ConsoleReader;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Created by Tareko on 25.05.2017.
@@ -28,7 +30,10 @@ public class SetupSpigotVersion
                 URLConnection connection = new URL(url).openConnection();
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
                 connection.connect();
-                Files.copy(connection.getInputStream(), Paths.get("local/spigot.jar"));
+                try (InputStream inputStream = connection.getInputStream())
+                {
+                    Files.copy(inputStream, Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+                }
                 System.out.println("Download was successfully completed!");
             } catch (Exception e)
             {
@@ -42,7 +47,7 @@ public class SetupSpigotVersion
     {
         System.out.println("No spigot.jar has been found!");
 
-        System.out.println("Choose a minecraft server version [\"taco\", \"paper\", \"hose\", \"spigot\"]");
+        System.out.println("Choose a minecraft server version [\"taco\", \"paper\", \"hose\", \"spigot\"] | [\"dytanicspigot\" 1.8.8 BETA]");
 
         String answer = null;
 
@@ -72,8 +77,10 @@ public class SetupSpigotVersion
                     case "hose":
                         answer = "hose";
                         break;
-                    default:
-                        System.out.println("This version is not supported!");
+                    case "dytanicspigot":
+                        answer = "dytanicspigot";
+                        break;
+                    default: System.out.println("This version is not supported!");
                 }
 
             } catch (Exception ex)
@@ -91,6 +98,9 @@ public class SetupSpigotVersion
 
         switch (answer)
         {
+            case "dytanicspigot":
+                download.run("http://dytanic.de/645793465974z9724z24793zt9247tz9274nztv24zt924zt924tz9158929384/dytanicspigot.jar");
+                return;
             case "taco":
                 System.out.println("Choose a TacoSpigot version [\"1.8.8\", \"1.11.2\", \"1.12.2\"]");
                 while (true)

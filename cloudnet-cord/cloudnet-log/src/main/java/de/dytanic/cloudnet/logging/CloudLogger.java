@@ -73,6 +73,7 @@ public class CloudLogger
 
         LoggingHandler loggingHandler = new LoggingHandler();
         loggingHandler.setFormatter(formatter);
+        loggingHandler.setEncoding(StandardCharsets.UTF_8.name());
         loggingHandler.setLevel(Level.INFO);
         addHandler(loggingHandler);
 
@@ -116,11 +117,6 @@ public class CloudLogger
 
     private class LoggingHandler
             extends Handler {
-
-        public LoggingHandler() throws Exception
-        {
-            setEncoding(StandardCharsets.UTF_8.name());
-        }
 
         @Override
         public void publish(LogRecord record)

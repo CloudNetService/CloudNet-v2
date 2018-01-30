@@ -436,7 +436,7 @@ public class CommandPermissions extends Command {
             sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> remove permission <permission> <group>");
             sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDisplay <display>");
             sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setJoinPower <joinPower>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setSuffix <joinPower>");
+            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setSuffix <suffix>");
             sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setPrefix <prefix>");
             sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setTagId <tagId>");
             sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDefault <true : false>");

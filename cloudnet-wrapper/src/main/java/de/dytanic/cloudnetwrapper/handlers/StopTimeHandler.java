@@ -61,6 +61,6 @@ public final class StopTimeHandler implements IWrapperHandler {
     @Override
     public int getTicks()
     {
-        return 4;
+        return 25;
     }
 }
