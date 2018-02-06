@@ -28,11 +28,11 @@ public class PlayerDatabase extends DatabaseUseable {
         super(database);
     }
 
-    public PlayerDatabase registerPlayer(PlayerConnection playerConnection)
+    public OfflinePlayer registerPlayer(PlayerConnection playerConnection)
     {
         OfflinePlayer offlinePlayer = new OfflinePlayer(playerConnection.getUniqueId(), playerConnection.getName(), new Document(), System.currentTimeMillis(), System.currentTimeMillis(), playerConnection, null);
-        database.insert(new DatabaseDocument(offlinePlayer.getUniqueId().toString()).append("offlinePlayer", offlinePlayer));
-        return this;
+        database.insert(new DatabaseDocument(playerConnection.getUniqueId().toString()).append("offlinePlayer", offlinePlayer));
+        return offlinePlayer;
     }
 
     public PlayerDatabase updatePlayer(OfflinePlayer offlinePlayer)
@@ -46,7 +46,7 @@ public class PlayerDatabase extends DatabaseUseable {
     public PlayerDatabase updateName(UUID uuid, String name)
     {
         Document document = database.getDocument(uuid.toString());
-        OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", new TypeToken<OfflinePlayer>(){}.getType());
+        OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
         offlinePlayer.setName(name);
         database.insert(document);
         return this;
@@ -60,7 +60,7 @@ public class PlayerDatabase extends DatabaseUseable {
     public PlayerDatabase updatePermissionEntity(UUID uuid, PermissionEntity permissionEntity)
     {
         Document document = database.getDocument(uuid.toString());
-        OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", new TypeToken<OfflinePlayer>(){}.getType());
+        OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
         offlinePlayer.setPermissionEntity(permissionEntity);
         database.insert(document);
         return this;
@@ -73,6 +73,6 @@ public class PlayerDatabase extends DatabaseUseable {
 
         if(document == null) return null;
 
-        return document.getObject("offlinePlayer", new TypeToken<OfflinePlayer>(){}.getType());
+        return document.getObject("offlinePlayer", OfflinePlayer.TYPE);
     }
 }

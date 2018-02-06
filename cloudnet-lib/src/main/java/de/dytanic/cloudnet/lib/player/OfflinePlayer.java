@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.lib.player;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.player.permission.Permissible;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
@@ -12,12 +13,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.lang.reflect.Type;
 import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class OfflinePlayer implements Nameable, Permissible {
+
+    public static final Type TYPE = new TypeToken<OfflinePlayer>(){}.getType();
 
     protected UUID uniqueId;
 

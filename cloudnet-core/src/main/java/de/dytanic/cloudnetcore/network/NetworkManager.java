@@ -6,6 +6,7 @@ package de.dytanic.cloudnetcore.network;
 
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
+import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
@@ -88,12 +89,15 @@ public final class NetworkManager {
         CloudNet.getInstance().getEventManager().callEvent(loginRequestEvent);
 
         PlayerDatabase playerDatabase = CloudNet.getInstance().getDbHandlers().getPlayerDatabase();
-        if (!playerDatabase.containsPlayer(cloudPlayerConnection.getUniqueId()))
-        {
-            playerDatabase.registerPlayer(cloudPlayerConnection);
-        }
 
-        CloudPlayer cloudPlayer = new CloudPlayer(playerDatabase.getPlayer(cloudPlayerConnection.getUniqueId()), cloudPlayerConnection, proxyServer.getServerId());
+        OfflinePlayer offlinePlayer = null;
+
+        if (!playerDatabase.containsPlayer(cloudPlayerConnection.getUniqueId()))
+            offlinePlayer = playerDatabase.registerPlayer(cloudPlayerConnection);
+
+        if(offlinePlayer == null) offlinePlayer = playerDatabase.getPlayer(cloudPlayerConnection.getUniqueId());
+
+        CloudPlayer cloudPlayer = new CloudPlayer(offlinePlayer, cloudPlayerConnection, proxyServer.getServerId());
         cloudPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
         if(cloudPlayer.getFirstLogin() != null) cloudPlayer.setFirstLogin(System.currentTimeMillis());
