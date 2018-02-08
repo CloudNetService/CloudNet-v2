@@ -90,15 +90,13 @@ public final class Wrapper
     public int getUsedMemory()
     {
         int mem = 0;
+
         for (ProxyServer proxyServer : proxys.values())
-        {
             mem = mem + proxyServer.getProxyInfo().getMemory();
-        }
 
         for (MinecraftServer proxyServer : servers.values())
-        {
             mem = mem + proxyServer.getProcessMeta().getMemory();
-        }
+
         return mem;
     }
 
@@ -189,6 +187,7 @@ public final class Wrapper
         {
             simpledUser = user.toSimple();
         }
+
         WrapperExternal wrapperExternal = new WrapperExternal(CloudNet.getInstance().getNetworkManager().newCloudNetwork(), simpledUser, groups, proxyGroups);
         sendPacket(new PacketOutWrapperInfo(wrapperExternal));
         return this;
@@ -212,20 +211,15 @@ public final class Wrapper
     public Collection<Integer> getBinndedPorts()
     {
         Collection<Integer> ports = new ArrayList<>();
+
         for(Quad<Integer, Integer, ServiceId, Template> serviceIdValues : waitingServices.values())
-        {
             ports.add(serviceIdValues.getFirst());
-        }
 
         for(MinecraftServer minecraftServer : servers.values())
-        {
             ports.add(minecraftServer.getProcessMeta().getPort());
-        }
 
         for(ProxyServer proxyServer : proxys.values())
-        {
             ports.add(proxyServer.getProcessMeta().getPort());
-        }
 
         return ports;
     }
@@ -282,6 +276,7 @@ public final class Wrapper
     {
         if (this.servers.containsKey(minecraftServer.getServerId()))
             sendPacket(new PacketOutStopServer(minecraftServer.getServerInfo()));
+
         this.waitingServices.remove(minecraftServer.getServerId());
         return this;
     }
@@ -290,6 +285,7 @@ public final class Wrapper
     {
         if (this.servers.containsKey(cloudServer.getServerId()))
             sendPacket(new PacketOutStopServer(cloudServer.getServerInfo()));
+
         this.waitingServices.remove(cloudServer.getServerId());
         return this;
     }
@@ -298,6 +294,7 @@ public final class Wrapper
     {
         if (this.proxys.containsKey(proxyServer.getServerId()))
             sendPacket(new PacketOutStopProxy(proxyServer.getProxyInfo()));
+
         this.waitingServices.remove(proxyServer.getServerId());
         return this;
     }

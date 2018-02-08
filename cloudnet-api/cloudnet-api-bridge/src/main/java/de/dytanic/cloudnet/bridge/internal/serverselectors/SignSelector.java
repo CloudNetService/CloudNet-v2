@@ -644,6 +644,7 @@ public class SignSelector implements Listener {
                 signLayout = getLayout(sign.getTargetGroup(), "online");
                 layout = signLayout.getSignLayout().clone();
             }
+
             sign.setServerInfo(serverInfo);
             updateArray(layout, serverInfo);
             for (Player all : Bukkit.getOnlinePlayers())
@@ -852,6 +853,7 @@ public class SignSelector implements Listener {
             Sign sign = filter(serverInfo);
 
             if (sign != null)
+                if(CloudServer.getInstance().getPlugin() != null && CloudServer.getInstance().getPlugin().isEnabled())
                 Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
 
                     @Override

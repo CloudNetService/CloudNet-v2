@@ -161,10 +161,9 @@ public class SetupServerGroup {
                         for (short i = 0; i < wrappers.size(); i++)
                         {
                             if (!CloudNet.getInstance().getWrappers().containsKey(wrappers.get(i)))
-                            {
                                 wrappers.remove(wrappers.get(i));
-                            }
                         }
+
                         if (wrappers.size() == 0) return false; else return true;
                     }
                 }))

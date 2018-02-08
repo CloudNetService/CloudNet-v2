@@ -85,7 +85,6 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                                         Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(key.getItemId()));
                                         item.setTicksLived(Integer.MAX_VALUE);
                                         item.setPickupDelay(Integer.MAX_VALUE);
-                                        item.setFireTicks(0);
                                         armor.setPassenger(item);
                                     }
                             }

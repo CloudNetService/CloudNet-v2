@@ -9,12 +9,12 @@ import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.bridge.event.proxied.*;
+import de.dytanic.cloudnet.bridge.internal.chat.PlayerChatExecutor;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
-import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
+import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.proxylayout.ServerFallback;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
@@ -28,6 +28,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -41,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * This Class represents the Proxy Instance on based on cloudnet
  */
-public class CloudProxy implements ICloudService {
+public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
     private static CloudProxy instance;
 
@@ -459,6 +460,12 @@ public class CloudProxy implements ICloudService {
         }
 
         @Override
+        public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer)
+        {
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOfflinePlayerEvent(offlinePlayer));
+        }
+
+        @Override
         public void onUpdateOnlineCount(int onlineCount)
         {
             ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOnlineCountUpdateEvent(onlineCount));
@@ -470,6 +477,8 @@ public class CloudProxy implements ICloudService {
             if (channel.equalsIgnoreCase("cloudnet_internal"))
             {
 
+                if(message == null) return false;
+
                 if (message.equalsIgnoreCase("sendMessage"))
                 {
                     UUID uniqueId = document.getObject("uniqueId", UUID.class);
@@ -479,6 +488,16 @@ public class CloudProxy implements ICloudService {
                         proxiedPlayer.sendMessage(new TextComponent(TextComponent.fromLegacyText(document.getString("message"))));
 
                     return true;
+                }
+
+
+                if(message.equalsIgnoreCase("sendMessage_basecomponent"))
+                {
+                    UUID uniqueId = document.getObject("uniqueId", UUID.class);
+                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+
+                    if (proxiedPlayer != null)
+                        proxiedPlayer.sendMessage(document.getObject("baseComponent", BaseComponent.class));
                 }
 
                 if (message.equalsIgnoreCase("kickPlayer"))

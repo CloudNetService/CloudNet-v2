@@ -20,14 +20,8 @@ public final class StopTimeHandler implements IWrapperHandler {
             {
                 if (!gameServer.isAlive())
                 {
-                    if(System.currentTimeMillis() > (gameServer.getStartupTimeStamp() + 5000))
-                    {
-                        gameServer.shutdown();
-                    }
-                    else
-                    {
-                        gameServer.restart();
-                    }
+                    if(System.currentTimeMillis() > (gameServer.getStartupTimeStamp() + 1600)) gameServer.shutdown();
+                    else gameServer.restart();
                 }
             } catch (Exception ex) {
 
@@ -61,6 +55,6 @@ public final class StopTimeHandler implements IWrapperHandler {
     @Override
     public int getTicks()
     {
-        return 25;
+        return 10;
     }
 }

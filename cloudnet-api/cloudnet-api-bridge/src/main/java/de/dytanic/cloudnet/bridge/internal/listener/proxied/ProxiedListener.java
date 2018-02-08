@@ -278,6 +278,7 @@ public class ProxiedListener implements Listener {
             ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent(
                     event.getPlayer(),
                     CloudAPI.getInstance().getOnlinePlayer(event.getPlayer().getUniqueId()),
+                    ProxiedPlayerFallbackEvent.FallbackType.SERVER_KICK,
                     fallback
             );
 
@@ -318,6 +319,7 @@ public class ProxiedListener implements Listener {
             ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent(
                     e.getPlayer(),
                     CloudAPI.getInstance().getOnlinePlayer(e.getPlayer().getUniqueId()),
+                    ProxiedPlayerFallbackEvent.FallbackType.SERVER_KICK,
                     fallback
             );
 

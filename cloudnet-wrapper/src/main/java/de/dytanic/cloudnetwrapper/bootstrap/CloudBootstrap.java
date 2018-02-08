@@ -12,6 +12,7 @@ import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.util.HeaderFunction;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.CloudNetWrapperConfig;
+import io.netty.util.ResourceLeakDetector;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.commons.io.FileUtils;
@@ -25,6 +26,8 @@ public class CloudBootstrap {
 
     public static void main(String[] args) throws Exception
     {
+
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
 
         System.setProperty("file.encoding", "UTF-8");
         System.setProperty("java.net.preferIPv4Stack", "true");

@@ -50,7 +50,7 @@ public final class FileCopy {
         InputStream localInputStream = FileCopy.class.getClassLoader().getResourceAsStream(paramString1);
         try
         {
-            Files.copy(localInputStream, Paths.get(paramString2));
+            Files.copy(localInputStream, Paths.get(paramString2), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e)
         {
             e.printStackTrace();

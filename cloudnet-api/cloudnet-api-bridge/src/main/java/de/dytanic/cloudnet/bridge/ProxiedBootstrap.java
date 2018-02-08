@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandHub;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandPermissions;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.defaults.CommandIp;
 import de.dytanic.cloudnet.bridge.internal.listener.proxied.ProxiedListener;
-import de.dytanic.cloudnet.lib.player.OfflinePlayer;
-import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
+import de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.ProxyServer;
@@ -44,6 +43,8 @@ public class ProxiedBootstrap extends Plugin {
     @Override
     public void onEnable()
     {
+
+        DocumentRegistry.fire();
 
         getProxy().registerChannel("CloudNet");
         CloudAPI.getInstance().bootstrap();

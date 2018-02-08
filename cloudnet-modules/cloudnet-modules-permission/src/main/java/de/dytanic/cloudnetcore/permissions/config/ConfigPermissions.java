@@ -157,7 +157,7 @@ public class ConfigPermissions {
         group.set("suffix", permissionGroup.getSuffix());
         group.set("display", permissionGroup.getDisplay());
         group.set("tagId", permissionGroup.getTagId());
-        group.set("joinPower", 0);
+        group.set("joinPower", permissionGroup.getJoinPower());
         group.set("defaultGroup", permissionGroup.isDefaultGroup());
 
         Collection<String> perms = new CopyOnWriteArrayList<>();

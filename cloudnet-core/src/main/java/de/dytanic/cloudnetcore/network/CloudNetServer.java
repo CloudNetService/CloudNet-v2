@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.network;
 
 import de.dytanic.cloudnet.lib.ConnectableAddress;
@@ -15,11 +11,8 @@ import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
-import io.netty.util.ResourceLeakDetector;
 import joptsimple.OptionSet;
 import lombok.Getter;
-
-import java.util.List;
 
 /**
  * Created by Tareko on 26.05.2017.
@@ -33,7 +26,6 @@ public final class CloudNetServer
 
     public CloudNetServer(OptionSet optionSet, ConnectableAddress connectableAddress)
     {
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
         try
         {
             if (optionSet.has("ssl"))
@@ -129,7 +121,7 @@ public final class CloudNetServer
             }
         }
 
-        channel.close().syncUninterruptibly();
+        channel.close().addListener(ChannelFutureListener.CLOSE_ON_FAILURE).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
 
     }
 }

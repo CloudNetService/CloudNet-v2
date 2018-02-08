@@ -17,7 +17,18 @@ public class ProxiedPlayerFallbackEvent extends ProxiedCloudEvent {
 
     private CloudPlayer cloudPlayer;
 
+    private FallbackType fallbackType;
+
     @Setter
     private String fallback;
+
+    public enum FallbackType {
+
+        HUB_COMMAND,
+        SERVER_KICK,
+        SERVER_CONNECT,
+        CUSTOM
+
+    }
 
 }

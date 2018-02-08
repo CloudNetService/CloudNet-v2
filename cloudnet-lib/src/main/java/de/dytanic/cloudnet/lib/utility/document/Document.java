@@ -20,7 +20,7 @@ import java.util.*;
 public class Document
         implements DocumentAbstract {
 
-    protected static final Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
+    public static Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
     protected static final JsonParser PARSER = new JsonParser();
 
     @Getter

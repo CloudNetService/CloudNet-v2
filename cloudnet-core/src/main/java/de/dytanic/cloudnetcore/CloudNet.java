@@ -124,6 +124,8 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
     @Override
     public boolean bootstrap() throws Exception
     {
+        if (!optionSet.has("disable-autoupdate")) checkForUpdates();
+
         dbHandlers = new DatabaseBasicHandlers(databaseManager);
         dbHandlers.getStatisticManager().addStartup();
 
@@ -244,15 +246,6 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         if (!optionSet.has("disable-modules"))
             System.out.println("Enabling Modules...");
         moduleManager.enableModules();
-
-        if (!optionSet.has("disable-autoupdate"))
-            scheduler.runTaskAsync(new Runnable() {
-                @Override
-                public void run()
-                {
-                    checkForUpdates();
-                }
-            });
 
         //Event Init
         eventManager.callEvent(new CloudInitEvent());

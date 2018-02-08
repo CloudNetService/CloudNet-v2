@@ -22,18 +22,14 @@ public class CloudStartupHandler implements ICloudHandler {
         {
             Collection<String> servers = cloudNet.getServersAndWaitings(serverGroup.getName());
             if(servers.size() < serverGroup.getMinOnlineServers() && (serverGroup.getMaxOnlineServers() == -1 || serverGroup.getMaxOnlineServers() > servers.size()))
-            {
                 cloudNet.startGameServer(serverGroup);
-            }
         }
 
         for(ProxyGroup serverGroup : cloudNet.getProxyGroups().values())
         {
             Collection<String> servers = cloudNet.getProxysAndWaitings(serverGroup.getName());
             if(servers.size() < serverGroup.getStartup())
-            {
                 cloudNet.startProxy(serverGroup);
-            }
         }
     }
 

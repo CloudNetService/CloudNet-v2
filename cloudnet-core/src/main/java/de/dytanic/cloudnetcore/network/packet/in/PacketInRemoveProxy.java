@@ -26,10 +26,7 @@ public final class PacketInRemoveProxy extends PacketInHandler {
         if (cn.getProxys().containsKey(proxyInfo.getServiceId().getServerId()))
         {
             ProxyServer minecraftServer = cn.getProxys().get(proxyInfo.getServiceId().getServerId());
-            if (minecraftServer.getChannel() != null)
-            {
-                minecraftServer.getChannel().close().syncUninterruptibly();
-            }
+            if (minecraftServer.getChannel() != null) minecraftServer.getChannel().close();
 
             cn.getProxys().remove(proxyInfo.getServiceId().getServerId());
             CloudNet.getInstance().getNetworkManager().handleProxyRemove(minecraftServer);

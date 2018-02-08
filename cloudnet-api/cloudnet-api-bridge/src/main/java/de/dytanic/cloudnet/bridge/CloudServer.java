@@ -14,6 +14,7 @@ import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
+import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
@@ -583,6 +584,12 @@ public class CloudServer implements ICloudService {
                 cloudPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
             }
             Bukkit.getPluginManager().callEvent(new BukkitPlayerUpdateEvent(cloudPlayer));
+        }
+
+        @Override
+        public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer)
+        {
+            Bukkit.getPluginManager().callEvent(new BukkitOfflinePlayerUpdateEvent(offlinePlayer));
         }
 
         @Override

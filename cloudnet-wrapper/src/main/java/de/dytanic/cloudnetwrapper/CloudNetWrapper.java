@@ -109,6 +109,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
 
     public CloudNetWrapper(OptionSet optionSet, CloudNetWrapperConfig cloudNetWrapperConfig, CloudLogger cloudNetLogging) throws Exception
     {
+
         if (instance == null)
         {
             instance = this;
@@ -137,7 +138,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         {
             System.out.println("Please copy the WRAPPER_KEY.cnd for authentication!");
             System.out.println("The Wrapper stops in 5 seconds");
-            NetworkUtils.sleepUninterruptedly(5000);
+            NetworkUtils.sleepUninterruptedly(2000);
             System.exit(0);
             return;
         }
@@ -151,6 +152,8 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
     @Override
     public boolean bootstrap() throws Exception
     {
+        if (!optionSet.has("disable-autoupdate")) checkForUpdates();
+
         if (!optionSet.has("disallow_bukkit_download") && !Files.exists(Paths.get("local/spigot.jar")))
             new SetupSpigotVersion().run(cloudNetLogging.getReader());
 
@@ -224,17 +227,6 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
                     networkConnection.sendPacket(new PacketOutWrapperScreen(input));
             }
         });
-
-        if (!optionSet.has("disable-autoupdate"))
-        {
-            scheduler.runTaskAsync(new Runnable() {
-                @Override
-                public void run()
-                {
-                    checkForUpdates();
-                }
-            });
-        }
 
         canDeployed = true;
         RUNNING = true;

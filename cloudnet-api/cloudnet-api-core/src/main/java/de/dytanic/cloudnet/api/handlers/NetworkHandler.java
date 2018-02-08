@@ -100,6 +100,11 @@ public interface NetworkHandler {
     void onPlayerUpdate(CloudPlayer cloudPlayer);
 
     /**
+     * Called if a OfflinePlayer was updated
+     */
+    void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer);
+
+    /**
      * Called if the player online count was changed
      * @param onlineCount
      */

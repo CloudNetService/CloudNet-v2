@@ -7,6 +7,7 @@ package de.dytanic.cloudnet.api.handlers.adapter;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
+import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -93,6 +94,12 @@ public class NetworkHandlerAdapter implements NetworkHandler {
 
     @Override
     public void onPlayerUpdate(CloudPlayer cloudPlayer)
+    {
+
+    }
+
+    @Override
+    public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer)
     {
 
     }

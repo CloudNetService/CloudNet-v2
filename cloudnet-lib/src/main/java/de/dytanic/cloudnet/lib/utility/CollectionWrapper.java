@@ -50,7 +50,7 @@ public final class CollectionWrapper {
 
     public static Collection<String> toCollection(String input, String splitter)
     {
-        return Arrays.asList(input.split(splitter));
+        return new CopyOnWriteArrayList<>(input.split(splitter));
     }
 
     public static <E> void iterator(Collection<E> collection, Runnabled<E>... runnableds)

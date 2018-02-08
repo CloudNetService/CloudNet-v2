@@ -152,7 +152,7 @@ public class CloudNetWrapperConfig {
             configuration.set("general.proxy-config-host", hostName);
             configuration.set("general.max-memory", memory);
             configuration.set("general.startPort", 41570);
-            configuration.set("general.auto-update", true);
+            configuration.set("general.auto-update", false);
             configuration.set("general.saving-records", false);
             configuration.set("general.viaversion", false);
             configuration.set("general.maintenance-copy", false);

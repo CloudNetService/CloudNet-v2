@@ -30,10 +30,7 @@ public class PacketInRemoveServer
         if (cn.getServers().containsKey(serverInfo.getServiceId().getServerId()))
         {
             MinecraftServer minecraftServer = cn.getServers().get(serverInfo.getServiceId().getServerId());
-            if (minecraftServer.getChannel() != null)
-            {
-                minecraftServer.getChannel().close().syncUninterruptibly();
-            }
+            if (minecraftServer.getChannel() != null) minecraftServer.getChannel().close();
 
             cn.getServers().remove(serverInfo.getServiceId().getServerId());
             CloudNet.getInstance().getNetworkManager().handleServerRemove(minecraftServer);

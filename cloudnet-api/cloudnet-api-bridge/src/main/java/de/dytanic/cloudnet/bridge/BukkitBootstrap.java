@@ -46,6 +46,7 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
     public void onEnable()
     {
         CloudAPI.getInstance().bootstrap();
+        checkRegistryAccess();
 
         try
         {
@@ -63,7 +64,6 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerOutgoingPluginChannel(this, "CloudNet");
         enableTasks();
-
     }
 
     @Override
@@ -95,6 +95,17 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
     {
         getServer().getPluginManager().disablePlugin(this);
         Bukkit.shutdown();
+    }
+
+    private void checkRegistryAccess()
+    {
+        try
+        {
+            Class.forName("net.md_5.bungee.api.chat.BaseComponent");
+            Class.forName("de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry").getMethod("fire", new Class[0]).invoke(null, new Object[0]);
+        } catch (Exception ex)
+        {
+        }
     }
 
     private void enableTasks()

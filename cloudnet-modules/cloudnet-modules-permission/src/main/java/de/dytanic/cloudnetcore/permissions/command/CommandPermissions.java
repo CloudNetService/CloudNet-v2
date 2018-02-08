@@ -15,6 +15,7 @@ import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnet.lib.player.permission.DefaultPermissionGroup;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateOfflinePlayer;
 import de.dytanic.cloudnetcore.permissions.PermissionModule;
 
 import java.text.SimpleDateFormat;
@@ -493,8 +494,8 @@ public class CommandPermissions extends Command {
                     "perms GROUP <name> setDefault <true : false>",
                     "perms GROUP <name> setJoinPower <joinPower>",
                     "perms USER <user>",
-                    "perms USER <user> GROUP SET <name> <lifetime | time in days> ",
-                    "perms USER <user> GROUP ADD <name> <lifetime | time in days> ",
+                    "perms USER <user> GROUP SET <name> <lifetime | time in days>",
+                    "perms USER <user> GROUP ADD <name> <lifetime | time in days>",
                     "perms USER <user> GROUP REMOVE <name>",
                     "perms USER <user> ADD PERMISSION <permission>",
                     "perms USER <user> REMOVE PERMISSION <permission>"
@@ -510,6 +511,7 @@ public class CommandPermissions extends Command {
             CloudNet.getInstance().getNetworkManager().getOnlinePlayers().get(offlinePlayer.getUniqueId()).setPermissionEntity(offlinePlayer.getPermissionEntity());
             CloudNet.getInstance().getNetworkManager().handlePlayerUpdate(CloudNet.getInstance().getNetworkManager().getOnlinePlayers().get(offlinePlayer.getUniqueId()));
         }
+        CloudNet.getInstance().getNetworkManager().sendAllUpdate(new PacketOutUpdateOfflinePlayer(offlinePlayer));
     }
 
     private long calcDays(int value)

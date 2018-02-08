@@ -8,6 +8,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufProcessor;
 import io.netty.buffer.Unpooled;
+import io.netty.util.ByteProcessor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.charset.Charset;
@@ -177,6 +179,18 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public boolean isReadOnly()
+    {
+        return byteBuf.isReadOnly();
+    }
+
+    @Override
+    public ByteBuf asReadOnly()
+    {
+        return byteBuf.asReadOnly();
+    }
+
+    @Override
     public int readerIndex()
     {
         return byteBuf.readerIndex();
@@ -327,9 +341,21 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public short getShortLE(int i)
+    {
+        return byteBuf.getShortLE(i);
+    }
+
+    @Override
     public int getUnsignedShort(int i)
     {
         return byteBuf.getUnsignedShort(i);
+    }
+
+    @Override
+    public int getUnsignedShortLE(int i)
+    {
+        return byteBuf.getUnsignedShortLE(i);
     }
 
     @Override
@@ -339,9 +365,21 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public int getMediumLE(int i)
+    {
+        return byteBuf.getMediumLE(i);
+    }
+
+    @Override
     public int getUnsignedMedium(int i)
     {
         return byteBuf.getUnsignedMedium(i);
+    }
+
+    @Override
+    public int getUnsignedMediumLE(int i)
+    {
+        return byteBuf.getUnsignedMediumLE(i);
     }
 
     @Override
@@ -351,15 +389,33 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public int getIntLE(int i)
+    {
+        return byteBuf.getIntLE(i);
+    }
+
+    @Override
     public long getUnsignedInt(int i)
     {
         return byteBuf.getUnsignedInt(i);
     }
 
     @Override
+    public long getUnsignedIntLE(int i)
+    {
+        return byteBuf.getUnsignedIntLE(i);
+    }
+
+    @Override
     public long getLong(int i)
     {
         return byteBuf.getLong(i);
+    }
+
+    @Override
+    public long getLongLE(int i)
+    {
+        return byteBuf.getLongLE(i);
     }
 
     @Override
@@ -429,6 +485,18 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public int getBytes(int i, FileChannel fileChannel, long l, int i1) throws IOException
+    {
+        return byteBuf.getBytes(i, fileChannel, l, i1);
+    }
+
+    @Override
+    public CharSequence getCharSequence(int i, int i1, Charset charset)
+    {
+        return byteBuf.getCharSequence(i, i1, charset);
+    }
+
+    @Override
     public ByteBuf setBoolean(int i, boolean b)
     {
         return byteBuf.setBoolean(i, b);
@@ -447,9 +515,21 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public ByteBuf setShortLE(int i, int i1)
+    {
+        return byteBuf.setShortLE(i, i1);
+    }
+
+    @Override
     public ByteBuf setMedium(int i, int i1)
     {
         return byteBuf.setMedium(i, i1);
+    }
+
+    @Override
+    public ByteBuf setMediumLE(int i, int i1)
+    {
+        return byteBuf.setMediumLE(i, i1);
     }
 
     @Override
@@ -459,9 +539,21 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public ByteBuf setIntLE(int i, int i1)
+    {
+        return byteBuf.setIntLE(i, i1);
+    }
+
+    @Override
     public ByteBuf setLong(int i, long l)
     {
         return byteBuf.setLong(i, l);
+    }
+
+    @Override
+    public ByteBuf setLongLE(int i, long l)
+    {
+        return byteBuf.setLongLE(i, l);
     }
 
     @Override
@@ -531,9 +623,21 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public int setBytes(int i, FileChannel fileChannel, long l, int i1) throws IOException
+    {
+        return byteBuf.setBytes(i, fileChannel, l, i1);
+    }
+
+    @Override
     public ByteBuf setZero(int i, int i1)
     {
         return byteBuf.setZero(i, i1);
+    }
+
+    @Override
+    public int setCharSequence(int i, CharSequence charSequence, Charset charset)
+    {
+        return byteBuf.setCharSequence(i, charSequence, charset);
     }
 
     @Override
@@ -561,9 +665,21 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public short readShortLE()
+    {
+        return byteBuf.readShortLE();
+    }
+
+    @Override
     public int readUnsignedShort()
     {
         return byteBuf.readUnsignedShort();
+    }
+
+    @Override
+    public int readUnsignedShortLE()
+    {
+        return byteBuf.readUnsignedShortLE();
     }
 
     @Override
@@ -573,9 +689,21 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public int readMediumLE()
+    {
+        return byteBuf.readMediumLE();
+    }
+
+    @Override
     public int readUnsignedMedium()
     {
         return byteBuf.readUnsignedMedium();
+    }
+
+    @Override
+    public int readUnsignedMediumLE()
+    {
+        return byteBuf.readUnsignedMediumLE();
     }
 
     @Override
@@ -585,15 +713,33 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public int readIntLE()
+    {
+        return byteBuf.readIntLE();
+    }
+
+    @Override
     public long readUnsignedInt()
     {
         return byteBuf.readUnsignedInt();
     }
 
     @Override
+    public long readUnsignedIntLE()
+    {
+        return byteBuf.readUnsignedIntLE();
+    }
+
+    @Override
     public long readLong()
     {
         return byteBuf.readLong();
+    }
+
+    @Override
+    public long readLongLE()
+    {
+        return byteBuf.readLongLE();
     }
 
     @Override
@@ -624,6 +770,12 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     public ByteBuf readSlice(int i)
     {
         return byteBuf.readSlice(i);
+    }
+
+    @Override
+    public ByteBuf readRetainedSlice(int i)
+    {
+        return byteBuf.readRetainedSlice(i);
     }
 
     @Override
@@ -675,6 +827,18 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public CharSequence readCharSequence(int i, Charset charset)
+    {
+        return byteBuf.readCharSequence(i, charset);
+    }
+
+    @Override
+    public int readBytes(FileChannel fileChannel, long l, int i) throws IOException
+    {
+        return byteBuf.readBytes(fileChannel, l, i);
+    }
+
+    @Override
     public ByteBuf skipBytes(int i)
     {
         return byteBuf.skipBytes(i);
@@ -699,9 +863,21 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public ByteBuf writeShortLE(int i)
+    {
+        return byteBuf.writeShortLE(i);
+    }
+
+    @Override
     public ByteBuf writeMedium(int i)
     {
         return byteBuf.writeMedium(i);
+    }
+
+    @Override
+    public ByteBuf writeMediumLE(int i)
+    {
+        return byteBuf.writeMediumLE(i);
     }
 
     @Override
@@ -711,9 +887,21 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public ByteBuf writeIntLE(int i)
+    {
+        return byteBuf.writeIntLE(i);
+    }
+
+    @Override
     public ByteBuf writeLong(long l)
     {
         return byteBuf.writeLong(l);
+    }
+
+    @Override
+    public ByteBuf writeLongLE(long l)
+    {
+        return byteBuf.writeLongLE(l);
     }
 
     @Override
@@ -783,9 +971,21 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public int writeBytes(FileChannel fileChannel, long l, int i) throws IOException
+    {
+        return byteBuf.writeBytes(fileChannel, l, i);
+    }
+
+    @Override
     public ByteBuf writeZero(int i)
     {
         return byteBuf.writeZero(i);
+    }
+
+    @Override
+    public int writeCharSequence(CharSequence charSequence, Charset charset)
+    {
+        return byteBuf.writeCharSequence(charSequence, charset);
     }
 
     @Override
@@ -813,24 +1013,44 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public int forEachByte(ByteProcessor byteProcessor)
+    {
+        return byteBuf.forEachByte(byteProcessor);
+    }
+
+    @Override
+    public int forEachByte(int i, int i1, ByteProcessor byteProcessor)
+    {
+        return byteBuf.forEachByte(i, i1, byteProcessor);
+    }
+
+    @Override
+    public int forEachByteDesc(ByteProcessor byteProcessor)
+    {
+        return byteBuf.forEachByteDesc(byteProcessor);
+    }
+
+    @Override
+    public int forEachByteDesc(int i, int i1, ByteProcessor byteProcessor)
+    {
+        return byteBuf.forEachByteDesc(i, i1, byteProcessor);
+    }
+
     public int forEachByte(ByteBufProcessor byteBufProcessor)
     {
         return byteBuf.forEachByte(byteBufProcessor);
     }
 
-    @Override
     public int forEachByte(int i, int i1, ByteBufProcessor byteBufProcessor)
     {
         return byteBuf.forEachByte(i, i1, byteBufProcessor);
     }
 
-    @Override
     public int forEachByteDesc(ByteBufProcessor byteBufProcessor)
     {
         return byteBuf.forEachByteDesc(byteBufProcessor);
     }
 
-    @Override
     public int forEachByteDesc(int i, int i1, ByteBufProcessor byteBufProcessor)
     {
         return byteBuf.forEachByteDesc(i, i1, byteBufProcessor);
@@ -855,15 +1075,33 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    public ByteBuf retainedSlice()
+    {
+        return byteBuf.retainedSlice();
+    }
+
+    @Override
     public ByteBuf slice(int i, int i1)
     {
         return byteBuf.slice(i, i1);
     }
 
     @Override
+    public ByteBuf retainedSlice(int i, int i1)
+    {
+        return byteBuf.retainedSlice(i, i1);
+    }
+
+    @Override
     public ByteBuf duplicate()
     {
         return byteBuf.duplicate();
+    }
+
+    @Override
+    public ByteBuf retainedDuplicate()
+    {
+        return byteBuf.retainedDuplicate();
     }
 
     @Override
@@ -996,5 +1234,17 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     public ByteBuf retain()
     {
         return byteBuf.retain();
+    }
+
+    @Override
+    public ByteBuf touch()
+    {
+        return byteBuf.touch();
+    }
+
+    @Override
+    public ByteBuf touch(Object o)
+    {
+        return byteBuf.touch(o);
     }
 }
