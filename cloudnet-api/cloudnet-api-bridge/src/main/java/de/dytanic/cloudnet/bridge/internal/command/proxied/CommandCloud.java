@@ -48,7 +48,7 @@ public final class CommandCloud extends Command implements TabExecutor {
     {
         if (args.length > 2)
         {
-            if (args[0].equalsIgnoreCase("cmds") && commandSender.hasPermission("cloudnet.command.cloud.comamndserver"))
+            if (args[0].equalsIgnoreCase("cmds") && commandSender.hasPermission("cloudnet.command.cloud.commandserver"))
             {
                 if (CloudProxy.getInstance().getCachedServers().containsKey(args[1]))
                 {

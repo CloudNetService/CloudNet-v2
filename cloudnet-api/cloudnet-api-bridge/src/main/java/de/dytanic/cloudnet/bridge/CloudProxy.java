@@ -462,7 +462,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         @Override
         public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOfflinePlayerEvent(offlinePlayer));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOfflinePlayerUpdateEvent(offlinePlayer));
         }
 
         @Override

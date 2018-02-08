@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ProxiedOfflinePlayerEvent extends ProxiedCloudEvent {
+public class ProxiedOfflinePlayerUpdateEvent extends ProxiedCloudEvent {
 
     private OfflinePlayer offlinePlayer;
 
