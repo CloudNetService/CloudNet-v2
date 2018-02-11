@@ -47,7 +47,7 @@ public class SetupSpigotVersion
     {
         System.out.println("No spigot.jar has been found!");
 
-        System.out.println("Choose a minecraft server version [\"taco\", \"paper\", \"hose\", \"spigot\"] | [\"dytanicspigot\" 1.8.8 BETA]");
+        System.out.println("Choose a minecraft server version [\"taco\", \"paper\", \"hose\", \"spigot\"]" /*" | [\"dytanicspigot\" 1.8.8 BETA]" */);
 
         String answer = null;
 
@@ -77,9 +77,11 @@ public class SetupSpigotVersion
                     case "hose":
                         answer = "hose";
                         break;
+                        /*
                     case "dytanicspigot":
                         answer = "dytanicspigot";
                         break;
+                        */
                     default: System.out.println("This version is not supported!");
                 }
 
@@ -98,9 +100,11 @@ public class SetupSpigotVersion
 
         switch (answer)
         {
+            /*
             case "dytanicspigot":
                 download.run("http://dytanic.de/645793465974z9724z24793zt9247tz9274nztv24zt924zt924tz9158929384/dytanicspigot.jar");
                 return;
+                */
             case "taco":
                 System.out.println("Choose a TacoSpigot version [\"1.8.8\", \"1.11.2\", \"1.12.2\"]");
                 while (true)

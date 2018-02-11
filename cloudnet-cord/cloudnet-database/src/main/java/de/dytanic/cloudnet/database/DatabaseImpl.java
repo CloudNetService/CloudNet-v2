@@ -32,10 +32,9 @@ public class DatabaseImpl
     public Database loadDocuments()
     {
         for(File file : backendDir.listFiles())
-        {
             if(!this.documents.containsKey(file.getName()))
             this.documents.put(file.getName(), Document.loadDocument(file));
-        }
+
         return this;
     }
 
@@ -73,12 +72,8 @@ public class DatabaseImpl
     public Database insert(Document... documents)
     {
         for(Document document : documents)
-        {
             if(document.contains(UNIQUE_NAME_KEY))
-            {
                 this.documents.put(document.getString(UNIQUE_NAME_KEY), document);
-            }
-        }
         return this;
     }
 

@@ -85,7 +85,10 @@ public final class PacketManager {
                 packetSender.sendPacket(packet);
             }
         });
-        while (synchronizedHandlers.get(uniq).getValue() == null)
+
+        short i = 0;
+
+        while (synchronizedHandlers.get(uniq).getValue() == null && i++ < 5000)
         {
             try
             {
@@ -94,6 +97,12 @@ public final class PacketManager {
             {
             }
         }
+
+        if(i >= 200)
+        {
+            synchronizedHandlers.get(uniq).setValue(new Result(uniq, new Document()));
+        }
+
         Value<Result> values = synchronizedHandlers.get(uniq);
         synchronizedHandlers.remove(uniq);
         return values.getValue();
