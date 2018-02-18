@@ -16,8 +16,6 @@ public final class Scheduler
     private ConcurrentHashMap<Long, ScheduledTask> tasks = new ConcurrentHashMap<>();
 
     @Getter
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
-    @Getter
     private final int ticks;
     @Getter
     private final Random random = new Random();

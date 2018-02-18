@@ -289,15 +289,15 @@ public class ProxiedListener implements Listener {
             {
                 event.setTarget(ProxyServer.getInstance().getServerInfo(fallback));
 
-                CloudAPI.getInstance().getNetworkConnection().getChannel().writeAndFlush(new PacketOutCustomSubChannelMessage(DefaultType.BUKKIT, event.getTarget().getName(),"cloudnet_internal", "server_connect_request", new Document("uniqueId", event.getPlayer().getUniqueId()))).syncUninterruptibly();
-                NetworkUtils.sleepUninterruptedly(4);
+                CloudAPI.getInstance().getNetworkConnection().getChannel().writeAndFlush(new PacketOutCustomSubChannelMessage(DefaultType.BUKKIT, event.getTarget().getName(),"cloudnet_internal", "server_connect_request", new Document("uniqueId", event.getPlayer().getUniqueId())));
+                NetworkUtils.sleepUninterruptedly(6);
             }
             else event.setCancelled(true);
         }
         else
         {
-            CloudAPI.getInstance().getNetworkConnection().getChannel().writeAndFlush(new PacketOutCustomSubChannelMessage(DefaultType.BUKKIT, event.getTarget().getName(),"cloudnet_internal", "server_connect_request", new Document("uniqueId", event.getPlayer().getUniqueId()))).syncUninterruptibly();
-            NetworkUtils.sleepUninterruptedly(4);
+            CloudAPI.getInstance().getNetworkConnection().getChannel().writeAndFlush(new PacketOutCustomSubChannelMessage(DefaultType.BUKKIT, event.getTarget().getName(),"cloudnet_internal", "server_connect_request", new Document("uniqueId", event.getPlayer().getUniqueId())));
+            NetworkUtils.sleepUninterruptedly(6);
         }
     }
 

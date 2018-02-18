@@ -23,6 +23,7 @@ import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnet.libloader.LibLoader;
 import de.dytanic.cloudnet.web.client.WebClient;
 import de.dytanic.cloudnet.web.server.WebServer;
+import de.dytanic.cloudnet3.TaskScheduler;
 import de.dytanic.cloudnetcore.api.event.network.CloudInitEvent;
 import de.dytanic.cloudnetcore.command.*;
 import de.dytanic.cloudnet.database.DatabaseManager;
@@ -57,8 +58,6 @@ import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -337,6 +336,8 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
     public boolean shutdown()
     {
         if (!RUNNING) return false;
+        TaskScheduler.runtimeScheduler().shutdown();
+
         this.scheduler.cancelAllTasks();
         this.subScheduler.cancelAllTasks();
 

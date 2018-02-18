@@ -49,7 +49,10 @@ public class WebClient {
         try
         {
             URLConnection urlConnection = new java.net.URL(url).openConnection();
+            urlConnection.setUseCaches(false);
+            urlConnection.setConnectTimeout(1000);
             urlConnection.connect();
+
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8)))
             {
                 JsonObject jsonObject = new JsonParser().parse(bufferedReader).getAsJsonObject();
@@ -66,7 +69,10 @@ public class WebClient {
         try
         {
             URLConnection urlConnection = new java.net.URL(url).openConnection();
+            urlConnection.setUseCaches(false);
+            urlConnection.setConnectTimeout(1000);
             urlConnection.connect();
+
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8)))
             {
                 JsonObject jsonObject = new JsonParser().parse(bufferedReader).getAsJsonObject();
@@ -84,6 +90,8 @@ public class WebClient {
         {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(DEFAULT_URL + "cloud/" + (getEnvironment() ? "core" : "wrapper")).openConnection();
             httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            httpURLConnection.setUseCaches(false);
+            httpURLConnection.setConnectTimeout(1000);
             httpURLConnection.connect();
 
             System.out.println("Downloading update...");

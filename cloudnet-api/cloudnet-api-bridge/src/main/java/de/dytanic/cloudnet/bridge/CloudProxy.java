@@ -327,6 +327,8 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         @Override
         public void onServerAdd(ServerInfo serverInfo)
         {
+            if(serverInfo == null) return;
+
             ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerAddEvent(serverInfo));
             ProxyServer.getInstance().getServers().put(
                     serverInfo.getServiceId().getServerId(),
@@ -352,6 +354,8 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         @Override
         public void onServerInfoUpdate(ServerInfo serverInfo)
         {
+            if(serverInfo == null) return;
+
             ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerInfoUpdateEvent(serverInfo));
             cachedServers.put(serverInfo.getServiceId().getServerId(), serverInfo);
         }
@@ -359,6 +363,8 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         @Override
         public void onServerRemove(ServerInfo serverInfo)
         {
+            if(serverInfo == null) return;
+
             ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerRemoveEvent(serverInfo));
             ProxyServer.getInstance().getServers().remove(serverInfo.getServiceId().getServerId());
             cachedServers.remove(serverInfo.getServiceId().getServerId());

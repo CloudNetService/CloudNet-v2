@@ -10,6 +10,7 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.network.auth.packetio.PacketOutAuth;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
+import de.dytanic.cloudnet3.TaskScheduler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.*;
@@ -33,7 +34,6 @@ public class NetworkConnection implements PacketSender {
     @Setter(AccessLevel.PROTECTED)
     private Channel channel;
     private ConnectableAddress connectableAddress;
-    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     private long connectionTrys = 0;
 
@@ -230,7 +230,7 @@ public class NetworkConnection implements PacketSender {
     @Override
     public void sendAsynchronized(Object object)
     {
-        executorService.execute(new Runnable() {
+        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
             @Override
             public void run()
             {

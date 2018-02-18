@@ -6,6 +6,7 @@ package de.dytanic.cloudnet.lib.network;
 
 import de.dytanic.cloudnet.lib.network.protocol.file.FileDeploy;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
+import de.dytanic.cloudnet3.TaskScheduler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.AllArgsConstructor;
@@ -56,7 +57,7 @@ public class NetDispatcher extends SimpleChannelInboundHandler{
     {
         if (o instanceof Packet)
         {
-            networkConnection.getExecutorService().execute(new Runnable() {
+            TaskScheduler.runtimeScheduler().schedule(new Runnable() {
                 @Override
                 public void run()
                 {
@@ -68,7 +69,7 @@ public class NetDispatcher extends SimpleChannelInboundHandler{
             if (o instanceof FileDeploy)
             {
                 FileDeploy deploy = ((FileDeploy) o);
-                networkConnection.getExecutorService().execute(new Runnable() {
+                TaskScheduler.runtimeScheduler().schedule(new Runnable() {
                     @Override
                     public void run()
                     {

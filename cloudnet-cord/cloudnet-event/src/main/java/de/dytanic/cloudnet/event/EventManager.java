@@ -2,6 +2,7 @@ package de.dytanic.cloudnet.event;
 
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.interfaces.IEventManager;
+import de.dytanic.cloudnet3.TaskScheduler;
 import net.jodah.typetools.TypeResolver;
 
 import java.lang.reflect.ParameterizedType;
@@ -18,7 +19,6 @@ import java.util.concurrent.Executors;
 public final class EventManager implements IEventManager {
 
     private final java.util.Map<Class, Collection<EventEntity>> registeredListeners = new ConcurrentHashMap<>();
-    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     @Override
     public <T extends Event> void registerListener(EventKey eventKey, IEventListener<T> eventListener)
@@ -91,7 +91,7 @@ public final class EventManager implements IEventManager {
             }
         } else
         {
-            this.executorService.submit(new Runnable() {
+            TaskScheduler.runtimeScheduler().schedule(new Runnable() {
                 @Override
                 public void run()
                 {

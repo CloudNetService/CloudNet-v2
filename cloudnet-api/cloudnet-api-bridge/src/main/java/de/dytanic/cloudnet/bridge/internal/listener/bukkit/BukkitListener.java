@@ -14,8 +14,8 @@ import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -45,7 +45,7 @@ public class BukkitListener implements Listener {
     {
         for(Player all : Bukkit.getOnlinePlayers())
             if(all.getUniqueId().equals(e.getUniqueId()))
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, "§cYou have to connect from a internal proxy server!");
+                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
     }
 
     @EventHandler
@@ -81,24 +81,20 @@ public class BukkitListener implements Listener {
                     Field field;
                     Class<?> clazz = ReflectionUtil.reflectCraftClazz(".entity.CraftHumanEntity");
 
-                    if(clazz != null)
-                    {
-                        field = clazz.getDeclaredField("perm");
-                    }
-                    else
-                    {
-                        field = Class.forName("net.glowstone.entity.GlowHumanEntity").getDeclaredField("permissions");
-                    }
+                    if(clazz != null) field = clazz.getDeclaredField("perm");
+                    else field = Class.forName("net.glowstone.entity.GlowHumanEntity").getDeclaredField("permissions");
+
                     field.setAccessible(true);
                     field.set(e.getPlayer(), new CloudPermissble(e.getPlayer()));
                 } catch (Exception ex)
                 {
                     ex.printStackTrace();
                 }
+
         } else
         {
-            e.getPlayer().kickPlayer("§cYou have to connect from a internal proxy server!");
-            e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "§cYou have to connect from a internal proxy server!");
+            e.getPlayer().kickPlayer(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
+            e.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
             return;
         }
 
@@ -121,14 +117,12 @@ public class BukkitListener implements Listener {
                 for (GroupEntityData entityData : cloudPlayer.getPermissionEntity().getGroups())
                 {
                     if (CloudAPI.getInstance().getPermissionGroup(entityData.getGroup()).getJoinPower() >= joinPower)
-                    {
                         acceptLogin = true;
-                    }
+
                     if (e.getPlayer().hasPermission("cloudnet.joinpower." + CloudAPI.getInstance().getPermissionGroup(entityData.getGroup()).getJoinPower()))
-                    {
                         acceptLogin = true;
-                    }
                 }
+
                 if (!acceptLogin)
                 {
                     CloudServer.getInstance().getCloudPlayers().remove(e.getPlayer().getUniqueId());

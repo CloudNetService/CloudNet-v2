@@ -133,6 +133,7 @@ public final class MobSelector {
             }
             mobImpl.entity.remove();
         }
+
         mobs.clear();
     }
 

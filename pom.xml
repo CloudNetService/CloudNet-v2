@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
         <netty.version>4.1.21.Final</netty.version>
-        <service.version>2.1.Pv27F3</service.version>
+        <service.version>2.1.Pv28F0</service.version>
         <service.type>PRE</service.type>
     </properties>
 

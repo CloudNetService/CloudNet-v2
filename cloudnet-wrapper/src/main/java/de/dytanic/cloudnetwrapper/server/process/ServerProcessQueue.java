@@ -4,9 +4,11 @@
 
 package de.dytanic.cloudnetwrapper.server.process;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.cloudserver.CloudServerMeta;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
+import de.dytanic.cloudnet3.TaskScheduler;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.server.BungeeCord;
 import de.dytanic.cloudnetwrapper.server.CloudGameServer;
@@ -17,8 +19,6 @@ import lombok.Setter;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Getter
 public class ServerProcessQueue implements Runnable {
@@ -29,10 +29,6 @@ public class ServerProcessQueue implements Runnable {
     private final Queue<ServerProcess> servers = new ConcurrentLinkedQueue<>();
     private final Queue<ProxyProcessMeta> proxys = new ConcurrentLinkedQueue<>();
     private final Queue<CloudServerMeta> cloudServers = new ConcurrentLinkedQueue<>();
-
-    private final Queue<GameServer> startups = new ConcurrentLinkedQueue<>();
-
-    private final ExecutorService executorService = Executors.newFixedThreadPool(1);
     private final int process_queue_size;
 
     public ServerProcessQueue(int process_queue_size)
@@ -58,10 +54,14 @@ public class ServerProcessQueue implements Runnable {
     @Override
     public void run()
     {
+
+        if(!running) return;
+
         {
             short i = 0;
             int memory = CloudNetWrapper.getInstance().getUsedMemory();
-            while (running && !servers.isEmpty() && (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer() == 0 || CloudNetWrapper.getInstance().getCpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer()))
+            
+            while (running && !servers.isEmpty() && (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer() == 0D || NetworkUtils.cpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer()))
             {
                 i++;
                 if(i == 3) break;
@@ -82,10 +82,8 @@ public class ServerProcessQueue implements Runnable {
                     {
                         System.out.println("Fetching entry [" + serverProcess.getMeta().getServiceId() + "]");
                         gameServer = new GameServer(serverProcess, ServerStage.SETUP, CloudNetWrapper.getInstance().getServerGroups().get(serverProcess.getMeta().getServiceId().getGroup()));
-                        if(gameServer.bootstrap())
+                        if(!gameServer.bootstrap())
                         {
-                            this.startups.add(gameServer);
-                        }else {
                             this.servers.add(serverProcess);
                         }
                     } catch (Exception e)
@@ -105,7 +103,7 @@ public class ServerProcessQueue implements Runnable {
         {
             short i = 0;
             int memory = CloudNetWrapper.getInstance().getUsedMemory();
-            while (running && !proxys.isEmpty() && (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy() == 0 || CloudNetWrapper.getInstance().getCpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy()))
+            while (running && !proxys.isEmpty() && (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy() == 0 || NetworkUtils.cpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy()))
             {
                 i++;
                 if(i == 3) break;
@@ -154,7 +152,7 @@ public class ServerProcessQueue implements Runnable {
             return;
         }
         GameServer gameServer = new GameServer(new ServerProcess(process, ServerStage.SETUP), ServerStage.SETUP, CloudNetWrapper.getInstance().getServerGroups().get(process.getServiceId().getGroup()));
-        this.executorService.submit(new Runnable() {
+        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
             @Override
             public void run()
             {
@@ -172,7 +170,7 @@ public class ServerProcessQueue implements Runnable {
     public void patchAsync(CloudServerMeta cloudServerMeta)
     {
         CloudGameServer cloudGameServer = new CloudGameServer(cloudServerMeta);
-        this.executorService.execute(new Runnable() {
+        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
             @Override
             public void run()
             {
@@ -197,7 +195,7 @@ public class ServerProcessQueue implements Runnable {
             return;
         }
 
-        this.executorService.execute(new Runnable() {
+        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
             @Override
             public void run()
             {

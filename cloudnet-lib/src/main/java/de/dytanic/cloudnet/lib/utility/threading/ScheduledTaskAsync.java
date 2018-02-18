@@ -1,5 +1,7 @@
 package de.dytanic.cloudnet.lib.utility.threading;
 
+import de.dytanic.cloudnet3.TaskScheduler;
+
 /**
  * Created by Tareko on 24.05.2017.
  */
@@ -32,7 +34,7 @@ public class ScheduledTaskAsync
         }
         else
         {
-            scheduler.getExecutorService().execute(runnable);
+            TaskScheduler.runtimeScheduler().schedule(runnable);
             if(repeatTime == -1)
             {
                 cancel();

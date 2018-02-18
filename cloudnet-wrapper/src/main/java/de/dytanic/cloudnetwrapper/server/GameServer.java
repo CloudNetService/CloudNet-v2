@@ -343,7 +343,6 @@ public class GameServer implements ServerDispatcher {
     @Override
     public boolean shutdown()
     {
-        CloudNetWrapper.getInstance().getServerProcessQueue().getStartups().remove(this);
 
         if (instance == null)
         {

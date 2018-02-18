@@ -24,7 +24,7 @@ public final class PacketManager {
     private final java.util.Map<Integer, Collection<Class<? extends PacketInHandler>>> packetHandlers = new ConcurrentHashMap<>();
     private final java.util.Map<UUID, Value<Result>> synchronizedHandlers = new ConcurrentHashMap<>();
     private final Queue<Packet> packetQueue = new ConcurrentLinkedQueue<>();
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     public void registerHandler(int id, Class<? extends PacketInHandler> packetHandlerClass)
     {

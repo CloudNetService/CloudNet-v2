@@ -56,10 +56,7 @@ public class WebServer {
                     @Override
                     protected void initChannel(Channel channel) throws Exception
                     {
-                        if (sslContext != null)
-                        {
-                            channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
-                        }
+                        if (sslContext != null) channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
 
                         channel.pipeline().addLast(new HttpServerCodec(), new HttpObjectAggregator(Integer.MAX_VALUE), new WebServerHandler(WebServer.this));
                     }

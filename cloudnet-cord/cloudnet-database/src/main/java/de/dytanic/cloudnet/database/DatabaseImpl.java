@@ -6,6 +6,7 @@ package de.dytanic.cloudnet.database;
 
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import de.dytanic.cloudnet3.TaskScheduler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 /**
@@ -26,7 +28,6 @@ public class DatabaseImpl
     private final String name;
     private final java.util.Map<String, Document> documents;
     private final File backendDir;
-    private final ExecutorService executorService = java.util.concurrent.Executors.newSingleThreadExecutor();
 
     @Override
     public Database loadDocuments()
@@ -124,7 +125,7 @@ public class DatabaseImpl
     @Override
     public Database insertAsync(Document... documents)
     {
-        executorService.submit(new Runnable() {
+        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
             @Override
             public void run()
             {
@@ -137,7 +138,7 @@ public class DatabaseImpl
     @Override
     public Database deleteAsync(String name)
     {
-        executorService.submit(new Runnable() {
+        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
             @Override
             public void run()
             {

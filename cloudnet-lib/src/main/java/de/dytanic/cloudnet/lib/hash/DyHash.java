@@ -21,7 +21,7 @@ public final class DyHash {
             byte b = (byte)c;
             char d = (char)b;
             int e = d;
-            stringBuilder.append((long) (e + length * length));
+            stringBuilder.append(Long.toHexString((e << 3 + length * length - 16)));
         }
         return stringBuilder.toString();
     }

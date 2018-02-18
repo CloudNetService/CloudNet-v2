@@ -32,6 +32,7 @@ public class MessageConfig {
                     .append("notify-message-server-add", "§cThe server %server% is starting now...")
                     .append("notify-message-server-remove", "§cThe server %server% is now stopping!")
                     .append("hub-already", "§cYou are already connected to a hub server")
+                    .append("server-kick-proxy-disallow", "§cYou have to connect from a internal proxy server!")
                     .saveAsConfig(path);
         }
     }
@@ -39,7 +40,16 @@ public class MessageConfig {
     public Document load()
     {
 
+        boolean resave = false;
         Document document = Document.loadDocument(path);
+
+        if(!document.contains("server-kick-proxy-disallow"))
+        {
+            document.append("server-kick-proxy-disallow", "§cYou have to connect from a internal proxy server!");
+            resave = true;
+        }
+
+        if(resave) document.saveAsConfig(path);
 
         return document;
     }

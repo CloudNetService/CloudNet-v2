@@ -16,11 +16,12 @@ import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.interfaces.Executeable;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
+import de.dytanic.cloudnet.lib.utility.threading.TaskCancelable;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import de.dytanic.cloudnet.web.client.WebClient;
+import de.dytanic.cloudnet3.TaskScheduler;
 import de.dytanic.cloudnetwrapper.command.*;
-import de.dytanic.cloudnetwrapper.handlers.CPUUsageHandler;
 import de.dytanic.cloudnetwrapper.handlers.IWrapperHandler;
 import de.dytanic.cloudnetwrapper.handlers.StopTimeHandler;
 import de.dytanic.cloudnetwrapper.network.packet.in.*;
@@ -43,15 +44,13 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Getter
 public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnCentral {
 
     public static volatile boolean RUNNING = false;
@@ -59,52 +58,31 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
     @Getter
     private static CloudNetWrapper instance;
 
-    @Getter
     private final NetworkConnection networkConnection;
-    @Getter
     private final CloudLogger cloudNetLogging;
-    @Getter
     private final CloudNetWrapperConfig wrapperConfig;
-    @Getter
     private final Scheduler scheduler = new Scheduler(40);
-    @Getter
     private final ScreenProvider screenProvider = new ScreenProvider();
-    @Getter
     private final CommandManager commandManager = new CommandManager();
-    @Getter
     private final WebClient webClient = new WebClient();
-    @Getter
     private Auth auth;
-    @Getter
     private OptionSet optionSet;
     @Setter
-    @Getter
     private ServerProcessQueue serverProcessQueue;
     @Setter
-    @Getter
     private SimpledUser simpledUser;
 
     //Sytem meta
     @Setter
-    @Getter
     private int maxMemory;
 
-    @Getter
-    private Collection<Double> cpuUsageEntries = new ConcurrentLinkedQueue<>();
-
-    @Getter
     private final java.util.Map<String, GameServer> servers = new ConcurrentHashMap<>();
-    @Getter
     private final java.util.Map<String, BungeeCord> proxys = new ConcurrentHashMap<>();
-    @Getter
     private final java.util.Map<String, CloudGameServer> cloudservers = new ConcurrentHashMap<>();
 
-    @Getter
     private final java.util.Map<String, ServerGroup> serverGroups = new ConcurrentHashMap<>();
-    @Getter
     private final java.util.Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
 
-    @Getter
     private boolean canDeployed = false;
 
     public CloudNetWrapper(OptionSet optionSet, CloudNetWrapperConfig cloudNetWrapperConfig, CloudLogger cloudNetLogging) throws Exception
@@ -198,17 +176,15 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         if (!Files.exists(Paths.get("local/server-icon.png")))
             FileCopy.insertData("files/server-icon.png", "local/server-icon.png");
 
-        System.out.println("Starting process queue... with " + wrapperConfig.getProcessQueueSize() + " server server");
+        System.out.println("Starting process queue...");
         scheduler.runTaskRepeatSync(serverProcessQueue, 0, 20);
 
         //Server Handlers
         {
             networkConnection.sendPacket(new PacketOutSetReadyWrapper(true));
             IWrapperHandler iWrapperHandler = new StopTimeHandler();
-            IWrapperHandler iWrapperHandler1 = new CPUUsageHandler();
 
             scheduler.runTaskRepeatSync(iWrapperHandler.toExecutor(), 0, iWrapperHandler.getTicks());
-            scheduler.runTaskRepeatSync(iWrapperHandler1.toExecutor(), 0, iWrapperHandler1.getTicks());
 
             scheduler.runTaskRepeatSync(new Runnable() {
                 @Override
@@ -271,6 +247,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
     {
         if (!RUNNING) return false;
         System.out.println("Wrapper shutdown...");
+        TaskScheduler.runtimeScheduler().shutdown();
 
         if (scheduler != null)
             scheduler.cancelAllTasks();
@@ -325,7 +302,6 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         canDeployed = false;
         if (serverProcessQueue != null)
         {
-            serverProcessQueue.getStartups().clear();
             serverProcessQueue.getProxys().clear();
             serverProcessQueue.getServers().clear();
             serverProcessQueue.setRunning(false);
@@ -371,13 +347,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
 
     public double getCpuUsage()
     {
-
-        double cpu = 0;
-
-        for (double entry : cpuUsageEntries)
-            cpu += entry;
-
-        return cpu / cpuUsageEntries.size();
+        return NetworkUtils.cpuUsage();
     }
 
 }

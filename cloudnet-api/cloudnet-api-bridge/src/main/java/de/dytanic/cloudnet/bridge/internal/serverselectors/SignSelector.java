@@ -91,7 +91,7 @@ public class SignSelector implements Listener {
     @EventHandler
     public void handleInteract(PlayerInteractEvent e)
     {
-        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && (e.getClickedBlock().getType().equals(Material.SIGN_POST) || e.getClickedBlock().getType().equals(Material.WALL_SIGN)))
+        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) && (e.getClickedBlock().getType().equals(Material.SIGN_POST) || e.getClickedBlock().getType().equals(Material.WALL_SIGN)))
         {
             if (containsPosition(e.getClickedBlock().getLocation()))
             {
