@@ -22,6 +22,8 @@ public final class FileCopy {
 
     public static void copyFileToDirectory(File file, File to) throws IOException
     {
+        if(to == null || file == null) return;
+
         if (!to.exists()) to.mkdirs();
 
         File n = new File(to.getAbsolutePath() + "/" + file.getName());
@@ -30,10 +32,14 @@ public final class FileCopy {
 
     public static void copyFilesInDirectory(File from, File to) throws IOException
     {
+        if(to == null || from == null) return;
+
         if (!to.exists()) to.mkdirs();
 
         for (File file : from.listFiles())
         {
+            if(file == null) continue;
+
             if (file.isDirectory())
             {
                 copyFilesInDirectory(file, new File(to.getAbsolutePath() + "/" + file.getName()));
