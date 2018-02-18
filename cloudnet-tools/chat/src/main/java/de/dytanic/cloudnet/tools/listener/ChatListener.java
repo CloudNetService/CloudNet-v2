@@ -33,6 +33,7 @@ public final class ChatListener implements Listener {
                 ChatPlugin.getPlugin(ChatPlugin.class).getConfig().getString("format")
                         .replace("%display%", ChatColor.translateAlternateColorCodes('&', (permissionService ? permissionGroup.getDisplay() : "")))
                         .replace("%prefix%", ChatColor.translateAlternateColorCodes('&', (permissionService ? permissionGroup.getPrefix() : "")))
+                        .replace("%suffix%", ChatColor.translateAlternateColorCodes('&', (permissionService ? permissionGroup.getSuffix() : "")))
                         .replace("%group%", (permissionService ? permissionGroup.getName() : ""))
                         .replace("%player%", e.getPlayer().getName())
                         .replace("%message%", e.getPlayer().hasPermission("cloudnet.chat.color") ?
