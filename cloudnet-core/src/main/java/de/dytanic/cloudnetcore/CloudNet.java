@@ -480,6 +480,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         packetManager.registerHandler(PacketRC.API + 7, PacketAPIInNameUUID.class);
         packetManager.registerHandler(PacketRC.API + 8, PacketAPIInGetServer.class);
         packetManager.registerHandler(PacketRC.API + 9, PacketAPIInGetCloudServers.class);
+        packetManager.registerHandler(PacketRC.API + 10, PacketAPIInGetStatistic.class);
 
         packetManager.registerHandler(PacketRC.DB + 1, PacketDBInGetDocument.class);
         packetManager.registerHandler(PacketRC.DB + 2, PacketDBInInsertDocument.class);

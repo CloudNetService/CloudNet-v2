@@ -25,6 +25,8 @@ public class DatabaseBasicHandlers {
 
     private WrapperSessionDatabase wrapperSessionDatabase;
 
+    private UpdateConfigurationDatabase updateConfigurationDatabase;
+
     public DatabaseBasicHandlers(DatabaseManager databaseManager)
     {
         Database config = databaseManager.getDatabase("cloud_internal_cfg");
@@ -35,6 +37,9 @@ public class DatabaseBasicHandlers {
         statisticManager = new StatisticManager(config);
         commandDispatcherDatabase = new CommandDispatcherDatabase(config);
         wrapperSessionDatabase = new WrapperSessionDatabase(databaseManager.getDatabase("cloudnet_internal_wrapper_session"));
+        updateConfigurationDatabase = new UpdateConfigurationDatabase(config);
+
+        nameToUUIDDatabase.handleUpdate(updateConfigurationDatabase);
 
         ((DatabaseImpl)config).save();
     }

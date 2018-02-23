@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnetcore.database;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.database.DatabaseUseable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
@@ -12,10 +11,8 @@ import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
-import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 /**

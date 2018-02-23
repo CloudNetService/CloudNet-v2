@@ -130,10 +130,10 @@ public final class CloudAPI implements MetaObj {
         return this;
     }
 
-        /*================= API =====================*/
+    /*================= API =====================*/
 
     /**
-     *Returns synchronized the OnlineCount from the group
+     * Returns synchronized the OnlineCount from the group
      */
     public int getOnlineCount(String group)
     {
@@ -325,6 +325,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns all the module properties
+     *
      * @return
      */
     public Document getModuleProperties()
@@ -353,8 +354,8 @@ public final class CloudAPI implements MetaObj {
      */
     public PermissionGroup getPermissionGroup(String group)
     {
-        if(cloudNetwork.getModules().contains("permissionPool"))
-            return ((PermissionPool)cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE)).getGroups().get(group);
+        if (cloudNetwork.getModules().contains("permissionPool"))
+            return ((PermissionPool) cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE)).getGroups().get(group);
         return null;
     }
 
@@ -435,7 +436,7 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     *  Dispatch a command on cloudnet-core
+     * Dispatch a command on cloudnet-core
      */
     public void sendCloudCommand(String commandLine)
     {
@@ -444,6 +445,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Dispatch a console message
+     *
      * @param output
      */
     public void dispatchConsoleMessage(String output)
@@ -453,6 +455,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Writes into the console of the server/proxy the command line
+     *
      * @param defaultType
      * @param serverId
      * @param commandLine
@@ -490,7 +493,7 @@ public final class CloudAPI implements MetaObj {
         networkConnection.sendPacket(new PacketOutStopProxy(proxyId));
     }
 
-        /*=====================================================================================*/
+    /*=====================================================================================*/
 
     /**
      * Creates a custom server log url for one server screen
@@ -505,6 +508,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Start a proxy server with a group
+     *
      * @param proxyGroup
      */
     public void startProxy(ProxyGroup proxyGroup)
@@ -514,6 +518,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Start a proxy server with a group
+     *
      * @param proxyGroup
      */
     public void startProxy(ProxyGroup proxyGroup, int memory, String[] processParameters)
@@ -523,6 +528,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Start a proxy server with a group
+     *
      * @param proxyGroup
      */
     public void startProxy(ProxyGroup proxyGroup, int memory, String[] processParameters, Document document)
@@ -532,6 +538,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Start a proxy server with a group
+     *
      * @param proxyGroup
      */
     public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup)
@@ -541,6 +548,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Start a proxy server with a group
+     *
      * @param proxyGroup
      */
     public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters)
@@ -550,6 +558,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Start a proxy server with a group
+     *
      * @param proxyGroup
      */
     public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters, Document document)
@@ -561,6 +570,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Start a proxy server with a group
+     *
      * @param proxyGroup
      */
     public void startProxy(ProxyGroup proxyGroup, int memory, String[] processParameters, String url, Collection<ServerInstallablePlugin> plugins, Document properties)
@@ -570,6 +580,7 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Start a proxy server with a group
+     *
      * @param proxyGroup
      */
     public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters, String url, Collection<ServerInstallablePlugin> plugins, Document properties)
@@ -984,7 +995,8 @@ public final class CloudAPI implements MetaObj {
      */
     public Collection<ServerInfo> getServers()
     {
-        if(cloudService != null && cloudService.isProxyInstance()) return new LinkedList<>(cloudService.getServers().values());
+        if (cloudService != null && cloudService.isProxyInstance())
+            return new LinkedList<>(cloudService.getServers().values());
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(), networkConnection);
         return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {
@@ -996,16 +1008,18 @@ public final class CloudAPI implements MetaObj {
      */
     public Collection<ServerInfo> getCloudServers()
     {
-        if(cloudService != null && cloudService.isProxyInstance()) return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo serverInfo)
-            {
-                return serverInfo.getServiceId().getGroup() == null;
-            }
-        });
+        if (cloudService != null && cloudService.isProxyInstance())
+            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
+                @Override
+                public boolean isAccepted(ServerInfo serverInfo)
+                {
+                    return serverInfo.getServiceId().getGroup() == null;
+                }
+            });
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetCloudServers(), networkConnection);
-        return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>(){}.getType());
+        return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {
+        }.getType());
     }
 
     /**
@@ -1015,13 +1029,14 @@ public final class CloudAPI implements MetaObj {
      */
     public Collection<ServerInfo> getServers(String group)
     {
-        if(cloudService != null && cloudService.isProxyInstance()) return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo serverInfo)
-            {
-                return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
-            }
-        });
+        if (cloudService != null && cloudService.isProxyInstance())
+            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
+                @Override
+                public boolean isAccepted(ServerInfo serverInfo)
+                {
+                    return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
+                }
+            });
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(group), networkConnection);
         return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {
@@ -1059,9 +1074,9 @@ public final class CloudAPI implements MetaObj {
         Collection<CloudPlayer> cloudPlayers = result.getResult().getObject("players", new TypeToken<Collection<CloudPlayer>>() {
         }.getType());
 
-        if(cloudPlayers == null) return new ArrayList<>();
+        if (cloudPlayers == null) return new ArrayList<>();
 
-        for(CloudPlayer cloudPlayer : cloudPlayers)
+        for (CloudPlayer cloudPlayer : cloudPlayers)
             cloudPlayer.setPlayerExecutor(PlayerExecutorBridge.INSTANCE);
 
         return cloudPlayers;
@@ -1073,11 +1088,11 @@ public final class CloudAPI implements MetaObj {
     public CloudPlayer getOnlinePlayer(UUID uniqueId)
     {
         CloudPlayer instance = checkAndGet(uniqueId);
-        if(instance != null) return instance;
+        if (instance != null) return instance;
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayer(uniqueId), networkConnection);
         CloudPlayer cloudPlayer = result.getResult().getObject("player", CloudPlayer.TYPE);
-        if(cloudPlayer == null) return null;
+        if (cloudPlayer == null) return null;
         cloudPlayer.setPlayerExecutor(PlayerExecutorBridge.INSTANCE);
         return cloudPlayer;
     }
@@ -1090,7 +1105,7 @@ public final class CloudAPI implements MetaObj {
     public OfflinePlayer getOfflinePlayer(UUID uniqueId)
     {
         CloudPlayer cloudPlayer = checkAndGet(uniqueId);
-        if(cloudPlayer != null) return cloudPlayer;
+        if (cloudPlayer != null) return cloudPlayer;
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(uniqueId), networkConnection);
         return result.getResult().getObject("player", new TypeToken<OfflinePlayer>() {
@@ -1105,7 +1120,7 @@ public final class CloudAPI implements MetaObj {
     public OfflinePlayer getOfflinePlayer(String name)
     {
         CloudPlayer cloudPlayer = checkAndGet(name);
-        if(cloudPlayer != null) return cloudPlayer;
+        if (cloudPlayer != null) return cloudPlayer;
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(name), networkConnection);
         return result.getResult().getObject("player", new TypeToken<OfflinePlayer>() {
@@ -1149,7 +1164,19 @@ public final class CloudAPI implements MetaObj {
     public ServerInfo getServerInfo(String serverName)
     {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServer(serverName), networkConnection);
-        return result.getResult().getObject("serverInfo", new TypeToken<ServerInfo>(){}.getType());
+        return result.getResult().getObject("serverInfo", new TypeToken<ServerInfo>() {
+        }.getType());
+    }
+
+    /**
+     * Returns a Document with all collected statistics
+     *
+     * @return
+     */
+    public Document getStatistics()
+    {
+        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetStatistic(), networkConnection);
+        return result.getResult();
     }
 
     /*================================================================================*/

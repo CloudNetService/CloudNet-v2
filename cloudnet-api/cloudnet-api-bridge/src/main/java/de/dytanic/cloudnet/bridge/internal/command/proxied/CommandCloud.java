@@ -8,6 +8,7 @@ import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.CloudProxy;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.proxylayout.AutoSlot;
@@ -79,33 +80,36 @@ public final class CommandCloud extends Command implements TabExecutor {
             case 1:
                 if (args[0].equalsIgnoreCase("help"))
                 {
-                    commandSender.sendMessage(" ");
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "All command arguments");
-                    commandSender.sendMessage("§7/cloud toggle autoslot");
-                    commandSender.sendMessage("§7/cloud toggle maintenance");
-                    commandSender.sendMessage("§7/cloud toggle maintenance <time>");
-                    commandSender.sendMessage("§7/cloud setMaxPlayers <maxonlinecount>");
-                    commandSender.sendMessage("§7/cloud whitelist <add : remove> <name>");
-                    commandSender.sendMessage("§7/cloud start <group> <count>");
-                    commandSender.sendMessage("§7/cloud start <group> <template>");
-                    commandSender.sendMessage("§7/cloud startcs <name> <memory> <priorityStop>");
-                    commandSender.sendMessage("§7/cloud cmds (command server) <server> <command>");
-                    commandSender.sendMessage("§7/cloud cmdp (command proxy) <proxy> <command>");
-                    commandSender.sendMessage("§7/cloud stop <serverId>");
-                    commandSender.sendMessage("§7/cloud stopGroup <group>");
-                    commandSender.sendMessage("§7/cloud ustopGroup <group>");
-                    commandSender.sendMessage("§7/cloud listProxys");
-                    commandSender.sendMessage("§7/cloud listOnline");
-                    commandSender.sendMessage("§7/cloud listServers");
-                    commandSender.sendMessage("§7/cloud log <server>");
-                    commandSender.sendMessage("§7/cloud listGroups");
-                    commandSender.sendMessage("§7/cloud rl");
-                    commandSender.sendMessage("§7/cloud rlconfig");
-                    commandSender.sendMessage("§7/cloud list");
-                    commandSender.sendMessage("§7/cloud maintenance <group>");
-                    commandSender.sendMessage("§7/cloud copy <server>");
-                    commandSender.sendMessage("§7/cloud version");
-                    commandSender.sendMessage(" ");
+                    commandSender.sendMessages(
+                            " ",
+                            CloudAPI.getInstance().getPrefix() + "All command arguments",
+                            "§7/cloud toggle autoslot",
+                            "§7/cloud toggle maintenance",
+                            "§7/cloud toggle maintenance <time>",
+                            "§7/cloud setMaxPlayers <maxonlinecount>",
+                            "§7/cloud whitelist <add : remove> <name>",
+                            "§7/cloud start <group> <count>",
+                            "§7/cloud start <group> <template>",
+                            "§7/cloud startcs <name> <memory> <priorityStop>",
+                            "§7/cloud cmds (command server) <server> <command>",
+                            "§7/cloud cmdp (command proxy) <proxy> <command>",
+                            "§7/cloud stop <serverId>",
+                            "§7/cloud stopGroup <group>",
+                            "§7/cloud ustopGroup <group>",
+                            "§7/cloud listProxys",
+                            "§7/cloud listOnline",
+                            "§7/cloud listServers",
+                            "§7/cloud log <server>",
+                            "§7/cloud listGroups",
+                            "§7/cloud rl",
+                            "§7/cloud rlconfig",
+                            "§7/cloud list",
+                            "§7/cloud maintenance <group>",
+                            "§7/cloud copy <server>",
+                            "§7/cloud version",
+                            "§7/cloud statistics",
+                            " "
+                    );
                     return;
                 }
                 if (args[0].equalsIgnoreCase("rl") && commandSender.hasPermission("cloudnet.command.cloud.reload"))
@@ -115,12 +119,23 @@ public final class CommandCloud extends Command implements TabExecutor {
                             "The information was sent to the cloud");
                     return;
                 }
-                if(args[0].equalsIgnoreCase("version") && commandSender.hasPermission("cloudnet.command.cloud.version"))
+                if (args[0].equalsIgnoreCase("statistics") && commandSender.hasPermission("cloudnet.ommand.cloud.statistics"))
+                {
+                    Document document = CloudAPI.getInstance().getStatistics();
+
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "Statistics");
+
+                    for (String key : document.keys())
+                        if (!Database.UNIQUE_NAME_KEY.equalsIgnoreCase(key))
+                            commandSender.sendMessage( "§3" + key + "§8| §e " + document.get(key).toString());
+                            return;
+                }
+                if (args[0].equalsIgnoreCase("version") && commandSender.hasPermission("cloudnet.command.cloud.version"))
                 {
                     commandSender.sendMessage("CloudNet " + NetworkUtils.class.getPackage().getSpecificationVersion() + " #" + NetworkUtils.class.getPackage().getImplementationVersion() + " by Dytanic");
                     return;
                 }
-                if (args[0].equalsIgnoreCase("rlconfig")  && commandSender.hasPermission("cloudnet.command.cloud.reloadconfig"))
+                if (args[0].equalsIgnoreCase("rlconfig") && commandSender.hasPermission("cloudnet.command.cloud.reloadconfig"))
                 {
                     CloudAPI.getInstance().sendCloudCommand("reload config");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
@@ -206,7 +221,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                     {
                         case "autoslot":
                         {
-                            if(commandSender.hasPermission("cloudnet.command.cloud.autoslot"))
+                            if (commandSender.hasPermission("cloudnet.command.cloud.autoslot"))
                             {
                                 ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
                                 proxyGroup.getProxyConfig().setAutoSlot(new AutoSlot(proxyGroup.getProxyConfig().getAutoSlot().getDynamicSlotSize(),
@@ -218,7 +233,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         return;
                         case "maintenance":
                         {
-                            if(commandSender.hasPermission("cloudnet.command.cloud.maintenance"))
+                            if (commandSender.hasPermission("cloudnet.command.cloud.maintenance"))
                             {
                                 ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
                                 proxyGroup.getProxyConfig().setMaintenance(!proxyGroup.getProxyConfig().isMaintenance());
@@ -325,7 +340,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 if (args[0].equalsIgnoreCase("stopGroup") && commandSender.hasPermission("cloudnet.command.cloud.stopgroup"))
                 {
-                    if(CloudAPI.getInstance().getServerGroupMap().containsKey(args[1]))
+                    if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1]))
                     {
                         List<String> servers = CloudProxy.getInstance().getServers(args[1]);
 
@@ -337,12 +352,12 @@ public final class CommandCloud extends Command implements TabExecutor {
                         return;
                     }
 
-                    if(CloudAPI.getInstance().getProxyGroupMap().containsKey(args[1]))
+                    if (CloudAPI.getInstance().getProxyGroupMap().containsKey(args[1]))
                     {
                         Collection<ProxyInfo> servers = CloudAPI.getInstance().getProxys();
 
-                        for(ProxyInfo proxyInfo : servers)
-                            if(proxyInfo.getServiceId().getGroup().equalsIgnoreCase(args[1]))
+                        for (ProxyInfo proxyInfo : servers)
+                            if (proxyInfo.getServiceId().getGroup().equalsIgnoreCase(args[1]))
                                 CloudAPI.getInstance().stopProxy(proxyInfo.getServiceId().getServerId());
 
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
@@ -354,7 +369,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 if (args[0].equalsIgnoreCase("ustopGroup") && commandSender.hasPermission("cloudnet.command.cloud.useless-stopgroup"))
                 {
-                    if(CloudAPI.getInstance().getServerGroupMap().containsKey(args[1]))
+                    if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1]))
                     {
                         Collection<ServerInfo> servers = CollectionWrapper.filterMany(CloudProxy.getInstance().getCachedServers().values(),
                                 new Acceptable<ServerInfo>() {
@@ -366,20 +381,20 @@ public final class CommandCloud extends Command implements TabExecutor {
                                 });
 
                         for (ServerInfo server : servers)
-                            if(server.getOnlineCount() == 0)
-                            CloudAPI.getInstance().stopServer(server.getServiceId().getServerId());
+                            if (server.getOnlineCount() == 0)
+                                CloudAPI.getInstance().stopServer(server.getServiceId().getServerId());
 
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
                                 "The information was sent to the cloud");
                         return;
                     }
 
-                    if(CloudAPI.getInstance().getProxyGroupMap().containsKey(args[1]))
+                    if (CloudAPI.getInstance().getProxyGroupMap().containsKey(args[1]))
                     {
                         Collection<ProxyInfo> servers = CloudAPI.getInstance().getProxys();
 
-                        for(ProxyInfo proxyInfo : servers)
-                            if(proxyInfo.getServiceId().getGroup().equalsIgnoreCase(args[1]) && proxyInfo.getOnlineCount() == 0)
+                        for (ProxyInfo proxyInfo : servers)
+                            if (proxyInfo.getServiceId().getGroup().equalsIgnoreCase(args[1]) && proxyInfo.getOnlineCount() == 0)
                                 CloudAPI.getInstance().stopProxy(proxyInfo.getServiceId().getServerId());
 
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
@@ -404,7 +419,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                     {
                         case "maintenance":
                         {
-                            if(commandSender.hasPermission("cloudnet.command.cloud.maintenance"))
+                            if (commandSender.hasPermission("cloudnet.command.cloud.maintenance"))
                             {
                                 if (!NetworkUtils.checkIsNumber(args[2])) return;
                                 ProxyServer.getInstance().getScheduler().schedule(CloudProxy.getInstance().getPlugin(), new Runnable() {

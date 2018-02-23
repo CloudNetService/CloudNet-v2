@@ -92,7 +92,6 @@ public class SignSelector implements Listener {
     public void handleInteract(PlayerInteractEvent e)
     {
         if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) && (e.getClickedBlock().getType().equals(Material.SIGN_POST) || e.getClickedBlock().getType().equals(Material.WALL_SIGN)))
-        {
             if (containsPosition(e.getClickedBlock().getLocation()))
             {
                 Sign sign = getSignByPosition(e.getClickedBlock().getLocation());
@@ -105,15 +104,13 @@ public class SignSelector implements Listener {
                     e.getPlayer().sendPluginMessage(CloudServer.getInstance().getPlugin(), "BungeeCord", output.toByteArray());
                 }
             }
-        }
     }
 
     public boolean containsPosition(Position position)
     {
         for (Sign sign : signs.values())
-        {
             if (sign.getPosition().equals(position)) return true;
-        }
+
         return false;
     }
 
@@ -152,18 +149,13 @@ public class SignSelector implements Listener {
     public Collection<String> freeServers(String group)
     {
         List<String> servers = new ArrayList<>();
+
         for (ServerInfo serverInfo : getServers(group))
-        {
             servers.add(serverInfo.getServiceId().getServerId());
-        }
 
         for (Sign sign : signs.values())
-        {
             if (sign.getServerInfo() != null && servers.contains(sign.getServerInfo().getServiceId().getServerId()))
-            {
                 servers.remove(sign.getServerInfo().getServiceId().getServerId());
-            }
-        }
 
         List<String> x = new ArrayList<>();
 
@@ -175,19 +167,12 @@ public class SignSelector implements Listener {
             {
                 if (!serverInfo.isOnline() || !serverInfo.getServerState().equals(ServerState.LOBBY) || serverInfo.getServerConfig().isHideServer() || serverInfo.getMotd().contains("INGAME") || serverInfo.getMotd().contains("RUNNING") ||
                         serverInfo.getServerConfig().isHideServer())
-                {
                     x.add(serverInfo.getServiceId().getServerId());
-                }
-            } else
-            {
-                x.add(servers.get(i));
-            }
+            } else x.add(servers.get(i));
         }
 
-        for (String b : x)
-        {
-            servers.remove(b);
-        }
+        for (String b : x) servers.remove(b);
+
         return servers;
     }
 
