@@ -5,12 +5,12 @@
 package de.dytanic.cloudnetcore.database;
 
 import com.google.gson.reflect.TypeToken;
+import de.dytanic.cloudnet.database.DatabaseImpl;
 import de.dytanic.cloudnet.database.DatabaseUseable;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.database.DatabaseImpl;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -29,7 +29,7 @@ public final class NameToUUIDDatabase extends DatabaseUseable {
     public void handleUpdate(UpdateConfigurationDatabase updateConfigurationDatabase)
     {
 
-        if(!updateConfigurationDatabase.get().contains("updated_database_from_2_1_Pv29"))
+        if (!updateConfigurationDatabase.get().contains("updated_database_from_2_1_Pv29"))
         {
             Collection<Document> documents = database.loadDocuments().getDocs();
             String name;
@@ -38,6 +38,7 @@ public final class NameToUUIDDatabase extends DatabaseUseable {
             {
                 name = document.getString(Database.UNIQUE_NAME_KEY);
 
+                if (name != null)
                 if (name.length() < 32)
                 {
                     database.delete(document.getString(Database.UNIQUE_NAME_KEY));
@@ -46,8 +47,8 @@ public final class NameToUUIDDatabase extends DatabaseUseable {
             }
 
             updateConfigurationDatabase.set(updateConfigurationDatabase.get().append("updated_database_from_2_1_Pv29", true));
-            ((DatabaseImpl)database).save();
-            ((DatabaseImpl)database).clear();
+            ((DatabaseImpl) database).save();
+            ((DatabaseImpl) database).clear();
         }
     }
 
@@ -83,7 +84,8 @@ public final class NameToUUIDDatabase extends DatabaseUseable {
         if (a().containsDoc(name.toLowerCase()))
         {
             Document document = database.getDocument(name.toLowerCase());
-            return document.getObject("uniqueId", new TypeToken<UUID>() {}.getType());
+            return document.getObject("uniqueId", new TypeToken<UUID>() {
+            }.getType());
         }
         return null;
     }

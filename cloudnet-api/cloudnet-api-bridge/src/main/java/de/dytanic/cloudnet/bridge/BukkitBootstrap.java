@@ -21,6 +21,7 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -63,7 +64,9 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         CloudServer.getInstance().registerCommand(new CommandResource());
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerOutgoingPluginChannel(this, "CloudNet");
+
         enableTasks();
+        loadPlayers();
     }
 
     @Override
@@ -106,6 +109,12 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         } catch (Exception ex)
         {
         }
+    }
+
+    private void loadPlayers()
+    {
+        for (Player all : getServer().getOnlinePlayers())
+            CloudServer.getInstance().getPlayerAndCache(all.getUniqueId());
     }
 
     private void enableTasks()
