@@ -119,6 +119,7 @@ public class CloudServer implements ICloudService {
     public void updateDisable()
     {
         List<String> list = new CopyOnWriteArrayList<>();
+
         for (Player all : Bukkit.getOnlinePlayers())
             list.add(all.getName());
 

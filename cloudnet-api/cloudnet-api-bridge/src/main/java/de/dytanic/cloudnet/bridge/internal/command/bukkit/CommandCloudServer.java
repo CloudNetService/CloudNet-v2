@@ -23,17 +23,16 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Tareko on 23.08.2017.
  */
-public class CommandCloudServer implements CommandExecutor {
+public class CommandCloudServer implements CommandExecutor, TabExecutor {
 
     public CommandCloudServer()
     {
@@ -52,15 +51,15 @@ public class CommandCloudServer implements CommandExecutor {
         Player player = (Player) commandSender;
 
 
-        if(args.length > 5)
+        if (args.length > 5)
         {
-            if(args[0].equalsIgnoreCase("createMob"))
+            if (args[0].equalsIgnoreCase("createMob"))
             {
                 try
                 {
                     EntityType entityType = EntityType.valueOf(args[1].toUpperCase());
-                    if(!entityType.isAlive() || !entityType.isSpawnable()) return false;
-                    if(CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
+                    if (!entityType.isAlive() || !entityType.isSpawnable()) return false;
+                    if (CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
                         @Override
                         public boolean isAccepted(MobSelector.MobImpl value)
                         {
@@ -69,29 +68,29 @@ public class CommandCloudServer implements CommandExecutor {
                     }) == null)
                     {
                         StringBuilder stringBuilder = new StringBuilder();
-                        for(short i = 6; i < args.length; i++)
+                        for (short i = 6; i < args.length; i++)
                         {
                             stringBuilder.append(args[i]).append(" ");
                         }
-                        if(stringBuilder.length() > 32)
+                        if (stringBuilder.length() > 32)
                         {
                             commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The display cannot be longe then 32 characters");
                             return false;
                         }
                         ServerMob serverMob = new ServerMob(UUID.randomUUID(), stringBuilder.substring(0, stringBuilder.length() - 1), args[2], entityType.name(), args[3],
                                 NetworkUtils.checkIsNumber(args[4]) ? (Integer.parseInt(args[4]) != 0 ? Integer.parseInt(args[4]) : 138) : 138
-                                ,args[5].equalsIgnoreCase("true"),
+                                , args[5].equalsIgnoreCase("true"),
                                 MobSelector.getInstance().toPosition(CloudAPI.getInstance().getGroup(), player.getLocation()), "§8#§c%group% &bPlayers online §8|§7 %group_online% of %max_players%", new Document());
                         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(serverMob));
                         player.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob will be created, please wait...");
-                    }
-                    else
+                    } else
                     {
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob with the name " + args[2] + " already exists!");
                         return false;
                     }
-                }catch (Exception ex){
-                    for(EntityType entityType : EntityType.values())
+                } catch (Exception ex)
+                {
+                    for (EntityType entityType : EntityType.values())
                     {
                         commandSender.sendMessage("- " + entityType.name());
                     }
@@ -99,9 +98,9 @@ public class CommandCloudServer implements CommandExecutor {
             }
         }
 
-        if(args.length > 2)
+        if (args.length > 2)
         {
-            if(args[0].equalsIgnoreCase("editMobLine"))
+            if (args[0].equalsIgnoreCase("editMobLine"))
             {
                 MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
                     @Override
@@ -110,10 +109,10 @@ public class CommandCloudServer implements CommandExecutor {
                         return value.getMob().getName().equalsIgnoreCase(args[1]);
                     }
                 });
-                if(mob != null)
+                if (mob != null)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
-                    for(short i = 2; i < args.length; i++)
+                    for (short i = 2; i < args.length; i++)
                     {
                         stringBuilder.append(args[i]).append(" ");
                     }
@@ -124,7 +123,7 @@ public class CommandCloudServer implements CommandExecutor {
                     return false;
                 }
             }
-            if(args[0].equalsIgnoreCase("setDisplay"))
+            if (args[0].equalsIgnoreCase("setDisplay"))
             {
                 MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
                     @Override
@@ -133,10 +132,10 @@ public class CommandCloudServer implements CommandExecutor {
                         return value.getMob().getName().equalsIgnoreCase(args[1]);
                     }
                 });
-                if(mob != null)
+                if (mob != null)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
-                    for(short i = 2; i < args.length; i++)
+                    for (short i = 2; i < args.length; i++)
                     {
                         stringBuilder.append(args[i]).append(" ");
                     }
@@ -176,7 +175,18 @@ public class CommandCloudServer implements CommandExecutor {
                     }
                     return false;
                 }
-                if(args[0].equalsIgnoreCase("removeMob"))
+                if (args[0].equalsIgnoreCase("removeSigns"))
+                {
+                    if (SignSelector.getInstance() == null) return false;
+
+                    for (Sign sign : SignSelector.getInstance().getSigns().values())
+                        if (sign.getTargetGroup() != null && sign.getTargetGroup().equalsIgnoreCase(args[1]))
+                            CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveSign(sign));
+
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "§7You deleted all signs from the group \"§6" + args[1] + "§7\"");
+
+                }
+                if (args[0].equalsIgnoreCase("removeMob"))
                 {
                     if (MobSelector.getInstance() == null) return false;
                     MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
@@ -186,12 +196,12 @@ public class CommandCloudServer implements CommandExecutor {
                             return value.getMob().getName().equalsIgnoreCase(args[1]);
                         }
                     });
-                    if(mob != null)
+                    if (mob != null)
                     {
                         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveMob(mob.getMob()));
                         player.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob has been removed");
-                    }
-                    else player.sendMessage(CloudAPI.getInstance().getPrefix() + "The Mob doesn't exist on this group");
+                    } else
+                        player.sendMessage(CloudAPI.getInstance().getPrefix() + "The Mob doesn't exist on this group");
                 }
                 break;
             case 1:
@@ -213,7 +223,7 @@ public class CommandCloudServer implements CommandExecutor {
                     }
 
                 }
-                if(args[0].equalsIgnoreCase("listMobs"))
+                if (args[0].equalsIgnoreCase("listMobs"))
                 {
                     if (MobSelector.getInstance() == null) return false;
                     CollectionWrapper.iterator(MobSelector.getInstance().getMobs().values(), new Runnabled<MobSelector.MobImpl>() {
@@ -224,18 +234,18 @@ public class CommandCloudServer implements CommandExecutor {
                         }
                     });
                 }
-                if(args[0].equalsIgnoreCase("moblist"))
+                if (args[0].equalsIgnoreCase("moblist"))
                 {
                     if (MobSelector.getInstance() == null) return false;
-                    for(EntityType entityType : EntityType.values())
+                    for (EntityType entityType : EntityType.values())
                     {
-                        if(entityType.isAlive() && entityType.isSpawnable())
+                        if (entityType.isAlive() && entityType.isSpawnable())
                             commandSender.sendMessage("- " + entityType.name());
                     }
                 }
                 break;
             case 3:
-                if(args[0].equalsIgnoreCase("setItem"))
+                if (args[0].equalsIgnoreCase("setItem"))
                 {
                     if (MobSelector.getInstance() == null) return false;
                     MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
@@ -245,7 +255,7 @@ public class CommandCloudServer implements CommandExecutor {
                             return value.getMob().getName().equalsIgnoreCase(args[1]);
                         }
                     });
-                    if(mob != null)
+                    if (mob != null)
                     {
                         int itemId = NetworkUtils.checkIsNumber(args[2]) ? Integer.parseInt(args[2]) : 138;
                         mob.getMob().setItemId(itemId);
@@ -260,6 +270,7 @@ public class CommandCloudServer implements CommandExecutor {
                 {
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver createSign <targetGroup>");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver removeSign");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver removeSigns <targetGroup>");
                 }
                 if (MobSelector.getInstance() != null)
                 {
@@ -275,5 +286,11 @@ public class CommandCloudServer implements CommandExecutor {
         }
 
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args)
+    {
+        return new LinkedList<>(CloudAPI.getInstance().getServerGroupMap().keySet());
     }
 }

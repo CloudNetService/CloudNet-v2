@@ -128,8 +128,11 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
                     if (CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getMode().equals(ServerGroupMode.LOBBY) ||
                             CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getMode().equals(ServerGroupMode.STATIC_LOBBY))
                     {
-                        getCommand("cloudserver").setExecutor(new CommandCloudServer());
+                        CommandCloudServer server = new CommandCloudServer();
+
+                        getCommand("cloudserver").setExecutor(server);
                         getCommand("cloudserver").setPermission("cloudnet.command.cloudserver");
+                        getCommand("cloudserver").setTabCompleter(server);
                     }
 
                     Bukkit.getPluginManager().callEvent(new BukkitCloudServerInitEvent(CloudServer.getInstance()));

@@ -1179,6 +1179,31 @@ public final class CloudAPI implements MetaObj {
         return result.getResult();
     }
 
+    /**
+     *
+     */
+    public void copyDirectory(ServerInfo serverInfo, String directory)
+    {
+        if(serverInfo == null || directory == null) throw new NullPointerException("serverInfo or directory is null");
+
+        networkConnection.sendPacket(new PacketOutCopyDirectory(serverInfo, directory));
+    }
+
+    /**
+     * Unsafe Method
+     */
+    @Deprecated
+    private Map<UUID, OfflinePlayer> getRegisteredPlayers()
+    {
+        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetRegisteredPlayers(), networkConnection);
+
+        if (result.getResult() != null)
+            return result.getResult().getObject("players", new TypeToken<Map<UUID, OfflinePlayer>>() {
+            }.getType());
+
+        return new HashMap<>();
+    }
+
     /*================================================================================*/
 
     private CloudPlayer checkAndGet(UUID uniqueId)

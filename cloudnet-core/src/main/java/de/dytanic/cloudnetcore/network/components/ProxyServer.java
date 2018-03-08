@@ -56,10 +56,7 @@ public class ProxyServer
 
     public void disconnect()
     {
-        if (this.channel != null)
-        {
-            this.channel.close().syncUninterruptibly();
-        }
+        if (this.channel != null) this.channel.close().syncUninterruptibly();
     }
 
     public void sendCustomMessage(String channel, String message, Document value)

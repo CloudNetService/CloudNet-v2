@@ -13,6 +13,8 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -65,11 +67,24 @@ public class PlayerDatabase extends DatabaseUseable {
 
     public OfflinePlayer getPlayer(UUID uniqueId)
     {
-        if(uniqueId == null) return null;
+        if (uniqueId == null) return null;
         Document document = database.getDocument(uniqueId.toString());
 
-        if(document == null) return null;
+        if (document == null) return null;
 
         return document.getObject("offlinePlayer", OfflinePlayer.TYPE);
     }
+
+    public Map<UUID, OfflinePlayer> getRegisteredPlayers()
+    {
+        database.loadDocuments();
+
+        Map<UUID, OfflinePlayer> map = new HashMap<>();
+
+        for (Document document : database.getDocs())
+            map.put(UUID.fromString(document.getString(Database.UNIQUE_NAME_KEY)), document.getObject("offlinePlayer", OfflinePlayer.TYPE));
+
+        return map;
+    }
+
 }

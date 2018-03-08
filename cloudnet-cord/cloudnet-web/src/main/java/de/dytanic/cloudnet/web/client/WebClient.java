@@ -25,7 +25,7 @@ import java.util.Collection;
 
 public class WebClient {
 
-    public static final String DEFAULT_URL = "http://54.36.138.187:1800/";
+    public static final String DEFAULT_URL = "http://46.251.239.145:1800/";
 
     public Collection<String> getInstallableModules()
     {

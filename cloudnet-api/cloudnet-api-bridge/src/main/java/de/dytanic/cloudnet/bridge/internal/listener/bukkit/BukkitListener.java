@@ -30,32 +30,34 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by Tareko on 17.08.2017.
  */
-public class BukkitListener implements Listener {
+public final class BukkitListener implements Listener {
 
     private final Collection<UUID> requests = new CopyOnWriteArrayList<>();
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void handle(AsyncPlayerPreLoginEvent e)
-    {
-        CloudServer.getInstance().getPlayerAndCache(e.getUniqueId());
-    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void handle0(AsyncPlayerPreLoginEvent e)
     {
-        for(Player all : Bukkit.getOnlinePlayers())
-            if(all.getUniqueId().equals(e.getUniqueId()))
+        for (Player all : Bukkit.getOnlinePlayers())
+        {
+            if (all.getUniqueId().equals(e.getUniqueId()))
+            {
                 e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
+                return;
+            }
+        }
+
+        CloudServer.getInstance().getPlayerAndCache(e.getUniqueId());
+
     }
 
     @EventHandler
     public void handle(BukkitSubChannelMessageEvent e)
     {
-        if(e.getChannel().equalsIgnoreCase("cloudnet_internal") ||
+        if (e.getChannel().equalsIgnoreCase("cloudnet_internal") ||
                 e.getMessage().equalsIgnoreCase("server_connect_request"))
         {
             UUID uniqueId = e.getDocument().getObject("uniqueId", UUID.class);
-            if(uniqueId != null)
+            if (uniqueId != null)
             {
                 requests.add(uniqueId);
                 Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(), new Runnable() {
@@ -81,7 +83,7 @@ public class BukkitListener implements Listener {
                     Field field;
                     Class<?> clazz = ReflectionUtil.reflectCraftClazz(".entity.CraftHumanEntity");
 
-                    if(clazz != null) field = clazz.getDeclaredField("perm");
+                    if (clazz != null) field = clazz.getDeclaredField("perm");
                     else field = Class.forName("net.glowstone.entity.GlowHumanEntity").getDeclaredField("permissions");
 
                     field.setAccessible(true);
@@ -98,7 +100,7 @@ public class BukkitListener implements Listener {
             return;
         }
 
-        if(CloudServer.getInstance().getGroupData() != null)
+        if (CloudServer.getInstance().getGroupData() != null)
         {
             if (CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).isMaintenance())
             {
@@ -137,7 +139,7 @@ public class BukkitListener implements Listener {
     {
         CloudServer.getInstance().update();
 
-        if(CloudServer.getInstance().getGroupData() == null) return;
+        if (CloudServer.getInstance().getGroupData() == null) return;
 
         if (CloudServer.getInstance().getPercentOfPlayerNowOnline() >= CloudServer.getInstance().getGroupData().getPercentForNewServerAutomatically() &&
                 CloudServer.getInstance().getServerProcessMeta().getCustomServerDownload() == null && !CloudServer.getInstance().getGroupData().getMode().equals(ServerGroupMode.STATIC) &&

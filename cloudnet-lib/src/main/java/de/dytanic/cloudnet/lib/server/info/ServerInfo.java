@@ -1,5 +1,6 @@
 package de.dytanic.cloudnet.lib.server.info;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
@@ -8,6 +9,7 @@ import de.dytanic.cloudnet.lib.service.ServiceId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -16,6 +18,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class ServerInfo {
+
+    public static final Type TYPE = new TypeToken<ServerInfo>(){}.getType();
 
     private ServiceId serviceId;
 

@@ -95,12 +95,12 @@ public final class NetworkManager {
         if (!playerDatabase.containsPlayer(cloudPlayerConnection.getUniqueId()))
             offlinePlayer = playerDatabase.registerPlayer(cloudPlayerConnection);
 
-        if(offlinePlayer == null) offlinePlayer = playerDatabase.getPlayer(cloudPlayerConnection.getUniqueId());
+        if (offlinePlayer == null) offlinePlayer = playerDatabase.getPlayer(cloudPlayerConnection.getUniqueId());
 
         CloudPlayer cloudPlayer = new CloudPlayer(offlinePlayer, cloudPlayerConnection, proxyServer.getServerId());
         cloudPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
-        if(cloudPlayer.getFirstLogin() != null) cloudPlayer.setFirstLogin(System.currentTimeMillis());
+        if (cloudPlayer.getFirstLogin() != null) cloudPlayer.setFirstLogin(System.currentTimeMillis());
 
         CloudNet.getInstance().getEventManager().callEvent(new PlayerInitEvent(cloudPlayer));
 
@@ -250,9 +250,15 @@ public final class NetworkManager {
 
     public void handleCommandExecute(PlayerCommandExecution playerCommandExecutor)
     {
-        CloudNet.getLogger().info("Player [" + playerCommandExecutor.getName() + "] executed command [" + playerCommandExecutor.getCommandLine() + "]");
-        CloudNet.getInstance().getEventManager().callEvent(new CommandExecutionEvent(playerCommandExecutor));
-        StatisticManager.getInstance().playerCommandExecutions();
+
+        CloudPlayer cloudPlayer = getPlayer(playerCommandExecutor.getName());
+        if (cloudPlayer != null)
+        {
+            CloudNet.getLogger().info("Player [" + playerCommandExecutor.getName() + "] executed command [" + playerCommandExecutor.getCommandLine() +
+                    "] on [" + cloudPlayer.getProxy() + "/" + cloudPlayer.getServer() + "]");
+            CloudNet.getInstance().getEventManager().callEvent(new CommandExecutionEvent(playerCommandExecutor));
+            StatisticManager.getInstance().playerCommandExecutions();
+        }
     }
 
     public void handlePlayerUpdate(CloudPlayer cloudPlayer)
@@ -288,7 +294,7 @@ public final class NetworkManager {
     {
         int atomicInteger = 0;
 
-        for(ProxyServer proxyServer : CloudNet.getInstance().getProxys().values())
+        for (ProxyServer proxyServer : CloudNet.getInstance().getProxys().values())
             atomicInteger += proxyServer.getProxyInfo().getOnlineCount();
 
         return atomicInteger;
@@ -325,8 +331,8 @@ public final class NetworkManager {
                         if (minecraftServer.getChannel() != null && filter.accept(minecraftServer))
                             minecraftServer.sendPacket(packet);
 
-                    for(CloudServer cloudServer : cn.getCloudServers().values())
-                        if(cloudServer.getChannel() != null && filter.accept(cloudServer))
+                    for (CloudServer cloudServer : cn.getCloudServers().values())
+                        if (cloudServer.getChannel() != null && filter.accept(cloudServer))
                             cloudServer.sendPacket(packet);
 
                 }
@@ -371,7 +377,8 @@ public final class NetworkManager {
                             return true;
 
                         if (serverGroup.getAdvancedServerConfig().isNotifyPlayerUpdatesFromNoCurrentPlayer() &&
-                                (packet instanceof PacketOutUpdatePlayer || packet instanceof PacketOutLoginPlayer || packet instanceof PacketOutLogoutPlayer))
+                                (packet instanceof PacketOutUpdatePlayer || packet instanceof PacketOutLoginPlayer || packet instanceof PacketOutLogoutPlayer ||
+                                        packet instanceof PacketOutUpdateOfflinePlayer))
                             return true;
 
                     }
@@ -475,4 +482,5 @@ public final class NetworkManager {
 
         return cloudNetwork;
     }
+
 }

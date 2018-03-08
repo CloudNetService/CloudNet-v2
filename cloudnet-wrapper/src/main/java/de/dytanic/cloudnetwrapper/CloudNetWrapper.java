@@ -155,6 +155,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 11, PacketInOnlineServer.class);
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 12, PacketInUpdateWrapperProperties.class);
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 13, PacketInStartCloudServer.class);
+        networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 14, PacketInCopyDirectory.class);
 
         networkConnection.getPacketManager().registerHandler(PacketRC.TEST + 1, PacketInTestResult.class);
 

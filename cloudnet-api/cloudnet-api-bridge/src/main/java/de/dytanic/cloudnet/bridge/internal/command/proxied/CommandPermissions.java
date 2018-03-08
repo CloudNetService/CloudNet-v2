@@ -12,18 +12,16 @@ import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 23.08.2017.
  */
-public class CommandPermissions extends Command {
+public final class CommandPermissions extends Command implements TabExecutor {
 
     public CommandPermissions()
     {
@@ -215,7 +213,7 @@ public class CommandPermissions extends Command {
 
                             permissionGroup.getServerGroupPermissions().get(args[5]).add(args[4].replaceFirst("-", ""));
                             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup.getName()+ "\" on server group " + args[5]);
+                            sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\" on server group " + args[5]);
                         } else
                         {
                             sender.sendMessage("The specified permission group doesn't exist");
@@ -457,5 +455,11 @@ public class CommandPermissions extends Command {
     private long calcDays(int value)
     {
         return (System.currentTimeMillis() + ((TimeUnit.DAYS.toMillis(value))));
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender commandSender, String[] strings)
+    {
+        return new LinkedList<>(CloudAPI.getInstance().getPermissionPool().getGroups().keySet());
     }
 }

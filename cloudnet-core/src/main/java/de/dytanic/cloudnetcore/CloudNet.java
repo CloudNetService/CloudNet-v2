@@ -463,6 +463,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         packetManager.registerHandler(PacketRC.SERVER_HANDLE + 7, PacketInStopProxy.class);
         packetManager.registerHandler(PacketRC.SERVER_HANDLE + 8, PacketInCustomSubChannelMessage.class);
         packetManager.registerHandler(PacketRC.SERVER_HANDLE + 9, PacketInStartCloudServer.class);
+        packetManager.registerHandler(PacketRC.SERVER_HANDLE + 10, PacketInCopyDirectory.class);
 
         packetManager.registerHandler(PacketRC.PLAYER_HANDLE + 1, PacketInPlayerLoginRequest.class);
         packetManager.registerHandler(PacketRC.PLAYER_HANDLE + 2, PacketInUpdatePlayer.class);
@@ -481,6 +482,7 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         packetManager.registerHandler(PacketRC.API + 8, PacketAPIInGetServer.class);
         packetManager.registerHandler(PacketRC.API + 9, PacketAPIInGetCloudServers.class);
         packetManager.registerHandler(PacketRC.API + 10, PacketAPIInGetStatistic.class);
+        packetManager.registerHandler(PacketRC.API + 11, PacketAPIInGetRegisteredPlayers.class);
 
         packetManager.registerHandler(PacketRC.DB + 1, PacketDBInGetDocument.class);
         packetManager.registerHandler(PacketRC.DB + 2, PacketDBInInsertDocument.class);

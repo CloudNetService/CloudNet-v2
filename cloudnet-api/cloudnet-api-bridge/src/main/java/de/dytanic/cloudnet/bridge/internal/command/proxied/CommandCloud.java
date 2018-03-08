@@ -106,6 +106,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                             "§7/cloud list",
                             "§7/cloud maintenance <group>",
                             "§7/cloud copy <server>",
+                            "§7/cloud copy <server> <directory>",
                             "§7/cloud version",
                             "§7/cloud statistics",
                             " "
@@ -413,6 +414,20 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 break;
             case 3:
+                if(args[0].equalsIgnoreCase("copy"))
+                {
+                    if(!CloudProxy.getInstance().getCachedServers().containsKey(args[1]))
+                    {
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The server doesn't exists");
+                        return;
+                    }
+
+                    CloudAPI.getInstance().copyDirectory(CloudProxy.getInstance().getCachedServers().get(args[1]),
+                            args[2]);
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The wrapper tried to copy the directory...");
+
+                    return;
+                }
                 if (args[0].equalsIgnoreCase("toggle"))
                 {
                     switch (args[1].toLowerCase())

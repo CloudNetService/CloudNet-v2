@@ -494,6 +494,21 @@ public class GameServer implements ServerDispatcher {
         instance.destroyForcibly();
     }
 
+    public void copyDirectory(String name)
+    {
+        File file = new File(path, name);
+
+        if(file.exists() && file.isDirectory())
+        {
+            try
+            {
+                FileCopy.copyFilesInDirectory(file, new File("local/templates/" + serverGroup.getName() + "/" + serverProcess.getMeta().getTemplate().getName() + "/" + name));
+            } catch (IOException e)
+            {
+            }
+        }
+    }
+
     private void startProcess() throws Exception
     {
         StringBuilder commandBuilder = new StringBuilder();
