@@ -25,7 +25,7 @@ import java.util.Collection;
 
 public class WebClient {
 
-    public static final String DEFAULT_URL = "http://46.251.239.145:1800/";
+    public static final String DEFAULT_URL = "http://dytanic.de/cloudnet/";
 
     public Collection<String> getInstallableModules()
     {
@@ -41,7 +41,7 @@ public class WebClient {
 
     public String getNewstVersion()
     {
-        return getString(DEFAULT_URL + "version", "version");
+        return getString(DEFAULT_URL + "update/config.json", "version");
     }
 
     private <E> E handleRequest(String url, Type type)
@@ -88,7 +88,7 @@ public class WebClient {
     {
         try
         {
-            HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(DEFAULT_URL + "cloud/" + (getEnvironment() ? "core" : "wrapper")).openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(DEFAULT_URL + "update/" + (getEnvironment() ? "CloudNet-Master.jar" : "CloudNet-Wrapper.jar")).openConnection();
             httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
             httpURLConnection.setUseCaches(false);
             httpURLConnection.setConnectTimeout(1000);
