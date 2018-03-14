@@ -16,6 +16,11 @@ import de.dytanic.cloudnetcore.cloudflare.listener.ProxyRemoveListener;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import lombok.Getter;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by Tareko on 20.10.2017.
  */
@@ -26,6 +31,8 @@ public class CloudFlareModule extends CoreModule {
     private static CloudFlareModule instance;
 
     private ConfigCloudFlare configCloudFlare;
+
+    private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
     private CloudFlareDatabase cloudFlareDatabase;
 
@@ -70,8 +77,12 @@ public class CloudFlareModule extends CoreModule {
     @Override
     public void onShutdown()
     {
+
+        executor.shutdown();
+
         try
         {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             CloudFlareService.getInstance().shutdown(cloudFlareDatabase);
         } catch (Exception ex)
         {

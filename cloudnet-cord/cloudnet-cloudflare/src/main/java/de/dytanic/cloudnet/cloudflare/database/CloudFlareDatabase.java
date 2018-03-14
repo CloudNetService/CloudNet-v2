@@ -68,6 +68,8 @@ public class CloudFlareDatabase extends DatabaseUseable {
 
     public void add(PostResponse postResponse)
     {
+        if(postResponse == null) return;
+
         Document document = database.getDocument("cloudflare_cache_dnsrequests");
         if (document.contains("requests"))
         {

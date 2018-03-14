@@ -32,7 +32,7 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
 
     private ByteBuf byteBuf;
 
-    protected ProtocolBuffer(ByteBuf byteBuf)
+    public ProtocolBuffer(ByteBuf byteBuf)
     {
         this.byteBuf = byteBuf;
     }

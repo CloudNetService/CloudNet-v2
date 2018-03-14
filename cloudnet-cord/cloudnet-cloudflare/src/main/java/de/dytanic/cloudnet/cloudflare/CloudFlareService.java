@@ -84,6 +84,7 @@ public class CloudFlareService {
                         PostResponse postResponse = this.createRecord(dnsRecord);
                         ipARecords.put(wrapper, postResponse);
                         cloudFlareDatabase.putPostResponse(wrapper, postResponse);
+                        NetworkUtils.sleepUninterruptedly(400);
                     }
                 }
             }
@@ -98,9 +99,14 @@ public class CloudFlareService {
         for (PostResponse postResponse : this.bungeeSRVRecords.values())
         {
             this.deleteRecord(postResponse.getId());
+            NetworkUtils.sleepUninterruptedly(400);
         }
 
-        for(String id : cloudFlareDatabase.getAndRemove()) this.deleteRecord(id);
+        for(String id : cloudFlareDatabase.getAndRemove())
+        {
+            this.deleteRecord(id);
+            NetworkUtils.sleepUninterruptedly(400);
+        }
         return true;
     }
 
@@ -179,9 +185,9 @@ public class CloudFlareService {
     {
         if (!cloudFlareConfig.isEnabled()) return;
         PostResponse postResponse = bungeeSRVRecords.get(proxyServer.getServiceId().getServerId());
-        cloudFlareDatabase.remove(postResponse.getId());
         if (postResponse != null)
         {
+            cloudFlareDatabase.remove(postResponse.getId());
             deleteRecord(postResponse.getId());
         }
     }
