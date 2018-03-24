@@ -17,4 +17,8 @@ public class PlayerExecutor {
 
     public void sendMessage(CloudPlayer cloudPlayer, String message) {}
 
+    public void sendActionbar(CloudPlayer cloudPlayer, String message) {}
+
+    public void sendTitle(CloudPlayer cloudPlayer, String title, String subTitle, int fadeIn, int stay, int fadeOut) {}
+
 }

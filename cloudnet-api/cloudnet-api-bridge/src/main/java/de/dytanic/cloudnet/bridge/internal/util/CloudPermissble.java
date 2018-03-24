@@ -24,6 +24,8 @@ public class CloudPermissble extends PermissibleBase {
     {
         super(player);
         this.unqiueId = player.getUniqueId();
+
+        player.setOp(false);
     }
 
     @Override
@@ -53,6 +55,12 @@ public class CloudPermissble extends PermissibleBase {
         if(cloudPlayer != null)
         return cloudPlayer.getPermissionEntity().hasPermission(CloudAPI.getInstance().getPermissionPool(), inName, CloudAPI.getInstance().getGroup());
         else
+        return false;
+    }
+
+    @Override
+    public boolean isOp()
+    {
         return false;
     }
 

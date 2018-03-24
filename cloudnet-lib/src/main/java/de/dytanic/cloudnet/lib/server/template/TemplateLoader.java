@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.lib.server.template;
 
+import de.dytanic.cloudnet.lib.utility.ZipConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -44,52 +45,15 @@ public class TemplateLoader {
 
     public TemplateLoader unZip(String dest)
     {
-        try{
-
-            ZipFile zipFile = new ZipFile(this.dest);
-            ZipEntry z;
-            Enumeration<? extends ZipEntry> entryEnumeration = zipFile.entries();
-            while (entryEnumeration.hasMoreElements())
-            {
-                z = entryEnumeration.nextElement();
-                extractEntry(zipFile, z, dest);
-            }
-            new File(this.dest).delete();
-        }catch (Exception ex)
+        try
         {
-            ex.printStackTrace();
+            ZipConverter.extract(Paths.get(this.dest), Paths.get(dest));
+            new File(this.dest).delete();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
         }
         return this;
-    }
-
-    private void extractEntry(ZipFile zipFile, ZipEntry entry, String destDir)
-            throws IOException
-    {
-        final byte[] bytes = new byte[0xFFFF];
-        File file = new File(destDir, entry.getName());
-
-        if (entry.isDirectory())
-            file.mkdirs();
-        else
-        {
-            new File(file.getParent()).mkdirs();
-
-            InputStream is = null;
-            OutputStream os = null;
-
-            try {
-                is = zipFile.getInputStream(entry);
-                os = new FileOutputStream(file);
-
-                int len;
-                while ((len = is.read(bytes)) != -1)
-                    os.write(bytes, 0, len);
-            } finally
-            {
-                if (os != null) os.close();
-                if (is != null) is.close();
-            }
-        }
     }
 
 }

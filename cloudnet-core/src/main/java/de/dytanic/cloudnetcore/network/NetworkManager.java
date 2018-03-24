@@ -85,6 +85,12 @@ public final class NetworkManager {
 
     public void handlePlayerLoginRequest(ProxyServer proxyServer, PlayerConnection cloudPlayerConnection, UUID uniqueId)
     {
+        if(this.onlinePlayers.containsKey(cloudPlayerConnection.getUniqueId()))
+        {
+            proxyServer.sendPacketSynchronized(new PacketOutLoginPlayer(uniqueId, null));
+            return;
+        }
+
         LoginRequestEvent loginRequestEvent = new LoginRequestEvent(proxyServer, cloudPlayerConnection);
         CloudNet.getInstance().getEventManager().callEvent(loginRequestEvent);
 

@@ -8,6 +8,7 @@ import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
+import de.dytanic.cloudnet.lib.utility.ZipConverter;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -62,7 +63,7 @@ public class MasterTemplateDeploy {
         {
         }
 
-        zipFolder(dir, file);
+        ZipConverter.convert(file, dir);
         HttpURLConnection urlConnection = (HttpURLConnection) new URL((ssl ? "https" : "http") +
                 "://" +
                 connectableAddress.getHostName() +
@@ -105,30 +106,5 @@ public class MasterTemplateDeploy {
 
         }
         Files.deleteIfExists(file);
-    }
-
-    private void zipFolder(Path sourceFolderPath, Path zipPath) throws Exception
-    {
-        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()));
-        Files.walkFileTree(
-                sourceFolderPath,
-                EnumSet.noneOf(FileVisitOption.class),
-                Integer.MAX_VALUE,
-                new SimpleFileVisitor<Path>() {
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-                    {
-                        try
-                        {
-                            zos.putNextEntry(new ZipEntry(sourceFolderPath.relativize(file).toString()));
-                            Files.copy(file, zos);
-                            zos.closeEntry();
-                        } catch (Exception ex)
-                        {
-                            zos.closeEntry();
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
-        zos.close();
     }
 }

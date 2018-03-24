@@ -5,22 +5,26 @@
 package de.dytanic.cloudnetcore.web.api.v1;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.utility.ZipConverter;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
 import de.dytanic.cloudnet.web.server.util.PathProvider;
 import de.dytanic.cloudnet.web.server.util.QueryDecoder;
 import de.dytanic.cloudnetcore.CloudNet;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * Created by Tareko on 29.09.2017.
@@ -82,13 +86,28 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                 Document document = Document.load(httpRequest.headers().get("-Xvalue"));
                 if (document.contains("template") && document.contains("group") && Files.exists(Paths.get("local/templates/" + document.getString("group") + "/" + document.getString("template"))))
                 {
-                    Path file = Paths.get("local/cache/" + NetworkUtils.RANDOM.nextLong() + ".zip");
+                    Path file = Paths.get("local/cache/" + (NetworkUtils.RANDOM.nextInt(Integer.MAX_VALUE - 1)) + ".zip");
+
                     if (!Files.exists(file))
-                    {
                         Files.createFile(file);
-                    }
+
                     String x = "local/templates/" + document.getString("group") + "/" + document.getString("template");
-                    zipFolder(Paths.get(x), file);
+
+                    File directory = new File(x);
+                    directory.mkdirs();
+
+                    if (directory.list() != null && directory.list().length == 0)
+                    {
+                        new File(x + "/plugins").mkdirs();
+
+                        try (FileWriter fileWriter = new FileWriter(new File(x + "/eula.txt")))
+                        {
+                            fileWriter.write("eula=true");
+                            fileWriter.flush();
+                        }
+                    }
+
+                    ZipConverter.convert(file, Paths.get(x));
                     byte[] value = Files.readAllBytes(file);
                     fullHttpResponse.headers().set("content-disposition", "attachment; filename = " + document.getString("template") + ".zip");
                     fullHttpResponse.content().writeBytes(value);
@@ -107,19 +126,16 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                 String server = httpRequest.headers().get("-Xvalue");
                 String x = "local/servers/" + server;
 
-                if(!Files.exists(Paths.get(x)))
-                {
-                    Files.createDirectories(Paths.get(x + "/plugins"));
-                }
+                if (!Files.exists(Paths.get(x))) Files.createDirectories(Paths.get(x + "/plugins"));
 
                 Path file = Paths.get("local/cache/" + NetworkUtils.RANDOM.nextLong() + ".zip");
-                if (!Files.exists(file))
-                {
-                    Files.createFile(file);
-                }
 
-                zipFolder(Paths.get(x), file);
+                if (!Files.exists(file))
+                    Files.createFile(file);
+
+                ZipConverter.convert(file, Paths.get(x));
                 byte[] value = Files.readAllBytes(file);
+
                 fullHttpResponse.headers().set("content-disposition", "attachment; filename = " + server + ".zip");
                 fullHttpResponse.content().writeBytes(value);
                 Files.deleteIfExists(file);
@@ -130,21 +146,6 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
         }
 
         return fullHttpResponse;
-    }
-
-    private void zipFolder(Path sourceFolderPath, Path zipPath) throws Exception
-    {
-        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()));
-        Files.walkFileTree(sourceFolderPath, new SimpleFileVisitor<Path>() {
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-            {
-                zos.putNextEntry(new ZipEntry(sourceFolderPath.relativize(file).toString()));
-                Files.copy(file, zos);
-                zos.closeEntry();
-                return FileVisitResult.CONTINUE;
-            }
-        });
-        zos.close();
     }
 
 }

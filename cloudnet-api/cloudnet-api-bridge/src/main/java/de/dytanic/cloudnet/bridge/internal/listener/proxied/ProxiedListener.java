@@ -129,6 +129,12 @@ public class ProxiedListener implements Listener {
         CloudPlayer cloudPlayer = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketOutPlayerLoginRequest(playerConnection),
                 CloudAPI.getInstance().getNetworkConnection()).getResult().getObject("player", new TypeToken<CloudPlayer>() {}.getType());
 
+        if(cloudPlayer == null)
+        {
+            e.setCancelReason(TextComponent.fromLegacyText("§cYou are already on the network!"));
+            e.setCancelled(true);
+        }
+
         CommandSender cloudCommandSender = new CloudPlayerCommandSender(cloudPlayer);
 
         if (CloudProxy.getInstance().getProxyGroup() != null)

@@ -418,7 +418,6 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
                 .registerCommand(new CommandStop())
                 .registerCommand(new CommandCmd())
                 .registerCommand(new CommandStatistic())
-                .registerCommand(new CommandInstall())
                 .registerCommand(new CommandDelete())
                 .registerCommand(new CommandInstallPlugin())
                 .registerCommand(new CommandCopy())

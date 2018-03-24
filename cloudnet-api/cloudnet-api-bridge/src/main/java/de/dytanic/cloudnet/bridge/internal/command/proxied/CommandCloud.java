@@ -29,9 +29,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -128,8 +126,8 @@ public final class CommandCloud extends Command implements TabExecutor {
 
                     for (String key : document.keys())
                         if (!Database.UNIQUE_NAME_KEY.equalsIgnoreCase(key))
-                            commandSender.sendMessage( "§3" + key + "§8| §e " + document.get(key).toString());
-                            return;
+                            commandSender.sendMessage("§3" + key + "§8| §e " + document.get(key).toString());
+                    return;
                 }
                 if (args[0].equalsIgnoreCase("version") && commandSender.hasPermission("cloudnet.command.cloud.version"))
                 {
@@ -150,6 +148,8 @@ public final class CommandCloud extends Command implements TabExecutor {
                     int maxMemory = 0;
                     int usedMemory = 0;
 
+                    Map<String, Collection<ServerInfo>> groupSorted = new LinkedHashMap<>();
+
                     for (WrapperInfo cnsInfo : CloudAPI.getInstance().getWrappers())
                     {
                         commandSender.sendMessage("§8[§7" + cnsInfo.getServerId() + "§8/§7" + cnsInfo.getHostName() + "§8] §7Cores: " + cnsInfo.getAvailableProcessors());
@@ -161,15 +161,43 @@ public final class CommandCloud extends Command implements TabExecutor {
                         commandSender.sendMessage("§8[§c" + simpleProxyInfo.getServiceId().getServerId() + "§8] §8(§e" + simpleProxyInfo.getOnlineCount() + "§8) : §7" + simpleProxyInfo.getMemory() + "MB");
                         usedMemory = usedMemory + simpleProxyInfo.getMemory();
                     }
+
                     commandSender.sendMessage(" ");
                     for (ServerInfo simpleProxyInfo : CloudAPI.getInstance().getServers())
                     {
+                        if (simpleProxyInfo.getServiceId().getGroup() != null)
+                        {
+                            if (!groupSorted.containsKey(simpleProxyInfo.getServiceId().getGroup()))
+                                groupSorted.put(simpleProxyInfo.getServiceId().getGroup(), new ArrayList<>());
+
+                            groupSorted.get(simpleProxyInfo.getServiceId().getGroup()).add(simpleProxyInfo);
+                            continue;
+                        }
                         TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText("§8[§c" + simpleProxyInfo.getServiceId().getServerId() + "§8] §8(§e" + simpleProxyInfo.getOnlineCount() + "§8) §e" + simpleProxyInfo.getServerState().name() + " §8: §7" + simpleProxyInfo.getMemory() + "MB"));
                         textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server " + simpleProxyInfo.getServiceId().getServerId()));
                         commandSender.sendMessage(textComponent);
                         usedMemory = usedMemory + simpleProxyInfo.getMemory();
                     }
+
                     commandSender.sendMessage(" ");
+
+                    for (Map.Entry<String, Collection<ServerInfo>> entry : groupSorted.entrySet())
+                    {
+                        commandSender.sendMessage("§7Group: §e" + entry.getKey());
+
+                        for (ServerInfo serverInfo : entry.getValue())
+                        {
+                            TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText("§8[§c" +
+                                    serverInfo.getServiceId().getServerId() + "§8] §8(§e" + serverInfo.getOnlineCount() + "§8) §e" +
+                                    serverInfo.getServerState().name() + " §8: §7" + serverInfo.getMemory() + "MB"));
+
+                            textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server " + serverInfo.getServiceId().getServerId()));
+                            commandSender.sendMessage(textComponent);
+                            usedMemory = usedMemory + serverInfo.getMemory();
+                        }
+
+                        commandSender.sendMessage(" ");
+                    }
 
                     commandSender.sendMessage("§7Memory in use: " + usedMemory + "§8/§7" + maxMemory + "MB");
                 }
@@ -414,9 +442,9 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 break;
             case 3:
-                if(args[0].equalsIgnoreCase("copy"))
+                if (args[0].equalsIgnoreCase("copy"))
                 {
-                    if(!CloudProxy.getInstance().getCachedServers().containsKey(args[1]))
+                    if (!CloudProxy.getInstance().getCachedServers().containsKey(args[1]))
                     {
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The server doesn't exists");
                         return;

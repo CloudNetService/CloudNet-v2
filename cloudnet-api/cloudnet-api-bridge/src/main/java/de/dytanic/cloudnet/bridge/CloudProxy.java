@@ -11,8 +11,8 @@ import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.bridge.event.proxied.*;
 import de.dytanic.cloudnet.bridge.internal.chat.PlayerChatExecutor;
 import de.dytanic.cloudnet.lib.CloudNetwork;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.MultiValue;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.proxylayout.ServerFallback;
@@ -22,13 +22,15 @@ import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.Catcher;
+import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ListenerInfo;
@@ -36,7 +38,10 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -517,11 +522,13 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                 if (message.equalsIgnoreCase("sendMessage"))
                 {
                     UUID uniqueId = document.getObject("uniqueId", UUID.class);
-                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+                    if (uniqueId != null)
+                    {
+                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
 
-                    if (proxiedPlayer != null)
-                        proxiedPlayer.sendMessage(new TextComponent(TextComponent.fromLegacyText(document.getString("message"))));
-
+                        if (proxiedPlayer != null)
+                            proxiedPlayer.sendMessage(new TextComponent(TextComponent.fromLegacyText(document.getString("message"))));
+                    }
                     return true;
                 }
 
@@ -529,20 +536,63 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                 if (message.equalsIgnoreCase("sendMessage_basecomponent"))
                 {
                     UUID uniqueId = document.getObject("uniqueId", UUID.class);
-                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+                    if (uniqueId != null)
+                    {
+                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
 
-                    if (proxiedPlayer != null)
-                        proxiedPlayer.sendMessage(document.getObject("baseComponent", BaseComponent.class));
+                        if (proxiedPlayer != null)
+                            proxiedPlayer.sendMessage(document.getObject("baseComponent", BaseComponent.class));
+                    }
                 }
 
                 if (message.equalsIgnoreCase("kickPlayer"))
                 {
                     UUID uniqueId = document.getObject("uniqueId", UUID.class);
+                    if (uniqueId != null)
+                    {
+                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+
+                        if (proxiedPlayer != null)
+                            proxiedPlayer.disconnect(document.getString("reason"));
+                    }
+                    return true;
+                }
+
+                if (message.equalsIgnoreCase("sendActionbar"))
+                {
+                    UUID uniqueId = document.getObject("uniqueId", UUID.class);
+                    if (uniqueId != null)
+                    {
+                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+
+                        if (proxiedPlayer != null)
+                            proxiedPlayer.sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(document.getString("message")));
+                    }
+                    return true;
+                }
+
+                if (message.equalsIgnoreCase("sendTitle"))
+                {
+                    if (!document.contains("stay") || !document.contains("fadeIn") || !document.contains("fadeOut") || !document.contains("uniqueId"))
+                        return true;
+
+                    UUID uniqueId = document.getObject("uniqueId", UUID.class);
                     ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
 
                     if (proxiedPlayer != null)
-                        proxiedPlayer.disconnect(document.getString("reason"));
+                    {
+                        Title title = ProxyServer.getInstance().createTitle();
 
+                        if(document.contains("title"))
+                            title.title(TextComponent.fromLegacyText(document.getString("title")));
+
+                        if(document.contains("subTitle"))
+                            title.subTitle(TextComponent.fromLegacyText(document.getString("subTitle")));
+
+                        title.fadeIn(document.getInt("fadeIn")).fadeOut(document.getInt("fadeOut")).stay(document.getInt("stay"));
+
+                        proxiedPlayer.sendTitle(title);
+                    }
                     return true;
                 }
 

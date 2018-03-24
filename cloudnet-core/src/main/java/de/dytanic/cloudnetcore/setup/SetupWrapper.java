@@ -45,6 +45,7 @@ public class SetupWrapper {
                 commandSender.sendMessage("Wrapper [" + wrapperMeta.getId() + "] was registered on CloudNet");
             }
         });
+
         Consumer<SetupRequest> request = setup::request;
         request.accept(new SetupRequest("address", "What's the IP address of the wrapper?", "Specified IP address is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
             @Override
@@ -53,7 +54,7 @@ public class SetupWrapper {
                 return key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1");
             }
         }));
-        request.accept(new SetupRequest("user", "What's the name of the wrapper?", "Specified name is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+        request.accept(new SetupRequest("user", "What's the user of the wrapper?", "Specified name is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
             @Override
             public Boolean doCatch(String key)
             {

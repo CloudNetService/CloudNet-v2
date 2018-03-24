@@ -445,6 +445,8 @@ public class Document
 
     public <T> T getObject(String key, Type type)
     {
+        if(!contains(key)) return null;
+
         return GSON.fromJson(dataCatcher.get(key), type);
     }
 

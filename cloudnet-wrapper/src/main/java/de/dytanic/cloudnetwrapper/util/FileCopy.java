@@ -36,6 +36,8 @@ public final class FileCopy {
 
         if (!to.exists()) to.mkdirs();
 
+        if(!from.isDirectory()) return;
+
         for (File file : from.listFiles())
         {
             if(file == null) continue;
