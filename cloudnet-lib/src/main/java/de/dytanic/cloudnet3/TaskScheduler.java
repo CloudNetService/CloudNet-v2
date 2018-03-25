@@ -690,7 +690,6 @@ public class TaskScheduler {
                 Thread.sleep(millis);
             } catch (InterruptedException e)
             {
-                logger.log(Level.SEVERE, "Interrupted Thread sleep", e);
             }
         }
 
