@@ -6,6 +6,7 @@ package de.dytanic.cloudnetcore.command;
 
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.modules.Module;
 import de.dytanic.cloudnetcore.CloudNet;
 
@@ -22,10 +23,10 @@ public class CommandModules extends Command {
     @Override
     public void onExecuteCommand(CommandSender sender, String[] args)
     {
-        sender.sendMessage("Running modules:", " ");
+        sender.sendMessage("Running modules:", NetworkUtils.SPACE_STRING);
         for(Module module : CloudNet.getInstance().getModuleManager().getModules())
         {
-            sender.sendMessage(module.getName() + " " + module.getModuleConfig().getVersion() + " by " + module.getModuleConfig().getAuthor() + "");
+            sender.sendMessage(module.getName() + " " + module.getModuleConfig().getVersion() + " by " + module.getModuleConfig().getAuthor() + NetworkUtils.EMPTY_STRING);
         }
     }
 }

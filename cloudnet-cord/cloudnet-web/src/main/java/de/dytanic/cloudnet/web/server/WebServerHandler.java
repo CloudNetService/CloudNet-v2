@@ -4,8 +4,8 @@
 
 package de.dytanic.cloudnet.web.server;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.map.WrappedMap;
-import de.dytanic.cloudnet.web.server.handler.DynamicWebHandler;
 import de.dytanic.cloudnet.web.server.handler.WebHandler;
 import de.dytanic.cloudnet.web.server.util.PathProvider;
 import de.dytanic.cloudnet.web.server.util.QueryDecoder;
@@ -45,10 +45,10 @@ final class WebServerHandler extends ChannelInboundHandlerAdapter {
         URI uri = new URI(httpRequest.getUri());
         String path = uri.getRawPath();
         if(path == null) {
-            path = "/";
+            path = NetworkUtils.SLASH_STRING;
         }
 
-        if(path.endsWith("/"))
+        if(path.endsWith(NetworkUtils.SLASH_STRING))
         {
             path = path.substring(0, path.length() - 1);
         }
@@ -59,18 +59,18 @@ final class WebServerHandler extends ChannelInboundHandlerAdapter {
             FullHttpResponse fullHttpResponse = null;
             for(WebHandler webHandler : webHandlers)
             {
-                if(path.isEmpty() || path.equals("/"))
+                if(path.isEmpty() || path.equals(NetworkUtils.SLASH_STRING))
                 fullHttpResponse = webHandler.handleRequest(ctx, new QueryDecoder(uri.getQuery()), new PathProvider(path, new WrappedMap()), httpRequest);
                 else
                 {
-                    String[] array = path.replaceFirst("/", "").split("/");
-                    String[] pathArray = webHandler.getPath().replaceFirst("/", "").split("/");
+                    String[] array = path.replaceFirst(NetworkUtils.SLASH_STRING, NetworkUtils.EMPTY_STRING).split(NetworkUtils.SLASH_STRING);
+                    String[] pathArray = webHandler.getPath().replaceFirst(NetworkUtils.SLASH_STRING, NetworkUtils.EMPTY_STRING).split(NetworkUtils.SLASH_STRING);
                     WrappedMap wrappedMap = new WrappedMap();
                     for(short i = 0; i < array.length; i++)
                     {
                         if(pathArray[i].startsWith("{") && pathArray[i].endsWith("}"))
                         {
-                            wrappedMap.append(pathArray[i].replace("{", "").replace("}", ""), array[i]);
+                            wrappedMap.append(pathArray[i].replace("{", NetworkUtils.EMPTY_STRING).replace("}", NetworkUtils.EMPTY_STRING), array[i]);
                         }
                     }
                     fullHttpResponse = webHandler.handleRequest(ctx, new QueryDecoder(uri.getQuery()), new PathProvider(path, wrappedMap), httpRequest);

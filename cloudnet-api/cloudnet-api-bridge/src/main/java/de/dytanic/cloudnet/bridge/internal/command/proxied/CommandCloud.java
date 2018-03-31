@@ -53,7 +53,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 {
                     StringBuilder builder = new StringBuilder();
 
-                    for (short i = 2; i < args.length; i++) builder.append(args[i]).append(" ");
+                    for (short i = 2; i < args.length; i++) builder.append(args[i]).append(NetworkUtils.SPACE_STRING);
 
                     CloudAPI.getInstance().sendConsoleMessage(DefaultType.BUKKIT, args[1], builder.substring(0, builder.length() - 1));
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
@@ -65,7 +65,7 @@ public final class CommandCloud extends Command implements TabExecutor {
             {
                 StringBuilder builder = new StringBuilder();
 
-                for (short i = 2; i < args.length; i++) builder.append(args[i]).append(" ");
+                for (short i = 2; i < args.length; i++) builder.append(args[i]).append(NetworkUtils.SPACE_STRING);
 
                 CloudAPI.getInstance().sendConsoleMessage(DefaultType.BUNGEE_CORD, args[1], builder.substring(0, builder.length() - 1));
                 commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The information was sent to the cloud");
@@ -79,7 +79,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 if (args[0].equalsIgnoreCase("help"))
                 {
                     commandSender.sendMessages(
-                            " ",
+                            NetworkUtils.SPACE_STRING,
                             CloudAPI.getInstance().getPrefix() + "All command arguments",
                             "§7/cloud toggle autoslot",
                             "§7/cloud toggle maintenance",
@@ -107,7 +107,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                             "§7/cloud copy <server> <directory>",
                             "§7/cloud version",
                             "§7/cloud statistics",
-                            " "
+                            NetworkUtils.SPACE_STRING
                     );
                     return;
                 }
@@ -143,7 +143,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 if (args[0].equalsIgnoreCase("list") && commandSender.hasPermission("cloudnet.command.cloud.list"))
                 {
-                    commandSender.sendMessage(" ");
+                    commandSender.sendMessage(NetworkUtils.SPACE_STRING);
 
                     int maxMemory = 0;
                     int usedMemory = 0;
@@ -155,14 +155,14 @@ public final class CommandCloud extends Command implements TabExecutor {
                         commandSender.sendMessage("§8[§7" + cnsInfo.getServerId() + "§8/§7" + cnsInfo.getHostName() + "§8] §7Cores: " + cnsInfo.getAvailableProcessors());
                         maxMemory = maxMemory + cnsInfo.getMemory();
                     }
-                    commandSender.sendMessage(" ");
+                    commandSender.sendMessage(NetworkUtils.SPACE_STRING);
                     for (ProxyInfo simpleProxyInfo : CloudAPI.getInstance().getProxys())
                     {
                         commandSender.sendMessage("§8[§c" + simpleProxyInfo.getServiceId().getServerId() + "§8] §8(§e" + simpleProxyInfo.getOnlineCount() + "§8) : §7" + simpleProxyInfo.getMemory() + "MB");
                         usedMemory = usedMemory + simpleProxyInfo.getMemory();
                     }
 
-                    commandSender.sendMessage(" ");
+                    commandSender.sendMessage(NetworkUtils.SPACE_STRING);
                     for (ServerInfo simpleProxyInfo : CloudAPI.getInstance().getServers())
                     {
                         if (simpleProxyInfo.getServiceId().getGroup() != null)
@@ -179,7 +179,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         usedMemory = usedMemory + simpleProxyInfo.getMemory();
                     }
 
-                    commandSender.sendMessage(" ");
+                    commandSender.sendMessage(NetworkUtils.SPACE_STRING);
 
                     for (Map.Entry<String, Collection<ServerInfo>> entry : groupSorted.entrySet())
                     {
@@ -196,7 +196,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                             usedMemory = usedMemory + serverInfo.getMemory();
                         }
 
-                        commandSender.sendMessage(" ");
+                        commandSender.sendMessage(NetworkUtils.SPACE_STRING);
                     }
 
                     commandSender.sendMessage("§7Memory in use: " + usedMemory + "§8/§7" + maxMemory + "MB");
@@ -225,7 +225,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 {
                     for (CloudPlayer playerWhereAmI : CloudAPI.getInstance().getOnlinePlayers())
                     {
-                        commandSender.sendMessage("§7- §e" + playerWhereAmI.getName() + " §7on §e" + playerWhereAmI.getServer() + "/" + playerWhereAmI.getProxy());
+                        commandSender.sendMessage("§7- §e" + playerWhereAmI.getName() + " §7on §e" + playerWhereAmI.getServer() + NetworkUtils.SLASH_STRING + playerWhereAmI.getProxy());
                     }
                     return;
                 }

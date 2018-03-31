@@ -688,7 +688,7 @@ public class TaskScheduler {
             try
             {
                 Thread.sleep(millis);
-            } catch (InterruptedException e)
+            } catch (InterruptedException ignored)
             {
             }
         }

@@ -5,10 +5,10 @@
 
 package de.dytanic.cloudnetwrapper.util;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
+
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
@@ -26,7 +26,7 @@ public final class FileCopy {
 
         if (!to.exists()) to.mkdirs();
 
-        File n = new File(to.getAbsolutePath() + "/" + file.getName());
+        File n = new File(to.getAbsolutePath() + NetworkUtils.SLASH_STRING + file.getName());
         Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -44,10 +44,10 @@ public final class FileCopy {
 
             if (file.isDirectory())
             {
-                copyFilesInDirectory(file, new File(to.getAbsolutePath() + "/" + file.getName()));
+                copyFilesInDirectory(file, new File(to.getAbsolutePath() + NetworkUtils.SLASH_STRING + file.getName()));
             } else
             {
-                File n = new File(to.getAbsolutePath() + "/" + file.getName());
+                File n = new File(to.getAbsolutePath() + NetworkUtils.SLASH_STRING + file.getName());
                 Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         }

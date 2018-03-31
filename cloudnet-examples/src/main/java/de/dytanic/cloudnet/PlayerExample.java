@@ -5,6 +5,7 @@
 package de.dytanic.cloudnet;
 
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
@@ -33,7 +34,7 @@ public class PlayerExample {
             playerConnection.isOnlineMode(); //Returns if the player was in onlinemode
         }
 
-        System.out.println("The player " + cloudPlayer.getName()  + " is on " + cloudPlayer.getProxy() + "/" + cloudPlayer.getServer() + " and connected at " + cloudPlayer.getLoginTimeStamp().getTime());
+        System.out.println("The player " + cloudPlayer.getName()  + " is on " + cloudPlayer.getProxy() + NetworkUtils.SLASH_STRING + cloudPlayer.getServer() + " and connected at " + cloudPlayer.getLoginTimeStamp().getTime());
 
         PlayerExecutor playerExecutor = cloudPlayer.getPlayerExecutor(); //Returns a util Class for some network methods
         playerExecutor.sendMessage(cloudPlayer, "Hello world!"); //writes a message to the player if the player is online
@@ -62,7 +63,7 @@ public class PlayerExample {
 
             if(permissionEntity.isInGroup("VIP"))
             {
-                System.out.println("The player " + offlinePlayer.getUniqueId() + "/" + offlinePlayer.getName() + " is in the group VIP");
+                System.out.println("The player " + offlinePlayer.getUniqueId() + NetworkUtils.SLASH_STRING + offlinePlayer.getName() + " is in the group VIP");
             }
 
             PlayerConnection playerConnection = offlinePlayer.getLastPlayerConnection();

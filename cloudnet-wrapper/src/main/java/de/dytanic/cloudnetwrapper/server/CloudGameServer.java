@@ -5,25 +5,19 @@
 package de.dytanic.cloudnetwrapper.server;
 
 import de.dytanic.cloudnet.lib.ConnectableAddress;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.cloudserver.CloudServerMeta;
-import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.server.ServerGroupType;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.MasterTemplateLoader;
-import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutAddCloudServer;
-import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutAddServer;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveCloudServer;
-import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveServer;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileCopy;
 import de.dytanic.cloudnetwrapper.util.MasterTemplateDeploy;
@@ -68,7 +62,7 @@ public class CloudGameServer implements ServerDispatcher {
     public CloudGameServer(CloudServerMeta cloudServerMeta)
     {
         this.cloudServerMeta = cloudServerMeta;
-        this.path = CloudNetWrapper.getInstance().getWrapperConfig().getDevServicePath() + "/" + cloudServerMeta.getServiceId().getServerId();
+        this.path = CloudNetWrapper.getInstance().getWrapperConfig().getDevServicePath() + NetworkUtils.SLASH_STRING + cloudServerMeta.getServiceId().getServerId();
         this.dir = Paths.get(path);
     }
 
@@ -302,7 +296,7 @@ public class CloudGameServer implements ServerDispatcher {
             }
 
             properties.setProperty("server-ip", CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP());
-            properties.setProperty("server-port", cloudServerMeta.getPort() + "");
+            properties.setProperty("server-port", cloudServerMeta.getPort() + NetworkUtils.EMPTY_STRING);
             properties.setProperty("online-mode", "false");
             //properties.setProperty("server-name", serverProcess.getMeta().getServiceId().getServerId());
 
@@ -360,7 +354,7 @@ public class CloudGameServer implements ServerDispatcher {
         commandBuilder.append("java ");
         for (String command : cloudServerMeta.getProcessParameters())
         {
-            commandBuilder.append(command).append(" ");
+            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
         }
 
         commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -Dio.netty.leakDetectionLevel=DISABLED -Dfile.encoding=UTF-8 -Dio.netty.maxDirectMemory=0 -Dcom.mojang.eula.agree=true -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -Xmx" +
@@ -385,7 +379,7 @@ public class CloudGameServer implements ServerDispatcher {
         CloudNetWrapper.getInstance().getCloudservers().put(this.cloudServerMeta.getServiceId().getServerId(), this);
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddCloudServer(this.serverInfo, cloudServerMeta));
         System.out.println("CloudServer " + toString() + " [" + (cloudServerMeta.isPriorityStop() ? "priority stop: true" : "priority stop: false") + "] start [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
-        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(" "), null, new File(path));
+        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, new File(path));
 
         return true;
     }

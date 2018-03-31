@@ -59,7 +59,7 @@ public class CommandHelp extends Command {
                 serverGrouPBuilder.substring(0),
                 "Proxy groups: ",
                 proxyGrouPBuilder.substring(0),
-                "The Cloud uses " + (ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1048576L) + "/" + (ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() / 1048576L) + "MB",
+                "The Cloud uses " + (ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1048576L) + NetworkUtils.SLASH_STRING + (ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() / 1048576L) + "MB",
                 "CPU on this instance " + new DecimalFormat("##.##").format(NetworkUtils.internalCpuUsage()) + "/100 %",
                 " "
         );

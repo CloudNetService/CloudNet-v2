@@ -6,9 +6,7 @@ package de.dytanic.cloudnetcore.command;
 
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.lib.DefaultType;
-import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
-import de.dytanic.cloudnet.lib.server.info.ServerInfo;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
@@ -32,7 +30,7 @@ public class CommandScreen extends Command {
             StringBuilder stringBuilder = new StringBuilder();
             for(short i = 1; i < args.length; i++)
             {
-                stringBuilder.append(args[i]).append(" ");
+                stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
             }
             String commandLine = stringBuilder.substring(0, stringBuilder.length() - 1);
             Wrapper wrapper = CloudNet.getInstance().getWrappers().get(serviceId.getWrapperId());

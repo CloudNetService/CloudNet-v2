@@ -16,7 +16,6 @@ import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.interfaces.Executeable;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
-import de.dytanic.cloudnet.lib.utility.threading.TaskCancelable;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import de.dytanic.cloudnet.web.client.WebClient;
@@ -46,9 +45,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Getter
 public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnCentral {
@@ -76,12 +72,12 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
     @Setter
     private int maxMemory;
 
-    private final java.util.Map<String, GameServer> servers = new ConcurrentHashMap<>();
-    private final java.util.Map<String, BungeeCord> proxys = new ConcurrentHashMap<>();
-    private final java.util.Map<String, CloudGameServer> cloudservers = new ConcurrentHashMap<>();
+    private final java.util.Map<String, GameServer> servers = NetworkUtils.newConcurrentHashMap();
+    private final java.util.Map<String, BungeeCord> proxys = NetworkUtils.newConcurrentHashMap();
+    private final java.util.Map<String, CloudGameServer> cloudservers = NetworkUtils.newConcurrentHashMap();
 
-    private final java.util.Map<String, ServerGroup> serverGroups = new ConcurrentHashMap<>();
-    private final java.util.Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
+    private final java.util.Map<String, ServerGroup> serverGroups = NetworkUtils.newConcurrentHashMap();
+    private final java.util.Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
 
     private boolean canDeployed = false;
 

@@ -30,8 +30,6 @@ package de.dytanic.cloudnetwrapper.server;
         import org.apache.commons.io.FileUtils;
 
         import java.io.*;
-        import java.net.HttpURLConnection;
-        import java.net.URL;
         import java.net.URLConnection;
         import java.nio.charset.StandardCharsets;
         import java.nio.file.Files;
@@ -69,14 +67,14 @@ public class GameServer implements ServerDispatcher {
 
         if (this.serverProcess.getMeta().getServerConfig().getProperties().contains(NetworkUtils.DEV_PROPERTY))
         {
-            this.path = CloudNetWrapper.getInstance().getWrapperConfig().getDevServicePath() + "/" + serverProcess.getMeta().getServiceId().getServerId();
+            this.path = CloudNetWrapper.getInstance().getWrapperConfig().getDevServicePath() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getServiceId().getServerId();
             this.custom = this.serverProcess.getMeta().getCustomServerDownload();
         } else
         {
             if (serverGroup.getGroupMode().equals(ServerGroupMode.STATIC) || serverGroup.getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))
-                this.path = "local/servers/" + serverGroup.getName() + "/" + this.serverProcess.getMeta().getServiceId().getServerId();
+                this.path = "local/servers/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + this.serverProcess.getMeta().getServiceId().getServerId();
             else
-                this.path = "temp/" + serverGroup.getName() + "/" + serverProcess.getMeta().getServiceId();
+                this.path = "temp/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getServiceId();
         }
 
         this.dir = Paths.get(path);
@@ -259,8 +257,8 @@ public class GameServer implements ServerDispatcher {
             }
 
             properties.setProperty("server-ip", CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP());
-            properties.setProperty("server-port", serverProcess.getMeta().getPort() + "");
-            properties.setProperty("online-mode", serverProcess.getMeta().isOnlineMode() + "");
+            properties.setProperty("server-port", serverProcess.getMeta().getPort() + NetworkUtils.EMPTY_STRING);
+            properties.setProperty("online-mode", serverProcess.getMeta().isOnlineMode() + NetworkUtils.EMPTY_STRING);
             //properties.setProperty("server-name", serverProcess.getMeta().getServiceId().getServerId());
 
             motd = properties.getProperty("motd");
@@ -461,9 +459,9 @@ public class GameServer implements ServerDispatcher {
 
             try
             {
-                FileCopy.copyFilesInDirectory(new File(this.path), new File("local/templates/" + serverGroup.getName() + "/" + template.getName()));
-                FileUtils.deleteDirectory(new File("local/templates/" + serverGroup.getName() + "/" + serverProcess.getMeta().getTemplate().getName() + "/CLOUD"));
-                new File("local/templates/" + serverGroup.getName() + "/" + serverProcess.getMeta().getTemplate().getName() + "/plugins/CloudNetAPI.jar").delete();
+                FileCopy.copyFilesInDirectory(new File(this.path), new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()));
+                FileUtils.deleteDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getTemplate().getName() + "/CLOUD"));
+                new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getTemplate().getName() + "/plugins/CloudNetAPI.jar").delete();
             } catch (Exception e)
             {
             }
@@ -502,7 +500,7 @@ public class GameServer implements ServerDispatcher {
         {
             try
             {
-                FileCopy.copyFilesInDirectory(file, new File("local/templates/" + serverGroup.getName() + "/" + serverProcess.getMeta().getTemplate().getName() + "/" + name));
+                FileCopy.copyFilesInDirectory(file, new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getTemplate().getName() + NetworkUtils.SLASH_STRING + name));
             } catch (IOException e)
             {
             }
@@ -515,12 +513,12 @@ public class GameServer implements ServerDispatcher {
         commandBuilder.append("java ");
         for (String command : serverProcess.getMeta().getProcessParameters())
         {
-            commandBuilder.append(command).append(" ");
+            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
         }
 
         for (String command : serverProcess.getMeta().getTemplate().getProcessPreParameters())
         {
-            commandBuilder.append(command).append(" ");
+            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
         }
 
         commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -Dcom.mojang.eula.agree=true -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -Xmx" +
@@ -542,7 +540,7 @@ public class GameServer implements ServerDispatcher {
                 break;
         }
 
-        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(" "), null, new File(path));
+        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, new File(path));
     }
 
     private boolean a() throws Exception
@@ -567,7 +565,7 @@ public class GameServer implements ServerDispatcher {
                 FileCopy.copyFilesInDirectory(new File(dir.toString()), new File(path));
             } else if (template.getBackend().equals(TemplateResource.URL) && template.getUrl() != null)
             {
-                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + "/" + template.getName();
+                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
                 if (!Files.exists(Paths.get(groupTemplates)))
                 {
                     Files.createDirectories(Paths.get(groupTemplates));
@@ -580,7 +578,7 @@ public class GameServer implements ServerDispatcher {
                 FileCopy.copyFilesInDirectory(new File(groupTemplates), new File(path));
             } else if (template.getBackend().equals(TemplateResource.MASTER) && CloudNetWrapper.getInstance().getSimpledUser() != null)
             {
-                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + "/" + template.getName();
+                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
                 if (!Files.exists(Paths.get(groupTemplates)))
                 {
                     Files.createDirectories(Paths.get(groupTemplates));
@@ -597,10 +595,10 @@ public class GameServer implements ServerDispatcher {
                     templateLoader.unZip(groupTemplates);
                 }
                 FileCopy.copyFilesInDirectory(new File(groupTemplates), new File(path));
-            } else if (Files.exists(Paths.get("local/templates/" + serverGroup.getName() + "/" + template.getName())))
+            } else if (Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName())))
             {
 
-                FileCopy.copyFilesInDirectory(new File("local/templates/" + serverGroup.getName() + "/" + template.getName()), new File(path));
+                FileCopy.copyFilesInDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()), new File(path));
             } else
             {
             }
@@ -626,7 +624,7 @@ public class GameServer implements ServerDispatcher {
             Template template = this.serverProcess.getMeta().getTemplate();
             if (template.getBackend().equals(TemplateResource.URL) && template.getUrl() != null)
             {
-                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + "/" + template.getName();
+                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
                 if (!Files.exists(Paths.get(groupTemplates)))
                 {
                     Files.createDirectories(Paths.get(groupTemplates));
@@ -638,7 +636,7 @@ public class GameServer implements ServerDispatcher {
                 FileCopy.copyFilesInDirectory(new File(groupTemplates), new File(path));
             } else if (template.getBackend().equals(TemplateResource.MASTER) && CloudNetWrapper.getInstance().getSimpledUser() != null)
             {
-                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + "/" + template.getName();
+                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
                 if (!Files.exists(Paths.get(groupTemplates)))
                 {
                     Files.createDirectories(Paths.get(groupTemplates));
@@ -655,10 +653,10 @@ public class GameServer implements ServerDispatcher {
                     templateLoader.unZip(groupTemplates);
                 }
                 FileCopy.copyFilesInDirectory(new File(groupTemplates), new File(path));
-            } else if (Files.exists(Paths.get("local/templates/" + serverGroup.getName() + "/" + template.getName())))
+            } else if (Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName())))
             {
 
-                FileCopy.copyFilesInDirectory(new File("local/templates/" + serverGroup.getName() + "/" + template.getName()), new File(path));
+                FileCopy.copyFilesInDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()), new File(path));
             } else
             {
                 return false;

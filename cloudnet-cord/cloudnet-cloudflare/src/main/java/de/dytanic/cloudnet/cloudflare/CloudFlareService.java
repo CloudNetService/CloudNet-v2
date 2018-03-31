@@ -27,8 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * CloudFlare Service Supports the with the api.cloudflare.com API dynamic dns records for BungeeCord Server
@@ -46,8 +45,8 @@ public class CloudFlareService {
     private CloudFlareConfig cloudFlareConfig;
 
     // WrapperId DNSRecord
-    private Map<String, PostResponse> ipARecords = new ConcurrentHashMap<>();
-    private Map<String, PostResponse> bungeeSRVRecords = new ConcurrentHashMap<>();
+    private Map<String, PostResponse> ipARecords = NetworkUtils.newConcurrentHashMap();
+    private Map<String, PostResponse> bungeeSRVRecords = NetworkUtils.newConcurrentHashMap();
 
     public CloudFlareService(CloudFlareConfig cloudFlareConfig)
     {
@@ -208,7 +207,7 @@ public class CloudFlareService {
             httpPost.setRequestMethod("POST");
             httpPost.setRequestProperty("X-Auth-Email", cloudFlareConfig.getEmail());
             httpPost.setRequestProperty("X-Auth-Key", cloudFlareConfig.getToken());
-            httpPost.setRequestProperty("Content-Length", values.getBytes().length + "");
+            httpPost.setRequestProperty("Content-Length", values.getBytes().length + NetworkUtils.EMPTY_STRING);
             httpPost.setRequestProperty("Accept", "application/json");
             httpPost.setRequestProperty("Content-Type", "application/json");
             httpPost.setDoOutput(true);

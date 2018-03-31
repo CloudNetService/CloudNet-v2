@@ -37,7 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * Created by Tareko on 16.09.2017.
@@ -170,7 +170,7 @@ public class CloudConfig {
 
         String password = NetworkUtils.randomString(8);
         System.out.println("\"admin\" Password: " + password);
-        System.out.println(" ");
+        System.out.println(NetworkUtils.SPACE_STRING);
         new Document().append("users", Arrays.asList(new BasicUser("admin", password, Arrays.asList("*")))).saveAsConfig(usersPath);
     }
 
@@ -354,7 +354,7 @@ public class CloudConfig {
         });
         */
 
-        Map<String, ServerGroup> groups = new ConcurrentHashMap<>();
+        Map<String, ServerGroup> groups = NetworkUtils.newConcurrentHashMap();
 
         if (serviceDocument.contains("serverGroups"))
         {

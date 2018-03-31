@@ -4,8 +4,7 @@
 
 package de.dytanic.cloudnetcore.web.api.v1;
 
-import de.dytanic.cloudnet.lib.network.protocol.ProtocolBuffer;
-import de.dytanic.cloudnet.lib.network.protocol.ProtocolProvider;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
 import de.dytanic.cloudnet.web.server.util.PathProvider;
@@ -16,7 +15,6 @@ import io.netty.handler.codec.http.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -82,9 +80,9 @@ public class WebsiteDeployment extends MethodWebHandlerAdapter {
                 {
                     File file = new File("local/templates/" +
                             document.getString("group") +
-                            "/" +
+                            NetworkUtils.SLASH_STRING +
                             document.getString("template") +
-                            "/" +
+                            NetworkUtils.SLASH_STRING +
                             document.getString("template") +
                             ".zip");
 
@@ -100,7 +98,7 @@ public class WebsiteDeployment extends MethodWebHandlerAdapter {
                     ZipFile zipFile = new ZipFile(file);
                     StringBuilder stringBuilder = new StringBuilder("local/templates/")
                             .append(document.getString("group"))
-                            .append("/")
+                            .append(NetworkUtils.SLASH_STRING)
                             .append(document.getString("template"));
                     for (ZipEntry zipEntry : Collections.list(zipFile.entries()))
                         extractEntry(zipFile, zipEntry, stringBuilder.toString());

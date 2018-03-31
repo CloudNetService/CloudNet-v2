@@ -1,8 +1,8 @@
 package de.dytanic.cloudnet.lib;
 
-import com.sun.management.OperatingSystemMXBean;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.sun.management.OperatingSystemMXBean;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolInDecoder;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolLengthDeserializer;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolLengthSerializer;
@@ -10,7 +10,6 @@ import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolOutEncoder;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
@@ -34,7 +33,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -55,7 +59,11 @@ public final class NetworkUtils {
 
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("##.##");
 
-    public static final String DEV_PROPERTY = "_CLOUDNET_DEV_SERVICE_UNIQUEID_";
+    public static final String
+            DEV_PROPERTY = "_CLOUDNET_DEV_SERVICE_UNIQUEID_",
+            EMPTY_STRING = "",
+            SPACE_STRING = " ",
+            SLASH_STRING = "/";
 
     public static Class<? extends SocketChannel> socketChannel()
     {
@@ -251,9 +259,19 @@ public final class NetworkUtils {
         }
     }
 
+    public static <K, V> HashMap<K, V> newHashMap()
+    {
+        return new HashMap<>();
+    }
+
+    public static ConcurrentHashMap newConcurrentHashMap()
+    {
+        return new ConcurrentHashMap();
+    }
+
     public static void header()
     {
-        System.out.println(" ");
+        System.out.println(NetworkUtils.SPACE_STRING);
         /*
         System.out.println("██████ █      ██████ █   █ █████ ██    █ █████ █████ [" + NetworkUtils.class.getPackage().getImplementationVersion() + "]");
         System.out.println("█R     █E     █Z   █ █S  █ █Y  █ █M█   █ █       █");
@@ -267,16 +285,16 @@ public final class NetworkUtils {
         System.out.println("                                                              ");
         System.out.println("«» The Cloud Network Environment Technology");
         System.out.println("«» Support https://discord.gg/5NUhKuR      [" + NetworkUtils.class.getPackage().getSpecificationVersion() + "]");
-        System.out.println("«» Java " + System.getProperty("java.version") + " @" + System.getProperty("user.name") + " " + System.getProperty("os.name") + " ");
-        System.out.println(" ");
+        System.out.println("«» Java " + System.getProperty("java.version") + " @" + System.getProperty("user.name") + NetworkUtils.SPACE_STRING + System.getProperty("os.name") + NetworkUtils.SPACE_STRING);
+        System.out.println(NetworkUtils.SPACE_STRING);
     }
 
     public static void headerOut()
     {
         System.out.println("«» The Cloud Network Environment Technology");
         System.out.println("«» Support https://discord.gg/5NUhKuR      [" + NetworkUtils.class.getPackage().getSpecificationVersion() + "]");
-        System.out.println("«» Java " + System.getProperty("java.version") + " @" + System.getProperty("user.name") + " " + System.getProperty("os.name") + " ");
-        System.out.println(" ");
+        System.out.println("«» Java " + System.getProperty("java.version") + " @" + System.getProperty("user.name") + NetworkUtils.SPACE_STRING + System.getProperty("os.name") + NetworkUtils.SPACE_STRING);
+        System.out.println(NetworkUtils.SPACE_STRING);
     }
 
 }

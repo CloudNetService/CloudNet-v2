@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnetcore.network.components.screen;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
@@ -13,7 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * Created by Tareko on 20.08.2017.
@@ -21,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 public class ScreenProvider {
 
-    private Map<String, EnabledScreen> screens = new ConcurrentHashMap<>();
+    private Map<String, EnabledScreen> screens = NetworkUtils.newConcurrentHashMap();
 
     @Setter
     private ServiceId mainServiceId;

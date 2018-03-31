@@ -4,12 +4,10 @@
 
 package de.dytanic.cloudnetcore.permissions;
 
-import de.dytanic.cloudnet.event.IEventListener;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnetcore.api.CoreModule;
-import de.dytanic.cloudnetcore.api.event.player.PlayerInitEvent;
 import de.dytanic.cloudnetcore.permissions.command.CommandPermissions;
 import de.dytanic.cloudnetcore.permissions.config.ConfigPermissions;
 import de.dytanic.cloudnetcore.permissions.listener.PlayerInitListener;

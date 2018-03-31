@@ -43,8 +43,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Tareko on 25.08.2017.
@@ -62,7 +60,7 @@ public final class MobSelector {
     private MobConfig mobConfig;
 
     @Getter
-    private Map<String, ServerInfo> servers = new ConcurrentHashMap<>();
+    private Map<String, ServerInfo> servers = NetworkUtils.newConcurrentHashMap();
 
     public MobSelector(MobConfig mobConfig)
     {
@@ -149,7 +147,7 @@ public final class MobSelector {
 
     public Inventory create(MobConfig mobConfig, ServerMob mob)
     {
-        Inventory inventory = Bukkit.createInventory(null, mobConfig.getInventorySize(), ChatColor.translateAlternateColorCodes('&', mob.getDisplay() + " "));
+        Inventory inventory = Bukkit.createInventory(null, mobConfig.getInventorySize(), ChatColor.translateAlternateColorCodes('&', mob.getDisplay() + NetworkUtils.SPACE_STRING));
 
         for (Map.Entry<Integer, MobItemLayout> mobItem : mobConfig.getDefaultItemInventory().entrySet())
             inventory.setItem(mobItem.getKey() - 1, transform(mobItem.getValue()));
@@ -183,15 +181,15 @@ public final class MobSelector {
     private String initPatterns(String x, ServerInfo serverInfo)
     {
         return x.replace("%server%", serverInfo.getServiceId().getServerId())
-                .replace("%id%", serverInfo.getServiceId().getId() + "")
+                .replace("%id%", serverInfo.getServiceId().getId() + NetworkUtils.EMPTY_STRING)
                 .replace("%host%", serverInfo.getHost())
-                .replace("%port%", serverInfo.getPort() + "")
+                .replace("%port%", serverInfo.getPort() + NetworkUtils.EMPTY_STRING)
                 .replace("%memory%", serverInfo.getMemory() + "MB")
-                .replace("%online_players%", serverInfo.getOnlineCount() + "")
-                .replace("%max_players%", serverInfo.getMaxPlayers() + "")
+                .replace("%online_players%", serverInfo.getOnlineCount() + NetworkUtils.EMPTY_STRING)
+                .replace("%max_players%", serverInfo.getMaxPlayers() + NetworkUtils.EMPTY_STRING)
                 .replace("%motd%", ChatColor.translateAlternateColorCodes('&', serverInfo.getMotd()))
-                .replace("%state%", serverInfo.getServerState().name() + "")
-                .replace("%wrapper%", serverInfo.getServiceId().getWrapperId() + "")
+                .replace("%state%", serverInfo.getServerState().name() + NetworkUtils.EMPTY_STRING)
+                .replace("%wrapper%", serverInfo.getServiceId().getWrapperId() + NetworkUtils.EMPTY_STRING)
                 .replace("%extra%", serverInfo.getServerConfig().getExtra())
                 .replace("%template%", serverInfo.getTemplate().getName())
                 .replace("%group%", serverInfo.getServiceId().getGroup());
@@ -322,9 +320,9 @@ public final class MobSelector {
             try
             {
 
-                armorStand.getClass().getMethod("setCustomName", String.class).invoke(armorStand, ChatColor.translateAlternateColorCodes('&', serverMob.getDisplayMessage() + "")
-                        .replace("%max_players%", x.getSecond() + "").replace("%group%", serverMob.getTargetGroup()).replace("%group_online%", x
-                                .getFirst() + ""));
+                armorStand.getClass().getMethod("setCustomName", String.class).invoke(armorStand, ChatColor.translateAlternateColorCodes('&', serverMob.getDisplayMessage() + NetworkUtils.EMPTY_STRING)
+                        .replace("%max_players%", x.getSecond() + NetworkUtils.EMPTY_STRING).replace("%group%", serverMob.getTargetGroup()).replace("%group_online%", x
+                                .getFirst() + NetworkUtils.EMPTY_STRING));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
             {
             }

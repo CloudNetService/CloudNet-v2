@@ -13,6 +13,7 @@ import de.dytanic.cloudnet.bridge.event.bukkit.*;
 import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.CloudNetwork;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
@@ -44,10 +45,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -59,7 +61,7 @@ public class CloudServer implements ICloudService {
 
     private BukkitBootstrap bukkitBootstrap;
 
-    private Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
+    private Map<UUID, CloudPlayer> cloudPlayers = NetworkUtils.newConcurrentHashMap();
 
     /*=================================================*/
     private int maxPlayers;
@@ -456,6 +458,11 @@ public class CloudServer implements ICloudService {
                 addTeamEntry(all, player, targetPermissionGroup);
 
         }
+    }
+
+    public Map<UUID, CloudPlayer> getClonedCloudPlayers()
+    {
+        return new HashMap<>(this.cloudPlayers);
     }
 
     private void addTeamEntry(Player target, Player all, PermissionGroup permissionGroup)

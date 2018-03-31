@@ -4,13 +4,15 @@
 
 package de.dytanic.cloudnetwrapper.screen;
 
-import java.util.concurrent.ConcurrentHashMap;
+
+import de.dytanic.cloudnet.lib.NetworkUtils;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class ScreenProvider {
 
-    private final java.util.Map<Screenable, ScreenLoader> loads = new ConcurrentHashMap<>();
+    private final java.util.Map<Screenable, ScreenLoader> loads = NetworkUtils.newConcurrentHashMap();
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public void putScreenRequest(Screenable screenable)

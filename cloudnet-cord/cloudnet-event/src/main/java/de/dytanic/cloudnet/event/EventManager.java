@@ -2,23 +2,20 @@ package de.dytanic.cloudnet.event;
 
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.interfaces.IEventManager;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet3.TaskScheduler;
 import net.jodah.typetools.TypeResolver;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by Tareko on 23.07.2017.
  */
 public final class EventManager implements IEventManager {
 
-    private final java.util.Map<Class, Collection<EventEntity>> registeredListeners = new ConcurrentHashMap<>();
+    private final java.util.Map<Class, Collection<EventEntity>> registeredListeners = NetworkUtils.newConcurrentHashMap();
 
     @Override
     public <T extends Event> void registerListener(EventKey eventKey, IEventListener<T> eventListener)

@@ -1,19 +1,18 @@
 package de.dytanic.cloudnet.lib.utility.threading;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import lombok.Getter;
 
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by Tareko on 24.05.2017.
  */
 public final class Scheduler
-        implements TaskCancelable, Runnable{
+        implements TaskCancelable, Runnable {
 
-    private ConcurrentHashMap<Long, ScheduledTask> tasks = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Long, ScheduledTask> tasks = NetworkUtils.newConcurrentHashMap();
 
     @Getter
     private final int ticks;
@@ -69,7 +68,7 @@ public final class Scheduler
     @Override
     public void cancelTask(Long id)
     {
-        if(tasks.containsKey(id)) tasks.get(id).cancel();
+        if (tasks.containsKey(id)) tasks.get(id).cancel();
     }
 
     @Override
@@ -84,19 +83,25 @@ public final class Scheduler
     {
         while (true)
         {
-            try { Thread.sleep(1000 / ticks); } catch (InterruptedException e) {}
-            if(tasks.isEmpty()) continue;
+            try
+            {
+                Thread.sleep(1000 / ticks);
+            } catch (InterruptedException e)
+            {
+            }
+            if (tasks.isEmpty()) continue;
 
             ConcurrentHashMap<Long, ScheduledTask> tasks = this.tasks; //For a Performance optimizing
 
-            for(ScheduledTask task : tasks.values())
+            for (ScheduledTask task : tasks.values())
             {
 
-                if(task.isInterrupted())
+                if (task.isInterrupted())
                 {
                     this.tasks.remove(task.getTaskId());
                     continue;
                 }
+
                 task.run();
             }
         }

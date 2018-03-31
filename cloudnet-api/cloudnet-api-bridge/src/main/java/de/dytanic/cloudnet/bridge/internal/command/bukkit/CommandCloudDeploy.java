@@ -5,13 +5,14 @@
 package de.dytanic.cloudnet.bridge.internal.command.bukkit;
 
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 /**
  * Created by Tareko on 14.10.2017.
  */
-public class CommandCloudDeploy extends Command {
+public final class CommandCloudDeploy extends Command {
 
     public CommandCloudDeploy()
     {
@@ -28,7 +29,7 @@ public class CommandCloudDeploy extends Command {
         {
             case 1:
             {
-                CloudAPI.getInstance().sendCloudCommand("copy " + CloudAPI.getInstance().getServerId() + " " + args[0]);
+                CloudAPI.getInstance().sendCloudCommand("copy " + CloudAPI.getInstance().getServerId() + NetworkUtils.SPACE_STRING + args[0]);
                 commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "Server will be deployed to " + args[0]);
             }
                 break;

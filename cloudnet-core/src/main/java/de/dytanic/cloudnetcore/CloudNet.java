@@ -7,6 +7,7 @@ package de.dytanic.cloudnetcore;
 import de.dytanic.cloudnet.command.CommandManager;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.cloudserver.CloudServerMeta;
 import de.dytanic.cloudnet.lib.hash.DyHash;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
@@ -38,7 +39,6 @@ import de.dytanic.cloudnetcore.network.packet.dbsync.*;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
 import de.dytanic.cloudnetcore.handler.*;
 import de.dytanic.cloudnet.event.EventManager;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.*;
 import de.dytanic.cloudnet.lib.interfaces.Executeable;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
@@ -62,7 +62,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -103,9 +102,9 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
     private Collection<User> users;
     private long startupTime = System.currentTimeMillis();
 
-    private final java.util.Map<String, Wrapper> wrappers = new ConcurrentHashMap<>();
-    private final java.util.Map<String, ServerGroup> serverGroups = new ConcurrentHashMap<>();
-    private final java.util.Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
+    private final java.util.Map<String, Wrapper> wrappers = NetworkUtils.newConcurrentHashMap();
+    private final java.util.Map<String, ServerGroup> serverGroups = NetworkUtils.newConcurrentHashMap();
+    private final java.util.Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
 
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> objective, List<String> args) throws Exception
     {
@@ -501,14 +500,14 @@ public final class CloudNet implements Executeable, Runnable, Reloadable {
         Path path;
         for (Template template : serverGroup.getTemplates())
         {
-            path = Paths.get("local/templates/" + serverGroup.getName() + "/" + template.getName());
+            path = Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName());
             if (!Files.exists(path))
             {
                 try
                 {
                     Files.createDirectories(path);
-                    Files.createDirectories(Paths.get("local/templates/" + serverGroup.getName() + "/" + template.getName() + "/plugins"));
-                    FileCopy.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + "/" + template.getName() + "/server.properties");
+                    Files.createDirectories(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins"));
+                    FileCopy.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
                 } catch (IOException e)
                 {
                     e.printStackTrace();

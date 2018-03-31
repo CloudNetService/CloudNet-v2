@@ -5,6 +5,7 @@
 package de.dytanic.cloudnetcore.network;
 
 import de.dytanic.cloudnet.lib.MultiValue;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
@@ -16,7 +17,6 @@ import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.network.CustomChannelMessageEvent;
 import de.dytanic.cloudnetcore.api.event.network.UpdateAllEvent;
@@ -42,9 +42,8 @@ import de.dytanic.cloudnetcore.network.components.util.ChannelFilter;
 import lombok.Getter;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Tareko on 19.07.2017.
@@ -52,8 +51,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Getter
 public final class NetworkManager {
 
-    private java.util.Map<UUID, CloudPlayer> waitingPlayers = new ConcurrentHashMap<>();
-    private java.util.Map<UUID, CloudPlayer> onlinePlayers = new ConcurrentHashMap<>();
+    private java.util.Map<UUID, CloudPlayer> waitingPlayers = NetworkUtils.newConcurrentHashMap();
+    private java.util.Map<UUID, CloudPlayer> onlinePlayers = NetworkUtils.newConcurrentHashMap();
     private Document moduleProperties = new Document();
     private ExecutorService executorService = java.util.concurrent.Executors.newFixedThreadPool(4);
 
@@ -126,7 +125,7 @@ public final class NetworkManager {
         loginPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
         CloudNet.getInstance().getEventManager().callEvent(new LoginEvent(loginPlayer));
-        System.out.println("Player [" + loginPlayer.getName() + "/" + loginPlayer.getUniqueId() + "/" + loginPlayer.getPlayerConnection().getHost() + "] is connected on " + loginPlayer.getProxy());
+        System.out.println("Player [" + loginPlayer.getName() + NetworkUtils.SLASH_STRING + loginPlayer.getUniqueId() + NetworkUtils.SLASH_STRING + loginPlayer.getPlayerConnection().getHost() + "] is connected on " + loginPlayer.getProxy());
 
         this.sendAllUpdate(new PacketOutLoginPlayer(loginPlayer));
         this.sendAll(new PacketOutUpdateOnlineCount(getOnlineCount()));
@@ -140,7 +139,7 @@ public final class NetworkManager {
         CloudNet.getInstance().getEventManager().callEvent(new LogoutEvent(playerWhereAmI));
         try
         {
-            System.out.println("Player [" + playerWhereAmI.getName() + "/" + playerWhereAmI.getUniqueId() + "/" + playerWhereAmI.getPlayerConnection().getHost() + "] is disconnected on " + playerWhereAmI.getProxy());
+            System.out.println("Player [" + playerWhereAmI.getName() + NetworkUtils.SLASH_STRING + playerWhereAmI.getUniqueId() + NetworkUtils.SLASH_STRING + playerWhereAmI.getPlayerConnection().getHost() + "] is disconnected on " + playerWhereAmI.getProxy());
         } catch (Exception ex)
         {
         }
@@ -170,7 +169,7 @@ public final class NetworkManager {
     {
         CloudNet.getInstance().getEventManager().callEvent(new LogoutEventUnique(uniqueId));
         String name = CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().get(uniqueId);
-        System.out.println("Player [" + name + "/" + uniqueId + "/] is disconnected on " + proxyServer.getServerId());
+        System.out.println("Player [" + name + NetworkUtils.SLASH_STRING + uniqueId + "/] is disconnected on " + proxyServer.getServerId());
 
         try
         {
@@ -261,7 +260,7 @@ public final class NetworkManager {
         if (cloudPlayer != null)
         {
             CloudNet.getLogger().info("Player [" + playerCommandExecutor.getName() + "] executed command [" + playerCommandExecutor.getCommandLine() +
-                    "] on [" + cloudPlayer.getProxy() + "/" + cloudPlayer.getServer() + "]");
+                    "] on [" + cloudPlayer.getProxy() + NetworkUtils.SLASH_STRING + cloudPlayer.getServer() + "]");
             CloudNet.getInstance().getEventManager().callEvent(new CommandExecutionEvent(playerCommandExecutor));
             StatisticManager.getInstance().playerCommandExecutions();
         }
@@ -274,7 +273,7 @@ public final class NetworkManager {
         this.sendAllUpdate(new PacketOutUpdatePlayer(cloudPlayer));
 
         if (cloudPlayer.getServer() != null)
-            System.out.println("Player [" + cloudPlayer.getName() + "/" + cloudPlayer.getUniqueId() + "/] update [server=" + cloudPlayer.getServer() + ", proxy=" + cloudPlayer.getProxy() + ", address=" + cloudPlayer.getPlayerConnection().getHost() + "]");
+            System.out.println("Player [" + cloudPlayer.getName() + NetworkUtils.SLASH_STRING + cloudPlayer.getUniqueId() + "/] update [server=" + cloudPlayer.getServer() + ", proxy=" + cloudPlayer.getProxy() + ", address=" + cloudPlayer.getPlayerConnection().getHost() + "]");
     }
 
     public void handleCustomChannelMessage(String channel, String message, Document document, PacketSender packetSender)

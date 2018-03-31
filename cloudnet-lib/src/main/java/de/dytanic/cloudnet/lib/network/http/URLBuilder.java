@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.lib.network.http;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import lombok.Getter;
 
 import java.net.URLConnection;
@@ -16,17 +17,17 @@ public class URLBuilder implements Cloneable {
 
     public URLBuilder(String http, String mainUrl)
     {
-        this.urlString.append(http).append("://").append(mainUrl).append("/");
+        this.urlString.append(http).append("://").append(mainUrl).append(NetworkUtils.SLASH_STRING);
     }
 
     public URLBuilder path(String path)
     {
-        if (urlString.substring(0).endsWith("/"))
+        if (urlString.substring(0).endsWith(NetworkUtils.SLASH_STRING))
         {
             urlString.append(path);
         } else
         {
-            urlString.append("/").append(path);
+            urlString.append(NetworkUtils.SLASH_STRING).append(path);
         }
         return this;
     }

@@ -37,7 +37,6 @@ import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.interfaces.MetaObj;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

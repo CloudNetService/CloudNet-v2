@@ -60,7 +60,7 @@ public class BungeeCord implements ServerDispatcher {
         this.proxyProcessMeta = proxyProcessMeta;
         this.proxyGroup = proxyGroup;
 
-        this.path = (proxyGroup.getProxyGroupMode().equals(ProxyGroupMode.STATIC) ? "local/servers/" : "temp/") + proxyGroup.getName() + "/" + (proxyGroup.getProxyGroupMode().equals(ProxyGroupMode.STATIC) ? proxyProcessMeta.getServiceId().getServerId() : proxyProcessMeta.getServiceId());
+        this.path = (proxyGroup.getProxyGroupMode().equals(ProxyGroupMode.STATIC) ? "local/servers/" : "temp/") + proxyGroup.getName() + NetworkUtils.SLASH_STRING + (proxyGroup.getProxyGroupMode().equals(ProxyGroupMode.STATIC) ? proxyProcessMeta.getServiceId().getServerId() : proxyProcessMeta.getServiceId());
         this.dir = Paths.get(path);
     }
 
@@ -186,7 +186,7 @@ public class BungeeCord implements ServerDispatcher {
                         FileCopy.copyFilesInDirectory(new File("local/cache/web_templates/" + proxyGroup.getName()), new File(path));
                     } else if (template.getBackend().equals(TemplateResource.MASTER) && CloudNetWrapper.getInstance().getSimpledUser() != null)
                     {
-                        String groupTemplates = "local/cache/web_templates/" + proxyGroup.getName() + "/" + template.getName();
+                        String groupTemplates = "local/cache/web_templates/" + proxyGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
                         if (!Files.exists(Paths.get(groupTemplates)))
                         {
                             Files.createDirectories(Paths.get(groupTemplates));
@@ -257,7 +257,7 @@ public class BungeeCord implements ServerDispatcher {
                     FileCopy.copyFilesInDirectory(new File("local/cache/web_templates/" + proxyGroup.getName()), new File(path));
                 } else if (template.getBackend().equals(TemplateResource.MASTER) && CloudNetWrapper.getInstance().getSimpledUser() != null)
                 {
-                    String groupTemplates = "local/cache/web_templates/" + proxyGroup.getName() + "/" + template.getName();
+                    String groupTemplates = "local/cache/web_templates/" + proxyGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
                     if (!Files.exists(Paths.get(groupTemplates)))
                     {
                         Files.createDirectories(Paths.get(groupTemplates));
@@ -310,7 +310,7 @@ public class BungeeCord implements ServerDispatcher {
             }
 
             FileCopy.copyFileToDirectory(new File("local/proxy_versions/" + version.getSecond()), new File(this.path));
-            new File(this.path + "/" + version.getSecond()).renameTo(new File(this.path + "/BungeeCord.jar"));
+            new File(this.path + NetworkUtils.SLASH_STRING + version.getSecond()).renameTo(new File(this.path + "/BungeeCord.jar"));
         }
 
         if (!Files.exists(Paths.get(path + "/server-icon.png")) && Files.exists(Paths.get("local/server-icon.png")))
@@ -365,10 +365,10 @@ public class BungeeCord implements ServerDispatcher {
         commandBuilder.append("java ");
 
         for (String command : proxyProcessMeta.getProcessParameters())
-            commandBuilder.append(command).append(" ");
+            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
 
         for (String command : proxyGroup.getTemplate().getProcessPreParameters())
-            commandBuilder.append(command).append(" ");
+            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
 
         //commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -Djline.terminal=jline.UnsupportedTerminal -XX:MaxPermSize=256M -DIReallyKnowWhatIAmDoingISwear=true -Xmx" + proxyProcessMeta.getMemory() + "M -jar BungeeCord.jar -o true -p");
         commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -Dio.netty.leakDetectionLevel=DISABLED -Dfile.encoding=UTF-8 -Dio.netty.maxDirectMemory=0 -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -DIReallyKnowWhatIAmDoingISwear=true -Xmx" + proxyProcessMeta.getMemory() + "M -jar BungeeCord.jar -o true -p");
@@ -376,7 +376,7 @@ public class BungeeCord implements ServerDispatcher {
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddProxy(proxyInfo, proxyProcessMeta));
         System.out.println("Proxy " + toString() + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
 
-        this.instance = Runtime.getRuntime().exec(commandBuilder.substring(0).split(" "), null, new File(path));
+        this.instance = Runtime.getRuntime().exec(commandBuilder.substring(0).split(NetworkUtils.SPACE_STRING), null, new File(path));
         CloudNetWrapper.getInstance().getProxys().put(this.proxyProcessMeta.getServiceId().getServerId(), this);
         return true;
     }

@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.web.server;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.web.server.handler.DynamicWebHandler;
@@ -46,10 +47,10 @@ public final class WebServerProvider {
             @Override
             public boolean isAccepted(WebHandler webHandler)
             {
-                if((path.equals("/") || path.isEmpty()) && webHandler.getPath().equals("/")) return true;
+                if((path.equals(NetworkUtils.SLASH_STRING) || path.isEmpty()) && webHandler.getPath().equals("/")) return true;
 
-                String[] array = path.replaceFirst("/", "").split("/");
-                String[] pathArray = webHandler.getPath().replaceFirst("/", "").split("/");
+                String[] array = path.replaceFirst("/", NetworkUtils.EMPTY_STRING).split("/");
+                String[] pathArray = webHandler.getPath().replaceFirst("/", NetworkUtils.EMPTY_STRING).split("/");
 
                 if(array.length != pathArray.length) return false;
 

@@ -6,11 +6,8 @@ package de.dytanic.cloudnet.setup;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import jline.console.ConsoleReader;
-import lombok.Getter;
 
-import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -55,7 +52,7 @@ public class Setup implements ISetup {
                 return;
             }
 
-            if (!input.isEmpty() && !input.equals(" "))
+            if (!input.isEmpty() && !input.equals(NetworkUtils.SPACE_STRING))
             {
                 switch (setupRequest.getResponseType())
                 {

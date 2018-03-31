@@ -1,4 +1,4 @@
-package de.dytanic.cloudnet.lib.utility;
+package de.dytanic.cloudnet3;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

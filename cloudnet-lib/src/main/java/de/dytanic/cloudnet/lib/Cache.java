@@ -3,7 +3,7 @@ package de.dytanic.cloudnet.lib;
 import de.dytanic.cloudnet.lib.utility.threading.ScheduledTask;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 
-import java.util.concurrent.ConcurrentHashMap;
+
 
 public class Cache<K, V> {
 
@@ -12,7 +12,7 @@ public class Cache<K, V> {
 
     public Cache(Scheduler scheduler)
     {
-        values = new ConcurrentHashMap<>();
+        values = NetworkUtils.newConcurrentHashMap();
         task = scheduler.runTaskRepeatSync(new Runnable() {
             @Override
             public void run()

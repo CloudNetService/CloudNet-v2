@@ -98,7 +98,7 @@ public final class CloudNetServer
         }
 
         String[] address = channel.remoteAddress().toString().split(":");
-        String host = address[0].replaceFirst("/", "");
+        String host = address[0].replaceFirst(NetworkUtils.SLASH_STRING, NetworkUtils.EMPTY_STRING);
         for (Wrapper cn : CloudNet.getInstance().getWrappers().values())
         {
             if (cn.getChannel() == null && cn.getNetworkInfo().getHostName().equalsIgnoreCase(host))

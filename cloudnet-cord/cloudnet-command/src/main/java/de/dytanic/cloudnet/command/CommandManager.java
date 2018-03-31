@@ -4,19 +4,20 @@
 
 package de.dytanic.cloudnet.command;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import jline.console.completer.Completer;
 import lombok.Getter;
 
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 @Getter
 public final class CommandManager
         implements Completer
 {
 
-    private final java.util.Map<String, Command> commands = new ConcurrentHashMap<>();
+    private final java.util.Map<String, Command> commands = NetworkUtils.newConcurrentHashMap();
     private ConsoleCommandSender consoleSender = new ConsoleCommandSender();
 
     public CommandManager() {}
@@ -59,10 +60,10 @@ public final class CommandManager
         String[] a = command.split(" ");
         if(this.commands.containsKey(a[0].toLowerCase()))
         {
-            String b = command.replace((command.contains(" ") ? command.split(" ")[0] + " " : command), "");
+            String b = command.replace((command.contains(" ") ? command.split(" ")[0] + " " : command), NetworkUtils.EMPTY_STRING);
             try
             {
-                if(b.equals(""))
+                if(b.equals(NetworkUtils.EMPTY_STRING))
                 {
                     this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, new String[0]);
                 }else{
@@ -87,7 +88,7 @@ public final class CommandManager
         String[] a = command.split(" ");
         if(this.commands.containsKey(a[0].toLowerCase()))
         {
-            String b = command.replace((command.contains(" ") ? command.split(" ")[0] + " " : command), "");
+            String b = command.replace((command.contains(" ") ? command.split(" ")[0] + " " : command), NetworkUtils.EMPTY_STRING);
             try
             {
 
@@ -99,7 +100,7 @@ public final class CommandManager
                     }
                 }
 
-                if(b.equals(""))
+                if(b.equals(NetworkUtils.EMPTY_STRING))
                 {
                     this.commands.get(a[0].toLowerCase()).onExecuteCommand(consoleSender, new String[0]);
                 }else{

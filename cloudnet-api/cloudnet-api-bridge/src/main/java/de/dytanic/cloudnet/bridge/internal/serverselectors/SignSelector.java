@@ -31,12 +31,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.util.*;
 import org.bukkit.util.Vector;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * Created by Tareko on 21.08.2017.
@@ -61,7 +59,7 @@ public class SignSelector implements Listener {
     private volatile SignLayoutConfig signLayoutConfig;
     private Thread worker;
 
-    private Map<String, ServerInfo> servers = new ConcurrentHashMap<>();
+    private Map<String, ServerInfo> servers = NetworkUtils.newConcurrentHashMap();
 
     /*=============================*/ //Utils
 
@@ -548,16 +546,16 @@ public class SignSelector implements Listener {
         for (String x : value)
         {
             value[i] = ChatColor.translateAlternateColorCodes('&', x
-                    .replace("%server%", serverInfo.getServiceId().getServerId() + "")
-                    .replace("%id%", serverInfo.getServiceId().getId() + "")
+                    .replace("%server%", serverInfo.getServiceId().getServerId() + NetworkUtils.EMPTY_STRING)
+                    .replace("%id%", serverInfo.getServiceId().getId() + NetworkUtils.EMPTY_STRING)
                     .replace("%host%", serverInfo.getHost())
-                    .replace("%port%", serverInfo.getPort() + "")
+                    .replace("%port%", serverInfo.getPort() + NetworkUtils.EMPTY_STRING)
                     .replace("%memory%", serverInfo.getMemory() + "MB")
-                    .replace("%online_players%", serverInfo.getOnlineCount() + "")
-                    .replace("%max_players%", serverInfo.getMaxPlayers() + "")
+                    .replace("%online_players%", serverInfo.getOnlineCount() + NetworkUtils.EMPTY_STRING)
+                    .replace("%max_players%", serverInfo.getMaxPlayers() + NetworkUtils.EMPTY_STRING)
                     .replace("%motd%", ChatColor.translateAlternateColorCodes('&', serverInfo.getMotd()))
-                    .replace("%state%", serverInfo.getServerState().name() + "")
-                    .replace("%wrapper%", serverInfo.getServiceId().getWrapperId() + "")
+                    .replace("%state%", serverInfo.getServerState().name() + NetworkUtils.EMPTY_STRING)
+                    .replace("%wrapper%", serverInfo.getServiceId().getWrapperId() + NetworkUtils.EMPTY_STRING)
                     .replace("%extra%", serverInfo.getServerConfig().getExtra())
                     .replace("%template%", serverInfo.getTemplate().getName())
                     .replace("%group%", serverInfo.getServiceId().getGroup()));

@@ -27,21 +27,15 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Tareko on 23.08.2017.
  */
-public class CommandCloudServer implements CommandExecutor, TabExecutor {
-
-    public CommandCloudServer()
-    {
-        /*
-        super("cloudserver");
-        setPermission("cloudnet.command.cloudserver");
-        setAliases(Arrays.asList("cs"));
-        */
-    }
+public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args)
@@ -55,6 +49,12 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
         {
             if (args[0].equalsIgnoreCase("createMob"))
             {
+                if (MobSelector.getInstance() == null)
+                {
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"MobSelector\" isn't enabled!");
+                    return false;
+                }
+
                 try
                 {
                     EntityType entityType = EntityType.valueOf(args[1].toUpperCase());
@@ -70,7 +70,7 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
                         StringBuilder stringBuilder = new StringBuilder();
                         for (short i = 6; i < args.length; i++)
                         {
-                            stringBuilder.append(args[i]).append(" ");
+                            stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
                         }
                         if (stringBuilder.length() > 32)
                         {
@@ -83,6 +83,7 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
                                 MobSelector.getInstance().toPosition(CloudAPI.getInstance().getGroup(), player.getLocation()), "§8#§c%group% &bPlayers online §8|§7 %group_online% of %max_players%", new Document());
                         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(serverMob));
                         player.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob will be created, please wait...");
+
                     } else
                     {
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob with the name " + args[2] + " already exists!");
@@ -90,10 +91,7 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
                     }
                 } catch (Exception ex)
                 {
-                    for (EntityType entityType : EntityType.values())
-                    {
-                        commandSender.sendMessage("- " + entityType.name());
-                    }
+                    for (EntityType entityType : EntityType.values()) commandSender.sendMessage("- " + entityType.name());
                 }
             }
         }
@@ -102,6 +100,12 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
         {
             if (args[0].equalsIgnoreCase("editMobLine"))
             {
+                if (MobSelector.getInstance() == null)
+                {
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"MobSelector\" isn't enabled!");
+                    return false;
+                }
+
                 MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
                     @Override
                     public boolean isAccepted(MobSelector.MobImpl value)
@@ -112,10 +116,9 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
                 if (mob != null)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
+
                     for (short i = 2; i < args.length; i++)
-                    {
-                        stringBuilder.append(args[i]).append(" ");
-                    }
+                        stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
 
                     mob.getMob().setDisplayMessage(stringBuilder.substring(0, stringBuilder.length() - 1));
                     CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(mob.getMob()));
@@ -135,10 +138,9 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
                 if (mob != null)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
+
                     for (short i = 2; i < args.length; i++)
-                    {
-                        stringBuilder.append(args[i]).append(" ");
-                    }
+                        stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
 
                     mob.getMob().setDisplay(stringBuilder.substring(0, stringBuilder.length() - 1));
                     CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(mob.getMob()));
@@ -153,10 +155,14 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
             case 2:
                 if (args[0].equalsIgnoreCase("createSign"))
                 {
-                    if (SignSelector.getInstance() == null) return false;
+                    if (SignSelector.getInstance() == null)
+                    {
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"SignSelector\" isn't enabled!");
+                        return false;
+                    }
+
                     Block block = player.getTargetBlock((HashSet<Material>) null, 15);
                     if (block.getState() instanceof org.bukkit.block.Sign)
-                    {
                         if (!SignSelector.getInstance().containsPosition(block.getLocation()))
                         {
                             if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1]))
@@ -164,20 +170,18 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
                                 Sign sign = new Sign(args[1], SignSelector.getInstance().toPosition(block.getLocation()));
                                 CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddSign(sign));
                                 commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The sign was successfully created!");
-                            } else
-                            {
-                                commandSender.sendMessage("The group doesn't exist");
-                            }
-                        } else
-                        {
-                            commandSender.sendMessage("The sign already exists!");
-                        }
-                    }
+
+                            } else commandSender.sendMessage("The group doesn't exist");
+                        } else commandSender.sendMessage("The sign already exists!");
                     return false;
                 }
                 if (args[0].equalsIgnoreCase("removeSigns"))
                 {
-                    if (SignSelector.getInstance() == null) return false;
+                    if (SignSelector.getInstance() == null)
+                    {
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"SignSelector\" isn't enabled!");
+                        return false;
+                    }
 
                     for (Sign sign : SignSelector.getInstance().getSigns().values())
                         if (sign.getTargetGroup() != null && sign.getTargetGroup().equalsIgnoreCase(args[1]))
@@ -188,7 +192,12 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
                 }
                 if (args[0].equalsIgnoreCase("removeMob"))
                 {
-                    if (MobSelector.getInstance() == null) return false;
+                    if (MobSelector.getInstance() == null)
+                    {
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"MobSelector\" isn't enabled!");
+                        return false;
+                    }
+
                     MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
                         @Override
                         public boolean isAccepted(MobSelector.MobImpl value)
@@ -200,6 +209,7 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
                     {
                         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveMob(mob.getMob()));
                         player.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob has been removed");
+
                     } else
                         player.sendMessage(CloudAPI.getInstance().getPrefix() + "The Mob doesn't exist on this group");
                 }
@@ -207,25 +217,36 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
             case 1:
                 if (args[0].equalsIgnoreCase("removeSign"))
                 {
-                    if (SignSelector.getInstance() == null) return false;
+                    if (SignSelector.getInstance() == null)
+                    {
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"SignSelector\" isn't enabled!");
+                        return false;
+                    }
+
                     Block block = player.getTargetBlock((HashSet<Byte>) null, 15);
                     if (block.getState() instanceof org.bukkit.block.Sign)
                     {
                         if (SignSelector.getInstance().containsPosition(block.getLocation()))
                         {
                             Sign sign = SignSelector.getInstance().getSignByPosition(block.getLocation());
+
                             if (sign != null)
                             {
                                 CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveSign(sign));
+                                commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The sign has been removed");
                             }
-                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The sign has been removed");
                         }
                     }
 
                 }
                 if (args[0].equalsIgnoreCase("listMobs"))
                 {
-                    if (MobSelector.getInstance() == null) return false;
+                    if (MobSelector.getInstance() == null)
+                    {
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"MobSelector\" isn't enabled!");
+                        return false;
+                    }
+
                     CollectionWrapper.iterator(MobSelector.getInstance().getMobs().values(), new Runnabled<MobSelector.MobImpl>() {
                         @Override
                         public void run(MobSelector.MobImpl obj)
@@ -236,7 +257,12 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
                 }
                 if (args[0].equalsIgnoreCase("moblist"))
                 {
-                    if (MobSelector.getInstance() == null) return false;
+                    if (MobSelector.getInstance() == null)
+                    {
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"MobSelector\" isn't enabled!");
+                        return false;
+                    }
+
                     for (EntityType entityType : EntityType.values())
                     {
                         if (entityType.isAlive() && entityType.isSpawnable())
@@ -247,7 +273,12 @@ public class CommandCloudServer implements CommandExecutor, TabExecutor {
             case 3:
                 if (args[0].equalsIgnoreCase("setItem"))
                 {
-                    if (MobSelector.getInstance() == null) return false;
+                    if (MobSelector.getInstance() == null)
+                    {
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"MobSelector\" isn't enabled!");
+                        return false;
+                    }
+
                     MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
                         @Override
                         public boolean isAccepted(MobSelector.MobImpl value)

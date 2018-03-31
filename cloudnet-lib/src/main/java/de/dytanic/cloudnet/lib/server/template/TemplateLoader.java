@@ -4,7 +4,7 @@
 
 package de.dytanic.cloudnet.lib.server.template;
 
-import de.dytanic.cloudnet.lib.utility.ZipConverter;
+import de.dytanic.cloudnet3.ZipConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,9 +14,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 @Getter
 @AllArgsConstructor

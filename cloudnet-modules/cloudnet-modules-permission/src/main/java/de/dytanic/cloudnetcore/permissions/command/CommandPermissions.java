@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 20.08.2017.
@@ -45,19 +44,19 @@ public class CommandPermissions extends Command {
             {
                 if(args.length == 1)
                 {
-                    sender.sendMessage(" ", "Permission groups:");
+                    sender.sendMessage(NetworkUtils.SPACE_STRING, "Permission groups:");
                     for(PermissionGroup permissionGroup : PermissionModule.getInstance().getPermissionPool().getGroups().values())
                     {
                         sender.sendMessage(permissionGroup.getName() + " [" + permissionGroup.getJoinPower() + "] implements " + permissionGroup.getImplementGroups());
                     }
-                    sender.sendMessage(" ");
+                    sender.sendMessage(NetworkUtils.SPACE_STRING);
                     return;
                 }
                 if(args.length == 2)
                 {
                     if(permissionPool.getGroups().containsKey(args[1]))
                     {
-                        sender.sendMessage(" ");
+                        sender.sendMessage(NetworkUtils.SPACE_STRING);
                         PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
                         sender.sendMessage("Name: " + permissionGroup.getName());
                         sender.sendMessage("Implementations: " + permissionGroup.getImplementGroups());
@@ -65,7 +64,7 @@ public class CommandPermissions extends Command {
                         sender.sendMessage("JoinPower: " + permissionGroup.getJoinPower());
                         for(Map.Entry<String, Boolean> x : permissionGroup.getPermissions().entrySet())
                         sender.sendMessage("- " + x.getKey() + ":" + x.getValue());
-                        sender.sendMessage(" ");
+                        sender.sendMessage(NetworkUtils.SPACE_STRING);
                         sender.sendMessage("Permissions for server groups:");
                         for(Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet())
                         {
@@ -78,7 +77,7 @@ public class CommandPermissions extends Command {
                                 }
                             });
                         }
-                        sender.sendMessage(" ");
+                        sender.sendMessage(NetworkUtils.SPACE_STRING);
                     }
                     else
                     {
@@ -93,7 +92,7 @@ public class CommandPermissions extends Command {
                         if(permissionPool.getGroups().containsKey(args[1]))
                         {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
-                            permissionGroup.setDisplay(args[3].replace("_", " "));
+                            permissionGroup.setDisplay(args[3].replace("_", NetworkUtils.SPACE_STRING));
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
@@ -110,7 +109,7 @@ public class CommandPermissions extends Command {
                         if(permissionPool.getGroups().containsKey(args[1]))
                         {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
-                            permissionGroup.setPrefix(args[3].replace("_", " "));
+                            permissionGroup.setPrefix(args[3].replace("_", NetworkUtils.SPACE_STRING));
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
@@ -127,7 +126,7 @@ public class CommandPermissions extends Command {
                         if(permissionPool.getGroups().containsKey(args[1]))
                         {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
-                            permissionGroup.setSuffix(args[3].replace("_", " "));
+                            permissionGroup.setSuffix(args[3].replace("_", NetworkUtils.SPACE_STRING));
                             PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
                             CloudNet.getInstance().getNetworkManager().reload();
                             CloudNet.getInstance().getNetworkManager().updateAll0();
@@ -294,14 +293,14 @@ public class CommandPermissions extends Command {
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy-HH:mm:ss");
                             for(GroupEntityData groupEntityData : offlinePlayer.getPermissionEntity().getGroups())
                             {
-                                stringBuilder.append(groupEntityData.getGroup() + "@" + (groupEntityData.getTimeout() == 0 || groupEntityData.getTimeout() == -1 ? "LIFETIME" : simpleDateFormat.format(groupEntityData.getTimeout())) + " ");
+                                stringBuilder.append(groupEntityData.getGroup() + "@" + (groupEntityData.getTimeout() == 0 || groupEntityData.getTimeout() == -1 ? "LIFETIME" : simpleDateFormat.format(groupEntityData.getTimeout())) + NetworkUtils.SPACE_STRING);
                             }
 
                             sender.sendMessage(
-                                    " ",
+                                    NetworkUtils.SPACE_STRING,
                                     "Player " + offlinePlayer.getName() + ": " + offlinePlayer.getUniqueId(),
                                     "Groups: " + stringBuilder.substring(0),
-                                    " "
+                                    NetworkUtils.SPACE_STRING
                             );
 
                             for(Map.Entry<String, Boolean> booleanEntry : offlinePlayer.getPermissionEntity().getPermissions().entrySet())
@@ -309,7 +308,7 @@ public class CommandPermissions extends Command {
                                 sender.sendMessage("- " + booleanEntry.getKey() + " [" + booleanEntry.getValue() + "]");
                             }
 
-                            sender.sendMessage(" ");
+                            sender.sendMessage(NetworkUtils.SPACE_STRING);
                         }
                         else
                         {
@@ -478,7 +477,7 @@ public class CommandPermissions extends Command {
         {
             sender.sendMessage(
                     "CloudNet-Permissions: [\"_\" = \" \"]",
-                    " ",
+                    NetworkUtils.SPACE_STRING,
                     "perms CREATE <groupName>",
                     "perms GROUP",
                     "perms GROUP <name>",

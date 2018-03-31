@@ -113,12 +113,12 @@ public class CommandShutdown extends Command {
                 break;
             default:
                 sender.sendMessage(
-                        " ",
+                        NetworkUtils.SPACE_STRING,
                         "shutdown WRAPPER <wrapper-id> | Stops a wrapper service with the respective \"wrapper ID\"",
                         "shutdown GROUP <group-id> | Stops a group of either proxy or servergroup, and restarts it by default",
                         "shutdown PROXY <proxy-id> | Stops a BungeeCord service and after preconfiguring the group, a new one is started",
                         "shutdown SERVER <server-id> | Stops a Minecraft server service and after preconfiguring the group, a new one is started",
-                        " "
+                        NetworkUtils.SPACE_STRING
                 );
                 break;
         }

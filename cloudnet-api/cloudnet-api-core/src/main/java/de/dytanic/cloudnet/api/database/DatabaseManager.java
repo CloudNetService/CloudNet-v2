@@ -4,19 +4,19 @@
 
 package de.dytanic.cloudnet.api.database;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
-import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * Created by Tareko on 20.08.2017.
  */
 public class DatabaseManager {
 
-    private Map<String, Database> databaseMap = new ConcurrentHashMap<>();
+    private Map<String, Database> databaseMap = NetworkUtils.newConcurrentHashMap();
 
     public DatabaseManager()
     {

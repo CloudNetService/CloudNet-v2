@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,8 +54,8 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     private ProxiedBootstrap proxiedBootstrap;
     private ProxyProcessMeta proxyProcessMeta;
 
-    private Map<String, ServerInfo> cachedServers = new ConcurrentHashMap<>();
-    private Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
+    private Map<String, ServerInfo> cachedServers = NetworkUtils.newConcurrentHashMap();
+    private Map<UUID, CloudPlayer> cloudPlayers = NetworkUtils.newConcurrentHashMap();
 
     public CloudProxy(ProxiedBootstrap proxiedBootstrap, CloudAPI cloudAPI)
     {
@@ -438,16 +437,16 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                             new TextComponent(ChatColor.translateAlternateColorCodes('&', tabList.getHeader()
                                     .replace("%proxy%", CloudAPI.getInstance().getServerId())
                                     .replace("%server%", (proxiedPlayer.getServer() != null ? proxiedPlayer.getServer().getInfo().getName() : CloudProxy.getInstance().getProxyGroup().getName()))
-                                    .replace("%online_players%", CloudAPI.getInstance().getOnlineCount() + "")
-                                    .replace("%max_players%", CloudProxy.getInstance().getProxyGroup().getProxyConfig().getMaxPlayers() + "")
+                                    .replace("%online_players%", CloudAPI.getInstance().getOnlineCount() + NetworkUtils.EMPTY_STRING)
+                                    .replace("%max_players%", CloudProxy.getInstance().getProxyGroup().getProxyConfig().getMaxPlayers() + NetworkUtils.EMPTY_STRING)
                                     .replace("%group%", (proxiedPlayer.getServer() != null && CloudProxy.getInstance().getCachedServers().containsKey(proxiedPlayer.getServer().getInfo().getName()) ? CloudProxy.getInstance().getCachedServers().get(proxiedPlayer.getServer().getInfo().getName()).getServiceId().getGroup() : "Hub"))
                                     .replace("%proxy_group%", CloudProxy.getInstance().getProxyGroup().getName())
                             )),
                             new TextComponent(ChatColor.translateAlternateColorCodes('&', tabList.getFooter()
                                     .replace("%proxy%", CloudAPI.getInstance().getServerId())
                                     .replace("%server%", (proxiedPlayer.getServer() != null ? proxiedPlayer.getServer().getInfo().getName() : CloudProxy.getInstance().getProxyGroup().getName()))
-                                    .replace("%online_players%", CloudAPI.getInstance().getOnlineCount() + "")
-                                    .replace("%max_players%", CloudProxy.getInstance().getProxyGroup().getProxyConfig().getMaxPlayers() + "")
+                                    .replace("%online_players%", CloudAPI.getInstance().getOnlineCount() + NetworkUtils.EMPTY_STRING)
+                                    .replace("%max_players%", CloudProxy.getInstance().getProxyGroup().getProxyConfig().getMaxPlayers() + NetworkUtils.EMPTY_STRING)
                                     .replace("%group%", (proxiedPlayer.getServer() != null && CloudProxy.getInstance().getCachedServers().containsKey(proxiedPlayer.getServer().getInfo().getName()) ? CloudProxy.getInstance().getCachedServers().get(proxiedPlayer.getServer().getInfo().getName()).getServiceId().getGroup() : "Hub"))
                                     .replace("%proxy_group%", CloudProxy.getInstance().getProxyGroup().getName())
                             )));

@@ -5,7 +5,7 @@
 package de.dytanic.cloudnetcore.web.api.v1;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.utility.ZipConverter;
+import de.dytanic.cloudnet3.ZipConverter;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
 import de.dytanic.cloudnet.web.server.util.PathProvider;
@@ -84,14 +84,14 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
             {
                 fullHttpResponse.setStatus(HttpResponseStatus.OK);
                 Document document = Document.load(httpRequest.headers().get("-Xvalue"));
-                if (document.contains("template") && document.contains("group") && Files.exists(Paths.get("local/templates/" + document.getString("group") + "/" + document.getString("template"))))
+                if (document.contains("template") && document.contains("group") && Files.exists(Paths.get("local/templates/" + document.getString("group") + NetworkUtils.SLASH_STRING + document.getString("template"))))
                 {
                     Path file = Paths.get("local/cache/" + (NetworkUtils.RANDOM.nextInt(Integer.MAX_VALUE - 1)) + ".zip");
 
                     if (!Files.exists(file))
                         Files.createFile(file);
 
-                    String x = "local/templates/" + document.getString("group") + "/" + document.getString("template");
+                    String x = "local/templates/" + document.getString("group") + NetworkUtils.SLASH_STRING + document.getString("template");
 
                     File directory = new File(x);
                     directory.mkdirs();

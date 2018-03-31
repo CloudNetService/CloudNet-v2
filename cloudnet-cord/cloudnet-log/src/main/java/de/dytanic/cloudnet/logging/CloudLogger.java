@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.logging;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import jline.console.ConsoleReader;
 import lombok.Getter;
@@ -111,7 +112,7 @@ public class CloudLogger
             String contents = toString(StandardCharsets.UTF_8.name());
             super.reset();
             if (!contents.isEmpty() && !contents.equals(separator))
-                logp(level, "", "", contents);
+                logp(level, NetworkUtils.EMPTY_STRING, NetworkUtils.EMPTY_STRING, contents);
         }
     }
 
@@ -172,8 +173,8 @@ public class CloudLogger
                 builder.append(writer).append("\n");
             }
 
-            return "[" + format.format(System.currentTimeMillis()) + "/" + name + "] " + record.getLevel().getLocalizedName() + ": " +
-                    " " + formatMessage(record) + "\n" + builder.toString();
+            return "[" + format.format(System.currentTimeMillis()) + NetworkUtils.SLASH_STRING + name + "] " + record.getLevel().getLocalizedName() + ": " +
+                    NetworkUtils.SPACE_STRING + formatMessage(record) + "\n" + builder.toString();
         }
 
     }
@@ -197,7 +198,7 @@ public class CloudLogger
             StringBuilder stringBuilder = new StringBuilder(ConsoleReader.RESET_LINE)
                     .append("[")
                     .append(format.format(System.currentTimeMillis()))
-                    .append("/")
+                    .append(NetworkUtils.SLASH_STRING)
                     .append(name)
                     .append("] ")
                     .append(record.getLevel().getName())

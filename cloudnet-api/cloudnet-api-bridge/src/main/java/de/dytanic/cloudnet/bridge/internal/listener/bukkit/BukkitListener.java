@@ -7,8 +7,8 @@ package de.dytanic.cloudnet.bridge.internal.listener.bukkit;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitSubChannelMessageEvent;
-import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.bridge.internal.util.CloudPermissble;
+import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
@@ -38,25 +38,23 @@ public final class BukkitListener implements Listener {
     public void handle0(AsyncPlayerPreLoginEvent e)
     {
         for (Player all : Bukkit.getOnlinePlayers())
-        {
             if (all.getUniqueId().equals(e.getUniqueId()))
             {
                 e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
                 return;
             }
-        }
 
         CloudServer.getInstance().getPlayerAndCache(e.getUniqueId());
 
     }
 
     @EventHandler
-    public void handle(BukkitSubChannelMessageEvent e)
+    public void handle(BukkitSubChannelMessageEvent event)
     {
-        if (e.getChannel().equalsIgnoreCase("cloudnet_internal") ||
-                e.getMessage().equalsIgnoreCase("server_connect_request"))
+        if (event.getChannel().equalsIgnoreCase("cloudnet_internal") ||
+                event.getMessage().equalsIgnoreCase("server_connect_request"))
         {
-            UUID uniqueId = e.getDocument().getObject("uniqueId", UUID.class);
+            UUID uniqueId = event.getDocument().getObject("uniqueId", UUID.class);
             if (uniqueId != null)
             {
                 requests.add(uniqueId);
@@ -72,11 +70,11 @@ public final class BukkitListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void handle(PlayerLoginEvent e)
+    public void handle(PlayerLoginEvent event)
     {
-        if (CloudServer.getInstance().getCloudPlayers().containsKey(e.getPlayer().getUniqueId()) && requests.contains(e.getPlayer().getUniqueId()))
+        if (CloudServer.getInstance().getCloudPlayers().containsKey(event.getPlayer().getUniqueId()) && requests.contains(event.getPlayer().getUniqueId()))
         {
-            requests.remove(e.getPlayer().getUniqueId());
+            requests.remove(event.getPlayer().getUniqueId());
             if (CloudAPI.getInstance().getPermissionPool() != null && CloudAPI.getInstance().getPermissionPool().isAvailable())
                 try
                 {
@@ -87,7 +85,7 @@ public final class BukkitListener implements Listener {
                     else field = Class.forName("net.glowstone.entity.GlowHumanEntity").getDeclaredField("permissions");
 
                     field.setAccessible(true);
-                    field.set(e.getPlayer(), new CloudPermissble(e.getPlayer()));
+                    field.set(event.getPlayer(), new CloudPermissble(event.getPlayer()));
                 } catch (Exception ex)
                 {
                     ex.printStackTrace();
@@ -95,8 +93,8 @@ public final class BukkitListener implements Listener {
 
         } else
         {
-            e.getPlayer().kickPlayer(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
-            e.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
+            event.getPlayer().kickPlayer(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
             return;
         }
 
@@ -104,16 +102,16 @@ public final class BukkitListener implements Listener {
         {
             if (CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).isMaintenance())
             {
-                if (!e.getPlayer().hasPermission("cloudnet.group.maintenance"))
+                if (!event.getPlayer().hasPermission("cloudnet.group.maintenance"))
                 {
-                    e.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-group-maintenance-kick")));
+                    event.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-group-maintenance-kick")));
                     return;
                 }
             }
 
             if (CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getJoinPower() > 0 && (!CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getMode().equals(ServerGroupMode.LOBBY) || !CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getMode().equals(ServerGroupMode.STATIC_LOBBY)))
             {
-                CloudPlayer cloudPlayer = CloudServer.getInstance().getCloudPlayers().get(e.getPlayer().getUniqueId());
+                CloudPlayer cloudPlayer = CloudServer.getInstance().getCloudPlayers().get(event.getPlayer().getUniqueId());
                 int joinPower = CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getJoinPower();
                 boolean acceptLogin = false;
                 for (GroupEntityData entityData : cloudPlayer.getPermissionEntity().getGroups())
@@ -121,14 +119,14 @@ public final class BukkitListener implements Listener {
                     if (CloudAPI.getInstance().getPermissionGroup(entityData.getGroup()).getJoinPower() >= joinPower)
                         acceptLogin = true;
 
-                    if (e.getPlayer().hasPermission("cloudnet.joinpower." + CloudAPI.getInstance().getPermissionGroup(entityData.getGroup()).getJoinPower()))
+                    if (event.getPlayer().hasPermission("cloudnet.joinpower." + CloudAPI.getInstance().getPermissionGroup(entityData.getGroup()).getJoinPower()))
                         acceptLogin = true;
                 }
 
                 if (!acceptLogin)
                 {
-                    CloudServer.getInstance().getCloudPlayers().remove(e.getPlayer().getUniqueId());
-                    e.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("joinpower-deny")));
+                    CloudServer.getInstance().getCloudPlayers().remove(event.getPlayer().getUniqueId());
+                    event.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("joinpower-deny")));
                 }
             }
         }

@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnetcore.util.defaults;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.proxylayout.*;
 
 import java.util.ArrayList;
@@ -21,11 +22,11 @@ public class BasicProxyConfig extends ProxyConfig {
                 new TabList(true,
                         " \n§b§lCloud§f§lNet §8× §7your §bfree §7cloudsystem §8➜ §f%online_players%§8/§f%max_players%§f\n §8► §7Current server §8● §b%server% §8◄ \n ",
                         " \n §7Twitter §8» §f@Dytanic §8▎ §7Discord §8» §fdiscord.gg/UNQ4wET \n §7powered by §8» §b§b§lCloud§f§lNet \n "), new String[]{
-                        " ",
+                        NetworkUtils.SPACE_STRING,
                         "§b§lCloud§f§lNet §8× §7your §bfree §7cloudsystem",
                         "§7Twitter §8» §f@CloudNetService",
                         "§7Discord §8» §fdiscord.gg/UNQ4wET",
-                        " "
+                        NetworkUtils.SPACE_STRING
                 }, new ArrayList<>(), new DynamicFallback("Lobby", Arrays.asList(new ServerFallback("Lobby", null))));
     }
 }

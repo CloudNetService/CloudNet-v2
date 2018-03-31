@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.lib.network.protocol.packet;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.Value;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
@@ -11,7 +12,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,8 +22,8 @@ import java.util.concurrent.Executors;
  */
 public final class PacketManager {
 
-    private final java.util.Map<Integer, Collection<Class<? extends PacketInHandler>>> packetHandlers = new ConcurrentHashMap<>();
-    private final java.util.Map<UUID, Value<Result>> synchronizedHandlers = new ConcurrentHashMap<>();
+    private final java.util.Map<Integer, Collection<Class<? extends PacketInHandler>>> packetHandlers = NetworkUtils.newConcurrentHashMap();
+    private final java.util.Map<UUID, Value<Result>> synchronizedHandlers = NetworkUtils.newConcurrentHashMap();
     private final Queue<Packet> packetQueue = new ConcurrentLinkedQueue<>();
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 

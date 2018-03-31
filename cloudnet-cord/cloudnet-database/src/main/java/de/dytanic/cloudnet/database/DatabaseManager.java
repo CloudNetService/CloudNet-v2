@@ -4,12 +4,13 @@
 
 package de.dytanic.cloudnet.database;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
 import lombok.Getter;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * Created by Tareko on 01.07.2017.
@@ -22,7 +23,7 @@ public class DatabaseManager
     private final Thread thread;
     private short tick = 1;
 
-    private java.util.Map<String, Database> databaseCollection = new ConcurrentHashMap<>();
+    private java.util.Map<String, Database> databaseCollection = NetworkUtils.newConcurrentHashMap();
 
     public DatabaseManager()
     {
@@ -54,7 +55,7 @@ public class DatabaseManager
             file.mkdir();
         }
 
-        database = new DatabaseImpl(name, new ConcurrentHashMap<>(), file);
+        database = new DatabaseImpl(name, NetworkUtils.newConcurrentHashMap(), file);
         this.databaseCollection.put(name, database);
 
         return database;

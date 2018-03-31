@@ -6,6 +6,7 @@ package de.dytanic.cloudnetcore.command;
 
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
@@ -35,7 +36,7 @@ public class CommandCmd extends Command {
                         StringBuilder stringBuilder = new StringBuilder();
                         for(short i = 1; i < args.length; i++)
                         {
-                            stringBuilder.append(args[i]).append(" ");
+                            stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
                         }
                         minecraftServer.getWrapper().writeServerCommand(stringBuilder.substring(0, stringBuilder.length() - 1), minecraftServer.getServerInfo());
                         sender.sendMessage("Sending command to " + minecraftServer.getServiceId().getServerId() + " with [\"" + stringBuilder.substring(0, stringBuilder.length() -1) + "\"]");
@@ -50,7 +51,7 @@ public class CommandCmd extends Command {
                         StringBuilder stringBuilder = new StringBuilder();
                         for(short i = 1; i < args.length; i++)
                         {
-                            stringBuilder.append(args[i]).append(" ");
+                            stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
                         }
                         minecraftServer.getWrapper().writeProxyCommand(stringBuilder.substring(0, stringBuilder.length() - 1), minecraftServer.getProxyInfo());
                         sender.sendMessage("Sending command to " + minecraftServer.getServiceId().getServerId() + " with [\"" + stringBuilder.substring(0, stringBuilder.length() -1) + "\"]");

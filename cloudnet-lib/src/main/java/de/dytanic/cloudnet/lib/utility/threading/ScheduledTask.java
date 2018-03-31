@@ -7,7 +7,7 @@ import lombok.Getter;
  */
 @Getter
 public class ScheduledTask
-            implements Runnable{
+        implements Runnable {
 
     protected long taskId;
     protected Runnable runnable;
@@ -38,23 +38,29 @@ public class ScheduledTask
     @Override
     public void run()
     {
-        if(interrupted) return;
+        if (interrupted) return;
 
-        if(delay != 0
+        if (delay != 0
                 && delayTime != 0)
         {
             delayTime--;
             return;
         }
 
-        if(repeatTime > 0)
+        if (repeatTime > 0)
         {
             repeatTime--;
-        }
-        else
+        } else
         {
-            runnable.run();
-            if(repeatTime == -1)
+            try
+            {
+                runnable.run();
+            } catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+
+            if (repeatTime == -1)
             {
                 cancel();
                 return;

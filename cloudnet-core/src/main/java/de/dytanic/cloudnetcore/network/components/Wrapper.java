@@ -4,8 +4,8 @@
 
 package de.dytanic.cloudnetcore.network.components;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.cloudserver.CloudServerMeta;
-import de.dytanic.cloudnet.lib.server.resource.ResourceMeta;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
@@ -13,7 +13,6 @@ import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.Quad;
-import de.dytanic.cloudnet.lib.utility.Trio;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnet.lib.DefaultType;
@@ -26,7 +25,6 @@ import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnetcore.network.packet.out.*;
-import de.dytanic.cloudnetcore.util.defaults.DefaultResourceMeta;
 import io.netty.channel.Channel;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,8 +32,7 @@ import net.md_5.bungee.config.Configuration;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -57,12 +54,12 @@ public final class Wrapper
     @Setter
     private double cpuUsage = -1;
 
-    private final java.util.Map<String, ProxyServer> proxys = new ConcurrentHashMap<>();
-    private final java.util.Map<String, MinecraftServer> servers = new ConcurrentHashMap<>();
-    private final java.util.Map<String, CloudServer> cloudServers = new ConcurrentHashMap<>();
+    private final java.util.Map<String, ProxyServer> proxys = NetworkUtils.newConcurrentHashMap();
+    private final java.util.Map<String, MinecraftServer> servers = NetworkUtils.newConcurrentHashMap();
+    private final java.util.Map<String, CloudServer> cloudServers = NetworkUtils.newConcurrentHashMap();
 
     // Group, ServiceId
-    private final java.util.Map<String, Quad<Integer, Integer, ServiceId, Template>> waitingServices = new ConcurrentHashMap<>();
+    private final java.util.Map<String, Quad<Integer, Integer, ServiceId, Template>> waitingServices = NetworkUtils.newConcurrentHashMap();
 
     @Setter
     private int maxMemory = 0;
@@ -159,7 +156,7 @@ public final class Wrapper
 
         if (getChannel() == null) return this;
 
-        java.util.Map<String, ServerGroup> groups = new ConcurrentHashMap<>();
+        java.util.Map<String, ServerGroup> groups = NetworkUtils.newConcurrentHashMap();
         for (ServerGroup serverGroup : CloudNet.getInstance().getServerGroups().values())
             if (serverGroup.getWrapper().contains(networkInfo.getId()))
             {
@@ -167,7 +164,7 @@ public final class Wrapper
                 sendPacket(new PacketOutCreateTemplate(serverGroup));
             }
 
-        java.util.Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
+        java.util.Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
         for (ProxyGroup serverGroup : CloudNet.getInstance().getProxyGroups().values())
             if (serverGroup.getWrapper().contains(networkInfo.getId()))
             {

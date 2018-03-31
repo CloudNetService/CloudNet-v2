@@ -16,9 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Properties;
-import java.util.UUID;
 
 @Getter
 public class CloudNetWrapperConfig {
@@ -105,9 +102,9 @@ public class CloudNetWrapperConfig {
             if (wrapperId == null)
             {
                 System.out.println("Please provide the name of this wrapper (example: Wrapper-1)");
-                wrapperId = reader.readLine().replace(" ", "");
+                wrapperId = reader.readLine().replace(NetworkUtils.SPACE_STRING, NetworkUtils.EMPTY_STRING);
 
-                if (wrapperId.isEmpty() || wrapperId.equals(""))
+                if (wrapperId.isEmpty() || wrapperId.equals(NetworkUtils.EMPTY_STRING))
                 {
                     wrapperId = "Wrapper-" + NetworkUtils.RANDOM.nextInt();
                 }

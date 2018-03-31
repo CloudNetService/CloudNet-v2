@@ -5,6 +5,7 @@
 package de.dytanic.cloudnetcore.mobs.config;
 
 import com.google.gson.reflect.TypeToken;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobItemLayout;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
@@ -30,17 +31,17 @@ public class ConfigMobs implements ILoader<MobConfig> {
         {
             new Document()
                     .append("mobConfig", new MobConfig(54, 10, new MobItemLayout(388, 0,
-                            "§6%server%", Arrays.asList(" ", "§e%state%", "§e%online_players% §8/§e%max_players%", "§e%motd%")),
+                            "§6%server%", Arrays.asList(NetworkUtils.SPACE_STRING, "§e%state%", "§e%online_players% §8/§e%max_players%", "§e%motd%")),
                             MapWrapper.valueableHashMap(
-                                    new Return<>(1, new MobItemLayout(160, 15, " ", Arrays.asList(" "))),
-                                    new Return<>(2, new MobItemLayout(160, 15, " ", Arrays.asList(" "))),
-                                    new Return<>(3, new MobItemLayout(160, 15, " ", Arrays.asList(" "))),
-                                    new Return<>(4, new MobItemLayout(160, 15, " ", Arrays.asList(" "))),
-                                    new Return<>(5, new MobItemLayout(160, 15, " ", Arrays.asList(" "))),
-                                    new Return<>(6, new MobItemLayout(160, 15, " ", Arrays.asList(" "))),
-                                    new Return<>(7, new MobItemLayout(160, 15, " ", Arrays.asList(" "))),
-                                    new Return<>(8, new MobItemLayout(160, 15, " ", Arrays.asList(" "))),
-                                    new Return<>(9, new MobItemLayout(160, 15, " ", Arrays.asList(" "))))
+                                    new Return<>(1, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                    new Return<>(2, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                    new Return<>(3, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                    new Return<>(4, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                    new Return<>(5, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                    new Return<>(6, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                    new Return<>(7, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                    new Return<>(8, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                    new Return<>(9, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))))
                             )
                     ).saveAsConfig(path);
         }

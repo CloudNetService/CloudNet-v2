@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.database;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet3.TaskScheduler;
@@ -13,8 +14,6 @@ import lombok.Getter;
 import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 /**
@@ -42,7 +41,7 @@ public class DatabaseImpl
     @Override
     public boolean containsDoc(String name)
     {
-        return new File("database/" + this.name + "/" + name).exists();
+        return new File("database/" + this.name + NetworkUtils.SLASH_STRING + name).exists();
     }
 
     @Override
@@ -58,7 +57,7 @@ public class DatabaseImpl
 
         if(document == null)
         {
-            File doc = new File("database/" + this.name + "/" + name);
+            File doc = new File("database/" + this.name + NetworkUtils.SLASH_STRING + name);
             if(doc.exists())
             {
                document = Document.loadDocument(doc);
@@ -86,7 +85,7 @@ public class DatabaseImpl
         {
             documents.remove(document);
         }
-        new File("database/" + this.name + "/" + name).delete();
+        new File("database/" + this.name + NetworkUtils.SLASH_STRING + name).delete();
         return this;
     }
 
@@ -94,14 +93,14 @@ public class DatabaseImpl
     public Database delete(Document document)
     {
         this.documents.remove(document);
-        new File("database/" + this.name + "/" + name).delete();
+        new File("database/" + this.name + NetworkUtils.SLASH_STRING + name).delete();
         return this;
     }
 
     @Override
     public Document load(String name)
     {
-        return Document.loadDocument(new File("database/databases/" + this.name + "/" + name));
+        return Document.loadDocument(new File("database/databases/" + this.name + NetworkUtils.SLASH_STRING + name));
     }
 
     @Override
@@ -164,7 +163,7 @@ public class DatabaseImpl
     public void save()
     {
         for(Document document : documents.values())
-            document.saveAsConfig0(new File("database/" + this.name + "/" + document.getString(UNIQUE_NAME_KEY)));
+            document.saveAsConfig0(new File("database/" + this.name + NetworkUtils.SLASH_STRING + document.getString(UNIQUE_NAME_KEY)));
     }
 
     public void clear()

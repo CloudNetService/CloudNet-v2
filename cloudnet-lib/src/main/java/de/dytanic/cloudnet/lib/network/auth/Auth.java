@@ -1,5 +1,6 @@
 package de.dytanic.cloudnet.lib.network.auth;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.service.ServiceId;
@@ -52,7 +53,7 @@ public final class Auth {
     {
         this.type = AuthType.USER_AUTH;
         this.authData
-                .append("name", new Random().nextLong() + "")
+                .append("name", new Random().nextLong() + NetworkUtils.EMPTY_STRING)
                 .append("adminkey", adminKey);
     }
 }
