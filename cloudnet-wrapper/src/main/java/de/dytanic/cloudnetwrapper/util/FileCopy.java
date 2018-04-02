@@ -53,10 +53,9 @@ public final class FileCopy {
         }
     }
 
-    public static final void insertData(String paramString1, String paramString2)
+    public static void insertData(String paramString1, String paramString2)
     {
-        InputStream localInputStream = FileCopy.class.getClassLoader().getResourceAsStream(paramString1);
-        try
+        try(InputStream localInputStream = FileCopy.class.getClassLoader().getResourceAsStream(paramString1))
         {
             Files.copy(localInputStream, Paths.get(paramString2), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e)
