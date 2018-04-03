@@ -5,33 +5,59 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * ZipConverter 2.0
+ */
 public final class ZipConverter {
 
     private ZipConverter()
     {
     }
 
-    public static Path convert(Path zipPath, Path... directorys) throws IOException
+    public static Path convert(Path zipPath, Path... directories) throws IOException
     {
-        if(!Files.exists(zipPath))
+        if (directories == null) return null;
+
+        if (!Files.exists(zipPath))
             Files.createFile(zipPath);
 
         try (OutputStream outputStream = Files.newOutputStream(zipPath);
              ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream, StandardCharsets.UTF_8))
         {
-            for (Path dir : directorys)
+            for (Path dir : directories)
                 if (Files.exists(dir))
-                    convert0(zipOutputStream, zipPath, dir);
+                    convert0(zipOutputStream, dir);
         }
         return zipPath;
     }
 
-    private static void convert0(ZipOutputStream zipOutputStream, Path zipPath, Path directory) throws IOException
+    public static byte[] convert(Path... directories)
+    {
+        if (directories == null) return new byte[0];
+
+        try (ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+             ZipOutputStream zipOutputStream = new ZipOutputStream(byteBuffer, StandardCharsets.UTF_8))
+        {
+
+            for (Path dir : directories)
+                if (Files.exists(dir))
+                    convert0(zipOutputStream, dir);
+
+            return byteBuffer.toByteArray();
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private static void convert0(ZipOutputStream zipOutputStream, Path directory) throws IOException
     {
         Files.walkFileTree(
                 directory,
@@ -56,30 +82,45 @@ public final class ZipConverter {
 
     public static Path extract(Path zipPath, Path targetDirectory) throws IOException
     {
-        if (!Files.exists(zipPath)) throw new FileNotFoundException("zip file doesn't exists");
+        if (zipPath == null || targetDirectory == null || !Files.exists(zipPath)) return targetDirectory;
 
-        if (!Files.exists(targetDirectory))
-            Files.createDirectory(targetDirectory);
-
-        else if (!Files.isDirectory(targetDirectory)) throw new IOException("File is not a directory");
-
-        try (ZipFile zipFile = new ZipFile(zipPath.toFile(), StandardCharsets.UTF_8))
+        try (InputStream inputStream = Files.newInputStream(zipPath))
         {
-            extract0(zipFile, targetDirectory);
+            extract0(inputStream, targetDirectory);
         }
 
         return targetDirectory;
     }
 
-    private static void extract0(ZipFile zipFile, Path targetDirectory) throws IOException
+    public static Path extract(byte[] zipData, Path targetDirectory) throws IOException
     {
-        Enumeration<? extends ZipEntry> entryEnumeration = zipFile.entries();
-        while (entryEnumeration.hasMoreElements()) extract1(zipFile, entryEnumeration.nextElement(), targetDirectory);
+        if (zipData == null || zipData.length == 0 || targetDirectory == null) return targetDirectory;
+
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(zipData))
+        {
+            extract0(byteArrayInputStream, targetDirectory);
+        }
+
+        return targetDirectory;
     }
 
-    private static void extract1(ZipFile zipFile, ZipEntry zipEntry, Path targetDirectory) throws IOException
+    public static void extract0(InputStream inputStream, Path targetDirectory) throws IOException
     {
-        byte[] buffer = new byte[0xFFFF];
+        try (ZipInputStream zipInputStream = new ZipInputStream(inputStream, StandardCharsets.UTF_8))
+        {
+            ZipEntry zipEntry = null;
+
+            while ((zipEntry = zipInputStream.getNextEntry()) != null)
+            {
+                extract1(zipInputStream, zipEntry, targetDirectory);
+                zipInputStream.closeEntry();
+            }
+        }
+    }
+
+    private static void extract1(ZipInputStream zipInputStream, ZipEntry zipEntry, Path targetDirectory) throws IOException
+    {
+        byte[] buffer = new byte[0x1FFF];
         Path file = Paths.get(targetDirectory.toString(), zipEntry.getName());
 
         if (zipEntry.isDirectory())
@@ -88,10 +129,12 @@ public final class ZipConverter {
                 Files.createDirectories(file);
         } else
         {
-            new File(file.toFile().getParent()).mkdirs();
+            Path parent = file.getParent();
+            if (!Files.exists(parent))
+                Files.createDirectories(parent);
 
             Files.createFile(file);
-            try (InputStream zipInputStream = zipFile.getInputStream(zipEntry); OutputStream outputStream = Files.newOutputStream(file))
+            try (OutputStream outputStream = Files.newOutputStream(file))
             {
                 int len;
                 while ((len = zipInputStream.read(buffer)) != -1) outputStream.write(buffer, 0, len);

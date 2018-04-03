@@ -5,11 +5,11 @@
 package de.dytanic.cloudnetcore.web.api.v1;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet3.ZipConverter;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
 import de.dytanic.cloudnet.web.server.util.PathProvider;
 import de.dytanic.cloudnet.web.server.util.QueryDecoder;
+import de.dytanic.cloudnet3.ZipConverter;
 import de.dytanic.cloudnetcore.CloudNet;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -86,11 +86,6 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                 Document document = Document.load(httpRequest.headers().get("-Xvalue"));
                 if (document.contains("template") && document.contains("group") && Files.exists(Paths.get("local/templates/" + document.getString("group") + NetworkUtils.SLASH_STRING + document.getString("template"))))
                 {
-                    Path file = Paths.get("local/cache/" + (NetworkUtils.RANDOM.nextInt(Integer.MAX_VALUE - 1)) + ".zip");
-
-                    if (!Files.exists(file))
-                        Files.createFile(file);
-
                     String x = "local/templates/" + document.getString("group") + NetworkUtils.SLASH_STRING + document.getString("template");
 
                     File directory = new File(x);
@@ -107,11 +102,9 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                         }
                     }
 
-                    ZipConverter.convert(file, Paths.get(x));
-                    byte[] value = Files.readAllBytes(file);
+                    byte[] value = ZipConverter.convert(new Path[]{Paths.get(x)});
                     fullHttpResponse.headers().set("content-disposition", "attachment; filename = " + document.getString("template") + ".zip");
                     fullHttpResponse.content().writeBytes(value);
-                    Files.deleteIfExists(file);
                 } else
                 {
                     fullHttpResponse.headers().set("Content-Type", "application/json");
@@ -127,18 +120,10 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                 String x = "local/servers/" + server;
 
                 if (!Files.exists(Paths.get(x))) Files.createDirectories(Paths.get(x + "/plugins"));
-
-                Path file = Paths.get("local/cache/" + NetworkUtils.RANDOM.nextLong() + ".zip");
-
-                if (!Files.exists(file))
-                    Files.createFile(file);
-
-                ZipConverter.convert(file, Paths.get(x));
-                byte[] value = Files.readAllBytes(file);
+                byte[] value = ZipConverter.convert(new Path[]{Paths.get(x)});
 
                 fullHttpResponse.headers().set("content-disposition", "attachment; filename = " + server + ".zip");
                 fullHttpResponse.content().writeBytes(value);
-                Files.deleteIfExists(file);
             }
             break;
             default:
