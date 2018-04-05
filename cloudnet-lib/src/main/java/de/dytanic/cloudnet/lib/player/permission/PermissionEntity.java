@@ -31,11 +31,9 @@ public class PermissionEntity {
         if (permissionPool == null || permission == null) return false;
 
         String adminPermission = null;
-        String[] block = permission.split(".");
-        if (block.length > 1)
-        {
-            adminPermission = block[0] + ".*";
-        }
+        String[] block = permission.split("\\.");
+
+        if (block.length > 1) adminPermission = block[0] + ".*";
 
         if (permissions.containsKey("*") && permissions.get("*")) return true;
         else if ((permissions.containsKey(permission)) && permissions.get(permission)) return true;
@@ -43,21 +41,21 @@ public class PermissionEntity {
         else if (adminPermission != null && permissions.containsKey(adminPermission) && permissions.get(adminPermission))
             return true;
         else if (adminPermission != null && permissions.containsKey(adminPermission) && !permissions.get(adminPermission))
-            return true;
+            return false;
 
         for (GroupEntityData implg : groups)
         {
             if (!permissionPool.getGroups().containsKey(implg.getGroup())) continue;
             PermissionGroup permissionGroup = permissionPool.getGroups().get(implg.getGroup());
 
-            if(checkAccess(permissionGroup, permission, adminPermission, group)) return true;
+            if (checkAccess(permissionGroup, permission, adminPermission, group)) return true;
 
-            for(String implGroup : permissionGroup.getImplementGroups())
+            for (String implGroup : permissionGroup.getImplementGroups())
             {
                 if (!permissionPool.getGroups().containsKey(implGroup)) continue;
 
                 PermissionGroup subGroup = permissionPool.getGroups().get(implGroup);
-                if(checkAccess(subGroup, permission, adminPermission, group)) return true;
+                if (checkAccess(subGroup, permission, adminPermission, group)) return true;
             }
 
         }
@@ -72,9 +70,8 @@ public class PermissionEntity {
         for (GroupEntityData groupEntityData : getGroups())
         {
             if (permissionGroup == null)
-            {
                 permissionGroup = permissionPool.getGroups().get(groupEntityData.getGroup());
-            } else
+            else
             {
                 if (permissionGroup.getJoinPower() < permissionPool.getGroups().get(groupEntityData.getGroup()).getJoinPower())
                 {
@@ -83,26 +80,6 @@ public class PermissionEntity {
             }
         }
         return permissionGroup;
-    }
-
-    private boolean checkAccess(PermissionGroup permissionGroup, String permission, String adminPermission, String group)
-    {
-        if ((permissionGroup.getPermissions().containsKey("*") && permissionGroup.getPermissions().get("*")))
-            return true;
-
-        if ((permissionGroup.getPermissions().containsKey(permission) && permissionGroup.getPermissions().get(permission)) || (adminPermission != null && (permissionGroup.getPermissions().containsKey(adminPermission) &&
-                permissionGroup.getPermissions().get(adminPermission)
-        ))) return true;
-
-        if (permissionGroup.getServerGroupPermissions().containsKey(group))
-        {
-            if (permissionGroup.getServerGroupPermissions().get(group).contains(permission) ||
-                    permissionGroup.getServerGroupPermissions().get(group).contains("*")
-                    || (adminPermission != null && permissionGroup.getServerGroupPermissions().get(group).contains(adminPermission)))
-                return true;
-        }
-
-        return false;
     }
 
     public boolean isInGroup(String group)
@@ -119,6 +96,34 @@ public class PermissionEntity {
     public void setPrefix(String prefix)
     {
         this.prefix = prefix;
+    }
+
+    /*= -------------------------------------------------------------------------------- =*/
+
+    private boolean checkAccess(PermissionGroup permissionGroup, String permission, String adminPermission, String group)
+    {
+        if ((adminPermission != null && (permissionGroup.getPermissions().containsKey(adminPermission) &&
+                !permissionGroup.getPermissions().get(adminPermission))) ||
+                (permissionGroup.getPermissions().containsKey("*") && !permissionGroup.getPermissions().get("*")) ||
+                (permissionGroup.getPermissions().containsKey(permission) && !permissionGroup.getPermissions().get(permission)))
+            return false;
+
+        if ((permissionGroup.getPermissions().containsKey("*") && permissionGroup.getPermissions().get("*")))
+            return true;
+
+        if ((permissionGroup.getPermissions().containsKey(permission) && permissionGroup.getPermissions().get(permission)) ||
+                (adminPermission != null && (permissionGroup.getPermissions().containsKey(adminPermission) && permissionGroup.getPermissions().get(adminPermission))))
+            return true;
+
+        if (permissionGroup.getServerGroupPermissions().containsKey(group))
+        {
+            if (permissionGroup.getServerGroupPermissions().get(group).contains(permission) ||
+                    permissionGroup.getServerGroupPermissions().get(group).contains("*")
+                    || (adminPermission != null && permissionGroup.getServerGroupPermissions().get(group).contains(adminPermission)))
+                return true;
+        }
+
+        return false;
     }
 
 }

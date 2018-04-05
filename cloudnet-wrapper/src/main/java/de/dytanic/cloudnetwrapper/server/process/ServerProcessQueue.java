@@ -88,7 +88,6 @@ public class ServerProcessQueue implements Runnable {
                         }
                     } catch (Exception e)
                     {
-                        System.out.println("Failed to bootstrap the game-server " + serverProcess.getMeta().getServiceId().toString());
                         e.printStackTrace();
                         this.servers.add(serverProcess);
                     }
@@ -131,7 +130,6 @@ public class ServerProcessQueue implements Runnable {
                         }
                     } catch (Exception e)
                     {
-                        System.out.println("Failed to bootstrap the proxy-server " + gameServer.toString());
                         e.printStackTrace();
                         this.proxys.add(serverProcess);
                     }
