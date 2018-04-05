@@ -44,7 +44,7 @@ public class PlayerExecutorBridge extends PlayerExecutor {
     @Override
     public void sendMessage(CloudPlayer cloudPlayer, String message)
     {
-        if (cloudPlayer == null || message == null)
+        if (cloudPlayer == null || message == null) return;
 
             CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "sendMessage",
                     new Document("message", message).append("name", cloudPlayer.getName()).append("uniqueId", cloudPlayer.getUniqueId()));
