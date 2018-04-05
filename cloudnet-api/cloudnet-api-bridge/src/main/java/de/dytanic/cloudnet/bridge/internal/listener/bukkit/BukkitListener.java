@@ -24,6 +24,7 @@ import org.bukkit.event.player.*;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -32,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class BukkitListener implements Listener {
 
-    private final Collection<UUID> requests = new CopyOnWriteArrayList<>();
+    private final Collection<UUID> requests = new CopyOnWriteArrayList<>(), kicks = new HashSet<>(256);
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void handle0(AsyncPlayerPreLoginEvent e)
@@ -45,7 +46,6 @@ public final class BukkitListener implements Listener {
             }
 
         CloudServer.getInstance().getPlayerAndCache(e.getUniqueId());
-
     }
 
     @EventHandler
@@ -69,8 +69,19 @@ public final class BukkitListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void handleLast(PlayerLoginEvent event)
+    {
+        if (this.kicks.contains(event.getPlayer().getUniqueId()))
+        {
+            this.kicks.remove(event.getPlayer().getUniqueId());
+
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
-    public void handle(PlayerLoginEvent event)
+    public void handleFirst(PlayerLoginEvent event)
     {
         if (CloudServer.getInstance().getCloudPlayers().containsKey(event.getPlayer().getUniqueId()) && requests.contains(event.getPlayer().getUniqueId()))
         {
@@ -93,8 +104,7 @@ public final class BukkitListener implements Listener {
 
         } else
         {
-            event.getPlayer().kickPlayer(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
-            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
+            this.kicks.add(event.getPlayer().getUniqueId());
             return;
         }
 
