@@ -54,17 +54,15 @@ public class ServerProcessQueue implements Runnable {
     @Override
     public void run()
     {
-
-        if(!running) return;
-
         {
             short i = 0;
-            int memory = CloudNetWrapper.getInstance().getUsedMemory();
             
             while (running && !servers.isEmpty() && (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer() == 0D || NetworkUtils.cpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer()))
             {
                 i++;
                 if(i == 3) break;
+
+                int memory = CloudNetWrapper.getInstance().getUsedMemory();
 
                 ServerProcess serverProcess = servers.poll();
 
@@ -101,11 +99,11 @@ public class ServerProcessQueue implements Runnable {
 
         {
             short i = 0;
-            int memory = CloudNetWrapper.getInstance().getUsedMemory();
             while (running && !proxys.isEmpty() && (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy() == 0 || NetworkUtils.cpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy()))
             {
                 i++;
                 if(i == 3) break;
+                int memory = CloudNetWrapper.getInstance().getUsedMemory();
 
                 ProxyProcessMeta serverProcess = proxys.poll();
 
