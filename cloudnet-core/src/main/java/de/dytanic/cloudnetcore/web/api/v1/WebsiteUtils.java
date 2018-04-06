@@ -100,7 +100,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
                 return fullHttpResponse;
             }
-            case "onlinePlayers":
+            case "onlineplayers":
 
                 if(!user.getPermissions().contains("cloudnet.web.onlineplayers") && !user.getPermissions().contains("*"))
                 {
@@ -175,7 +175,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 }
 
                 return fullHttpResponse;
-            case "startProxy":
+            case "startproxy":
 
                 if(!user.getPermissions().contains("cloudnet.web.startproxy") && !user.getPermissions().contains("*"))
                 {

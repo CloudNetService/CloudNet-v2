@@ -6,25 +6,25 @@
 ![Image of CloudNet](https://proxy.spigotmc.org/04918abd59c8a2d6eb0818cd79eebc7947254e88?url=https%3A%2F%2Fcdn.discordapp.com%2Fattachments%2F325383142464552972%2F354670548292206594%2FCloudNet.png)
 
 
-This is the CloudNet project, which has spared a lot of time and effort for over 6 months. 
-Here you can find the most recent commits of the project. 
-I am absolutely not satisfied with the code and find it horribly awful. 
-Therefore, there will soon be a third CloudNet architecture.
+This is the CloudNet project, which has already taken a lot of time and effort for over 6 months. 
+Here you can find the most recent commits to the project. 
+I am absolutely not satisfied by the code and find it horribly awful. 
+Therefore, soon there will be version 3.0 of CloudNet.
 
-CloudNet is a cloud computing service for Minecraft networks. With a wide range of functionality, it offers both Minecraft Server (Craftbukkit / Spigot / Glowstone) and BungeeCord.
+CloudNet is a cloud computing service for Minecraft networks. With a wide range of functionality, it offers both control over Minecraft Servers (Craftbukkit / Spigot / Glowstone) and BungeeCord Proxys.
 
 CloudNet is dynamic, which means that the software automates and "limits" many already clear functionalities based on the pre-configuration or the "CloudDynamicServices" (CDS 2.1)
 
-CloudNet is to be the manager and network extension with new technologies the administration of a Minecraft network to the side. The second direction is the unlimited development possibility with its own modules, and extensive programming interfaces.
-Support for a wide range of needs and future opportunities, such as support for a Round Robin DNS management with the CloudFlare company service and the multi-proxy functionality for networks with more than 500 players, the project is important to enable high performance and stabilization for a Minecraft network.
+CloudNet manages server and helps networks to expand through new technologies to help the administration of a Minecraft Network. Another aspect of CloudNet are the unlimited development possibilities because you are able to build your own modules and extensive programming interfaces.
+CloudNet supports a wide range of needs and future opportunities, such as a Round Robin DNS management with the CloudFlare company service and the multi-proxy functionality for networks with more than 500 players, the project is important to enable high performance and stabilization for a Minecraft network.
 
 For general information about CloudNet go to [spigotmc.org](https://www.spigotmc.org/resources/cloudnet-the-cloud-network-environment-technology.42059/). 
 
 ### Requirements
 
  * Java 8
- * Linux/Windows server with min. 2GB DDR3 Memory and 2 vCores
- * A FTP/SFTP client for mange your linux or windows server
+ * Linux/Windows server with a minimum of 2GB DDR3 Memory and 2 vCores
+ * A FTP/SFTP client to manage your Linux or Windows Server
  
  ### Support
  
