@@ -23,7 +23,7 @@ public interface ServerDispatcher extends Executeable, Screenable {
 
     default void executeCommand(String consoleCommand)
     {
-        if (getInstance() == null && getInstance().isAlive()) return;
+        if (getInstance() == null && !getInstance().isAlive()) return;
 
         try
         {

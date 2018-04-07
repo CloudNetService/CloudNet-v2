@@ -388,13 +388,6 @@ public class GameServer implements ServerDispatcher {
         CloudNetWrapper.getInstance().getServers().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveServer(serverInfo));
         System.out.println("Server " + toString() + " was stopped");
-
-        try
-        {
-            this.finalize();
-        } catch (Throwable throwable)
-        {
-        }
         return true;
     }
 
@@ -481,12 +474,7 @@ public class GameServer implements ServerDispatcher {
         if (instance.isAlive())
         {
             executeCommand("stop");
-            try
-            {
-                Thread.sleep(1000);
-            } catch (InterruptedException e)
-            {
-            }
+            NetworkUtils.sleepUninterruptedly(500);
         }
 
         instance.destroyForcibly();

@@ -54,87 +54,90 @@ public class ServerProcessQueue implements Runnable {
     @Override
     public void run()
     {
+        while (!Thread.currentThread().isInterrupted())
         {
-            short i = 0;
-            
-            while (running && !servers.isEmpty() && (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer() == 0D || NetworkUtils.cpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer()))
+            NetworkUtils.sleepUninterruptedly(500);
+
             {
-                i++;
-                if(i == 3) break;
+                short i = 0;
 
-                int memory = CloudNetWrapper.getInstance().getUsedMemory();
-
-                ServerProcess serverProcess = servers.poll();
-
-                if(!CloudNetWrapper.getInstance().getServerGroups().containsKey(serverProcess.getMeta().getServiceId().getGroup()))
+                while (running && !servers.isEmpty() && (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer() == 0D || NetworkUtils.cpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer()))
                 {
-                    this.servers.add(serverProcess);
-                    continue;
-                }
+                    i++;
+                    if (i == 3) break;
 
-                if((memory + serverProcess.getMeta().getMemory())
-                        < CloudNetWrapper.getInstance().getMaxMemory())
-                {
-                    GameServer gameServer = null;
-                    try
+                    int memory = CloudNetWrapper.getInstance().getUsedMemory();
+
+                    ServerProcess serverProcess = servers.poll();
+
+                    if (!CloudNetWrapper.getInstance().getServerGroups().containsKey(serverProcess.getMeta().getServiceId().getGroup()))
                     {
-                        System.out.println("Fetching entry [" + serverProcess.getMeta().getServiceId() + "]");
-                        gameServer = new GameServer(serverProcess, ServerStage.SETUP, CloudNetWrapper.getInstance().getServerGroups().get(serverProcess.getMeta().getServiceId().getGroup()));
-                        if(!gameServer.bootstrap())
+                        this.servers.add(serverProcess);
+                        continue;
+                    }
+
+                    if ((memory + serverProcess.getMeta().getMemory())
+                            < CloudNetWrapper.getInstance().getMaxMemory())
+                    {
+                        GameServer gameServer = null;
+                        try
                         {
+                            System.out.println("Fetching entry [" + serverProcess.getMeta().getServiceId() + "]");
+                            gameServer = new GameServer(serverProcess, ServerStage.SETUP, CloudNetWrapper.getInstance().getServerGroups().get(serverProcess.getMeta().getServiceId().getGroup()));
+                            if (!gameServer.bootstrap())
+                            {
+                                this.servers.add(serverProcess);
+                            }
+                        } catch (Exception e)
+                        {
+                            e.printStackTrace();
                             this.servers.add(serverProcess);
                         }
-                    } catch (Exception e)
+                    } else
                     {
-                        e.printStackTrace();
                         this.servers.add(serverProcess);
                     }
                 }
-                else
-                {
-                    this.servers.add(serverProcess);
-                }
             }
-        }
 
-        {
-            short i = 0;
-            while (running && !proxys.isEmpty() && (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy() == 0 || NetworkUtils.cpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy()))
             {
-                i++;
-                if(i == 3) break;
-                int memory = CloudNetWrapper.getInstance().getUsedMemory();
-
-                ProxyProcessMeta serverProcess = proxys.poll();
-
-                if(!CloudNetWrapper.getInstance().getProxyGroups().containsKey(serverProcess.getServiceId().getGroup()))
+                short i = 0;
+                while (running && !proxys.isEmpty() && (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy() == 0 || NetworkUtils.cpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy()))
                 {
-                    this.proxys.add(serverProcess);
-                    continue;
-                }
+                    i++;
+                    if (i == 3) break;
+                    int memory = CloudNetWrapper.getInstance().getUsedMemory();
 
-                if((memory + serverProcess.getMemory())
-                        < CloudNetWrapper.getInstance().getMaxMemory())
-                {
+                    ProxyProcessMeta serverProcess = proxys.poll();
 
-                    BungeeCord gameServer = new BungeeCord(serverProcess, CloudNetWrapper.getInstance().getProxyGroups().get(serverProcess.getServiceId().getGroup()));
-
-                    try
+                    if (!CloudNetWrapper.getInstance().getProxyGroups().containsKey(serverProcess.getServiceId().getGroup()))
                     {
-                        System.out.println("Fetching entry [" + gameServer.getServiceId() + "]");
-                        if(!gameServer.bootstrap())
+                        this.proxys.add(serverProcess);
+                        continue;
+                    }
+
+                    if ((memory + serverProcess.getMemory())
+                            < CloudNetWrapper.getInstance().getMaxMemory())
+                    {
+
+                        BungeeCord gameServer = new BungeeCord(serverProcess, CloudNetWrapper.getInstance().getProxyGroups().get(serverProcess.getServiceId().getGroup()));
+
+                        try
                         {
+                            System.out.println("Fetching entry [" + gameServer.getServiceId() + "]");
+                            if (!gameServer.bootstrap())
+                            {
+                                this.proxys.add(serverProcess);
+                            }
+                        } catch (Exception e)
+                        {
+                            e.printStackTrace();
                             this.proxys.add(serverProcess);
                         }
-                    } catch (Exception e)
+                    } else
                     {
-                        e.printStackTrace();
                         this.proxys.add(serverProcess);
                     }
-                }
-                else
-                {
-                    this.proxys.add(serverProcess);
                 }
             }
         }
@@ -142,7 +145,7 @@ public class ServerProcessQueue implements Runnable {
 
     public void patchAsync(ServerProcessMeta process)
     {
-        if(!CloudNetWrapper.getInstance().getServerGroups().containsKey(process.getServiceId().getGroup()))
+        if (!CloudNetWrapper.getInstance().getServerGroups().containsKey(process.getServiceId().getGroup()))
         {
             this.servers.add(new ServerProcess(process, ServerStage.SETUP));
             return;
@@ -185,7 +188,7 @@ public class ServerProcessQueue implements Runnable {
     {
         BungeeCord bungeeCord = new BungeeCord(proxyProcessMeta, CloudNetWrapper.getInstance().getProxyGroups().get(proxyProcessMeta.getServiceId().getGroup()));
 
-        if(!CloudNetWrapper.getInstance().getProxyGroups().containsKey(proxyProcessMeta.getServiceId().getGroup()))
+        if (!CloudNetWrapper.getInstance().getProxyGroups().containsKey(proxyProcessMeta.getServiceId().getGroup()))
         {
             this.proxys.add(proxyProcessMeta);
             return;

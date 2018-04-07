@@ -81,36 +81,29 @@ public final class Scheduler
     @Deprecated //This Method use the Thread for the Task Handling
     public void run()
     {
-        while (true)
+        while (!Thread.currentThread().isInterrupted())
         {
             try
             {
                 Thread.sleep(1000 / ticks);
-            } catch (InterruptedException ignored)
+            } catch (InterruptedException e)
             {
             }
 
+            if (tasks.isEmpty()) continue;
 
-                if (tasks.isEmpty()) continue;
+            ConcurrentHashMap<Long, ScheduledTask> tasks = this.tasks; //For a Performance optimizing
 
-                ConcurrentHashMap<Long, ScheduledTask> tasks = this.tasks; //For a Performance optimizing
-
-            try
+            for (ScheduledTask task : tasks.values())
             {
-                for (ScheduledTask task : tasks.values())
+
+                if (task.isInterrupted())
                 {
-
-                    if (task.isInterrupted())
-                    {
-                        this.tasks.remove(task.getTaskId());
-                        continue;
-                    }
-
-                    task.run();
+                    this.tasks.remove(task.getTaskId());
+                    continue;
                 }
-            } catch (Throwable ex)
-            {
-                ex.printStackTrace();
+
+                task.run();
             }
         }
     }

@@ -19,11 +19,12 @@ public final class StopTimeHandler implements IWrapperHandler {
             {
                 if (!gameServer.isAlive())
                 {
-                    if(System.currentTimeMillis() > (gameServer.getStartupTimeStamp() + 1600)) gameServer.shutdown();
+                    if (System.currentTimeMillis() > (gameServer.getStartupTimeStamp() + 1600)) gameServer.shutdown();
                     else gameServer.restart();
                 }
-            } catch (Exception ex) {
-
+            } catch (Exception ex)
+            {
+                ex.printStackTrace();
             }
 
         for (CloudGameServer gameServer : CloudNetWrapper.getInstance().getCloudservers().values())
@@ -31,8 +32,9 @@ public final class StopTimeHandler implements IWrapperHandler {
             {
                 if (!gameServer.isAlive())
                     gameServer.shutdown();
-            } catch (Exception ex) {
-
+            } catch (Exception ex)
+            {
+                ex.printStackTrace();
             }
 
         for (BungeeCord bungeeCord : CloudNetWrapper.getInstance().getProxys().values())
@@ -40,8 +42,9 @@ public final class StopTimeHandler implements IWrapperHandler {
             {
                 if (!bungeeCord.isAlive())
                     bungeeCord.shutdown();
-            }catch (Exception ex) {
-
+            } catch (Exception ex)
+            {
+                ex.printStackTrace();
             }
 
     }

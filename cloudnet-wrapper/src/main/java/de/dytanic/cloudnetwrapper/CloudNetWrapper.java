@@ -132,8 +132,14 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
             new SetupSpigotVersion().run(cloudNetLogging.getReader());
 
         Thread thread = new Thread(scheduler);
+        thread.setPriority(Thread.MIN_PRIORITY);
         thread.setDaemon(true);
         thread.start();
+
+        Thread processQueueThread = new Thread(serverProcessQueue);
+        processQueueThread.setPriority(Thread.MIN_PRIORITY);
+        processQueueThread.setDaemon(true);
+        processQueueThread.start();
 
         commandManager.registerCommand(new CommandHelp()).registerCommand(new CommandClear()).registerCommand(new CommandVersion()).registerCommand(new CommandClearCache()).registerCommand(new CommandStop()).registerCommand(new CommandReload());
 
@@ -173,9 +179,6 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
         if (!Files.exists(Paths.get("local/server-icon.png")))
             FileCopy.insertData("files/server-icon.png", "local/server-icon.png");
 
-        System.out.println("Starting process queue...");
-        scheduler.runTaskRepeatSync(serverProcessQueue, 0, 20);
-
         //Server Handlers
         {
             networkConnection.sendPacket(new PacketOutSetReadyWrapper(true));
@@ -183,7 +186,7 @@ public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnC
 
             scheduler.runTaskRepeatSync(iWrapperHandler.toExecutor(), 0, iWrapperHandler.getTicks());
 
-            scheduler.runTaskRepeatSync(new Runnable() {
+            scheduler.runTaskRepeatAsync(new Runnable() {
                 @Override
                 public void run()
                 {
