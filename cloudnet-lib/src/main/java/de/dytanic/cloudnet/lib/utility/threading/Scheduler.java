@@ -86,23 +86,31 @@ public final class Scheduler
             try
             {
                 Thread.sleep(1000 / ticks);
-            } catch (InterruptedException e)
+            } catch (InterruptedException ignored)
             {
             }
-            if (tasks.isEmpty()) continue;
 
-            ConcurrentHashMap<Long, ScheduledTask> tasks = this.tasks; //For a Performance optimizing
 
-            for (ScheduledTask task : tasks.values())
+                if (tasks.isEmpty()) continue;
+
+                ConcurrentHashMap<Long, ScheduledTask> tasks = this.tasks; //For a Performance optimizing
+
+            try
             {
-
-                if (task.isInterrupted())
+                for (ScheduledTask task : tasks.values())
                 {
-                    this.tasks.remove(task.getTaskId());
-                    continue;
-                }
 
-                task.run();
+                    if (task.isInterrupted())
+                    {
+                        this.tasks.remove(task.getTaskId());
+                        continue;
+                    }
+
+                    task.run();
+                }
+            } catch (Throwable ex)
+            {
+                ex.printStackTrace();
             }
         }
     }

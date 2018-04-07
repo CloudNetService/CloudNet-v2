@@ -40,8 +40,7 @@ public class ScheduledTask
     {
         if (interrupted) return;
 
-        if (delay != 0
-                && delayTime != 0)
+        if (delay != 0 && delayTime != 0)
         {
             delayTime--;
             return;
