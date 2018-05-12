@@ -5,8 +5,8 @@
 package de.dytanic.cloudnetwrapper.server;
 
 import de.dytanic.cloudnet.lib.ConnectableAddress;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.MultiValue;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyGroupMode;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
@@ -16,8 +16,8 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateLoader;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.server.version.ProxyVersion;
-import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.service.ServiceId;
+import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
@@ -30,6 +30,7 @@ import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -131,7 +132,7 @@ public class BungeeCord implements ServerDispatcher {
 
                             urlConnection.connect();
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
-                            ((HttpURLConnection)urlConnection).disconnect();
+                            ((HttpURLConnection) urlConnection).disconnect();
                         } catch (Exception ex)
                         {
                             ex.printStackTrace();
@@ -319,7 +320,7 @@ public class BungeeCord implements ServerDispatcher {
         Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
         FileCopy.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
-        FileCopy.rewriteFileUtils(new File(path + "/config.yml"),  "\""+ CloudNetWrapper.getInstance().getWrapperConfig().getProxy_config_host() + ":" + this.proxyProcessMeta.getPort() + "\"");
+        FileCopy.rewriteFileUtils(new File(path + "/config.yml"), "\"" + CloudNetWrapper.getInstance().getWrapperConfig().getProxy_config_host() + ":" + this.proxyProcessMeta.getPort() + "\"");
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isViaVersion())
         {
@@ -412,7 +413,15 @@ public class BungeeCord implements ServerDispatcher {
         {
             try
             {
-                FileCopy.copyFilesInDirectory(new File(path), new File("local/records/" + proxyProcessMeta.getServiceId().toString()));
+                for (File file : new File(path).listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File pathname)
+                    {
+                        return pathname.getName().contains("proxy.log");
+                    }
+                }))
+                    FileCopy.copyFileToDirectory(file, new File("local/records/" + proxyProcessMeta.getServiceId().toString()));
+
                 new Document("meta", proxyProcessMeta).saveAsConfig(Paths.get("local/records/metadata.json"));
             } catch (IOException e)
             {

@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitMobInitEvent;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
@@ -157,7 +158,8 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
 
                             MobSelector.getInstance().unstableEntity(entity);
                             entity.setCustomNameVisible(true);
-                            entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay()));
+                            entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay() + NetworkUtils.EMPTY_STRING));
+
                             MobSelector.MobImpl mob =  new MobSelector.MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
                             Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
                             return mob;

@@ -41,7 +41,7 @@ import java.util.*;
  */
 @Getter
 @Setter
-public class SignSelector implements Listener {
+public final class SignSelector implements Listener {
 
     @Getter
     private static SignSelector instance;
@@ -342,6 +342,7 @@ public class SignSelector implements Listener {
                                             changeBlock(location, searchLayer.getBlockId(), searchLayer.getSubId());
                                             continue;
                                         }
+
                                         sign.setServerInfo(serverInfo);
                                         String[] layout;
                                         SignLayout signLayout;

@@ -334,6 +334,7 @@ public final class MobSelector {
     @Setter
     @AllArgsConstructor
     public static class MobImpl {
+
         private UUID uniqueId;
 
         private ServerMob mob;
