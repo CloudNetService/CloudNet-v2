@@ -382,7 +382,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                     {
                                         offlinePlayer.getPermissionEntity().getGroups()
                                                 .add(new GroupEntityData(args[4],
-                                                        (args[5].equalsIgnoreCase("lifetime") ? 0L : NetworkUtils.checkIsNumber(args[4]) ? calcDays(Integer.parseInt(args[4])) : 0L)));
+                                                        (args[5].equalsIgnoreCase("lifetime") ? 0L : NetworkUtils.checkIsNumber(args[5]) ? calcDays(Integer.parseInt(args[5])) : 0L)));
                                         updatePlayer(offlinePlayer);
                                         sender.sendMessage("The player " + offlinePlayer.getName() + " is now also a member of the group " + args[4]);
                                     } else
