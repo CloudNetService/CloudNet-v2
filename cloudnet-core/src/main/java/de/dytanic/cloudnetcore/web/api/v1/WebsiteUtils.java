@@ -148,7 +148,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 fullHttpResponse.setStatus(HttpResponseStatus.OK);
                 fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
                 return fullHttpResponse;
-            case "startServer":
+            case "startserver":
 
                 if(!user.getPermissions().contains("cloudnet.web.startserver") && !user.getPermissions().contains("*"))
                 {
