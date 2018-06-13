@@ -12,16 +12,16 @@ public class ReloadListener implements Listener {
         @EventHandler
         public void onDispatch(PlayerCommandPreprocessEvent e) {
             Player p = e.getPlayer();
-            if (e.getMessage().equalsIgnoreCase("/reload")) {
+            if (e.getMessage().toLowerCase().startsWith("/reload") ) {
                 p.sendMessage(CloudAPI.getInstance().getPrefix() + "The command was blocked for bug avoidance");
                 e.setCancelled(true);
-            } else if (e.getMessage().equalsIgnoreCase("/rl")) {
+            } else if (e.getMessage().toLowerCase().startsWith("/rl")) {
                 p.sendMessage(CloudAPI.getInstance().getPrefix() + "The command was blocked for bug avoidance");
                 e.setCancelled(true);
-            } else if (e.getMessage().equalsIgnoreCase("/bukkit:rl")) {
+            } else if (e.getMessage().toLowerCase().startsWith("/bukkit:rl")) {
                 p.sendMessage(CloudAPI.getInstance().getPrefix() + "The command was blocked for bug avoidance");
                 e.setCancelled(true);
-            } else if (e.getMessage().equalsIgnoreCase("bukkit:reload")) {
+            } else if (e.getMessage().toLowerCase().startsWith("/bukkit:reload")) {
                 p.sendMessage(CloudAPI.getInstance().getPrefix() + "The command was blocked for bug avoidance");
                 e.setCancelled(true);
             } else {
