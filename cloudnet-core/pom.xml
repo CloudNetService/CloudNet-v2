@@ -158,7 +158,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <copy todir="${basedir}/src/main/resources/modules/" flatten="true">
+                                <copy todir="${basedir}/target/classes/modules/" flatten="true">
                                     <fileset dir="${basedir}/../cloudnet-modules/">
                                         <include name="**/CloudNet-Service-*.jar"/>
                                     </fileset>

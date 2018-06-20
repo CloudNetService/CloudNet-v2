@@ -137,7 +137,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/src/main/resources/files</outputDirectory>
+                            <outputDirectory>${basedir}/target/classes/files</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/../cloudnet-api/cloudnet-api-bridge/target</directory>
