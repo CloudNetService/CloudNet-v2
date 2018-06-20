@@ -26,10 +26,14 @@ pipeline {
         sh 'mvn package'
       }
     }
+    stage('Re-package') {
+      steps {
+        sh 'mvn package'
+      }
+    }
     stage('Archive') {
       steps {
-        archiveArtifacts artifacts: '**/target/*.jar', excludes: '**/target/original-*.jar'
-      }
+        archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/CloudNet-Wrapper.jar,**/target/CloudNet-Master.jar,**/target/CloudNetAPI.jar', fingerprint: true, onlyIfSuccessful: true      }
     }
   }
 }
