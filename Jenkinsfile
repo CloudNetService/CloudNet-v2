@@ -28,8 +28,7 @@ pipeline {
     }
     stage('Archive') {
       steps {
-        archiveArtifacts artifacts: '**/target/*.jar', excludes: '**/target/original-*.jar'
-      }
+        archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/CloudNet-Master.jar,**/target/CloudNet-Master.jar', fingerprint: true, onlyIfSuccessful: true      }
     }
   }
 }
