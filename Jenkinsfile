@@ -28,12 +28,13 @@ pipeline {
     }
     stage('Re-package') {
       steps {
-        sh 'mvn package'
+        sh 'mvn package javadoc:aggregate-jar'
       }
     }
     stage('Archive') {
       steps {
-        archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/CloudNet-Wrapper.jar,**/target/CloudNet-Master.jar,**/target/CloudNetAPI.jar', fingerprint: true, onlyIfSuccessful: true      }
+        archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/CloudNet-Wrapper.jar,**/target/CloudNet-Master.jar,**/target/CloudNetAPI.jar,target/cloudnet-*-javadoc.jar', fingerprint: true, onlyIfSuccessful: true
+      }
     }
   }
 }

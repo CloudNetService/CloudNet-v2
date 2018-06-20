@@ -35,7 +35,6 @@
         <module>cloudnet-wrapper</module>
         <module>cloudnet-api</module>
         <module>cloudnet-tools</module>
-        <module>cloudnet-examples</module>
         <module>cloudnet-modules</module>
     </modules>
 
@@ -47,5 +46,32 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <show>private</show>
+                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate-jar</goal>
+                        </goals>
+                        <phase>site</phase>
+                        <configuration>
+                            <show>private</show>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
