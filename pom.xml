@@ -35,7 +35,6 @@
         <module>cloudnet-wrapper</module>
         <module>cloudnet-api</module>
         <module>cloudnet-tools</module>
-        <module>cloudnet-examples</module>
         <module>cloudnet-modules</module>
     </modules>
 
