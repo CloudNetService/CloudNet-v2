@@ -59,7 +59,7 @@
                         <goals>
                             <goal>aggregate-jar</goal>
                         </goals>
-                        <phase>compile</phase>
+                        <phase>site</phase>
                         <configuration>
                             <show>private</show>
                             <additionalJOption>-Xdoclint:none</additionalJOption>

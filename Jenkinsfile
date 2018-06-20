@@ -28,7 +28,7 @@ pipeline {
     }
     stage('Re-package') {
       steps {
-        sh 'mvn package'
+        sh 'mvn package javadoc:aggregate'
       }
     }
     stage('Archive') {
