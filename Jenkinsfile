@@ -37,14 +37,15 @@ pipeline {
         cp -r .template/* temp/;
         cp cloudnet-core/target/CloudNet-Master.jar temp/CloudNet-Master/;
         cp cloudnet-wrapper/target/CloudNet-Wrapper.jar temp/CloudNet-Wrapper/;
-        find cloudnet-tools/ -type f -name 'cloudnet-tools-*.jar' -exec cp '{}' temp/tools/ ';';
-        zip CloudNet.zip 'temp/*';
-        rm -r temp/''';
+        find cloudnet-tools/ -type f -name 'cloudnet-tools-*.jar' -exec cp '{}' temp/tools/ ';'
+        '''
+        zip archive: true, dir: 'temp', glob: '', zipFile: 'CloudNet.zip'
+        sh 'rm -r temp/';
       }
     }
     stage('Archive') {
       steps {
-        archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/CloudNet-Wrapper.jar,**/target/CloudNet-Master.jar,**/target/CloudNetAPI.jar,target/cloudnet-*-javadoc.jar,cloudnet-tools/**/target/cloudnet-tools-*.jar,CloudNet.zip', fingerprint: true, onlyIfSuccessful: true
+        archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/CloudNet-Wrapper.jar,**/target/CloudNet-Master.jar,**/target/CloudNetAPI.jar,target/cloudnet-*-javadoc.jar,cloudnet-tools/**/target/cloudnet-tools-*.jar', fingerprint: true, onlyIfSuccessful: true
       }
     }
   }
