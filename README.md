@@ -1,4 +1,4 @@
-[![Build Status](https://ci.groundmc.net/buildStatus/icon?job=CloudNetService/CloudNet/master)](https://ci.groundmc.net/job/CloudNetService/job/CloudNet/master)
+[![Build Status](https://ci.cloudnetservice.eu/buildStatus/icon?job=CloudNetService/CloudNet/master)](https://ci.cloudnetservice.eu/job/CloudNetService/CloudNet/master)
 [![star this repo](http://githubbadges.com/star.svg?user=CloudNetService&repo=CloudNet)](https://github.com/CloudNetService/CloudNet)
 [![fork this repo](http://githubbadges.com/fork.svg?user=CloudNetService&repo=CloudNet)](https://github.com/CloudNetService/CloudNet/fork)
 [![GitHub license](https://img.shields.io/github/license/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/blob/master/LICENSE)
