@@ -24,7 +24,7 @@
     <repositories>
         <repository>
             <id>cloudnet-repo</id>
-            <url>http://dytanic.de/repositories</url>
+            <url>https://cloudnetservice.eu/repositories</url>
         </repository>
     </repositories>
 
