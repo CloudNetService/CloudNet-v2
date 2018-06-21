@@ -33,8 +33,8 @@ For general information about CloudNet go to [spigotmc.org](https://www.spigotmc
  * Linux/Windows server with a minimum of 2GB DDR3 Memory and 2 vCores
  * A FTP/SFTP client to manage your Linux or Windows Server
  
- **The use of Linux containers (LXC) or OpenVZ containers (OVZ) is discouraged. There are many issues with server hosters hosting these.**  
-Use KVM virtualization or dedicated servers is recommended.
+ **The use of Linux containers (LXC) or OpenVZ containers (OVZ) is discouraged. There are many issues with their stability.**  
+Use of KVM virtualization or dedicated servers is recommended.
 
  ### Support
  
