@@ -37,7 +37,7 @@ pipeline {
         cp -r .template/* temp/;
         cp cloudnet-core/target/CloudNet-Master.jar temp/CloudNet-Master/;
         cp cloudnet-wrapper/target/CloudNet-Wrapper.jar temp/CloudNet-Wrapper/;
-        find cloudnet-tools/ -t file -name 'cloudnet-tools-*.jar' -exec cp '{}' temp/tools/ ';';
+        find cloudnet-tools/ -type f -name 'cloudnet-tools-*.jar' -exec cp '{}' temp/tools/ ';';
         zip CloudNet.zip 'temp/*';
         rm -r temp/''';
       }
