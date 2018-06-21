@@ -1,0 +1,282 @@
+﻿{
+  "layout_config": {
+    "fullServerHide": true,
+    "groupLayouts": [
+      {
+        "name": "default",
+        "layouts": [
+          {
+            "name": "online",
+            "signLayout": [
+              "&7â€¢ &0%server% &7â€¢",
+              "&a&l%motd%",
+              " &8%online_players% &8/ &8%max_players% ",
+              " &0%extra% "
+            ],
+            "blockId": 159,
+            "subId": 5
+          },
+          {
+            "name": "full",
+            "signLayout": [
+              "&7â€¢ &0%server% &7â€¢",
+              "&6&lBetreten",
+              " &8%online_players% &8/ &8%max_players% ",
+              " &0%extra% "
+            ],
+            "blockId": 159,
+            "subId": 4
+          },
+          {
+            "name": "maintenance",
+            "signLayout": [
+              "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆",
+              "&c&lWARTUNGEN",
+              "   &4âœ—   ",
+              "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆"
+            ],
+            "blockId": 159,
+            "subId": 14
+          }
+        ]
+      }
+    ],
+    "searchingAnimation": {
+      "animations": 21,
+      "animationsPerSecond": 12,
+      "searchingLayouts": [
+        {
+          "name": "loading1",
+          "signLayout": [
+            "&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading2",
+          "signLayout": [
+            "&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading3",
+          "signLayout": [
+            "&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading4",
+          "signLayout": [
+            "&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading5",
+          "signLayout": [
+            "&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading6",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading7",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading8",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading9",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading10",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading11",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading12",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading13",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading14",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading15",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading16",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading17",
+          "signLayout": [
+            "&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading18",
+          "signLayout": [
+            "&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading19",
+          "signLayout": [
+            "&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&c▆&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading20",
+          "signLayout": [
+            "&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆",
+            "Server wird",
+            "geladen",
+            "&4▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        },
+        {
+          "name": "loading21",
+          "signLayout": [
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆",
+            "Server wird",
+            "geladen",
+            "&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&c▆&4▆"
+          ],
+          "blockId": 159,
+          "subId": 14
+        }
+      ]
+    }
+  }
+}

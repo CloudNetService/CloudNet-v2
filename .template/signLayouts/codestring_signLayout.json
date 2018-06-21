@@ -1,0 +1,183 @@
+{
+   "layout_config":{
+      "fullServerHide":true,
+      "groupLayouts":[
+         {
+            "name":"default",
+            "layouts":[
+               {
+                  "name":"online",
+                  "signLayout":[
+                     "%server%",
+                     "&e%state%",
+                     "%online_players%/%max_players%",
+                     "%template%"
+                  ],
+                  "blockId":159,
+                  "subId":0
+               },
+               {
+                  "name":"full",
+                  "signLayout":[
+                     "%server%",
+                     "&ePREMIUM",
+                     "%online_players%/%max_players%",
+                     "%motd%"
+                  ],
+                  "blockId":159,
+                  "subId":0
+               },
+               {
+                  "name":"maintenance",
+                  "signLayout":[
+                     "§8§m---------",
+                     "maintenance",
+                     "§cmode",
+                     "§8§m---------"
+                  ],
+                  "blockId":159,
+                  "subId":0
+               }
+            ]
+         }
+      ],
+      "searchingAnimation":{
+         "animations": 12,
+         "animationsPerSecond": 6,
+         "searchingLayouts":[
+            {
+               "name":"loading1",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "« »",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading2",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "« ● »",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading3",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "« ● ● »",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading4",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "« ● ● ● »",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading5",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "« ● ● ● ● »",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading6",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "« ● ● ● ● ● »",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading7",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "» ● ● ● ● ● «",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading8",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "» ● ● ● ● «",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading9",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "» ● ● ● «",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading10",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "» ● ● «",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading11",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "» ● «",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            },
+            {
+               "name":"loading12",
+               "signLayout":[
+                  " ",
+                  "loading",
+                  "» «",
+                  " "
+               ],
+               "blockId":159,
+               "subId":14
+            }
+         ]
+      }
+   }
+}
