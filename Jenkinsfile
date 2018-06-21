@@ -33,7 +33,7 @@ pipeline {
     }
     stage('Release ZIP') {
       steps {
-        sh '''mkdir temp;
+        sh '''mkdir -p temp;
         cp -r .template/* temp/;
         cp cloudnet-core/target/CloudNet-Master.jar temp/CloudNet-Master/;
         cp cloudnet-wrapper/target/CloudNet-Wrapper.jar temp/CloudNet-Wrapper/;
