@@ -323,14 +323,6 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns the amount of players that are registered in the Cloud
-     */
-    public int getRegisteredPlayerCount()
-    {
-        return cloudNetwork.getRegisteredPlayerCount();
-    }
-
-    /**
      * Returns all the module properties
      *
      * @return

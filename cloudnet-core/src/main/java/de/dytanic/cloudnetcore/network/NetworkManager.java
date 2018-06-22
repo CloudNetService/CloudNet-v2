@@ -484,7 +484,6 @@ public final class NetworkManager {
         //cloudNetwork.setPermissionPool(permissionPool);
         cloudNetwork.setProxyGroups(CloudNet.getInstance().getProxyGroups());
         cloudNetwork.setModules(moduleProperties);
-        cloudNetwork.setRegisteredPlayerCount(CloudNet.getInstance().getDbHandlers().getPlayerDatabase().getDatabase().size());
 
         return cloudNetwork;
     }
