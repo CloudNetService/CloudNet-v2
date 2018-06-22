@@ -7,7 +7,7 @@
     <groupId>de.dytanic.cloudnet</groupId>
     <artifactId>cloudnet</artifactId>
     <packaging>pom</packaging>
-    <version>${service.version}-SNAPSHOT</version>
+    <version>2.1.6</version>
     <name>CloudNet-Parent</name>
 
     <properties>
@@ -59,6 +59,12 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>aggregate</id>
                         <goals>
                             <goal>aggregate-jar</goal>
@@ -66,8 +72,21 @@
                         <phase>site</phase>
                         <configuration>
                             <show>private</show>
-                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                            <additionalJOption>-Xdoclint:none
+                            </additionalJOption>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

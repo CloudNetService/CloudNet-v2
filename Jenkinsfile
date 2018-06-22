@@ -10,6 +10,11 @@ pipeline {
         sh 'mvn clean'
       }
     }
+    stage('Version') {
+      steps {
+        sh 'mvn versions:set -DnewVersion=2.1.6'
+      }
+    }
     stage('Compile') {
       steps {
         sh 'mvn compile'
@@ -29,6 +34,11 @@ pipeline {
     stage('Re-package') {
       steps {
         sh 'mvn package javadoc:aggregate-jar'
+      }
+    }
+    stage('Install') {
+      steps {
+        sh 'mvn install'
       }
     }
     stage('Release ZIP') {
