@@ -17,6 +17,7 @@ import java.util.Properties;
 @Data
 public class CloudNetwork {
 
+    private int registeredPlayerCount;
     private int onlineCount = 0;
     private java.util.Map<String, SimpleServerGroup> serverGroups = new HashMap<>();
     private java.util.Map<String, ProxyGroup> proxyGroups = new HashMap<>();
