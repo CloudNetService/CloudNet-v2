@@ -3,6 +3,7 @@
 [![fork this repo](http://githubbadges.com/fork.svg?user=CloudNetService&repo=CloudNet)](https://github.com/CloudNetService/CloudNet/fork)
 [![GitHub license](https://img.shields.io/github/license/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/blob/master/LICENSE)
 
+[![Known Vulnerabilities](https://snyk.io/test/github/CloudNetService/CloudNet/badge.svg)](https://snyk.io/test/github/CloudNetService/CloudNet)
 [![GitHub issues](https://img.shields.io/github/issues/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/issues)
 [![GitHub contributors](https://img.shields.io/github/contributors/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/graphs/contributors)
 [![Github All Releases](https://img.shields.io/github/downloads/CloudNetService/CloudNet/total.svg)](https://github.com/CloudNetService/CloudNet/releases)
