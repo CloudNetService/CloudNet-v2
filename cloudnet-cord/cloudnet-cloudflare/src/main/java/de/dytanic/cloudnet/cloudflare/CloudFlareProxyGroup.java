@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * Created by Tareko on 23.08.2017.
+ * Container for a CloudFlare proxy group.
  */
 @Getter
 @ToString
@@ -19,12 +19,12 @@ import lombok.ToString;
 public class CloudFlareProxyGroup {
 
     /**
-     * BungeeCord Group Name
+     * Name of the BungeeCord group
      */
     private String name;
 
     /**
-     * SubDomain Name
+     * Name of the sub-domain
      */
     private String sub;
 
