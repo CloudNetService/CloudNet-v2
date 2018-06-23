@@ -1,10 +1,24 @@
 ﻿{
   "layout_config": {
     "fullServerHide": true,
+    "knockbackOnSmallDistance": true,
+    "distance": 1.0,
+    "strength": 0.8,
     "groupLayouts": [
       {
         "name": "default",
         "layouts": [
+          {
+            "name": "empty",
+            "signLayout": [
+              "§8► §0%server% §8◄",
+              "§a§lBetreten",
+              "%state%",
+              "§8● §0%online_players% / %max_players% §8●"
+            ],
+            "blockId": 159,
+            "subId": 9
+          },
           {
             "name": "online",
             "signLayout": [
