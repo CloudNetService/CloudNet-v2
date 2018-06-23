@@ -7,25 +7,23 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class ReloadListener implements Listener {
+    private static final String[] blockedCommands = {"/reload", "/rl", "/bukkit:rl", "/bukkit:reload"};
 
-
-        @EventHandler
-        public void onDispatch(PlayerCommandPreprocessEvent e) {
-            Player p = e.getPlayer();
-            if (e.getMessage().toLowerCase().startsWith("/reload") ) {
-                p.sendMessage(CloudAPI.getInstance().getPrefix() + "The command was blocked for bug avoidance");
-                e.setCancelled(true);
-            } else if (e.getMessage().toLowerCase().startsWith("/rl")) {
-                p.sendMessage(CloudAPI.getInstance().getPrefix() + "The command was blocked for bug avoidance");
-                e.setCancelled(true);
-            } else if (e.getMessage().toLowerCase().startsWith("/bukkit:rl")) {
-                p.sendMessage(CloudAPI.getInstance().getPrefix() + "The command was blocked for bug avoidance");
-                e.setCancelled(true);
-            } else if (e.getMessage().toLowerCase().startsWith("/bukkit:reload")) {
-                p.sendMessage(CloudAPI.getInstance().getPrefix() + "The command was blocked for bug avoidance");
-                e.setCancelled(true);
-            } else {
-                e.setCancelled(false);
-            }
+    @EventHandler
+    public void onDispatch(PlayerCommandPreprocessEvent event) {
+        Player player = event.getPlayer();
+        if (isCmdBlocked(event.getMessage())) {
+            player.sendMessage(CloudAPI.getInstance().getPrefix() + "This command has been blocked because it leads to problems using CloudNet.");
+            event.setCancelled(true);
         }
     }
+
+    private boolean isCmdBlocked(String commandLine) {
+        for (String blockedCmd : blockedCommands) {
+            if (commandLine.toLowerCase().startsWith(blockedCmd)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
