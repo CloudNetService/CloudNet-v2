@@ -63,6 +63,7 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <phase>install</phase>
                     </execution>
                     <execution>
                         <id>aggregate</id>
@@ -87,6 +88,7 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <phase>install</phase>
                     </execution>
                 </executions>
             </plugin>
