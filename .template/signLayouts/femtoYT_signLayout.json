@@ -1,0 +1,161 @@
+﻿{
+  "layout_config": {
+    "fullServerHide": true,
+    "groupLayouts": [
+      {
+        "name": "default",
+        "layouts": [
+          {
+            "name": "online",
+            "signLayout": [
+              "§8► §0%server% §8◄",
+              "§a§lBetreten",
+              "%state%",
+              "§8● §0%online_players% / %max_players% §8●"
+            ],
+            "blockId": 159,
+            "subId": 5
+          },
+          {
+            "name": "full",
+            "signLayout": [
+              "§8► §0%server% §8◄",
+              "§6§lPremium",
+              "%state%",
+              "§8● §0%online_players% / %max_players% §8●"
+            ],
+            "blockId": 159,
+            "subId": 4
+          },
+          {
+            "name": "maintenance",
+            "signLayout": [
+              "§b● ● ● ● ● ● ● ● ●",
+              "§0%group% ist",
+              "§0in Wartungen",
+              "§b● ● ● ● ● ● ● ● ●"
+            ],
+            "blockId": 159,
+            "subId": 3
+          }
+        ]
+      }
+    ],
+    "searchingAnimation": {
+      "animations": 10,
+      "animationsPerSecond": 6,
+      "searchingLayouts": [
+		{
+          "name": "loading1",
+          "signLayout": [
+            "§7● ● ● ● ● ● ● ● ●",
+            "Server wird",
+            "gesucht",
+            "§7● ● ● ● ● ● ● ● ●"
+          ],
+          "blockId": 159,
+          "subId": 9
+        },
+		{
+          "name": "loading2",
+          "signLayout": [
+            "§8● §7● ● ● ● ● ● ● ●",
+            "Server wird",
+            "gesucht",
+            "§8● §7● ● ● ● ● ● ● ●"
+          ],
+          "blockId": 159,
+          "subId": 9
+        },
+		{
+          "name": "loading3",
+          "signLayout": [
+            "§8● ● §7● ● ● ● ● ● ●",
+            "Server wird",
+            "gesucht",
+            "§8● ● §7● ● ● ● ● ● ●"
+          ],
+          "blockId": 159,
+          "subId": 9
+        },
+				{
+          "name": "loading4",
+          "signLayout": [
+            "§8● ● ● §7● ● ● ● ● ●",
+            "Server wird",
+            "gesucht",
+            "§8● ● ● §7● ● ● ● ● ●"
+          ],
+          "blockId": 159,
+          "subId": 9
+        },
+		{
+          "name": "loading5",
+          "signLayout": [
+            "§8● ● ● ● §7● ● ● ● ●",
+            "Server wird",
+            "gesucht",
+            "§8● ● ● ● §7● ● ● ● ●"
+          ],
+          "blockId": 159,
+          "subId": 9
+        },
+		{
+          "name": "loading6",
+          "signLayout": [
+            "§8● ● ● ● ● §7● ● ● ●",
+            "Server wird",
+            "gesucht",
+            "§8● ● ● ● ● §7● ● ● ●"
+          ],
+          "blockId": 159,
+          "subId": 9
+        },
+		{
+          "name": "loading7",
+          "signLayout": [
+            "§8● ● ● ● ● ● §7● ● ●",
+            "Server wird",
+            "gesucht",
+            "§8● ● ● ● ● ● §7● ● ●"
+          ],
+          "blockId": 159,
+          "subId": 9
+        },
+		{
+          "name": "loading8",
+          "signLayout": [
+            "§8● ● ● ● ● ● ● §7● ●",
+            "Server wird",
+            "gesucht",
+            "§8● ● ● ● ● ● ● §7● ●"
+          ],
+          "blockId": 159,
+          "subId": 9
+        },
+				{
+          "name": "loading9",
+          "signLayout": [
+            "§8● ● ● ● ● ● ● ● §7●",
+            "Server wird",
+            "gesucht",
+            "§8● ● ● ● ● ● ● ● §7●"
+          ],
+          "blockId": 159,
+          "subId": 9
+        },
+		{
+          "name": "loading10",
+          "signLayout": [
+            "§8● ● ● ● ● ● ● ● ●",
+            "Server wird",
+            "gesucht",
+            "§8● ● ● ● ● ● ● ● ●"
+          ],
+          "blockId": 159,
+          "subId": 9
+        }
+      ]
+    }
+  }
+}

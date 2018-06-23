@@ -1,9 +1,17 @@
-[![Build Status](https://travis-ci.org/Dytanic/CloudNet.svg?branch=master)](https://travis-ci.org/Dytanic/CloudNet)
-[![star this repo](http://githubbadges.com/star.svg?user=Dytanic&repo=CloudNet)](https://github.com/Dytanic/CloudNet)
-[![fork this repo](http://githubbadges.com/fork.svg?user=Dytanic&repo=CloudNet)](https://github.com/Dytanic/CloudNet/fork)
+[![Build Status](https://ci.cloudnetservice.eu/buildStatus/icon?job=CloudNetService/CloudNet/master)](https://ci.cloudnetservice.eu/job/CloudNetService/CloudNet/master)
+[![star this repo](http://githubbadges.com/star.svg?user=CloudNetService&repo=CloudNet)](https://github.com/CloudNetService/CloudNet)
+[![fork this repo](http://githubbadges.com/fork.svg?user=CloudNetService&repo=CloudNet)](https://github.com/CloudNetService/CloudNet/fork)
+[![GitHub license](https://img.shields.io/github/license/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/blob/master/LICENSE)
+
+[![Known Vulnerabilities](https://snyk.io/test/github/CloudNetService/CloudNet/badge.svg)](https://snyk.io/test/github/CloudNetService/CloudNet)
+[![GitHub issues](https://img.shields.io/github/issues/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/issues)
+[![GitHub contributors](https://img.shields.io/github/contributors/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/graphs/contributors)
+[![Github All Releases](https://img.shields.io/github/downloads/CloudNetService/CloudNet/total.svg)](https://github.com/CloudNetService/CloudNet/releases)
+[![GitHub release](https://img.shields.io/github/release/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/releases)
+
 
 # CloudNet | The Cloud Network Environment Technology
-![Image of CloudNet](https://proxy.spigotmc.org/04918abd59c8a2d6eb0818cd79eebc7947254e88?url=https%3A%2F%2Fcdn.discordapp.com%2Fattachments%2F325383142464552972%2F354670548292206594%2FCloudNet.png)
+![Image of CloudNet](https://cdn.discordapp.com/attachments/325383142464552972/354670548292206594/CloudNet.png)
 
 
 This is the CloudNet project, which has already taken a lot of time and effort for over 6 months. 
@@ -26,6 +34,9 @@ For general information about CloudNet go to [spigotmc.org](https://www.spigotmc
  * Linux/Windows server with a minimum of 2GB DDR3 Memory and 2 vCores
  * A FTP/SFTP client to manage your Linux or Windows Server
  
+ **The use of Linux containers (LXC) or OpenVZ containers (OVZ) is discouraged. There are many issues with their stability.**  
+Use of KVM virtualization or dedicated servers is recommended.
+
  ### Support
  
   * Spigot-Support » 1.7.x - 1.12.1 

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>cloudnet-cord</artifactId>
         <groupId>de.dytanic.cloudnet</groupId>
-        <version>${service.version}-SNAPSHOT</version>
+        <version>2.1.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>net.jodah</groupId>
             <artifactId>typetools</artifactId>
-            <version>0.4.8</version>
+            <version>0.5.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

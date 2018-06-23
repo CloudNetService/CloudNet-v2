@@ -9,7 +9,7 @@
     <parent>
         <artifactId>cloudnet</artifactId>
         <groupId>de.dytanic.cloudnet</groupId>
-        <version>${service.version}-SNAPSHOT</version>
+        <version>2.1.6</version>
     </parent>
     <packaging>pom</packaging>
     <modules>
@@ -24,7 +24,7 @@
     <repositories>
         <repository>
             <id>cloudnet-repo</id>
-            <url>http://dytanic.de/repositories</url>
+            <url>https://cloudnetservice.eu/repositories</url>
         </repository>
     </repositories>
 
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-api-bridge</artifactId>
-            <version>${service.version}-SNAPSHOT</version>
+            <version>2.1.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
