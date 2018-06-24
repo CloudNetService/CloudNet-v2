@@ -11,30 +11,43 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Created by Tareko on 23.05.2017.
+ * Abstract class to define a command with an executor and a name
  */
 @Getter
 public abstract class Command
-            implements CommandExecutor, Nameable{
+        implements CommandExecutor, Nameable {
 
     protected String name;
     protected String permission;
     protected String[] aliases;
 
-    protected String descrption = "Default command discrption";
+    protected String description = "Default command discrption";
 
     private Collection<CommandArgument> commandArguments = new HashSet<>();
 
-    protected Command(String name, String permission, String...aliases)
-    {
+    /**
+     * Constructs a new command with a name, a needed permission and variable aliases.
+     *
+     * @param name       the name of this command
+     * @param permission the permission a user has to have
+     * @param aliases    other names of this command
+     */
+    protected Command(String name, String permission, String... aliases) {
         this.name = name;
         this.permission = permission;
         this.aliases = aliases;
     }
 
-    protected <T extends Command> T appendArgument(CommandArgument commandArgument)
-    {
+    /**
+     * Appends a new argument to this command
+     *
+     * @param commandArgument the argument to append
+     * @param <T>             a subclass of {@link Command}
+     * @return the command for chaining
+     */
+    protected <T extends Command> T appendArgument(CommandArgument commandArgument) {
         this.commandArguments.add(commandArgument);
+        //noinspection unchecked
         return (T) this;
     }
 }
