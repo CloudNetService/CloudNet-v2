@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.tools.listener;
 
 import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitPlayerUpdateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
