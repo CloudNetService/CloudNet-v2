@@ -425,9 +425,21 @@ public class CloudServer implements ICloudService {
     }
 
     private void addTeamEntry(Player target, Player all, PermissionGroup permissionGroup) {
-        Team team = all.getScoreboard().getTeam(permissionGroup.getTagId() + permissionGroup.getName());
+        String teamName = permissionGroup.getTagId() + permissionGroup.getName();
+        try {
+            if (teamName.getBytes("UTF-8").length > 16) {
+                teamName = shortenStringTo16Bytes(teamName);
+                CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporary shortened to 16 bytes!");
+                CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the name of the group in your perms.yml");
+                Bukkit.broadcast("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporary shortened to 16 bytes!", "cloudnet.notify");
+                Bukkit.broadcast("Please fix this issue by changing the name of the group in your perms.yml", "cloudnet.notify");
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Team team = all.getScoreboard().getTeam(teamName);
         if (team == null)
-            team = all.getScoreboard().registerNewTeam(permissionGroup.getTagId() + permissionGroup.getName());
+            team = all.getScoreboard().registerNewTeam(teamName);
 
         try {
             if (permissionGroup.getPrefix().getBytes("UTF-8").length > 16) {
