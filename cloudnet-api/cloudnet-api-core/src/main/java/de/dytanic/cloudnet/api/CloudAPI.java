@@ -12,6 +12,7 @@ import de.dytanic.cloudnet.api.network.packet.api.*;
 import de.dytanic.cloudnet.api.network.packet.api.sync.*;
 import de.dytanic.cloudnet.api.network.packet.in.*;
 import de.dytanic.cloudnet.api.network.packet.out.*;
+import de.dytanic.cloudnet.api.player.PermissionProvider;
 import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.lib.*;
 import de.dytanic.cloudnet.lib.network.NetDispatcher;
@@ -48,6 +49,7 @@ public final class CloudAPI implements MetaObj {
     private Document config;
     private ServiceId serviceId;
     private CloudConfigLoader cloudConfigLoader;
+    private PermissionProvider permissionProvider;
 
     private NetworkConnection networkConnection;
     private int memory;
@@ -63,6 +65,7 @@ public final class CloudAPI implements MetaObj {
     public CloudAPI(CloudConfigLoader loader, Runnable cancelTask)
     {
         instance = this;
+        this.permissionProvider = new PermissionProvider();
         this.cloudConfigLoader = loader;
         this.config = loader.loadConfig();
         this.networkConnection = new NetworkConnection(loader.loadConnnection());
@@ -216,6 +219,12 @@ public final class CloudAPI implements MetaObj {
     {
         return networkConnection;
     }
+
+
+    /**
+     * @return the Permission Provider
+     */
+    public PermissionProvider getPermissionProvider() { return this.permissionProvider; }
 
     public String getPrefix()
     {
