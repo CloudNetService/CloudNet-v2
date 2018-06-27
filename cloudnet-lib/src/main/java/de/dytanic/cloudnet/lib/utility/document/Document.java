@@ -260,7 +260,7 @@ public class Document
         return this.dataCatcher.size();
     }
 
-    public Document loadProperies(Properties properties)
+    public Document loadProperties(Properties properties)
     {
         Enumeration<?> enumeration = properties.propertyNames();
         while (enumeration.hasMoreElements())
