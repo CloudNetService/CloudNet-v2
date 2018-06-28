@@ -4,14 +4,14 @@
 
 package de.dytanic.cloudnetcore.database;
 
-import de.dytanic.cloudnet.database.DatabaseUseable;
+import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
+import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
-import de.dytanic.cloudnet.lib.player.CloudPlayer;
+import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -21,7 +21,7 @@ import java.util.UUID;
 /**
  * Created by Tareko on 01.07.2017.
  */
-public class PlayerDatabase extends DatabaseUseable {
+public class PlayerDatabase extends DatabaseUsable {
 
     public PlayerDatabase(Database database)
     {

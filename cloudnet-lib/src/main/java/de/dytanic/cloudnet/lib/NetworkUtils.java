@@ -37,7 +37,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
@@ -264,9 +263,9 @@ public final class NetworkUtils {
         return new HashMap<>();
     }
 
-    public static ConcurrentHashMap newConcurrentHashMap()
+    public static <K, V> ConcurrentHashMap<K, V> newConcurrentHashMap()
     {
-        return new ConcurrentHashMap();
+        return new ConcurrentHashMap<>();
     }
 
     public static void header()

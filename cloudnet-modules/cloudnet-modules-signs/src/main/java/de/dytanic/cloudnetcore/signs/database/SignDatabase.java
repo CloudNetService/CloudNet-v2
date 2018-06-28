@@ -5,11 +5,11 @@
 package de.dytanic.cloudnetcore.signs.database;
 
 import com.google.gson.reflect.TypeToken;
-import de.dytanic.cloudnet.database.DatabaseUseable;
+import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
+import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
@@ -18,7 +18,7 @@ import java.util.UUID;
 /**
  * Created by Tareko on 22.07.2017.
  */
-public class SignDatabase extends DatabaseUseable {
+public class SignDatabase extends DatabaseUsable {
 
     public SignDatabase(Database database)
     {

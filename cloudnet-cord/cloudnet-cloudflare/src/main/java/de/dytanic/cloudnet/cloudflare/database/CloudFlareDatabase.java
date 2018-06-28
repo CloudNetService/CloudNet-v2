@@ -6,7 +6,7 @@ package de.dytanic.cloudnet.cloudflare.database;
 
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.cloudflare.PostResponse;
-import de.dytanic.cloudnet.database.DatabaseUseable;
+import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -17,7 +17,7 @@ import java.util.Collection;
 /**
  * Database to store information about the CloudFlare requests and cache.
  */
-public class CloudFlareDatabase extends DatabaseUseable {
+public class CloudFlareDatabase extends DatabaseUsable {
 
     public CloudFlareDatabase(Database database) {
         super(database);
