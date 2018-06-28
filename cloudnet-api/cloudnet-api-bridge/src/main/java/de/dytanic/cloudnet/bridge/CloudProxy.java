@@ -337,7 +337,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         {
             if (serverInfo == null) return;
 
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyServerAddEvent(serverInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerAddEvent(serverInfo));
             ProxyServer.getInstance().getServers().put(
                     serverInfo.getServiceId().getServerId(),
                     ProxyServer.getInstance().constructServerInfo(serverInfo.getServiceId().getServerId(), new InetSocketAddress(serverInfo.getHost(), serverInfo.getPort()), "CloudNet2 Game-Server", false)
@@ -364,7 +364,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         {
             if (serverInfo == null) return;
 
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyServerInfoUpdateEvent(serverInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerInfoUpdateEvent(serverInfo));
             cachedServers.put(serverInfo.getServiceId().getServerId(), serverInfo);
         }
 
@@ -373,7 +373,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         {
             if (serverInfo == null) return;
 
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyServerRemoveEvent(serverInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerRemoveEvent(serverInfo));
             ProxyServer.getInstance().getServers().remove(serverInfo.getServiceId().getServerId());
             cachedServers.remove(serverInfo.getServiceId().getServerId());
 
@@ -395,25 +395,25 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         @Override
         public void onProxyAdd(ProxyInfo proxyInfo)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyProxyAddEvent(proxyInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyAddEvent(proxyInfo));
         }
 
         @Override
         public void onProxyInfoUpdate(ProxyInfo proxyInfo)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyProxyInfoUpdateEvent(proxyInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyInfoUpdateEvent(proxyInfo));
         }
 
         @Override
         public void onProxyRemove(ProxyInfo proxyInfo)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyProxyRemoveEvent(proxyInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyRemoveEvent(proxyInfo));
         }
 
         @Override
         public void onCloudNetworkUpdate(CloudNetwork cloudNetwork)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyCloudNetworkUpdateEvent(cloudNetwork));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedCloudNetworkUpdateEvent(cloudNetwork));
 
             if (cloudNetwork.getProxyGroups().containsKey(CloudAPI.getInstance().getGroup()))
             {
@@ -458,33 +458,33 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         public void onCustomChannelMessageReceive(String channel, String message, Document document)
         {
             if (handle(channel, message, document)) return;
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyCustomChannelMessageReceiveEvent(channel, message, document));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedCustomChannelMessageReceiveEvent(channel, message, document));
         }
 
         @Override
         public void onCustomSubChannelMessageReceive(String channel, String message, Document document)
         {
             if (handle(channel, message, document)) return;
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxySubChannelMessageEvent(channel, message, document));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedSubChannelMessageEvent(channel, message, document));
         }
 
         @Override
         public void onPlayerLoginNetwork(CloudPlayer cloudPlayer)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyPlayerLoginEvent(cloudPlayer));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLoginEvent(cloudPlayer));
         }
 
         @Override
         public void onPlayerDisconnectNetwork(CloudPlayer cloudPlayer)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyPlayerLogoutEvent(cloudPlayer));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLogoutEvent(cloudPlayer));
             cloudPlayers.remove(cloudPlayer.getUniqueId());
         }
 
         @Override
         public void onPlayerDisconnectNetwork(UUID uniqueId)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyPlayerLogoutUniqueEvent(uniqueId));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLogoutUniqueEvent(uniqueId));
             cloudPlayers.remove(uniqueId);
         }
 
@@ -495,19 +495,19 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
             {
                 cloudPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
             }
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyPlayerUpdateEvent(cloudPlayer));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerUpdateEvent(cloudPlayer));
         }
 
         @Override
         public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyOfflinePlayerUpdateEvent(offlinePlayer));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOfflinePlayerUpdateEvent(offlinePlayer));
         }
 
         @Override
         public void onUpdateOnlineCount(int onlineCount)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyOnlineCountUpdateEvent(onlineCount));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOnlineCountUpdateEvent(onlineCount));
         }
 
         private boolean handle(String channel, String message, Document document)
@@ -609,7 +609,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
                 if (message.equalsIgnoreCase("player_server_switch"))
                 {
-                    ProxyServer.getInstance().getPluginManager().callEvent(new ProxyPlayerServerSwitchEvent(
+                    ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerServerSwitchEvent(
                             document.getObject("player", CloudPlayer.TYPE),
                             document.getString("server")));
 

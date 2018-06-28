@@ -5,7 +5,7 @@
 package de.dytanic.cloudnet;
 
 import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.bridge.event.proxied.ProxySubChannelMessageEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedSubChannelMessageEvent;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -24,7 +24,7 @@ public class BungeeCordChannel {
     }
 
     @EventHandler
-    public void handleChannelIncomingMessage(ProxySubChannelMessageEvent e)
+    public void handleChannelIncomingMessage(ProxiedSubChannelMessageEvent e)
     {
         if(e.getChannel().equalsIgnoreCase("ban-system"))
         {

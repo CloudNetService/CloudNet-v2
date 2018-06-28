@@ -2,7 +2,7 @@ package de.dytanic.cloudnet;
 
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitServerAddEvent;
-import de.dytanic.cloudnet.bridge.event.proxied.ProxyServerAddEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedServerAddEvent;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -14,7 +14,7 @@ import org.bukkit.event.EventHandler;
 public class ServerGetExample {
 
     @EventHandler
-    public void handle(ProxyServerAddEvent e)
+    public void handle(ProxiedServerAddEvent e)
     {
         if (e.getServerInfo().getServerConfig().getProperties().contains("myUUID") &&
                 e.getServerInfo().getServerConfig().getProperties().getString("myUUID").equals("test"))

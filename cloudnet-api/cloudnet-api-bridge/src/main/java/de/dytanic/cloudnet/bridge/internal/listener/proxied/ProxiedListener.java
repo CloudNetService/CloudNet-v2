@@ -10,8 +10,8 @@ import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.network.packet.out.*;
 import de.dytanic.cloudnet.bridge.CloudProxy;
-import de.dytanic.cloudnet.bridge.event.proxied.ProxyOnlineCountUpdateEvent;
-import de.dytanic.cloudnet.bridge.event.proxied.ProxyPlayerFallbackEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedOnlineCountUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedPlayerFallbackEvent;
 import de.dytanic.cloudnet.bridge.internal.util.CloudPlayerCommandSender;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
@@ -280,10 +280,10 @@ public class ProxiedListener implements Listener {
         if (event.getPlayer().getServer() == null)
         {
             String fallback = CloudProxy.getInstance().fallback(event.getPlayer());
-            ProxyPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxyPlayerFallbackEvent(
+            ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent(
                     event.getPlayer(),
                     CloudAPI.getInstance().getOnlinePlayer(event.getPlayer().getUniqueId()),
-                    ProxyPlayerFallbackEvent.FallbackType.SERVER_KICK,
+                    ProxiedPlayerFallbackEvent.FallbackType.SERVER_KICK,
                     fallback
             );
 
@@ -319,10 +319,10 @@ public class ProxiedListener implements Listener {
                 fallback = CloudProxy.getInstance().fallback(e.getPlayer(), e.getKickedFrom().getName());
             }
 
-            ProxyPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxyPlayerFallbackEvent(
+            ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent(
                     e.getPlayer(),
                     CloudAPI.getInstance().getOnlinePlayer(e.getPlayer().getUniqueId()),
-                    ProxyPlayerFallbackEvent.FallbackType.SERVER_KICK,
+                    ProxiedPlayerFallbackEvent.FallbackType.SERVER_KICK,
                     fallback
             );
 
@@ -339,7 +339,7 @@ public class ProxiedListener implements Listener {
     }
 
     @EventHandler
-    public void handleOnlineCountUpdate(ProxyOnlineCountUpdateEvent e)
+    public void handleOnlineCountUpdate(ProxiedOnlineCountUpdateEvent e)
     {
         ProxyServer.getInstance().getScheduler().runAsync(CloudProxy.getInstance().getPlugin(), new Runnable() {
             @Override
