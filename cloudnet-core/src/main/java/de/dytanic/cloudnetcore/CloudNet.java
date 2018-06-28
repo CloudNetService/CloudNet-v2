@@ -40,7 +40,7 @@ import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
 import de.dytanic.cloudnetcore.handler.*;
 import de.dytanic.cloudnet.event.EventManager;
 import de.dytanic.cloudnet.lib.server.*;
-import de.dytanic.cloudnet.lib.interfaces.Executeable;
+import de.dytanic.cloudnet.lib.interfaces.Executable;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.modules.ModuleManager;
@@ -67,7 +67,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
-public final class CloudNet implements Executeable, Runnable, Reloadable {
+public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public static volatile boolean RUNNING = false;
 
