@@ -8,12 +8,13 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.CloudServer;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
+
+import java.util.function.Consumer;
 
 public class CommandShutdown extends Command {
 
@@ -49,9 +50,9 @@ public class CommandShutdown extends Command {
                     if (CloudNet.getInstance().getServerGroups().containsKey(args[1]))
                     {
                         System.out.println("All servers of the server group " + args[1] + " will be stopped...");
-                        CollectionWrapper.iterator(CloudNet.getInstance().getServers(args[1]), new Runnabled<MinecraftServer>() {
+                        CollectionWrapper.iterator(CloudNet.getInstance().getServers(args[1]), new Consumer<MinecraftServer>() {
                             @Override
-                            public void run(MinecraftServer obj)
+                            public void accept(MinecraftServer obj)
                             {
                                 obj.getWrapper().stopServer(obj);
                                 NetworkUtils.sleepUninterruptedly(1000);
@@ -62,9 +63,9 @@ public class CommandShutdown extends Command {
                     if (CloudNet.getInstance().getProxyGroups().containsKey(args[1]))
                     {
                         System.out.println("All proxies of the proxy group " + args[1] + " will be stopped");
-                        CollectionWrapper.iterator(CloudNet.getInstance().getProxys(args[1]), new Runnabled<ProxyServer>() {
+                        CollectionWrapper.iterator(CloudNet.getInstance().getProxys(args[1]), new Consumer<ProxyServer>() {
                             @Override
-                            public void run(ProxyServer obj)
+                            public void accept(ProxyServer obj)
                             {
                                 obj.getWrapper().stopProxy(obj);
                                 NetworkUtils.sleepUninterruptedly(1000);

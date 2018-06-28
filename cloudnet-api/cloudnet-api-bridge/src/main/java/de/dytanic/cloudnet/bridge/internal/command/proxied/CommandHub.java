@@ -6,7 +6,7 @@ package de.dytanic.cloudnet.bridge.internal.command.proxied;
 
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.CloudProxy;
-import de.dytanic.cloudnet.bridge.event.proxied.ProxiedPlayerFallbackEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxyPlayerFallbackEvent;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -48,8 +48,8 @@ public final class CommandHub extends Command {
                 .fallbackOnEnabledKick((((ProxiedPlayer)commandSender)),
                         CloudAPI.getInstance().getGroup(), ((ProxiedPlayer)commandSender).getServer().getInfo().getName());
 
-        ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent( (ProxiedPlayer) commandSender,
-                CloudAPI.getInstance().getOnlinePlayer(((ProxiedPlayer) commandSender).getUniqueId()), ProxiedPlayerFallbackEvent.FallbackType.HUB_COMMAND, fallback);
+        ProxyPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxyPlayerFallbackEvent( (ProxiedPlayer) commandSender,
+                CloudAPI.getInstance().getOnlinePlayer(((ProxiedPlayer) commandSender).getUniqueId()), ProxyPlayerFallbackEvent.FallbackType.HUB_COMMAND, fallback);
 
         ProxyServer.getInstance().getPluginManager().callEvent(proxiedPlayerFallbackEvent);
 

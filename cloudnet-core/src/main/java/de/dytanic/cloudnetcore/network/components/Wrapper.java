@@ -13,7 +13,6 @@ import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.Quad;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.network.WrapperExternal;
@@ -34,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 26.05.2017.
@@ -101,9 +101,10 @@ public final class Wrapper
     {
         AtomicInteger integer = new AtomicInteger(getUsedMemory());
 
-        CollectionWrapper.iterator(this.waitingServices.values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+        CollectionWrapper.iterator(this.waitingServices.values(), new Consumer<Quad<Integer, Integer, ServiceId,
+                        Template>>() {
             @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            public void accept(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 integer.addAndGet(obj.getSecond());
             }

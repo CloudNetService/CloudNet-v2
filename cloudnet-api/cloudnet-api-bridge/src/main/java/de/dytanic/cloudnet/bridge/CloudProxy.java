@@ -26,7 +26,6 @@ import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.ProxyServer;
@@ -43,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * This Class represents the Proxy Instance on based on cloudnet
@@ -79,9 +79,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                         );
 
                         if (key.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback()))
-                            CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {
+                            CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Consumer<ListenerInfo>() {
                                 @Override
-                                public void run(ListenerInfo obj)
+                                public void accept(ListenerInfo obj)
                                 {
                                     obj.getServerPriority().add(key.getServiceId().getServerId());
                                 }
@@ -337,15 +337,15 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         {
             if (serverInfo == null) return;
 
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerAddEvent(serverInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyServerAddEvent(serverInfo));
             ProxyServer.getInstance().getServers().put(
                     serverInfo.getServiceId().getServerId(),
                     ProxyServer.getInstance().constructServerInfo(serverInfo.getServiceId().getServerId(), new InetSocketAddress(serverInfo.getHost(), serverInfo.getPort()), "CloudNet2 Game-Server", false)
             );
             if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback()))
-                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {
+                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Consumer<ListenerInfo>() {
                     @Override
-                    public void run(ListenerInfo obj)
+                    public void accept(ListenerInfo obj)
                     {
                         obj.getServerPriority().add(serverInfo.getServiceId().getServerId());
                     }
@@ -364,7 +364,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         {
             if (serverInfo == null) return;
 
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerInfoUpdateEvent(serverInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyServerInfoUpdateEvent(serverInfo));
             cachedServers.put(serverInfo.getServiceId().getServerId(), serverInfo);
         }
 
@@ -373,14 +373,14 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         {
             if (serverInfo == null) return;
 
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerRemoveEvent(serverInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyServerRemoveEvent(serverInfo));
             ProxyServer.getInstance().getServers().remove(serverInfo.getServiceId().getServerId());
             cachedServers.remove(serverInfo.getServiceId().getServerId());
 
             if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback()))
-                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {
+                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Consumer<ListenerInfo>() {
                     @Override
-                    public void run(ListenerInfo obj)
+                    public void accept(ListenerInfo obj)
                     {
                         obj.getServerPriority().remove(serverInfo.getServiceId().getServerId());
                     }
@@ -395,25 +395,25 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         @Override
         public void onProxyAdd(ProxyInfo proxyInfo)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyAddEvent(proxyInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyProxyAddEvent(proxyInfo));
         }
 
         @Override
         public void onProxyInfoUpdate(ProxyInfo proxyInfo)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyInfoUpdateEvent(proxyInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyProxyInfoUpdateEvent(proxyInfo));
         }
 
         @Override
         public void onProxyRemove(ProxyInfo proxyInfo)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyRemoveEvent(proxyInfo));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyProxyRemoveEvent(proxyInfo));
         }
 
         @Override
         public void onCloudNetworkUpdate(CloudNetwork cloudNetwork)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedCloudNetworkUpdateEvent(cloudNetwork));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyCloudNetworkUpdateEvent(cloudNetwork));
 
             if (cloudNetwork.getProxyGroups().containsKey(CloudAPI.getInstance().getGroup()))
             {
@@ -458,33 +458,33 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         public void onCustomChannelMessageReceive(String channel, String message, Document document)
         {
             if (handle(channel, message, document)) return;
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedCustomChannelMessageReceiveEvent(channel, message, document));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyCustomChannelMessageReceiveEvent(channel, message, document));
         }
 
         @Override
         public void onCustomSubChannelMessageReceive(String channel, String message, Document document)
         {
             if (handle(channel, message, document)) return;
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedSubChannelMessageEvent(channel, message, document));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxySubChannelMessageEvent(channel, message, document));
         }
 
         @Override
         public void onPlayerLoginNetwork(CloudPlayer cloudPlayer)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLoginEvent(cloudPlayer));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyPlayerLoginEvent(cloudPlayer));
         }
 
         @Override
         public void onPlayerDisconnectNetwork(CloudPlayer cloudPlayer)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLogoutEvent(cloudPlayer));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyPlayerLogoutEvent(cloudPlayer));
             cloudPlayers.remove(cloudPlayer.getUniqueId());
         }
 
         @Override
         public void onPlayerDisconnectNetwork(UUID uniqueId)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLogoutUniqueEvent(uniqueId));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyPlayerLogoutUniqueEvent(uniqueId));
             cloudPlayers.remove(uniqueId);
         }
 
@@ -495,19 +495,19 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
             {
                 cloudPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
             }
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerUpdateEvent(cloudPlayer));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyPlayerUpdateEvent(cloudPlayer));
         }
 
         @Override
         public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOfflinePlayerUpdateEvent(offlinePlayer));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyOfflinePlayerUpdateEvent(offlinePlayer));
         }
 
         @Override
         public void onUpdateOnlineCount(int onlineCount)
         {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOnlineCountUpdateEvent(onlineCount));
+            ProxyServer.getInstance().getPluginManager().callEvent(new ProxyOnlineCountUpdateEvent(onlineCount));
         }
 
         private boolean handle(String channel, String message, Document document)
@@ -609,7 +609,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
                 if (message.equalsIgnoreCase("player_server_switch"))
                 {
-                    ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerServerSwitchEvent(
+                    ProxyServer.getInstance().getPluginManager().callEvent(new ProxyPlayerServerSwitchEvent(
                             document.getObject("player", CloudPlayer.TYPE),
                             document.getString("server")));
 

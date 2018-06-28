@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnetcore.setup;
 
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnet.web.client.WebClient;
 import joptsimple.OptionSet;
 
@@ -14,16 +13,17 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 01.10.2017.
  */
-public class LocalCloudWrapper implements Runnabled<OptionSet> {
+public class LocalCloudWrapper implements Consumer<OptionSet> {
 
     private Process process;
 
     @Override
-    public void run(OptionSet obj)
+    public void accept(OptionSet obj)
     {
         if(obj.has("installWrapper"))
         {
