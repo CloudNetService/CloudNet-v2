@@ -8,18 +8,23 @@ import de.dytanic.cloudnet.event.Event;
 import lombok.Getter;
 
 /**
- * Asynchronized Event server
- * @param <E>
+ * Interface for asynchronous events
+ *
+ * @param <E> the type of the asynchronous events
  */
 @Getter
 public abstract class AsyncEvent<E extends AsyncEvent<?>> extends Event {
 
-    public AsyncEvent(AsyncPoster<E> poster)
-    {
-        this.poster = poster;
-        this.asynchronized = true;
-    }
-
     private AsyncPoster<E> poster;
+
+    /**
+     * Constructs a new asynchronous event with an asynchronous poster.
+     *
+     * @param poster the poster to handle pre- and post-call methods
+     */
+    public AsyncEvent(AsyncPoster<E> poster) {
+        this.poster = poster;
+        this.asynchronous = true;
+    }
 
 }
