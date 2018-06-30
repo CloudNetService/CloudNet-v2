@@ -29,16 +29,16 @@ public final class NameToUUIDDatabase extends DatabaseUseable {
 
         if (!updateConfigurationDatabase.get().contains("updated_database_from_2_1_Pv29")) {
             Collection<Document> documents = database.loadDocuments().getDocs();
-            String name;
+
+            System.out.println("Updating " + documents.size() + " documents...");
 
             for (Document document: documents) {
-                name = document.getString(Database.UNIQUE_NAME_KEY);
+                String name = document.getString(Database.UNIQUE_NAME_KEY);
 
-                if (name != null)
-                    if (name.length() < 32) {
-                        database.delete(document.getString(Database.UNIQUE_NAME_KEY));
-                        database.insert(document.append(Database.UNIQUE_NAME_KEY, name.toLowerCase()));
-                    }
+                if (name != null && name.length() < 32) {
+                    database.delete(document.getString(Database.UNIQUE_NAME_KEY));
+                    database.insert(document.append(Database.UNIQUE_NAME_KEY, name.toLowerCase()));
+                }
             }
 
             updateConfigurationDatabase.set(updateConfigurationDatabase.get().append("updated_database_from_2_1_Pv29", true));
