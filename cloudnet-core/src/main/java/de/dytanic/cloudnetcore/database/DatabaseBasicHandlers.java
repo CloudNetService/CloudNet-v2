@@ -39,8 +39,6 @@ public class DatabaseBasicHandlers {
         wrapperSessionDatabase = new WrapperSessionDatabase(databaseManager.getDatabase("cloudnet_internal_wrapper_session"));
         updateConfigurationDatabase = new UpdateConfigurationDatabase(config);
 
-        nameToUUIDDatabase.handleUpdate(updateConfigurationDatabase);
-
         ((DatabaseImpl)config).save();
     }
 }

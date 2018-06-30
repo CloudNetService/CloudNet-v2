@@ -12,7 +12,6 @@ import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
-import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -22,30 +21,6 @@ public final class NameToUUIDDatabase extends DatabaseUseable {
 
     public NameToUUIDDatabase(Database database) {
         super(database);
-    }
-
-    @Deprecated
-    public void handleUpdate(UpdateConfigurationDatabase updateConfigurationDatabase) {
-
-        if (!updateConfigurationDatabase.get().contains("updated_database_from_2_1_Pv29")) {
-            Collection<Document> documents = database.loadDocuments().getDocs();
-
-            System.out.println("Updating " + documents.size() + " documents...");
-
-            for (Document document: documents) {
-                String name = document.getString(Database.UNIQUE_NAME_KEY);
-
-                if (name != null && name.length() < 32) {
-                    database.delete(document.getString(Database.UNIQUE_NAME_KEY));
-                    database.insert(document.append(Database.UNIQUE_NAME_KEY, name.toLowerCase()));
-                }
-            }
-
-            updateConfigurationDatabase.set(updateConfigurationDatabase.get().append("updated_database_from_2_1_Pv29", true));
-            ((DatabaseImpl) updateConfigurationDatabase.getDatabase()).save();
-            ((DatabaseImpl) database).save();
-            ((DatabaseImpl) database).clear();
-        }
     }
 
     public DatabaseImpl getDatabaseImplementation() {
