@@ -20,7 +20,6 @@ import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.*;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.interfaces.Reloadable;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnet.libloader.LibLoader;
 import de.dytanic.cloudnet.web.client.WebClient;
 import de.dytanic.cloudnet.web.server.WebServer;
@@ -65,6 +64,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 @Getter
 public final class CloudNet implements Executable, Runnable, Reloadable {
@@ -248,7 +248,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         //Event Init
         eventManager.callEvent(new CloudInitEvent());
 
-        new LocalCloudWrapper().run(optionSet);
+        new LocalCloudWrapper().accept(optionSet);
         return true;
     }
 
@@ -353,9 +353,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         }
         dbHandlers.getStatisticManager().cloudOnlineTime(startupTime);
         this.databaseManager.save().clear();
-        CollectionWrapper.iterator(this.cloudServers, new Runnabled<CloudNetServer>() {
+        CollectionWrapper.iterator(this.cloudServers, new Consumer<CloudNetServer>() {
             @Override
-            public void run(CloudNetServer obj)
+            public void accept(CloudNetServer obj)
             {
                 obj.getBossGroup().shutdownGracefully();
                 obj.getWorkerGroup().shutdownGracefully();
@@ -608,9 +608,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public int getGlobalUsedMemoryAndWaitings()
     {
         AtomicInteger atomicInteger = new AtomicInteger(0);
-        CollectionWrapper.iterator(CloudNet.getInstance().getWrappers().values(), new Runnabled<Wrapper>() {
+        CollectionWrapper.iterator(CloudNet.getInstance().getWrappers().values(), new Consumer<Wrapper>() {
             @Override
-            public void run(Wrapper obj)
+            public void accept(Wrapper obj)
             {
                 atomicInteger.addAndGet(obj.getUsedMemory());
 
@@ -762,9 +762,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public long globalMaxMemory()
     {
         AtomicInteger atomicInteger = new AtomicInteger();
-        CollectionWrapper.iterator(getWrappers().values(), new Runnabled<Wrapper>() {
+        CollectionWrapper.iterator(getWrappers().values(), new Consumer<Wrapper>() {
             @Override
-            public void run(Wrapper obj)
+            public void accept(Wrapper obj)
             {
                 atomicInteger.addAndGet(obj.getMaxMemory());
             }
@@ -775,16 +775,16 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public long globalUsedMemory()
     {
         AtomicInteger atomicInteger = new AtomicInteger(0);
-        CollectionWrapper.iterator(getServers().values(), new Runnabled<MinecraftServer>() {
+        CollectionWrapper.iterator(getServers().values(), new Consumer<MinecraftServer>() {
             @Override
-            public void run(MinecraftServer obj)
+            public void accept(MinecraftServer obj)
             {
                 atomicInteger.addAndGet(obj.getProcessMeta().getMemory());
             }
         });
-        CollectionWrapper.iterator(getProxys().values(), new Runnabled<ProxyServer>() {
+        CollectionWrapper.iterator(getProxys().values(), new Consumer<ProxyServer>() {
             @Override
-            public void run(ProxyServer obj)
+            public void accept(ProxyServer obj)
             {
                 atomicInteger.addAndGet(obj.getProcessMeta().getMemory());
             }
@@ -1508,9 +1508,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Consumer<MinecraftServer>() {
             @Override
-            public void run(MinecraftServer obj)
+            public void accept(MinecraftServer obj)
             {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
@@ -1520,9 +1520,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Consumer<Quad<Integer, Integer,
+                ServiceId, Template>>() {
             @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            public void accept(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
                 if(template != null)
@@ -1593,9 +1594,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Consumer<MinecraftServer>() {
             @Override
-            public void run(MinecraftServer obj)
+            public void accept(MinecraftServer obj)
             {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
@@ -1605,9 +1606,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Consumer<Quad<Integer, Integer,
+                ServiceId, Template>>() {
             @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            public void accept(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
                 if(template != null)
@@ -1744,9 +1746,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Consumer<MinecraftServer>() {
             @Override
-            public void run(MinecraftServer obj)
+            public void accept(MinecraftServer obj)
             {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
@@ -1756,9 +1758,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Consumer<Quad<Integer, Integer,
+                ServiceId, Template>>() {
             @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            public void accept(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
                 if(template != null)
@@ -1836,9 +1839,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         });
         collection.addAll(wrapper.getBinndedPorts());
 
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Consumer<MinecraftServer>() {
             @Override
-            public void run(MinecraftServer obj)
+            public void accept(MinecraftServer obj)
             {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
@@ -1846,9 +1849,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Consumer<Quad<Integer, Integer,
+                ServiceId, Template>>() {
             @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            public void accept(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
                 if(template != null)
@@ -2191,9 +2195,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Consumer<MinecraftServer>() {
             @Override
-            public void run(MinecraftServer obj)
+            public void accept(MinecraftServer obj)
             {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
@@ -2203,9 +2207,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Consumer<Quad<Integer, Integer,
+                ServiceId, Template>>() {
             @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            public void accept(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
                 if(template != null)
@@ -2276,9 +2281,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Consumer<MinecraftServer>() {
             @Override
-            public void run(MinecraftServer obj)
+            public void accept(MinecraftServer obj)
             {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
@@ -2288,9 +2293,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Consumer<Quad<Integer, Integer,
+                ServiceId, Template>>() {
             @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            public void accept(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
                 if(template != null)
@@ -2364,9 +2370,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Consumer<MinecraftServer>() {
             @Override
-            public void run(MinecraftServer obj)
+            public void accept(MinecraftServer obj)
             {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
@@ -2376,9 +2382,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Consumer<Quad<Integer, Integer,
+                ServiceId, Template>>() {
             @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            public void accept(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
                 if(template != null)

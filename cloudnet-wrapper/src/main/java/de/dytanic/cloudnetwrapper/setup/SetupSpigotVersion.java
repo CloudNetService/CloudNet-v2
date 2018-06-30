@@ -3,7 +3,6 @@
  */
 
 package de.dytanic.cloudnetwrapper.setup;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import jline.console.ConsoleReader;
 
 import java.io.IOException;
@@ -13,16 +12,16 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 25.05.2017.
  */
-public class SetupSpigotVersion
-        implements Runnabled<ConsoleReader> {
+public class SetupSpigotVersion implements Consumer<ConsoleReader> {
 
-    private final Runnabled<String> download = new Runnabled<String>() {
+    private final Consumer<String> download = new Consumer<String>() {
         @Override
-        public void run(String url)
+        public void accept(String url)
         {
             try
             {
@@ -43,7 +42,7 @@ public class SetupSpigotVersion
     };
 
     @Override
-    public void run(ConsoleReader reader)
+    public void accept(ConsoleReader reader)
     {
         System.out.println("No spigot.jar has been found!");
 
@@ -114,13 +113,13 @@ public class SetupSpigotVersion
                         switch (cancer == null ? reader.readLine().toLowerCase() : cancer)
                         {
                             case "1.8.8":
-                                download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.8.8.jar");
+                                download.accept("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.8.8.jar");
                                 return;
                             case "1.11.2":
-                                download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.11.2-b102.jar");
+                                download.accept("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.11.2-b102.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.12.2-b109.jar");
+                                download.accept("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.12.2-b109.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");
@@ -140,22 +139,23 @@ public class SetupSpigotVersion
                         switch (cancer == null ? reader.readLine().toLowerCase() : cancer)
                         {
                             case "1.7.10":
-                                download.run("https://yivesmirror.com/files/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
+                                download.accept("https://yivesmirror.com/files/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
                                 return;
                             case "1.8.8":
-                                download.run("https://yivesmirror.com/files/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
+                                download.accept("https://yivesmirror.com/files/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
                                 return;
                             case "1.9.4":
-                                download.run("https://yivesmirror.com/files/spigot/spigot-1.9.4-R0.1-SNAPSHOT.jar");
+                                download.accept("https://yivesmirror.com/files/spigot/spigot-1.9.4-R0.1-SNAPSHOT.jar");
                                 return;
                             case "1.11.2":
-                                download.run("https://yivesmirror.com/files/spigot/spigot-1.11.2-R0.1-SNAPSHOT.jar");
+                                download.accept("https://yivesmirror.com/files/spigot/spigot-1.11.2-R0.1-SNAPSHOT.jar");
                                 return;
                             case "1.10.2":
-                                download.run("https://yivesmirror.com/files/spigot/spigot-1.10.2-R0.1-SNAPSHOT.jar");
+                                download.accept("https://yivesmirror.com/files/spigot/spigot-1.10.2-R0.1-SNAPSHOT.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://yivesmirror.com/files/spigot/spigot-1.12.2-R0.1-SNAPSHOT-b1496.jar");
+                                download.accept("https://yivesmirror" +
+                                        ".com/files/spigot/spigot-1.12.2-R0.1-SNAPSHOT-b1496.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");
@@ -175,13 +175,13 @@ public class SetupSpigotVersion
                         switch (cancer == null ? reader.readLine().toLowerCase() : cancer)
                         {
                             case "1.8.8":
-                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
+                                download.accept("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
                                 return;
                             case "1.11.2":
-                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.11.2-b1104.jar");
+                                download.accept("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.11.2-b1104.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.12.2-b1298.jar");
+                                download.accept("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.12.2-b1298.jar");
                                 break;
                             default:
                                 System.out.println("This version is not supported!");
@@ -201,16 +201,16 @@ public class SetupSpigotVersion
                         switch (cancer == null ? reader.readLine().toLowerCase() : cancer)
                         {
                             case "1.8.8":
-                                download.run("https://yivesmirror.com/files/hose/hose-1.8.8.jar");
+                                download.accept("https://yivesmirror.com/files/hose/hose-1.8.8.jar");
                                 return;
                             case "1.9.4":
-                                download.run("https://yivesmirror.com/files/hose/hose-1.9.4.jar");
+                                download.accept("https://yivesmirror.com/files/hose/hose-1.9.4.jar");
                                 return;
                             case "1.10.2":
-                                download.run("https://yivesmirror.com/files/hose/hose-1.10.2.jar");
+                                download.accept("https://yivesmirror.com/files/hose/hose-1.10.2.jar");
                                 return;
                             case "1.11.2":
-                                download.run("https://yivesmirror.com/files/hose/hose-1.11.2.jar");
+                                download.accept("https://yivesmirror.com/files/hose/hose-1.11.2.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");

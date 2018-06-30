@@ -6,10 +6,10 @@ package de.dytanic.cloudnet.help;
 
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.map.Maps;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import lombok.Getter;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 18.09.2017.
@@ -23,10 +23,11 @@ public final class HelpService {
     public String toString()
     {
         StringBuilder stringBuilder = new StringBuilder("Help service of the Cloud:\n");
-        CollectionWrapper.iterator(descriptions.entrySet(), new Runnabled<Map.Entry<String, ServiceDescription[]>>() {
+
+        CollectionWrapper.iterator(descriptions.entrySet(), new Consumer<Map.Entry<String, ServiceDescription[]>>() {
+
             @Override
-            public void run(Map.Entry<String, ServiceDescription[]> obj)
-            {
+            public void accept(final Map.Entry<String, ServiceDescription[]> obj) {
                 stringBuilder.append(obj.getKey()).append(":\n");
                 for(ServiceDescription serviceDescription : obj.getValue())
                 {

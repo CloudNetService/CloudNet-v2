@@ -9,13 +9,13 @@ import de.dytanic.cloudnet.lib.Value;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
 import java.util.*;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 22.05.2017.
@@ -120,10 +120,10 @@ public final class PacketManager {
         }
 
         Collection<PacketInHandler> handlers = buildHandlers(incoming.id);
-        CollectionWrapper.iterator(handlers, new Runnabled<PacketInHandler>() {
+        CollectionWrapper.iterator(handlers, new Consumer<PacketInHandler>() {
+
             @Override
-            public void run(PacketInHandler handler)
-            {
+            public void accept(final PacketInHandler handler) {
                 if (incoming.uniqueId != null) handler.packetUniqueId = incoming.uniqueId;
                 if (handler != null)
                 {

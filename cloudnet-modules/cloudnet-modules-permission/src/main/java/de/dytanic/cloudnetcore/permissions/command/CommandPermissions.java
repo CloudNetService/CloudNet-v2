@@ -12,7 +12,6 @@ import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnet.lib.player.permission.DefaultPermissionGroup;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateOfflinePlayer;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 20.08.2017.
@@ -69,9 +69,9 @@ public class CommandPermissions extends Command {
                         for(Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet())
                         {
                             sender.sendMessage(x.getKey() + ":");
-                            CollectionWrapper.iterator(x.getValue(), new Runnabled<String>() {
+                            CollectionWrapper.iterator(x.getValue(), new Consumer<String>() {
                                 @Override
-                                public void run(String obj)
+                                public void accept(String obj)
                                 {
                                     sender.sendMessage("- " + obj);
                                 }

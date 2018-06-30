@@ -11,7 +11,8 @@ import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 17.08.2017.
@@ -25,9 +26,9 @@ public class PacketInCloudNetwork extends PacketInHandlerDefault {
         {
             CloudNetwork cloudNetwork = data.getObject("cloudnetwork", NetworkUtils.cloudnet().getType());
             CloudAPI.getInstance().setCloudNetwork(cloudNetwork);
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Consumer<NetworkHandler>() {
                 @Override
-                public void run(NetworkHandler obj)
+                public void accept(NetworkHandler obj)
                 {
                     obj.onCloudNetworkUpdate(cloudNetwork);
                 }

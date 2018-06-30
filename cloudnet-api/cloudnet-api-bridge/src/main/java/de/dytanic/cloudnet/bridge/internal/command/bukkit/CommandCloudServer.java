@@ -17,7 +17,6 @@ import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -28,6 +27,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 23.08.2017.
@@ -244,9 +244,9 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    CollectionWrapper.iterator(MobSelector.getInstance().getMobs().values(), new Runnabled<MobSelector.MobImpl>() {
+                    CollectionWrapper.iterator(MobSelector.getInstance().getMobs().values(), new Consumer<MobSelector.MobImpl>() {
                         @Override
-                        public void run(MobSelector.MobImpl obj)
+                        public void accept(MobSelector.MobImpl obj)
                         {
                             commandSender.sendMessage("- " + obj.getMob().getName());
                         }

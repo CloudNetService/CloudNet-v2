@@ -26,7 +26,6 @@ import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.ProxyServer;
@@ -43,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * This Class represents the Proxy Instance on based on cloudnet
@@ -79,9 +79,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                         );
 
                         if (key.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback()))
-                            CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {
+                            CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Consumer<ListenerInfo>() {
                                 @Override
-                                public void run(ListenerInfo obj)
+                                public void accept(ListenerInfo obj)
                                 {
                                     obj.getServerPriority().add(key.getServiceId().getServerId());
                                 }
@@ -343,9 +343,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                     ProxyServer.getInstance().constructServerInfo(serverInfo.getServiceId().getServerId(), new InetSocketAddress(serverInfo.getHost(), serverInfo.getPort()), "CloudNet2 Game-Server", false)
             );
             if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback()))
-                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {
+                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Consumer<ListenerInfo>() {
                     @Override
-                    public void run(ListenerInfo obj)
+                    public void accept(ListenerInfo obj)
                     {
                         obj.getServerPriority().add(serverInfo.getServiceId().getServerId());
                     }
@@ -378,9 +378,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
             cachedServers.remove(serverInfo.getServiceId().getServerId());
 
             if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback()))
-                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {
+                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Consumer<ListenerInfo>() {
                     @Override
-                    public void run(ListenerInfo obj)
+                    public void accept(ListenerInfo obj)
                     {
                         obj.getServerPriority().remove(serverInfo.getServiceId().getServerId());
                     }

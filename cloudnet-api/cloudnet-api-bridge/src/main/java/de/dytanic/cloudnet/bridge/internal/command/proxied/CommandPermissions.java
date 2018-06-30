@@ -9,7 +9,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.*;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -17,6 +16,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 23.08.2017.
@@ -64,9 +64,9 @@ public final class CommandPermissions extends Command implements TabExecutor {
                         for (Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet())
                         {
                             sender.sendMessage(x.getKey() + ":");
-                            CollectionWrapper.iterator(x.getValue(), new Runnabled<String>() {
+                            CollectionWrapper.iterator(x.getValue(), new Consumer<String>() {
                                 @Override
-                                public void run(String obj)
+                                public void accept(String obj)
                                 {
                                     sender.sendMessage("- " + obj);
                                 }

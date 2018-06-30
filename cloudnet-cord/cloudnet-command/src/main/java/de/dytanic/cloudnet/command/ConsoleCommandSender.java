@@ -6,12 +6,11 @@ package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 18.09.2017.
@@ -29,10 +28,10 @@ public class ConsoleCommandSender implements CommandSender {
     @Override
     public void sendMessage(String... message)
     {
-        CollectionWrapper.iterator(message, new Runnabled<String>() {
+        CollectionWrapper.iterator(message, new Consumer<String>() {
+
             @Override
-            public void run(String obj)
-            {
+            public void accept(final String obj) {
                 System.out.println(obj);
             }
         });
