@@ -20,63 +20,54 @@ import java.util.UUID;
  */
 public final class NameToUUIDDatabase extends DatabaseUseable {
 
-    public NameToUUIDDatabase(Database database)
-    {
+    public NameToUUIDDatabase(Database database) {
         super(database);
     }
 
     @Deprecated
-    public void handleUpdate(UpdateConfigurationDatabase updateConfigurationDatabase)
-    {
+    public void handleUpdate(UpdateConfigurationDatabase updateConfigurationDatabase) {
 
-        if (!updateConfigurationDatabase.get().contains("updated_database_from_2_1_Pv29"))
-        {
+        if (!updateConfigurationDatabase.get().contains("updated_database_from_2_1_Pv29")) {
             Collection<Document> documents = database.loadDocuments().getDocs();
             String name;
 
-            for (Document document : documents)
-            {
+            for (Document document: documents) {
                 name = document.getString(Database.UNIQUE_NAME_KEY);
 
                 if (name != null)
-                    if (name.length() < 32)
-                    {
+                    if (name.length() < 32) {
                         database.delete(document.getString(Database.UNIQUE_NAME_KEY));
                         database.insert(document.append(Database.UNIQUE_NAME_KEY, name.toLowerCase()));
                     }
             }
 
             updateConfigurationDatabase.set(updateConfigurationDatabase.get().append("updated_database_from_2_1_Pv29", true));
+            ((DatabaseImpl) updateConfigurationDatabase.getDatabase()).save();
             ((DatabaseImpl) database).save();
             ((DatabaseImpl) database).clear();
         }
     }
 
-    public DatabaseImpl a()
-    {
+    public DatabaseImpl getDatabaseImplementation() {
         return ((DatabaseImpl) database);
     }
 
-    public void append(MultiValue<String, UUID> values)
-    {
+    public void append(MultiValue<String, UUID> values) {
         database.insert(new DatabaseDocument(values.getFirst().toLowerCase()).append("uniqueId", values.getSecond()));
 
         database.insert(new DatabaseDocument(values.getSecond().toString()).append("name", values.getFirst()));
     }
 
-    public void replace(MultiValue<UUID, String> replacer)
-    {
+    public void replace(MultiValue<UUID, String> replacer) {
         Document document = database.getDocument(replacer.getFirst().toString());
         document.append("name", replacer.getSecond());
         database.insert(document);
     }
 
-    public UUID get(String name)
-    {
+    public UUID get(String name) {
         if (name == null) return null;
 
-        if (a().containsDoc(name.toLowerCase()))
-        {
+        if (getDatabaseImplementation().containsDoc(name.toLowerCase())) {
             Document document = database.getDocument(name.toLowerCase());
             if (!document.contains("uniqueId")) {
                 database.delete(name.toLowerCase());
@@ -88,12 +79,10 @@ public final class NameToUUIDDatabase extends DatabaseUseable {
         return null;
     }
 
-    public String get(UUID uniqueId)
-    {
+    public String get(UUID uniqueId) {
         if (uniqueId == null) return null;
 
-        if (a().containsDoc(uniqueId.toString()))
-        {
+        if (getDatabaseImplementation().containsDoc(uniqueId.toString())) {
             Document document = database.getDocument(uniqueId.toString());
             if (!document.contains("name")) {
                 database.delete(uniqueId.toString());
