@@ -11,43 +11,60 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
- * Created by Tareko on 07.09.2017.
+ * Class that loads libraries from a given directory to its own {@link URLClassLoader}.
  */
 @Getter
 public class LibLoader {
 
-    private File file;
+    /**
+     * The directory to load the libraries from.
+     */
+    private final File directory;
 
-    private Collection<Libary> libarys;
+    /**
+     * The currently loaded libraries
+     */
+    private Collection<Library> libraries = new LinkedList<>();
 
+    /**
+     * The classloader that is able to load all the libraries of this library loader.
+     */
     private URLClassLoader urlClassLoader;
 
-    public LibLoader(File file)
-    {
-        this.file = file;
+    /**
+     * Constructs a new library loader with an uninitialized state.
+     *
+     * @param directory the directory to search for libraries
+     */
+    public LibLoader(final File directory) {
+        this.directory = directory;
     }
 
-    public void load()
-    {
-        URL[] url = new URL[file.list().length];
-        for(File file : this.file.listFiles())
-        {
-            if(file.getName().endsWith(".jar"))
-            {
-                libarys.add(new Libary(Paths.get(file.getPath()), file.getName()));
-                try
-                {
-                    Arrays.fill(url, file.toURI().toURL());
-                } catch (MalformedURLException e)
-                {
-                    e.printStackTrace();
-                }
+    /**
+     * Loads the libraries from {@link #directory} into {@link #libraries} and
+     * the {@link #urlClassLoader}.
+     * <p>
+     * Filters based on file name, so that the file name ends with {@code .jar}.
+     */
+    public void load() {
+        File[] files = directory.listFiles((dir, name) -> name.endsWith(".jar"));
+        if (files == null) {
+            return;
+        }
+        List<URL> urls = new LinkedList<>();
+        for (File file: files) {
+            libraries.add(new Library(Paths.get(file.getPath()), file.getName()));
+            try {
+                urls.add(file.toURI().toURL());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
             }
         }
-        urlClassLoader = new URLClassLoader(url);
+        urlClassLoader = new URLClassLoader(urls.toArray(new URL[0]), urlClassLoader);
     }
 }

@@ -10,14 +10,20 @@ import lombok.Getter;
 import java.nio.file.Path;
 
 /**
- * Created by Tareko on 13.09.2017.
+ * Data class to define a library
  */
 @Getter
 @AllArgsConstructor
-public class Libary {
+public class Library {
 
+    /**
+     * The path where this library is located at
+     */
     private Path path;
 
+    /**
+     * The file name of this library
+     */
     private String jarName;
 
 }
