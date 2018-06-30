@@ -17,13 +17,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.*;
 
 /**
- * Created by Tareko on 21.05.2017.
+ * Custom logger configured for CloudNet.
  */
 @Getter
 public class CloudLogger
@@ -34,37 +36,38 @@ public class CloudLogger
     private final ConsoleReader reader;
     private final String name = System.getProperty("user.name");
 
-    private final java.util.List<ICloudLoggerHandler> handler = new LinkedList<>();
+    private final List<ICloudLoggerHandler> handler = new LinkedList<>();
 
     @Setter
     private boolean debugging = false;
 
-    public CloudLogger() throws Exception
-    {
+    /**
+     * Constructs a new cloud logger instance that handles logging messages from
+     * all sources in an asynchronous matter.
+     *
+     * @throws IOException            when creating directories or files in {@code local/}
+     *                                was not possible
+     * @throws NoSuchFieldException   when the default charset could not be set
+     * @throws IllegalAccessException when the default charset could not be set
+     */
+    public CloudLogger() throws IOException, NoSuchFieldException, IllegalAccessException {
         super("CloudNetServerLogger", null);
-
-        try
-        {
-            Field field = Charset.class.getDeclaredField("defaultCharset");
-            field.setAccessible(true);
-            field.set(null, Charset.forName("UTF-8"));
-        }catch (Exception ex) {
-
-        }
+        Field field = Charset.class.getDeclaredField("defaultCharset");
+        field.setAccessible(true);
+        field.set(null, StandardCharsets.UTF_8);
 
         if (!Files.exists(Paths.get("local")))
             Files.createDirectory(Paths.get("local"));
-        if (!Files.exists(Paths.get("local/logs")))
-            Files.createDirectory(Paths.get("local/logs"));
+        if (!Files.exists(Paths.get("local", "logs")))
+            Files.createDirectory(Paths.get("local", "logs"));
 
         setLevel(Level.ALL);
 
         this.reader = new ConsoleReader(System.in, System.out);
         this.reader.setExpandEvents(false);
 
-        /*
         FileLoggerHandler handler = new FileLoggerHandler(new FileFormatter(), "local/logs");
-        addHandler(handler);*/
+        addHandler(handler);
 
         FileHandler fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, true);
         fileHandler.setEncoding(StandardCharsets.UTF_8.name());
@@ -80,35 +83,42 @@ public class CloudLogger
 
         System.setOut(new AsyncPrintStream(new LoggingOutputStream(Level.INFO)));
         System.setErr(new AsyncPrintStream(new LoggingOutputStream(Level.SEVERE)));
-
     }
 
-    public void debug(String message)
-    {
+    /**
+     * This posts a new debug message, if {@link #debugging} is true.
+     *
+     * @param message the message to send to the log
+     */
+    public void debug(String message) {
         if (debugging)
             log(Level.WARNING, "[DEBUG] " + message);
     }
 
-    public void shutdownAll()
-    {
-        for (Handler handler : getHandlers()) handler.close();
-        try
-        {
+    /**
+     * Shuts down all handlers and the reader.
+     */
+    public void shutdownAll() {
+        for (Handler handler: getHandlers()) {
+            handler.close();
+        }
+        try {
             this.reader.killLine();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
+    /**
+     * Output stream that sends the last message in the buffer to the log handlers
+     * when flushed.
+     */
     @RequiredArgsConstructor
     private class LoggingOutputStream extends ByteArrayOutputStream {
-        /*========================================================================*/
         private final Level level;
 
-        @SuppressWarnings("deprecation")
         @Override
-        public void flush() throws IOException
-        {
+        public void flush() throws IOException {
             String contents = toString(StandardCharsets.UTF_8.name());
             super.reset();
             if (!contents.isEmpty() && !contents.equals(separator))
@@ -116,44 +126,39 @@ public class CloudLogger
         }
     }
 
-    private class LoggingHandler
-            extends Handler {
+    /**
+     * Handler class that forwards all records to {@link CloudLogger#handler}.
+     */
+    private class LoggingHandler extends Handler {
+
+        private boolean closed;
 
         @Override
-        public void publish(LogRecord record)
-        {
+        public void publish(LogRecord record) {
+            if (closed) return;
+
             String formatMessage = getFormatter().formatMessage(record);
-            for (ICloudLoggerHandler handler : CloudLogger.this.getHandler()) handler.handleConsole(formatMessage);
+            for (ICloudLoggerHandler handler: CloudLogger.this.getHandler())
+                handler.handleConsole(formatMessage);
 
-            if (isLoggable(record)) handle(getFormatter().format(record));
-        }
-
-        public void handle(String message)
-        {
-            AsyncPrintStream.ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        reader.print(ConsoleReader.RESET_LINE + message);
-                        reader.drawLine();
-                        reader.flush();
-                    } catch (Exception ex)
-                    {
-                    }
+            if (isLoggable(record)) {
+                try {
+                    reader.print(ConsoleReader.RESET_LINE + getFormatter().format(record));
+                    reader.drawLine();
+                    reader.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            });
+            }
         }
 
         @Override
-        public void flush()
-        {
+        public void flush() {
         }
 
         @Override
-        public void close() throws SecurityException
-        {
+        public void close() throws SecurityException {
+            closed = true;
         }
     }
 
@@ -163,11 +168,9 @@ public class CloudLogger
         private final DateFormat format = new SimpleDateFormat("HH:mm:ss");
 
         @Override
-        public String format(LogRecord record)
-        {
+        public String format(LogRecord record) {
             StringBuilder builder = new StringBuilder();
-            if (record.getThrown() != null)
-            {
+            if (record.getThrown() != null) {
                 StringWriter writer = new StringWriter();
                 record.getThrown().printStackTrace(new PrintWriter(writer));
                 builder.append(writer).append("\n");
@@ -179,89 +182,96 @@ public class CloudLogger
 
     }
 
-    private class LoggingFormatter
-            extends Formatter {
+    private class LoggingFormatter extends Formatter {
 
         private final DateFormat format = new SimpleDateFormat("HH:mm:ss");
 
         @Override
-        public String format(LogRecord record)
-        {
+        public String format(LogRecord record) {
             StringBuilder builder = new StringBuilder();
-            if (record.getThrown() != null)
-            {
+            if (record.getThrown() != null) {
                 StringWriter writer = new StringWriter();
                 record.getThrown().printStackTrace(new PrintWriter(writer));
                 builder.append(writer).append("\n");
             }
 
-            StringBuilder stringBuilder = new StringBuilder(ConsoleReader.RESET_LINE)
-                    .append("[")
-                    .append(format.format(System.currentTimeMillis()))
-                    .append(NetworkUtils.SLASH_STRING)
-                    .append(name)
-                    .append("] ")
-                    .append(record.getLevel().getName())
-                    .append(": ")
-                    .append(formatMessage(record))
-                    .append("\n").append(builder.substring(0));
-
-            return stringBuilder.substring(0);
+            return "\r" + // ConsoleReader.RESET_LINE
+                    "[" +
+                    format.format(System.currentTimeMillis()) +
+                    NetworkUtils.SLASH_STRING +
+                    name +
+                    "] " +
+                    record.getLevel().getName() +
+                    ": " +
+                    formatMessage(record) +
+                    "\n" + builder.substring(0);
         }
     }
 
-    /*
-    @Getter
-    public class FileLoggerHandler extends Handler {
 
+    /**
+     * Log handler that writes all log records to a log file and archives old files.
+     */
+    @Getter
+    private class FileLoggerHandler extends Handler {
+
+        private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
         private String directory;
         private PrintWriter printWriter;
 
-        public FileLoggerHandler(Formatter formatter, String directory) throws Exception
-        {
+        /**
+         * Constructs a new handler that writes log records to files in the
+         * provided directory.
+         *
+         * @param formatter the formatter instance to format incoming log records with
+         * @param directory the directory to store the the files in
+         * @throws IOException when the files couldn't be moved or created
+         */
+        FileLoggerHandler(Formatter formatter, String directory) throws IOException {
             super();
             setLevel(Level.INFO);
             this.directory = directory;
-            try
-            {
+            try {
                 setEncoding(StandardCharsets.UTF_8.name());
-            } catch (UnsupportedEncodingException e)
-            {
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
             setFormatter(formatter);
 
-            if (Files.exists(Paths.get(directory + "/latest.log")))
-            {
-                new File(directory + "/latest.log").renameTo(new File(directory + "/latest_" + new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss").format(System.currentTimeMillis()) + ".log"));
+            if (Files.exists(Paths.get(directory, "latest.log"))) {
+                Files.move(Paths.get(directory, "latest.log"),
+                        Paths.get(directory, "latest_" + dateFormat.format(System.currentTimeMillis()) + ".log"),
+                        StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
             }
-            new File(directory + "/latest.log").createNewFile();
+            Files.createFile(Paths.get(directory, "latest.log"));
 
             this.printWriter = new PrintWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(directory + "/latest.log")), StandardCharsets.UTF_8));
         }
 
         @Override
-        public void publish(LogRecord record)
-        {
+        public void publish(LogRecord record) {
             printWriter.write(getFormatter().format(record));
             printWriter.flush();
         }
 
         @Override
-        public void flush()
-        {
+        public void flush() {
 
         }
 
         @Override
-        public void close() throws SecurityException
-        {
+        public void close() throws SecurityException {
             printWriter.close();
-            if (Files.exists(Paths.get(directory + "/latest.log")))
-            {
-                new File(directory + "/latest.log").renameTo(new File(directory + "/latest_" + new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss").format(System.currentTimeMillis()) + ".log"));
+            if (Files.exists(Paths.get(directory, "latest.log"))) {
+                try {
+                    Files.move(Paths.get(directory, "latest.log"),
+                            Paths.get(directory, "latest_" + dateFormat.format(System.currentTimeMillis()) + ".log"),
+                            StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-    }*/
+    }
 
 }
