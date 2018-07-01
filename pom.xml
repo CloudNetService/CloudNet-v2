@@ -15,9 +15,19 @@
         <maven.compiler.target>10</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
-        <netty.version>4.1.25.Final</netty.version>
-        <service.version>2.1.5.1</service.version>
+        <service.version>2.1.5.2</service.version>
         <service.type>PRE</service.type>
+        <!-- Dependencies -->
+        <dependency.gson.version>2.8.5</dependency.gson.version>
+        <dependency.lombok.version>1.18.0</dependency.lombok.version>
+        <dependency.netty.version>4.1.25.Final</dependency.netty.version>
+        <dependency.bungeecord.version>1.8-1.12</dependency.bungeecord.version>
+        <dependency.spigot.version>1.8.8</dependency.spigot.version>
+        <dependency.jline.version>2.14.6</dependency.jline.version>
+        <dependency.jopt-simple.version>4.7</dependency.jopt-simple.version>
+        <dependency.typetools.version>0.4.8</dependency.typetools.version>
+        <dependency.vault.version>1.6</dependency.vault.version>
+        <dependency.yaml.version>1.16</dependency.yaml.version>
     </properties>
 
     <developers>
@@ -43,7 +53,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.0</version>
+            <version>${dependency.lombok.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

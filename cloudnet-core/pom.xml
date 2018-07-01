@@ -16,12 +16,6 @@
     <dependencies>
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
-            <artifactId>cloudnet-snakeconfig</artifactId>
-            <version>${service.version}-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-log</artifactId>
             <version>${service.version}-SNAPSHOT</version>
             <scope>compile</scope>
@@ -29,12 +23,6 @@
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-lib</artifactId>
-            <version>${service.version}-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
-            <artifactId>cloudnet-event</artifactId>
             <version>${service.version}-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
@@ -86,30 +74,10 @@
             <version>${service.version}-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport-native-epoll</artifactId>
-            <version>${netty.version}</version>
-            <classifier>linux-x86_64</classifier>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>net.sf.jopt-simple</groupId>
             <artifactId>jopt-simple</artifactId>
-            <version>4.7</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler</artifactId>
-            <version>${netty.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.jodah</groupId>
-            <artifactId>typetools</artifactId>
-            <version>0.4.8</version>
+            <version>${dependency.jopt-simple.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

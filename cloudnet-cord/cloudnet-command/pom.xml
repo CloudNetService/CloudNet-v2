@@ -16,8 +16,8 @@
         <dependency>
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
-            <version>2.10</version>
-            <scope>provided</scope>
+            <version>${dependency.jline.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
