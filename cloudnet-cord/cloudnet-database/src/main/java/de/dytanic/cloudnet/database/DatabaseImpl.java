@@ -12,6 +12,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
@@ -22,7 +26,7 @@ import java.util.concurrent.FutureTask;
 @Getter
 @AllArgsConstructor
 public class DatabaseImpl
-            implements Database {
+        implements Database {
 
     private final String name;
     private final java.util.Map<String, Document> documents;
@@ -31,16 +35,21 @@ public class DatabaseImpl
     @Override
     public Database loadDocuments()
     {
-        for(File file : backendDir.listFiles())
-            if(!this.documents.containsKey(file.getName()))
-            this.documents.put(file.getName(), Document.loadDocument(file));
-
+        for(File file : backendDir.listFiles()) {
+            if (!this.documents.containsKey(file.getName())) {
+                Document document = Document.loadDocument(file);
+                if (document.contains(UNIQUE_NAME_KEY)) {
+                    this.documents.put(file.getName(), document);
+                }
+            }
+        }
         return this;
     }
 
     @Override
     public boolean containsDoc(String name)
     {
+        if (name == null) return false;
         return new File("database/" + this.name + NetworkUtils.SLASH_STRING + name).exists();
     }
 
@@ -53,6 +62,8 @@ public class DatabaseImpl
     @Override
     public Document getDocument(String name)
     {
+        if (name == null) return null;
+
         Document document = documents.get(name);
 
         if(document == null)
@@ -60,9 +71,9 @@ public class DatabaseImpl
             File doc = new File("database/" + this.name + NetworkUtils.SLASH_STRING + name);
             if(doc.exists())
             {
-               document = Document.loadDocument(doc);
-               this.documents.put(doc.getName(), document);
-               return document;
+                document = Document.loadDocument(doc);
+                this.documents.put(doc.getName(), document);
+                return document;
             }
         }
         return document;
@@ -71,19 +82,32 @@ public class DatabaseImpl
     @Override
     public Database insert(Document... documents)
     {
-        for(Document document : documents)
-            if(document.contains(UNIQUE_NAME_KEY))
+        for (Document document : documents) {
+            if (document.contains(UNIQUE_NAME_KEY)) {
                 this.documents.put(document.getString(UNIQUE_NAME_KEY), document);
+                Path path = Paths.get("database/" + this.name + "/" + document.getString(UNIQUE_NAME_KEY));
+                if (!Files.exists(path)) {
+                    try {
+                        Files.createFile(path);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                document.saveAsConfig(path);
+            }
+        }
         return this;
     }
 
     @Override
     public Database delete(String name)
     {
+        if (name == null) return this;
+
         Document document = getDocument(name);
         if(document != null)
         {
-            documents.remove(document);
+            documents.remove(name);
         }
         new File("database/" + this.name + NetworkUtils.SLASH_STRING + name).delete();
         return this;
@@ -92,21 +116,22 @@ public class DatabaseImpl
     @Override
     public Database delete(Document document)
     {
-        this.documents.remove(document);
-        new File("database/" + this.name + NetworkUtils.SLASH_STRING + name).delete();
+        if (document.contains(UNIQUE_NAME_KEY)) {
+            delete(document.getString(UNIQUE_NAME_KEY));
+        }
         return this;
     }
 
     @Override
     public Document load(String name)
     {
-        return Document.loadDocument(new File("database/databases/" + this.name + NetworkUtils.SLASH_STRING + name));
+        return Document.loadDocument(new File("database/" + this.name + NetworkUtils.SLASH_STRING + name));
     }
 
     @Override
     public boolean contains(Document document)
     {
-        return contains(document);
+        return contains(document.getString(UNIQUE_NAME_KEY));
     }
 
     @Override
@@ -124,12 +149,8 @@ public class DatabaseImpl
     @Override
     public Database insertAsync(Document... documents)
     {
-        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-            @Override
-            public void run()
-            {
-                insert(documents);
-            }
+        TaskScheduler.runtimeScheduler().schedule(() -> {
+            insert(documents);
         });
         return this;
     }
@@ -137,12 +158,8 @@ public class DatabaseImpl
     @Override
     public Database deleteAsync(String name)
     {
-        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-            @Override
-            public void run()
-            {
-                delete(name);
-            }
+        TaskScheduler.runtimeScheduler().schedule(() -> {
+            delete(name);
         });
         return this;
     }
@@ -150,22 +167,16 @@ public class DatabaseImpl
     @Override
     public FutureTask<Document> getDocumentAsync(String name)
     {
-        FutureTask<Document> get = new FutureTask<>(new Callable<Document>() {
-            @Override
-            public Document call() throws Exception
-            {
-                return getDocument(name);
+        return new FutureTask<>(() -> getDocument(name));
+    }
+
+    public void save() {
+        for (Document document : documents.values()) {
+            if (document.contains(UNIQUE_NAME_KEY)) {
+                document.saveAsConfig0(new File("database/" + this.name + NetworkUtils.SLASH_STRING + document.getString(UNIQUE_NAME_KEY)));
             }
-        });
-        return get;
+        }
     }
-
-    public void save()
-    {
-        for(Document document : documents.values())
-            document.saveAsConfig0(new File("database/" + this.name + NetworkUtils.SLASH_STRING + document.getString(UNIQUE_NAME_KEY)));
-    }
-
     public void clear()
     {
         this.documents.clear();

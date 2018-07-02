@@ -25,7 +25,7 @@ import java.util.Collection;
 
 public class WebClient {
 
-    public static final String DEFAULT_URL = "http://dytanic.de/cloudnet/";
+    public static final String DEFAULT_URL = "https://cloudnetservice.eu/cloudnet/";
 
     public Collection<String> getInstallableModules()
     {
