@@ -157,11 +157,17 @@ public class CommandPermissions extends Command {
                     if (args[2].equalsIgnoreCase("add") && args[3].equalsIgnoreCase("permission")) {
                         if (permissionPool.getGroups().containsKey(args[1])) {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
-                            permissionGroup.getPermissions().put(args[4].replaceFirst("-", ""), !args[4].startsWith("-"));
-                            PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
-                            CloudNet.getInstance().getNetworkManager().reload();
-                            CloudNet.getInstance().getNetworkManager().updateAll0();
-                            sender.sendMessage("You added the permission " + args[4] + " to the permission group \"" + permissionGroup.getName() + "\"");
+                            String permission = args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING);
+                            boolean value = !args[4].startsWith("-");
+                            if (!permissionIsSet(permissionGroup.getPermissions(), permission, value)) {
+                                permissionGroup.getPermissions().put(permission, value);
+                                PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
+                                CloudNet.getInstance().getNetworkManager().reload();
+                                CloudNet.getInstance().getNetworkManager().updateAll0();
+                                sender.sendMessage("You added the permission " + args[4] + " to the permission group \"" + permissionGroup.getName() + "\"");
+                            } else {
+                                sender.sendMessage("The permission " + permission + " with the value " + String.valueOf(value).toLowerCase() + " is already set for the permission group " + permissionGroup.getName());
+                            }
                         } else {
                             sender.sendMessage("The specified permission group doesn't exist");
                         }
@@ -404,5 +410,12 @@ public class CommandPermissions extends Command {
 
     private long calcDays(int value) {
         return System.currentTimeMillis() + ((60 * 60 * 1000 * 24 * value));
+    }
+
+    private boolean permissionIsSet(Map<String, Boolean> permissions, String permission, boolean value) {
+        if (permissions.containsKey(permission)) {
+            return permissions.get(permission).equals(value);
+        }
+        return false;
     }
 }
