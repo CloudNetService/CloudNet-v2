@@ -57,12 +57,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                         sender.sendMessage("Permissions for groups:");
                         for (Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet()) {
                             sender.sendMessage(x.getKey() + ":");
-                            CollectionWrapper.iterator(x.getValue(), new Runnabled<String>() {
-                                @Override
-                                public void run(String obj) {
-                                    sender.sendMessage("- " + obj);
-                                }
-                            });
+                            CollectionWrapper.iterator(x.getValue(), (Runnabled<String>) obj -> sender.sendMessage("- " + obj));
                         }
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                     } else {
@@ -143,9 +138,15 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     if (args[2].equalsIgnoreCase("add") && args[3].equalsIgnoreCase("permission")) {
                         if (permissionPool.getGroups().containsKey(args[1])) {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
-                            permissionGroup.getPermissions().put(args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING), !args[4].startsWith("-"));
-                            CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\"");
+                            String permission = args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING);
+                            boolean value = !args[4].startsWith("-");
+                            if (!permissionIsSet(permissionGroup.getPermissions(), permission, value)) {
+                                permissionGroup.getPermissions().put(permission, value);
+                                CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+                                sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\"");
+                            } else {
+                                sender.sendMessage("The permission " + permission + " with the value " + String.valueOf(value).toLowerCase() + " is already set for the permission group " + permissionGroup.getName());
+                            }
                         } else {
                             sender.sendMessage("The specified permission group doesn't exist");
                         }
@@ -171,7 +172,6 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             if (!permissionGroup.getServerGroupPermissions().containsKey(args[5])) {
                                 permissionGroup.getServerGroupPermissions().put(args[5], new ArrayList<>());
                             }
-
                             permissionGroup.getServerGroupPermissions().get(args[5]).add(args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING));
                             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
                             sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\" on server group " + args[5]);
@@ -373,5 +373,12 @@ public final class CommandPermissions extends Command implements TabExecutor {
     @Override
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] strings) {
         return new LinkedList<>(CloudAPI.getInstance().getPermissionPool().getGroups().keySet());
+    }
+
+    private boolean permissionIsSet(Map<String, Boolean> permissions, String permission, boolean value) {
+        if (permissions.containsKey(permission)) {
+            return permissions.get(permission).equals(value);
+        }
+        return false;
     }
 }
