@@ -8,9 +8,9 @@ import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.config.CloudConfigLoader;
 import de.dytanic.cloudnet.api.config.ConfigTypeLoader;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudServerInitEvent;
+import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandCloudDeploy;
 import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandCloudServer;
 import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandResource;
-import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandCloudDeploy;
 import de.dytanic.cloudnet.bridge.internal.listener.bukkit.BukkitListener;
 import de.dytanic.cloudnet.bridge.internal.listener.bukkit.ReloadListener;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
@@ -107,7 +107,7 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         try
         {
             Class.forName("net.md_5.bungee.api.chat.BaseComponent");
-            Class.forName("de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry").getMethod("fire", new Class[0]).invoke(null, new Object[0]);
+            Class.forName("de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry").getMethod("fire").invoke(null);
         } catch (Exception ex)
         {
         }
@@ -185,7 +185,7 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
                         (getServer().getPluginManager().isPluginEnabled("VaultAPI") || getServer().getPluginManager().isPluginEnabled("Vault")))
                     try
                     {
-                        Class.forName("de.dytanic.cloudnet.bridge.vault.VaultInvoker").getMethod("invoke", new Class[0]).invoke(null, new Object[0]);
+                        Class.forName("de.dytanic.cloudnet.bridge.vault.VaultInvoker").getMethod("invoke").invoke(null);
                     } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e)
                     {
                         e.printStackTrace();
