@@ -96,7 +96,9 @@ public final class BukkitListener implements Listener {
                     else field = Class.forName("net.glowstone.entity.GlowHumanEntity").getDeclaredField("permissions");
 
                     field.setAccessible(true);
-                    field.set(event.getPlayer(), new CloudPermissble(event.getPlayer()));
+                    final CloudPermissble cloudPermissble = new CloudPermissble(event.getPlayer());
+                    field.set(event.getPlayer(), cloudPermissble);
+                    cloudPermissble.clearPermissions();
                 } catch (Exception ex)
                 {
                     ex.printStackTrace();
