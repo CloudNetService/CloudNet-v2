@@ -10,20 +10,35 @@ import lombok.Getter;
 import java.io.File;
 
 /**
- * Created by Tareko on 23.07.2017.
+ * Data class that stores information about a {@link Module}
  */
 @Getter
 @AllArgsConstructor
 public class ModuleConfig {
 
+    /**
+     * The file this module is stored in.
+     */
     private File file;
 
+    /**
+     * The name of this module, used for the configuration directory.
+     */
     private String name;
 
+    /**
+     * The version string of this module.
+     */
     private String version;
 
+    /**
+     * The author of this module.
+     */
     private String author;
 
+    /**
+     * The path to the main class of this module.
+     */
     private String main;
 
 }
