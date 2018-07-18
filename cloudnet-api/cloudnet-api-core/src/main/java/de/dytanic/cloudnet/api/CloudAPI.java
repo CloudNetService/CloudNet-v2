@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.api;
 
 import com.google.gson.reflect.TypeToken;
@@ -219,9 +215,8 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns the Cloud Prefix
+     * Returns the cloud prefix
      */
-
     public String getPrefix()
     {
         return cloudNetwork.getMessages().getString("prefix");
