@@ -8,16 +8,25 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Created by Tareko on 16.09.2017.
+ * Configuration class for the web server
  */
 @Getter
 @AllArgsConstructor
 public class WebServerConfig {
 
+    /**
+     * Whether the web server is enabled or not
+     */
     private boolean enabled;
 
+    /**
+     * The address the web server is bound to
+     */
     private String address;
 
+    /**
+     * Port that this web server is bound to
+     */
     private int port;
 
 }
