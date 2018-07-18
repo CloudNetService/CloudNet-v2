@@ -11,20 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/**
- * # PermissionProvider
- * # Created by _Klaro on ${DATE}.
- * # Copyright (c) _Klaro
- * # Do not decompile this resource our say it´s yours.
- * # Visit our Discord for more information: http://discord.deinsystem.net
- * # Or our Teamspeak: deinsystem.net
- */
-
 public class PermissionProvider
 {
     /**
      *
-     * Returns the SimpleDateFormat for the Permission Time
+     * Calculate the permission timeout for the given days.
      * @see java.util.concurrent.TimeUnit
      */
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy-HH:mm:ss");
@@ -41,7 +32,7 @@ public class PermissionProvider
     }
 
     /**
-     * Updates the Permissiongroup in the Database
+     * Updates the Permissiongroup in the Database.
      *
      * @param permissionGroup
      * @see de.dytanic.cloudnet.lib.player.permission.PermissionGroup
@@ -53,7 +44,7 @@ public class PermissionProvider
     }
 
     /**
-     * Calculate the Permission group time by the given int
+     * Calculate the Permission group time by the given int.
      *
      * @param value
      * @return Time Value for Permission Time
@@ -61,7 +52,7 @@ public class PermissionProvider
     private static long calculateDays(int value) { return System.currentTimeMillis() + ((TimeUnit.DAYS.toMillis(value))); }
 
     /**
-     * Gets the Display of the given player by his highest permissiongroup
+     * Gets the Display of the given player by his highest permission group.
      *
      * @param offlinePlayer
      * @return Player Group Display of the given player
@@ -73,7 +64,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the Display of the given uuid by the highest permissiongroup
+     * Gets the Display of the given uuid by the highest permission group.
      *
      * @param uuid
      * @return Player Group Display of the given UUID
@@ -85,7 +76,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the Suffix of the given player by his highest permissiongroup
+     * Gets the Suffix of the given player by his highest permission group.
      *
      * @param offlinePlayer
      * @return Player Group Suffix of the given player
@@ -98,7 +89,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the Suffix of the given uuid by the highest permissiongroup
+     * Gets the Suffix of the given uuid by the highest permission group.
      *
      * @param uuid
      * @return Player group Suffix of the given UUID
@@ -111,7 +102,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the Prefix of the given player by his highest permissiongroup
+     * Gets the Prefix of the given player by his highest permission group.
      *
      * @param offlinePlayer
      * @return Player Group Prefix of the given player
@@ -124,7 +115,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the Prefix of the given uuid by the highest permissiongroup
+     * Gets the Prefix of the given uuid by the highest permission group.
      *
      * @param uuid
      * @return Player Group Prefix of the given UUID
@@ -137,7 +128,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the Highest Player permissiongroup by the given player
+     * Gets the Highest Player permission group by the given player.
      *
      * @param offlinePlayer
      * @return Player Group Name of the given player
@@ -150,7 +141,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the Highest Player permissiongroup by the given UUID
+     * Gets the Highest Player permission group by the given UUID.
      *
      * @param uuid
      * @return Player Group Name of the given UUID
@@ -163,7 +154,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the perfix of the given permissiongroup
+     * Gets the perfix of the given permission group.
      *
      * @param groupName
      * @return Group Prefix of the given group or null if the group doesn't exists
@@ -181,7 +172,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the suffix of the given permissiongroup
+     * Gets the suffix of the given permission group.
      *
      * @param groupName
      * @return Group Suffix of the given group or null if the group doesn't exists
@@ -199,7 +190,7 @@ public class PermissionProvider
     }
 
     /**
-     * Checks if the player is in the specified permissiongroup
+     * Checks if the player is in the specified permission group.
      *
      * @param groupName
      * @param offlinePlayer
@@ -213,7 +204,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the permission group display by the given permissiongroup
+     * Gets the permission group display by the given permission group.
      *
      * @param groupName
      * @return Group Display of the given group or null if the group doesn't exists
@@ -231,7 +222,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the implemented permission groups of the specified player
+     * Gets the implemented permission groups of the specified player.
      *
      * @param offlinePlayer
      * @return List of implemented servergroups of the given player or null if the group doesn't exists
@@ -245,7 +236,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the implemented groups of the specified permissiongroup
+     * Gets the implemented groups of the specified permission group.
      *
      * @param groupName
      * @return List of implemented servergroups of the given permissiongroup or null if the group doesn't exists
@@ -263,7 +254,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the join power of the given player by his highest permissiongroup
+     * Gets the join power of the given player by his highest permission group.
      *
      * @param player
      * @return Group Join Power of the given player
@@ -276,7 +267,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the join power of the specified permissiongroup
+     * Gets the join power of the specified permission group.
      *
      * @param groupName
      * @return Group Join Power of the given permissiongroup or null if the group doesn't exists
@@ -294,7 +285,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the player permissions
+     * Gets the player permissions.
      *
      * @param offlinePlayer
      * @return Player Permissions of the given player
@@ -308,7 +299,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the Permissions of the given player by his highest permissiongroup
+     * Gets the Permissions of the given player by his highest permission group.
      *
      * @param offlinePlayer
      * @return Player Permissions on Servergroups of the given player
@@ -322,7 +313,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the TagID of the group by the given player
+     * Gets the TagID of the group by the given player.
      *
      * @param offlinePlayer
      * @return Player Group TagID of the given player
@@ -335,7 +326,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the remaining Time of the player in the given group
+     * Gets the remaining Time of the player in the given group.
      *
      * @param offlinePlayer
      * @return Player Group RemaingTime of the given player or -1 if it´s lifetime
@@ -352,7 +343,7 @@ public class PermissionProvider
     }
 
     /**
-     * Adds a permission to the given Player
+     * Adds a permission to the given Player.
      *
      * @param offlinePlayer
      * @param permission
@@ -366,7 +357,7 @@ public class PermissionProvider
     }
 
     /**
-     * Removes a permission from the given player
+     * Removes a permission from the given player.
      *
      * @param offlinePlayer
      * @param permission
@@ -380,7 +371,7 @@ public class PermissionProvider
     }
 
     /**
-     * Creates the a new permission group by the given name
+     * Creates the a new permission group by the given name.
      *
      * @param permissiongroup
      * @return The new Permissiongroup if not successful null
@@ -399,7 +390,7 @@ public class PermissionProvider
     }
 
     /**
-     * Adds the given permission to the given permissiongroup
+     * Adds the given permission to the given permission group.
      *
      * @param permissiongroup
      * @param permission
@@ -417,7 +408,7 @@ public class PermissionProvider
     }
 
     /**
-     * Removes the given permission from the given permissiongroup
+     * Removes the given permission from the given permission vgroup.
      *
      * @param permissiongroup
      * @param permission
@@ -435,7 +426,7 @@ public class PermissionProvider
     }
 
     /**
-     * Adds the given permission to the given permissiongroup on the given servergroup
+     * Adds the given permission to the given permission group on the given server group.
      *
      * @param permissiongroup
      * @param permission
@@ -458,7 +449,7 @@ public class PermissionProvider
     }
 
     /**
-     * Adds the given permission to the given group on the given servergroup
+     * Adds the given permission to the given group on the given server group.
      *
      * @param permissiongroup
      * @param permission
@@ -481,7 +472,7 @@ public class PermissionProvider
     }
 
     /**
-     * Sets the given player permissiongroup(s)
+     * Sets the given player permission group(s).
      *
      * @param offlinePlayer
      * @param group
@@ -502,7 +493,7 @@ public class PermissionProvider
     }
 
     /**
-     * Adds the given player to the given permissiongroup(s)
+     * Adds the given player to the given permission group(s).
      *
      * @param player
      * @param group
@@ -522,7 +513,7 @@ public class PermissionProvider
     }
 
     /**
-     * Removes the given player from the given permissiongroup
+     * Removes the given player from the given permission group.
      *
      * @param group
      * @param offlinePlayer
@@ -556,7 +547,7 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the given player permission groups
+     * Gets the given player permission groups.
      *
      * @param offlinePlayer
      * @return Player Groups of the given player as String or  null if the player doesn't exists
@@ -577,7 +568,7 @@ public class PermissionProvider
     }
 
     /**
-     * Returns all servergroups
+     * Returns all server groups.
      *
      * @return Permission Groups or null
      */
@@ -593,10 +584,10 @@ public class PermissionProvider
     }
 
     /**
-     * Returns the specified Permission group
+     * Returns the specified permission group.
      *
      * @param group
-     * @return the specified permissongroup or null if the group doesn't exists
+     * @return the specified permission group or null if the group doesn't exists
      */
 
     public static PermissionGroup getPermissionGroup(String group)
@@ -610,7 +601,7 @@ public class PermissionProvider
     }
 
     /**
-     * Sets the display name by the given group
+     * Sets the display name by the given group.
      *
      * @param group
      * @param display
@@ -628,7 +619,7 @@ public class PermissionProvider
     }
 
     /**
-     * Sets the prefix name by the given group
+     * Sets the prefix name by the given group.
      *
      * @param group
      * @param prefix
@@ -646,7 +637,7 @@ public class PermissionProvider
     }
 
     /**
-     * Sets the suffix name by the given group
+     * Sets the suffix name by the given group.
      *
      * @param group
      * @param suffix
@@ -664,7 +655,7 @@ public class PermissionProvider
     }
 
     /**
-     * Sets the default permission group
+     * Sets the default permission group.
      *
      * @param group
      */
@@ -684,7 +675,7 @@ public class PermissionProvider
     }
 
     /**
-     * Sets the joinpower of the specified permissiongroup
+     * Sets the joinpower of the specified permission group.
      *
      * @param group
      * @param joinpower
@@ -702,7 +693,7 @@ public class PermissionProvider
     }
 
     /**
-     * Sets the TagID of the given permissiongroup
+     * Sets the TagID of the given permission group.
      *
      * @param group
      * @param TagID
