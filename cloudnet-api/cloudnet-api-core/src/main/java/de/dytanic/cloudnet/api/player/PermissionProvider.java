@@ -2,169 +2,169 @@ package de.dytanic.cloudnet.api.player;
 
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
-import de.dytanic.cloudnet.lib.player.permission.DefaultPermissionGroup;
-import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
-import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
-import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
+import de.dytanic.cloudnet.lib.player.permission.*;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class PermissionProvider
-{
+@SuppressWarnings({"unused", "WeakerAccess"})
+public final class PermissionProvider {
     /**
-     *
-     * Calculate the permission timeout for the given days.
-     * @see java.util.concurrent.TimeUnit
+     * The date format for print statements regarding dates.
      */
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy-HH:mm:ss");
 
     /**
-     * Update the Player in the PlayerDatabase
+     * Update the given player in the player database.
      *
-     * @param offlinePlayer
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param offlinePlayer the player to update
      */
-    private static void updatePlayer(OfflinePlayer offlinePlayer)
-    {
+    public static void updatePlayer(OfflinePlayer offlinePlayer) {
         CloudAPI.getInstance().updatePlayer(offlinePlayer);
     }
 
     /**
-     * Updates the Permissiongroup in the Database.
+     * Updates the permission group in the database.
      *
-     * @param permissionGroup
-     * @see de.dytanic.cloudnet.lib.player.permission.PermissionGroup
+     * @param permissionGroup the permission group to update
      */
-
-    private static void updatePermissionGroup(PermissionGroup permissionGroup)
-    {
+    public static void updatePermissionGroup(PermissionGroup permissionGroup) {
         CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
     }
 
     /**
-     * Calculate the Permission group time by the given int.
+     * Calculate the permission group timeout for the given days in future.
      *
-     * @param value
-     * @return Time Value for Permission Time
+     * @param value the amount of days
+     * @return timeout value for use with {@link PermissionGroup}
      */
-    private static long calculateDays(int value) { return System.currentTimeMillis() + ((TimeUnit.DAYS.toMillis(value))); }
+    public static long calculateDays(int value) {
+        return System.currentTimeMillis() + ((TimeUnit.DAYS.toMillis(value)));
+    }
 
     /**
-     * Gets the Display of the given player by his highest permission group.
+     * Gets the display for the given player by their highest permission group.
      *
-     * @param offlinePlayer
-     * @return Player Group Display of the given player
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param offlinePlayer the player to get the display for
+     * @return the display for the given player
+     * @see PermissionGroup
+     * @see #getDisplay(UUID)
      */
-    public static String getDisplay(OfflinePlayer offlinePlayer)
-    {
+    public static String getDisplay(OfflinePlayer offlinePlayer) {
         return offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool()).getDisplay();
     }
 
     /**
-     * Gets the Display of the given uuid by the highest permission group.
+     * Gets the display of the player, identified by the given UUID
+     * by their highest permission group.
      *
-     * @param uuid
-     * @return Player Group Display of the given UUID
+     * @param uuid the UUID of the player
+     * @return the display for the given player
+     * @see PermissionGroup
+     * @see #getDisplay(OfflinePlayer)
      */
-    public static String getDisplay(UUID uuid)
-    {
+    public static String getDisplay(UUID uuid) {
         return CloudAPI.getInstance().getOfflinePlayer(uuid).getPermissionEntity().getHighestPermissionGroup(CloudAPI.
-        getInstance().getPermissionPool()).getDisplay();
+                getInstance().getPermissionPool()).getDisplay();
     }
 
     /**
-     * Gets the Suffix of the given player by his highest permission group.
+     * Gets the suffix of the given player by their highest permission group.
      *
-     * @param offlinePlayer
-     * @return Player Group Suffix of the given player
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param offlinePlayer the player to get the suffix for
+     * @return the suffix for the given player
+     * @see PermissionGroup
+     * @see #getSuffix(UUID)
      */
-
-    public static String getSuffix(OfflinePlayer offlinePlayer)
-    {
+    public static String getSuffix(OfflinePlayer offlinePlayer) {
         return offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool()).getSuffix();
     }
 
     /**
-     * Gets the Suffix of the given uuid by the highest permission group.
+     * Gets the suffix of the given player identified by their UUID
+     * by their highest permission group.
      *
-     * @param uuid
-     * @return Player group Suffix of the given UUID
+     * @param uuid the UUID of the player
+     * @return the suffix for the given player
+     * @see PermissionGroup
+     * @see #getSuffix(OfflinePlayer)
      */
-
-    public static String getSuffix(UUID uuid)
-    {
+    public static String getSuffix(UUID uuid) {
         return CloudAPI.getInstance().getOfflinePlayer(uuid).getPermissionEntity().getHighestPermissionGroup(CloudAPI.
-            getInstance().getPermissionPool()).getSuffix();
+                getInstance().getPermissionPool()).getSuffix();
     }
 
     /**
-     * Gets the Prefix of the given player by his highest permission group.
+     * Gets the prefix of the given player by their highest permission group.
      *
-     * @param offlinePlayer
-     * @return Player Group Prefix of the given player
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param offlinePlayer the player to get the prefix for
+     * @return the prefix for the given player
+     * @see PermissionGroup
+     * @see #getPrefix(UUID)
      */
-
-    public static String getPrefix(OfflinePlayer offlinePlayer)
-    {
+    public static String getPrefix(OfflinePlayer offlinePlayer) {
         return offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool()).getPrefix();
     }
 
     /**
-     * Gets the Prefix of the given uuid by the highest permission group.
+     * Gets the prefix of the given player identified by their UUID
+     * by their highest permission group.
      *
-     * @param uuid
-     * @return Player Group Prefix of the given UUID
+     * @param uuid the UUID of the player
+     * @return the prefix for the given player
+     * @see PermissionGroup
+     * @see #getPrefix(OfflinePlayer)
      */
-
-    public static String getPrefix(UUID uuid)
-    {
+    public static String getPrefix(UUID uuid) {
         return CloudAPI.getInstance().getOfflinePlayer(uuid).getPermissionEntity().getHighestPermissionGroup(CloudAPI.
                 getInstance().getPermissionPool()).getPrefix();
     }
 
     /**
-     * Gets the Highest Player permission group by the given player.
+     * Gets the name of the highest permission group for the given player.
      *
-     * @param offlinePlayer
-     * @return Player Group Name of the given player
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param offlinePlayer the player to get the name of their highest
+     *                      permission group for.
+     * @return the name of the highest permission group of the given player
+     * @see #getGroupName(UUID)
+     * @see PermissionGroup
+     * @see PermissionEntity
      */
-
-    public static String getGroupName(OfflinePlayer offlinePlayer)
-    {
+    public static String getGroupName(OfflinePlayer offlinePlayer) {
         return offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool()).getName();
     }
 
     /**
-     * Gets the Highest Player permission group by the given UUID.
+     * Gets the name of the highest permission group for the given player
+     * identified by their UUID.
      *
-     * @param uuid
-     * @return Player Group Name of the given UUID
+     * @param uuid the UUID of the player
+     * @return the name of the highest permission group of the given player
+     * @see #getGroupName(OfflinePlayer)
+     * @see PermissionGroup
+     * @see PermissionEntity
      */
-
-    public static String getGroupName(UUID uuid)
-    {
+    public static String getGroupName(UUID uuid) {
         return CloudAPI.getInstance().getOfflinePlayer(uuid).getPermissionEntity().getHighestPermissionGroup(CloudAPI.
                 getInstance().getPermissionPool()).getName();
     }
 
     /**
-     * Gets the perfix of the given permission group.
+     * Gets the prefix of the given permission group.
      *
-     * @param groupName
-     * @return Group Prefix of the given group or null if the group doesn't exists
+     * @param groupName the name of the permission group
+     * @return the group prefix of the given group or {@code null},
+     * if the group doesn't exist.
+     * @see PermissionGroup
+     * @see PermissionPool
      */
-
-    public static String getGroupPrefix(String groupName)
-    {
+    public static String getGroupPrefix(String groupName) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(groupName))
-        {
+        if (permissionPool.getGroups().containsKey(groupName)) {
             PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             return permissionGroup.getPrefix();
         }
@@ -174,15 +174,15 @@ public class PermissionProvider
     /**
      * Gets the suffix of the given permission group.
      *
-     * @param groupName
-     * @return Group Suffix of the given group or null if the group doesn't exists
+     * @param groupName the name of the group
+     * @return the group suffix of the given group or {@code null},
+     * if the group doesn't exist.
+     * @see PermissionGroup
+     * @see PermissionPool
      */
-
-    public static String getGroupSuffix(String groupName)
-    {
+    public static String getGroupSuffix(String groupName) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(groupName))
-        {
+        if (permissionPool.getGroups().containsKey(groupName)) {
             PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             return permissionGroup.getSuffix();
         }
@@ -192,29 +192,25 @@ public class PermissionProvider
     /**
      * Checks if the player is in the specified permission group.
      *
-     * @param groupName
-     * @param offlinePlayer
-     * @return Checks if player is in the specified group or if it´s false the player isn´t in the group
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param groupName     the name of the group
+     * @param offlinePlayer the player to check for group membership
+     * @return whether or not the player is in the requested group
+     * @see PermissionEntity
      */
-
-    public static boolean isInGroup(String groupName, OfflinePlayer offlinePlayer)
-    {
+    public static boolean isInGroup(String groupName, OfflinePlayer offlinePlayer) {
         return offlinePlayer.getPermissionEntity().isInGroup(groupName);
     }
 
     /**
-     * Gets the permission group display by the given permission group.
+     * Gets the permission group display for the given permission group name.
      *
-     * @param groupName
-     * @return Group Display of the given group or null if the group doesn't exists
+     * @param groupName the name of the group
+     * @return the group display of the given group or null if the group doesn't exist
+     * @see PermissionGroup
      */
-
-    public static String getGroupDisplay(String groupName)
-    {
+    public static String getGroupDisplay(String groupName) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(groupName))
-        {
+        if (permissionPool.getGroups().containsKey(groupName)) {
             PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             return permissionGroup.getDisplay();
         }
@@ -222,31 +218,16 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the implemented permission groups of the specified player.
+     * Gets the implemented permission groups of the specified permission group.
      *
-     * @param offlinePlayer
-     * @return List of implemented servergroups of the given player or null if the group doesn't exists
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param groupName the permission group
+     * @return Collection of implemented permission groups of the given
+     * permission group or null, if the group doesn't exist.
+     * @see PermissionGroup
      */
-
-    public static Collection<String> getImplementedPlayerGroups(OfflinePlayer offlinePlayer)
-    {
-        return Collections.unmodifiableCollection(offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.
-        getInstance().getPermissionPool()).getImplementGroups());
-    }
-
-    /**
-     * Gets the implemented groups of the specified permission group.
-     *
-     * @param groupName
-     * @return List of implemented servergroups of the given permissiongroup or null if the group doesn't exists
-     */
-
-    public static Collection<String> getImplementedGroups(String groupName)
-    {
+    public static Collection<String> getImplementedGroups(String groupName) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(groupName))
-        {
+        if (permissionPool.getGroups().containsKey(groupName)) {
             PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             return Collections.unmodifiableCollection(permissionGroup.getImplementGroups());
         }
@@ -254,30 +235,26 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the join power of the given player by his highest permission group.
+     * Gets the join power of the given player by their highest permission group.
      *
-     * @param player
-     * @return Group Join Power of the given player
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param player the player
+     * @return the join power of the highest permission group of the player
+     * @see PermissionGroup
      */
-
-    public static Integer getJoinPower(OfflinePlayer player)
-    {
+    public static int getJoinPower(OfflinePlayer player) {
         return player.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool()).getJoinPower();
     }
 
     /**
      * Gets the join power of the specified permission group.
      *
-     * @param groupName
-     * @return Group Join Power of the given permissiongroup or null if the group doesn't exists
+     * @param groupName the name of the group
+     * @return the group join power of the given permission group or
+     * null, if the group doesn't exist.
      */
-
-    public static Integer getGroupJoinPower(String groupName)
-    {
+    public static Integer getGroupJoinPower(String groupName) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(groupName))
-        {
+        if (permissionPool.getGroups().containsKey(groupName)) {
             PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             return permissionGroup.getJoinPower();
         }
@@ -285,73 +262,40 @@ public class PermissionProvider
     }
 
     /**
-     * Gets the player permissions.
+     * Gets the TagID of the highest permission group of the given player.
      *
-     * @param offlinePlayer
-     * @return Player Permissions of the given player
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param offlinePlayer the player
+     * @return The permission group's TagID of the highest permission group
+     * of the given player
+     * @see PermissionGroup
      */
-
-    public static Map<String, Boolean> getPlayerPermissions(OfflinePlayer offlinePlayer)
-    {
-        return Collections.unmodifiableMap(offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.
-        getInstance().getPermissionPool()).getPermissions());
-    }
-
-    /**
-     * Gets the Permissions of the given player by his highest permission group.
-     *
-     * @param offlinePlayer
-     * @return Player Permissions on Servergroups of the given player
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
-     */
-
-    public static Map<String, Object> getPlayerServerPermissions(OfflinePlayer offlinePlayer)
-    {
-        return Collections.unmodifiableMap(offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.
-        getInstance().getPermissionPool()).getOptions());
-    }
-
-    /**
-     * Gets the TagID of the group by the given player.
-     *
-     * @param offlinePlayer
-     * @return Player Group TagID of the given player
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
-     */
-
-    public static int getPlayerGroupTagID(OfflinePlayer offlinePlayer)
-    {
+    public static int getPlayerGroupTagID(OfflinePlayer offlinePlayer) {
         return offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool()).getTagId();
     }
 
     /**
-     * Gets the remaining Time of the player in the given group.
+     * Gets the timeout of the player in their highest permission group.
      *
-     * @param offlinePlayer
-     * @return Player Group RemaingTime of the given player or -1 if it´s lifetime
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param offlinePlayer the player to get the timeout for
+     * @return The timeout of the player in their highest permission group
+     * or -1 if it´s lifetime.
+     * @see GroupEntityData
      */
-
-    public static long getPlayerGroupRemainingTime(OfflinePlayer offlinePlayer)
-    {
-        for (GroupEntityData groupEntityData : offlinePlayer.getPermissionEntity().getGroups())
-        {
-            return groupEntityData.getTimeout();
-        }
-        return -1;
+    public static long getPlayerGroupRemainingTime(OfflinePlayer offlinePlayer) {
+        return offlinePlayer.getPermissionEntity().getGroups().stream()
+                .filter(e -> e.getGroup().equals(getGroupName(offlinePlayer)))
+                .findFirst()
+                .map(GroupEntityData::getTimeout)
+                .orElse(-1L);
     }
 
     /**
-     * Adds a permission to the given Player.
+     * Adds a permission to the given player.
      *
-     * @param offlinePlayer
-     * @param permission
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param offlinePlayer the player to add the permission to
+     * @param permission    the permission to add
      */
-
-    public static void addPlayerPermission(OfflinePlayer offlinePlayer, String permission)
-    {
+    public static void addPlayerPermission(OfflinePlayer offlinePlayer, String permission) {
         offlinePlayer.getPermissionEntity().getPermissions().put(permission.replaceFirst("-", ""), !permission.startsWith("-"));
         updatePlayer(offlinePlayer);
     }
@@ -359,297 +303,229 @@ public class PermissionProvider
     /**
      * Removes a permission from the given player.
      *
-     * @param offlinePlayer
-     * @param permission
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param offlinePlayer the player to remove the permission from
+     * @param permission    the permission to remove
      */
-
-    public static void removePlayerPermission(OfflinePlayer offlinePlayer, String permission)
-    {
+    public static void removePlayerPermission(OfflinePlayer offlinePlayer, String permission) {
         offlinePlayer.getPermissionEntity().getPermissions().remove(permission);
         updatePlayer(offlinePlayer);
     }
 
     /**
-     * Creates the a new permission group by the given name.
-     *
-     * @param permissiongroup
-     * @return The new Permissiongroup if not successful null
-     */
-
-    public PermissionGroup createPermissionGroup(String permissiongroup)
-    {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (!permissionPool.getGroups().containsKey(permissiongroup))
-        {
-            PermissionGroup permissionGroup = new DefaultPermissionGroup(permissiongroup);
-            CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-            return permissionGroup;
-        }
-        return null;
-    }
-
-    /**
      * Adds the given permission to the given permission group.
      *
-     * @param permissiongroup
-     * @param permission
+     * @param permissionGroupName the name of the permission group
+     *                            to add the permission to.
+     * @param permission          the permission to add
      */
-
-    public static void addPermission(String permissiongroup, String permission)
-    {
+    public static void addPermission(String permissionGroupName, String permission) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(permissiongroup))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(permissiongroup);
+        if (permissionPool.getGroups().containsKey(permissionGroupName)) {
+            PermissionGroup permissionGroup = permissionPool.getGroups().get(permissionGroupName);
             permissionGroup.getPermissions().put(permission.replaceFirst("-", ""), !permission.startsWith("-"));
             updatePermissionGroup(permissionGroup);
         }
     }
 
     /**
-     * Removes the given permission from the given permission vgroup.
+     * Removes the given permission from the given permission group.
      *
-     * @param permissiongroup
-     * @param permission
+     * @param permissionGroupName the name of the permission group to remove the
+     *                            permission from.
+     * @param permission          the permission to remove.
      */
-
-    public static void removePermission(String permissiongroup, String permission)
-    {
+    public static void removePermission(String permissionGroupName, String permission) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(permissiongroup))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(permissiongroup);
+        if (permissionPool.getGroups().containsKey(permissionGroupName)) {
+            PermissionGroup permissionGroup = permissionPool.getGroups().get(permissionGroupName);
             permissionGroup.getPermissions().remove(permission);
             updatePermissionGroup(permissionGroup);
         }
     }
 
     /**
-     * Adds the given permission to the given permission group on the given server group.
+     * Adds the given permission to the given permission group for the given
+     * server group.
      *
-     * @param permissiongroup
-     * @param permission
-     * @param servergroup
+     * @param permissionGroupName the name of the permission group
+     *                            to add the permission to.
+     * @param permission          the permission to add
+     * @param serverGroup         the server group to restrict the permission to
      */
-
-    public static void addServergroupPermission(String permissiongroup, String permission, String servergroup)
-    {
+    public static void addServergroupPermission(String permissionGroupName, String permission, String serverGroup) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(permissiongroup))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(permissiongroup);
-            if (!permissionGroup.getServerGroupPermissions().containsKey(permission))
-            {
+        if (permissionPool.getGroups().containsKey(permissionGroupName)) {
+            PermissionGroup permissionGroup = permissionPool.getGroups().get(permissionGroupName);
+            if (!permissionGroup.getServerGroupPermissions().containsKey(permission)) {
                 permissionGroup.getServerGroupPermissions().put(permission, new ArrayList<>());
             }
-            permissionGroup.getServerGroupPermissions().get(servergroup).add(permission.replaceFirst("-", ""));
+            permissionGroup.getServerGroupPermissions().get(serverGroup).add(permission.replaceFirst("-", ""));
             updatePermissionGroup(permissionGroup);
         }
     }
 
     /**
-     * Adds the given permission to the given group on the given server group.
+     * Removes the given permission from the given permission group for the given
+     * server group.
      *
-     * @param permissiongroup
-     * @param permission
-     * @param servergroup
+     * @param permissionGroupName the name of the permission group
+     *                            to remove the permission from.
+     * @param permission          the permission to remove
+     * @param serverGroup         the server group to remove the permission from
      */
-
-    public static void removeServerGroupPermission(String permissiongroup, String permission, String servergroup)
-    {
+    public static void removeServerGroupPermission(String permissionGroupName, String permission, String serverGroup) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(permissiongroup))
-        {
-            PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionGroup(permissiongroup);
-            if (!permissionGroup.getServerGroupPermissions().containsKey(permission))
-            {
+        if (permissionPool.getGroups().containsKey(permissionGroupName)) {
+            PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionGroup(permissionGroupName);
+            if (permissionGroup == null) {
+                return;
+            }
+            if (!permissionGroup.getServerGroupPermissions().containsKey(permission)) {
                 permissionGroup.getServerGroupPermissions().put(permission, new ArrayList<>());
             }
-            permissionGroup.getServerGroupPermissions().get(servergroup).remove(permission.replaceFirst("-", ""));
+            permissionGroup.getServerGroupPermissions().get(serverGroup).remove(permission.replaceFirst("-", ""));
             updatePermissionGroup(permissionGroup);
         }
     }
 
     /**
-     * Sets the given player permission group(s).
+     * Sets permission group for the given player.
      *
-     * @param offlinePlayer
-     * @param group
-     * @param timeindays
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param offlinePlayer the player to set the permission groups for
+     * @param groupName     the group name of the group to add
+     * @param time          the time after which the group will be removed
+     * @see GroupEntityData
      */
-
-    public static void setPlayerGroups(OfflinePlayer offlinePlayer, String group, Integer timeindays)
-    {
+    public static void setPlayerGroup(OfflinePlayer offlinePlayer, String groupName, long time) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(group))
-        {
+        if (permissionPool.getGroups().containsKey(groupName)) {
             offlinePlayer.getPermissionEntity().getGroups().clear();
-            offlinePlayer.getPermissionEntity().getGroups().add(new GroupEntityData(group,
-                    (timeindays.equals(-1) ? 0L : calculateDays(timeindays))));
+            offlinePlayer.getPermissionEntity().getGroups().add(new GroupEntityData(groupName,
+                    (time == -1 ? 0 : time)));
             updatePlayer(offlinePlayer);
         }
     }
 
     /**
-     * Adds the given player to the given permission group(s).
+     * Adds the given permission group by name to the player.
      *
-     * @param player
-     * @param group
-     * @param timeindays
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param player    the player to add the permission group to.
+     * @param groupName the group to add to the player
+     * @param time      the time after which the group will be removed
+     * @see GroupEntityData
      */
-
-    public static void addPlayerGroup(OfflinePlayer player, String group, Integer timeindays)
-    {
+    public static void addPlayerGroup(OfflinePlayer player, String groupName, Integer time) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(group))
-        {
-            player.getPermissionEntity().getGroups().add(new GroupEntityData(group,
-                    (timeindays.equals(-1) ? 0L : calculateDays(timeindays))));
+        if (permissionPool.getGroups().containsKey(groupName)) {
+            player.getPermissionEntity().getGroups().add(new GroupEntityData(groupName,
+                    (time == -1 ? 0 : time)));
             updatePlayer(player);
         }
     }
 
     /**
-     * Removes the given player from the given permission group.
+     * Removes the given permission group by name from the given player.
      *
-     * @param group
-     * @param offlinePlayer
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
+     * @param groupName     the name of the permission group to remove
+     * @param offlinePlayer the player to remove the permission group from
+     * @see PermissionGroup
      */
-
-    public static void removePlayerGroup(String group, OfflinePlayer offlinePlayer)
-    {
+    public static void removePlayerGroup(String groupName, OfflinePlayer offlinePlayer) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(group))
-        {
-            GroupEntityData groupEntityData = null;
-            for (GroupEntityData groupEntity : offlinePlayer.getPermissionEntity().getGroups())
-            {
-                if (groupEntity.getGroup().equalsIgnoreCase(group))
-                {
-                    groupEntityData = groupEntity;
-                    break;
-                }
-            }
-            if (groupEntityData != null)
-            {
-                offlinePlayer.getPermissionEntity().getGroups().remove(groupEntityData);
-            }
-            if (offlinePlayer.getPermissionEntity().getGroups().size() == 0)
-            {
-                offlinePlayer.getPermissionEntity().getGroups().add(new GroupEntityData(permissionPool.getDefaultGroup().getName(), 0));
-            }
-            updatePlayer(offlinePlayer);
+        offlinePlayer.getPermissionEntity().getGroups().stream()
+                .filter(e -> e.getGroup().equals(groupName))
+                .forEach(e -> offlinePlayer.getPermissionEntity().getGroups().remove(e));
+
+        if (offlinePlayer.getPermissionEntity().getGroups().size() == 0) {
+            offlinePlayer.getPermissionEntity().getGroups().add(new GroupEntityData(permissionPool.getDefaultGroup().getName(), 0));
         }
+        updatePlayer(offlinePlayer);
     }
 
     /**
-     * Gets the given player permission groups.
+     * Gets a string representation of the permission groups of the given player.
      *
-     * @param offlinePlayer
+     * @param offlinePlayer the player to get the groups as a string for
      * @return Player Groups of the given player as String or  null if the player doesn't exists
-     * @see de.dytanic.cloudnet.lib.player.OfflinePlayer
      */
-
     public static String getPlayerGroups(OfflinePlayer offlinePlayer) {
         if (offlinePlayer != null && offlinePlayer.getPermissionEntity() != null) {
             StringBuilder stringBuilder = new StringBuilder();
             for (GroupEntityData groupEntityData : offlinePlayer.getPermissionEntity().getGroups()) {
-                stringBuilder.append(groupEntityData.getGroup() + "@" + (groupEntityData.getTimeout() == 0 ||
-                        groupEntityData.getTimeout() == -1 ? "LIFETIME" : simpleDateFormat.format(groupEntityData.getTimeout()))
-                        + "");
+                stringBuilder
+                        .append(groupEntityData.getGroup())
+                        .append("@").append(groupEntityData.getTimeout() == 0 || groupEntityData.getTimeout() == -1 ? "LIFETIME" : simpleDateFormat.format(groupEntityData.getTimeout()))
+                        .append(Character.LINE_SEPARATOR);
             }
-            return stringBuilder.substring(0);
+            return stringBuilder.toString();
         }
         return null;
     }
 
     /**
-     * Returns all server groups.
+     * Returns all permission groups.
      *
-     * @return Permission Groups or null
+     * @return All permission groups
      */
+    public static Collection<PermissionGroup> getGroups() {
+        return Collections.unmodifiableCollection(CloudAPI.getInstance().getPermissionPool().getGroups().values());
+    }
 
-    public static Collection<PermissionGroup> getGroups()
-    {
+    /**
+     * Returns the specified permission group by name.
+     *
+     * @param groupName the name of the group to get
+     * @return the specified permission group or null if the group doesn't exist
+     */
+    public static PermissionGroup getPermissionGroup(String groupName) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        for (PermissionGroup permissionGroup : permissionPool.getGroups().values())
-        {
-            return Collections.unmodifiableCollection(permissionPool.getGroups().values());
+        if (permissionPool.getGroups().containsKey(groupName)) {
+            return permissionPool.getGroups().get(groupName);
         }
         return null;
     }
 
     /**
-     * Returns the specified permission group.
+     * Sets the display for the given group by name.
      *
-     * @param group
-     * @return the specified permission group or null if the group doesn't exists
+     * @param groupName the name of the group
+     * @param display   the display to set
      */
-
-    public static PermissionGroup getPermissionGroup(String group)
-    {
+    public static void setDisplay(String groupName, String display) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(group))
-        {
-            return permissionPool.getGroups().get(group);
-        }
-        return null;
-    }
-
-    /**
-     * Sets the display name by the given group.
-     *
-     * @param group
-     * @param display
-     */
-
-    public static void setDisplay(String group, String display)
-    {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(group))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(group);
-            permissionGroup.setDisplay(display.replace("_", " "));
+        if (permissionPool.getGroups().containsKey(groupName)) {
+            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            permissionGroup.setDisplay(display);
             updatePermissionGroup(permissionGroup);
         }
     }
 
     /**
-     * Sets the prefix name by the given group.
+     * Sets the prefix for the given group by name.
      *
-     * @param group
-     * @param prefix
+     * @param groupName the name of the group
+     * @param prefix    the prefix to set
      */
-
-    public static void setPrefix(String group, String prefix)
-    {
+    public static void setPrefix(String groupName, String prefix) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(group))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(group);
-            permissionGroup.setPrefix(prefix.replace("_", " "));
+        if (permissionPool.getGroups().containsKey(groupName)) {
+            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            permissionGroup.setPrefix(prefix);
             updatePermissionGroup(permissionGroup);
         }
     }
 
     /**
-     * Sets the suffix name by the given group.
+     * Sets the suffix for the given group by name.
      *
-     * @param group
-     * @param suffix
+     * @param groupName the name of the group
+     * @param suffix    the suffix to set
      */
-
-    public static void setSuffix(String group, String suffix)
-    {
+    public static void setSuffix(String groupName, String suffix) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(group))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(group);
-            permissionGroup.setSuffix(suffix.replace("_", " "));
+        if (permissionPool.getGroups().containsKey(groupName)) {
+            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            permissionGroup.setSuffix(suffix);
             updatePermissionGroup(permissionGroup);
         }
     }
@@ -657,15 +533,12 @@ public class PermissionProvider
     /**
      * Sets the default permission group.
      *
-     * @param group
+     * @param groupName the name of the group to set as default
      */
-
-    public static void setDefaultGroup(String group)
-    {
+    public static void setDefaultGroup(String groupName) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(group))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(group);
+        if (permissionPool.getGroups().containsKey(groupName)) {
+            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             PermissionGroup olddefault = permissionPool.getDefaultGroup();
             olddefault.setDefaultGroup(false);
             permissionGroup.setDefaultGroup(true);
@@ -675,38 +548,49 @@ public class PermissionProvider
     }
 
     /**
-     * Sets the joinpower of the specified permission group.
+     * Sets the join power of the specified permission group by name.
      *
-     * @param group
-     * @param joinpower
+     * @param groupName the name of the group
+     * @param joinPower the new join power of the group
      */
-
-    public static void setJoinPower(String group, int joinpower)
-    {
+    public static void setJoinPower(String groupName, int joinPower) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(group))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(group);
-            permissionGroup.setJoinPower(joinpower);
+        if (permissionPool.getGroups().containsKey(groupName)) {
+            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            permissionGroup.setJoinPower(joinPower);
             updatePermissionGroup(permissionGroup);
         }
     }
 
     /**
-     * Sets the TagID of the given permission group.
+     * Sets the tag id of the given permission group by name.
      *
-     * @param group
-     * @param TagID
+     * @param groupName the name of the group
+     * @param tagId     the new tag id.
      */
-
-    public static void setTagID(String group, int TagID)
-    {
+    public static void setTagID(String groupName, int tagId) {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        if (permissionPool.getGroups().containsKey(group))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(group);
-            permissionGroup.setTagId(TagID);
+        if (permissionPool.getGroups().containsKey(groupName)) {
+            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            permissionGroup.setTagId(tagId);
             updatePermissionGroup(permissionGroup);
         }
+    }
+
+    /**
+     * Creates the a new permission group with the given name.
+     *
+     * @param permissionGroupName the name of the new permission group
+     * @return the new permission group or {@code null}, if the group already
+     * exists.
+     */
+    public PermissionGroup createPermissionGroup(String permissionGroupName) {
+        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        if (!permissionPool.getGroups().containsKey(permissionGroupName)) {
+            PermissionGroup permissionGroup = new DefaultPermissionGroup(permissionGroupName);
+            CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+            return permissionGroup;
+        }
+        return null;
     }
 }
