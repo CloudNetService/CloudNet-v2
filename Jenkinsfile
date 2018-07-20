@@ -60,8 +60,9 @@ pipeline {
   }
   post {
     always {
-      withCredentials([string(credentialsId: 'cloudnet-discord-ci-webhook', variable: 'url')])
-      discordSend description: 'New build for CloudNet!', footer: 'New build!', link: env.BUILD_URL, successful: currentBuild.resultIsBetterOrEqualTo('SUCCESS'), title: JOB_NAME, webhookURL: url
+      withCredentials([string(credentialsId: 'cloudnet-discord-ci-webhook', variable: 'url')]) {
+        discordSend description: 'New build for CloudNet!', footer: 'New build!', link: env.BUILD_URL, successful: currentBuild.resultIsBetterOrEqualTo('SUCCESS'), title: JOB_NAME, webhookURL: url
+      }
     }
   }
 }
