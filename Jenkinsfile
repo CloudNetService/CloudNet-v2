@@ -57,5 +57,10 @@ pipeline {
         archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/CloudNet-Wrapper.jar,**/target/CloudNet-Master.jar,**/target/CloudNetAPI.jar,target/cloudnet-*-javadoc.jar,cloudnet-tools/**/target/cloudnet-tools-*.jar', fingerprint: true, onlyIfSuccessful: true
       }
     }
+    post {
+    always {
+      discordSend description: 'New build for CloudNet!', footer: 'New build!', link: env.BUILD_URL, successful: currentBuild.resultIsBetterOrEqualTo('SUCCESS'), title: JOB_NAME, webhookURL: credentials('cloudnet-discord-ci-webhook')
+    }
+  }
   }
 }
