@@ -9,7 +9,6 @@ import de.dytanic.cloudnet.api.config.CloudConfigLoader;
 import de.dytanic.cloudnet.api.config.ConfigTypeLoader;
 import de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandCloud;
-import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandCloudDev;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandHub;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandPermissions;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.defaults.CommandIp;
@@ -74,9 +73,6 @@ public class ProxiedBootstrap extends Plugin {
             {
                 if (CloudAPI.getInstance().getPermissionPool() != null && CloudAPI.getInstance().getPermissionPool().isAvailable())
                     getProxy().getPluginManager().registerCommand(ProxiedBootstrap.this, new CommandPermissions());
-
-                if (CloudAPI.getInstance().getModuleProperties().contains("devservice"))
-                    getProxy().getPluginManager().registerCommand(ProxiedBootstrap.this, new CommandCloudDev());
 
                 if (CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance().getProxyGroup().getProxyConfig().getCustomPayloadFixer())
                 {
