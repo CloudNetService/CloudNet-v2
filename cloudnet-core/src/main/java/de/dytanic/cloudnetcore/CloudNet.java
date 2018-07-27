@@ -28,7 +28,6 @@ import de.dytanic.cloudnet.lib.utility.*;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
-import de.dytanic.cloudnet.libloader.LibLoader;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.modules.ModuleManager;
 import de.dytanic.cloudnet.web.client.WebClient;
@@ -56,7 +55,6 @@ import de.dytanic.cloudnetcore.web.log.WebsiteLog;
 import joptsimple.OptionSet;
 import lombok.Getter;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,7 +79,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     private final EventManager eventManager = new EventManager();
     private final ScreenProvider screenProvider = new ScreenProvider();
     private final ServerLogManager serverLogManager = new ServerLogManager();
-    private final LibLoader libLoader = new LibLoader(new File("local/libs"));
 
     private final NetworkManager networkManager = new NetworkManager();
     private final Scheduler scheduler = new Scheduler(50);

@@ -7,9 +7,10 @@
     <groupId>de.dytanic.cloudnet</groupId>
     <artifactId>cloudnet</artifactId>
     <packaging>pom</packaging>
-    <version>2.1.6</version>
+    <version>2.1.7</version>
 
     <name>CloudNet-Parent</name>
+    <url>https://cloudnetservice.eu/</url>
 
     <properties>
         <!-- compiler and encoding -->
@@ -17,7 +18,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
-        <service.version>2.1.6</service.version>
+        <service.version>2.1.7</service.version>
         <service.type>RELEASE</service.type>
         <!-- Dependencies -->
         <dependency.lombok.version>1.18.0</dependency.lombok.version>
@@ -44,7 +45,7 @@
         <developer>
             <id>main</id>
             <name>Tarek H.</name>
-            <url>http://dytanic.de</url>
+            <url>https://dytanic.de</url>
         </developer>
     </developers>
 

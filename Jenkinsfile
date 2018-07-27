@@ -12,7 +12,7 @@ pipeline {
     }
     stage('Version') {
       steps {
-        sh 'mvn versions:set -DnewVersion=2.1.6'
+        sh 'mvn versions:set -DnewVersion=2.1.7'
       }
     }
     stage('Compile') {
