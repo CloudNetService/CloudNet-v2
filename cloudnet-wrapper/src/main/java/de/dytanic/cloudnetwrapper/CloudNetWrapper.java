@@ -13,7 +13,7 @@ import de.dytanic.cloudnet.lib.network.auth.Auth;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.interfaces.Executeable;
+import de.dytanic.cloudnet.lib.interfaces.Executable;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 import de.dytanic.cloudnet.logging.CloudLogger;
@@ -47,7 +47,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Getter
-public final class CloudNetWrapper implements Executeable, Runnable, ShutdownOnCentral {
+public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCentral {
 
     public static volatile boolean RUNNING = false;
 

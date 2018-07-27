@@ -14,6 +14,7 @@ import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,7 +30,7 @@ public class PlayerDatabase extends DatabaseUseable {
 
     public OfflinePlayer registerPlayer(PlayerConnection playerConnection)
     {
-        OfflinePlayer offlinePlayer = new OfflinePlayer(playerConnection.getUniqueId(), playerConnection.getName(), new Document(), System.currentTimeMillis(), System.currentTimeMillis(), playerConnection, null);
+        OfflinePlayer offlinePlayer = new OfflinePlayer(playerConnection.getUniqueId(), playerConnection.getName(), new Document(), System.currentTimeMillis(), System.currentTimeMillis(), playerConnection, new PermissionEntity(playerConnection.getUniqueId(), new HashMap<>(), null, null, new LinkedList<>()));
         database.insert(new DatabaseDocument(playerConnection.getUniqueId().toString()).append("offlinePlayer", offlinePlayer));
         return offlinePlayer;
     }
@@ -47,6 +48,7 @@ public class PlayerDatabase extends DatabaseUseable {
         Document document = database.getDocument(uuid.toString());
         OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
         offlinePlayer.setName(name);
+        document.append("offlinePlayer", offlinePlayer);
         database.insert(document);
         return this;
     }
@@ -61,6 +63,7 @@ public class PlayerDatabase extends DatabaseUseable {
         Document document = database.getDocument(uuid.toString());
         OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
         offlinePlayer.setPermissionEntity(permissionEntity);
+        document.append("offlinePlayer", offlinePlayer);
         database.insert(document);
         return this;
     }
@@ -81,8 +84,10 @@ public class PlayerDatabase extends DatabaseUseable {
 
         Map<UUID, OfflinePlayer> map = new HashMap<>();
 
-        for (Document document : database.getDocs())
-            map.put(UUID.fromString(document.getString(Database.UNIQUE_NAME_KEY)), document.getObject("offlinePlayer", OfflinePlayer.TYPE));
+        for (Document document : database.getDocs()) {
+            OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
+            map.put(offlinePlayer.getUniqueId(), offlinePlayer);
+        }
 
         return map;
     }

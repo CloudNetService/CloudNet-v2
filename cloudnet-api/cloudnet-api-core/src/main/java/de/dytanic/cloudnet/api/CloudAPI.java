@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.api;
 
 import com.google.gson.reflect.TypeToken;
@@ -217,6 +213,9 @@ public final class CloudAPI implements MetaObj {
         return networkConnection;
     }
 
+    /**
+     * Returns the cloud prefix
+     */
     public String getPrefix()
     {
         return cloudNetwork.getMessages().getString("prefix");
@@ -320,6 +319,14 @@ public final class CloudAPI implements MetaObj {
     public int getOnlineCount()
     {
         return cloudNetwork.getOnlineCount();
+    }
+
+    /**
+     * Returns the amount of players that are registered in the Cloud
+     */
+    public int getRegisteredPlayerCount()
+    {
+        return cloudNetwork.getRegisteredPlayerCount();
     }
 
     /**

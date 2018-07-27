@@ -329,7 +329,7 @@ public class BungeeCord implements ServerDispatcher {
                 try
                 {
                     System.out.println("Downloading ViaVersion...");
-                    URLConnection url = new URL("https://ci.viaversion.com/job/ViaVersion/lastSuccessfulBuild/artifact/jar/target/ViaVersion-1.3.0.jar").openConnection();
+                    URLConnection url = new URL("https://ci.cloudnetservice.eu/job/ViaVersion/lastStableBuild/artifact/jar/target/ViaVersion.jar").openConnection();
                     url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
                     url.connect();
                     Files.copy(url.getInputStream(), Paths.get("local/ViaVersion-Proxied.jar"));
