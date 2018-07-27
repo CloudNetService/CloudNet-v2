@@ -271,17 +271,12 @@ public final class NetworkUtils {
     public static void header()
     {
         System.out.println(NetworkUtils.SPACE_STRING);
-        /*
         System.out.println("██████ █      ██████ █   █ █████ ██    █ █████ █████ [" + NetworkUtils.class.getPackage().getImplementationVersion() + "]");
         System.out.println("█R     █E     █Z   █ █S  █ █Y  █ █M█   █ █       █");
         System.out.println("█      █      █    █ █   █ █   █ █  █  █ ████    █");
         System.out.println("█D     █Y     █T   █ █A  █ █N  █ █   █I█ █C      █");
         System.out.println("██████ ██████ ██████ █████ █████ █    ██ ████    █");
-        */
-        System.out.println(" _______         _____  _     _ ______  __   _ _______ _______ [" + NetworkUtils.class.getPackage().getImplementationVersion() + "]");
-        System.out.println(" |       |      |     | |     | |     \\ | \\  | |______    |   ");
-        System.out.println(" |_____  |_____ |_____| |_____| |_____/ |  \\_| |______    |   ");
-        System.out.println("                                                              ");
+        System.out.println();
         System.out.println("«» The Cloud Network Environment Technology");
         System.out.println("«» Support https://discord.gg/5NUhKuR      [" + NetworkUtils.class.getPackage().getSpecificationVersion() + "]");
         System.out.println("«» Java " + System.getProperty("java.version") + " @" + System.getProperty("user.name") + NetworkUtils.SPACE_STRING + System.getProperty("os.name") + NetworkUtils.SPACE_STRING);

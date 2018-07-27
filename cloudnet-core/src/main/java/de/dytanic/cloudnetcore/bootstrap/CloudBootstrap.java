@@ -109,11 +109,19 @@ public final class CloudBootstrap {
         {
             System.out.println("Use the command \"help\" for further information!");
             String commandLine;
+
+            String user = System.getProperty("user.name");
+
             try
             {
                 while (true)
-                    while ((commandLine = cloudNetLogging.getReader().readLine()) != null && CloudNet.RUNNING)
+                {
+                    cloudNetLogging.getReader().setPrompt(NetworkUtils.EMPTY_STRING);
+                    cloudNetLogging.getReader().resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
+                    while ((commandLine = cloudNetLogging.getReader().readLine(user + "@Master $ ")) != null && CloudNet.RUNNING)
                     {
+                        cloudNetLogging.getReader().setPrompt(NetworkUtils.EMPTY_STRING);
+
                         String dispatcher = cloudNetCore.getDbHandlers().getCommandDispatcherDatabase().findDispatcher(commandLine);
                         if (dispatcher != null)
                         {
@@ -134,6 +142,7 @@ public final class CloudBootstrap {
                             System.out.println("Command not found. Use the command \"help\" for further information!");
                         }
                     }
+                }
             } catch (Exception ex)
             {
 

@@ -11,7 +11,6 @@ import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudServerInitEvent;
 import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandCloudServer;
 import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandResource;
 import de.dytanic.cloudnet.bridge.internal.listener.bukkit.BukkitListener;
-import de.dytanic.cloudnet.bridge.internal.listener.bukkit.ReloadListener;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.SignSelector;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.in.PacketInMobSelector;
@@ -59,7 +58,6 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
 
         new CloudServer(this, CloudAPI.getInstance());
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
-        getServer().getPluginManager().registerEvents(new ReloadListener(), this);
 
         CloudServer.getInstance().registerCommand(new CommandResource());
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
