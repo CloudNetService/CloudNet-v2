@@ -39,13 +39,13 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-bootstrap</artifactId>
-            <version>${dependency.bungeecord.version}</version>
+            <version>1.8-1.12</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>${dependency.spigot.version}</version>
+            <version>1.8.8</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

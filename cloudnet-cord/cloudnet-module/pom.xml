@@ -17,7 +17,7 @@
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-event</artifactId>
             <version>${service.version}-SNAPSHOT</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>

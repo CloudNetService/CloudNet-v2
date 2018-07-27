@@ -1,10 +1,10 @@
 language: java
 jdk:
-  - oraclejdk10
+  - oraclejdk8
 sudo: false
 addons:
   apt:
     packages:
-      - oracle-java10-installer
+      - oracle-java8-installer
 notifications:
   email: false  
