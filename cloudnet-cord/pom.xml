@@ -21,7 +21,6 @@
         <module>cloudnet-log</module>
         <module>cloudnet-web</module>
         <module>cloudnet-database</module>
-        <module>cloudnet-libloader</module>
         <module>cloudnet-cloudflare</module>
         <module>cloudnet-snakeconfig</module>
         <module>cloudnet-help</module>

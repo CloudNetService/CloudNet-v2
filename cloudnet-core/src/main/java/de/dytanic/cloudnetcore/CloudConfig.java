@@ -71,7 +71,6 @@ public class CloudConfig {
     {
         if (!Files.exists(Paths.get("groups"))) Files.createDirectory(Paths.get("groups"));
         if (!Files.exists(Paths.get("local"))) Files.createDirectory(Paths.get("local"));
-        if (!Files.exists(Paths.get("local/libs"))) Files.createDirectory(Paths.get("local/libs"));
         if (!Files.exists(Paths.get("local/templates"))) Files.createDirectory(Paths.get("local/templates"));
         if (!Files.exists(Paths.get("local/plugins"))) Files.createDirectory(Paths.get("local/plugins"));
         if (!Files.exists(Paths.get("local/cache"))) Files.createDirectory(Paths.get("local/cache"));
