@@ -4,7 +4,7 @@
 
 package de.dytanic.cloudnet.api.config;
 
-public enum  ConfigTypeLoader {
+public enum ConfigTypeLoader {
 
     EXTERNAL,
     INTERNAL

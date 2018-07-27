@@ -15,6 +15,7 @@ public abstract class BukkitCloudEvent extends Event {
 
     /**
      * Returns the CloudAPI instance
+     *
      * @return
      */
     public CloudAPI getCloud()

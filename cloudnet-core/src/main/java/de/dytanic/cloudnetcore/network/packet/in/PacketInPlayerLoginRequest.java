@@ -17,8 +17,9 @@ public final class PacketInPlayerLoginRequest extends PacketInHandler {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        if(!(packetSender instanceof ProxyServer) && packetUniqueId != null) return;
-        PlayerConnection playerConnection = data.getObject("playerConnection", new TypeToken<PlayerConnection>(){}.getType());
+        if (!(packetSender instanceof ProxyServer) && packetUniqueId != null) return;
+        PlayerConnection playerConnection = data.getObject("playerConnection", new TypeToken<PlayerConnection>() {
+        }.getType());
         CloudNet.getInstance().getNetworkManager().handlePlayerLoginRequest(((ProxyServer) packetSender), playerConnection, packetUniqueId);
     }
 }

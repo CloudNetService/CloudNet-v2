@@ -4,7 +4,6 @@ import de.dytanic.cloudnet.lib.utility.threading.ScheduledTask;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 
 
-
 public class Cache<K, V> {
 
     private ScheduledTask task;

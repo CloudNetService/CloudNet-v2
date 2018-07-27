@@ -41,6 +41,6 @@ public class DatabaseBasicHandlers {
 
         nameToUUIDDatabase.handleUpdate(updateConfigurationDatabase);
 
-        ((DatabaseImpl)config).save();
+        ((DatabaseImpl) config).save();
     }
 }

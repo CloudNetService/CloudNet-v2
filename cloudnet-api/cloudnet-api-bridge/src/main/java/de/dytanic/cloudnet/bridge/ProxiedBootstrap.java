@@ -7,13 +7,13 @@ package de.dytanic.cloudnet.bridge;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.config.CloudConfigLoader;
 import de.dytanic.cloudnet.api.config.ConfigTypeLoader;
-import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandCloudDev;
+import de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandCloud;
+import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandCloudDev;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandHub;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandPermissions;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.defaults.CommandIp;
 import de.dytanic.cloudnet.bridge.internal.listener.proxied.ProxiedListener;
-import de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.ProxyServer;
@@ -72,13 +72,13 @@ public class ProxiedBootstrap extends Plugin {
             @Override
             public void run()
             {
-                if(CloudAPI.getInstance().getPermissionPool() != null && CloudAPI.getInstance().getPermissionPool().isAvailable())
-                getProxy().getPluginManager().registerCommand(ProxiedBootstrap.this, new CommandPermissions());
+                if (CloudAPI.getInstance().getPermissionPool() != null && CloudAPI.getInstance().getPermissionPool().isAvailable())
+                    getProxy().getPluginManager().registerCommand(ProxiedBootstrap.this, new CommandPermissions());
 
-                if(CloudAPI.getInstance().getModuleProperties().contains("devservice"))
-                getProxy().getPluginManager().registerCommand(ProxiedBootstrap.this, new CommandCloudDev());
+                if (CloudAPI.getInstance().getModuleProperties().contains("devservice"))
+                    getProxy().getPluginManager().registerCommand(ProxiedBootstrap.this, new CommandCloudDev());
 
-                if(CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance().getProxyGroup().getProxyConfig().getCustomPayloadFixer())
+                if (CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance().getProxyGroup().getProxyConfig().getCustomPayloadFixer())
                 {
                     getProxy().registerChannel("MC|BSign");
                     getProxy().registerChannel("MC|BEdit");

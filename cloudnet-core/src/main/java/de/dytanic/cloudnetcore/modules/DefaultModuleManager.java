@@ -46,13 +46,13 @@ public class DefaultModuleManager {
         });
 
         Path path;
-        for(DefaultModule defaultModule : modules)
+        for (DefaultModule defaultModule : modules)
         {
             path = Paths.get("modules/" + defaultModule.getModuleName() + ".jar");
 
             Files.deleteIfExists(path);
 
-            try(InputStream inputStream = defaultModule.stream())
+            try (InputStream inputStream = defaultModule.stream())
             {
                 Files.copy(inputStream, path);
             }

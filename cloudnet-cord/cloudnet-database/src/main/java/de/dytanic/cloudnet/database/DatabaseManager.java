@@ -17,7 +17,7 @@ import java.util.*;
  */
 @Getter
 public class DatabaseManager
-            implements Runnable{
+        implements Runnable {
 
     private final File dir;
     private final Thread thread;
@@ -44,13 +44,13 @@ public class DatabaseManager
     {
         Database database = null;
 
-        if(databaseCollection.containsKey(name))
+        if (databaseCollection.containsKey(name))
         {
             return databaseCollection.get(name);
         }
 
         File file = new File("database/" + name);
-        if(!file.exists())
+        if (!file.exists())
         {
             file.mkdir();
         }
@@ -63,18 +63,18 @@ public class DatabaseManager
 
     public DatabaseManager save()
     {
-        for(Database database : databaseCollection.values())
+        for (Database database : databaseCollection.values())
         {
-            ((DatabaseImpl)database).save();
+            ((DatabaseImpl) database).save();
         }
         return this;
     }
 
     public DatabaseManager clear()
     {
-        for(Database database : databaseCollection.values())
+        for (Database database : databaseCollection.values())
         {
-            ((DatabaseImpl)database).clear();
+            ((DatabaseImpl) database).clear();
         }
         return this;
     }
@@ -88,7 +88,7 @@ public class DatabaseManager
             save();
 
             tick++;
-            if(tick == 6)
+            if (tick == 6)
             {
                 clear();
                 tick = 0;
@@ -97,7 +97,9 @@ public class DatabaseManager
             try
             {
                 Thread.sleep(60000);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e)
+            {
+            }
         }
     }
 }

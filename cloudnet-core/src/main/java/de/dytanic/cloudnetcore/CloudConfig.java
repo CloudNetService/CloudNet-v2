@@ -372,19 +372,20 @@ public class CloudConfig {
         File groupsDirectory = new File("groups");
         Document entry;
 
-        if(groupsDirectory.isDirectory())
-        for(File file : groupsDirectory.listFiles())
-        {
-            if(file.getName().endsWith(".json"))
-            try
+        if (groupsDirectory.isDirectory())
+            for (File file : groupsDirectory.listFiles())
             {
-                entry = Document.$loadDocument(file);
-                ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
-                groups.put(serverGroup.getName(), serverGroup);
-            } catch (Throwable ex) {
-                System.out.println("Cannot load servergroup file [" + file.getName() + "]");
+                if (file.getName().endsWith(".json"))
+                    try
+                    {
+                        entry = Document.$loadDocument(file);
+                        ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
+                        groups.put(serverGroup.getName(), serverGroup);
+                    } catch (Throwable ex)
+                    {
+                        System.out.println("Cannot load servergroup file [" + file.getName() + "]");
+                    }
             }
-        }
 
         return groups;
     }

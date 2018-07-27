@@ -27,21 +27,21 @@ public class ConfigMobs implements ILoader<MobConfig> {
 
     public ConfigMobs()
     {
-        if(!Files.exists(path))
+        if (!Files.exists(path))
         {
             new Document()
                     .append("mobConfig", new MobConfig(54, 10, new MobItemLayout(388, 0,
-                            "§6%server%", Arrays.asList(NetworkUtils.SPACE_STRING, "§e%state%", "§e%online_players% §8/§e%max_players%", "§e%motd%")),
-                            MapWrapper.valueableHashMap(
-                                    new Return<>(1, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
-                                    new Return<>(2, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
-                                    new Return<>(3, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
-                                    new Return<>(4, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
-                                    new Return<>(5, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
-                                    new Return<>(6, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
-                                    new Return<>(7, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
-                                    new Return<>(8, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
-                                    new Return<>(9, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))))
+                                    "§6%server%", Arrays.asList(NetworkUtils.SPACE_STRING, "§e%state%", "§e%online_players% §8/§e%max_players%", "§e%motd%")),
+                                    MapWrapper.valueableHashMap(
+                                            new Return<>(1, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                            new Return<>(2, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                            new Return<>(3, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                            new Return<>(4, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                            new Return<>(5, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                            new Return<>(6, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                            new Return<>(7, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                            new Return<>(8, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))),
+                                            new Return<>(9, new MobItemLayout(160, 15, NetworkUtils.SPACE_STRING, Arrays.asList(NetworkUtils.SPACE_STRING))))
                             )
                     ).saveAsConfig(path);
         }
@@ -50,7 +50,8 @@ public class ConfigMobs implements ILoader<MobConfig> {
     @Override
     public MobConfig load()
     {
-        return Document.loadDocument(path).getObject("mobConfig", new TypeToken<MobConfig>(){}.getType());
+        return Document.loadDocument(path).getObject("mobConfig", new TypeToken<MobConfig>() {
+        }.getType());
     }
 
 }

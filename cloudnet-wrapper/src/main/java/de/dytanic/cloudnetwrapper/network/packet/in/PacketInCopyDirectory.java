@@ -13,15 +13,15 @@ public final class PacketInCopyDirectory extends PacketInHandler {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        if(!data.contains("directory") || !data.contains("serverInfo")) return;
+        if (!data.contains("directory") || !data.contains("serverInfo")) return;
 
         ServerInfo serverInfo = data.getObject("serverInfo", ServerInfo.TYPE);
         GameServer gameServer = CloudNetWrapper.getInstance().getServers().get(serverInfo.getServiceId().getServerId());
 
-        if(gameServer == null) return;
+        if (gameServer == null) return;
 
-        if(gameServer.getServerProcess().getMeta().getTemplate().getBackend().equals(TemplateResource.LOCAL))
-        gameServer.copyDirectory(data.getString("directory"));
+        if (gameServer.getServerProcess().getMeta().getTemplate().getBackend().equals(TemplateResource.LOCAL))
+            gameServer.copyDirectory(data.getString("directory"));
 
     }
 }

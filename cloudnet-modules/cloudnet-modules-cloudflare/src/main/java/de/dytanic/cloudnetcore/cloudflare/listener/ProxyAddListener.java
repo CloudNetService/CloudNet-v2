@@ -13,7 +13,7 @@ import de.dytanic.cloudnetcore.cloudflare.CloudFlareModule;
 /**
  * Created by Tareko on 20.10.2017.
  */
-public class ProxyAddListener implements IEventListener<ProxyAddEvent>{
+public class ProxyAddListener implements IEventListener<ProxyAddEvent> {
 
     @Override
     public void onCall(ProxyAddEvent event)

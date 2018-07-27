@@ -2,14 +2,14 @@ package de.dytanic.cloudnet.lib.network;
 
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.network.auth.Auth;
+import de.dytanic.cloudnet.lib.network.auth.packetio.PacketOutAuth;
 import de.dytanic.cloudnet.lib.network.protocol.IProtocol;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolProvider;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolRequest;
-import de.dytanic.cloudnet.lib.network.auth.Auth;
+import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.network.auth.packetio.PacketOutAuth;
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet3.TaskScheduler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -98,7 +98,7 @@ public class NetworkConnection implements PacketSender {
             System.out.println("Failed to connect... [" + connectionTrys + "]");
             System.out.println("Error: " + ex.getMessage());
 
-            if(eventLoopGroup != null)
+            if (eventLoopGroup != null)
                 eventLoopGroup.shutdownGracefully();
 
             eventLoopGroup = null;
@@ -114,8 +114,8 @@ public class NetworkConnection implements PacketSender {
 
     public boolean tryDisconnect()
     {
-        if(channel != null)
-        channel.close();
+        if (channel != null)
+            channel.close();
         eventLoopGroup.shutdownGracefully();
         return false;
     }

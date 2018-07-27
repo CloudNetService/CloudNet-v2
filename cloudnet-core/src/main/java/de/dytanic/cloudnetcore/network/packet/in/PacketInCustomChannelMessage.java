@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutCustomChannelMessage;
 
 /**
  * Created by Tareko on 19.08.2017.

@@ -24,7 +24,7 @@ public class CommandModules extends Command {
     public void onExecuteCommand(CommandSender sender, String[] args)
     {
         sender.sendMessage("Running modules:", NetworkUtils.SPACE_STRING);
-        for(Module module : CloudNet.getInstance().getModuleManager().getModules())
+        for (Module module : CloudNet.getInstance().getModuleManager().getModules())
         {
             sender.sendMessage(module.getName() + " " + module.getModuleConfig().getVersion() + " by " + module.getModuleConfig().getAuthor() + NetworkUtils.EMPTY_STRING);
         }

@@ -14,7 +14,7 @@ import java.util.UUID;
  * Calls if a player
  */
 @Getter
-public class LogoutEventUnique extends AsyncEvent<LogoutEventUnique>{
+public class LogoutEventUnique extends AsyncEvent<LogoutEventUnique> {
 
     private UUID uniqueId;
 

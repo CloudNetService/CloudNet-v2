@@ -4,8 +4,17 @@
 
 package de.dytanic.cloudnetcore.network.components;
 
+import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.cloudserver.CloudServerMeta;
+import de.dytanic.cloudnet.lib.network.WrapperExternal;
+import de.dytanic.cloudnet.lib.network.WrapperInfo;
+import de.dytanic.cloudnet.lib.server.ProxyGroup;
+import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
+import de.dytanic.cloudnet.lib.server.ServerGroup;
+import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
+import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
+import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
@@ -15,15 +24,6 @@ import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.Quad;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
-import de.dytanic.cloudnet.lib.DefaultType;
-import de.dytanic.cloudnet.lib.network.WrapperExternal;
-import de.dytanic.cloudnet.lib.network.WrapperInfo;
-import de.dytanic.cloudnet.lib.server.ProxyGroup;
-import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
-import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
-import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
-import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnetcore.network.packet.out.*;
 import io.netty.channel.Channel;
 import lombok.Getter;
@@ -32,7 +32,6 @@ import net.md_5.bungee.config.Configuration;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -125,15 +124,17 @@ public final class Wrapper
             try
             {
                 minecraftServer.disconnect();
-            }catch (Exception ex){
+            } catch (Exception ex)
+            {
 
             }
 
-        for(CloudServer cloudServer : cloudServers.values())
+        for (CloudServer cloudServer : cloudServers.values())
             try
             {
                 cloudServer.disconnect();
-            }catch (Exception ex) {
+            } catch (Exception ex)
+            {
 
             }
 
@@ -141,7 +142,8 @@ public final class Wrapper
             try
             {
                 minecraftServer.disconnect();
-            }catch (Exception ex){
+            } catch (Exception ex)
+            {
 
             }
 
@@ -180,7 +182,7 @@ public final class Wrapper
                 return networkInfo.getUser().equals(value.getName());
             }
         });
-        if(user != null)
+        if (user != null)
         {
             simpledUser = user.toSimple();
         }
@@ -209,13 +211,13 @@ public final class Wrapper
     {
         Collection<Integer> ports = new ArrayList<>();
 
-        for(Quad<Integer, Integer, ServiceId, Template> serviceIdValues : waitingServices.values())
+        for (Quad<Integer, Integer, ServiceId, Template> serviceIdValues : waitingServices.values())
             ports.add(serviceIdValues.getFirst());
 
-        for(MinecraftServer minecraftServer : servers.values())
+        for (MinecraftServer minecraftServer : servers.values())
             ports.add(minecraftServer.getProcessMeta().getPort());
 
-        for(ProxyServer proxyServer : proxys.values())
+        for (ProxyServer proxyServer : proxys.values())
             ports.add(proxyServer.getProcessMeta().getPort());
 
         return ports;

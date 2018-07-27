@@ -13,12 +13,13 @@ public final class UpdateConfigurationDatabase extends DatabaseUseable {
     {
         super(database);
 
-        if(database.getDocument(NAME) == null) database.insert(new DatabaseDocument(NAME));
+        if (database.getDocument(NAME) == null) database.insert(new DatabaseDocument(NAME));
     }
 
     public void set(Document document)
     {
-        if(document.contains(Database.UNIQUE_NAME_KEY) && document.getString(Database.UNIQUE_NAME_KEY).equals(NAME)) database.insert(document);
+        if (document.contains(Database.UNIQUE_NAME_KEY) && document.getString(Database.UNIQUE_NAME_KEY).equals(NAME))
+            database.insert(document);
     }
 
     public Document get()

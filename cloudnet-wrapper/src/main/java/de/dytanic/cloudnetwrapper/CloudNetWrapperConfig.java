@@ -26,11 +26,11 @@ public class CloudNetWrapperConfig {
 
     private String internalIP, wrapperId, cloudnetHost, devServicePath, proxy_config_host;
 
-    private boolean savingRecords,viaVersion, autoUpdate, maintenance_copy;
+    private boolean savingRecords, viaVersion, autoUpdate, maintenance_copy;
 
     private int cloudnetPort, startPort, processQueueSize, maxMemory, webPort;
 
-    private double percentOfCPUForANewServer, percentOfCPUForANewCloudServer,  percentOfCPUForANewProxy;
+    private double percentOfCPUForANewServer, percentOfCPUForANewCloudServer, percentOfCPUForANewProxy;
 
     public CloudNetWrapperConfig(ConsoleReader reader) throws Exception
     {
@@ -191,7 +191,7 @@ public class CloudNetWrapperConfig {
             this.percentOfCPUForANewCloudServer = configuration.getDouble("general.percentOfCPUForANewCloudServer");
             this.devServicePath = configuration.getString("general.devservicePath");
 
-            if(!configuration.getSection("general").self.containsKey("proxy-config-host"))
+            if (!configuration.getSection("general").self.containsKey("proxy-config-host"))
             {
                 configuration.set("general.proxy-config-host", this.internalIP);
                 save();
@@ -201,7 +201,7 @@ public class CloudNetWrapperConfig {
 
             this.proxy_config_host = configuration.getString("general.proxy-config-host");
 
-            if(!Files.exists(Paths.get(devServicePath)))
+            if (!Files.exists(Paths.get(devServicePath)))
             {
                 Files.createDirectories(Paths.get(devServicePath));
             }

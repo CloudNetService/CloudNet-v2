@@ -9,6 +9,7 @@ import lombok.Getter;
 
 /**
  * Asynchronized Event server
+ *
  * @param <E>
  */
 @Getter

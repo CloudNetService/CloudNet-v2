@@ -6,12 +6,10 @@ package de.dytanic.cloudnetcore.network.components;
 
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
-import de.dytanic.cloudnet.lib.server.resource.ResourceMeta;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.network.NetworkInfo;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutCustomChannelMessage;
-import de.dytanic.cloudnetcore.util.defaults.DefaultResourceMeta;
 import io.netty.channel.Channel;
 import lombok.Getter;
 import lombok.Setter;

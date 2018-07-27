@@ -26,12 +26,12 @@ public class BungeeCordChannel {
     @EventHandler
     public void handleChannelIncomingMessage(ProxiedSubChannelMessageEvent e)
     {
-        if(e.getChannel().equalsIgnoreCase("ban-system"))
+        if (e.getChannel().equalsIgnoreCase("ban-system"))
         {
-            if(e.getMessage().equalsIgnoreCase("kick"))
+            if (e.getMessage().equalsIgnoreCase("kick"))
             {
                 ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(e.getDocument().getObject("uuid", UUID.class));
-                if(proxiedPlayer != null)
+                if (proxiedPlayer != null)
                 {
                     proxiedPlayer.disconnect(e.getDocument().getString("reason"));
                 }

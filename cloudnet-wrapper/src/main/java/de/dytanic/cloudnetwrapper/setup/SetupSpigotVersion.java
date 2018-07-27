@@ -3,6 +3,7 @@
  */
 
 package de.dytanic.cloudnetwrapper.setup;
+
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import jline.console.ConsoleReader;
 
@@ -51,7 +52,7 @@ public class SetupSpigotVersion
 
         String answer = null;
 
-        if(System.getProperty("spigot-type") != null)
+        if (System.getProperty("spigot-type") != null)
         {
             answer = System.getProperty("spigot-type");
         }
@@ -82,7 +83,8 @@ public class SetupSpigotVersion
                         answer = "dytanicspigot";
                         break;
                         */
-                    default: System.out.println("This version is not supported!");
+                    default:
+                        System.out.println("This version is not supported!");
                 }
 
             } catch (Exception ex)
@@ -93,7 +95,7 @@ public class SetupSpigotVersion
 
         String cancer = null;
 
-        if(System.getProperty("spigot-version") != null)
+        if (System.getProperty("spigot-version") != null)
         {
             answer = System.getProperty("spigot-version");
         }

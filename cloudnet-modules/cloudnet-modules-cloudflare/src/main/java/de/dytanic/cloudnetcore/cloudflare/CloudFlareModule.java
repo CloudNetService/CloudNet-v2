@@ -4,8 +4,8 @@
 
 package de.dytanic.cloudnetcore.cloudflare;
 
-import de.dytanic.cloudnet.cloudflare.database.CloudFlareDatabase;
 import de.dytanic.cloudnet.cloudflare.CloudFlareService;
+import de.dytanic.cloudnet.cloudflare.database.CloudFlareDatabase;
 import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
 import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
@@ -16,7 +16,6 @@ import de.dytanic.cloudnetcore.cloudflare.listener.ProxyRemoveListener;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import lombok.Getter;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;

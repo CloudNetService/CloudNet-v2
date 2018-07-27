@@ -17,10 +17,10 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.Value;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.serverselectors.mob.MobPosition;
-import de.dytanic.cloudnet.lib.serverselectors.mob.MobItemLayout;
-import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
+import de.dytanic.cloudnet.lib.serverselectors.mob.MobItemLayout;
+import de.dytanic.cloudnet.lib.serverselectors.mob.MobPosition;
+import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
 import de.dytanic.cloudnet.lib.utility.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -120,7 +120,7 @@ public final class MobSelector {
                 try
                 {
                     Entity entity = (Entity) mobImpl.displayMessage;
-                    if(entity.getPassenger() != null)
+                    if (entity.getPassenger() != null)
                     {
                         entity.getPassenger().remove();
                     }
@@ -265,7 +265,7 @@ public final class MobSelector {
 
     public void handleUpdate(ServerInfo serverInfo)
     {
-        if(serverInfo.getServiceId().getGroup() == null) return;
+        if (serverInfo.getServiceId().getGroup() == null) return;
 
         for (MobImpl mob : this.mobs.values())
             if (mob.getMob().getTargetGroup().equals(serverInfo.getServiceId().getGroup()))
@@ -412,7 +412,7 @@ public final class MobSelector {
                 e.setCancelled(true);
                 if (!CloudAPI.getInstance().getServerGroupData(mobImpl.getMob().getTargetGroup()).isMaintenance())
                 {
-                    if(mobImpl.getMob().getAutoJoin() != null && mobImpl.getMob().getAutoJoin())
+                    if (mobImpl.getMob().getAutoJoin() != null && mobImpl.getMob().getAutoJoin())
                     {
                         ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
                         byteArrayDataOutput.writeUTF("Connect");
@@ -426,9 +426,9 @@ public final class MobSelector {
                                 e.getPlayer().sendPluginMessage(CloudServer.getInstance().getPlugin(), "BungeeCord", byteArrayDataOutput.toByteArray());
                                 return;
                             }
-                    }
-                    else e.getPlayer().openInventory(mobImpl.getInventory());
-                } else e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("mob-selector-maintenance-message")));
+                    } else e.getPlayer().openInventory(mobImpl.getInventory());
+                } else
+                    e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("mob-selector-maintenance-message")));
             }
         }
 
@@ -462,7 +462,8 @@ public final class MobSelector {
                     MobImpl mob = find(e.getInventory());
                     if (mob.getServerPosition().containsKey(e.getSlot()))
                     {
-                        if (CloudAPI.getInstance().getServerId().equalsIgnoreCase(mob.getServerPosition().get(e.getSlot()))) return;
+                        if (CloudAPI.getInstance().getServerId().equalsIgnoreCase(mob.getServerPosition().get(e.getSlot())))
+                            return;
                         ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
                         byteArrayDataOutput.writeUTF("Connect");
                         byteArrayDataOutput.writeUTF(mob.getServerPosition().get(e.getSlot()));
@@ -510,11 +511,11 @@ public final class MobSelector {
                             Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
                             Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);
 
-                            if(armorStand != null)
+                            if (armorStand != null)
                             {
                                 MobSelector.getInstance().updateCustom(key, armorStand);
                                 Entity armor = (Entity) armorStand;
-                                if(armor.getPassenger() == null && key.getItemId() != null)
+                                if (armor.getPassenger() == null && key.getItemId() != null)
                                 {
                                     Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(key.getItemId()));
                                     item.setPickupDelay(Integer.MAX_VALUE);
@@ -523,7 +524,7 @@ public final class MobSelector {
                                 }
                             }
 
-                            if(entity instanceof Villager)
+                            if (entity instanceof Villager)
                             {
                                 ((Villager) entity).setProfession(Villager.Profession.FARMER);
                             }
@@ -531,7 +532,7 @@ public final class MobSelector {
                             MobSelector.getInstance().unstableEntity(entity);
                             entity.setCustomNameVisible(true);
                             entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay()));
-                            MobImpl mob =  new MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
+                            MobImpl mob = new MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
                             Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
                             return mob;
                         }

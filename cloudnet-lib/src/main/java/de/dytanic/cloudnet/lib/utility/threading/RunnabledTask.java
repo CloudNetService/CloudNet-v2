@@ -43,6 +43,6 @@ public abstract class RunnabledTask implements Runnable {
 
     public void cancel()
     {
-        if(task != null) task.cancel();
+        if (task != null) task.cancel();
     }
 }

@@ -40,9 +40,10 @@ public class URLBuilder implements Cloneable {
 
     public java.net.URL url()
     {
-        try{
+        try
+        {
             return new java.net.URL(urlString.substring(0) + param.substring(0));
-        }catch (Exception ex)
+        } catch (Exception ex)
         {
             return null;
         }

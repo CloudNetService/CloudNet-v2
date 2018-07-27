@@ -9,13 +9,11 @@ import de.dytanic.cloudnet.lib.network.protocol.ProtocolStream;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by Tareko on 09.09.2017.
@@ -37,12 +35,12 @@ public class FileProtocol implements IProtocol {
     @Override
     public ProtocolStream createElement(Object element)
     {
-        if(element.getClass().equals(File.class))
+        if (element.getClass().equals(File.class))
         {
             try
             {
-                byte[] input = Files.readAllBytes(Paths.get(((File)element).getPath()));
-                String dest = ((File)element).getPath();
+                byte[] input = Files.readAllBytes(Paths.get(((File) element).getPath()));
+                String dest = ((File) element).getPath();
                 return new FileDeploy(dest, input);
             } catch (IOException e)
             {
@@ -50,12 +48,12 @@ public class FileProtocol implements IProtocol {
             }
         }
 
-        if(element.getClass().equals(Path.class))
+        if (element.getClass().equals(Path.class))
         {
             try
             {
                 byte[] input = Files.readAllBytes((Path) element);
-                String dest = ((Path)element).toUri().toString();
+                String dest = ((Path) element).toUri().toString();
                 return new FileDeploy(dest, input);
             } catch (IOException e)
             {
@@ -63,9 +61,9 @@ public class FileProtocol implements IProtocol {
             }
         }
 
-        if(element instanceof FileDeploy)
+        if (element instanceof FileDeploy)
         {
-            return (FileDeploy)element;
+            return (FileDeploy) element;
         }
 
         return null;

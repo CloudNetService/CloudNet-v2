@@ -34,9 +34,9 @@ public class LibLoader {
     public void load()
     {
         URL[] url = new URL[file.list().length];
-        for(File file : this.file.listFiles())
+        for (File file : this.file.listFiles())
         {
-            if(file.getName().endsWith(".jar"))
+            if (file.getName().endsWith(".jar"))
             {
                 libarys.add(new Libary(Paths.get(file.getPath()), file.getName()));
                 try

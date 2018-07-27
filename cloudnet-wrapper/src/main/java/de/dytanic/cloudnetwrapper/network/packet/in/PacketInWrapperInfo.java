@@ -20,7 +20,8 @@ public class PacketInWrapperInfo extends PacketInHandler {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        WrapperExternal wrapperExternal = data.getObject("wrapper", new TypeToken<WrapperExternal>(){}.getType());
+        WrapperExternal wrapperExternal = data.getObject("wrapper", new TypeToken<WrapperExternal>() {
+        }.getType());
         CloudNetWrapper.getInstance().setSimpledUser(wrapperExternal.getUser());
         CloudNetWrapper.getInstance().getServerGroups().clear();
         NetworkUtils.addAll(CloudNetWrapper.getInstance().getServerGroups(), wrapperExternal.getServerGroups(), new Acceptable<ServerGroup>() {

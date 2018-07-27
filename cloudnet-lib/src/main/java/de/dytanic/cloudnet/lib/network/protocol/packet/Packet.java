@@ -6,8 +6,8 @@ package de.dytanic.cloudnet.lib.network.protocol.packet;
 
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.network.protocol.ProtocolStream;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolBuffer;
+import de.dytanic.cloudnet.lib.network.protocol.ProtocolStream;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import lombok.NonNull;
 
@@ -19,7 +19,8 @@ import java.util.UUID;
  */
 public class Packet extends ProtocolStream {
 
-    private static final Type TYPE = new TypeToken<Packet>(){}.getType();
+    private static final Type TYPE = new TypeToken<Packet>() {
+    }.getType();
 
     protected int id;
     protected Document data;

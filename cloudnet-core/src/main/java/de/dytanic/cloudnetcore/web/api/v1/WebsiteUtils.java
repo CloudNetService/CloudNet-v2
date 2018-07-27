@@ -59,7 +59,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
             case "serverinfos":
             {
 
-                if(!user.getPermissions().contains("cloudnet.web.serverinfos") && !user.getPermissions().contains("*"))
+                if (!user.getPermissions().contains("cloudnet.web.serverinfos") && !user.getPermissions().contains("*"))
                 {
                     dataDocument.append("reason", Arrays.asList("permission denied!"));
                     fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
@@ -81,7 +81,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
             case "proxyinfos":
             {
 
-                if(!user.getPermissions().contains("cloudnet.web.proxyinfos") && !user.getPermissions().contains("*"))
+                if (!user.getPermissions().contains("cloudnet.web.proxyinfos") && !user.getPermissions().contains("*"))
                 {
                     dataDocument.append("reason", Arrays.asList("permission denied!"));
                     fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
@@ -102,7 +102,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
             }
             case "onlineplayers":
 
-                if(!user.getPermissions().contains("cloudnet.web.onlineplayers") && !user.getPermissions().contains("*"))
+                if (!user.getPermissions().contains("cloudnet.web.onlineplayers") && !user.getPermissions().contains("*"))
                 {
                     dataDocument.append("reason", Arrays.asList("permission denied!"));
                     fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
@@ -112,7 +112,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
 
                 dataDocument.append("success", true);
                 Document response = new Document();
-                for(CloudPlayer cloudPlayer : CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values())
+                for (CloudPlayer cloudPlayer : CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values())
                 {
                     response.append(cloudPlayer.getUniqueId().toString(), cloudPlayer);
                 }
@@ -122,7 +122,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 return fullHttpResponse;
             case "statistic":
 
-                if(!user.getPermissions().contains("cloudnet.web.statistic") && !user.getPermissions().contains("*"))
+                if (!user.getPermissions().contains("cloudnet.web.statistic") && !user.getPermissions().contains("*"))
                 {
                     dataDocument.append("reason", Arrays.asList("permission denied!"));
                     fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
@@ -136,7 +136,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 return fullHttpResponse;
             case "cloudnetwork":
 
-                if(!user.getPermissions().contains("cloudnet.web.cloudnetwork") && !user.getPermissions().contains("*"))
+                if (!user.getPermissions().contains("cloudnet.web.cloudnetwork") && !user.getPermissions().contains("*"))
                 {
                     dataDocument.append("reason", Arrays.asList("permission denied!"));
                     fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
@@ -150,7 +150,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 return fullHttpResponse;
             case "startserver":
 
-                if(!user.getPermissions().contains("cloudnet.web.startserver") && !user.getPermissions().contains("*"))
+                if (!user.getPermissions().contains("cloudnet.web.startserver") && !user.getPermissions().contains("*"))
                 {
                     dataDocument.append("reason", Arrays.asList("permission denied!"));
                     fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
@@ -162,7 +162,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 fullHttpResponse.setStatus(HttpResponseStatus.OK);
                 fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
 
-                if(httpRequest.headers().contains("-Xvalue"))
+                if (httpRequest.headers().contains("-Xvalue"))
                 {
                     String group = httpRequest.headers().get("-Xvalue");
                     CloudNet.getInstance().getScheduler().runTaskSync(new Runnable() {
@@ -177,7 +177,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 return fullHttpResponse;
             case "startproxy":
 
-                if(!user.getPermissions().contains("cloudnet.web.startproxy") && !user.getPermissions().contains("*"))
+                if (!user.getPermissions().contains("cloudnet.web.startproxy") && !user.getPermissions().contains("*"))
                 {
                     dataDocument.append("reason", Arrays.asList("permission denied!"));
                     fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
@@ -189,7 +189,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 fullHttpResponse.setStatus(HttpResponseStatus.OK);
                 fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
 
-                if(httpRequest.headers().contains("-Xvalue"))
+                if (httpRequest.headers().contains("-Xvalue"))
                 {
                     String group = httpRequest.headers().get("-Xvalue");
                     CloudNet.getInstance().getScheduler().runTaskSync(new Runnable() {

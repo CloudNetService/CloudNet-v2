@@ -13,7 +13,7 @@ import lombok.Getter;
  * Calls if the wrapper is disconnected
  */
 @Getter
-public class WrapperChannelDisconnectEvent extends AsyncEvent<WrapperChannelDisconnectEvent>{
+public class WrapperChannelDisconnectEvent extends AsyncEvent<WrapperChannelDisconnectEvent> {
 
     private Wrapper wrapper;
 

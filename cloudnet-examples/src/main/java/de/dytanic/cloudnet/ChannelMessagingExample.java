@@ -25,9 +25,9 @@ public class ChannelMessagingExample {
     @EventHandler
     public void channelSubReceive(ProxiedSubChannelMessageEvent e) //handle the received channel message
     {
-        if(e.getChannel().equalsIgnoreCase("some-sub-channel-for-proxy"))
+        if (e.getChannel().equalsIgnoreCase("some-sub-channel-for-proxy"))
         {
-            if(e.getMessage().equalsIgnoreCase("handle"))
+            if (e.getMessage().equalsIgnoreCase("handle"))
             {
                 System.out.println(e.getDocument().convertToJson());
             }

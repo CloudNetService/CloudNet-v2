@@ -11,7 +11,9 @@ import org.bukkit.plugin.ServicesManager;
  */
 public final class VaultInvoker {
 
-    private VaultInvoker() {}
+    private VaultInvoker()
+    {
+    }
 
     public static void invoke()
     {

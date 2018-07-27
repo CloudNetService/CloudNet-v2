@@ -1,9 +1,6 @@
 package de.dytanic.cloudnet.bridge.internal.util;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.md_5.bungee.api.CommandSender;
@@ -38,13 +35,13 @@ public class CloudPlayerCommandSender implements CommandSender {
     @Override
     public void sendMessages(String... strings)
     {
-        for(String m : strings) sendMessage(m);
+        for (String m : strings) sendMessage(m);
     }
 
     @Override
     public void sendMessage(BaseComponent... baseComponents)
     {
-        for(BaseComponent m : baseComponents) sendMessage(m);
+        for (BaseComponent m : baseComponents) sendMessage(m);
     }
 
     @Override

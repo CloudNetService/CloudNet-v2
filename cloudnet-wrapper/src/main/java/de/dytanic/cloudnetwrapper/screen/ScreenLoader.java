@@ -10,10 +10,6 @@ import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutSendScreenLine;
 import lombok.Getter;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.Pipe;
-import java.nio.channels.SelectableChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 

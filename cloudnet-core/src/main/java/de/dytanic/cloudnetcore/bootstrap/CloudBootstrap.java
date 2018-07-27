@@ -109,7 +109,8 @@ public final class CloudBootstrap {
         {
             System.out.println("Use the command \"help\" for further information!");
             String commandLine;
-            try {
+            try
+            {
                 while (true)
                     while ((commandLine = cloudNetLogging.getReader().readLine()) != null && CloudNet.RUNNING)
                     {
@@ -122,7 +123,8 @@ public final class CloudBootstrap {
                                 {
                                     continue;
                                 }
-                            }catch (Exception ex) {
+                            } catch (Exception ex)
+                            {
                                 ex.printStackTrace();
                             }
                         }
@@ -132,7 +134,8 @@ public final class CloudBootstrap {
                             System.out.println("Command not found. Use the command \"help\" for further information!");
                         }
                     }
-            }catch (Exception ex) {
+            } catch (Exception ex)
+            {
 
             }
         } else

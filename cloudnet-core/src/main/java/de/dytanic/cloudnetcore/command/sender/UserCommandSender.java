@@ -35,20 +35,20 @@ public class UserCommandSender implements CommandSender {
     @Override
     public PermissionEntity getPermissionEntity()
     {
-        if(permissionEntity == null) permissionEntity = new UserablePermissionEntity(UUID.randomUUID(), user);
+        if (permissionEntity == null) permissionEntity = new UserablePermissionEntity(UUID.randomUUID(), user);
         return permissionEntity;
     }
 
     @Override
     public void sendMessage(String... message)
     {
-        for(String m : message)
-        System.out.println(m);
+        for (String m : message)
+            System.out.println(m);
     }
 
     @Override
     public boolean hasPermission(String permission)
     {
-        return ((UserablePermissionEntity)getPermissionEntity()).hasPermission(permission);
+        return ((UserablePermissionEntity) getPermissionEntity()).hasPermission(permission);
     }
 }

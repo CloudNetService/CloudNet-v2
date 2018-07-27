@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet.lib.player.permission;
 
-import de.dytanic.cloudnet.lib.player.permission.PermissionFallback;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 
 import java.util.*;

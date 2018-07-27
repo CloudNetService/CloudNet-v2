@@ -110,12 +110,11 @@ public class VaultPermissionImpl extends Permission {
             }
         });
 
-        if(groupEntityData != null)
+        if (groupEntityData != null)
         {
             permissionEntity.getGroups().remove(groupEntityData);
             groupEntityData = new GroupEntityData(groupEntityData.getGroup(), 0);
-        }
-        else
+        } else
         {
             groupEntityData = new GroupEntityData(groupEntityData.getGroup(), 0);
         }
@@ -140,7 +139,7 @@ public class VaultPermissionImpl extends Permission {
             }
         });
 
-        if(groupEntityData != null) permissionEntity.getGroups().remove(groupEntityData);
+        if (groupEntityData != null) permissionEntity.getGroups().remove(groupEntityData);
         offlinePlayer.setPermissionEntity(permissionEntity);
         updatePlayer(offlinePlayer);
         return true;
@@ -152,7 +151,7 @@ public class VaultPermissionImpl extends Permission {
         PermissionEntity permissionEntity = getPlayer(s1).getPermissionEntity();
         String[] data = new String[permissionEntity.getGroups().size()];
         short i = 0;
-        for(GroupEntityData groupEntityData : permissionEntity.getGroups())
+        for (GroupEntityData groupEntityData : permissionEntity.getGroups())
         {
             data[i++] = groupEntityData.getGroup();
         }
@@ -172,7 +171,7 @@ public class VaultPermissionImpl extends Permission {
     {
         String[] groups = new String[CloudAPI.getInstance().getPermissionPool().getGroups().size()];
         int i = 0;
-        for(String group : CloudAPI.getInstance().getPermissionPool().getGroups().keySet()) groups[i++] = group;
+        for (String group : CloudAPI.getInstance().getPermissionPool().getGroups().keySet()) groups[i++] = group;
 
         return groups;
     }
@@ -192,10 +191,10 @@ public class VaultPermissionImpl extends Permission {
     {
         OfflinePlayer offlinePlayer = CloudServer.getInstance().getCachedPlayer(name);
 
-        if(offlinePlayer == null)
+        if (offlinePlayer == null)
             offlinePlayer = CloudAPI.getInstance().getOfflinePlayer(name);
 
         return offlinePlayer;
     }
-    
+
 }

@@ -12,7 +12,8 @@ import java.sql.Timestamp;
 @Data
 public class CloudPlayer extends OfflinePlayer {
 
-    public static final Type TYPE = new TypeToken<CloudPlayer>(){}.getType();
+    public static final Type TYPE = new TypeToken<CloudPlayer>() {
+    }.getType();
 
     private PlayerConnection playerConnection;
 

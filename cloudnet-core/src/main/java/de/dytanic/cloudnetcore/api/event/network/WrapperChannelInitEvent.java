@@ -4,8 +4,8 @@
 
 package de.dytanic.cloudnetcore.api.event.network;
 
-import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnet.event.Event;
+import de.dytanic.cloudnetcore.network.components.Wrapper;
 import io.netty.channel.Channel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

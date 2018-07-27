@@ -24,7 +24,8 @@ public class PacketInRemoveCloudServer extends PacketInHandler {
         if (!(packetSender instanceof Wrapper)) return;
 
         Wrapper cn = (Wrapper) packetSender;
-        ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>(){}.getType());
+        ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {
+        }.getType());
 
         if (cn.getServers().containsKey(serverInfo.getServiceId().getServerId()))
         {

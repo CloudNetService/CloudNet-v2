@@ -4,40 +4,40 @@
 
 package de.dytanic.cloudnetwrapper.server;
 
-        import de.dytanic.cloudnet.lib.ConnectableAddress;
-        import de.dytanic.cloudnet.lib.NetworkUtils;
-        import de.dytanic.cloudnet.lib.server.*;
-        import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-        import de.dytanic.cloudnet.lib.server.template.*;
-        import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-        import de.dytanic.cloudnet.lib.service.ServiceId;
-        import de.dytanic.cloudnet.lib.user.SimpledUser;
-        import de.dytanic.cloudnet.lib.utility.Acceptable;
-        import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-        import de.dytanic.cloudnet.lib.utility.document.Document;
-        import de.dytanic.cloudnetwrapper.CloudNetWrapper;
-        import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutAddServer;
-        import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveServer;
-        import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
-        import de.dytanic.cloudnetwrapper.server.process.ServerProcess;
-        import de.dytanic.cloudnetwrapper.util.FileCopy;
-        import de.dytanic.cloudnetwrapper.util.MasterTemplateDeploy;
-        import lombok.EqualsAndHashCode;
-        import lombok.Getter;
-        import net.md_5.bungee.config.Configuration;
-        import net.md_5.bungee.config.ConfigurationProvider;
-        import net.md_5.bungee.config.YamlConfiguration;
-        import org.apache.commons.io.FileUtils;
+import de.dytanic.cloudnet.lib.ConnectableAddress;
+import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.server.*;
+import de.dytanic.cloudnet.lib.server.info.ServerInfo;
+import de.dytanic.cloudnet.lib.server.template.*;
+import de.dytanic.cloudnet.lib.service.ServiceId;
+import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
+import de.dytanic.cloudnet.lib.user.SimpledUser;
+import de.dytanic.cloudnet.lib.utility.Acceptable;
+import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
+import de.dytanic.cloudnet.lib.utility.document.Document;
+import de.dytanic.cloudnetwrapper.CloudNetWrapper;
+import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutAddServer;
+import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveServer;
+import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
+import de.dytanic.cloudnetwrapper.server.process.ServerProcess;
+import de.dytanic.cloudnetwrapper.util.FileCopy;
+import de.dytanic.cloudnetwrapper.util.MasterTemplateDeploy;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
+import org.apache.commons.io.FileUtils;
 
-        import java.io.*;
-        import java.net.URLConnection;
-        import java.nio.charset.StandardCharsets;
-        import java.nio.file.Files;
-        import java.nio.file.Path;
-        import java.nio.file.Paths;
-        import java.util.ArrayList;
-        import java.util.Enumeration;
-        import java.util.Properties;
+import java.io.*;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Properties;
 
 @EqualsAndHashCode
 @Getter
@@ -381,7 +381,8 @@ public class GameServer implements ServerDispatcher {
                 } catch (Exception e)
                 {
                 }
-            } catch (Exception ex) {
+            } catch (Exception ex)
+            {
                 ex.printStackTrace();
             }
 
@@ -399,7 +400,7 @@ public class GameServer implements ServerDispatcher {
     public void copy(Template template)
     {
 
-        if(template == null) template = this.serverProcess.getMeta().getTemplate();
+        if (template == null) template = this.serverProcess.getMeta().getTemplate();
 
         if (instance != null && instance.isAlive())
         {
@@ -484,7 +485,7 @@ public class GameServer implements ServerDispatcher {
     {
         File file = new File(path, name);
 
-        if(file.exists() && file.isDirectory())
+        if (file.exists() && file.isDirectory())
         {
             try
             {

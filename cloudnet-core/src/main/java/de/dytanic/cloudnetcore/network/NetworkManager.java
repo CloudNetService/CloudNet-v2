@@ -4,12 +4,21 @@
 
 package de.dytanic.cloudnetcore.network;
 
+import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.network.WrapperInfo;
+import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
+import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
+import de.dytanic.cloudnet.lib.player.PlayerCommandExecution;
+import de.dytanic.cloudnet.lib.player.PlayerConnection;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
+import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
+import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
+import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnet.lib.service.wrapper.WrapperScreen;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
@@ -26,23 +35,13 @@ import de.dytanic.cloudnetcore.api.event.server.*;
 import de.dytanic.cloudnetcore.database.PlayerDatabase;
 import de.dytanic.cloudnetcore.database.StatisticManager;
 import de.dytanic.cloudnetcore.network.components.*;
+import de.dytanic.cloudnetcore.network.components.util.ChannelFilter;
+import de.dytanic.cloudnetcore.network.packet.out.*;
 import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
-import de.dytanic.cloudnetcore.network.packet.out.*;
-import de.dytanic.cloudnet.lib.CloudNetwork;
-import de.dytanic.cloudnet.lib.network.WrapperInfo;
-import de.dytanic.cloudnet.lib.player.PlayerCommandExecution;
-import de.dytanic.cloudnet.lib.player.PlayerConnection;
-import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
-import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import de.dytanic.cloudnet.lib.server.ServerGroupMode;
-import de.dytanic.cloudnetcore.network.components.util.ChannelFilter;
 import lombok.Getter;
 
 import java.util.*;
-
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -84,7 +83,7 @@ public final class NetworkManager {
 
     public void handlePlayerLoginRequest(ProxyServer proxyServer, PlayerConnection cloudPlayerConnection, UUID uniqueId)
     {
-        if(this.onlinePlayers.containsKey(cloudPlayerConnection.getUniqueId()))
+        if (this.onlinePlayers.containsKey(cloudPlayerConnection.getUniqueId()))
         {
             proxyServer.sendPacketSynchronized(new PacketOutLoginPlayer(uniqueId, null));
             return;

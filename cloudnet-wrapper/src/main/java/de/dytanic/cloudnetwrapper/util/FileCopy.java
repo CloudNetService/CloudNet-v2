@@ -22,7 +22,7 @@ public final class FileCopy {
 
     public static void copyFileToDirectory(File file, File to) throws IOException
     {
-        if(to == null || file == null) return;
+        if (to == null || file == null) return;
 
         if (!to.exists()) to.mkdirs();
 
@@ -32,15 +32,15 @@ public final class FileCopy {
 
     public static void copyFilesInDirectory(File from, File to) throws IOException
     {
-        if(to == null || from == null) return;
+        if (to == null || from == null) return;
 
         if (!to.exists()) to.mkdirs();
 
-        if(!from.isDirectory()) return;
+        if (!from.isDirectory()) return;
 
         for (File file : from.listFiles())
         {
-            if(file == null) continue;
+            if (file == null) continue;
 
             if (file.isDirectory())
             {
@@ -55,7 +55,7 @@ public final class FileCopy {
 
     public static void insertData(String paramString1, String paramString2)
     {
-        try(InputStream localInputStream = FileCopy.class.getClassLoader().getResourceAsStream(paramString1))
+        try (InputStream localInputStream = FileCopy.class.getClassLoader().getResourceAsStream(paramString1))
         {
             Files.copy(localInputStream, Paths.get(paramString2), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e)

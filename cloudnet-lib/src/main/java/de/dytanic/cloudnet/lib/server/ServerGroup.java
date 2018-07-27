@@ -1,13 +1,13 @@
 package de.dytanic.cloudnet.lib.server;
 
 import com.google.gson.reflect.TypeToken;
-import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
-import de.dytanic.cloudnet.lib.map.WrappedMap;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
+import de.dytanic.cloudnet.lib.map.WrappedMap;
+import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
 import de.dytanic.cloudnet.lib.server.priority.PriorityConfig;
+import de.dytanic.cloudnet.lib.server.priority.PriorityService;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
-import de.dytanic.cloudnet.lib.server.priority.PriorityService;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,9 +20,10 @@ import java.util.*;
 @Getter
 @Setter
 public class ServerGroup
-        implements Nameable{
+        implements Nameable {
 
-    public static final Type TYPE = new TypeToken<ServerGroup>(){}.getType();
+    public static final Type TYPE = new TypeToken<ServerGroup>() {
+    }.getType();
 
     protected String name;
     protected Collection<String> wrapper;
@@ -76,7 +77,7 @@ public class ServerGroup
         );
 
         this.templates = Arrays.asList(new Template("default", TemplateResource.LOCAL, null, new String[]{}, new ArrayList<>()));
-}
+    }
 
     public SimpleServerGroup toSimple()
     {

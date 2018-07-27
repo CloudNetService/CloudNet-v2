@@ -20,7 +20,7 @@ public abstract class ConfigAbstract {
 
     public ConfigAbstract(Document defaults, Path path)
     {
-        if(!Files.exists(path))
+        if (!Files.exists(path))
         {
             defaults.saveAsConfig(path);
         }

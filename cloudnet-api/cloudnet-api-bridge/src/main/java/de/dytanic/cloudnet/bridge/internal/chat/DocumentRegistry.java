@@ -2,7 +2,6 @@ package de.dytanic.cloudnet.bridge.internal.chat;
 
 import com.google.gson.GsonBuilder;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;

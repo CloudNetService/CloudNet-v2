@@ -14,13 +14,14 @@ import java.util.Set;
 
 @Getter
 public final class CommandManager
-        implements Completer
-{
+        implements Completer {
 
     private final java.util.Map<String, Command> commands = NetworkUtils.newConcurrentHashMap();
     private ConsoleCommandSender consoleSender = new ConsoleCommandSender();
 
-    public CommandManager() {}
+    public CommandManager()
+    {
+    }
 
     public CommandManager clearCommands()
     {
@@ -58,26 +59,26 @@ public final class CommandManager
     public boolean dispatchCommand(CommandSender sender, String command)
     {
         String[] a = command.split(" ");
-        if(this.commands.containsKey(a[0].toLowerCase()))
+        if (this.commands.containsKey(a[0].toLowerCase()))
         {
             String b = command.replace((command.contains(" ") ? command.split(" ")[0] + " " : command), NetworkUtils.EMPTY_STRING);
             try
             {
-                if(b.equals(NetworkUtils.EMPTY_STRING))
+                if (b.equals(NetworkUtils.EMPTY_STRING))
                 {
                     this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, new String[0]);
-                }else{
+                } else
+                {
                     String[] c = b.split(" ");
                     this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, c);
                 }
-            }catch
+            } catch
                     (Exception ex)
             {
                 ex.printStackTrace();
             }
             return true;
-        }
-        else
+        } else
         {
             return false;
         }
@@ -86,44 +87,46 @@ public final class CommandManager
     public boolean dispatchCommand(String command)
     {
         String[] a = command.split(" ");
-        if(this.commands.containsKey(a[0].toLowerCase()))
+        if (this.commands.containsKey(a[0].toLowerCase()))
         {
             String b = command.replace((command.contains(" ") ? command.split(" ")[0] + " " : command), NetworkUtils.EMPTY_STRING);
             try
             {
 
-                for(String argument : a)
+                for (String argument : a)
                 {
-                    for(CommandArgument argumenents : this.commands.get(a[0].toLowerCase()).getCommandArguments())
+                    for (CommandArgument argumenents : this.commands.get(a[0].toLowerCase()).getCommandArguments())
                     {
-                        if(argumenents.getName().equalsIgnoreCase(argument)) argumenents.preExecute(this.commands.get(a[0]), command);
+                        if (argumenents.getName().equalsIgnoreCase(argument))
+                            argumenents.preExecute(this.commands.get(a[0]), command);
                     }
                 }
 
-                if(b.equals(NetworkUtils.EMPTY_STRING))
+                if (b.equals(NetworkUtils.EMPTY_STRING))
                 {
                     this.commands.get(a[0].toLowerCase()).onExecuteCommand(consoleSender, new String[0]);
-                }else{
+                } else
+                {
                     String[] c = b.split(" ");
                     this.commands.get(a[0].toLowerCase()).onExecuteCommand(consoleSender, c);
                 }
 
-                for(String argument : a)
+                for (String argument : a)
                 {
-                    for(CommandArgument argumenents : this.commands.get(a[0].toLowerCase()).getCommandArguments())
+                    for (CommandArgument argumenents : this.commands.get(a[0].toLowerCase()).getCommandArguments())
                     {
-                        if(argumenents.getName().equalsIgnoreCase(argument)) argumenents.postExecute(this.commands.get(a[0]), command);
+                        if (argumenents.getName().equalsIgnoreCase(argument))
+                            argumenents.postExecute(this.commands.get(a[0]), command);
                     }
                 }
 
-            }catch
+            } catch
                     (Exception ex)
             {
                 ex.printStackTrace();
             }
             return true;
-        }
-        else
+        } else
         {
             return false;
         }
@@ -134,25 +137,25 @@ public final class CommandManager
     {
         String[] input = buffer.split(" ");
 
-        if(input.length == 0) return cursor;
+        if (input.length == 0) return cursor;
 
         Command command = getCommand(input[0]);
-        if(command != null && command instanceof TabCompleteable)
+        if (command != null && command instanceof TabCompleteable)
         {
-            List<String> tabCompletions = ((TabCompleteable)command).onTab((input.length - 1), input[input.length - 1]);
+            List<String> tabCompletions = ((TabCompleteable) command).onTab((input.length - 1), input[input.length - 1]);
 
-            for(String t : tabCompletions)
+            for (String t : tabCompletions)
             {
                 candidates.add(t);
             }
 
-            final int lastSpace = buffer.lastIndexOf( ' ' );
-            if ( lastSpace == -1 )
+            final int lastSpace = buffer.lastIndexOf(' ');
+            if (lastSpace == -1)
             {
                 return cursor - buffer.length();
             } else
             {
-                return cursor - ( buffer.length() - lastSpace - 1 );
+                return cursor - (buffer.length() - lastSpace - 1);
             }
         }
         return cursor;

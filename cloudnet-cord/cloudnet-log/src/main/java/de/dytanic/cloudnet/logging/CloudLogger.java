@@ -48,7 +48,8 @@ public class CloudLogger
             Field field = Charset.class.getDeclaredField("defaultCharset");
             field.setAccessible(true);
             field.set(null, Charset.forName("UTF-8"));
-        }catch (Exception ex) {
+        } catch (Exception ex)
+        {
 
         }
 

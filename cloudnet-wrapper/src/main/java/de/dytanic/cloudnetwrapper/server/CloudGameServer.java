@@ -189,7 +189,7 @@ public class CloudGameServer implements ServerDispatcher {
 
         if (cloudServerMeta.getServerGroupType().equals(ServerGroupType.GLOWSTONE))
         {
-            Path path = Paths.get( this.path + "/glowstone.jar");
+            Path path = Paths.get(this.path + "/glowstone.jar");
             if (!Files.exists(path))
             {
                 try
@@ -237,10 +237,10 @@ public class CloudGameServer implements ServerDispatcher {
         if (!Files.exists(Paths.get(path + "/spigot.yml")))
             FileCopy.insertData("files/spigot.yml", path + "/spigot.yml");
 
-        if(!Files.exists(Paths.get(path + "/plugins")))
-        Files.createDirectory(Paths.get(path + "/plugins"));
+        if (!Files.exists(Paths.get(path + "/plugins")))
+            Files.createDirectory(Paths.get(path + "/plugins"));
 
-        if(!Files.exists(Paths.get(path + "/CLOUD")))
+        if (!Files.exists(Paths.get(path + "/CLOUD")))
             Files.createDirectory(Paths.get(path + "/CLOUD"));
 
         Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
@@ -249,8 +249,7 @@ public class CloudGameServer implements ServerDispatcher {
         try
         {
             FileCopy.copyFilesInDirectory(new File("local/global_cloudserver"), new File(path));
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
         }
 
@@ -418,7 +417,7 @@ public class CloudGameServer implements ServerDispatcher {
         {
         }
 
-        if(CloudNetWrapper.getInstance().isCanDeployed())
+        if (CloudNetWrapper.getInstance().isCanDeployed())
         {
             MasterTemplateDeploy masterTemplateDeploy = new MasterTemplateDeploy(path, new ConnectableAddress(
                     CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),

@@ -4,8 +4,8 @@
 
 package de.dytanic.cloudnet.lib.network.protocol.packet;
 
-import de.dytanic.cloudnet.lib.network.protocol.sender.IProtocolSender;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
+import de.dytanic.cloudnet.lib.network.protocol.sender.IProtocolSender;
 
 /**
  * Created by Tareko on 24.05.2017.

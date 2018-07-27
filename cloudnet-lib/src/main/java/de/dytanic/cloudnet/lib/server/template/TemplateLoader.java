@@ -32,7 +32,7 @@ public class TemplateLoader {
             urlConnection.setUseCaches(false);
             urlConnection.connect();
             Files.copy(urlConnection.getInputStream(), Paths.get(dest));
-            ((HttpURLConnection)urlConnection).disconnect();
+            ((HttpURLConnection) urlConnection).disconnect();
         } catch (IOException e)
         {
             e.printStackTrace();

@@ -26,7 +26,8 @@ public class PermissionEntity {
 
     protected Collection<GroupEntityData> groups;
 
-    public boolean hasPermission(PermissionPool permissionPool, String permission, String group) {
+    public boolean hasPermission(PermissionPool permissionPool, String permission, String group)
+    {
         if (checkAdminPermission(permission)) return true;
 
         if (permissionPool == null || permission == null) return false;
@@ -46,7 +47,8 @@ public class PermissionEntity {
         else if (adminPermission != null && permissions.containsKey(adminPermission) && permissions.get(adminPermission))
             return true;
 
-        for (GroupEntityData implg : groups) {
+        for (GroupEntityData implg : groups)
+        {
             if (!permissionPool.getGroups().containsKey(implg.getGroup())) continue;
             PermissionGroup permissionGroup = permissionPool.getGroups().get(implg.getGroup());
 
@@ -54,7 +56,8 @@ public class PermissionEntity {
 
             if (checkAccess(permissionGroup, permission, adminPermission, group)) return true;
 
-            for (String implGroup : permissionGroup.getImplementGroups()) {
+            for (String implGroup : permissionGroup.getImplementGroups())
+            {
                 if (!permissionPool.getGroups().containsKey(implGroup)) continue;
 
                 PermissionGroup subGroup = permissionPool.getGroups().get(implGroup);
@@ -66,20 +69,24 @@ public class PermissionEntity {
         return false;
     }
 
-    private boolean checkAdminPermission(String permission) {
+    private boolean checkAdminPermission(String permission)
+    {
         List<String> parts = Arrays.asList(permission.split("\\."));
         if (parts.size() < 2) return false;
-        for (int i = parts.size() - 2; i >= 1; i--) {
+        for (int i = parts.size() - 2; i >= 1; i--)
+        {
             String perm = String.join(".", parts.subList(0, i)) + ".*";
             if (permissions.containsKey(perm)) return permissions.get(perm);
         }
         return false;
     }
 
-    private boolean checkAdminPermission(PermissionGroup permissionGroup, String permission) {
+    private boolean checkAdminPermission(PermissionGroup permissionGroup, String permission)
+    {
         List<String> parts = Arrays.asList(permission.split("\\."));
         if (parts.size() < 2) return false;
-        for (int i = parts.size() - 2; i >= 1; i--) {
+        for (int i = parts.size() - 2; i >= 1; i--)
+        {
             String perm = String.join(".", parts.subList(0, i)) + ".*";
             if (permissionGroup.permissions.containsKey(perm))
                 return permissionGroup.permissions.get(perm);

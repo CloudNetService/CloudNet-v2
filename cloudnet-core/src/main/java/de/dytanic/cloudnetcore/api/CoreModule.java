@@ -17,6 +17,7 @@ public class CoreModule extends Module<CloudNet> {
 
     /**
      * Registered a IEventListener objective to a Event Class
+     *
      * @param eventListener
      * @param <T>
      */
@@ -35,6 +36,7 @@ public class CoreModule extends Module<CloudNet> {
 
     /**
      * Registered a command
+     *
      * @param command
      */
     public void registerCommand(Command command)

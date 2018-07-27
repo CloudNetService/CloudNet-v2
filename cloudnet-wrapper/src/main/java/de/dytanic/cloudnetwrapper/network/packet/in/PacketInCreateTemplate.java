@@ -42,10 +42,10 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                 for (Template template : serverGroup.getTemplates())
                 {
                     if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName())))
-                {
-                    System.out.println("Creating GroupTemplate for " + serverGroup.getName() + " " + template.getName() + "...");
-                    Files.createDirectories(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + ""));
-                }
+                    {
+                        System.out.println("Creating GroupTemplate for " + serverGroup.getName() + " " + template.getName() + "...");
+                        Files.createDirectories(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + ""));
+                    }
 
                     if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties")))
                     {
@@ -176,8 +176,9 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                             System.out.println("Downloading glowstone.jar...");
                             Files.copy(connection.getInputStream(), path);
                             System.out.println("Download was completed successfully");
-                            ((HttpURLConnection)connection).disconnect();
-                        }catch (Exception ex) {
+                            ((HttpURLConnection) connection).disconnect();
+                        } catch (Exception ex)
+                        {
                             ex.printStackTrace();
                         }
                     }
@@ -195,8 +196,9 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                         System.out.println("Downloading glowstone.jar...");
                         Files.copy(connection.getInputStream(), path);
                         System.out.println("Download was completed successfully");
-                        ((HttpURLConnection)connection).disconnect();
-                    }catch (Exception ex) {
+                        ((HttpURLConnection) connection).disconnect();
+                    } catch (Exception ex)
+                    {
                         ex.printStackTrace();
                     }
                 }

@@ -12,7 +12,6 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
 import java.util.*;
-
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -99,7 +98,7 @@ public final class PacketManager {
             }
         }
 
-        if(i >= 200)
+        if (i >= 200)
         {
             synchronizedHandlers.get(uniq).setValue(new Result(uniq, new Document()));
         }

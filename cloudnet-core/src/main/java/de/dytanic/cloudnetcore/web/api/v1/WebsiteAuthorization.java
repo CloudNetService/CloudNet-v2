@@ -6,7 +6,6 @@ package de.dytanic.cloudnetcore.web.api.v1;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
-import de.dytanic.cloudnet.web.server.handler.WebHandler;
 import de.dytanic.cloudnet.web.server.util.PathProvider;
 import de.dytanic.cloudnet.web.server.util.QueryDecoder;
 import de.dytanic.cloudnetcore.CloudNet;

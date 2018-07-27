@@ -57,25 +57,23 @@ public class Setup implements ISetup {
                 switch (setupRequest.getResponseType())
                 {
                     case NUMBER:
-                        if(!NetworkUtils.checkIsNumber(input))
+                        if (!NetworkUtils.checkIsNumber(input))
                         {
                             System.out.println(setupRequest.getInValidMessage());
                             continue;
                         }
-                        if(setupRequest.getValidater() != null)
+                        if (setupRequest.getValidater() != null)
                         {
-                            if(setupRequest.getValidater().doCatch(input))
+                            if (setupRequest.getValidater().doCatch(input))
                             {
                                 document.append(setupRequest.getName(), Integer.parseInt(input));
                                 setupRequest = null;
-                            }
-                            else
+                            } else
                             {
                                 System.out.println(setupRequest.getInValidMessage());
                                 continue;
                             }
-                        }
-                        else
+                        } else
                         {
                             document.append(setupRequest.getName(), Integer.parseInt(input));
                             setupRequest = null;
@@ -98,20 +96,18 @@ public class Setup implements ISetup {
                         System.out.println(setupRequest.getInValidMessage());
                         break;
                     case STRING:
-                        if(setupRequest.getValidater() != null)
+                        if (setupRequest.getValidater() != null)
                         {
-                            if(setupRequest.getValidater().doCatch(input))
+                            if (setupRequest.getValidater().doCatch(input))
                             {
                                 document.append(setupRequest.getName(), input);
                                 setupRequest = null;
-                            }
-                            else
+                            } else
                             {
                                 System.out.println(setupRequest.getInValidMessage());
                                 continue;
                             }
-                        }
-                        else
+                        } else
                         {
                             document.append(setupRequest.getName(), input);
                             setupRequest = null;

@@ -12,7 +12,7 @@ public interface IEventManager {
 
     <T extends Event> void registerListener(EventKey eventKey, IEventListener<T> eventListener);
 
-    <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>...eventListeners);
+    <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>... eventListeners);
 
     void unregisterListener(EventKey eventKey);
 

@@ -14,7 +14,6 @@ import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 
-import java.util.Arrays;
 import java.util.HashSet;
 
 /**
