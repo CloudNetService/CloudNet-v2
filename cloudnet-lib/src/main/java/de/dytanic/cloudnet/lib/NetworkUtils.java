@@ -265,7 +265,7 @@ public final class NetworkUtils {
 
     public static ConcurrentHashMap newConcurrentHashMap()
     {
-        return new ConcurrentHashMap();
+        return new ConcurrentHashMap<>();
     }
 
     public static void header()

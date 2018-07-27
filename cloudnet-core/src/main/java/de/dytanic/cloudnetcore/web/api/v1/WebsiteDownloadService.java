@@ -9,7 +9,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
 import de.dytanic.cloudnet.web.server.util.PathProvider;
 import de.dytanic.cloudnet.web.server.util.QueryDecoder;
-import de.dytanic.cloudnet3.ZipConverter;
+import de.dytanic.cloudnet.lib.zip.ZipConverter;
 import de.dytanic.cloudnetcore.CloudNet;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;

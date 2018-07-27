@@ -19,7 +19,7 @@ import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import de.dytanic.cloudnet.web.client.WebClient;
-import de.dytanic.cloudnet3.TaskScheduler;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnetwrapper.command.*;
 import de.dytanic.cloudnetwrapper.handlers.IWrapperHandler;
 import de.dytanic.cloudnetwrapper.handlers.StopTimeHandler;

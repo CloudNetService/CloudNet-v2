@@ -7,7 +7,7 @@ package de.dytanic.cloudnet.database;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet3.TaskScheduler;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

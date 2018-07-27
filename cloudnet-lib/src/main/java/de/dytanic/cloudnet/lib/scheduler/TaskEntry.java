@@ -1,4 +1,4 @@
-package de.dytanic.cloudnet3;
+package de.dytanic.cloudnet.lib.scheduler;
 
 import de.dytanic.cloudnet.lib.utility.threading.Callback;
 

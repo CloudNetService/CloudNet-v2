@@ -365,8 +365,7 @@ public class BungeeCord implements ServerDispatcher {
         for (String command : proxyGroup.getTemplate().getProcessPreParameters())
             commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
 
-        //commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -Djline.terminal=jline.UnsupportedTerminal -XX:MaxPermSize=256M -DIReallyKnowWhatIAmDoingISwear=true -Xmx" + proxyProcessMeta.getMemory() + "M -jar BungeeCord.jar -o true -p");
-        commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -Dio.netty.leakDetectionLevel=DISABLED -Dfile.encoding=UTF-8 -Dio.netty.maxDirectMemory=0 -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -DIReallyKnowWhatIAmDoingISwear=true -Xmx" + proxyProcessMeta.getMemory() + "M -jar BungeeCord.jar -o true -p");
+        commandBuilder.append("-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -XX:+OptimizeStringConcat -XX:CompileThreshold=100 -Dio.netty.leakDetectionLevel=DISABLED -Dfile.encoding=UTF-8 -Dio.netty.maxDirectMemory=0 -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -DIReallyKnowWhatIAmDoingISwear=true -Xmx" + proxyProcessMeta.getMemory() + "M -jar BungeeCord.jar -o true -p");
 
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddProxy(proxyInfo, proxyProcessMeta));
         System.out.println("Proxy " + toString() + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");

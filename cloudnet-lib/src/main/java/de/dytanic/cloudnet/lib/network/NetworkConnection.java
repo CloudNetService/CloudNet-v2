@@ -10,7 +10,7 @@ import de.dytanic.cloudnet.lib.network.protocol.ProtocolRequest;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet3.TaskScheduler;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.handler.ssl.SslContext;
@@ -26,7 +26,7 @@ import java.nio.file.Path;
  * Created by Tareko on 22.07.2017.
  */
 @Getter
-public class NetworkConnection implements PacketSender {
+public final class NetworkConnection implements PacketSender {
 
     @Setter(AccessLevel.PROTECTED)
     private Channel channel;

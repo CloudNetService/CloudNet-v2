@@ -32,7 +32,7 @@ import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.modules.ModuleManager;
 import de.dytanic.cloudnet.web.client.WebClient;
 import de.dytanic.cloudnet.web.server.WebServer;
-import de.dytanic.cloudnet3.TaskScheduler;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnetcore.api.event.network.CloudInitEvent;
 import de.dytanic.cloudnetcore.command.*;
 import de.dytanic.cloudnetcore.database.DatabaseBasicHandlers;

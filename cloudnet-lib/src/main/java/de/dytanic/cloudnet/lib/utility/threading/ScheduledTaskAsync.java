@@ -1,6 +1,6 @@
 package de.dytanic.cloudnet.lib.utility.threading;
 
-import de.dytanic.cloudnet3.TaskScheduler;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 
 /**
  * Created by Tareko on 24.05.2017.

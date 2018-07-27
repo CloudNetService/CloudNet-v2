@@ -6,7 +6,7 @@ package de.dytanic.cloudnet.lib.network;
 
 import de.dytanic.cloudnet.lib.network.protocol.file.FileDeploy;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet3.TaskScheduler;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.AllArgsConstructor;

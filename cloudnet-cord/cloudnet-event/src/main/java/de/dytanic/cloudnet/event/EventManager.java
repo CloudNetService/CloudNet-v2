@@ -3,7 +3,7 @@ package de.dytanic.cloudnet.event;
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.interfaces.IEventManager;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet3.TaskScheduler;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import net.jodah.typetools.TypeResolver;
 
 import java.util.Collection;
