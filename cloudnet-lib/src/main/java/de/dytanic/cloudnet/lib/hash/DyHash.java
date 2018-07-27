@@ -4,6 +4,9 @@
 
 package de.dytanic.cloudnet.lib.hash;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
 /**
  * Created by Tareko on 17.09.2017.
  */
@@ -15,16 +18,18 @@ public final class DyHash {
 
     public static String hashString(String encode)
     {
-        StringBuilder stringBuilder = new StringBuilder();
-        int length = encode.length();
-
-        for (char c : encode.toCharArray())
+        try
         {
-            byte b = (byte) c;
-            char d = (char) b;
-            int e = d;
-            stringBuilder.append(Long.toHexString((e << 3 + length * length - 16)));
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest.update(encode.getBytes(StandardCharsets.UTF_8));
+
+            String string = new String(messageDigest.digest(), StandardCharsets.UTF_8);
+            return string;
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
         }
-        return stringBuilder.toString();
+
+        return encode;
     }
 }
