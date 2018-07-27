@@ -11,12 +11,12 @@
     <name>CloudNet-Parent</name>
 
     <properties>
-        <maven.compiler.source>10</maven.compiler.source>
-        <maven.compiler.target>10</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
         <netty.version>4.1.25.Final</netty.version>
-        <service.version>2.1.5.1</service.version>
+        <service.version>2.1.5</service.version>
         <service.type>PRE</service.type>
     </properties>
 
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.0</version>
+            <version>1.16.6</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
