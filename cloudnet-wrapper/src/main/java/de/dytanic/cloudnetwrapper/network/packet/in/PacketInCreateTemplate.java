@@ -48,14 +48,10 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                     }
 
                     if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties")))
-                    {
                         FileUtility.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
-                    }
 
                     if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins")))
-                    {
                         new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins").mkdir();
-                    }
                 }
                 Template template = serverGroup.getGlobalTemplate();
                 if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName())))
@@ -65,14 +61,11 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                 }
 
                 if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties")))
-                {
                     FileUtility.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
-                }
 
                 if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins")))
-                {
                     new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins").mkdir();
-                }
+
             } catch (IOException e)
             {
                 e.printStackTrace();

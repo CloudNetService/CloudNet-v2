@@ -63,7 +63,6 @@ public final class FileUtility {
             Files.copy(localInputStream, Paths.get(paramString2), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e)
         {
-            e.printStackTrace();
         }
     }
 
