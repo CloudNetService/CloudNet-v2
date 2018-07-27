@@ -12,25 +12,32 @@ public class ReloadListener implements Listener {
     private static final String[] blockedCommands = {"/reload", "/rl", "/bukkit:rl", "/bukkit:reload"};
 
     @EventHandler
-    public void onDispatch(PlayerCommandPreprocessEvent event) {
+    public void onDispatch(PlayerCommandPreprocessEvent event)
+    {
         Player player = event.getPlayer();
-        if (isCmdBlocked(event.getMessage())) {
+        if (isCmdBlocked(event.getMessage()))
+        {
             player.sendMessage(CloudAPI.getInstance().getPrefix() + "This command has been blocked because it leads to problems using CloudNet.");
             event.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void handle(ServerCommandEvent event) {
-        if (isCmdBlocked(event.getCommand())) {
+    public void handle(ServerCommandEvent event)
+    {
+        if (isCmdBlocked(event.getCommand()))
+        {
             event.setCancelled(true);
             Bukkit.getConsoleSender().sendMessage("This command has been blocked because it leads to problems using CloudNet.");
         }
     }
 
-    private boolean isCmdBlocked(String commandLine) {
-        for (String blockedCmd : blockedCommands) {
-            if (commandLine.toLowerCase().startsWith(blockedCmd)) {
+    private boolean isCmdBlocked(String commandLine)
+    {
+        for (String blockedCmd : blockedCommands)
+        {
+            if (commandLine.toLowerCase().startsWith(blockedCmd))
+            {
                 return true;
             }
         }

@@ -14,7 +14,7 @@ import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroupType;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnetwrapper.util.FileCopy;
+import de.dytanic.cloudnetwrapper.util.FileUtility;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -49,7 +49,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
 
                     if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties")))
                     {
-                        FileCopy.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
+                        FileUtility.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
                     }
 
                     if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins")))
@@ -66,7 +66,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
 
                 if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties")))
                 {
-                    FileCopy.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
+                    FileUtility.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
                 }
 
                 if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins")))

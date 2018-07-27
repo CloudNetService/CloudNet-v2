@@ -19,14 +19,13 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutAddCloudServer;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveCloudServer;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
-import de.dytanic.cloudnetwrapper.util.FileCopy;
+import de.dytanic.cloudnetwrapper.util.FileUtility;
 import de.dytanic.cloudnetwrapper.util.MasterTemplateDeploy;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
-import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -142,7 +141,7 @@ public class CloudGameServer implements ServerDispatcher {
         templateLoader.load();
         templateLoader.unZip(dir.toString());
 
-        FileCopy.copyFilesInDirectory(new File(dir.toString()), new File(path));
+        FileUtility.copyFilesInDirectory(new File(dir.toString()), new File(path));
 
         if (cloudServerMeta.getServerGroupType().equals(ServerGroupType.CAULDRON))
         {
@@ -211,31 +210,31 @@ public class CloudGameServer implements ServerDispatcher {
 
         //Init
         for (ServerInstallablePlugin plugin : cloudServerMeta.getPlugins())
-            FileCopy.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
+            FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
 
         for (ServerInstallablePlugin plugin : cloudServerMeta.getPlugins())
-            FileCopy.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
+            FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
 
         if (cloudServerMeta.getServerGroupType().equals(ServerGroupType.BUKKIT))
             if (!Files.exists(Paths.get(path + "/spigot.jar")))
-                FileCopy.copyFileToDirectory(new File("local/spigot.jar"), new File(path));
+                FileUtility.copyFileToDirectory(new File("local/spigot.jar"), new File(path));
 
         if (cloudServerMeta.getServerGroupType().equals(ServerGroupType.GLOWSTONE))
         {
             if (!Files.exists(Paths.get(path + "/config")))
                 Files.createDirectories(Paths.get(path + "/config"));
             if (!Files.exists(Paths.get(path + "/config/glowstone.yml")))
-                FileCopy.insertData("files/glowstone.yml", path + "/config/glowstone.yml");
+                FileUtility.insertData("files/glowstone.yml", path + "/config/glowstone.yml");
         }
 
         if (!Files.exists(Paths.get(path + "/server.properties")))
-            FileCopy.insertData("files/server.properties", path + "/server.properties");
+            FileUtility.insertData("files/server.properties", path + "/server.properties");
 
         if (!Files.exists(Paths.get(path + "/bukkit.yml")))
-            FileCopy.insertData("files/bukkit.yml", path + "/bukkit.yml");
+            FileUtility.insertData("files/bukkit.yml", path + "/bukkit.yml");
 
         if (!Files.exists(Paths.get(path + "/spigot.yml")))
-            FileCopy.insertData("files/spigot.yml", path + "/spigot.yml");
+            FileUtility.insertData("files/spigot.yml", path + "/spigot.yml");
 
         if (!Files.exists(Paths.get(path + "/plugins")))
             Files.createDirectory(Paths.get(path + "/plugins"));
@@ -244,11 +243,11 @@ public class CloudGameServer implements ServerDispatcher {
             Files.createDirectory(Paths.get(path + "/CLOUD"));
 
         Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
-        FileCopy.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
+        FileUtility.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
         try
         {
-            FileCopy.copyFilesInDirectory(new File("local/global_cloudserver"), new File(path));
+            FileUtility.copyFilesInDirectory(new File("local/global_cloudserver"), new File(path));
         } catch (Exception ex)
         {
         }
@@ -271,7 +270,7 @@ public class CloudGameServer implements ServerDispatcher {
 
                 }
             }
-            FileCopy.copyFileToDirectory(new File("local/viaversion.jar"), new File(path + "/plugins"));
+            FileUtility.copyFileToDirectory(new File("local/viaversion.jar"), new File(path + "/plugins"));
         }
 
         /*===============================================================================*/
@@ -347,7 +346,7 @@ public class CloudGameServer implements ServerDispatcher {
                         CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetPort())).saveAsConfig(Paths.get(path + "/CLOUD/connection.json"));
 
         Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
-        FileCopy.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
+        FileUtility.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
         StringBuilder commandBuilder = new StringBuilder();
         commandBuilder.append("java ");
@@ -388,12 +387,7 @@ public class CloudGameServer implements ServerDispatcher {
     {
         if (instance == null)
         {
-            try
-            {
-                FileUtils.deleteDirectory(dir.toFile());
-            } catch (IOException e)
-            {
-            }
+            FileUtility.deleteDirectory(dir.toFile());
             return true;
         }
 
@@ -431,12 +425,7 @@ public class CloudGameServer implements ServerDispatcher {
             }
         }
 
-        try
-        {
-            FileUtils.deleteDirectory(new File(path));
-        } catch (IOException e)
-        {
-        }
+        FileUtility.deleteDirectory(new File(path));
 
         CloudNetWrapper.getInstance().getCloudservers().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveCloudServer(serverInfo));

@@ -14,9 +14,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public final class FileCopy {
+public final class FileUtility {
 
-    private FileCopy()
+    private FileUtility()
     {
     }
 
@@ -55,13 +55,35 @@ public final class FileCopy {
 
     public static void insertData(String paramString1, String paramString2)
     {
-        try (InputStream localInputStream = FileCopy.class.getClassLoader().getResourceAsStream(paramString1))
+        File file = new File(paramString2);
+        file.delete();
+
+        try (InputStream localInputStream = FileUtility.class.getClassLoader().getResourceAsStream(paramString1))
         {
             Files.copy(localInputStream, Paths.get(paramString2), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e)
         {
             e.printStackTrace();
         }
+    }
+
+    public static void deleteDirectory(File file)
+    {
+        if (file == null) return;
+
+        if (file.isDirectory())
+        {
+            File[] files = file.listFiles();
+
+            if (files != null)
+                for (File entry : files)
+                    if (entry.isDirectory())
+                        deleteDirectory(entry);
+                    else
+                        entry.delete();
+        }
+
+        file.delete();
     }
 
     public static void rewriteFileUtils(File file, String host) throws Exception

@@ -88,7 +88,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                     }
                 } catch (Exception ex)
                 {
-                    for (EntityType entityType : EntityType.values()) commandSender.sendMessage("- " + entityType.name());
+                    for (EntityType entityType : EntityType.values())
+                        commandSender.sendMessage("- " + entityType.name());
                 }
             }
         }

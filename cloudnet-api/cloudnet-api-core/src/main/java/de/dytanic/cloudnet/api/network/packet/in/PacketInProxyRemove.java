@@ -20,8 +20,9 @@ public final class PacketInProxyRemove extends PacketInHandlerDefault {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        ProxyInfo proxyInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>(){}.getType());
-        if(CloudAPI.getInstance() != null)
+        ProxyInfo proxyInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>() {
+        }.getType());
+        if (CloudAPI.getInstance() != null)
         {
             CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
                 @Override

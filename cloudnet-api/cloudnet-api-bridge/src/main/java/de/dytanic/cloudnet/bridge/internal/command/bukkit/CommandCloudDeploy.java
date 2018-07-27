@@ -23,7 +23,7 @@ public final class CommandCloudDeploy extends Command {
     @Override
     public boolean execute(CommandSender commandSender, String s, String[] args)
     {
-        if(!testPermission(commandSender)) return false;
+        if (!testPermission(commandSender)) return false;
 
         switch (args.length)
         {
@@ -32,7 +32,7 @@ public final class CommandCloudDeploy extends Command {
                 CloudAPI.getInstance().sendCloudCommand("copy " + CloudAPI.getInstance().getServerId() + NetworkUtils.SPACE_STRING + args[0]);
                 commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "Server will be deployed to " + args[0]);
             }
-                break;
+            break;
             default:
                 commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cdeploy <template>");
                 break;

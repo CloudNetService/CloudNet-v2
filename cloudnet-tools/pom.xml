@@ -6,20 +6,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <parent>
         <artifactId>cloudnet</artifactId>
         <groupId>de.dytanic.cloudnet</groupId>
         <version>2.1.6</version>
     </parent>
+
+    <name>CloudNet-Tools</name>
+    <artifactId>cloudnet-tools</artifactId>
+    <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
+
     <modules>
         <module>simplenametags</module>
         <module>chat</module>
     </modules>
-    <modelVersion>4.0.0</modelVersion>
-
-    <name>CloudNet-Tools</name>
-    <artifactId>cloudnet-tools</artifactId>
 
     <repositories>
         <repository>
@@ -32,13 +34,13 @@
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-api-bridge</artifactId>
-            <version>2.1.6</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.8.8</version>
+            <version>${dependency.spigot.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

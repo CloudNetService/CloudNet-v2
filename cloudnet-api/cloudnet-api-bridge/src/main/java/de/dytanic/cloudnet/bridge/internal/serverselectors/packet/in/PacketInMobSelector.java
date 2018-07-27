@@ -22,11 +22,9 @@ import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -77,20 +75,20 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                             entity.setFireTicks(0);
                             Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);
 
-                            if(armorStand != null)
+                            if (armorStand != null)
                             {
                                 MobSelector.getInstance().updateCustom(key, armorStand);
-                                    Entity armor = (Entity) armorStand;
-                                    if(armor.getPassenger() == null && key.getItemId() != null)
-                                    {
-                                        Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(key.getItemId()));
-                                        item.setTicksLived(Integer.MAX_VALUE);
-                                        item.setPickupDelay(Integer.MAX_VALUE);
-                                        armor.setPassenger(item);
-                                    }
+                                Entity armor = (Entity) armorStand;
+                                if (armor.getPassenger() == null && key.getItemId() != null)
+                                {
+                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(key.getItemId()));
+                                    item.setTicksLived(Integer.MAX_VALUE);
+                                    item.setPickupDelay(Integer.MAX_VALUE);
+                                    armor.setPassenger(item);
+                                }
                             }
 
-                            if(entity instanceof Villager)
+                            if (entity instanceof Villager)
                             {
                                 ((Villager) entity).setProfession(Villager.Profession.FARMER);
                             }
@@ -98,7 +96,7 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                             MobSelector.getInstance().unstableEntity(entity);
                             entity.setCustomNameVisible(true);
                             entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay()));
-                            MobSelector.MobImpl mob =  new MobSelector.MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
+                            MobSelector.MobImpl mob = new MobSelector.MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
                             Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
                             return mob;
                         }
@@ -138,11 +136,11 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                             Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
                             Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);
 
-                            if(armorStand != null)
+                            if (armorStand != null)
                             {
                                 MobSelector.getInstance().updateCustom(key, armorStand);
                                 Entity armor = (Entity) armorStand;
-                                if(armor.getPassenger() == null && key.getItemId() != null)
+                                if (armor.getPassenger() == null && key.getItemId() != null)
                                 {
                                     Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(key.getItemId()));
                                     item.setTicksLived(Integer.MAX_VALUE);
@@ -151,7 +149,7 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                                 }
                             }
 
-                            if(entity instanceof Villager)
+                            if (entity instanceof Villager)
                             {
                                 ((Villager) entity).setProfession(Villager.Profession.FARMER);
                             }
@@ -160,7 +158,7 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                             entity.setCustomNameVisible(true);
                             entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay() + NetworkUtils.EMPTY_STRING));
 
-                            MobSelector.MobImpl mob =  new MobSelector.MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
+                            MobSelector.MobImpl mob = new MobSelector.MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
                             Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
                             return mob;
                         }

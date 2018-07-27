@@ -25,13 +25,13 @@ public class PacketOutStartCloudServer extends Packet {
     {
         super(PacketRC.SERVER_HANDLE + 9, new Document
                 ("serverName", serverName)
-        .append("serverConfig", serverConfig)
-        .append("memory", memory)
-        .append("priorityStop", priorityStop)
-        .append("processPreParameters", processPreParameters)
-        .append("plugins", plugins)
-        .append("properties", properties)
-        .append("serverGroupType", serverGroupType));
+                .append("serverConfig", serverConfig)
+                .append("memory", memory)
+                .append("priorityStop", priorityStop)
+                .append("processPreParameters", processPreParameters)
+                .append("plugins", plugins)
+                .append("properties", properties)
+                .append("serverGroupType", serverGroupType));
     }
 
     public PacketOutStartCloudServer(WrapperInfo wrapperInfo, String serverName, ServerConfig serverConfig, int memory, boolean priorityStop, String[] processPreParameters, Collection<ServerInstallablePlugin> plugins,

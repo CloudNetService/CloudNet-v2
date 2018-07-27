@@ -2,13 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <parent>
         <artifactId>cloudnet-cord</artifactId>
         <groupId>de.dytanic.cloudnet</groupId>
         <version>2.1.6</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
     <name>CloudNet-Event</name>
     <artifactId>cloudnet-event</artifactId>
 
@@ -16,8 +17,8 @@
         <dependency>
             <groupId>net.jodah</groupId>
             <artifactId>typetools</artifactId>
-            <version>0.5.0</version>
-            <scope>provided</scope>
+            <version>${dependency.typetools.version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

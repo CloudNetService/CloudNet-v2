@@ -15,6 +15,6 @@ public class PacketAPIOutGetServerGroup extends Packet {
 
     public PacketAPIOutGetServerGroup(String name)
     {
-        super(PacketRC.API + 6, new Document("serverGroup" , name));
+        super(PacketRC.API + 6, new Document("serverGroup", name));
     }
 }

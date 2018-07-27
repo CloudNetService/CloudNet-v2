@@ -27,7 +27,7 @@ public final class CommandResource
     @Override
     public boolean execute(CommandSender sender, String s, String[] args)
     {
-        if(!testPermission(sender)) return false;
+        if (!testPermission(sender)) return false;
         long used = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1048576L;
         long max = Runtime.getRuntime().maxMemory() / 1048576L;
 

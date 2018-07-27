@@ -6,9 +6,15 @@ package de.dytanic.cloudnetwrapper.server;
 
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.server.*;
+import de.dytanic.cloudnet.lib.server.ServerGroup;
+import de.dytanic.cloudnet.lib.server.ServerGroupMode;
+import de.dytanic.cloudnet.lib.server.ServerGroupType;
+import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.server.template.*;
+import de.dytanic.cloudnet.lib.server.template.MasterTemplateLoader;
+import de.dytanic.cloudnet.lib.server.template.Template;
+import de.dytanic.cloudnet.lib.server.template.TemplateLoader;
+import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
@@ -20,14 +26,13 @@ import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutAddServer;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveServer;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.server.process.ServerProcess;
-import de.dytanic.cloudnetwrapper.util.FileCopy;
+import de.dytanic.cloudnetwrapper.util.FileUtility;
 import de.dytanic.cloudnetwrapper.util.MasterTemplateDeploy;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
-import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.net.URLConnection;
@@ -204,39 +209,39 @@ public class GameServer implements ServerDispatcher {
         } else if (!a()) return false;
 
         for (ServerInstallablePlugin plugin : serverProcess.getMeta().getDownloadablePlugins())
-            FileCopy.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
+            FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
 
         for (ServerInstallablePlugin plugin : serverProcess.getMeta().getTemplate().getInstallablePlugins())
-            FileCopy.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
+            FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
 
         serverProcess.setServerStage(ServerStage.COPY);
 
         if (serverGroup.getServerType().equals(ServerGroupType.BUKKIT))
             if (!Files.exists(Paths.get(path + "/spigot.jar")))
-                FileCopy.copyFileToDirectory(new File("local/spigot.jar"), new File(path));
+                FileUtility.copyFileToDirectory(new File("local/spigot.jar"), new File(path));
 
         if (serverGroup.getServerType().equals(ServerGroupType.GLOWSTONE))
         {
             if (!Files.exists(Paths.get(path + "/config")))
                 Files.createDirectories(Paths.get(path + "/config"));
             if (!Files.exists(Paths.get(path + "/config/glowstone.yml")))
-                FileCopy.insertData("files/glowstone.yml", path + "/config/glowstone.yml");
+                FileUtility.insertData("files/glowstone.yml", path + "/config/glowstone.yml");
         }
 
         if (!Files.exists(Paths.get(path + "/server.properties")))
-            FileCopy.insertData("files/server.properties", path + "/server.properties");
+            FileUtility.insertData("files/server.properties", path + "/server.properties");
 
         if (!Files.exists(Paths.get(path + "/bukkit.yml")))
-            FileCopy.insertData("files/bukkit.yml", path + "/bukkit.yml");
+            FileUtility.insertData("files/bukkit.yml", path + "/bukkit.yml");
 
         if (!serverProcess.getMeta().isOnlineMode())
             if (!Files.exists(Paths.get(path + "/spigot.yml")))
-                FileCopy.insertData("files/spigot.yml", path + "/spigot.yml");
+                FileUtility.insertData("files/spigot.yml", path + "/spigot.yml");
 
         Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
-        FileCopy.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
+        FileUtility.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
-        FileCopy.copyFilesInDirectory(new File("local/global"), new File(path));
+        FileUtility.copyFilesInDirectory(new File("local/global"), new File(path));
 
         String motd = "Default Motd";
         int maxPlayers = 0;
@@ -346,12 +351,7 @@ public class GameServer implements ServerDispatcher {
         {
             if (serverGroup.getGroupMode().equals(ServerGroupMode.DYNAMIC))
             {
-                try
-                {
-                    FileUtils.deleteDirectory(dir.toFile());
-                } catch (IOException e)
-                {
-                }
+                FileUtility.deleteDirectory(dir.toFile());
             }
             return true;
         }
@@ -362,7 +362,7 @@ public class GameServer implements ServerDispatcher {
         {
             try
             {
-                FileCopy.copyFilesInDirectory(new File(path + "/logs"), new File("local/records/" + serverProcess.getMeta().getServiceId().toString()));
+                FileUtility.copyFilesInDirectory(new File(path + "/logs"), new File("local/records/" + serverProcess.getMeta().getServiceId().toString()));
                 new Document("meta", serverProcess.getMeta()).saveAsConfig(Paths.get("local/records/" + serverProcess.getMeta().getServiceId().toString() + "/metadata.json"));
             } catch (IOException e)
             {
@@ -375,12 +375,7 @@ public class GameServer implements ServerDispatcher {
         if (!serverGroup.getGroupMode().equals(ServerGroupMode.STATIC) && !serverGroup.getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))
             try
             {
-                try
-                {
-                    FileUtils.deleteDirectory(dir.toFile());
-                } catch (Exception e)
-                {
-                }
+                FileUtility.deleteDirectory(dir.toFile());
             } catch (Exception ex)
             {
                 ex.printStackTrace();
@@ -453,8 +448,8 @@ public class GameServer implements ServerDispatcher {
 
             try
             {
-                FileCopy.copyFilesInDirectory(new File(this.path), new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()));
-                FileUtils.deleteDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getTemplate().getName() + "/CLOUD"));
+                FileUtility.copyFilesInDirectory(new File(this.path), new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()));
+                FileUtility.deleteDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getTemplate().getName() + "/CLOUD"));
                 new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getTemplate().getName() + "/plugins/CloudNetAPI.jar").delete();
             } catch (Exception e)
             {
@@ -489,7 +484,7 @@ public class GameServer implements ServerDispatcher {
         {
             try
             {
-                FileCopy.copyFilesInDirectory(file, new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getTemplate().getName() + NetworkUtils.SLASH_STRING + name));
+                FileUtility.copyFilesInDirectory(file, new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getTemplate().getName() + NetworkUtils.SLASH_STRING + name));
             } catch (IOException e)
             {
             }
@@ -551,7 +546,7 @@ public class GameServer implements ServerDispatcher {
                 System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup());
                 templateLoader.load();
                 templateLoader.unZip(dir.toString());
-                FileCopy.copyFilesInDirectory(new File(dir.toString()), new File(path));
+                FileUtility.copyFilesInDirectory(new File(dir.toString()), new File(path));
             } else if (template.getBackend().equals(TemplateResource.URL) && template.getUrl() != null)
             {
                 String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
@@ -564,7 +559,7 @@ public class GameServer implements ServerDispatcher {
                     templateLoader.unZip(groupTemplates);
                 }
 
-                FileCopy.copyFilesInDirectory(new File(groupTemplates), new File(path));
+                FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
             } else if (template.getBackend().equals(TemplateResource.MASTER) && CloudNetWrapper.getInstance().getSimpledUser() != null)
             {
                 String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
@@ -583,11 +578,11 @@ public class GameServer implements ServerDispatcher {
                     templateLoader.load();
                     templateLoader.unZip(groupTemplates);
                 }
-                FileCopy.copyFilesInDirectory(new File(groupTemplates), new File(path));
+                FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
             } else if (Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName())))
             {
 
-                FileCopy.copyFilesInDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()), new File(path));
+                FileUtility.copyFilesInDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()), new File(path));
             } else
             {
             }
@@ -622,7 +617,7 @@ public class GameServer implements ServerDispatcher {
                     templateLoader.load();
                     templateLoader.unZip(groupTemplates);
                 }
-                FileCopy.copyFilesInDirectory(new File(groupTemplates), new File(path));
+                FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
             } else if (template.getBackend().equals(TemplateResource.MASTER) && CloudNetWrapper.getInstance().getSimpledUser() != null)
             {
                 String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
@@ -641,11 +636,11 @@ public class GameServer implements ServerDispatcher {
                     templateLoader.load();
                     templateLoader.unZip(groupTemplates);
                 }
-                FileCopy.copyFilesInDirectory(new File(groupTemplates), new File(path));
+                FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
             } else if (Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName())))
             {
 
-                FileCopy.copyFilesInDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()), new File(path));
+                FileUtility.copyFilesInDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()), new File(path));
             } else
             {
                 return false;
