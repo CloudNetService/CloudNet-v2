@@ -20,7 +20,7 @@ public class QueryDecoder {
     public QueryDecoder(String query)
     {
         if (query == null) return;
-        if(query.length() == 0 || query.isEmpty() || query.equals("?")) return;
+        if (query.length() == 0 || query.isEmpty() || query.equals("?")) return;
 
         for (String input : query.split("&"))
         {

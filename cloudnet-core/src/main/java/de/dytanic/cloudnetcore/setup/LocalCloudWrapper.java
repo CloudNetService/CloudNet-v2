@@ -25,9 +25,9 @@ public class LocalCloudWrapper implements Runnabled<OptionSet> {
     @Override
     public void run(OptionSet obj)
     {
-        if(obj.has("installWrapper"))
+        if (obj.has("installWrapper"))
         {
-            if(!Files.exists(Paths.get("wrapper")))
+            if (!Files.exists(Paths.get("wrapper")))
             {
 
                 try

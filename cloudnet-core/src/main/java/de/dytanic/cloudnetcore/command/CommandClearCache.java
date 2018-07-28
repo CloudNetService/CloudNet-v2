@@ -28,7 +28,7 @@ public class CommandClearCache extends Command {
             @Override
             public void accept(Wrapper wrapper)
             {
-                if(wrapper.getChannel() != null)
+                if (wrapper.getChannel() != null)
                 {
                     wrapper.sendCommand("clearcache");
                 }

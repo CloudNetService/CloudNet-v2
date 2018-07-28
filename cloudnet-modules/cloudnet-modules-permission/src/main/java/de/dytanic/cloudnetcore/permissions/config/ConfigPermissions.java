@@ -161,14 +161,14 @@ public class ConfigPermissions {
         group.set("defaultGroup", permissionGroup.isDefaultGroup());
 
         Collection<String> perms = new CopyOnWriteArrayList<>();
-        for(Map.Entry<String, Boolean> entry : permissionGroup.getPermissions().entrySet())
+        for (Map.Entry<String, Boolean> entry : permissionGroup.getPermissions().entrySet())
         {
             perms.add((!entry.getValue() ? "-" : "") + entry.getKey());
         }
         group.set("permissions", perms);
 
         Configuration permsCfg = new Configuration();
-        for(Map.Entry<String, List<String>> keys : permissionGroup.getServerGroupPermissions().entrySet())
+        for (Map.Entry<String, List<String>> keys : permissionGroup.getServerGroupPermissions().entrySet())
         {
             permsCfg.set(keys.getKey(), keys.getValue());
         }

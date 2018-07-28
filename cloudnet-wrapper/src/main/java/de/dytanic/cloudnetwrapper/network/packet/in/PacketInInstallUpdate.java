@@ -22,15 +22,15 @@ public class PacketInInstallUpdate extends PacketInHandler {
         {
             URLConnection url = new java.net.URL(data.getString("url")).openConnection();
             url.connect();
-            if(System.getProperty("os.name").toLowerCase().contains("windows"))
+            if (System.getProperty("os.name").toLowerCase().contains("windows"))
             {
                 Files.copy(url.getInputStream(), Paths.get("CloudNet-Wrapper-" + NetworkUtils.RANDOM.nextLong() + ".jar"));
-            }
-            else
+            } else
             {
                 Files.copy(url.getInputStream(), Paths.get("CloudNet-Wrapper.jar"));
             }
-        }catch (Exception ex){
+        } catch (Exception ex)
+        {
             ex.printStackTrace();
         }
     }

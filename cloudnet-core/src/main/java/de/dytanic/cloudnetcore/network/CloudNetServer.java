@@ -91,7 +91,7 @@ public final class CloudNetServer
 
         ChannelConnectEvent channelConnectEvent = new ChannelConnectEvent(false, channel);
         CloudNet.getInstance().getEventManager().callEvent(channelConnectEvent);
-        if(channelConnectEvent.isCancelled())
+        if (channelConnectEvent.isCancelled())
         {
             channel.close().syncUninterruptibly();
             return;
@@ -110,7 +110,7 @@ public final class CloudNetServer
                 return;
             }
 
-            if(cn.getNetworkInfo().getHostName().equals(host))
+            if (cn.getNetworkInfo().getHostName().equals(host))
             {
                 if (sslContext != null) channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
 

@@ -41,8 +41,7 @@ public final class PacketInScreen extends PacketInHandler {
                 BungeeCord gameServer = CloudNetWrapper.getInstance().getProxys().get(server.getServiceId().getServerId());
                 if (data.getBoolean("enable"))
                     CloudNetWrapper.getInstance().getScreenProvider().putScreenRequest(gameServer);
-                else
-                    if(CloudNetWrapper.getInstance().getScreenProvider().contains(gameServer))
+                else if (CloudNetWrapper.getInstance().getScreenProvider().contains(gameServer))
                     CloudNetWrapper.getInstance().getScreenProvider().cancel(gameServer);
             }
         }

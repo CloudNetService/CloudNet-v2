@@ -11,10 +11,10 @@ import de.dytanic.cloudnetcore.api.event.network.ChannelInitEvent;
 import de.dytanic.cloudnetcore.api.event.network.WrapperChannelDisconnectEvent;
 import de.dytanic.cloudnetcore.api.event.network.WrapperChannelInitEvent;
 import de.dytanic.cloudnetcore.database.StatisticManager;
+import de.dytanic.cloudnetcore.network.components.INetworkComponent;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-import de.dytanic.cloudnetcore.network.components.INetworkComponent;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutOnlineServer;
 import de.dytanic.cloudnetcore.network.wrapper.WrapperSession;
@@ -31,7 +31,7 @@ import java.util.UUID;
  */
 @Getter
 public class CloudNetClient
-            extends SimpleChannelInboundHandler {
+        extends SimpleChannelInboundHandler {
 
     private Channel channel;
     private INetworkComponent networkComponent;
@@ -44,26 +44,26 @@ public class CloudNetClient
 
         System.out.println("Channel connected [" + channel.remoteAddress().toString() + "/serverId=" + networkComponent.getServerId() + "]");
 
-        if(networkComponent instanceof Wrapper)
+        if (networkComponent instanceof Wrapper)
         {
             StatisticManager.getInstance().wrapperConnections();
             System.out.println("Wrapper [" + networkComponent.getServerId() + "] is connected.");
             CloudNet.getInstance().getEventManager().callEvent(new WrapperChannelInitEvent((Wrapper) networkComponent, channel));
-            CloudNet.getInstance().getDbHandlers().getWrapperSessionDatabase().addSession(new WrapperSession(UUID.randomUUID(), ((Wrapper)networkComponent).getNetworkInfo(), System.currentTimeMillis()));
-            ((Wrapper)networkComponent).updateWrapper();
+            CloudNet.getInstance().getDbHandlers().getWrapperSessionDatabase().addSession(new WrapperSession(UUID.randomUUID(), ((Wrapper) networkComponent).getNetworkInfo(), System.currentTimeMillis()));
+            ((Wrapper) networkComponent).updateWrapper();
         }
 
         CloudNetwork cloudNetwork = CloudNet.getInstance().getNetworkManager().newCloudNetwork();
         channel.writeAndFlush(new PacketOutCloudNetwork(cloudNetwork));
 
-        if(networkComponent instanceof MinecraftServer)
+        if (networkComponent instanceof MinecraftServer)
         {
-            ((MinecraftServer)networkComponent).setChannelLostTime(0L);
-            networkComponent.getWrapper().sendPacket(new PacketOutOnlineServer(((MinecraftServer)networkComponent).getServerInfo()));
+            ((MinecraftServer) networkComponent).setChannelLostTime(0L);
+            networkComponent.getWrapper().sendPacket(new PacketOutOnlineServer(((MinecraftServer) networkComponent).getServerInfo()));
         }
-        if(networkComponent instanceof ProxyServer)
+        if (networkComponent instanceof ProxyServer)
         {
-            ((ProxyServer)networkComponent).setChannelLostTime(0L);
+            ((ProxyServer) networkComponent).setChannelLostTime(0L);
         }
         CloudNet.getInstance().getEventManager().callEvent(new ChannelInitEvent(channel, networkComponent));
         init(cloudNetwork);
@@ -78,31 +78,32 @@ public class CloudNetClient
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception
     {
-        if((!channel.isActive() || !channel.isOpen() || !channel.isWritable()))
+        if ((!channel.isActive() || !channel.isOpen() || !channel.isWritable()))
         {
             System.out.println("Channel disconnected [" + channel.remoteAddress().toString() + "/serverId=" + networkComponent.getServerId() + "]");
             ctx.close().syncUninterruptibly();
-            if(networkComponent instanceof MinecraftServer)
+            if (networkComponent instanceof MinecraftServer)
             {
-                ((MinecraftServer)networkComponent).setChannelLostTime(System.currentTimeMillis());
+                ((MinecraftServer) networkComponent).setChannelLostTime(System.currentTimeMillis());
             }
-            if(networkComponent instanceof ProxyServer)
+            if (networkComponent instanceof ProxyServer)
             {
-                ((ProxyServer)networkComponent).setChannelLostTime(System.currentTimeMillis());
+                ((ProxyServer) networkComponent).setChannelLostTime(System.currentTimeMillis());
             }
-            if(networkComponent instanceof Wrapper)
+            if (networkComponent instanceof Wrapper)
             {
                 try
                 {
                     ((Wrapper) networkComponent).disconnct();
-                }catch (Exception ex) {
+                } catch (Exception ex)
+                {
 
-                    ((Wrapper)networkComponent).getServers().clear();
-                    ((Wrapper)networkComponent).getProxys().clear();
+                    ((Wrapper) networkComponent).getServers().clear();
+                    ((Wrapper) networkComponent).getProxys().clear();
 
                 }
 
-                CloudNet.getInstance().getEventManager().callEvent(new WrapperChannelDisconnectEvent(((Wrapper)networkComponent)));
+                CloudNet.getInstance().getEventManager().callEvent(new WrapperChannelDisconnectEvent(((Wrapper) networkComponent)));
 
             }
             networkComponent.setChannel(null);
@@ -110,9 +111,10 @@ public class CloudNetClient
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
+    {
 
-        if(!(cause instanceof IOException))
+        if (!(cause instanceof IOException))
         {
             cause.printStackTrace();
         }
@@ -130,10 +132,10 @@ public class CloudNetClient
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object obj) throws Exception
     {
 
-        if(!(obj instanceof Packet)) return;
+        if (!(obj instanceof Packet)) return;
 
         CloudNet.getLogger().debug("Receiving Packet on " + getChannel().remoteAddress().toString());
-        Packet packet = (Packet)obj;
+        Packet packet = (Packet) obj;
         CloudNet.getInstance().getPacketManager().dispatchPacket(packet, networkComponent);
     }
 

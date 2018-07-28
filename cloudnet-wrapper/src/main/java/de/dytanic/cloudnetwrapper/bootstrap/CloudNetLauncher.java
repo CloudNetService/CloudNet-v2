@@ -16,7 +16,7 @@ public class CloudNetLauncher {
 
     public static void main(String[] args) throws Exception
     {
-        if(Float.parseFloat(System.getProperty("java.class.version")) < 52D)
+        if (Float.parseFloat(System.getProperty("java.class.version")) < 52D)
         {
             throw new JavaReqVersionException();
         }
@@ -27,7 +27,8 @@ public class CloudNetLauncher {
             Field field = Charset.class.getDeclaredField("defaultCharset");
             field.setAccessible(true);
             field.set(null, Charset.forName("UTF-8"));
-        }catch (Exception ex) {
+        } catch (Exception ex)
+        {
 
         }
 

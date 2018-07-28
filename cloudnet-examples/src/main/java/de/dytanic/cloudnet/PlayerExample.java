@@ -34,7 +34,7 @@ public class PlayerExample {
             playerConnection.isOnlineMode(); //Returns if the player was in onlinemode
         }
 
-        System.out.println("The player " + cloudPlayer.getName()  + " is on " + cloudPlayer.getProxy() + NetworkUtils.SLASH_STRING + cloudPlayer.getServer() + " and connected at " + cloudPlayer.getLoginTimeStamp().getTime());
+        System.out.println("The player " + cloudPlayer.getName() + " is on " + cloudPlayer.getProxy() + NetworkUtils.SLASH_STRING + cloudPlayer.getServer() + " and connected at " + cloudPlayer.getLoginTimeStamp().getTime());
 
         PlayerExecutor playerExecutor = cloudPlayer.getPlayerExecutor(); //Returns a util Class for some network methods
         playerExecutor.sendMessage(cloudPlayer, "Hello world!"); //writes a message to the player if the player is online
@@ -55,13 +55,13 @@ public class PlayerExample {
         }).start();
 
         OfflinePlayer offlinePlayer = CloudAPI.getInstance().getOfflinePlayer("Dytanic");
-        if(offlinePlayer != null) //If the player is registered
+        if (offlinePlayer != null) //If the player is registered
         {
             PermissionEntity permissionEntity = offlinePlayer.getPermissionEntity(); //Returns the permissionentity for manage some permission systems
             permissionEntity.getGroups().add(new GroupEntityData("VIP", System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30))); //add a permission group with the delay of 30 days
             permissionEntity.getPermissions().put("minecraft.command.tp", true); //add a permission for this player
 
-            if(permissionEntity.isInGroup("VIP"))
+            if (permissionEntity.isInGroup("VIP"))
             {
                 System.out.println("The player " + offlinePlayer.getUniqueId() + NetworkUtils.SLASH_STRING + offlinePlayer.getName() + " is in the group VIP");
             }

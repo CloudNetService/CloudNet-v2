@@ -21,11 +21,12 @@ public class HeaderFunction {
     public HeaderFunction()
     {
         File file = new File("HEADER.txt");
-        if(file.exists())
+        if (file.exists())
         {
             executed = true;
-            try(InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader)){
+            try (InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader))
+            {
 
                 String input;
                 while ((input = bufferedReader.readLine()) != null)
@@ -40,8 +41,7 @@ public class HeaderFunction {
             {
                 e.printStackTrace();
             }
-        }
-        else
+        } else
         {
             NetworkUtils.header();
         }

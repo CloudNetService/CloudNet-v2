@@ -25,7 +25,8 @@ public class PacketInUpdateProxyGroup extends PacketInHandler {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        ProxyGroup proxyGroup = data.getObject("group", new TypeToken<ProxyGroup>(){}.getType());
+        ProxyGroup proxyGroup = data.getObject("group", new TypeToken<ProxyGroup>() {
+        }.getType());
         CloudNet.getInstance().getConfig().createGroup(proxyGroup);
 
         try

@@ -15,7 +15,6 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.Callable;
-
 import java.util.concurrent.FutureTask;
 
 /**
@@ -35,7 +34,8 @@ public class DatabaseImpl implements Database {
     public Database loadDocuments()
     {
         Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketDBOutGetDocument(name), CloudAPI.getInstance().getNetworkConnection());
-        this.docs = result.getResult().getObject("docs", new TypeToken<Map<String, Document>>(){}.getType());
+        this.docs = result.getResult().getObject("docs", new TypeToken<Map<String, Document>>() {
+        }.getType());
         return this;
     }
 
@@ -49,7 +49,7 @@ public class DatabaseImpl implements Database {
     public Document getDocument(String name)
     {
         Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketDBOutGetDocument(name, this.name), CloudAPI.getInstance().getNetworkConnection());
-        Document document =  result.getResult().getDocument("result");
+        Document document = result.getResult().getDocument("result");
 
         this.docs.put(document.getString(Database.UNIQUE_NAME_KEY), document);
 

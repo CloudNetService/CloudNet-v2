@@ -33,7 +33,7 @@ public class StatisticManager extends DatabaseUseable {
             database.insert(document);
         }
 
-        if(CloudNet.getInstance().getOptionSet().has("disable-statistics"))
+        if (CloudNet.getInstance().getOptionSet().has("disable-statistics"))
         {
             statistic = false;
         }
@@ -46,7 +46,7 @@ public class StatisticManager extends DatabaseUseable {
 
     public void addPlayerLogin()
     {
-        if(!statistic) return;
+        if (!statistic) return;
         try
         {
             Document document = database.getDocument(NAME);
@@ -56,14 +56,15 @@ public class StatisticManager extends DatabaseUseable {
             }
 
             document.append("playerLogin", document.getLong("playerLogin") + 1L);
-        }catch (Exception ex) {
+        } catch (Exception ex)
+        {
 
         }
     }
 
     public void addStartedProxys()
     {
-        if(!statistic) return;
+        if (!statistic) return;
         Document document = database.getDocument(NAME);
         if (!document.contains("startedProxys"))
         {
@@ -75,7 +76,7 @@ public class StatisticManager extends DatabaseUseable {
 
     public void addStartedServers()
     {
-        if(!statistic) return;
+        if (!statistic) return;
         Document document = database.getDocument(NAME);
         if (!document.contains("startedServers"))
         {
@@ -87,7 +88,7 @@ public class StatisticManager extends DatabaseUseable {
 
     public void addStartup()
     {
-        if(!statistic) return;
+        if (!statistic) return;
         Document document = database.getDocument(NAME);
         if (!document.contains("cloudStartup"))
         {
@@ -99,7 +100,7 @@ public class StatisticManager extends DatabaseUseable {
 
     public void wrapperConnections()
     {
-        if(!statistic) return;
+        if (!statistic) return;
         Document document = database.getDocument(NAME);
         if (!document.contains("wrapperConnections"))
         {
@@ -111,7 +112,7 @@ public class StatisticManager extends DatabaseUseable {
 
     public void playerCommandExecutions()
     {
-        if(!statistic) return;
+        if (!statistic) return;
         Document document = database.getDocument(NAME);
         if (!document.contains("playerCommandExecutions"))
         {
@@ -123,7 +124,7 @@ public class StatisticManager extends DatabaseUseable {
 
     public void highestServerOnlineCount(int value)
     {
-        if(!statistic) return;
+        if (!statistic) return;
         Document document = database.getDocument(NAME);
         if (!document.contains("highestServerOnlineCount"))
         {
@@ -136,7 +137,7 @@ public class StatisticManager extends DatabaseUseable {
 
     public void highestPlayerOnlineCount(int value)
     {
-        if(!statistic) return;
+        if (!statistic) return;
         Document document = database.getDocument(NAME);
         if (!document.contains("highestPlayerOnline"))
         {
@@ -149,7 +150,7 @@ public class StatisticManager extends DatabaseUseable {
 
     public void cloudOnlineTime(long activeNow)
     {
-        if(!statistic) return;
+        if (!statistic) return;
         Document document = database.getDocument(NAME);
         if (!document.contains("cloudOnlineTime"))
         {

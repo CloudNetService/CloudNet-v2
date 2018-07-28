@@ -21,16 +21,17 @@ public class PacketInUpdatePlayer extends PacketInHandler {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        OfflinePlayer offlinePlayer = data.getObject("player", new TypeToken<OfflinePlayer>(){}.getType());
+        OfflinePlayer offlinePlayer = data.getObject("player", new TypeToken<OfflinePlayer>() {
+        }.getType());
         CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(offlinePlayer);
 
-        if(CloudNet.getInstance().getNetworkManager().getOnlinePlayers().containsKey(offlinePlayer.getUniqueId()))
+        if (CloudNet.getInstance().getNetworkManager().getOnlinePlayers().containsKey(offlinePlayer.getUniqueId()))
         {
             CloudPlayer cloudPlayer = CloudNet.getInstance().getNetworkManager().getOnlinePlayers().get(offlinePlayer.getUniqueId());
             cloudPlayer.setMetaData(offlinePlayer.getMetaData());
             cloudPlayer.setPermissionEntity(offlinePlayer.getPermissionEntity());
             CloudNet.getInstance().getNetworkManager().handlePlayerUpdate(cloudPlayer);
-        }
-        else CloudNet.getInstance().getNetworkManager().sendAllUpdate(new PacketOutUpdateOfflinePlayer(offlinePlayer));
+        } else
+            CloudNet.getInstance().getNetworkManager().sendAllUpdate(new PacketOutUpdateOfflinePlayer(offlinePlayer));
     }
 }

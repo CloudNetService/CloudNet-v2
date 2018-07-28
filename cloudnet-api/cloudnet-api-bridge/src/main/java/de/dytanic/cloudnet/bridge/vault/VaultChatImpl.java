@@ -65,17 +65,17 @@ public class VaultChatImpl extends Chat {
     public String getGroupPrefix(String s, String s1)
     {
         PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(s1);
-        if(permissionGroup != null)
-        return permissionGroup.getPrefix();
+        if (permissionGroup != null)
+            return permissionGroup.getPrefix();
         else
-        return null;
+            return null;
     }
 
     @Override
     public void setGroupPrefix(String s, String s1, String s2)
     {
         PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(s1);
-        if(permissionGroup != null)
+        if (permissionGroup != null)
         {
             permissionGroup.setPrefix(s2);
             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
@@ -86,7 +86,7 @@ public class VaultChatImpl extends Chat {
     public String getGroupSuffix(String s, String s1)
     {
         PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(s1);
-        if(permissionGroup != null)
+        if (permissionGroup != null)
             return permissionGroup.getSuffix();
         else
             return null;
@@ -96,7 +96,7 @@ public class VaultChatImpl extends Chat {
     public void setGroupSuffix(String s, String s1, String s2)
     {
         PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(s1);
-        if(permissionGroup != null)
+        if (permissionGroup != null)
         {
             permissionGroup.setSuffix(s2);
             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
@@ -203,7 +203,7 @@ public class VaultChatImpl extends Chat {
     {
         OfflinePlayer offlinePlayer = CloudServer.getInstance().getCachedPlayer(name);
 
-        if(offlinePlayer == null)
+        if (offlinePlayer == null)
             offlinePlayer = CloudAPI.getInstance().getOfflinePlayer(name);
 
         return offlinePlayer;

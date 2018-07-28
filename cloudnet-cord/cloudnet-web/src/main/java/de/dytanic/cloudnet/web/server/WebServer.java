@@ -68,10 +68,12 @@ public class WebServer {
         acceptorGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
 
-        try {
+        try
+        {
             acceptorGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             workerGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-        }catch (InterruptedException ex) {
+        } catch (InterruptedException ex)
+        {
         }
     }
 

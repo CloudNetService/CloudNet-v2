@@ -21,7 +21,7 @@ public class PacketInCloudNetwork extends PacketInHandlerDefault {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        if(CloudAPI.getInstance() != null)
+        if (CloudAPI.getInstance() != null)
         {
             CloudNetwork cloudNetwork = data.getObject("cloudnetwork", NetworkUtils.cloudnet().getType());
             CloudAPI.getInstance().setCloudNetwork(cloudNetwork);

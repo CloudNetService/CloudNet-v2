@@ -63,14 +63,14 @@ public class SetupServerGroup {
 
                         ServerGroupType serverGroupType = null;
 
-                        for(ServerGroupType serverGroup : ServerGroupType.values())
+                        for (ServerGroupType serverGroup : ServerGroupType.values())
                         {
-                            if(serverGroup.name().equalsIgnoreCase(data.getString("type").toUpperCase()))
+                            if (serverGroup.name().equalsIgnoreCase(data.getString("type").toUpperCase()))
                             {
                                 serverGroupType = serverGroup;
                             }
                         }
-                        if(serverGroupType == null) serverGroupType = ServerGroupType.BUKKIT;
+                        if (serverGroupType == null) serverGroupType = ServerGroupType.BUKKIT;
 
                         ServerGroup serverGroup = new ServerGroup(
                                 name,
@@ -96,7 +96,7 @@ public class SetupServerGroup {
                                         new String[0],
                                         new ArrayList<>()
                                 )),
-                        new AdvancedServerConfig(false, false, false, !serverGroupMode.equals(ServerGroupMode.STATIC)));
+                                new AdvancedServerConfig(false, false, false, !serverGroupMode.equals(ServerGroupMode.STATIC)));
                         CloudNet.getInstance().getConfig().createGroup(serverGroup);
                         CloudNet.getInstance().getServerGroups().put(serverGroup.getName(), serverGroup);
                         CloudNet.getInstance().setupGroup(serverGroup);
@@ -164,10 +164,10 @@ public class SetupServerGroup {
                                 wrappers.remove(wrappers.get(i));
                         }
 
-                        if (wrappers.size() == 0) return false; else return true;
+                        if (wrappers.size() == 0) return false;
+                        else return true;
                     }
-                }))
-                ;
+                }));
         setup.start(CloudNet.getLogger().getReader());
     }
 }

@@ -23,11 +23,12 @@ public final class PacketInLogoutPlayer extends PacketInHandlerDefault {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        CloudPlayer cloudPlayer = data.getObject("player", new TypeToken<CloudPlayer>(){}.getType());
+        CloudPlayer cloudPlayer = data.getObject("player", new TypeToken<CloudPlayer>() {
+        }.getType());
 
-        if(cloudPlayer != null)
+        if (cloudPlayer != null)
         {
-            if(CloudAPI.getInstance() != null)
+            if (CloudAPI.getInstance() != null)
             {
                 CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
                     @Override
@@ -37,11 +38,10 @@ public final class PacketInLogoutPlayer extends PacketInHandlerDefault {
                     }
                 });
             }
-        }
-        else
+        } else
         {
             UUID uuid = data.getObject("uniqueId", UUID.class);
-            if(CloudAPI.getInstance() != null)
+            if (CloudAPI.getInstance() != null)
             {
                 CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
                     @Override

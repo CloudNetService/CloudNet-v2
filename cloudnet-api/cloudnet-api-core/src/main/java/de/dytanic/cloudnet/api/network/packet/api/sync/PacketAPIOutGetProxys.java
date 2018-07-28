@@ -20,6 +20,6 @@ public class PacketAPIOutGetProxys extends Packet {
 
     public PacketAPIOutGetProxys(String group)
     {
-        super(PacketRC.API + 4, new Document("group" , group));
+        super(PacketRC.API + 4, new Document("group", group));
     }
 }

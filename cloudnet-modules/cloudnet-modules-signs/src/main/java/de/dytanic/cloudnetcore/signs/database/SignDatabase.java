@@ -8,8 +8,8 @@ import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.database.DatabaseUseable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
+import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
@@ -25,7 +25,7 @@ public class SignDatabase extends DatabaseUseable {
         super(database);
 
         Document document = database.getDocument("signs");
-        if(document == null)
+        if (document == null)
         {
             database.insert(new DatabaseDocument("signs").append("signs", new Document()));
         }
@@ -53,9 +53,10 @@ public class SignDatabase extends DatabaseUseable {
     {
         Document x = database.getDocument("signs");
         Document document = x.getDocument("signs");
-        Type typeToken = new TypeToken<Sign>(){}.getType();
+        Type typeToken = new TypeToken<Sign>() {
+        }.getType();
         java.util.Map<UUID, Sign> signs = new LinkedHashMap<>();
-        for(String key : document.keys())
+        for (String key : document.keys())
         {
             signs.put(UUID.fromString(key), document.getObject(key, typeToken));
         }

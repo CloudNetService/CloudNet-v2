@@ -12,7 +12,7 @@ public class CommandStop extends Command {
 
     public CommandStop()
     {
-        super("stop", "cloudnet.command.stop");
+        super("stop", "cloudnet.command.stop", "exit");
     }
 
     @Override

@@ -6,8 +6,8 @@ package de.dytanic.cloudnet.database;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet3.TaskScheduler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 /**
@@ -35,10 +34,13 @@ public class DatabaseImpl
     @Override
     public Database loadDocuments()
     {
-        for(File file : backendDir.listFiles()) {
-            if (!this.documents.containsKey(file.getName())) {
+        for (File file : backendDir.listFiles())
+        {
+            if (!this.documents.containsKey(file.getName()))
+            {
                 Document document = Document.loadDocument(file);
-                if (document.contains(UNIQUE_NAME_KEY)) {
+                if (document.contains(UNIQUE_NAME_KEY))
+                {
                     this.documents.put(file.getName(), document);
                 }
             }
@@ -66,10 +68,10 @@ public class DatabaseImpl
 
         Document document = documents.get(name);
 
-        if(document == null)
+        if (document == null)
         {
             File doc = new File("database/" + this.name + NetworkUtils.SLASH_STRING + name);
-            if(doc.exists())
+            if (doc.exists())
             {
                 document = Document.loadDocument(doc);
                 this.documents.put(doc.getName(), document);
@@ -82,14 +84,19 @@ public class DatabaseImpl
     @Override
     public Database insert(Document... documents)
     {
-        for (Document document : documents) {
-            if (document.contains(UNIQUE_NAME_KEY)) {
+        for (Document document : documents)
+        {
+            if (document.contains(UNIQUE_NAME_KEY))
+            {
                 this.documents.put(document.getString(UNIQUE_NAME_KEY), document);
                 Path path = Paths.get("database/" + this.name + "/" + document.getString(UNIQUE_NAME_KEY));
-                if (!Files.exists(path)) {
-                    try {
+                if (!Files.exists(path))
+                {
+                    try
+                    {
                         Files.createFile(path);
-                    } catch (IOException e) {
+                    } catch (IOException e)
+                    {
                         e.printStackTrace();
                     }
                 }
@@ -105,7 +112,7 @@ public class DatabaseImpl
         if (name == null) return this;
 
         Document document = getDocument(name);
-        if(document != null)
+        if (document != null)
         {
             documents.remove(name);
         }
@@ -116,7 +123,8 @@ public class DatabaseImpl
     @Override
     public Database delete(Document document)
     {
-        if (document.contains(UNIQUE_NAME_KEY)) {
+        if (document.contains(UNIQUE_NAME_KEY))
+        {
             delete(document.getString(UNIQUE_NAME_KEY));
         }
         return this;
@@ -170,13 +178,17 @@ public class DatabaseImpl
         return new FutureTask<>(() -> getDocument(name));
     }
 
-    public void save() {
-        for (Document document : documents.values()) {
-            if (document.contains(UNIQUE_NAME_KEY)) {
+    public void save()
+    {
+        for (Document document : documents.values())
+        {
+            if (document.contains(UNIQUE_NAME_KEY))
+            {
                 document.saveAsConfig0(new File("database/" + this.name + NetworkUtils.SLASH_STRING + document.getString(UNIQUE_NAME_KEY)));
             }
         }
     }
+
     public void clear()
     {
         this.documents.clear();

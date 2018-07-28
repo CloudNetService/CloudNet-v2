@@ -12,8 +12,7 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 public class PacketOutExecuteServerCommand
-    extends Packet
-{
+        extends Packet {
     public PacketOutExecuteServerCommand(ServerInfo serverInfo, String commandLine)
     {
         super(PacketRC.CN_CORE + 7, new Document("serverInfo", serverInfo).append("type", DefaultType.BUKKIT).append("commandLine", commandLine));

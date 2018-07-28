@@ -75,7 +75,7 @@ public final class ReflectionUtil {
         {
             Object armorstand = entity.getWorld().spawnEntity(entity.getLocation().clone().add(0,
                     ((LivingEntity) entity).getEyeHeight() - (entity instanceof Wither ? 0.15 : 0.3), 0), EntityType.valueOf("ARMOR_STAND"));
-            
+
             armorstand.getClass().getMethod("setVisible", boolean.class).invoke(armorstand, false);
             armorstand.getClass().getMethod("setCustomNameVisible", boolean.class).invoke(armorstand, true);
             armorstand.getClass().getMethod("setGravity", boolean.class).invoke(armorstand, false);
@@ -83,7 +83,8 @@ public final class ReflectionUtil {
             armorstand.getClass().getMethod("setSmall", boolean.class).invoke(armorstand, true);
             armorstand.getClass().getMethod("setCanPickupItems", boolean.class).invoke(armorstand, false);
             return armorstand;
-        }catch (Exception ex) {
+        } catch (Exception ex)
+        {
             ex.printStackTrace();
         }
         return null;

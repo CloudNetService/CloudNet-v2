@@ -10,7 +10,8 @@ import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Tareko on 05.10.2017.

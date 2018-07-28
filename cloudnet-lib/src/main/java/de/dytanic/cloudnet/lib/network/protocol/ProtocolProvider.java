@@ -18,11 +18,14 @@ import java.util.Map;
  */
 public final class ProtocolProvider {
 
-    private ProtocolProvider() {}
+    private ProtocolProvider()
+    {
+    }
 
     private static Map<Integer, IProtocol> protocols;
 
-    static {
+    static
+    {
         protocols = NetworkUtils.newConcurrentHashMap();
         registerProtocol(new PacketProtocol());
         registerProtocol(new FileProtocol());

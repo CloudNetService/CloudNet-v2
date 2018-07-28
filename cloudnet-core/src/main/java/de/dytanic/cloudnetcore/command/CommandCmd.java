@@ -25,42 +25,41 @@ public class CommandCmd extends Command {
     @Override
     public void onExecuteCommand(CommandSender sender, String[] args)
     {
-        if(args.length > 1)
+        if (args.length > 1)
         {
-            for(Wrapper wrapper : CloudNet.getInstance().getWrappers().values())
+            for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values())
             {
-                for(MinecraftServer minecraftServer : wrapper.getServers().values())
+                for (MinecraftServer minecraftServer : wrapper.getServers().values())
                 {
-                    if(minecraftServer.getServiceId().getServerId().equalsIgnoreCase(args[0]))
+                    if (minecraftServer.getServiceId().getServerId().equalsIgnoreCase(args[0]))
                     {
                         StringBuilder stringBuilder = new StringBuilder();
-                        for(short i = 1; i < args.length; i++)
+                        for (short i = 1; i < args.length; i++)
                         {
                             stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
                         }
                         minecraftServer.getWrapper().writeServerCommand(stringBuilder.substring(0, stringBuilder.length() - 1), minecraftServer.getServerInfo());
-                        sender.sendMessage("Sending command to " + minecraftServer.getServiceId().getServerId() + " with [\"" + stringBuilder.substring(0, stringBuilder.length() -1) + "\"]");
+                        sender.sendMessage("Sending command to " + minecraftServer.getServiceId().getServerId() + " with [\"" + stringBuilder.substring(0, stringBuilder.length() - 1) + "\"]");
                         return;
                     }
                 }
 
-                for(ProxyServer minecraftServer : wrapper.getProxys().values())
+                for (ProxyServer minecraftServer : wrapper.getProxys().values())
                 {
-                    if(minecraftServer.getServiceId().getServerId().equalsIgnoreCase(args[0]))
+                    if (minecraftServer.getServiceId().getServerId().equalsIgnoreCase(args[0]))
                     {
                         StringBuilder stringBuilder = new StringBuilder();
-                        for(short i = 1; i < args.length; i++)
+                        for (short i = 1; i < args.length; i++)
                         {
                             stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
                         }
                         minecraftServer.getWrapper().writeProxyCommand(stringBuilder.substring(0, stringBuilder.length() - 1), minecraftServer.getProxyInfo());
-                        sender.sendMessage("Sending command to " + minecraftServer.getServiceId().getServerId() + " with [\"" + stringBuilder.substring(0, stringBuilder.length() -1) + "\"]");
+                        sender.sendMessage("Sending command to " + minecraftServer.getServiceId().getServerId() + " with [\"" + stringBuilder.substring(0, stringBuilder.length() - 1) + "\"]");
                         return;
                     }
                 }
             }
-        }
-        else
+        } else
         {
             sender.sendMessage("cmd <name> <command> | Executes a command, either from a proxy or game server");
         }

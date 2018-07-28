@@ -4,8 +4,6 @@
 
 package de.dytanic.cloudnetcore.network.components.priority;
 
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.threading.ScheduledTask;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.INetworkComponent;
@@ -14,8 +12,6 @@ import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Collection;
 
 /**
  * Created by Tareko on 20.08.2017.

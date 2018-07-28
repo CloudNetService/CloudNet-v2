@@ -7,11 +7,11 @@ package de.dytanic.cloudnetcore.database;
 import de.dytanic.cloudnet.database.DatabaseUseable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
+import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
-import de.dytanic.cloudnet.lib.player.CloudPlayer;
+import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -84,7 +84,8 @@ public class PlayerDatabase extends DatabaseUseable {
 
         Map<UUID, OfflinePlayer> map = new HashMap<>();
 
-        for (Document document : database.getDocs()) {
+        for (Document document : database.getDocs())
+        {
             OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
             map.put(offlinePlayer.getUniqueId(), offlinePlayer);
         }

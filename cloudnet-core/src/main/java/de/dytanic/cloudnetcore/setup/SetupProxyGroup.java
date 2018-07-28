@@ -60,13 +60,13 @@ public class SetupProxyGroup {
 
                         ProxyGroupMode proxyGroupMode = null;
 
-                        for(ProxyGroupMode proxyGroup : ProxyGroupMode.values())
-                        if(proxyGroup.name().equalsIgnoreCase(data.getString("mode").toUpperCase()))
-                        {
-                            proxyGroupMode = proxyGroup;
-                        }
+                        for (ProxyGroupMode proxyGroup : ProxyGroupMode.values())
+                            if (proxyGroup.name().equalsIgnoreCase(data.getString("mode").toUpperCase()))
+                            {
+                                proxyGroupMode = proxyGroup;
+                            }
 
-                        if(proxyGroupMode == null) proxyGroupMode = ProxyGroupMode.DYNAMIC;
+                        if (proxyGroupMode == null) proxyGroupMode = ProxyGroupMode.DYNAMIC;
 
                         ProxyGroup proxyGroup = new ProxyGroup(name, wrappers, new Template(
                                 "default",

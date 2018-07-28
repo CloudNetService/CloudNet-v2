@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ServerGroupProfile
-                    implements Nameable{
+        implements Nameable {
 
     private String name;
 

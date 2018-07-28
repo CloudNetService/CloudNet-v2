@@ -69,17 +69,18 @@ public class CloudConfig {
 
     public CloudConfig(ConsoleReader consoleReader) throws Exception
     {
-        if (!Files.exists(Paths.get("groups"))) Files.createDirectory(Paths.get("groups"));
-        if (!Files.exists(Paths.get("local"))) Files.createDirectory(Paths.get("local"));
-        if (!Files.exists(Paths.get("local/libs"))) Files.createDirectory(Paths.get("local/libs"));
-        if (!Files.exists(Paths.get("local/templates"))) Files.createDirectory(Paths.get("local/templates"));
-        if (!Files.exists(Paths.get("local/plugins"))) Files.createDirectory(Paths.get("local/plugins"));
-        if (!Files.exists(Paths.get("local/cache"))) Files.createDirectory(Paths.get("local/cache"));
-        if (!Files.exists(Paths.get("local/servers"))) Files.createDirectory(Paths.get("local/servers"));
-        if (!Files.exists(Paths.get("local/servers/TestServer")))
-            Files.createDirectory(Paths.get("local/servers/TestServer"));
-        if (!Files.exists(Paths.get("local/servers/TestServer/plugins")))
-            Files.createDirectory(Paths.get("local/servers/TestServer/plugins"));
+
+        for (File directory : new File[]{
+                new File("local/servers"),
+                new File("local/templates"),
+                new File("local/plugins"),
+                new File("local/servers"),
+                new File("local/cache"),
+                new File("groups"),
+                new File("modules"),
+                new File("templates")
+        })
+            directory.mkdirs();
 
         NetworkUtils.writeWrapperKey();
 
@@ -372,19 +373,20 @@ public class CloudConfig {
         File groupsDirectory = new File("groups");
         Document entry;
 
-        if(groupsDirectory.isDirectory())
-        for(File file : groupsDirectory.listFiles())
-        {
-            if(file.getName().endsWith(".json"))
-            try
+        if (groupsDirectory.isDirectory())
+            for (File file : groupsDirectory.listFiles())
             {
-                entry = Document.$loadDocument(file);
-                ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
-                groups.put(serverGroup.getName(), serverGroup);
-            } catch (Throwable ex) {
-                System.out.println("Cannot load servergroup file [" + file.getName() + "]");
+                if (file.getName().endsWith(".json"))
+                    try
+                    {
+                        entry = Document.$loadDocument(file);
+                        ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
+                        groups.put(serverGroup.getName(), serverGroup);
+                    } catch (Throwable ex)
+                    {
+                        System.out.println("Cannot load servergroup file [" + file.getName() + "]");
+                    }
             }
-        }
 
         return groups;
     }

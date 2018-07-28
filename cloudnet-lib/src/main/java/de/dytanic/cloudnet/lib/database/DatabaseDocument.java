@@ -6,7 +6,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  * Created by Tareko on 01.07.2017.
  */
 public class DatabaseDocument
-            extends Document {
+        extends Document {
 
     public DatabaseDocument(String name)
     {

@@ -47,16 +47,18 @@ public final class WebServerProvider {
             @Override
             public boolean isAccepted(WebHandler webHandler)
             {
-                if((path.equals(NetworkUtils.SLASH_STRING) || path.isEmpty()) && webHandler.getPath().equals("/")) return true;
+                if ((path.equals(NetworkUtils.SLASH_STRING) || path.isEmpty()) && webHandler.getPath().equals("/"))
+                    return true;
 
                 String[] array = path.replaceFirst("/", NetworkUtils.EMPTY_STRING).split("/");
                 String[] pathArray = webHandler.getPath().replaceFirst("/", NetworkUtils.EMPTY_STRING).split("/");
 
-                if(array.length != pathArray.length) return false;
+                if (array.length != pathArray.length) return false;
 
-                for(short i = 0; i < array.length; i++)
+                for (short i = 0; i < array.length; i++)
                 {
-                    if(!((pathArray[i].startsWith("{") && pathArray[i].endsWith("}")) || pathArray[i].equals(array[i]))) return false;
+                    if (!((pathArray[i].startsWith("{") && pathArray[i].endsWith("}")) || pathArray[i].equals(array[i])))
+                        return false;
                 }
                 return true;
             }

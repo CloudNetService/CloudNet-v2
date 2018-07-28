@@ -5,8 +5,8 @@
 package de.dytanic.cloudnet.lib.server.template;
 
 import de.dytanic.cloudnet.lib.user.SimpledUser;
-import de.dytanic.cloudnet3.ZipConverter;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import de.dytanic.cloudnet.lib.zip.ZipConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

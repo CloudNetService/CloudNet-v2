@@ -30,8 +30,10 @@ public class PacketInSignSelector extends PacketInHandler {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        Map<UUID, Sign> signMap = data.getObject("signs", new TypeToken<Map<UUID, Sign>>(){}.getType());
-        SignLayoutConfig signLayoutConfig = data.getObject("signLayoutConfig", new TypeToken<SignLayoutConfig>(){}.getType());
+        Map<UUID, Sign> signMap = data.getObject("signs", new TypeToken<Map<UUID, Sign>>() {
+        }.getType());
+        SignLayoutConfig signLayoutConfig = data.getObject("signLayoutConfig", new TypeToken<SignLayoutConfig>() {
+        }.getType());
 
         Map<UUID, Sign> values = MapWrapper.filter(signMap, new Acceptable<Sign>() {
             @Override
@@ -43,34 +45,33 @@ public class PacketInSignSelector extends PacketInHandler {
 
         Bukkit.getPluginManager().callEvent(new BukkitUpdateSignLayoutsEvent(signLayoutConfig));
 
-        if(SignSelector.getInstance() != null)
+        if (SignSelector.getInstance() != null)
         {
             SignSelector.getInstance().setSignLayoutConfig(signLayoutConfig);
 
             Collection<UUID> collection = new HashSet<>();
 
-            for(Sign sign : SignSelector.getInstance().getSigns().values())
+            for (Sign sign : SignSelector.getInstance().getSigns().values())
             {
-                if(!values.containsKey(sign.getUniqueId()))
+                if (!values.containsKey(sign.getUniqueId()))
                 {
                     collection.add(sign.getUniqueId());
                 }
             }
 
-            for(UUID x : collection)
+            for (UUID x : collection)
             {
                 SignSelector.getInstance().getSigns().remove(x);
             }
 
-            for(Sign sign : values.values())
+            for (Sign sign : values.values())
             {
-                if(!SignSelector.getInstance().getSigns().containsKey(sign.getUniqueId()))
+                if (!SignSelector.getInstance().getSigns().containsKey(sign.getUniqueId()))
                 {
                     SignSelector.getInstance().getSigns().put(sign.getUniqueId(), sign);
                 }
             }
-        }
-        else
+        } else
         {
             SignSelector signSelector = new SignSelector(values, signLayoutConfig);
             signSelector.start();

@@ -1,7 +1,6 @@
 package de.dytanic.cloudnet.lib.player.permission;
 
 import com.google.gson.reflect.TypeToken;
-import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
 import lombok.Getter;
@@ -17,17 +16,19 @@ import java.util.HashMap;
 @Getter
 public class PermissionPool {
 
-    public static final Type TYPE = new TypeToken<PermissionPool>(){}.getType();
+    public static final Type TYPE = new TypeToken<PermissionPool>() {
+    }.getType();
 
-    @Setter private boolean available = true;
+    @Setter
+    private boolean available = true;
 
     private java.util.Map<String, PermissionGroup> groups = new HashMap<>();
 
     public PermissionGroup getDefaultGroup()
     {
-        for(PermissionGroup group : groups.values())
+        for (PermissionGroup group : groups.values())
         {
-            if(group.isDefaultGroup())
+            if (group.isDefaultGroup())
             {
                 return group;
             }

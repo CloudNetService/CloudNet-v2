@@ -14,7 +14,7 @@ import lombok.Getter;
  * Created by Tareko on 23.09.2017.
  */
 @Getter
-public class WrapperLineInputEvent extends AsyncEvent<WrapperLineInputEvent>{
+public class WrapperLineInputEvent extends AsyncEvent<WrapperLineInputEvent> {
 
     private WrapperScreen wrapperScreen;
 

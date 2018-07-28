@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.api;
 
 import com.google.gson.reflect.TypeToken;
@@ -13,7 +9,11 @@ import de.dytanic.cloudnet.api.network.packet.api.sync.*;
 import de.dytanic.cloudnet.api.network.packet.in.*;
 import de.dytanic.cloudnet.api.network.packet.out.*;
 import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
-import de.dytanic.cloudnet.lib.*;
+import de.dytanic.cloudnet.lib.CloudNetwork;
+import de.dytanic.cloudnet.lib.ConnectableAddress;
+import de.dytanic.cloudnet.lib.DefaultType;
+import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.interfaces.MetaObj;
 import de.dytanic.cloudnet.lib.network.NetDispatcher;
 import de.dytanic.cloudnet.lib.network.NetworkConnection;
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
@@ -30,12 +30,11 @@ import de.dytanic.cloudnet.lib.server.defaults.BasicServerConfig;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.service.ServiceId;
+import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.interfaces.MetaObj;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
 import java.util.*;
@@ -217,6 +216,9 @@ public final class CloudAPI implements MetaObj {
         return networkConnection;
     }
 
+    /**
+     * Returns the cloud prefix
+     */
     public String getPrefix()
     {
         return cloudNetwork.getMessages().getString("prefix");
@@ -1191,7 +1193,7 @@ public final class CloudAPI implements MetaObj {
      */
     public void copyDirectory(ServerInfo serverInfo, String directory)
     {
-        if(serverInfo == null || directory == null) throw new NullPointerException("serverInfo or directory is null");
+        if (serverInfo == null || directory == null) throw new NullPointerException("serverInfo or directory is null");
 
         networkConnection.sendPacket(new PacketOutCopyDirectory(serverInfo, directory));
     }

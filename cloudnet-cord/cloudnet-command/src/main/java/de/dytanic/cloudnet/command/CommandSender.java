@@ -4,8 +4,8 @@
 
 package de.dytanic.cloudnet.command;
 
-import de.dytanic.cloudnet.lib.player.permission.Permissible;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
+import de.dytanic.cloudnet.lib.player.permission.Permissible;
 
 /**
  * Created by Tareko on 23.05.2017.

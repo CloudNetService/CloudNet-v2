@@ -19,31 +19,31 @@ public final class WrappedMap extends HashMap<String, Object> {
 
     public Integer getInt(String key)
     {
-        if(!containsKey(key)) return null;
+        if (!containsKey(key)) return null;
         return Integer.parseInt(get(key).toString());
     }
 
     public Boolean getBoolean(String key)
     {
-        if(!containsKey(key)) return null;
+        if (!containsKey(key)) return null;
         return Boolean.parseBoolean(get(key).toString());
     }
 
     public String getString(String key)
     {
-        if(!containsKey(key)) return null;
+        if (!containsKey(key)) return null;
         return get(key).toString();
     }
 
     public Double getDouble(String key)
     {
-        if(!containsKey(key)) return null;
+        if (!containsKey(key)) return null;
         return Double.parseDouble(get(key).toString());
     }
 
     public Float getFloat(String key)
     {
-        if(!containsKey(key)) return null;
+        if (!containsKey(key)) return null;
         return Float.parseFloat(get(key).toString());
     }
 }

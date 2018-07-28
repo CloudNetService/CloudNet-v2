@@ -26,21 +26,20 @@ public class CommandDelete extends Command {
         switch (args.length)
         {
             case 2:
-                if(args[0].equalsIgnoreCase("serverGroup"))
+                if (args[0].equalsIgnoreCase("serverGroup"))
                 {
-                    if(CloudNet.getInstance().getServerGroups().containsKey(args[1]))
+                    if (CloudNet.getInstance().getServerGroups().containsKey(args[1]))
                     {
                         ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(args[1]);
                         CloudNet.getInstance().getConfig().deleteGroup(serverGroup);
                         CloudNet.getInstance().getServerGroups().remove(args[1]);
                         CloudNet.getInstance().getNetworkManager().updateAll();
-                        for(MinecraftServer minecraftServer : CloudNet.getInstance().getServers(args[1]))
+                        for (MinecraftServer minecraftServer : CloudNet.getInstance().getServers(args[1]))
                         {
                             minecraftServer.getWrapper().stopServer(minecraftServer);
                         }
                         sender.sendMessage("The group was successfully deleted");
-                    }
-                    else
+                    } else
                     {
                         sender.sendMessage("The server group doesn't exists");
                     }

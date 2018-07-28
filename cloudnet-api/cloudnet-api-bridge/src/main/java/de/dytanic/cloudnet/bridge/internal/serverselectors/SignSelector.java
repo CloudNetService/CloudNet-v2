@@ -12,9 +12,7 @@ import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.serverselectors.sign.Position;
 import de.dytanic.cloudnet.lib.serverselectors.sign.*;
-import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
@@ -837,111 +835,67 @@ public final class SignSelector implements Listener {
             Sign sign = filter(serverInfo);
 
             if (sign != null)
-                if(CloudServer.getInstance().getPlugin() != null && CloudServer.getInstance().getPlugin().isEnabled())
-                Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
+                if (CloudServer.getInstance().getPlugin() != null && CloudServer.getInstance().getPlugin().isEnabled())
+                    Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
 
-                    @Override
-                    public void run()
-                    {
-                        if (exists(sign))
+                        @Override
+                        public void run()
                         {
-                            sign.setServerInfo(serverInfo);
-                            Location location = toLocation(sign.getPosition());
-                            if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
+                            if (exists(sign))
                             {
-                                if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
+                                sign.setServerInfo(serverInfo);
+                                Location location = toLocation(sign.getPosition());
+                                if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
+                                {
+                                    if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
+                                    {
+                                        sign.setServerInfo(null);
+                                        SignLayout signLayout = getSearchingLayout(((ThreadImpl) worker).animationTick);
+                                        String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), sign);
+                                        sendUpdateSynchronized(toLocation(sign.getPosition()), layout);
+                                        return;
+                                    }
+                                    SignLayout signLayout;
+                                    String[] layout;
+                                    if (serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers())
+                                    {
+                                        signLayout = getLayout(sign.getTargetGroup(), "full");
+                                        layout = signLayout.getSignLayout().clone();
+                                    } else if (serverInfo.getOnlineCount() == 0)
+                                    {
+                                        signLayout = getLayout(sign.getTargetGroup(), "empty");
+                                        layout = signLayout.getSignLayout().clone();
+                                    } else
+                                    {
+                                        signLayout = getLayout(sign.getTargetGroup(), "online");
+                                        layout = signLayout.getSignLayout().clone();
+                                    }
+                                    sign.setServerInfo(serverInfo);
+                                    updateArray(layout, serverInfo);
+                                    sendUpdateSynchronized(location, layout);
+                                    changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                                } else
                                 {
                                     sign.setServerInfo(null);
                                     SignLayout signLayout = getSearchingLayout(((ThreadImpl) worker).animationTick);
                                     String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), sign);
-                                    sendUpdateSynchronized(toLocation(sign.getPosition()), layout);
-                                    return;
+                                    sendUpdateSynchronized(location, layout);
+                                    changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
                                 }
-                                SignLayout signLayout;
-                                String[] layout;
-                                if (serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers())
-                                {
-                                    signLayout = getLayout(sign.getTargetGroup(), "full");
-                                    layout = signLayout.getSignLayout().clone();
-                                } else if (serverInfo.getOnlineCount() == 0)
-                                {
-                                    signLayout = getLayout(sign.getTargetGroup(), "empty");
-                                    layout = signLayout.getSignLayout().clone();
-                                } else
-                                {
-                                    signLayout = getLayout(sign.getTargetGroup(), "online");
-                                    layout = signLayout.getSignLayout().clone();
-                                }
-                                sign.setServerInfo(serverInfo);
-                                updateArray(layout, serverInfo);
-                                sendUpdateSynchronized(location, layout);
-                                changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+
                             } else
                             {
                                 sign.setServerInfo(null);
-                                SignLayout signLayout = getSearchingLayout(((ThreadImpl) worker).animationTick);
-                                String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), sign);
-                                sendUpdateSynchronized(location, layout);
-                                changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
-                            }
 
-                        } else
-                        {
-                            sign.setServerInfo(null);
-
-                            Sign next = findFreeSign(serverInfo.getServiceId().getGroup());
-                            Location location = toLocation(next.getPosition());
-                            if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
-                            {
-                                if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
-                                {
-                                    sign.setServerInfo(null);
-                                    String[] layout = updateOfflineAndMaintenance(getSearchingLayout(((ThreadImpl) worker).animationTick).getSignLayout().clone(), sign);
-                                    sendUpdateSynchronized(toLocation(next.getPosition()), layout);
-                                    return;
-                                }
-                                String[] layout;
-                                if (serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers())
-                                {
-                                    layout = getLayout(sign.getTargetGroup(), "full").getSignLayout().clone();
-                                } else if (serverInfo.getOnlineCount() == 0)
-                                {
-                                    layout = getLayout(sign.getTargetGroup(), "empty").getSignLayout().clone();
-                                } else
-                                {
-                                    layout = getLayout(sign.getTargetGroup(), "online").getSignLayout().clone();
-                                }
-                                sign.setServerInfo(serverInfo);
-                                updateArray(layout, serverInfo);
-                                sendUpdateSynchronized(location, layout);
-                            } else
-                            {
-                                sign.setServerInfo(null);
-                                String[] layout = updateOfflineAndMaintenance(getSearchingLayout(((ThreadImpl) worker).animationTick).getSignLayout().clone(), sign);
-                                sendUpdateSynchronized(location, layout);
-                            }
-                        }
-                    }
-                });
-            else
-            {
-                Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-                    @Override
-                    public void run()
-                    {
-                        Sign newSign = findFreeSign(serverInfo.getServiceId().getGroup());
-                        if (newSign != null)
-                        {
-                            if (exists(newSign))
-                            {
-                                Location location = toLocation(newSign.getPosition());
+                                Sign next = findFreeSign(serverInfo.getServiceId().getGroup());
+                                Location location = toLocation(next.getPosition());
                                 if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
                                 {
                                     if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
                                     {
                                         sign.setServerInfo(null);
                                         String[] layout = updateOfflineAndMaintenance(getSearchingLayout(((ThreadImpl) worker).animationTick).getSignLayout().clone(), sign);
-                                        sendUpdateSynchronized(toLocation(sign.getPosition()), layout);
+                                        sendUpdateSynchronized(toLocation(next.getPosition()), layout);
                                         return;
                                     }
                                     String[] layout;
@@ -966,9 +920,53 @@ public final class SignSelector implements Listener {
                                 }
                             }
                         }
-                    }
-                });
-            }
+                    });
+                else
+                {
+                    Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
+                        @Override
+                        public void run()
+                        {
+                            Sign newSign = findFreeSign(serverInfo.getServiceId().getGroup());
+                            if (newSign != null)
+                            {
+                                if (exists(newSign))
+                                {
+                                    Location location = toLocation(newSign.getPosition());
+                                    if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
+                                    {
+                                        if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
+                                        {
+                                            sign.setServerInfo(null);
+                                            String[] layout = updateOfflineAndMaintenance(getSearchingLayout(((ThreadImpl) worker).animationTick).getSignLayout().clone(), sign);
+                                            sendUpdateSynchronized(toLocation(sign.getPosition()), layout);
+                                            return;
+                                        }
+                                        String[] layout;
+                                        if (serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers())
+                                        {
+                                            layout = getLayout(sign.getTargetGroup(), "full").getSignLayout().clone();
+                                        } else if (serverInfo.getOnlineCount() == 0)
+                                        {
+                                            layout = getLayout(sign.getTargetGroup(), "empty").getSignLayout().clone();
+                                        } else
+                                        {
+                                            layout = getLayout(sign.getTargetGroup(), "online").getSignLayout().clone();
+                                        }
+                                        sign.setServerInfo(serverInfo);
+                                        updateArray(layout, serverInfo);
+                                        sendUpdateSynchronized(location, layout);
+                                    } else
+                                    {
+                                        sign.setServerInfo(null);
+                                        String[] layout = updateOfflineAndMaintenance(getSearchingLayout(((ThreadImpl) worker).animationTick).getSignLayout().clone(), sign);
+                                        sendUpdateSynchronized(location, layout);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
         }
     }
 }

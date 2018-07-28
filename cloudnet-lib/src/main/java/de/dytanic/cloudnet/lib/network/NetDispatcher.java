@@ -6,7 +6,7 @@ package de.dytanic.cloudnet.lib.network;
 
 import de.dytanic.cloudnet.lib.network.protocol.file.FileDeploy;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet3.TaskScheduler;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.io.IOException;
 
 @Getter
 @AllArgsConstructor
-public class NetDispatcher extends SimpleChannelInboundHandler{
+public class NetDispatcher extends SimpleChannelInboundHandler {
 
     private final NetworkConnection networkConnection;
 
@@ -31,22 +31,22 @@ public class NetDispatcher extends SimpleChannelInboundHandler{
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception
     {
-        if((!ctx.channel().isActive() || !ctx.channel().isOpen() || !ctx.channel().isWritable()))
+        if ((!ctx.channel().isActive() || !ctx.channel().isOpen() || !ctx.channel().isWritable()))
         {
             networkConnection.setChannel(null);
             ctx.channel().close().syncUninterruptibly();
-            if(networkConnection.getTask() != null)
+            if (networkConnection.getTask() != null)
             {
                 networkConnection.getTask().run();
             }
-            if(shutdownOnInactive) System.exit(0);
+            if (shutdownOnInactive) System.exit(0);
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
-        if(!(cause instanceof IOException))
+        if (!(cause instanceof IOException))
         {
             cause.printStackTrace();
         }

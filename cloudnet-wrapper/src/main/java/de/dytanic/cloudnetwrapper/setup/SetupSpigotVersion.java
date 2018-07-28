@@ -3,6 +3,7 @@
  */
 
 package de.dytanic.cloudnetwrapper.setup;
+
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import jline.console.ConsoleReader;
 
@@ -47,11 +48,11 @@ public class SetupSpigotVersion
     {
         System.out.println("No spigot.jar has been found!");
 
-        System.out.println("Choose a minecraft server version [\"taco\", \"paper\", \"hose\", \"spigot\"]" /*" | [\"dytanicspigot\" 1.8.8 BETA]" */);
+        System.out.println("Choose a minecraft server version [\"taco\", \"paper\", \"hose\", \"spigot\"]");
 
         String answer = null;
 
-        if(System.getProperty("spigot-type") != null)
+        if (System.getProperty("spigot-type") != null)
         {
             answer = System.getProperty("spigot-type");
         }
@@ -77,12 +78,8 @@ public class SetupSpigotVersion
                     case "hose":
                         answer = "hose";
                         break;
-                        /*
-                    case "dytanicspigot":
-                        answer = "dytanicspigot";
-                        break;
-                        */
-                    default: System.out.println("This version is not supported!");
+                    default:
+                        System.out.println("This version is not supported!");
                 }
 
             } catch (Exception ex)
@@ -93,34 +90,29 @@ public class SetupSpigotVersion
 
         String cancer = null;
 
-        if(System.getProperty("spigot-version") != null)
+        if (System.getProperty("spigot-version") != null)
         {
             answer = System.getProperty("spigot-version");
         }
 
         switch (answer)
         {
-            /*
-            case "dytanicspigot":
-                download.run("http://dytanic.de/645793465974z9724z24793zt9247tz9274nztv24zt924zt924tz9158929384/dytanicspigot.jar");
-                return;
-                */
             case "taco":
                 System.out.println("Choose a TacoSpigot version [\"1.8.8\", \"1.11.2\", \"1.12.2\"]");
                 while (true)
                 {
                     try
                     {
-                        switch (cancer == null ? reader.readLine().toLowerCase() : cancer)
+                        switch (reader.readLine().toLowerCase())
                         {
                             case "1.8.8":
-                                download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.8.8.jar");
+                                download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.8.8-b31.jar");
                                 return;
                             case "1.11.2":
                                 download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.11.2-b102.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.12.2-b109.jar");
+                                download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.12.2-b114.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");
@@ -132,12 +124,12 @@ public class SetupSpigotVersion
                     }
                 }
             case "spigot":
-                System.out.println("Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\"]");
+                System.out.println("Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\"]");
                 while (true)
                 {
                     try
                     {
-                        switch (cancer == null ? reader.readLine().toLowerCase() : cancer)
+                        switch (reader.readLine().toLowerCase())
                         {
                             case "1.7.10":
                                 download.run("https://yivesmirror.com/files/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
@@ -155,7 +147,10 @@ public class SetupSpigotVersion
                                 download.run("https://yivesmirror.com/files/spigot/spigot-1.10.2-R0.1-SNAPSHOT.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://yivesmirror.com/files/spigot/spigot-1.12.2-R0.1-SNAPSHOT-b1496.jar");
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.12.2-R0.1-SNAPSHOT-b1648.jar");
+                                return;
+                            case "1.13":
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.13-R0.1-SNAPSHOT-b1767.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");
@@ -172,7 +167,7 @@ public class SetupSpigotVersion
                 {
                     try
                     {
-                        switch (cancer == null ? reader.readLine().toLowerCase() : cancer)
+                        switch (reader.readLine().toLowerCase())
                         {
                             case "1.8.8":
                                 download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
@@ -181,7 +176,7 @@ public class SetupSpigotVersion
                                 download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.11.2-b1104.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.12.2-b1298.jar");
+                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.12.2-b1515.jar");
                                 break;
                             default:
                                 System.out.println("This version is not supported!");
@@ -198,7 +193,7 @@ public class SetupSpigotVersion
                 {
                     try
                     {
-                        switch (cancer == null ? reader.readLine().toLowerCase() : cancer)
+                        switch (reader.readLine().toLowerCase())
                         {
                             case "1.8.8":
                                 download.run("https://yivesmirror.com/files/hose/hose-1.8.8.jar");

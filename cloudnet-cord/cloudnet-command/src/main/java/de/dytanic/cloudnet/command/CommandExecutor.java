@@ -7,7 +7,6 @@ package de.dytanic.cloudnet.command;
 /**
  * Created by Tareko on 23.05.2017.
  */
-public interface CommandExecutor
-{
+public interface CommandExecutor {
     void onExecuteCommand(CommandSender sender, String[] args);
 }

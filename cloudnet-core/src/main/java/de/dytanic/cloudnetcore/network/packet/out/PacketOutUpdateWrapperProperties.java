@@ -9,12 +9,10 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import net.md_5.bungee.config.Configuration;
 
-import java.util.Properties;
-
 /**
  * Created by Tareko on 31.08.2017.
  */
-public class PacketOutUpdateWrapperProperties extends Packet{
+public class PacketOutUpdateWrapperProperties extends Packet {
 
     public PacketOutUpdateWrapperProperties(Configuration properties)
     {

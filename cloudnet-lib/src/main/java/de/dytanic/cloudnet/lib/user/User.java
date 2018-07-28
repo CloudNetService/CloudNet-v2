@@ -22,7 +22,7 @@ import java.util.UUID;
 @ToString
 @AllArgsConstructor
 public class User implements Nameable {
-    
+
     protected String name;
 
     protected UUID uniqueId;

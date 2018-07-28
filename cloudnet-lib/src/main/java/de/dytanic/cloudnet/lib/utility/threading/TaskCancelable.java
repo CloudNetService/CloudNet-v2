@@ -6,6 +6,7 @@ package de.dytanic.cloudnet.lib.utility.threading;
 public interface TaskCancelable {
 
     void cancelTask(Long id);
+
     void cancelAllTasks();
 
 }

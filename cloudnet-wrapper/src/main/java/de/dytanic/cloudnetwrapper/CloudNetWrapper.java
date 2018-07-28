@@ -7,19 +7,19 @@ package de.dytanic.cloudnetwrapper;
 import de.dytanic.cloudnet.command.CommandManager;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.interfaces.Executable;
 import de.dytanic.cloudnet.lib.network.NetDispatcher;
 import de.dytanic.cloudnet.lib.network.NetworkConnection;
 import de.dytanic.cloudnet.lib.network.auth.Auth;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.interfaces.Executable;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import de.dytanic.cloudnet.web.client.WebClient;
-import de.dytanic.cloudnet3.TaskScheduler;
 import de.dytanic.cloudnetwrapper.command.*;
 import de.dytanic.cloudnetwrapper.handlers.IWrapperHandler;
 import de.dytanic.cloudnetwrapper.handlers.StopTimeHandler;
@@ -34,15 +34,13 @@ import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
 import de.dytanic.cloudnetwrapper.server.process.ServerProcessQueue;
 import de.dytanic.cloudnetwrapper.setup.SetupSpigotVersion;
-import de.dytanic.cloudnetwrapper.util.FileCopy;
+import de.dytanic.cloudnetwrapper.util.FileUtility;
 import de.dytanic.cloudnetwrapper.util.ShutdownOnCentral;
 import joptsimple.OptionSet;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -177,7 +175,7 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         }
 
         if (!Files.exists(Paths.get("local/server-icon.png")))
-            FileCopy.insertData("files/server-icon.png", "local/server-icon.png");
+            FileUtility.insertData("files/server-icon.png", "local/server-icon.png");
 
         //Server Handlers
         {
@@ -266,12 +264,8 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         this.cloudNetLogging.shutdownAll();
         if (networkConnection.getChannel() != null)
             networkConnection.tryDisconnect();
-        try
-        {
-            FileUtils.deleteDirectory(new File("temp"));
-        } catch (IOException e)
-        {
-        }
+
+        FileUtility.deleteDirectory(new File("temp"));
 
         System.out.println("\n    _  _     _______   _                       _          \n" +
                 "  _| || |_  |__   __| | |                     | |         \n" +
@@ -317,14 +311,7 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         serverGroups.clear();
 
         System.out.println("Wrapper try to connect to the CloudNet-Core");
-
-        try
-        {
-            FileUtils.deleteDirectory(new File("temp"));
-        } catch (Exception ex)
-        {
-
-        }
+        FileUtility.deleteDirectory(new File("temp"));
 
         new File("temp").mkdir();
 

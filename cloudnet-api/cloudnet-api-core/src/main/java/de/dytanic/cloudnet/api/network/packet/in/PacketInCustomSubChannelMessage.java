@@ -19,15 +19,15 @@ public class PacketInCustomSubChannelMessage extends PacketInHandlerDefault {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        if(CloudAPI.getInstance() != null)
+        if (CloudAPI.getInstance() != null)
         {
-           CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
-               @Override
-               public void run(NetworkHandler obj)
-               {
-                   obj.onCustomSubChannelMessageReceive(data.getString("channel"), data.getString("message"), data.getDocument("value"));
-               }
-           });
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
+                @Override
+                public void run(NetworkHandler obj)
+                {
+                    obj.onCustomSubChannelMessageReceive(data.getString("channel"), data.getString("message"), data.getDocument("value"));
+                }
+            });
         }
     }
 }

@@ -20,7 +20,8 @@ public class PacketInAddMob extends PacketInHandler {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        ServerMob serverMob = data.getObject("mob", new TypeToken<ServerMob>(){}.getType());
+        ServerMob serverMob = data.getObject("mob", new TypeToken<ServerMob>() {
+        }.getType());
         MobModule.getInstance().getMobDatabase().append(serverMob);
         CloudNet.getInstance().getNetworkManager().reload();
         CloudNet.getInstance().getNetworkManager().updateAll();

@@ -20,18 +20,18 @@ public class BungeeCordChannel {
 
     public void kickPlayer(UUID uuid)
     {
-        CloudAPI.getInstance().sendCustomSubProxyMessage("ban-system", "kick", new Document("uuid", uuid).append("reason", "Du bist ein Hurensohn"));
+        CloudAPI.getInstance().sendCustomSubProxyMessage("ban-system", "kick", new Document("uuid", uuid).append("reason", "Du wurdest gekickt!"));
     }
 
     @EventHandler
     public void handleChannelIncomingMessage(ProxiedSubChannelMessageEvent e)
     {
-        if(e.getChannel().equalsIgnoreCase("ban-system"))
+        if (e.getChannel().equalsIgnoreCase("ban-system"))
         {
-            if(e.getMessage().equalsIgnoreCase("kick"))
+            if (e.getMessage().equalsIgnoreCase("kick"))
             {
                 ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(e.getDocument().getObject("uuid", UUID.class));
-                if(proxiedPlayer != null)
+                if (proxiedPlayer != null)
                 {
                     proxiedPlayer.disconnect(e.getDocument().getString("reason"));
                 }

@@ -30,7 +30,7 @@ public final class CommandInfo extends Command {
                     case "server":
                     {
                         MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[1]);
-                        if(minecraftServer == null) return;
+                        if (minecraftServer == null) return;
 
                         sender.sendMessage(
                                 NetworkUtils.SPACE_STRING,
@@ -50,11 +50,11 @@ public final class CommandInfo extends Command {
                                 NetworkUtils.SPACE_STRING
                         );
                     }
-                        break;
+                    break;
                     case "proxy":
                     {
                         ProxyServer proxyServer = CloudNet.getInstance().getProxy(args[1]);
-                        if(proxyServer == null) return;
+                        if (proxyServer == null) return;
 
                         sender.sendMessage(
                                 NetworkUtils.SPACE_STRING,
@@ -73,11 +73,11 @@ public final class CommandInfo extends Command {
                                 NetworkUtils.SPACE_STRING
                         );
                     }
-                        break;
+                    break;
                     case "wrapper":
                     {
                         Wrapper wrapper = CloudNet.getInstance().getWrappers().get(args[1]);
-                        if(wrapper == null) return;
+                        if (wrapper == null) return;
 
                         sender.sendMessage(
                                 NetworkUtils.SPACE_STRING,
@@ -95,10 +95,10 @@ public final class CommandInfo extends Command {
                         );
 
                     }
-                        break;
+                    break;
                 }
             }
-                break;
+            break;
             default:
                 sender.sendMessage(
                         "info SERVER <server> | monitor all informations about a game server",

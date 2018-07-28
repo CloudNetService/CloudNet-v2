@@ -34,7 +34,7 @@ manifest.mf
 *.ipr
 *.iws
 .idea/
-CloudNet2.1.zip
+CloudNet.zip
 
 # other files
 *.log*
