@@ -158,7 +158,7 @@ public class Document
 
     public Document appendValues(java.util.Map<String, Object> values)
     {
-        for(java.util.Map.Entry<String, Object> valuess : values.entrySet())
+        for (java.util.Map.Entry<String, Object> valuess : values.entrySet())
         {
             append(valuess.getKey(), valuess.getValue());
         }
@@ -186,7 +186,7 @@ public class Document
 
     public JsonElement get(String key)
     {
-        if(!dataCatcher.has(key)) return null;
+        if (!dataCatcher.has(key)) return null;
         return dataCatcher.get(key);
     }
 
@@ -248,7 +248,7 @@ public class Document
 
     public Document clear()
     {
-        for(String key : keys())
+        for (String key : keys())
         {
             remove(key);
         }
@@ -334,7 +334,7 @@ public class Document
 
     public boolean saveAsConfig(Path path)
     {
-        try(OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), "UTF-8"))
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), "UTF-8"))
         {
             GSON.toJson(dataCatcher, outputStreamWriter);
             return true;
@@ -360,7 +360,8 @@ public class Document
         try
         {
             return new Document(PARSER.parse(new String(Files.readAllBytes(backend.toPath()), StandardCharsets.UTF_8)).getAsJsonObject());
-        }catch (Exception ex) {
+        } catch (Exception ex)
+        {
             throw new Exception(ex);
         }
     }
@@ -444,7 +445,7 @@ public class Document
 
     public <T> T getObject(String key, Type type)
     {
-        if(!contains(key)) return null;
+        if (!contains(key)) return null;
 
         return GSON.fromJson(dataCatcher.get(key), type);
     }

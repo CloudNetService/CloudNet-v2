@@ -24,10 +24,10 @@ public class Position {
     public boolean equals(Object obj)
     {
 
-        if(!(obj instanceof Position)) return false;
-        Position signPosition = (Position)obj;
+        if (!(obj instanceof Position)) return false;
+        Position signPosition = (Position) obj;
 
-        if(signPosition.x == x
+        if (signPosition.x == x
                 && signPosition.y == y &&
                 signPosition.z == z && signPosition.world.equals(world) &&
                 signPosition.group.equals(group))

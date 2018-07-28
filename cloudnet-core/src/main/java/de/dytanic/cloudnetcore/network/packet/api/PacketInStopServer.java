@@ -21,13 +21,13 @@ public class PacketInStopServer extends PacketInHandler {
     {
         String serverId = data.getString("serverId");
         MinecraftServer minecraftServer = CloudNet.getInstance().getServer(serverId);
-        if(minecraftServer != null)
+        if (minecraftServer != null)
         {
             minecraftServer.getWrapper().stopServer(minecraftServer);
             return;
         }
         CloudServer cloudServer = CloudNet.getInstance().getCloudGameServer(serverId);
-        if(cloudServer != null)
+        if (cloudServer != null)
         {
             cloudServer.getWrapper().stopServer(cloudServer);
         }

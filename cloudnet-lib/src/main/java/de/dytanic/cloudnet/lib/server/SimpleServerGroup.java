@@ -13,7 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public class SimpleServerGroup
-        implements Nameable{
+        implements Nameable {
 
     private String name;
 

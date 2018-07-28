@@ -7,7 +7,6 @@ package de.dytanic.cloudnetcore.mobs;
 import de.dytanic.cloudnet.event.IEventListener;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
-import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.CoreModule;
 import de.dytanic.cloudnetcore.api.event.network.ChannelInitEvent;
 import de.dytanic.cloudnetcore.api.event.network.UpdateAllEvent;
@@ -60,8 +59,8 @@ public class MobModule extends CoreModule implements IEventListener<UpdateAllEve
     @Override
     public void onCall(UpdateAllEvent event)
     {
-        if(event.isOnlineCloudNetworkUpdate())
-        getCloud().getNetworkManager().sendToLobbys(new PacketOutMobSelector(configMobs.load(), mobDatabase.loadAll()));
+        if (event.isOnlineCloudNetworkUpdate())
+            getCloud().getNetworkManager().sendToLobbys(new PacketOutMobSelector(configMobs.load(), mobDatabase.loadAll()));
     }
 
     private class ListenerImpl implements IEventListener<ChannelInitEvent> {
@@ -69,7 +68,7 @@ public class MobModule extends CoreModule implements IEventListener<UpdateAllEve
         @Override
         public void onCall(ChannelInitEvent event)
         {
-            if(event.getINetworkComponent() instanceof MinecraftServer && ((MinecraftServer)event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY))
+            if (event.getINetworkComponent() instanceof MinecraftServer && ((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY))
             {
                 event.getINetworkComponent().sendPacket(new PacketOutMobSelector(configMobs.load(), mobDatabase.loadAll()));
             }

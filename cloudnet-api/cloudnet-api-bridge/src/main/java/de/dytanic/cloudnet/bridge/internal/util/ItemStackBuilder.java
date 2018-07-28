@@ -7,7 +7,6 @@ package de.dytanic.cloudnet.bridge.internal.util;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -32,7 +31,7 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder(int material)
     {
-        this.itemStack = new ItemStack(material);
+        this.itemStack = new ItemStack(Material.getMaterial(material));
         this.itemMeta = itemStack.getItemMeta();
     }
 
@@ -56,7 +55,7 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder(int material, int amount, int sub)
     {
-        this.itemStack = new ItemStack(material, amount, (short) sub);
+        this.itemStack = new ItemStack(Material.getMaterial(material), amount, (short) sub);
         this.itemMeta = itemStack.getItemMeta();
     }
 
@@ -98,18 +97,18 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder color(Color color)
     {
-        if(itemMeta instanceof LeatherArmorMeta)
+        if (itemMeta instanceof LeatherArmorMeta)
         {
-            ((LeatherArmorMeta)itemMeta).setColor(color);
+            ((LeatherArmorMeta) itemMeta).setColor(color);
         }
         return this;
     }
 
     public ItemStackBuilder owner(String name)
     {
-        if(itemMeta instanceof SkullMeta)
+        if (itemMeta instanceof SkullMeta)
         {
-            ((SkullMeta)itemMeta).setOwner(name);
+            ((SkullMeta) itemMeta).setOwner(name);
         }
         return this;
     }

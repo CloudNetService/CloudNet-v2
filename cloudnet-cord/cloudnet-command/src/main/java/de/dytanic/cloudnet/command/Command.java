@@ -15,7 +15,7 @@ import java.util.HashSet;
  */
 @Getter
 public abstract class Command
-            implements CommandExecutor, Nameable{
+        implements CommandExecutor, Nameable {
 
     protected String name;
     protected String permission;
@@ -25,7 +25,7 @@ public abstract class Command
 
     private Collection<CommandArgument> commandArguments = new HashSet<>();
 
-    protected Command(String name, String permission, String...aliases)
+    protected Command(String name, String permission, String... aliases)
     {
         this.name = name;
         this.permission = permission;

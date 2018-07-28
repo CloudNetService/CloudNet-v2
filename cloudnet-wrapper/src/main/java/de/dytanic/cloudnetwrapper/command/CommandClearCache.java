@@ -6,11 +6,10 @@ package de.dytanic.cloudnetwrapper.command;
 
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
-import org.apache.commons.io.FileUtils;
+import de.dytanic.cloudnetwrapper.util.FileUtility;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CommandClearCache extends Command {
@@ -23,13 +22,14 @@ public class CommandClearCache extends Command {
     @Override
     public void onExecuteCommand(CommandSender sender, String[] args)
     {
-        try{
-
-            FileUtils.deleteDirectory(new File("local/cache"));
+        try
+        {
+            FileUtility.deleteDirectory(new File("local/cache"));
             Files.createDirectories(Paths.get("local/cache/web_templates"));
             Files.createDirectories(Paths.get("local/cache/web_plugins"));
 
-        }catch (Exception ex){
+        } catch (Exception ex)
+        {
             ex.printStackTrace();
         }
 

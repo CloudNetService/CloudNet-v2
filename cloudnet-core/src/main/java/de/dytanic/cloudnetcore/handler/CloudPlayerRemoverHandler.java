@@ -22,7 +22,7 @@ public class CloudPlayerRemoverHandler implements ICloudHandler {
 
         Collection<UUID> collection = new ArrayList<>();
 
-        for(ProxyServer proxyServer : CloudNet.getInstance().getProxys().values())
+        for (ProxyServer proxyServer : CloudNet.getInstance().getProxys().values())
         {
             CollectionWrapper.iterator(proxyServer.getProxyInfo().getPlayers(), new Runnabled<MultiValue<UUID, String>>() {
                 @Override
@@ -33,9 +33,9 @@ public class CloudPlayerRemoverHandler implements ICloudHandler {
             });
         }
 
-        for(CloudPlayer entries : CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values())
+        for (CloudPlayer entries : CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values())
         {
-            if(!collection.contains(entries.getUniqueId()))
+            if (!collection.contains(entries.getUniqueId()))
             {
                 CloudNet.getInstance().getNetworkManager().getOnlinePlayers().remove(entries.getUniqueId());
             }

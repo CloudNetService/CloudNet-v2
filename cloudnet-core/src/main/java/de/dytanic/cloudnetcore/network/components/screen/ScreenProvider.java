@@ -40,14 +40,14 @@ public class ScreenProvider {
     public void disableScreen(String server)
     {
         MinecraftServer minecraftServer = CloudNet.getInstance().getServer(server);
-        if(minecraftServer != null)
+        if (minecraftServer != null)
         {
             minecraftServer.getWrapper().disableScreen(minecraftServer.getServerInfo());
             return;
         }
 
         ProxyServer proxyServer = CloudNet.getInstance().getProxy(server);
-        if(proxyServer != null)
+        if (proxyServer != null)
         {
             proxyServer.getWrapper().disableScreen(proxyServer.getProxyInfo());
         }

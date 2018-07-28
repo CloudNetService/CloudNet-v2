@@ -26,45 +26,31 @@ public class CloudNetWrapperConfig {
 
     private String internalIP, wrapperId, cloudnetHost, devServicePath, proxy_config_host;
 
-    private boolean savingRecords,viaVersion, autoUpdate, maintenance_copy;
+    private boolean savingRecords, viaVersion, autoUpdate, maintenance_copy;
 
     private int cloudnetPort, startPort, processQueueSize, maxMemory, webPort;
 
-    private double percentOfCPUForANewServer, percentOfCPUForANewCloudServer,  percentOfCPUForANewProxy;
+    private double percentOfCPUForANewServer, percentOfCPUForANewCloudServer, percentOfCPUForANewProxy;
 
     public CloudNetWrapperConfig(ConsoleReader reader) throws Exception
     {
 
-        if (!Files.exists(Paths.get("local")))
-            Files.createDirectory(Paths.get("local"));
-        if (!Files.exists(Paths.get("local/servers")))
-            Files.createDirectory(Paths.get("local/servers"));
-        if (!Files.exists(Paths.get("local/templates")))
-            Files.createDirectory(Paths.get("local/templates"));
-        if (!Files.exists(Paths.get("local/cache")))
-            Files.createDirectory(Paths.get("local/cache"));
-        if (!Files.exists(Paths.get("local/cache/web_templates")))
-            Files.createDirectory(Paths.get("local/cache/web_templates"));
-        if (!Files.exists(Paths.get("local/cache/web_plugins")))
-            Files.createDirectory(Paths.get("local/cache/web_plugins"));
-        if (!Files.exists(Paths.get("local/records")))
-            Files.createDirectory(Paths.get("local/records"));
-        if (!Files.exists(Paths.get("temp")))
-            Files.createDirectory(Paths.get("temp"));
-        if (!Files.exists(Paths.get("modules")))
-            Files.createDirectory(Paths.get("modules"));
-        if (!Files.exists(Paths.get("local/global")))
-            Files.createDirectory(Paths.get("local/global"));
-        if (!Files.exists(Paths.get("local/global_cloudserver")))
-            Files.createDirectory(Paths.get("local/global_cloudserver"));
-        if (!Files.exists(Paths.get("local/global/plugins")))
-            Files.createDirectory(Paths.get("local/global/plugins"));
-        if (!Files.exists(Paths.get("local/proxy_versions")))
-            Files.createDirectory(Paths.get("local/proxy_versions"));
-        if (!Files.exists(Paths.get("local/plugins")))
-            Files.createDirectory(Paths.get("local/plugins"));
-        if (!Files.exists(Paths.get("temp/cloudserver")))
-            Files.createDirectory(Paths.get("temp/cloudserver"));
+        for (File directory : new File[]{
+                new File("local/servers"),
+                new File("local/templates"),
+                new File("local/cache/web_templates"),
+                new File("local/cache/web_plugins"),
+                new File("local/records"),
+                new File("local/plugins"),
+                new File("local/records"),
+                new File("local/global_cloudserver"),
+                new File("local/global/plugins"),
+                new File("local/proxy_versions"),
+                new File("temp"),
+                new File("temp/cloudserver"),
+                new File("modules")
+        })
+            directory.mkdirs();
 
         if (!Files.exists(path))
         {
@@ -191,7 +177,7 @@ public class CloudNetWrapperConfig {
             this.percentOfCPUForANewCloudServer = configuration.getDouble("general.percentOfCPUForANewCloudServer");
             this.devServicePath = configuration.getString("general.devservicePath");
 
-            if(!configuration.getSection("general").self.containsKey("proxy-config-host"))
+            if (!configuration.getSection("general").self.containsKey("proxy-config-host"))
             {
                 configuration.set("general.proxy-config-host", this.internalIP);
                 save();
@@ -201,7 +187,7 @@ public class CloudNetWrapperConfig {
 
             this.proxy_config_host = configuration.getString("general.proxy-config-host");
 
-            if(!Files.exists(Paths.get(devServicePath)))
+            if (!Files.exists(Paths.get(devServicePath)))
             {
                 Files.createDirectories(Paths.get(devServicePath));
             }

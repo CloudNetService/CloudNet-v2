@@ -20,8 +20,9 @@ public class PacketInEnableScreen extends PacketInHandler {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        if(!(packetSender instanceof Wrapper)) return;
-        ServiceId serviceId = data.getObject("serviceId", new TypeToken<ServiceId>(){}.getType());
-        CloudNet.getInstance().getScreenProvider().handleEnableScreen(serviceId, ((Wrapper)packetSender));
+        if (!(packetSender instanceof Wrapper)) return;
+        ServiceId serviceId = data.getObject("serviceId", new TypeToken<ServiceId>() {
+        }.getType());
+        CloudNet.getInstance().getScreenProvider().handleEnableScreen(serviceId, ((Wrapper) packetSender));
     }
 }

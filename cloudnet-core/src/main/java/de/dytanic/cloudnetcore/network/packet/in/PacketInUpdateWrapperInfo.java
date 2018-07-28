@@ -5,11 +5,11 @@
 package de.dytanic.cloudnetcore.network.packet.in;
 
 import com.google.gson.reflect.TypeToken;
-import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import de.dytanic.cloudnetcore.network.components.Wrapper;
 
 public final class PacketInUpdateWrapperInfo extends PacketInHandler {
 

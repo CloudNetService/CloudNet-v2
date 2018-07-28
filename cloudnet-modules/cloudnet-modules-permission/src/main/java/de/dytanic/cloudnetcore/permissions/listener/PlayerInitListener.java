@@ -15,13 +15,13 @@ import java.util.LinkedList;
 /**
  * Created by Tareko on 18.10.2017.
  */
-public final class PlayerInitListener implements IEventListener<PlayerInitEvent>{
+public final class PlayerInitListener implements IEventListener<PlayerInitEvent> {
 
     @Override
     public void onCall(PlayerInitEvent event)
     {
 
-        if(event.getCloudPlayer().getPermissionEntity() == null)
+        if (event.getCloudPlayer().getPermissionEntity() == null)
         {
             event.getCloudPlayer().setPermissionEntity(PermissionModule.getInstance().getPermissionPool().getNewPermissionEntity(event.getCloudPlayer()));
         }

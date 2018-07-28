@@ -582,10 +582,10 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                     {
                         Title title = ProxyServer.getInstance().createTitle();
 
-                        if(document.contains("title"))
+                        if (document.contains("title"))
                             title.title(TextComponent.fromLegacyText(document.getString("title")));
 
-                        if(document.contains("subTitle"))
+                        if (document.contains("subTitle"))
                             title.subTitle(TextComponent.fromLegacyText(document.getString("subTitle")));
 
                         title.fadeIn(document.getInt("fadeIn")).fadeOut(document.getInt("fadeOut")).stay(document.getInt("stay"));

@@ -7,6 +7,11 @@ package de.dytanic.cloudnet.cloudflare;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.dytanic.cloudnet.cloudflare.database.CloudFlareDatabase;
+import de.dytanic.cloudnet.cloudflare.exception.CloudFlareDNSRecordException;
+import de.dytanic.cloudnet.cloudflare.util.DNSRecord;
+import de.dytanic.cloudnet.cloudflare.util.DNSType;
+import de.dytanic.cloudnet.cloudflare.util.DefaultDNSRecord;
+import de.dytanic.cloudnet.cloudflare.util.SRVRecord;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
@@ -15,11 +20,6 @@ import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.cloudflare.exception.CloudFlareDNSRecordException;
-import de.dytanic.cloudnet.cloudflare.util.DNSRecord;
-import de.dytanic.cloudnet.cloudflare.util.DNSType;
-import de.dytanic.cloudnet.cloudflare.util.DefaultDNSRecord;
-import de.dytanic.cloudnet.cloudflare.util.SRVRecord;
 import lombok.Getter;
 
 import java.io.*;
@@ -59,7 +59,7 @@ public class CloudFlareService {
     {
         if (!cloudFlareConfig.isEnabled()) return false;
 
-        for(String id : cloudFlareDatabase.getAndRemove()) this.deleteRecord(id);
+        for (String id : cloudFlareDatabase.getAndRemove()) this.deleteRecord(id);
 
         for (String key : cloudFlareDatabase.getAll())
         {
@@ -101,7 +101,7 @@ public class CloudFlareService {
             NetworkUtils.sleepUninterruptedly(400);
         }
 
-        for(String id : cloudFlareDatabase.getAndRemove())
+        for (String id : cloudFlareDatabase.getAndRemove())
         {
             this.deleteRecord(id);
             NetworkUtils.sleepUninterruptedly(400);

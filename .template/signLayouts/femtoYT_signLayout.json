@@ -59,7 +59,7 @@
       "animations": 10,
       "animationsPerSecond": 6,
       "searchingLayouts": [
-		{
+        {
           "name": "loading1",
           "signLayout": [
             "§7● ● ● ● ● ● ● ● ●",
@@ -70,7 +70,7 @@
           "blockId": 159,
           "subId": 9
         },
-		{
+        {
           "name": "loading2",
           "signLayout": [
             "§8● §7● ● ● ● ● ● ● ●",
@@ -81,7 +81,7 @@
           "blockId": 159,
           "subId": 9
         },
-		{
+        {
           "name": "loading3",
           "signLayout": [
             "§8● ● §7● ● ● ● ● ● ●",
@@ -92,7 +92,7 @@
           "blockId": 159,
           "subId": 9
         },
-				{
+        {
           "name": "loading4",
           "signLayout": [
             "§8● ● ● §7● ● ● ● ● ●",
@@ -103,7 +103,7 @@
           "blockId": 159,
           "subId": 9
         },
-		{
+        {
           "name": "loading5",
           "signLayout": [
             "§8● ● ● ● §7● ● ● ● ●",
@@ -114,7 +114,7 @@
           "blockId": 159,
           "subId": 9
         },
-		{
+        {
           "name": "loading6",
           "signLayout": [
             "§8● ● ● ● ● §7● ● ● ●",
@@ -125,7 +125,7 @@
           "blockId": 159,
           "subId": 9
         },
-		{
+        {
           "name": "loading7",
           "signLayout": [
             "§8● ● ● ● ● ● §7● ● ●",
@@ -136,7 +136,7 @@
           "blockId": 159,
           "subId": 9
         },
-		{
+        {
           "name": "loading8",
           "signLayout": [
             "§8● ● ● ● ● ● ● §7● ●",
@@ -147,7 +147,7 @@
           "blockId": 159,
           "subId": 9
         },
-				{
+        {
           "name": "loading9",
           "signLayout": [
             "§8● ● ● ● ● ● ● ● §7●",
@@ -158,7 +158,7 @@
           "blockId": 159,
           "subId": 9
         },
-		{
+        {
           "name": "loading10",
           "signLayout": [
             "§8● ● ● ● ● ● ● ● ●",

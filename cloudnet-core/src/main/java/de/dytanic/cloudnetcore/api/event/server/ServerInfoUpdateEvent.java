@@ -7,7 +7,6 @@ package de.dytanic.cloudnetcore.api.event.server;
 import de.dytanic.cloudnet.event.Event;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnetcore.network.components.INetworkComponent;
-import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import lombok.Getter;
 
 /**

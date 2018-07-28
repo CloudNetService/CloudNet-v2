@@ -43,13 +43,13 @@ public class MessageConfig {
         boolean resave = false;
         Document document = Document.loadDocument(path);
 
-        if(!document.contains("server-kick-proxy-disallow"))
+        if (!document.contains("server-kick-proxy-disallow"))
         {
             document.append("server-kick-proxy-disallow", "§cYou have to connect from a internal proxy server!");
             resave = true;
         }
 
-        if(resave) document.saveAsConfig(path);
+        if (resave) document.saveAsConfig(path);
 
         return document;
     }

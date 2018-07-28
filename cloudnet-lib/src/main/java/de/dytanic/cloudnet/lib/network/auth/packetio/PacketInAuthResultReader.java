@@ -1,9 +1,9 @@
 package de.dytanic.cloudnet.lib.network.auth.packetio;
 
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.network.auth.AuthLoginResult;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
+import de.dytanic.cloudnet.lib.utility.document.Document;
 
 /**
  * Created by Tareko on 25.07.2017.

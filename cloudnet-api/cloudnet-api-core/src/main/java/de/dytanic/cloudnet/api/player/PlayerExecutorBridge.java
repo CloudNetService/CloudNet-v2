@@ -46,8 +46,8 @@ public class PlayerExecutorBridge extends PlayerExecutor {
     {
         if (cloudPlayer == null || message == null) return;
 
-            CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "sendMessage",
-                    new Document("message", message).append("name", cloudPlayer.getName()).append("uniqueId", cloudPlayer.getUniqueId()));
+        CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "sendMessage",
+                new Document("message", message).append("name", cloudPlayer.getName()).append("uniqueId", cloudPlayer.getUniqueId()));
     }
 
     @Override

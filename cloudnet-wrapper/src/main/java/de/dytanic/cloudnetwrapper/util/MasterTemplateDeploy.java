@@ -9,10 +9,9 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet3.ZipConverter;
+import de.dytanic.cloudnet.lib.zip.ZipConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -48,7 +47,7 @@ public class MasterTemplateDeploy {
         Path dir = Paths.get("local/cache/" + NetworkUtils.randomString(10));
         try
         {
-            FileCopy.copyFilesInDirectory(new File(this.dir), dir.toFile());
+            FileUtility.copyFilesInDirectory(new File(this.dir), dir.toFile());
             new File(dir.toString() + "/plugins/CloudNetAPI.jar").delete();
         } catch (Exception ex)
         {
@@ -85,8 +84,8 @@ public class MasterTemplateDeploy {
         urlConnection.disconnect();
         try
         {
-            FileUtils.deleteDirectory(dir.toFile());
-        } catch (Exception ex)
+            FileUtility.deleteDirectory(dir.toFile());
+        } catch (Exception ignored)
         {
 
         }

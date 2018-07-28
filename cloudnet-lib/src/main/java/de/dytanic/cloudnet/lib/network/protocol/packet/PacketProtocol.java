@@ -30,9 +30,9 @@ public class PacketProtocol implements IProtocol {
     @Override
     public ProtocolStream createElement(Object element)
     {
-        if(element instanceof Packet)
+        if (element instanceof Packet)
         {
-            return (Packet)element;
+            return (Packet) element;
         }
         return null;
     }

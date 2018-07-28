@@ -24,23 +24,23 @@ public class CommandScreen extends Command {
     public void onExecuteCommand(CommandSender sender, String[] args)
     {
 
-        if(CloudNet.getInstance().getScreenProvider().getMainServiceId() != null && args.length > 1 && args[0].equalsIgnoreCase("write"))
+        if (CloudNet.getInstance().getScreenProvider().getMainServiceId() != null && args.length > 1 && args[0].equalsIgnoreCase("write"))
         {
             ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
             StringBuilder stringBuilder = new StringBuilder();
-            for(short i = 1; i < args.length; i++)
+            for (short i = 1; i < args.length; i++)
             {
                 stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
             }
             String commandLine = stringBuilder.substring(0, stringBuilder.length() - 1);
             Wrapper wrapper = CloudNet.getInstance().getWrappers().get(serviceId.getWrapperId());
-            if(wrapper != null)
+            if (wrapper != null)
             {
-                if(wrapper.getServers().containsKey(serviceId.getServerId()))
+                if (wrapper.getServers().containsKey(serviceId.getServerId()))
                 {
                     wrapper.writeServerCommand(commandLine, wrapper.getServers().get(serviceId.getServerId()).getServerInfo());
                 }
-                if(wrapper.getProxys().containsKey(serviceId.getServerId()))
+                if (wrapper.getProxys().containsKey(serviceId.getServerId()))
                 {
                     wrapper.writeProxyCommand(commandLine, wrapper.getProxys().get(serviceId.getServerId()).getProxyInfo());
                 }
@@ -70,7 +70,7 @@ public class CommandScreen extends Command {
                     {
 
                         ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
-                        if(serviceId != null)
+                        if (serviceId != null)
                         {
                             CloudNet.getInstance().getScreenProvider().disableScreen(serviceId.getServerId());
                             CloudNet.getInstance().getScreenProvider().setMainServiceId(null);
@@ -89,7 +89,7 @@ public class CommandScreen extends Command {
                     if (minecraftServer != null)
                     {
                         ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
-                        if(serviceId != null)
+                        if (serviceId != null)
                         {
                             CloudNet.getInstance().getScreenProvider().disableScreen(serviceId.getServerId());
                             CloudNet.getInstance().getScreenProvider().setMainServiceId(null);

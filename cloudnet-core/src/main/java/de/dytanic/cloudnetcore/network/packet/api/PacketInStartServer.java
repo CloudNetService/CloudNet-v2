@@ -39,7 +39,7 @@ public class PacketInStartServer extends PacketInHandler {
                             data.getObject("plugins", new TypeToken<Collection<ServerInstallablePlugin>>() {
                             }.getType()), data.getString("customServer"), data.getObject("properties",
                                     new TypeToken<Properties>() {
-                                    }.getType()) );
+                                    }.getType()));
                 } else
                 {
                     if (data.contains("template"))
@@ -87,8 +87,7 @@ public class PacketInStartServer extends PacketInHandler {
                                     }.getType()), data.getString("customServer"), data.getObject("properties",
                                             new TypeToken<Properties>() {
                                             }.getType()));
-                        }
-                        else
+                        } else
                         {
                             CloudNet.getInstance().startGameServer(
                                     CloudNet.getInstance().getServerGroups().get(data.getString("group")),

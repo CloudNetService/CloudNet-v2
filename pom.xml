@@ -7,24 +7,45 @@
     <groupId>de.dytanic.cloudnet</groupId>
     <artifactId>cloudnet</artifactId>
     <packaging>pom</packaging>
-    <version>2.1.6</version>
+    <version>2.1.7</version>
+
     <name>CloudNet-Parent</name>
+    <url>https://cloudnetservice.eu/</url>
 
     <properties>
+        <!-- compiler and encoding -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
-        <netty.version>4.1.25.Final</netty.version>
-        <service.version>2.1.6</service.version>
-        <service.type>PRE</service.type>
+        <service.version>2.1.7</service.version>
+        <service.type>RELEASE</service.type>
+        <!-- Dependencies -->
+        <dependency.lombok.version>1.18.0</dependency.lombok.version>
+        <dependency.netty.version>4.1.27.Final</dependency.netty.version>
+        <dependency.gson.version>2.8.5</dependency.gson.version>
+        <dependency.jline.version>2.14.6</dependency.jline.version>
+        <dependency.jopt-simple.version>5.0.4</dependency.jopt-simple.version>
+        <dependecy.snakeyaml.version>1.21</dependecy.snakeyaml.version>
+        <dependency.bungeecord.version>1.8-1.12</dependency.bungeecord.version>
+        <dependency.spigot.version>1.8.8</dependency.spigot.version>
+        <dependency.vaultapi.version>1.6</dependency.vaultapi.version>
+        <dependency.typetools.version>0.5.0</dependency.typetools.version>
+        <!-- test dependencies -->
+        <test.junit.version>4.12</test.junit.version>
+        <!-- Plugins -->
+        <plugin.shade.version>3.1.1</plugin.shade.version>
+        <plugin.javadoc.version>3.0.1</plugin.javadoc.version>
+        <plugin.jar.version>3.1.0</plugin.jar.version>
+        <plugin.resources.version>3.1.0</plugin.resources.version>
+        <plugin.antrun.version>1.8</plugin.antrun.version>
     </properties>
 
     <developers>
         <developer>
             <id>main</id>
             <name>Tarek H.</name>
-            <url>http://dytanic.de</url>
+            <url>https://dytanic.de</url>
         </developer>
     </developers>
 
@@ -42,7 +63,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.0</version>
+            <version>${dependency.lombok.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -52,7 +73,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>${plugin.javadoc.version}</version>
                 <configuration>
                     <show>private</show>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
@@ -94,5 +115,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

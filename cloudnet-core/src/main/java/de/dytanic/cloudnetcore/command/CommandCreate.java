@@ -7,8 +7,8 @@ package de.dytanic.cloudnetcore.command;
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.server.*;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
+import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.user.BasicUser;
@@ -144,14 +144,13 @@ public class CommandCreate extends Command {
                 }
                 break;
             case 4:
-                if(args[0].equalsIgnoreCase("cloudserver") || args[0].equalsIgnoreCase("cs"))
+                if (args[0].equalsIgnoreCase("cloudserver") || args[0].equalsIgnoreCase("cs"))
                 {
-                    if(NetworkUtils.checkIsNumber(args[2]))
+                    if (NetworkUtils.checkIsNumber(args[2]))
                     {
                         CloudNet.getInstance().startCloudServer(args[1], Integer.parseInt(args[2]), args[3].equalsIgnoreCase("true"));
                         sender.sendMessage("Trying to startup a cloud server...");
-                    }
-                    else
+                    } else
                     {
                         sender.sendMessage("Invalid argument!");
                     }

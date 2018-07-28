@@ -24,7 +24,7 @@ public class ProtocolInDecoder extends ByteToMessageDecoder {
     {
         ProtocolBuffer protocolBuffer = ProtocolProvider.protocolBuffer(byteBuf);
 
-        for(IProtocol iProtocol : ProtocolProvider.protocols())
+        for (IProtocol iProtocol : ProtocolProvider.protocols())
         {
             try
             {
@@ -32,7 +32,8 @@ public class ProtocolInDecoder extends ByteToMessageDecoder {
                 protocolStream.read(protocolBuffer.clone());
                 list.add(protocolStream);
                 break;
-            }catch (Exception ex) {
+            } catch (Exception ex)
+            {
 
             }
         }

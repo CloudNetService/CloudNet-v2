@@ -19,7 +19,8 @@ public class PacketInUpdateWrapperProperties extends PacketInHandler {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        Configuration configuration = data.getObject("configuration", new TypeToken<Configuration>(){}.getType());
+        Configuration configuration = data.getObject("configuration", new TypeToken<Configuration>() {
+        }.getType());
         CloudNetWrapper.getInstance().getWrapperConfig().getConfiguration().self.putAll(configuration.self);
         CloudNetWrapper.getInstance().getWrapperConfig().save();
         CloudNetWrapper.getInstance().getWrapperConfig().load();

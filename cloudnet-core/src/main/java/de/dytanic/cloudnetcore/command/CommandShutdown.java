@@ -86,11 +86,10 @@ public class CommandShutdown extends Command {
                     } else
                     {
                         CloudServer proxyServers = CloudNet.getInstance().getCloudGameServer(args[1]);
-                        if(proxyServers != null)
+                        if (proxyServers != null)
                         {
                             proxyServers.getWrapper().stopServer(proxyServers);
-                        }
-                        else
+                        } else
                         {
                             sender.sendMessage("The server doesn't exist");
                         }

@@ -4,8 +4,8 @@
 
 package de.dytanic.cloudnet.help;
 
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.map.Maps;
+import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import lombok.Getter;
 
@@ -28,7 +28,7 @@ public final class HelpService {
             public void run(Map.Entry<String, ServiceDescription[]> obj)
             {
                 stringBuilder.append(obj.getKey()).append(":\n");
-                for(ServiceDescription serviceDescription : obj.getValue())
+                for (ServiceDescription serviceDescription : obj.getValue())
                 {
                     stringBuilder.append("Usage: ").append(serviceDescription.getUsage()).append("\n");
                     stringBuilder.append("Description: ").append(serviceDescription.getDescription()).append("\n\n");

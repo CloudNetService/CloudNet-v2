@@ -24,7 +24,7 @@ public final class ScreenProvider {
 
     public void cancel(Screenable screenable)
     {
-        if(loads.containsKey(screenable))
+        if (loads.containsKey(screenable))
         {
             loads.get(screenable).cancel();
             loads.remove(screenable);
@@ -38,7 +38,7 @@ public final class ScreenProvider {
 
     public void shutdown()
     {
-        for(Screenable screenable : loads.keySet())
+        for (Screenable screenable : loads.keySet())
         {
             cancel(screenable);
         }

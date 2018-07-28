@@ -12,10 +12,10 @@ import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.util.HeaderFunction;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.CloudNetWrapperConfig;
+import de.dytanic.cloudnetwrapper.util.FileUtility;
 import io.netty.util.ResourceLeakDetector;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -79,22 +79,10 @@ public class CloudBootstrap {
         }
 
         /*==============================================*/
-        try
-        {
-            FileUtils.deleteDirectory(new File("temp"));
-        } catch (Exception ex)
-        {
-        }
+        FileUtility.deleteDirectory(new File("temp"));
 
         if (Files.exists(Paths.get("local")))
-        {
-            try
-            {
-                FileUtils.deleteDirectory(new File("local/cache"));
-            } catch (Exception ex)
-            {
-            }
-        }
+            FileUtility.deleteDirectory(new File("local/cache"));
         /*==============================================*/
 
         CloudLogger cloudNetLogging = new CloudLogger();
@@ -104,29 +92,37 @@ public class CloudBootstrap {
         CloudNetWrapperConfig cloudNetWrapperConfig = new CloudNetWrapperConfig(cloudNetLogging.getReader());
         CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging);
 
-        if (!cloudNetWrapper.bootstrap())
-        {
-            System.exit(0);
-        }
+        if (!cloudNetWrapper.bootstrap()) System.exit(0);
 
         if (!optionSet.has("noconsole"))
         {
             System.out.println("Use the command \"help\" for further information!");
             String commandLine;
 
-            while (true)
-            try
-            {
-                while ((commandLine = cloudNetLogging.getReader().readLine()) != null)
-                {
-                    if (!cloudNetWrapper.getCommandManager().dispatchCommand(commandLine))
-                    {
-                        System.out.println("Command not found. Use the command \"help\" for further information!");
-                    }
-                }
-            }catch (Exception ex) {
+            String user = System.getProperty("user.name");
 
-            }
+            while (true)
+                try
+                {
+                    cloudNetLogging.getReader().setPrompt(NetworkUtils.EMPTY_STRING);
+                    cloudNetLogging.getReader().resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
+                    while ((commandLine = cloudNetLogging.getReader().readLine(user + "@" + cloudNetWrapper.getWrapperConfig().getWrapperId() + " $ ")) != null)
+                    {
+                        cloudNetLogging.getReader().setPrompt(NetworkUtils.EMPTY_STRING);
+
+                        try
+                        {
+                            if (!cloudNetWrapper.getCommandManager().dispatchCommand(commandLine))
+                                System.out.println("Command not found. Use the command \"help\" for further information!");
+                        } catch (Exception ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                    }
+                } catch (Exception ex)
+                {
+
+                }
         } else
         {
             while (true) NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);

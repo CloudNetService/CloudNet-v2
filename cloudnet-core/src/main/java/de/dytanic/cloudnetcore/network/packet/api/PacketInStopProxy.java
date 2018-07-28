@@ -20,7 +20,7 @@ public class PacketInStopProxy extends PacketInHandler {
     {
         String proxyId = data.getString("serverId");
         ProxyServer proxyServer = CloudNet.getInstance().getProxy(proxyId);
-        if(proxyServer != null)
+        if (proxyServer != null)
         {
             proxyServer.getWrapper().stopProxy(proxyServer);
         }

@@ -4,7 +4,8 @@
 
 package de.dytanic.cloudnet.web.client;
 
-import com.google.gson.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 

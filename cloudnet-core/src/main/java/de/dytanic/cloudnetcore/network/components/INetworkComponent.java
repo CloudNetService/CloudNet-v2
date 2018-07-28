@@ -4,10 +4,9 @@
 
 package de.dytanic.cloudnetcore.network.components;
 
+import de.dytanic.cloudnet.lib.network.ChannelUser;
 import de.dytanic.cloudnet.lib.network.protocol.IProtocol;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolRequest;
-import de.dytanic.cloudnet.lib.server.resource.ResourceMeta;
-import de.dytanic.cloudnet.lib.network.ChannelUser;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnetcore.CloudNet;

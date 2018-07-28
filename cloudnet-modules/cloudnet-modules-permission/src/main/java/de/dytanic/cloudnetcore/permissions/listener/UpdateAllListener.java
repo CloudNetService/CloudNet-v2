@@ -12,7 +12,7 @@ import de.dytanic.cloudnetcore.permissions.PermissionModule;
 /**
  * Created by Tareko on 18.10.2017.
  */
-public final class UpdateAllListener implements IEventListener<UpdateAllEvent>{
+public final class UpdateAllListener implements IEventListener<UpdateAllEvent> {
 
     @Override
     public void onCall(UpdateAllEvent event)

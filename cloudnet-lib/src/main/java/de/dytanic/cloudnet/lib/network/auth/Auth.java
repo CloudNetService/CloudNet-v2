@@ -1,9 +1,9 @@
 package de.dytanic.cloudnet.lib.network.auth;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.service.ServiceId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -46,7 +46,7 @@ public final class Auth {
         this.type = AuthType.GAMESERVER_OR_BUNGEE;
         this.authData
                 .append("serviceId", serverId);
-        if(external) this.authData.append("external", "1805 4646");
+        if (external) this.authData.append("external", "1805 4646");
     }
 
     public Auth(String adminKey)

@@ -5,9 +5,9 @@
 package de.dytanic.cloudnetcore.cloudflare.config;
 
 import com.google.gson.reflect.TypeToken;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.cloudflare.CloudFlareConfig;
 import de.dytanic.cloudnet.cloudflare.CloudFlareProxyGroup;
+import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.config.ConfigAbstract;
 import de.dytanic.cloudnetcore.config.ILoader;
 
@@ -28,7 +28,8 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<CloudFla
     @Override
     public CloudFlareConfig load()
     {
-        return Document.loadDocument(path).getObject("cloudflare", new TypeToken<CloudFlareConfig>(){}.getType());
+        return Document.loadDocument(path).getObject("cloudflare", new TypeToken<CloudFlareConfig>() {
+        }.getType());
     }
 
 }

@@ -27,11 +27,11 @@ public class CommandHelp extends Command {
     {
 
         StringBuilder proxyGrouPBuilder = new StringBuilder();
-        for(String group : CloudNet.getInstance().getProxyGroups().keySet())
+        for (String group : CloudNet.getInstance().getProxyGroups().keySet())
             proxyGrouPBuilder.append(group).append(", ");
 
         StringBuilder serverGrouPBuilder = new StringBuilder();
-        for(String group : CloudNet.getInstance().getServerGroups().keySet())
+        for (String group : CloudNet.getInstance().getServerGroups().keySet())
             serverGrouPBuilder.append(group).append(", ");
 
         sender.sendMessage(

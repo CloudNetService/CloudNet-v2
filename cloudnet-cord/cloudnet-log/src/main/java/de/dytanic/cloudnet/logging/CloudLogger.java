@@ -11,7 +11,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -48,7 +51,8 @@ public class CloudLogger
             Field field = Charset.class.getDeclaredField("defaultCharset");
             field.setAccessible(true);
             field.set(null, Charset.forName("UTF-8"));
-        }catch (Exception ex) {
+        } catch (Exception ex)
+        {
 
         }
 
@@ -61,10 +65,6 @@ public class CloudLogger
 
         this.reader = new ConsoleReader(System.in, System.out);
         this.reader.setExpandEvents(false);
-
-        /*
-        FileLoggerHandler handler = new FileLoggerHandler(new FileFormatter(), "local/logs");
-        addHandler(handler);*/
 
         FileHandler fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, true);
         fileHandler.setEncoding(StandardCharsets.UTF_8.name());
@@ -157,32 +157,10 @@ public class CloudLogger
         }
     }
 
-    private class FileFormatter
-            extends Formatter {
-
-        private final DateFormat format = new SimpleDateFormat("HH:mm:ss");
-
-        @Override
-        public String format(LogRecord record)
-        {
-            StringBuilder builder = new StringBuilder();
-            if (record.getThrown() != null)
-            {
-                StringWriter writer = new StringWriter();
-                record.getThrown().printStackTrace(new PrintWriter(writer));
-                builder.append(writer).append("\n");
-            }
-
-            return "[" + format.format(System.currentTimeMillis()) + NetworkUtils.SLASH_STRING + name + "] " + record.getLevel().getLocalizedName() + ": " +
-                    NetworkUtils.SPACE_STRING + formatMessage(record) + "\n" + builder.toString();
-        }
-
-    }
-
     private class LoggingFormatter
             extends Formatter {
 
-        private final DateFormat format = new SimpleDateFormat("HH:mm:ss");
+        private final DateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
         @Override
         public String format(LogRecord record)
@@ -195,73 +173,14 @@ public class CloudLogger
                 builder.append(writer).append("\n");
             }
 
-            StringBuilder stringBuilder = new StringBuilder(ConsoleReader.RESET_LINE)
-                    .append("[")
-                    .append(format.format(System.currentTimeMillis()))
-                    .append(NetworkUtils.SLASH_STRING)
-                    .append(name)
-                    .append("] ")
-                    .append(record.getLevel().getName())
-                    .append(": ")
-                    .append(formatMessage(record))
-                    .append("\n").append(builder.substring(0));
-
-            return stringBuilder.substring(0);
+            return ConsoleReader.RESET_LINE +
+                    "[" +
+                    format.format(record.getMillis()) +
+                    "] " +
+                    record.getLevel().getName() +
+                    ": " +
+                    formatMessage(record) +
+                    "\n" + builder.toString();
         }
     }
-
-    /*
-    @Getter
-    public class FileLoggerHandler extends Handler {
-
-        private String directory;
-        private PrintWriter printWriter;
-
-        public FileLoggerHandler(Formatter formatter, String directory) throws Exception
-        {
-            super();
-            setLevel(Level.INFO);
-            this.directory = directory;
-            try
-            {
-                setEncoding(StandardCharsets.UTF_8.name());
-            } catch (UnsupportedEncodingException e)
-            {
-                e.printStackTrace();
-            }
-            setFormatter(formatter);
-
-            if (Files.exists(Paths.get(directory + "/latest.log")))
-            {
-                new File(directory + "/latest.log").renameTo(new File(directory + "/latest_" + new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss").format(System.currentTimeMillis()) + ".log"));
-            }
-            new File(directory + "/latest.log").createNewFile();
-
-            this.printWriter = new PrintWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(directory + "/latest.log")), StandardCharsets.UTF_8));
-        }
-
-        @Override
-        public void publish(LogRecord record)
-        {
-            printWriter.write(getFormatter().format(record));
-            printWriter.flush();
-        }
-
-        @Override
-        public void flush()
-        {
-
-        }
-
-        @Override
-        public void close() throws SecurityException
-        {
-            printWriter.close();
-            if (Files.exists(Paths.get(directory + "/latest.log")))
-            {
-                new File(directory + "/latest.log").renameTo(new File(directory + "/latest_" + new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss").format(System.currentTimeMillis()) + ".log"));
-            }
-        }
-    }*/
-
 }

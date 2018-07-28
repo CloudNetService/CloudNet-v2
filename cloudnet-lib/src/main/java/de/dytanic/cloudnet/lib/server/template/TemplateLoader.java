@@ -4,11 +4,12 @@
 
 package de.dytanic.cloudnet.lib.server.template;
 
-import de.dytanic.cloudnet3.ZipConverter;
+import de.dytanic.cloudnet.lib.zip.ZipConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -32,7 +33,7 @@ public class TemplateLoader {
             urlConnection.setUseCaches(false);
             urlConnection.connect();
             Files.copy(urlConnection.getInputStream(), Paths.get(dest));
-            ((HttpURLConnection)urlConnection).disconnect();
+            ((HttpURLConnection) urlConnection).disconnect();
         } catch (IOException e)
         {
             e.printStackTrace();

@@ -10,7 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class SignLayout
-            implements Nameable{
+        implements Nameable {
 
     private String name;
     private String[] signLayout;

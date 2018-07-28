@@ -5,15 +5,13 @@
 package de.dytanic.cloudnet.cloudflare.database;
 
 import com.google.gson.reflect.TypeToken;
-import de.dytanic.cloudnet.cloudflare.util.DNSRecord;
+import de.dytanic.cloudnet.cloudflare.PostResponse;
 import de.dytanic.cloudnet.database.DatabaseUseable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.cloudflare.PostResponse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -68,7 +66,7 @@ public class CloudFlareDatabase extends DatabaseUseable {
 
     public void add(PostResponse postResponse)
     {
-        if(postResponse == null) return;
+        if (postResponse == null) return;
 
         Document document = database.getDocument("cloudflare_cache_dnsrequests");
         if (document.contains("requests"))

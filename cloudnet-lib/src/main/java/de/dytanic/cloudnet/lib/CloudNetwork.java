@@ -1,7 +1,6 @@
 package de.dytanic.cloudnet.lib;
 
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
-import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -9,7 +8,6 @@ import lombok.Data;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Properties;
 
 /**
  * Created by Tareko on 19.07.2017.

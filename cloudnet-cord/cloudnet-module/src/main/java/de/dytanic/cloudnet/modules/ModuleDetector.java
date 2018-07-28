@@ -26,7 +26,7 @@ public class ModuleDetector {
     {
         Set<ModuleConfig> moduleConfigs = new HashSet<>();
 
-        for(File file : dir.listFiles(new FileFilter() {
+        for (File file : dir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname)
             {
@@ -34,16 +34,16 @@ public class ModuleDetector {
             }
         }))
         {
-            try(JarFile jarFile = new JarFile(file))
+            try (JarFile jarFile = new JarFile(file))
             {
 
                 JarEntry jarEntry = jarFile.getJarEntry("module.properties");
-                if(jarEntry == null)
+                if (jarEntry == null)
                 {
                     throw new ModuleLoadException("Cannot find \"module.properties\" file");
                 }
 
-                try(InputStream inputStream = jarFile.getInputStream(jarEntry); InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+                try (InputStream inputStream = jarFile.getInputStream(jarEntry); InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8))
                 {
                     Properties properties = new Properties();
                     properties.load(reader);
@@ -51,7 +51,7 @@ public class ModuleDetector {
                     moduleConfigs.add(moduleConfig);
                 }
 
-            }catch (Exception ex)
+            } catch (Exception ex)
             {
                 ex.printStackTrace();
             }

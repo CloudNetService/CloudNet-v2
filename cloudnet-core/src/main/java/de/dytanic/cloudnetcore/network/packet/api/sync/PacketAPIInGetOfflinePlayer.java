@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnetcore.network.packet.api.sync;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;

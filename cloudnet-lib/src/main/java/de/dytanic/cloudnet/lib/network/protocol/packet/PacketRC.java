@@ -9,7 +9,9 @@ package de.dytanic.cloudnet.lib.network.protocol.packet;
  */
 public final class PacketRC {
 
-    private PacketRC() {}
+    private PacketRC()
+    {
+    }
 
     public static final int TEST = -100;
 

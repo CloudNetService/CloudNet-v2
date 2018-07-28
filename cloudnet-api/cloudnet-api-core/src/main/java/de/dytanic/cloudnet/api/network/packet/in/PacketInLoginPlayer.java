@@ -20,7 +20,7 @@ public class PacketInLoginPlayer extends PacketInHandlerDefault {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        if(CloudAPI.getInstance() != null)
+        if (CloudAPI.getInstance() != null)
         {
             CloudPlayer cloudPlayer = data.getObject("player", CloudPlayer.TYPE);
             CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {

@@ -14,7 +14,7 @@ import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroupType;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnetwrapper.util.FileCopy;
+import de.dytanic.cloudnetwrapper.util.FileUtility;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -42,20 +42,16 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                 for (Template template : serverGroup.getTemplates())
                 {
                     if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName())))
-                {
-                    System.out.println("Creating GroupTemplate for " + serverGroup.getName() + " " + template.getName() + "...");
-                    Files.createDirectories(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + ""));
-                }
+                    {
+                        System.out.println("Creating GroupTemplate for " + serverGroup.getName() + " " + template.getName() + "...");
+                        Files.createDirectories(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + ""));
+                    }
 
                     if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties")))
-                    {
-                        FileCopy.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
-                    }
+                        FileUtility.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
 
                     if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins")))
-                    {
                         new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins").mkdir();
-                    }
                 }
                 Template template = serverGroup.getGlobalTemplate();
                 if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName())))
@@ -65,14 +61,11 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                 }
 
                 if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties")))
-                {
-                    FileCopy.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
-                }
+                    FileUtility.insertData("files/server.properties", "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
 
                 if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins")))
-                {
                     new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins").mkdir();
-                }
+
             } catch (IOException e)
             {
                 e.printStackTrace();
@@ -176,8 +169,9 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                             System.out.println("Downloading glowstone.jar...");
                             Files.copy(connection.getInputStream(), path);
                             System.out.println("Download was completed successfully");
-                            ((HttpURLConnection)connection).disconnect();
-                        }catch (Exception ex) {
+                            ((HttpURLConnection) connection).disconnect();
+                        } catch (Exception ex)
+                        {
                             ex.printStackTrace();
                         }
                     }
@@ -195,8 +189,9 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                         System.out.println("Downloading glowstone.jar...");
                         Files.copy(connection.getInputStream(), path);
                         System.out.println("Download was completed successfully");
-                        ((HttpURLConnection)connection).disconnect();
-                    }catch (Exception ex) {
+                        ((HttpURLConnection) connection).disconnect();
+                    } catch (Exception ex)
+                    {
                         ex.printStackTrace();
                     }
                 }

@@ -4,8 +4,6 @@
 
 package de.dytanic.cloudnet.lib.test;
 
-import de.dytanic.cloudnet.lib.MultiValue;
-import de.dytanic.cloudnet.lib.Version;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.junit.Test;
 

@@ -7,15 +7,13 @@ package de.dytanic.cloudnet.lib.network.protocol.packet;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.Value;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
 import java.util.*;
-
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by Tareko on 22.05.2017.
@@ -25,14 +23,13 @@ public final class PacketManager {
     private final java.util.Map<Integer, Collection<Class<? extends PacketInHandler>>> packetHandlers = NetworkUtils.newConcurrentHashMap();
     private final java.util.Map<UUID, Value<Result>> synchronizedHandlers = NetworkUtils.newConcurrentHashMap();
     private final Queue<Packet> packetQueue = new ConcurrentLinkedQueue<>();
-    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
+    private final TaskScheduler executorService = new TaskScheduler(1);
 
     public void registerHandler(int id, Class<? extends PacketInHandler> packetHandlerClass)
     {
         if (!packetHandlers.containsKey(id))
-        {
             packetHandlers.put(id, new ArrayList<>());
-        }
+
         packetHandlers.get(id).add(packetHandlerClass);
     }
 
@@ -79,7 +76,7 @@ public final class PacketManager {
         packet.uniqueId = uniq;
         Value<Result> handled = new Value<>(null);
         synchronizedHandlers.put(uniq, handled);
-        executorService.execute(new Runnable() {
+        executorService.schedule(new Runnable() {
             @Override
             public void run()
             {
@@ -90,19 +87,14 @@ public final class PacketManager {
         short i = 0;
 
         while (synchronizedHandlers.get(uniq).getValue() == null && i++ < 5000)
-        {
             try
             {
                 Thread.sleep(0, 300000);
-            } catch (InterruptedException e)
+            } catch (InterruptedException ignored)
             {
             }
-        }
 
-        if(i >= 200)
-        {
-            synchronizedHandlers.get(uniq).setValue(new Result(uniq, new Document()));
-        }
+        if (i >= 200) synchronizedHandlers.get(uniq).setValue(new Result(uniq, new Document()));
 
         Value<Result> values = synchronizedHandlers.get(uniq);
         synchronizedHandlers.remove(uniq);

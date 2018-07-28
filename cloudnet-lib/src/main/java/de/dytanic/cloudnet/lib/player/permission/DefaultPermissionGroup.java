@@ -4,10 +4,8 @@
 
 package de.dytanic.cloudnet.lib.player.permission;
 
-import de.dytanic.cloudnet.lib.player.permission.PermissionFallback;
-import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Tareko on 20.08.2017.

@@ -13,7 +13,7 @@ import lombok.Getter;
  * Calls if a player is updated on cloudnet
  */
 @Getter
-public class UpdatePlayerEvent extends AsyncEvent<UpdatePlayerEvent>{
+public class UpdatePlayerEvent extends AsyncEvent<UpdatePlayerEvent> {
 
     private OfflinePlayer offlinePlayer;
 

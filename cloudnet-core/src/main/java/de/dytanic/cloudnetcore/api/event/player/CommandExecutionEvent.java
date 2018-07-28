@@ -11,7 +11,7 @@ import de.dytanic.cloudnet.lib.player.PlayerCommandExecution;
 /**
  * Calls if a command was executed from one player
  */
-public class CommandExecutionEvent extends AsyncEvent<CommandExecutionEvent>{
+public class CommandExecutionEvent extends AsyncEvent<CommandExecutionEvent> {
 
     private PlayerCommandExecution playerCommandExecution;
 

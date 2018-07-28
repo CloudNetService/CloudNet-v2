@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet;
 
-import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.event.IEventListener;
@@ -21,11 +20,11 @@ public class CloudCoreExample extends CoreModule { //extend the CoreModule class
     @Override
     public void onLoad()
     {
-        if(!getUtilFile().exists())
+        if (!getUtilFile().exists())
         {
             saveUtils(new Document("myutil configuration", "hello world!"));
         }
-        if(!getConfigFile().exists())
+        if (!getConfigFile().exists())
         {
             getConfig().set("myconfiguration", "foo bar");
             saveConfig();

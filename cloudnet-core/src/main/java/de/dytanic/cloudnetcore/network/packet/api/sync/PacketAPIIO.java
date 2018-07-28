@@ -11,7 +11,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 /**
  * Created by Tareko on 18.08.2017.
  */
-public abstract class PacketAPIIO extends PacketInHandler{
+public abstract class PacketAPIIO extends PacketInHandler {
 
     protected abstract Packet getResult(Document value);
 

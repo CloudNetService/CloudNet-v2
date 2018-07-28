@@ -20,7 +20,8 @@ public class PacketInRemoveSign extends PacketInHandler {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        Sign sign = data.getObject("sign", new TypeToken<Sign>(){}.getType());
+        Sign sign = data.getObject("sign", new TypeToken<Sign>() {
+        }.getType());
         SignsModule.getInstance().getSignDatabase().removeSign(sign.getUniqueId());
 
         CloudNet.getInstance().getNetworkManager().reload();

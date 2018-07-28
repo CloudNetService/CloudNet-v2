@@ -28,8 +28,10 @@ public class CommandIp extends Command {
 
         OfflinePlayer user = CloudAPI.getInstance().getOfflinePlayer(args[0]);
 
-        if (user == null) commandSender.sendMessage(new TextComponent(TextComponent.fromLegacyText(ChatColor.RED + "That user is not registered!")));
-        else commandSender.sendMessage(TextComponent.fromLegacyText(ChatColor.BLUE + "IP of " + args[0] + " is " + user.getLastPlayerConnection().getHost()));
+        if (user == null)
+            commandSender.sendMessage(new TextComponent(TextComponent.fromLegacyText(ChatColor.RED + "That user is not registered!")));
+        else
+            commandSender.sendMessage(TextComponent.fromLegacyText(ChatColor.BLUE + "IP of " + args[0] + " is " + user.getLastPlayerConnection().getHost()));
 
     }
 }

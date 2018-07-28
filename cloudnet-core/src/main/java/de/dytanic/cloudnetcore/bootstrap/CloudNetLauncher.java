@@ -13,7 +13,7 @@ public class CloudNetLauncher {
 
     public static synchronized void main(String[] args) throws Exception
     {
-        if(Float.parseFloat(System.getProperty("java.class.version")) < 52D)
+        if (Float.parseFloat(System.getProperty("java.class.version")) < 52D)
         {
             throw new JavaReqVersionException();
         }

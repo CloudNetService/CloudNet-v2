@@ -5,49 +5,47 @@
 package de.dytanic.cloudnetcore;
 
 import de.dytanic.cloudnet.command.CommandManager;
+import de.dytanic.cloudnet.database.DatabaseManager;
+import de.dytanic.cloudnet.event.EventManager;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.cloudserver.CloudServerMeta;
 import de.dytanic.cloudnet.lib.hash.DyHash;
+import de.dytanic.cloudnet.lib.interfaces.Executable;
+import de.dytanic.cloudnet.lib.interfaces.Reloadable;
+import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
+import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import de.dytanic.cloudnet.lib.server.ProxyGroup;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
+import de.dytanic.cloudnet.lib.server.*;
 import de.dytanic.cloudnet.lib.server.defaults.BasicServerConfig;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.service.ServiceId;
+import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.*;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.interfaces.Reloadable;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-import de.dytanic.cloudnet.libloader.LibLoader;
+import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
+import de.dytanic.cloudnet.logging.CloudLogger;
+import de.dytanic.cloudnet.modules.ModuleManager;
 import de.dytanic.cloudnet.web.client.WebClient;
 import de.dytanic.cloudnet.web.server.WebServer;
-import de.dytanic.cloudnet3.TaskScheduler;
 import de.dytanic.cloudnetcore.api.event.network.CloudInitEvent;
 import de.dytanic.cloudnetcore.command.*;
-import de.dytanic.cloudnet.database.DatabaseManager;
 import de.dytanic.cloudnetcore.database.DatabaseBasicHandlers;
+import de.dytanic.cloudnetcore.handler.*;
 import de.dytanic.cloudnetcore.modules.DefaultModuleManager;
 import de.dytanic.cloudnetcore.network.CloudNetServer;
+import de.dytanic.cloudnetcore.network.NetworkManager;
 import de.dytanic.cloudnetcore.network.components.*;
 import de.dytanic.cloudnetcore.network.components.screen.ScreenProvider;
 import de.dytanic.cloudnetcore.network.packet.api.*;
 import de.dytanic.cloudnetcore.network.packet.api.sync.*;
 import de.dytanic.cloudnetcore.network.packet.dbsync.*;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
-import de.dytanic.cloudnetcore.handler.*;
-import de.dytanic.cloudnet.event.EventManager;
-import de.dytanic.cloudnet.lib.server.*;
-import de.dytanic.cloudnet.lib.interfaces.Executable;
-import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
-import de.dytanic.cloudnet.logging.CloudLogger;
-import de.dytanic.cloudnet.modules.ModuleManager;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
-import de.dytanic.cloudnetcore.network.NetworkManager;
 import de.dytanic.cloudnetcore.network.packet.in.*;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
 import de.dytanic.cloudnetcore.serverlog.ServerLogManager;
 import de.dytanic.cloudnetcore.setup.LocalCloudWrapper;
 import de.dytanic.cloudnetcore.util.FileCopy;
@@ -56,7 +54,6 @@ import de.dytanic.cloudnetcore.web.log.WebsiteLog;
 import joptsimple.OptionSet;
 import lombok.Getter;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,7 +78,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     private final EventManager eventManager = new EventManager();
     private final ScreenProvider screenProvider = new ScreenProvider();
     private final ServerLogManager serverLogManager = new ServerLogManager();
-    private final LibLoader libLoader = new LibLoader(new File("local/libs"));
 
     private final NetworkManager networkManager = new NetworkManager();
     private final Scheduler scheduler = new Scheduler(50);
@@ -1493,7 +1489,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public void startGameServer(ServerGroup serverGroup, ServerConfig config, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
-        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers())
+            return;
 
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(serverGroup.getWrapper()));
         if (wrapper == null) return;
@@ -1525,7 +1522,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             public void run(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
-                if(template != null)
+                if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
@@ -1544,7 +1541,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         Map.Entry<String, Integer> entry = null;
         for (Map.Entry<String, Integer> values : templateMap.entrySet())
         {
-            if (entry == null) entry = values; else {
+            if (entry == null) entry = values;
+            else
+            {
                 if (entry.getValue() >= values.getValue())
                 {
                     entry = values;
@@ -1578,7 +1577,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public void startGameServer(ServerGroup serverGroup, String serverId, ServerConfig config, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
-        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers())
+            return;
 
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(serverGroup.getWrapper()));
         if (wrapper == null) return;
@@ -1610,7 +1610,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             public void run(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
-                if(template != null)
+                if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
@@ -1665,7 +1665,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public void startGameServer(ServerGroup serverGroup, ServerConfig config, Template template, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
-        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers())
+            return;
 
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(serverGroup.getWrapper()));
         if (wrapper == null) return;
@@ -1698,7 +1699,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, ServerConfig config, Template template, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
-        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers())
+            return;
 
         if (wrapper == null) return;
 
@@ -1730,7 +1732,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, ServerConfig config, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
-        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers())
+            return;
 
         if (wrapper == null) return;
 
@@ -1761,7 +1764,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             public void run(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
-                if(template != null)
+                if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
@@ -1821,7 +1824,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public void startGameServer(Wrapper wrapper, String serverId, ServerGroup serverGroup, ServerConfig config, int memory, boolean prioritystop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> plugins, String customServerName, Properties serverProperties)
     {
-        if(serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) return;
+        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers())
+            return;
 
         if (wrapper == null) return;
 
@@ -1851,7 +1855,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             public void run(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
-                if(template != null)
+                if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
@@ -2208,7 +2212,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             public void run(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
-                if(template != null)
+                if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
@@ -2293,7 +2297,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             public void run(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
-                if(template != null)
+                if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
@@ -2381,7 +2385,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             public void run(Quad<Integer, Integer, ServiceId, Template> obj)
             {
                 Template template = obj.getFourth();
-                if(template != null)
+                if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);

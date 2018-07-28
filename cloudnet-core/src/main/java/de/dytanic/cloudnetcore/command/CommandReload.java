@@ -88,11 +88,11 @@ public class CommandReload extends Command {
                     });
                     sender.sendMessage("[RELOAD] Reloading was completed successfully");
                 }
-                if(args[0].equalsIgnoreCase("wrapper"))
+                if (args[0].equalsIgnoreCase("wrapper"))
                 {
-                    for(Wrapper wrapper : CloudNet.getInstance().getWrappers().values())
+                    for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values())
                     {
-                        if(wrapper.getChannel() != null) wrapper.writeCommand("reload");
+                        if (wrapper.getChannel() != null) wrapper.writeCommand("reload");
                     }
                 }
                 break;

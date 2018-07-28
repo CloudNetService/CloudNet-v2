@@ -230,7 +230,7 @@ public class AsyncPrintStream extends PrintStream {
 
     }
 
-	/* ============================================== */
+    /* ============================================== */
 
     private void print0(int x)
     {
