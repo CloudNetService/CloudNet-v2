@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (c) Tarek Hosni El Alaoui 2017
-  -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <parent>
         <artifactId>cloudnet</artifactId>
         <groupId>de.dytanic.cloudnet</groupId>
         <version>2.1.7</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
+    <artifactId>cloudnet-api</artifactId>
+    <name>CloudNet-API-Parent</name>
     <packaging>pom</packaging>
 
-    <name>CloudNet-API-Parent</name>
     <modules>
         <module>cloudnet-api-core</module>
         <module>cloudnet-api-bridge</module>
     </modules>
-    <artifactId>cloudnet-api</artifactId>
 
     <repositories>
         <repository>
             <id>cloudnet-repo</id>
             <url>https://cloudnetservice.eu/repositories</url>
         </repository>
+        <!-- SpigotMC repository
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        -->
     </repositories>
 
     <dependencies>
@@ -37,8 +41,8 @@
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>${dependency.spigot.version}</version>
+            <artifactId>spigot <!-- spigot-api --> </artifactId>
+            <version>${dependency.spigot.version} <!-- 1.13-R0.1-SNAPSHOT --> </version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

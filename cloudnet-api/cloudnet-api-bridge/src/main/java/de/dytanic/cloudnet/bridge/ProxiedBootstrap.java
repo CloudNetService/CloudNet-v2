@@ -45,7 +45,7 @@ public class ProxiedBootstrap extends Plugin {
 
         DocumentRegistry.fire();
 
-        getProxy().registerChannel("CloudNet");
+        getProxy().registerChannel("cloudnet:main");
         CloudAPI.getInstance().bootstrap();
 
         CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {

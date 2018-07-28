@@ -61,7 +61,7 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
 
         CloudServer.getInstance().registerCommand(new CommandResource());
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "CloudNet");
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "cloudnet:main");
 
         enableTasks();
         loadPlayers();

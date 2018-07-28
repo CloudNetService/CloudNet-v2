@@ -22,6 +22,7 @@ import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -81,7 +82,8 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                                 Entity armor = (Entity) armorStand;
                                 if (armor.getPassenger() == null && key.getItemId() != null)
                                 {
-                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(key.getItemId()));
+
+                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(Material.getMaterial(key.getItemId())));
                                     item.setTicksLived(Integer.MAX_VALUE);
                                     item.setPickupDelay(Integer.MAX_VALUE);
                                     armor.setPassenger(item);
@@ -142,7 +144,7 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                                 Entity armor = (Entity) armorStand;
                                 if (armor.getPassenger() == null && key.getItemId() != null)
                                 {
-                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(key.getItemId()));
+                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(Material.getMaterial(key.getItemId())));
                                     item.setTicksLived(Integer.MAX_VALUE);
                                     item.setPickupDelay(Integer.MAX_VALUE);
                                     armor.setPassenger(item);

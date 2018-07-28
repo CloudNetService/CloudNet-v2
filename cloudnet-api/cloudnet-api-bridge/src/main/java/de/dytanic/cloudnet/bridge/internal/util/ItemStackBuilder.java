@@ -31,7 +31,7 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder(int material)
     {
-        this.itemStack = new ItemStack(material);
+        this.itemStack = new ItemStack(Material.getMaterial(material));
         this.itemMeta = itemStack.getItemMeta();
     }
 
@@ -55,7 +55,7 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder(int material, int amount, int sub)
     {
-        this.itemStack = new ItemStack(material, amount, (short) sub);
+        this.itemStack = new ItemStack(Material.getMaterial(material), amount, (short) sub);
         this.itemMeta = itemStack.getItemMeta();
     }
 

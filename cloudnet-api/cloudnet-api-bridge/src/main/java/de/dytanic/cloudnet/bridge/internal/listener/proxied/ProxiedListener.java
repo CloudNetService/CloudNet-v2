@@ -359,7 +359,7 @@ public class ProxiedListener implements Listener {
     public void handleChannel(PluginMessageEvent pluginMessageEvent)
     {
         if (!(pluginMessageEvent.getReceiver() instanceof ProxiedPlayer)) return;
-        if (pluginMessageEvent.getTag().equalsIgnoreCase("CloudNet"))
+        if (pluginMessageEvent.getTag().equalsIgnoreCase("cloudnet:main"))
         {
             ByteArrayDataInput byteArrayDataInput = ByteStreams.newDataInput(pluginMessageEvent.getData());
             switch (byteArrayDataInput.readUTF().toLowerCase())
