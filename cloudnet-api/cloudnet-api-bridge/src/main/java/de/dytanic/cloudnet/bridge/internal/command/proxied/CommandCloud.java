@@ -83,7 +83,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                             "The information was sent to the cloud");
                     return;
                 }
-                if (args[0].equalsIgnoreCase("statistics") && commandSender.hasPermission("cloudnet.ommand.cloud.statistics"))
+                if (args[0].equalsIgnoreCase("statistics") && commandSender.hasPermission("cloudnet.command.cloud.statistics"))
                 {
                     Document document = CloudAPI.getInstance().getStatistics();
 
