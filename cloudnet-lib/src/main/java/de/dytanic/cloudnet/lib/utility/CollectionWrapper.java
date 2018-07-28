@@ -7,7 +7,8 @@ package de.dytanic.cloudnet.lib.utility;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class CollectionWrapper {

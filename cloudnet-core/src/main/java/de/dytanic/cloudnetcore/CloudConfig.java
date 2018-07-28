@@ -70,7 +70,7 @@ public class CloudConfig {
     public CloudConfig(ConsoleReader consoleReader) throws Exception
     {
 
-        for (File directory : new File[] {
+        for (File directory : new File[]{
                 new File("local/servers"),
                 new File("local/templates"),
                 new File("local/plugins"),

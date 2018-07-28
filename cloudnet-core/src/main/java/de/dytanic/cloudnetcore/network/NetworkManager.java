@@ -41,7 +41,9 @@ import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 /**

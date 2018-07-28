@@ -12,7 +12,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Created by Tareko on 21.05.2017.

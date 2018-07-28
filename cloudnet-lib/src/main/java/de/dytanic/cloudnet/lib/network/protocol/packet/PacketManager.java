@@ -7,10 +7,10 @@ package de.dytanic.cloudnet.lib.network.protocol.packet;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.Value;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;

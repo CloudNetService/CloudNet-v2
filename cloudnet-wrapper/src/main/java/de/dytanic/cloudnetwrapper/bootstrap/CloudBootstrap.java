@@ -114,7 +114,7 @@ public class CloudBootstrap {
                         {
                             if (!cloudNetWrapper.getCommandManager().dispatchCommand(commandLine))
                                 System.out.println("Command not found. Use the command \"help\" for further information!");
-                        }catch (Exception ex)
+                        } catch (Exception ex)
                         {
                             ex.printStackTrace();
                         }

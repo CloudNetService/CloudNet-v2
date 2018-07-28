@@ -35,7 +35,7 @@ public class CloudNetWrapperConfig {
     public CloudNetWrapperConfig(ConsoleReader reader) throws Exception
     {
 
-        for (File directory : new File[] {
+        for (File directory : new File[]{
                 new File("local/servers"),
                 new File("local/templates"),
                 new File("local/cache/web_templates"),
