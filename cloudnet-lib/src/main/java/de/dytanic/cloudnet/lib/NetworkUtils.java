@@ -21,8 +21,6 @@ import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.base64.Base64Decoder;
-import io.netty.handler.codec.base64.Base64Encoder;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -69,7 +67,7 @@ public final class NetworkUtils {
         return EPOLL ? EpollSocketChannel.class : NioSocketChannel.class;
     }
 
-    private static final char[] values = new char[]{
+    private static final char[] VALUES = new char[]{
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'
             , 'J', '1', '2', '3', '4', '5', '6',
             '7', '8', '9', '0', 'K', 'L', 'M', 'N',
@@ -196,7 +194,7 @@ public final class NetworkUtils {
     {
         StringBuilder stringBuilder = new StringBuilder();
         for (short i = 0; i < size; i++)
-            stringBuilder.append(values[RANDOM.nextInt(values.length)]);
+            stringBuilder.append(VALUES[RANDOM.nextInt(VALUES.length)]);
         return stringBuilder.substring(0);
     }
 
@@ -209,7 +207,7 @@ public final class NetworkUtils {
         {
             StringBuilder stringBuilder = new StringBuilder();
             for (short i = 0; i < 4096; i++)
-                stringBuilder.append(values[random.nextInt(values.length)]);
+                stringBuilder.append(VALUES[random.nextInt(VALUES.length)]);
 
             try
             {
