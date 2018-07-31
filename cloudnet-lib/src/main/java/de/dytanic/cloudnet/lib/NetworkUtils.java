@@ -168,11 +168,9 @@ public final class NetworkUtils {
         channel.pipeline()
                 .addLast(
                         new ProtocolLengthDeserializer(),
-                        new ProtocolInDecoder(), //
-                        new Base64Decoder(),
+                        new ProtocolInDecoder(),
                         new ProtocolLengthSerializer(),
-                        new ProtocolOutEncoder(), //
-                        new Base64Encoder());
+                        new ProtocolOutEncoder());
         return channel;
     }
 
