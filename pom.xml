@@ -7,7 +7,7 @@
     <groupId>de.dytanic.cloudnet</groupId>
     <artifactId>cloudnet</artifactId>
     <packaging>pom</packaging>
-    <version>2.1.7</version>
+    <version>dev-snapshot</version>
 
     <name>CloudNet-Parent</name>
     <url>https://cloudnetservice.eu/</url>
