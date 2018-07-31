@@ -81,7 +81,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     private final NetworkManager networkManager = new NetworkManager();
     private final Scheduler scheduler = new Scheduler(50);
-    private final Scheduler subScheduler = new Scheduler(50);
     private Collection<CloudNetServer> cloudServers = new CopyOnWriteArrayList<>();
     private WebClient webClient = new WebClient();
     private WebServer webServer;
@@ -91,7 +90,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     private CloudLogger logger;
     private OptionSet optionSet;
     private DefaultModuleManager defaultModuleManager;
-    @Deprecated
     private List<String> arguments;
     private DatabaseBasicHandlers dbHandlers;
     private List<String> preConsoleOutput;
@@ -174,26 +172,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             thread.setDaemon(true);
             thread.start();
         }
-
-        {
-            Thread thread = new Thread(subScheduler);
-            thread.setDaemon(true);
-            thread.start();
-        }
         /*=====================================*/
 
         for (ConnectableAddress connectableAddress : config.getAddresses())
-        {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run()
-                {
-                    new CloudNetServer(optionSet, connectableAddress);
-                }
-            });
-            thread.setDaemon(true);
-            thread.start();
-        }
+            new CloudNetServer(optionSet, connectableAddress);
 
         webServer.bind();
 
@@ -227,24 +209,21 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
                 public void run()
                 {
                     for (CloudPlayer cloudPlayer : networkManager.getWaitingPlayers().values())
-                    {
                         if ((cloudPlayer.getLoginTimeStamp().getTime() + 10000L) < System.currentTimeMillis())
-                        {
                             networkManager.getWaitingPlayers().remove(cloudPlayer.getUniqueId());
-                        }
-                    }
                 }
             }, 0, 100);
         }
 
         if (!optionSet.has("disable-modules"))
             System.out.println("Enabling Modules...");
+
         moduleManager.enableModules();
 
         //Event Init
         eventManager.callEvent(new CloudInitEvent());
-
         new LocalCloudWrapper().run(optionSet);
+
         return true;
     }
 
@@ -334,7 +313,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         TaskScheduler.runtimeScheduler().shutdown();
 
         this.scheduler.cancelAllTasks();
-        this.subScheduler.cancelAllTasks();
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -349,14 +327,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         }
         dbHandlers.getStatisticManager().cloudOnlineTime(startupTime);
         this.databaseManager.save().clear();
-        CollectionWrapper.iterator(this.cloudServers, new Runnabled<CloudNetServer>() {
-            @Override
-            public void run(CloudNetServer obj)
-            {
-                obj.getBossGroup().shutdownGracefully();
-                obj.getWorkerGroup().shutdownGracefully();
-            }
-        });
+
+        for (CloudNetServer cloudNetServer : this.cloudServers)
+            cloudNetServer.close();
 
         System.out.println("\n    _  _     _______   _                       _          \n" +
                 "  _| || |_  |__   __| | |                     | |         \n" +
