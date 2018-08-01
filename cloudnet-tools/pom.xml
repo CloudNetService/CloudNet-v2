@@ -19,8 +19,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>simplenametags</module>
-        <module>chat</module>
+        <module>cloudnet-tools-simplenametags</module>
+        <module>cloudnet-tools-chat</module>
     </modules>
 
     <repositories>

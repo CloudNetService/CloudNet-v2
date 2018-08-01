@@ -12,6 +12,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>CloudNet-Tools-SimpleNameTags</name>
-    <artifactId>cloudnet-tools-simplenametag</artifactId>
+    <artifactId>cloudnet-tools-simplenametags</artifactId>
 
 </project>
