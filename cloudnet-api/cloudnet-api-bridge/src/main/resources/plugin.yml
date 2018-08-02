@@ -1,7 +1,7 @@
 name: CloudNetAPI
 version: 2.1
 author: Dytanic
-website: http://cloud.dytanic.de/download
+website: https://cloudnetservice.eu/
 description: CloudNet Interface for the Central server
 
 main: de.dytanic.cloudnet.bridge.BukkitBootstrap
