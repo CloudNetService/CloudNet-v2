@@ -14,12 +14,14 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 import joptsimple.OptionSet;
 import lombok.Getter;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by Tareko on 26.05.2017.
  */
 @Getter
 public final class CloudNetServer
-        extends ChannelInitializer<Channel> {
+        extends ChannelInitializer<Channel> implements AutoCloseable {
 
     private SslContext sslContext;
     private EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup(), bossGroup = NetworkUtils.eventLoopGroup();
@@ -38,23 +40,21 @@ public final class CloudNetServer
             ServerBootstrap serverBootstrap = new ServerBootstrap()
                     .group(bossGroup, workerGroup)
 
-                    //.option(ChannelOption.IP_TOS, 24)
                     .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                    //.option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.AUTO_READ, true)
-                    //.option(ChannelOption.SO_KEEPALIVE, true)
 
                     .channel(NetworkUtils.serverSocketChannel())
 
-                    //.childOption(ChannelOption.IP_TOS, 24)
+                    .childOption(ChannelOption.IP_TOS, 24)
                     .childOption(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                    //.childOption(ChannelOption.TCP_NODELAY, true)
+                    .childOption(ChannelOption.TCP_NODELAY, true)
                     .childOption(ChannelOption.AUTO_READ, true)
-                    //.childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childHandler(this);
 
             CloudNet.getLogger().debug("Using " + (Epoll.isAvailable() ? "Epoll native transport" : "NIO transport"));
             CloudNet.getLogger().debug("Try to bind to " + connectableAddress.getHostName() + ":" + connectableAddress.getPort() + "...");
+
             ChannelFuture channelFuture = serverBootstrap.bind(connectableAddress.getHostName(), connectableAddress.getPort()).addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture channelFuture) throws Exception
@@ -63,29 +63,27 @@ public final class CloudNetServer
                     {
                         System.out.println("CloudNet is listening @" + connectableAddress.getHostName() + ":" + connectableAddress.getPort());
                         CloudNet.getInstance().getCloudServers().add(CloudNetServer.this);
-                    } else
-                    {
-                        System.out.println("Failed to bind @" + connectableAddress.getHostName() + ":" + connectableAddress.getPort());
-                    }
+
+                    } else System.out.println("Failed to bind @" + connectableAddress.getHostName() + ":" + connectableAddress.getPort());
                 }
             }).addListener(ChannelFutureListener.CLOSE_ON_FAILURE).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
 
-            channelFuture.syncUninterruptibly().channel().closeFuture().sync();
+            channelFuture.sync().channel().closeFuture();
         } catch (Exception ex)
         {
-
             ex.printStackTrace();
-            System.exit(0);
-
-        } finally
-        {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
         }
     }
 
     @Override
-    protected void initChannel(Channel channel) throws Exception
+    public void close()
+    {
+        workerGroup.shutdownGracefully();
+        bossGroup.shutdownGracefully();
+    }
+
+    @Override
+    protected void initChannel(Channel channel)
     {
         System.out.println("Channel [" + channel.remoteAddress().toString() + "] connecting...");
 

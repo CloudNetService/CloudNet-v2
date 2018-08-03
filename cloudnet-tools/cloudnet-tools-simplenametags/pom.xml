@@ -6,12 +6,12 @@
     <parent>
         <artifactId>cloudnet-tools</artifactId>
         <groupId>de.dytanic.cloudnet</groupId>
-        <version>2.1.7</version>
+        <version>dev-snapshot</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <name>CloudNet-Tools-SimpleNameTags</name>
-    <artifactId>cloudnet-tools-simplenametag</artifactId>
+    <artifactId>cloudnet-tools-simplenametags</artifactId>
 
 </project>

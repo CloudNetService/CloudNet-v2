@@ -9,7 +9,7 @@
     <parent>
         <artifactId>cloudnet</artifactId>
         <groupId>de.dytanic.cloudnet</groupId>
-        <version>2.1.7</version>
+        <version>dev-snapshot</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

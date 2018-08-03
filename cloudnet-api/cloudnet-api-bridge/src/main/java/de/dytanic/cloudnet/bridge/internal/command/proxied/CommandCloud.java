@@ -100,7 +100,6 @@ public final class CommandCloud extends Command implements TabExecutor {
                             "§7/cloud log <server>",
                             "§7/cloud listGroups",
                             "§7/cloud rl",
-                            "§7/cloud rlconfig",
                             "§7/cloud list",
                             "§7/cloud maintenance <group>",
                             "§7/cloud copy <server>",
@@ -113,7 +112,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 if (args[0].equalsIgnoreCase("rl") && commandSender.hasPermission("cloudnet.command.cloud.reload"))
                 {
-                    CloudAPI.getInstance().sendCloudCommand("reload all");
+                    CloudAPI.getInstance().sendCloudCommand("reload config");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
                             "The information was sent to the cloud");
                     return;
@@ -132,13 +131,6 @@ public final class CommandCloud extends Command implements TabExecutor {
                 if (args[0].equalsIgnoreCase("version") && commandSender.hasPermission("cloudnet.command.cloud.version"))
                 {
                     commandSender.sendMessage("CloudNet " + NetworkUtils.class.getPackage().getSpecificationVersion() + " #" + NetworkUtils.class.getPackage().getImplementationVersion() + " by Dytanic");
-                    return;
-                }
-                if (args[0].equalsIgnoreCase("rlconfig") && commandSender.hasPermission("cloudnet.command.cloud.reloadconfig"))
-                {
-                    CloudAPI.getInstance().sendCloudCommand("reload config");
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
-                            "The information was sent to the cloud");
                     return;
                 }
                 if (args[0].equalsIgnoreCase("list") && commandSender.hasPermission("cloudnet.command.cloud.list"))

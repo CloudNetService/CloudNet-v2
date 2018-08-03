@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (c) Tarek Hosni El Alaoui 2017
-  -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -10,7 +6,7 @@
     <parent>
         <artifactId>cloudnet</artifactId>
         <groupId>de.dytanic.cloudnet</groupId>
-        <version>2.1.7</version>
+        <version>dev-snapshot</version>
     </parent>
 
     <name>CloudNet-Tools</name>
@@ -19,8 +15,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>simplenametags</module>
-        <module>chat</module>
+        <module>cloudnet-tools-simplenametags</module>
+        <module>cloudnet-tools-chat</module>
     </modules>
 
     <repositories>

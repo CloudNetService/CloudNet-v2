@@ -88,8 +88,6 @@ public class SetupSpigotVersion
             }
         }
 
-        String cancer = null;
-
         if (System.getProperty("spigot-version") != null)
         {
             answer = System.getProperty("spigot-version");
@@ -177,7 +175,7 @@ public class SetupSpigotVersion
                                 return;
                             case "1.12.2":
                                 download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.12.2-b1515.jar");
-                                break;
+                                return;
                             default:
                                 System.out.println("This version is not supported!");
                                 break;

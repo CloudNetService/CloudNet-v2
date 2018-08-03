@@ -247,8 +247,8 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         System.out.println("Wrapper shutdown...");
         TaskScheduler.runtimeScheduler().shutdown();
 
-        if (scheduler != null)
-            scheduler.cancelAllTasks();
+        scheduler.cancelAllTasks();
+
         if (serverProcessQueue != null)
             serverProcessQueue.setRunning(false);
 
@@ -310,7 +310,7 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         proxyGroups.clear();
         serverGroups.clear();
 
-        System.out.println("Wrapper try to connect to the CloudNet-Core");
+        System.out.println("Wrapper try to connect to the CloudNet-Master");
         FileUtility.deleteDirectory(new File("temp"));
 
         new File("temp").mkdir();

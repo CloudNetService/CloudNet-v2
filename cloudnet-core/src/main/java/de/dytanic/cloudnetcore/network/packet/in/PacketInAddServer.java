@@ -39,12 +39,11 @@ public class PacketInAddServer
         {
             if (serverProcessMeta.isPriorityStop())
             {
-
                 ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(serverProcessMeta.getServiceId().getGroup());
                 if (serverGroup != null)
                 {
                     PriorityStopTask priorityStopTask = new PriorityStopTask(cn, minecraftServer, serverGroup.getPriorityService().getStopTimeInSeconds());
-                    ScheduledTask scheduledTask = CloudNet.getInstance().getSubScheduler().runTaskRepeatSync(priorityStopTask, 0, 50);
+                    ScheduledTask scheduledTask = CloudNet.getInstance().getScheduler().runTaskRepeatSync(priorityStopTask, 0, 50);
                     priorityStopTask.setScheduledTask(scheduledTask);
                 }
             }
