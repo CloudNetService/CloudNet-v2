@@ -28,6 +28,9 @@ public class PermissionEntity {
 
     public boolean hasPermission(PermissionPool permissionPool, String permission, String group)
     {
+        if (permission != null && (permission.equals("bukkit.broadcast") || permission.equals("bukkit.broadcast.admin")))
+            return true;
+
         if (checkAdminPermission(permission)) return true;
 
         if (permissionPool == null || permission == null) return false;
