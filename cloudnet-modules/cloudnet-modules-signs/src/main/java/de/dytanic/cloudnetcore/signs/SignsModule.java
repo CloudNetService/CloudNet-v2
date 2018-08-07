@@ -69,10 +69,10 @@ public class SignsModule extends CoreModule implements IEventListener<UpdateAllE
         @Override
         public void onCall(ChannelInitEvent event)
         {
-            if (event.getINetworkComponent() instanceof MinecraftServer && ((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY))
-            {
+            if (event.getINetworkComponent() instanceof MinecraftServer &&
+                    (((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY) ||
+                            ((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY)))
                 event.getINetworkComponent().sendPacket(new PacketOutSignSelector(signDatabase.loadAll(), configSignLayout.loadLayout()));
-            }
         }
     }
 }

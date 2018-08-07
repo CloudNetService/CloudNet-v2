@@ -68,7 +68,8 @@ public class MobModule extends CoreModule implements IEventListener<UpdateAllEve
         @Override
         public void onCall(ChannelInitEvent event)
         {
-            if (event.getINetworkComponent() instanceof MinecraftServer && ((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY))
+            if (event.getINetworkComponent() instanceof MinecraftServer && (((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY)) ||
+                    ((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))
             {
                 event.getINetworkComponent().sendPacket(new PacketOutMobSelector(configMobs.load(), mobDatabase.loadAll()));
             }

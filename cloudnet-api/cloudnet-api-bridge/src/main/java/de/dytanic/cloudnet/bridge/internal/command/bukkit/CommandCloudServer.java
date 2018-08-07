@@ -13,6 +13,7 @@ import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutR
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutRemoveSign;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
+import de.dytanic.cloudnet.lib.serverselectors.sign.Position;
 import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
@@ -69,9 +70,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                     {
                         StringBuilder stringBuilder = new StringBuilder();
                         for (short i = 6; i < args.length; i++)
-                        {
                             stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
-                        }
+
                         if (stringBuilder.length() > 32)
                         {
                             commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The display cannot be longe then 32 characters");
@@ -154,6 +154,30 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         switch (args.length)
         {
             case 2:
+                if (args[0].equalsIgnoreCase("copyTo"))
+                {
+                    if (SignSelector.getInstance() == null)
+                    {
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"SignSelector\" isn't enabled!");
+                        return false;
+                    }
+
+                    if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1]))
+                    {
+                        for (Sign sign : SignSelector.getInstance().getSigns().values())
+                            CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddSign(new Sign(
+                                    sign.getTargetGroup(), new Position(
+                                    args[1],
+                                    sign.getPosition().getWorld(),
+                                    sign.getPosition().getX(),
+                                    sign.getPosition().getY(),
+                                    sign.getPosition().getZ()
+                            ))));
+
+                        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The signs by this group was successfully copied to the target group.");
+                    }
+                    return true;
+                }
                 if (args[0].equalsIgnoreCase("createSign"))
                 {
                     if (SignSelector.getInstance() == null)
@@ -300,19 +324,20 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
             default:
                 if (SignSelector.getInstance() != null)
                 {
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver createSign <targetGroup>");
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver removeSign");
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver removeSigns <targetGroup>");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs createSign <targetGroup>");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs removeSign");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs removeSigns <targetGroup>");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs copyTo <targetGroup>");
                 }
                 if (MobSelector.getInstance() != null)
                 {
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver createMob <entityType> <name> <targetGroup> <itemId> <autoJoin> <displayName>");
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver removeMob <name>");
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver listMobs");
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver moblist");
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver setDisplay <name> <display>");
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver setItem <name> <itemId>");
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cloudserver editMobLine <name> <display>");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs createMob <entityType> <name> <targetGroup> <itemId> <autoJoin> <displayName>");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs removeMob <name>");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs listMobs");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs moblist");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs setDisplay <name> <display>");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs setItem <name> <itemId>");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs editMobLine <name> <display>");
                 }
                 break;
         }
