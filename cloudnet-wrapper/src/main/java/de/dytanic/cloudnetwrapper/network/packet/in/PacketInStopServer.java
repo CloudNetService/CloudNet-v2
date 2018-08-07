@@ -24,9 +24,9 @@ public class PacketInStopServer extends PacketInHandler {
             return;
         }
 
-        if (CloudNetWrapper.getInstance().getCloudservers().containsKey(serverInfo.getServiceId().getServerId()))
+        if (CloudNetWrapper.getInstance().getCloudServers().containsKey(serverInfo.getServiceId().getServerId()))
         {
-            CloudNetWrapper.getInstance().getCloudservers().get(serverInfo.getServiceId().getServerId()).shutdown();
+            CloudNetWrapper.getInstance().getCloudServers().get(serverInfo.getServiceId().getServerId()).shutdown();
         }
     }
 }

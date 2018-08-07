@@ -27,7 +27,7 @@ public final class StopTimeHandler implements IWrapperHandler {
                 ex.printStackTrace();
             }
 
-        for (CloudGameServer gameServer : CloudNetWrapper.getInstance().getCloudservers().values())
+        for (CloudGameServer gameServer : CloudNetWrapper.getInstance().getCloudServers().values())
             try
             {
                 if (!gameServer.isAlive())
