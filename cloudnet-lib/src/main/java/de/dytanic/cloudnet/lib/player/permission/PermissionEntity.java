@@ -31,9 +31,9 @@ public class PermissionEntity {
         if (permission != null && (permission.equals("bukkit.broadcast") || permission.equals("bukkit.broadcast.admin")))
             return true;
 
-        if (checkAdminPermission(permission)) return true;
-
         if (permissionPool == null || permission == null) return false;
+
+        if (checkAdminPermission(permission)) return true;
 
         String adminPermission = null;
         String[] block = permission.split("\\.");
