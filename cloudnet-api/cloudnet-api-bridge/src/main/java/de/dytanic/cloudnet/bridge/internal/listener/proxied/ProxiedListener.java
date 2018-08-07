@@ -132,6 +132,7 @@ public class ProxiedListener implements Listener {
         {
             e.setCancelReason(TextComponent.fromLegacyText("§cUnverified login."));
             e.setCancelled(true);
+            return;
         }
 
         CommandSender cloudCommandSender = new CloudPlayerCommandSender(cloudPlayer);
