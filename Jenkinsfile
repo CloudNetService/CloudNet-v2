@@ -10,6 +10,11 @@ pipeline {
         sh 'mvn clean'
       }
     }
+    stage('Version') {
+      steps {
+        sh 'mvn versions:set -DnewVersion=2.1.9'
+      }
+    }
     stage('Compile') {
       steps {
         sh 'mvn compile'

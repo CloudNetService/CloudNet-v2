@@ -90,10 +90,8 @@ public class CloudNetWrapperConfig {
                 System.out.println("Please provide the name of this wrapper (example: Wrapper-1)");
                 wrapperId = reader.readLine().replace(NetworkUtils.SPACE_STRING, NetworkUtils.EMPTY_STRING);
 
-                if (wrapperId.isEmpty() || wrapperId.equals(NetworkUtils.EMPTY_STRING))
-                {
+                if (wrapperId.isEmpty())
                     wrapperId = "Wrapper-" + NetworkUtils.RANDOM.nextInt();
-                }
             }
 
             String cloudNetHost = NetworkUtils.getHostName();
@@ -141,9 +139,9 @@ public class CloudNetWrapperConfig {
             configuration.set("general.maintenance-copy", false);
             configuration.set("general.devservicePath", new File("Development").getAbsolutePath());
             configuration.set("general.processQueueSize", (Runtime.getRuntime().availableProcessors() / 2));
-            configuration.set("general.percentOfCPUForANewServer", 70D);
-            configuration.set("general.percentOfCPUForANewCloudServer", 70D);
-            configuration.set("general.percentOfCPUForANewProxy", 80D);
+            configuration.set("general.percentOfCPUForANewServer", 100D);
+            configuration.set("general.percentOfCPUForANewCloudServer", 100D);
+            configuration.set("general.percentOfCPUForANewProxy", 100D);
 
             try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8))
             {

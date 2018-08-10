@@ -8,6 +8,7 @@ import de.dytanic.cloudnet.help.HelpService;
 import de.dytanic.cloudnet.help.ServiceDescription;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.SystemTimer;
+import de.dytanic.cloudnet.lib.utility.signal.OSSignalBlocker;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.util.HeaderFunction;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
@@ -26,7 +27,7 @@ public class CloudBootstrap {
 
     public static void main(String[] args) throws Exception
     {
-
+        OSSignalBlocker.initSignalCancel();
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
 
         System.setProperty("file.encoding", "UTF-8");

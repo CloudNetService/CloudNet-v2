@@ -76,40 +76,6 @@ public final class CommandCloud extends Command implements TabExecutor {
         switch (args.length)
         {
             case 1:
-                if (args[0].equalsIgnoreCase("help"))
-                {
-                    commandSender.sendMessages(
-                            NetworkUtils.SPACE_STRING,
-                            CloudAPI.getInstance().getPrefix() + "All command arguments",
-                            "§7/cloud toggle autoslot",
-                            "§7/cloud toggle maintenance",
-                            "§7/cloud toggle maintenance <time>",
-                            "§7/cloud setMaxPlayers <maxonlinecount>",
-                            "§7/cloud whitelist <add : remove> <name>",
-                            "§7/cloud start <group> <count>",
-                            "§7/cloud start <group> <template>",
-                            "§7/cloud startcs <name> <memory> <priorityStop>",
-                            "§7/cloud cmds (command server) <server> <command>",
-                            "§7/cloud cmdp (command proxy) <proxy> <command>",
-                            "§7/cloud stop <serverId>",
-                            "§7/cloud stopGroup <group>",
-                            "§7/cloud ustopGroup <group>",
-                            "§7/cloud listProxys",
-                            "§7/cloud listOnline",
-                            "§7/cloud listServers",
-                            "§7/cloud log <server>",
-                            "§7/cloud listGroups",
-                            "§7/cloud rl",
-                            "§7/cloud list",
-                            "§7/cloud maintenance <group>",
-                            "§7/cloud copy <server>",
-                            "§7/cloud copy <server> <directory>",
-                            "§7/cloud version",
-                            "§7/cloud statistics",
-                            NetworkUtils.SPACE_STRING
-                    );
-                    return;
-                }
                 if (args[0].equalsIgnoreCase("rl") && commandSender.hasPermission("cloudnet.command.cloud.reload"))
                 {
                     CloudAPI.getInstance().sendCloudCommand("reload config");
@@ -565,7 +531,36 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 break;
             default:
-                commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "Use /cloud help");
+                commandSender.sendMessages(
+                        NetworkUtils.SPACE_STRING,
+                        CloudAPI.getInstance().getPrefix() + "All command arguments",
+                        "§7/cloud toggle autoslot",
+                        "§7/cloud toggle maintenance",
+                        "§7/cloud toggle maintenance <time>",
+                        "§7/cloud setMaxPlayers <maxonlinecount>",
+                        "§7/cloud whitelist <add : remove> <name>",
+                        "§7/cloud start <group> <count>",
+                        "§7/cloud start <group> <template>",
+                        "§7/cloud startcs <name> <memory> <priorityStop>",
+                        "§7/cloud cmds (command server) <server> <command>",
+                        "§7/cloud cmdp (command proxy) <proxy> <command>",
+                        "§7/cloud stop <serverId>",
+                        "§7/cloud stopGroup <group>",
+                        "§7/cloud ustopGroup <group>",
+                        "§7/cloud listProxys",
+                        "§7/cloud listOnline",
+                        "§7/cloud listServers",
+                        "§7/cloud log <server>",
+                        "§7/cloud listGroups",
+                        "§7/cloud rl",
+                        "§7/cloud list",
+                        "§7/cloud maintenance <group>",
+                        "§7/cloud copy <server>",
+                        "§7/cloud copy <server> <directory>",
+                        "§7/cloud version",
+                        "§7/cloud statistics",
+                        NetworkUtils.SPACE_STRING
+                );
                 break;
         }
 

@@ -3,10 +3,16 @@ package de.dytanic.cloudnetcore.command;
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.server.ServerGroup;
+import de.dytanic.cloudnet.lib.server.template.Template;
+import de.dytanic.cloudnet.lib.utility.Catcher;
+import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
+
+import java.util.Arrays;
 
 /**
  * Created by Tareko on 19.01.2018.
@@ -96,14 +102,42 @@ public final class CommandInfo extends Command {
 
                     }
                     break;
+                    case "sg":
+                    {
+                        ServerGroup group = CloudNet.getInstance().getServerGroup(args[1]);
+                        if (group == null) return;
+
+                        sender.sendMessage(
+                                NetworkUtils.SPACE_STRING,
+                                "Group: " + group.getName(),
+                                "GroupMode:"  + group.getGroupMode().name(),
+                                "ServerType: " + group.getServerType().name(),
+                                "JoinPower: " + group.getJoinPower(),
+                                "MaxHeapSize: " + group.getMemory() + "MB",
+                                "DynamicFixMaxHeapSize: " + group.getDynamicMemory() + "MB",
+                                "MinOnlineServers: " + group.getMinOnlineServers(),
+                                "MaxOnlineServers: " + group.getMaxOnlineServers(),
+                                "Wrappers: " + Arrays.toString(group.getWrapper().toArray(new String[0])),
+                                "Templates: " + Arrays.toString(CollectionWrapper.transform(group.getTemplates(), new Catcher<String, Template>() {
+                                    @Override
+                                    public String doCatch(Template key)
+                                    {
+                                        return key.getName() + ":" + key.getBackend().name();
+                                    }
+                                }).toArray()),
+                                NetworkUtils.SPACE_STRING
+                        );
+                    }
+                    break;
                 }
             }
             break;
             default:
                 sender.sendMessage(
-                        "info SERVER <server> | monitor all informations about a game server",
-                        "info PROXY <proxy> | monitor all informations about a proxy server",
-                        "info WRAPPER <wrapper-id> | monitor all informations about a wrapper"
+                        "info SERVER <server> | show all server informations about one Minecraft server",
+                        "info PROXY <proxy> | show all proxy stats from a current BungeeCord",
+                        "info WRAPPER <wrapper-id> | show all wrapper properties and stats",
+                        "info SG <serverGroup> | show all properties which you set in the group"
                 );
                 break;
         }

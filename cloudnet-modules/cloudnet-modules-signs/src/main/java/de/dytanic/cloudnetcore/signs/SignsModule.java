@@ -11,6 +11,7 @@ import de.dytanic.cloudnetcore.api.CoreModule;
 import de.dytanic.cloudnetcore.api.event.network.ChannelInitEvent;
 import de.dytanic.cloudnetcore.api.event.network.UpdateAllEvent;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
+import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.signs.config.ConfigSignLayout;
 import de.dytanic.cloudnetcore.signs.database.SignDatabase;
 import de.dytanic.cloudnetcore.signs.packet.in.PacketInAddSign;
@@ -69,10 +70,12 @@ public class SignsModule extends CoreModule implements IEventListener<UpdateAllE
         @Override
         public void onCall(ChannelInitEvent event)
         {
-            if (event.getINetworkComponent() instanceof MinecraftServer && ((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY))
-            {
+            if (event.getINetworkComponent() instanceof Wrapper) return;
+
+            if (event.getINetworkComponent() instanceof MinecraftServer &&
+                    (((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY) ||
+                            ((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY)))
                 event.getINetworkComponent().sendPacket(new PacketOutSignSelector(signDatabase.loadAll(), configSignLayout.loadLayout()));
-            }
         }
     }
 }

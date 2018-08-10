@@ -1078,11 +1078,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         wrapper.startProxy(proxyProcessMeta);
     }
 
-    public void startProxy(ProxyGroup proxyGroup)
+    public void startProxy(Wrapper wrapper, ProxyGroup proxyGroup)
     {
-        Wrapper wrapper = fetchPerformanceWrapper(proxyGroup.getMemory(), toWrapperInstances(proxyGroup.getWrapper()));
-        if (wrapper == null) return;
-
         Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
             @Override
             public Integer doCatch(ProxyServer key)
@@ -1091,13 +1088,23 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
         collection.addAll(wrapper.getBinndedPorts());
+
         int startport = proxyGroup.getStartPort();
         while (collection.contains(startport))
         {
             startport++;
         }
+
         ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(newServiceId(proxyGroup, wrapper), proxyGroup.getMemory(), startport, new String[]{}, null, Arrays.asList(), new Document());
         wrapper.startProxy(proxyProcessMeta);
+    }
+
+    public void startProxy(ProxyGroup proxyGroup)
+    {
+        Wrapper wrapper = fetchPerformanceWrapper(proxyGroup.getMemory(), toWrapperInstances(proxyGroup.getWrapper()));
+        if (wrapper == null) return;
+
+        this.startProxy(wrapper, proxyGroup);
     }
 
     public void startProxy(ProxyGroup proxyGroup, int memory, String[] paramters, String url, Collection<ServerInstallablePlugin> plugins, Document document)

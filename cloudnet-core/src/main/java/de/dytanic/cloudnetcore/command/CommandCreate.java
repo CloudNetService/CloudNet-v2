@@ -144,6 +144,38 @@ public class CommandCreate extends Command {
                 }
                 break;
             case 4:
+                if ((args[0].equalsIgnoreCase("proxy") || args[0].equalsIgnoreCase("-p")) && NetworkUtils.checkIsNumber(args[2]))
+                {
+                    if (CloudNet.getInstance().getProxyGroups().containsKey(args[1]) && CloudNet.getInstance().getWrappers().containsKey(args[3]))
+                    {
+                        for (short i = 0; i < Integer.parseInt(args[2]); i++)
+                        {
+                            CloudNet.getInstance().startProxy(CloudNet.getInstance().getWrappers().get(args[3]), CloudNet.getInstance().getProxyGroups().get(args[1]));
+                            NetworkUtils.sleepUninterruptedly(2000L);
+                        }
+                        sender.sendMessage("Trying to startup a proxy server...");
+                    } else
+                    {
+                        sender.sendMessage("The proxy group or wrapper doesn't exists");
+                    }
+                    return;
+                }
+                if ((args[0].equalsIgnoreCase("server") || args[0].equalsIgnoreCase("-s")) && NetworkUtils.checkIsNumber(args[2]))
+                {
+                    if (CloudNet.getInstance().getServerGroups().containsKey(args[1]) && CloudNet.getInstance().getWrappers().containsKey(args[3]))
+                    {
+                        for (short i = 0; i < Integer.parseInt(args[2]); i++)
+                        {
+                            CloudNet.getInstance().startGameServer(CloudNet.getInstance().getWrappers().get(args[3]), CloudNet.getInstance().getServerGroups().get(args[1]));
+                            NetworkUtils.sleepUninterruptedly(2000L);
+                        }
+                        sender.sendMessage("Trying to startup a game server...");
+                    } else
+                    {
+                        sender.sendMessage("The server group or wrapper doesn't exists");
+                    }
+                    return;
+                }
                 if (args[0].equalsIgnoreCase("cloudserver") || args[0].equalsIgnoreCase("cs"))
                 {
                     if (NetworkUtils.checkIsNumber(args[2]))
@@ -270,7 +302,9 @@ public class CommandCreate extends Command {
             default:
                 sender.sendMessage(
                         "create PROXY <proxyGroup> <count> | Creates a proxy server of a proxy group. <count> is not mandatory",
+                        "create PROXY <proxyGroup> <count> <wrapper> | Creates a proxy server of a proxy group. <count> is not mandatory",
                         "create SERVER <serverGroup> <count> | Creates a game server of a server group. <count> is not mandatory",
+                        "create SERVER <serverGroup> <count> <wrapper> | Creates a game server of a server group. <count> is not mandatory",
                         "create CLOUDSERVER <name> <memory> <priorityStop>",
                         "create USER <name> <password> | Creates a new user with specified name and password",
                         "create PROXYGROUP <name> | Creates a completely new proxy group for BungeeCord with its own configurations, etc.",

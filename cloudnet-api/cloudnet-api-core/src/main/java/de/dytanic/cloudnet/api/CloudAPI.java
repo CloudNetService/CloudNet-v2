@@ -25,6 +25,7 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.server.*;
 import de.dytanic.cloudnet.lib.server.defaults.BasicServerConfig;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
@@ -109,6 +110,7 @@ public final class CloudAPI implements MetaObj {
     @Deprecated
     public void shutdown()
     {
+        TaskScheduler.runtimeScheduler().shutdown();
         this.networkConnection.tryDisconnect();
     }
 
