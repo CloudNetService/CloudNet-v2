@@ -13,6 +13,7 @@ import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandHub;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandPermissions;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.defaults.CommandIp;
 import de.dytanic.cloudnet.bridge.internal.listener.proxied.ProxiedListener;
+import de.dytanic.cloudnet.bridge.internal.packetio.PacketOutProxyPing;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.ProxyServer;
@@ -82,6 +83,13 @@ public class ProxiedBootstrap extends Plugin {
             }
         }, 1, TimeUnit.SECONDS);
 
+        getProxy().getScheduler().schedule(this, new Runnable() {
+            @Override
+            public void run()
+            {
+                CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutProxyPing());
+            }
+        }, 0, 1, TimeUnit.MINUTES);
     }
 
     @Override

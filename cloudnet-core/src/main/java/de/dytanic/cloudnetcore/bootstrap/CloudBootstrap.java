@@ -8,6 +8,7 @@ import de.dytanic.cloudnet.help.HelpService;
 import de.dytanic.cloudnet.help.ServiceDescription;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.SystemTimer;
+import de.dytanic.cloudnet.lib.utility.signal.OSSignalBlocker;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import de.dytanic.cloudnet.logging.util.HeaderFunction;
@@ -28,6 +29,7 @@ public final class CloudBootstrap {
 
     public static synchronized void main(String[] args) throws Exception
     {
+        OSSignalBlocker.initSignalCancel();
 
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
 

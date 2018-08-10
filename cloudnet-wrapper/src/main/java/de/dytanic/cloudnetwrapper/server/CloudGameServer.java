@@ -374,7 +374,7 @@ public class CloudGameServer implements ServerDispatcher {
                 break;
         }
 
-        CloudNetWrapper.getInstance().getCloudservers().put(this.cloudServerMeta.getServiceId().getServerId(), this);
+        CloudNetWrapper.getInstance().getCloudServers().put(this.cloudServerMeta.getServiceId().getServerId(), this);
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddCloudServer(this.serverInfo, cloudServerMeta));
         System.out.println("CloudServer " + toString() + " [" + (cloudServerMeta.isPriorityStop() ? "priority stop: true" : "priority stop: false") + "] start [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
         this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, new File(path));
@@ -427,7 +427,7 @@ public class CloudGameServer implements ServerDispatcher {
 
         FileUtility.deleteDirectory(new File(path));
 
-        CloudNetWrapper.getInstance().getCloudservers().remove(getServiceId().getServerId());
+        CloudNetWrapper.getInstance().getCloudServers().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveCloudServer(serverInfo));
         System.out.println("Server " + toString() + " was stopped");
 

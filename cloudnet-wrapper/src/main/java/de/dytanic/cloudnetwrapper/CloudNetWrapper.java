@@ -72,7 +72,7 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
 
     private final java.util.Map<String, GameServer> servers = NetworkUtils.newConcurrentHashMap();
     private final java.util.Map<String, BungeeCord> proxys = NetworkUtils.newConcurrentHashMap();
-    private final java.util.Map<String, CloudGameServer> cloudservers = NetworkUtils.newConcurrentHashMap();
+    private final java.util.Map<String, CloudGameServer> cloudServers = NetworkUtils.newConcurrentHashMap();
 
     private final java.util.Map<String, ServerGroup> serverGroups = NetworkUtils.newConcurrentHashMap();
     private final java.util.Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
@@ -258,7 +258,7 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         for (BungeeCord gameServer : proxys.values())
             gameServer.shutdown();
 
-        for (CloudGameServer gameServer : cloudservers.values())
+        for (CloudGameServer gameServer : cloudServers.values())
             gameServer.shutdown();
 
         this.cloudNetLogging.shutdownAll();
