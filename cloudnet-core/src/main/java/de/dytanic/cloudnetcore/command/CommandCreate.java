@@ -27,7 +27,7 @@ public class CommandCreate extends Command {
 
     public CommandCreate()
     {
-        super("create", "cloudnet.command.create");
+        super("create", "cloudnet.command.create", "start");
     }
 
     @Override
