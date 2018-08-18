@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * Created by Tareko on 21.10.2017.
+ * Class that represents a request for setup data.
  */
 @Getter
 @AllArgsConstructor
@@ -20,14 +20,29 @@ import lombok.ToString;
 @ToString
 public class SetupRequest implements Nameable {
 
+    /**
+     * Name of this setup request.
+     */
     private String name;
 
+    /**
+     * Question that is displayed to the user.
+     */
     private String question;
 
+    /**
+     * Message that is shown when the input was invalid.
+     */
     private String inValidMessage;
 
+    /**
+     * The type of response that is required from the user.
+     */
     private SetupResponseType responseType;
 
+    /**
+     * The validation function that determines whether the input is valid or not.
+     */
     private Catcher<Boolean, String> validater;
 
 }

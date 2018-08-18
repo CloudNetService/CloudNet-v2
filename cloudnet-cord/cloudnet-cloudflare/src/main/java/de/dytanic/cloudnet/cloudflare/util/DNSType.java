@@ -5,12 +5,13 @@
 package de.dytanic.cloudnet.cloudflare.util;
 
 /**
- * Created by Tareko on 26.08.2017.
+ * An enumeration of all valid DNS record types
  */
 public enum DNSType {
 
     A,
     AAAA,
+    CNAME,
     MX,
     LOC,
     SRV,

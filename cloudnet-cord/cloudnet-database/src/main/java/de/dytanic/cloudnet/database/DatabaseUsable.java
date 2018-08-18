@@ -9,12 +9,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Created by Tareko on 17.08.2017.
+ * Parent class for all databases used by CloudNet.
  */
 @Getter
 @AllArgsConstructor
-public class DatabaseUseable {
+public class DatabaseUsable {
 
+    /**
+     * The data store that this database uses
+     */
     protected Database database;
 
 }

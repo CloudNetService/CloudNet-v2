@@ -1,11 +1,11 @@
 package de.dytanic.cloudnetcore.database;
 
-import de.dytanic.cloudnet.database.DatabaseUseable;
+import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
-public final class UpdateConfigurationDatabase extends DatabaseUseable {
+public final class UpdateConfigurationDatabase extends DatabaseUsable {
 
     private static final String NAME = "update_configurations";
 

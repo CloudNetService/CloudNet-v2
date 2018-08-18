@@ -7,10 +7,17 @@ package de.dytanic.cloudnet.setup;
 import jline.console.ConsoleReader;
 
 /**
- * Created by Tareko on 21.10.2017.
+ * Interface for classes that launch a setup sequence
+ *
+ * @see Setup
  */
 public interface ISetup {
 
+    /**
+     * Starts the setup sequence.
+     *
+     * @param consoleReader the console to read user input from
+     */
     void start(ConsoleReader consoleReader);
 
 }

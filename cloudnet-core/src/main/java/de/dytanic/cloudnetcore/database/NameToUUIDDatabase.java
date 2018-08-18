@@ -6,7 +6,7 @@ package de.dytanic.cloudnetcore.database;
 
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.database.DatabaseImpl;
-import de.dytanic.cloudnet.database.DatabaseUseable;
+import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
@@ -19,7 +19,7 @@ import java.util.UUID;
 /**
  * Created by Tareko on 20.08.2017.
  */
-public final class NameToUUIDDatabase extends DatabaseUseable {
+public final class NameToUUIDDatabase extends DatabaseUsable {
 
     public NameToUUIDDatabase(Database database)
     {
@@ -52,8 +52,7 @@ public final class NameToUUIDDatabase extends DatabaseUseable {
         if (getDatabaseImplementation().containsDoc(name.toLowerCase()))
         {
             Document document = database.getDocument(name.toLowerCase());
-            if (!document.contains("uniqueId"))
-            {
+            if (!document.contains("uniqueId")) {
                 database.delete(name.toLowerCase());
                 return null;
             }
@@ -70,8 +69,7 @@ public final class NameToUUIDDatabase extends DatabaseUseable {
         if (getDatabaseImplementation().containsDoc(uniqueId.toString()))
         {
             Document document = database.getDocument(uniqueId.toString());
-            if (!document.contains("name"))
-            {
+            if (!document.contains("name")) {
                 database.delete(uniqueId.toString());
                 return null;
             }
