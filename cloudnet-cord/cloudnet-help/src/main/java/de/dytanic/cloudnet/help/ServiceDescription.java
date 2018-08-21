@@ -8,14 +8,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Created by Tareko on 18.09.2017.
+ * Class to store a brief and a detailed usage description.
  */
 @Getter
 @AllArgsConstructor
 public class ServiceDescription {
 
+    /**
+     * Brief usage description.
+     */
     private String usage;
 
+    /**
+     * Detailed description.
+     */
     private String description;
 
 }

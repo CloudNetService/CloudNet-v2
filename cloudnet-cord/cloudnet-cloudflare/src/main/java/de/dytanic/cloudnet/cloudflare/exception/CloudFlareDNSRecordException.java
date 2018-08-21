@@ -5,12 +5,16 @@
 package de.dytanic.cloudnet.cloudflare.exception;
 
 /**
- * Created by Tareko on 26.08.2017.
+ * Thrown when errors regarding DNS records occur.
  */
 public class CloudFlareDNSRecordException extends RuntimeException {
 
-    public CloudFlareDNSRecordException(String message)
-    {
+    /**
+     * Constructs a new exception with {@code message} as its detailed message.
+     *
+     * @param message the detailed message of this exception.
+     */
+    public CloudFlareDNSRecordException(String message) {
         super(message);
     }
 }

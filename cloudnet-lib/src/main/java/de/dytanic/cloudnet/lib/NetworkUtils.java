@@ -259,7 +259,7 @@ public final class NetworkUtils {
         return new HashMap<>();
     }
 
-    public static ConcurrentHashMap newConcurrentHashMap()
+    public static <K, V> ConcurrentHashMap<K, V> newConcurrentHashMap()
     {
         return new ConcurrentHashMap<>();
     }

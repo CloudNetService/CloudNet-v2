@@ -1,7 +1,7 @@
 package de.dytanic.cloudnet.event;
 
 /**
- * Created by Tareko on 23.07.2017.
+ * Key that defines the domain of an {@link Event} or {@link IEventListener}.
  */
 public abstract class EventKey {
 

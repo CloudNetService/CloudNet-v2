@@ -9,50 +9,73 @@ import de.dytanic.cloudnet.lib.database.Database;
 import lombok.Getter;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 /**
- * Created by Tareko on 01.07.2017.
+ * Manager for a {@link Database}.
+ * Saves all databases every 60 seconds and
+ * clears the currently open databases every 6 minutes.
  */
 @Getter
-public class DatabaseManager
-        implements Runnable {
+public class DatabaseManager {
 
     private final File dir;
-    private final Thread thread;
+    private final Timer timer;
     private short tick = 1;
 
     private java.util.Map<String, Database> databaseCollection = NetworkUtils.newConcurrentHashMap();
 
-    public DatabaseManager()
-    {
+    /**
+     * Constructs a new database manager.
+     */
+    public DatabaseManager() {
         dir = new File("database");
+        //noinspection ResultOfMethodCallIgnored
         dir.mkdir();
 
-        thread = new Thread(this);
-        thread.setDaemon(true);
-        thread.start();
+        timer = new Timer(true);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                save();
+            }
+        }, 0, 60000);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                save().clear();
+            }
+        }, 0, 360000);
     }
 
-    public List<String> getDatabases()
-    {
-        return Arrays.asList(dir.list());
+    /**
+     * Returns the names of the databases.
+     *
+     * @return a list of database names
+     */
+    public List<String> getDatabases() {
+        String[] databases = dir.list();
+        return databases == null ? new ArrayList<>() : Arrays.asList(databases);
     }
 
-    public Database getDatabase(String name)
-    {
-        Database database = null;
+    /**
+     * Returns a database for the given {@code name}.
+     * If the database does not exist, it will be created.
+     *
+     * @param name the name of the database
+     * @return the database for the given {@code name}
+     */
+    public Database getDatabase(String name) {
+        Database database;
 
-        if (databaseCollection.containsKey(name))
-        {
+        if (databaseCollection.containsKey(name)) {
             return databaseCollection.get(name);
         }
 
         File file = new File("database/" + name);
-        if (!file.exists())
-        {
+        if (!file.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             file.mkdir();
         }
 
@@ -62,45 +85,30 @@ public class DatabaseManager
         return database;
     }
 
-    public DatabaseManager save()
-    {
-        for (Database database : databaseCollection.values())
-        {
+    /**
+     * Saves the currently opened documents in the loaded databases.
+     *
+     * @return this manager for chaining
+     * @see DatabaseImpl#save()
+     */
+    public DatabaseManager save() {
+        for (Database database: databaseCollection.values()) {
             ((DatabaseImpl) database).save();
         }
         return this;
     }
 
-    public DatabaseManager clear()
-    {
-        for (Database database : databaseCollection.values())
-        {
+    /**
+     * Clears the currently opened documents of the loaded databases.
+     *
+     * @return this manager for chaining
+     * @see DatabaseImpl#clear()
+     */
+    public DatabaseManager clear() {
+        for (Database database: databaseCollection.values()) {
             ((DatabaseImpl) database).clear();
         }
         return this;
     }
 
-    @Override
-    public void run()
-    {
-        while (true)
-        {
-
-            save();
-
-            tick++;
-            if (tick == 6)
-            {
-                clear();
-                tick = 0;
-            }
-
-            try
-            {
-                Thread.sleep(60000);
-            } catch (InterruptedException e)
-            {
-            }
-        }
-    }
 }
