@@ -53,7 +53,7 @@ public final class OSSignalBlocker {
 
             try
             {
-                System.out.println("Do you want to terminate the process? Then print 'y' and enter!");
+                System.out.println("Do you want to terminate the process? Then print 'y' and enter! You should execute the 'stop' command.");
                 if (bufferedReader.readLine().equals("y"))
                     System.exit(1);
                 else
