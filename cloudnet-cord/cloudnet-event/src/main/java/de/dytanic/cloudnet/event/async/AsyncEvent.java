@@ -22,7 +22,8 @@ public abstract class AsyncEvent<E extends AsyncEvent<?>> extends Event {
      *
      * @param poster the poster to handle pre- and post-call methods
      */
-    public AsyncEvent(AsyncPoster<E> poster) {
+    public AsyncEvent(AsyncPoster<E> poster)
+    {
         this.poster = poster;
         this.asynchronous = true;
     }

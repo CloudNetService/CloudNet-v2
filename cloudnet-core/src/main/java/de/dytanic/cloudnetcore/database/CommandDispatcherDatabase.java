@@ -14,7 +14,7 @@ public class CommandDispatcherDatabase extends DatabaseUsable {
     public CommandDispatcherDatabase(Database database)
     {
         super(database);
-        if(!database.containsDoc("dispatch_commands")) database.insert(new DatabaseDocument("dispatch_commands"));
+        if (!database.containsDoc("dispatch_commands")) database.insert(new DatabaseDocument("dispatch_commands"));
     }
 
     public void appendCommand(String dispatcher, String commandLine)

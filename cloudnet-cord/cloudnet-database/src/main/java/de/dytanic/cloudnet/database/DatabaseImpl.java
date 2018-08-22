@@ -32,15 +32,20 @@ public class DatabaseImpl
     private final File backendDir;
 
     @Override
-    public Database loadDocuments() {
+    public Database loadDocuments()
+    {
         File[] files = backendDir.listFiles();
-        if (files == null) {
+        if (files == null)
+        {
             return this;
         }
-        for (File file: files) {
-            if (!this.documents.containsKey(file.getName())) {
+        for (File file : files)
+        {
+            if (!this.documents.containsKey(file.getName()))
+            {
                 Document document = Document.loadDocument(file);
-                if (document.contains(UNIQUE_NAME_KEY)) {
+                if (document.contains(UNIQUE_NAME_KEY))
+                {
                     this.documents.put(file.getName(), document);
                 }
             }
@@ -49,25 +54,30 @@ public class DatabaseImpl
     }
 
     @Override
-    public boolean containsDoc(String name) {
+    public boolean containsDoc(String name)
+    {
         if (name == null) return false;
         return new File("database/" + this.name + NetworkUtils.SLASH_STRING + name).exists();
     }
 
     @Override
-    public Collection<Document> getDocs() {
+    public Collection<Document> getDocs()
+    {
         return documents.values();
     }
 
     @Override
-    public Document getDocument(String name) {
+    public Document getDocument(String name)
+    {
         if (name == null) return null;
 
         Document document = documents.get(name);
 
-        if (document == null) {
+        if (document == null)
+        {
             File doc = new File("database/" + this.name + NetworkUtils.SLASH_STRING + name);
-            if (doc.exists()) {
+            if (doc.exists())
+            {
                 document = Document.loadDocument(doc);
                 this.documents.put(doc.getName(), document);
                 return document;
@@ -77,15 +87,21 @@ public class DatabaseImpl
     }
 
     @Override
-    public Database insert(Document... documents) {
-        for (Document document: documents) {
-            if (document.contains(UNIQUE_NAME_KEY)) {
+    public Database insert(Document... documents)
+    {
+        for (Document document : documents)
+        {
+            if (document.contains(UNIQUE_NAME_KEY))
+            {
                 this.documents.put(document.getString(UNIQUE_NAME_KEY), document);
                 Path path = Paths.get("database/" + this.name + "/" + document.getString(UNIQUE_NAME_KEY));
-                if (!Files.exists(path)) {
-                    try {
+                if (!Files.exists(path))
+                {
+                    try
+                    {
                         Files.createFile(path);
-                    } catch (IOException e) {
+                    } catch (IOException e)
+                    {
                         e.printStackTrace();
                     }
                 }
@@ -96,52 +112,63 @@ public class DatabaseImpl
     }
 
     @Override
-    public Database delete(String name) {
+    public Database delete(String name)
+    {
         if (name == null) return this;
 
         Document document = getDocument(name);
-        if (document != null) {
+        if (document != null)
+        {
             documents.remove(name);
         }
-        try {
+        try
+        {
             Files.delete(Paths.get("database", this.name, name));
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
         return this;
     }
 
     @Override
-    public Database delete(Document document) {
-        if (document.contains(UNIQUE_NAME_KEY)) {
+    public Database delete(Document document)
+    {
+        if (document.contains(UNIQUE_NAME_KEY))
+        {
             delete(document.getString(UNIQUE_NAME_KEY));
         }
         return this;
     }
 
     @Override
-    public Document load(String name) {
+    public Document load(String name)
+    {
         return Document.loadDocument(new File("database/" + this.name + NetworkUtils.SLASH_STRING + name));
     }
 
     @Override
-    public boolean contains(Document document) {
+    public boolean contains(Document document)
+    {
         return contains(document.getString(UNIQUE_NAME_KEY));
     }
 
     @Override
-    public boolean contains(String name) {
+    public boolean contains(String name)
+    {
         return getDocument(name) != null;
     }
 
     @Override
-    public int size() {
+    public int size()
+    {
         String[] files = backendDir.list();
         return files == null ? 0 : files.length;
     }
 
     @Override
-    public Database insertAsync(Document... documents) {
+    public Database insertAsync(Document... documents)
+    {
         TaskScheduler.runtimeScheduler().schedule(() -> {
             insert(documents);
         });
@@ -149,7 +176,8 @@ public class DatabaseImpl
     }
 
     @Override
-    public Database deleteAsync(String name) {
+    public Database deleteAsync(String name)
+    {
         TaskScheduler.runtimeScheduler().schedule(() -> {
             delete(name);
         });
@@ -157,16 +185,20 @@ public class DatabaseImpl
     }
 
     @Override
-    public FutureTask<Document> getDocumentAsync(String name) {
+    public FutureTask<Document> getDocumentAsync(String name)
+    {
         return new FutureTask<>(() -> getDocument(name));
     }
 
     /**
      * Saves the currently loaded documents to their files.
      */
-    public void save() {
-        for (Document document: documents.values()) {
-            if (document.contains(UNIQUE_NAME_KEY)) {
+    public void save()
+    {
+        for (Document document : documents.values())
+        {
+            if (document.contains(UNIQUE_NAME_KEY))
+            {
                 document.saveAsConfig(Paths.get("database", this.name, document.getString(UNIQUE_NAME_KEY)));
             }
         }
@@ -175,7 +207,8 @@ public class DatabaseImpl
     /**
      * Clears the currently loaded documents.
      */
-    public void clear() {
+    public void clear()
+    {
         this.documents.clear();
     }
 }

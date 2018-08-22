@@ -16,11 +16,13 @@ public final class HelpService {
     private Maps.ArrayMap<String, ServiceDescription> descriptions = new Maps.ArrayMap<>();
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder stringBuilder = new StringBuilder("Help service of the Cloud:").append(Character.LINE_SEPARATOR);
         descriptions.forEach((key, value) -> {
             stringBuilder.append(key).append(':').append(Character.LINE_SEPARATOR);
-            for (ServiceDescription description: value) {
+            for (ServiceDescription description : value)
+            {
                 stringBuilder.append("Usage: ").append(description.getUsage()).append(Character.LINE_SEPARATOR)
                         .append("Description: ").append(description.getDescription()).append(Character.LINE_SEPARATOR).append(Character.LINE_SEPARATOR);
             }
@@ -31,7 +33,8 @@ public final class HelpService {
     /**
      * Print the help directly to {@link System#out}
      */
-    public void describe() {
+    public void describe()
+    {
         System.out.println(toString());
     }
 

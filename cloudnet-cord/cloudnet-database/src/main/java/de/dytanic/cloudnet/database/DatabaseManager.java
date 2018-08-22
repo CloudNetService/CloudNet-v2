@@ -29,7 +29,8 @@ public class DatabaseManager {
     /**
      * Constructs a new database manager.
      */
-    public DatabaseManager() {
+    public DatabaseManager()
+    {
         dir = new File("database");
         //noinspection ResultOfMethodCallIgnored
         dir.mkdir();
@@ -37,13 +38,15 @@ public class DatabaseManager {
         timer = new Timer(true);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run() {
+            public void run()
+            {
                 save();
             }
         }, 0, 60000);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run() {
+            public void run()
+            {
                 save().clear();
             }
         }, 0, 360000);
@@ -54,7 +57,8 @@ public class DatabaseManager {
      *
      * @return a list of database names
      */
-    public List<String> getDatabases() {
+    public List<String> getDatabases()
+    {
         String[] databases = dir.list();
         return databases == null ? new ArrayList<>() : Arrays.asList(databases);
     }
@@ -66,15 +70,18 @@ public class DatabaseManager {
      * @param name the name of the database
      * @return the database for the given {@code name}
      */
-    public Database getDatabase(String name) {
+    public Database getDatabase(String name)
+    {
         Database database;
 
-        if (databaseCollection.containsKey(name)) {
+        if (databaseCollection.containsKey(name))
+        {
             return databaseCollection.get(name);
         }
 
         File file = new File("database/" + name);
-        if (!file.exists()) {
+        if (!file.exists())
+        {
             //noinspection ResultOfMethodCallIgnored
             file.mkdir();
         }
@@ -91,8 +98,10 @@ public class DatabaseManager {
      * @return this manager for chaining
      * @see DatabaseImpl#save()
      */
-    public DatabaseManager save() {
-        for (Database database: databaseCollection.values()) {
+    public DatabaseManager save()
+    {
+        for (Database database : databaseCollection.values())
+        {
             ((DatabaseImpl) database).save();
         }
         return this;
@@ -104,8 +113,10 @@ public class DatabaseManager {
      * @return this manager for chaining
      * @see DatabaseImpl#clear()
      */
-    public DatabaseManager clear() {
-        for (Database database: databaseCollection.values()) {
+    public DatabaseManager clear()
+    {
+        for (Database database : databaseCollection.values())
+        {
             ((DatabaseImpl) database).clear();
         }
         return this;

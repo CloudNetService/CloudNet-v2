@@ -27,18 +27,23 @@ public class HeaderFunction {
      * display the header message either from a {@code HEADER.txt} or from
      * {@link NetworkUtils#header()}.
      */
-    public HeaderFunction() {
+    public HeaderFunction()
+    {
         File file = new File("HEADER.txt");
-        if (file.exists()) {
+        if (file.exists())
+        {
             executed = true;
             try (InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader))
+            {
                 bufferedReader.lines().forEach(System.out::println);
                 NetworkUtils.headerOut();
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 e.printStackTrace();
             }
-        } else {
+        } else
+        {
             NetworkUtils.header();
         }
     }

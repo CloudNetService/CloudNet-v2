@@ -60,19 +60,22 @@ public abstract class Module<E> extends EventKey {
     /**
      * Method that is called when the module is loaded.
      */
-    public void onLoad() {
+    public void onLoad()
+    {
     }
 
     /**
      * Method that is called when the module is enabled.
      */
-    public void onBootstrap() {
+    public void onBootstrap()
+    {
     }
 
     /**
      * Method that is called when the plugin is about to be shut down.
      */
-    public void onShutdown() {
+    public void onShutdown()
+    {
     }
 
     /**
@@ -81,7 +84,8 @@ public abstract class Module<E> extends EventKey {
      * @return the name of the module if a module configuration is present,
      * {@code some_plugin-} + a random long value otherwise.
      */
-    public String getName() {
+    public String getName()
+    {
         return moduleConfig != null ? moduleConfig.getName() : "some_plugin-" + NetworkUtils.RANDOM.nextLong();
     }
 
@@ -91,12 +95,16 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the directory for storing module data
      */
-    public File getDataFolder() {
-        if (dataFolder == null) {
+    public File getDataFolder()
+    {
+        if (dataFolder == null)
+        {
             dataFolder = new File("modules", moduleConfig.getName());
-            try {
+            try
+            {
                 Files.createDirectories(dataFolder.toPath());
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 e.printStackTrace();
             }
         }
@@ -108,7 +116,8 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the name as specified in the module configuration
      */
-    public String getPluginName() {
+    public String getPluginName()
+    {
         return moduleConfig.getName();
     }
 
@@ -117,7 +126,8 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the version as specified in the module configuration
      */
-    public String getVersion() {
+    public String getVersion()
+    {
         return moduleConfig.getVersion();
     }
 
@@ -126,7 +136,8 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the author as specified in the module configuration
      */
-    public String getAuthor() {
+    public String getAuthor()
+    {
         return moduleConfig.getAuthor();
     }
 
@@ -136,8 +147,10 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the currently active configuration
      */
-    public Configuration getConfig() {
-        if (configuration == null) {
+    public Configuration getConfig()
+    {
+        if (configuration == null)
+        {
             loadConfiguration();
         }
         return configuration;
@@ -149,10 +162,13 @@ public abstract class Module<E> extends EventKey {
      * @param document the document that holds the utility information
      * @return the module
      */
-    public Module<E> createUtils(Document document) {
-        if (utilFile == null) {
+    public Module<E> createUtils(Document document)
+    {
+        if (utilFile == null)
+        {
             utilFile = new File("modules/" + moduleConfig.getName() + "/utils.json");
-            if (!utilFile.exists()) {
+            if (!utilFile.exists())
+            {
                 document.saveAsConfig(utilFile);
             }
         }
@@ -164,10 +180,13 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the document containing utility information
      */
-    public Document getUtils() {
-        if (utilFile == null) {
+    public Document getUtils()
+    {
+        if (utilFile == null)
+        {
             utilFile = new File("modules/" + moduleConfig.getName() + "/utils.json");
-            if (!utilFile.exists()) {
+            if (!utilFile.exists())
+            {
                 new Document().saveAsConfig(utilFile);
             }
         }
@@ -180,8 +199,10 @@ public abstract class Module<E> extends EventKey {
      * @param document the document containing the utility information
      * @return the module
      */
-    public Module<E> saveUtils(Document document) {
-        if (utilFile == null) {
+    public Module<E> saveUtils(Document document)
+    {
+        if (utilFile == null)
+        {
             utilFile = new File("modules/" + moduleConfig.getName() + "/utils.json");
         }
         document.saveAsConfig(utilFile);
@@ -193,10 +214,13 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the module
      */
-    public Module<E> saveConfig() {
-        try {
+    public Module<E> saveConfig()
+    {
+        try
+        {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(getConfig(), configFile);
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
         return this;
@@ -207,27 +231,35 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the module
      */
-    public Module<E> loadConfig() {
+    public Module<E> loadConfig()
+    {
         loadConfiguration();
         return this;
     }
 
-    private void loadConfiguration() {
+    private void loadConfiguration()
+    {
         getDataFolder().mkdir();
-        if (configFile == null) {
+        if (configFile == null)
+        {
             configFile = new File("modules/" + moduleConfig.getName() + "/config.yml");
-            if (!configFile.exists()) {
-                try {
+            if (!configFile.exists())
+            {
+                try
+                {
                     configFile.createNewFile();
-                } catch (IOException e) {
+                } catch (IOException e)
+                {
                     e.printStackTrace();
                 }
             }
         }
 
-        try {
+        try
+        {
             configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }

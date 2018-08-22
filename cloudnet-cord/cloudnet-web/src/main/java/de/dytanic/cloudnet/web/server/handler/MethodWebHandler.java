@@ -22,37 +22,48 @@ public abstract class MethodWebHandler extends WebHandler {
      *
      * @param path the path where this handler is available.
      */
-    protected MethodWebHandler(String path) {
+    protected MethodWebHandler(String path)
+    {
         super(path);
     }
 
     @Override
-    public final FullHttpResponse handleRequest(ChannelHandlerContext channelHandlerContext, QueryDecoder queryDecoder, PathProvider path, HttpRequest httpRequest) throws Exception {
-        if (httpRequest.method().equals(HttpMethod.CONNECT)) {
+    public final FullHttpResponse handleRequest(ChannelHandlerContext channelHandlerContext, QueryDecoder queryDecoder, PathProvider path, HttpRequest httpRequest) throws Exception
+    {
+        if (httpRequest.method().equals(HttpMethod.CONNECT))
+        {
             return connect(channelHandlerContext, queryDecoder, path, httpRequest);
         }
-        if (httpRequest.method().equals(HttpMethod.DELETE)) {
+        if (httpRequest.method().equals(HttpMethod.DELETE))
+        {
             return delete(channelHandlerContext, queryDecoder, path, httpRequest);
         }
-        if (httpRequest.method().equals(HttpMethod.GET)) {
+        if (httpRequest.method().equals(HttpMethod.GET))
+        {
             return get(channelHandlerContext, queryDecoder, path, httpRequest);
         }
-        if (httpRequest.method().equals(HttpMethod.PUT)) {
+        if (httpRequest.method().equals(HttpMethod.PUT))
+        {
             return put(channelHandlerContext, queryDecoder, path, httpRequest);
         }
-        if (httpRequest.method().equals(HttpMethod.HEAD)) {
+        if (httpRequest.method().equals(HttpMethod.HEAD))
+        {
             return head(channelHandlerContext, queryDecoder, path, httpRequest);
         }
-        if (httpRequest.method().equals(HttpMethod.OPTIONS)) {
+        if (httpRequest.method().equals(HttpMethod.OPTIONS))
+        {
             return options(channelHandlerContext, queryDecoder, path, httpRequest);
         }
-        if (httpRequest.method().equals(HttpMethod.PATCH)) {
+        if (httpRequest.method().equals(HttpMethod.PATCH))
+        {
             return patch(channelHandlerContext, queryDecoder, path, httpRequest);
         }
-        if (httpRequest.method().equals(HttpMethod.TRACE)) {
+        if (httpRequest.method().equals(HttpMethod.TRACE))
+        {
             return trace(channelHandlerContext, queryDecoder, path, httpRequest);
         }
-        if (httpRequest.method().equals(HttpMethod.POST)) {
+        if (httpRequest.method().equals(HttpMethod.POST))
+        {
             return post(channelHandlerContext, queryDecoder, path, httpRequest);
         }
         return null;

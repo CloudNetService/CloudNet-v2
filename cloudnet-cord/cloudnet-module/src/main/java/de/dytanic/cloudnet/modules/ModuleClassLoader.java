@@ -25,13 +25,15 @@ public class ModuleClassLoader extends URLClassLoader implements ModuleLoader {
      * @throws MalformedURLException when {@link ModuleConfig#file} does not
      *                               resolve to a url
      */
-    public ModuleClassLoader(ModuleConfig config) throws MalformedURLException {
+    public ModuleClassLoader(ModuleConfig config) throws MalformedURLException
+    {
         super(new URL[]{config.getFile().toURI().toURL()});
         this.config = config;
     }
 
 
-    public Module loadModule() throws Exception {
+    public Module loadModule() throws Exception
+    {
         Class<?> bootstrap = loadClass(config.getMain());
         Module module = (Module) bootstrap.getDeclaredConstructor().newInstance();
 

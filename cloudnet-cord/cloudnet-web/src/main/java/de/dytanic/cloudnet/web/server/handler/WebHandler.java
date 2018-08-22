@@ -24,7 +24,8 @@ public abstract class WebHandler implements Cloneable {
      *
      * @param path the path where this handler is available.
      */
-    protected WebHandler(String path) {
+    protected WebHandler(String path)
+    {
         this.path = path;
     }
 
@@ -48,7 +49,8 @@ public abstract class WebHandler implements Cloneable {
      * @return an HTTP 404 response
      */
     @Deprecated
-    public FullHttpResponse newResponse(HttpVersion httpVersion) {
+    public FullHttpResponse newResponse(HttpVersion httpVersion)
+    {
         return new DefaultFullHttpResponse(httpVersion, HttpResponseStatus.NOT_FOUND);
     }
 
@@ -60,12 +62,14 @@ public abstract class WebHandler implements Cloneable {
      * @param content     the content to put inside the code 404 response
      * @return an HTTP 404 response with content
      */
-    public FullHttpResponse newResponse(HttpVersion httpVersion, ByteBuf content) {
+    public FullHttpResponse newResponse(HttpVersion httpVersion, ByteBuf content)
+    {
         return new DefaultFullHttpResponse(httpVersion, HttpResponseStatus.NOT_FOUND, content);
     }
 
     @Override
-    public WebHandler clone() throws CloneNotSupportedException {
+    public WebHandler clone() throws CloneNotSupportedException
+    {
         return (WebHandler) super.clone();
     }
 }

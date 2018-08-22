@@ -29,7 +29,8 @@ public class WebClient {
      *
      * @return a collection containing all official plugins.
      */
-    public Collection<String> getInstallableModules() {
+    public Collection<String> getInstallableModules()
+    {
         return handleRequest(DEFAULT_URL + "modules", new TypeToken<Collection<String>>() {
         }.getType());
     }
@@ -39,7 +40,8 @@ public class WebClient {
      *
      * @return a collection containing all official templates.
      */
-    public Collection<String> getInstallableTemplates() {
+    public Collection<String> getInstallableTemplates()
+    {
         return handleRequest(DEFAULT_URL + "templates", new TypeToken<Collection<String>>() {
         }.getType());
     }
@@ -49,7 +51,8 @@ public class WebClient {
      *
      * @return the latest version of the cloud
      */
-    public String getNewstVersion() {
+    public String getNewstVersion()
+    {
         return getString(DEFAULT_URL + "update/config.json", "version");
     }
 
@@ -61,18 +64,22 @@ public class WebClient {
      * @param <E>  the runtime type of the parsed json
      * @return the data parsed as the specified type or null, if an error occurred.
      */
-    private <E> E handleRequest(String url, Type type) {
-        try {
+    private <E> E handleRequest(String url, Type type)
+    {
+        try
+        {
             URLConnection urlConnection = new java.net.URL(url).openConnection();
             urlConnection.setUseCaches(false);
             urlConnection.setConnectTimeout(1000);
             urlConnection.connect();
 
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8))) {
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8)))
+            {
                 JsonObject jsonObject = new JsonParser().parse(bufferedReader).getAsJsonObject();
                 return NetworkUtils.GSON.fromJson(jsonObject.get("result"), type);
             }
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
         return null;
@@ -86,18 +93,22 @@ public class WebClient {
      * @param key the key to read the data from
      * @return the string representation of the data at the given key
      */
-    private String getString(String url, String key) {
-        try {
+    private String getString(String url, String key)
+    {
+        try
+        {
             URLConnection urlConnection = new java.net.URL(url).openConnection();
             urlConnection.setUseCaches(false);
             urlConnection.setConnectTimeout(1000);
             urlConnection.connect();
 
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8))) {
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8)))
+            {
                 JsonObject jsonObject = new JsonParser().parse(bufferedReader).getAsJsonObject();
                 return jsonObject.get(key).getAsString();
             }
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
         return null;
@@ -109,8 +120,10 @@ public class WebClient {
      * @param version the version to download
      * @see #getEnvironment()
      */
-    public void update(String version) {
-        try {
+    public void update(String version)
+    {
+        try
+        {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(DEFAULT_URL + "update/" + (getEnvironment() ? "CloudNet-Master.jar" : "CloudNet-Wrapper.jar")).openConnection();
             httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
             httpURLConnection.setUseCaches(false);
@@ -118,7 +131,8 @@ public class WebClient {
             httpURLConnection.connect();
 
             System.out.println("Downloading update...");
-            try (InputStream inputStream = httpURLConnection.getInputStream()) {
+            try (InputStream inputStream = httpURLConnection.getInputStream())
+            {
 
                 Files.copy(inputStream, (System.getProperty("os.name").toLowerCase().contains("windows") ?
                         Paths.get("CloudNet-" + (getEnvironment() ? "Master" : "Wrapper") + "-Update#" + version + "-" + NetworkUtils.RANDOM.nextLong() + ".jar")
@@ -126,14 +140,16 @@ public class WebClient {
                         Paths.get(WebClient.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())
                 ), StandardCopyOption.REPLACE_EXISTING);
 
-            } catch (URISyntaxException e) {
+            } catch (URISyntaxException e)
+            {
                 e.printStackTrace();
             }
 
             httpURLConnection.disconnect();
             System.out.println("Download complete!");
 
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
@@ -144,11 +160,14 @@ public class WebClient {
      *
      * @return true, when on the master, false when on the wrapper
      */
-    private boolean getEnvironment() {
-        try {
+    private boolean getEnvironment()
+    {
+        try
+        {
             Class.forName("de.dytanic.cloudnetcore.CloudNet");
             return true;
-        } catch (Exception ex) {
+        } catch (Exception ex)
+        {
             return false;
         }
     }

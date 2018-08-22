@@ -80,13 +80,15 @@ public class WebServer {
      * @throws SSLException         thrown when an error during the creation of the
      *                              ssl context occurred.
      */
-    public WebServer(boolean ssl, String host, int port) throws CertificateException, SSLException {
+    public WebServer(boolean ssl, String host, int port) throws CertificateException, SSLException
+    {
         this.ssl = ssl;
         this.address = host;
         this.port = port;
         this.webServerProvider = new WebServerProvider();
 
-        if (ssl) {
+        if (ssl)
+        {
             SelfSignedCertificate ssc = new SelfSignedCertificate();
             sslContext = SslContextBuilder.forServer(ssc.key(), ssc.cert()).build();
         }
@@ -99,7 +101,8 @@ public class WebServer {
                 .channel(NetworkUtils.serverSocketChannel())
                 .childHandler(new ChannelInitializer<Channel>() {
                     @Override
-                    protected void initChannel(Channel channel) {
+                    protected void initChannel(Channel channel)
+                    {
                         if (sslContext != null)
                             channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
 
@@ -111,14 +114,17 @@ public class WebServer {
     /**
      * Shuts the event loop groups down and awaits their termination.
      */
-    public void shutdown() {
+    public void shutdown()
+    {
         acceptorGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
 
-        try {
+        try
+        {
             acceptorGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             workerGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException ignored)
+        {
         }
     }
 
@@ -127,7 +133,8 @@ public class WebServer {
      *
      * @throws InterruptedException thrown when the synchronous call is interrupted.
      */
-    public void bind() throws InterruptedException {
+    public void bind() throws InterruptedException
+    {
         System.out.println("Bind WebServer at [" + address + ":" + port + "]");
         serverBootstrap.bind(address, port).sync().channel().closeFuture();
     }

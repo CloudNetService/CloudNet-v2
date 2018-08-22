@@ -52,7 +52,8 @@ public final class NameToUUIDDatabase extends DatabaseUsable {
         if (getDatabaseImplementation().containsDoc(name.toLowerCase()))
         {
             Document document = database.getDocument(name.toLowerCase());
-            if (!document.contains("uniqueId")) {
+            if (!document.contains("uniqueId"))
+            {
                 database.delete(name.toLowerCase());
                 return null;
             }
@@ -69,7 +70,8 @@ public final class NameToUUIDDatabase extends DatabaseUsable {
         if (getDatabaseImplementation().containsDoc(uniqueId.toString()))
         {
             Document document = database.getDocument(uniqueId.toString());
-            if (!document.contains("name")) {
+            if (!document.contains("name"))
+            {
                 database.delete(uniqueId.toString());
                 return null;
             }

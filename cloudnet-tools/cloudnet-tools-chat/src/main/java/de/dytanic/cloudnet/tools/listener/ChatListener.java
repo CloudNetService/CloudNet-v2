@@ -29,7 +29,8 @@ public final class ChatListener implements Listener {
                 :
                 null;
 
-        if (permissionGroup == null) {
+        if (permissionGroup == null)
+        {
             return;
         }
 

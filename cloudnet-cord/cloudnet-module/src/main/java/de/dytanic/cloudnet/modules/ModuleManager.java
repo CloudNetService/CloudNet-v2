@@ -38,7 +38,8 @@ public class ModuleManager {
         return detect(directory);
     }
 
-    public Collection<ModuleConfig> detect(File directory) {
+    public Collection<ModuleConfig> detect(File directory)
+    {
         Set<ModuleConfig> modules = moduleDetector.detectAvailable(directory);
         return modules;
     }
