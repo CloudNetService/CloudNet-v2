@@ -15,11 +15,14 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 
 import java.util.function.Consumer;
 
-public class CommandReload extends Command {
+public final class CommandReload extends Command {
 
     public CommandReload()
     {
         super("reload", "cloudnet.command.reload", "rl");
+
+        description = "Reloads the config and modules";
+
     }
 
     @Override

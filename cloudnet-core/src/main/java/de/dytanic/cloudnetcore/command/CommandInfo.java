@@ -22,6 +22,9 @@ public final class CommandInfo extends Command {
     public CommandInfo()
     {
         super("info", "cloudnet.command.info", "i");
+
+        description = "Shows informations about one instance";
+
     }
 
     @Override

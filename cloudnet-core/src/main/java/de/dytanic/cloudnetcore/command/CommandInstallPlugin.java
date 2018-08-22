@@ -13,11 +13,14 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 /**
  * Created by Tareko on 27.08.2017.
  */
-public class CommandInstallPlugin extends Command {
+public final class CommandInstallPlugin extends Command {
 
     public CommandInstallPlugin()
     {
         super("installplugin", "cloudnet.command.installplugin");
+
+        description = "Installs plugin for one server";
+
     }
 
     @Override

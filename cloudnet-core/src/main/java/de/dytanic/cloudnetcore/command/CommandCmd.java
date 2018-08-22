@@ -15,11 +15,14 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 /**
  * Created by Tareko on 20.08.2017.
  */
-public class CommandCmd extends Command {
+public final class CommandCmd extends Command {
 
     public CommandCmd()
     {
         super("cmd", "cloudnet.command.cmd", "command");
+
+        description = "Executes a command on a game server or proxy server";
+
     }
 
     @Override

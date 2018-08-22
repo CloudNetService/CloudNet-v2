@@ -256,12 +256,12 @@ public final class NetworkUtils {
 
     public static <K, V> HashMap<K, V> newHashMap()
     {
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     public static <K, V> ConcurrentHashMap<K, V> newConcurrentHashMap()
     {
-        return new ConcurrentHashMap<>();
+        return new ConcurrentHashMap<>(0);
     }
 
     public static void header()

@@ -15,11 +15,14 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 
-public class CommandShutdown extends Command {
+public final class CommandShutdown extends Command {
 
     public CommandShutdown()
     {
         super("shutdown", "cloudnet.command.shutdown");
+
+        description = "Stops all wrappers, proxys, servers or proxy/server groups";
+
     }
 
     @Override

@@ -14,11 +14,14 @@ import java.util.function.Consumer;
 /**
  * Created by Tareko on 23.08.2017.
  */
-public class CommandClearCache extends Command {
+public final class CommandClearCache extends Command {
 
     public CommandClearCache()
     {
         super("clearcache", "cloudnet.command.clearcache", "cc");
+
+        description = "Clears the plugin and template cache for all wrappers";
+
     }
 
     @Override

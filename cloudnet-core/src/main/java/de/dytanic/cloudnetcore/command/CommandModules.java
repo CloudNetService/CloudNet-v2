@@ -13,11 +13,14 @@ import de.dytanic.cloudnetcore.CloudNet;
 /**
  * Created by Tareko on 23.08.2017.
  */
-public class CommandModules extends Command {
+public final class CommandModules extends Command {
 
     public CommandModules()
     {
         super("modules", "cloudnet.command.modules", "m");
+
+        description = "Lists all modules, versions and authors";
+
     }
 
     @Override

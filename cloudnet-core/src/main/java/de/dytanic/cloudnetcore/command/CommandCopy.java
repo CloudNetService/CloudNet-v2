@@ -24,6 +24,9 @@ public final class CommandCopy extends Command {
     public CommandCopy()
     {
         super("copy", "cloudnet.command.copy");
+
+        description = "Copies a minecraft server to a template which is loaded local";
+
     }
 
     @Override

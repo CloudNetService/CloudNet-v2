@@ -15,6 +15,9 @@ public final class CommandClear extends Command {
     public CommandClear()
     {
         super("clear", "cloudnet.command.clear");
+
+        description = "Clears the console";
+
     }
 
     @Override

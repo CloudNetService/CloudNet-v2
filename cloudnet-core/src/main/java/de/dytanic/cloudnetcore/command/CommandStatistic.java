@@ -15,11 +15,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Tareko on 21.08.2017.
  */
-public class CommandStatistic extends Command {
+public final class CommandStatistic extends Command {
 
     public CommandStatistic()
     {
         super("statistic", "cloudnet.command.statistic");
+
+        description = "Shows a list of all statistics of cloudnet!";
+
     }
 
     @Override
