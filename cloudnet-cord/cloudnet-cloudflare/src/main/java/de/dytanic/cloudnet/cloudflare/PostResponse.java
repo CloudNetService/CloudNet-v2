@@ -18,6 +18,11 @@ import lombok.Getter;
 public class PostResponse {
 
     /**
+     * The provided configuration for this cached record
+     */
+    private CloudFlareConfig cloudFlareConfig;
+
+    /**
      * The DNS record that created the response
      */
     private DNSRecord dnsRecord;

@@ -9,58 +9,57 @@ import de.dytanic.cloudnet.cloudflare.PostResponse;
 import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
+import de.dytanic.cloudnet.lib.utility.MapWrapper;
+import de.dytanic.cloudnet.lib.utility.Return;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * Database to store information about the CloudFlare requests and cache.
  */
 public class CloudFlareDatabase extends DatabaseUsable {
 
+    private static final String CLOUDFLARE_CACHE = "cloudflare_cache", CLOUDFLARE_CACHE_REQ = "cloudflare_cache_dnsreq";
+
     public CloudFlareDatabase(Database database)
     {
         super(database);
-        if (database.getDocument("cloudflare_cache") == null)
-        {
-            database.insert(new DatabaseDocument("cloudflare_cache"));
-        }
+        if (database.getDocument(CLOUDFLARE_CACHE) == null)
+            database.insert(new DatabaseDocument(CLOUDFLARE_CACHE));
 
-        if (database.getDocument("cloudflare_cache_dnsrequests") == null)
-        {
-            database.insert(new DatabaseDocument("cloudflare_cache_dnsrequests"));
-        }
+        if (database.getDocument(CLOUDFLARE_CACHE_REQ) == null)
+            database.insert(new DatabaseDocument(CLOUDFLARE_CACHE_REQ));
     }
 
     public Collection<String> getAll()
     {
-        Collection<String> collection = database.getDocument("cloudflare_cache").keys();
+        Collection<String> collection = database.getDocument(CLOUDFLARE_CACHE).keys();
         collection.remove(Database.UNIQUE_NAME_KEY);
         return collection;
     }
 
     public void putPostResponse(String wrapper, PostResponse postResponse)
     {
-        Document document = database.getDocument("cloudflare_cache");
+        Document document = database.getDocument(CLOUDFLARE_CACHE);
         document.append(wrapper, postResponse);
         database.insert(document);
     }
 
     public boolean contains(String wrapper)
     {
-        Document document = database.getDocument("cloudflare_cache");
+        Document document = database.getDocument(CLOUDFLARE_CACHE);
         return document.contains(wrapper);
     }
 
     public void remove(String wrapper)
     {
-        database.getDocument("cloudflare_cache").remove(wrapper);
+        database.getDocument(CLOUDFLARE_CACHE).remove(wrapper);
     }
 
     public PostResponse getResponse(String wrapper)
     {
-        return database.getDocument("cloudflare_cache").getObject(wrapper, new TypeToken<PostResponse>() {
+        return database.getDocument(CLOUDFLARE_CACHE).getObject(wrapper, new TypeToken<PostResponse>() {
         }.getType());
     }
 
@@ -68,16 +67,16 @@ public class CloudFlareDatabase extends DatabaseUsable {
     {
         if (postResponse == null) return;
 
-        Document document = database.getDocument("cloudflare_cache_dnsrequests");
+        Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
         if (document.contains("requests"))
         {
-            Collection<String> responses = document.getObject("requests", new TypeToken<Collection<String>>() {
+            Map<String, PostResponse> responses = document.getObject("requests", new TypeToken<Map<String, PostResponse>>() {
             }.getType());
-            responses.add(postResponse.getId());
+            responses.put(postResponse.getId(), postResponse);
             document.append("requests", responses);
         } else
         {
-            document.append("requests", new String[]{postResponse.getId()});
+            document.append("requests", MapWrapper.valueableHashMap(new Return<>(postResponse.getId(), postResponse)));
         }
 
         database.insert(document);
@@ -85,33 +84,33 @@ public class CloudFlareDatabase extends DatabaseUsable {
 
     public void remove(PostResponse postResponse)
     {
-        Document document = database.getDocument("cloudflare_cache_dnsrequests");
+        Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
         if (document.contains("requests"))
         {
-            Collection<String> responses = document.getObject("requests", new TypeToken<Collection<String>>() {
+            Map<String, PostResponse> responses = document.getObject("requests", new TypeToken<Map<String, PostResponse>>() {
             }.getType());
             responses.remove(postResponse.getId());
             document.append("requests", responses);
         } else
         {
-            document.append("requests", new String[0]);
+            document.append("requests", new HashMap<>(0));
         }
 
         database.insert(document);
     }
 
-    public Collection<String> getAndRemove()
+    public Map<String, PostResponse> getAndRemove()
     {
-        Document document = database.getDocument("cloudflare_cache_dnsrequests");
+        Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
         if (document.contains("requests"))
         {
-            Collection<String> responses = document.getObject("requests", new TypeToken<Collection<String>>() {
+            Map<String, PostResponse> responses = document.getObject("requests", new TypeToken<Map<String, PostResponse>>() {
             }.getType());
-            document.append("requests", new String[0]);
+            document.append("requests", new HashMap<>(0));
             database.insert(document);
             return responses;
         }
-        return new ArrayList<>();
+        return Collections.EMPTY_MAP;
     }
 
 }

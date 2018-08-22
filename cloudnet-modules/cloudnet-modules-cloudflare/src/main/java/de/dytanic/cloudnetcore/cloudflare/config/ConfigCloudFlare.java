@@ -11,25 +11,40 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.config.ConfigAbstract;
 import de.dytanic.cloudnetcore.config.ILoader;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Created by Tareko on 26.08.2017.
  */
-public class ConfigCloudFlare extends ConfigAbstract implements ILoader<CloudFlareConfig> {
+public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collection<CloudFlareConfig>> {
 
     public ConfigCloudFlare()
     {
-        super(new Document("cloudflare", new CloudFlareConfig(false, "example@gmail.com", "token", "dytanic.de", "zone", Arrays.asList(new CloudFlareProxyGroup("Bungee", "server")))),
-                Paths.get("local/cloudflare.json"));
+        super(new Document("configurations", Arrays.asList(new CloudFlareConfig(false, "example@gmail.com", "token", "example.com", "zone", Arrays.asList(new CloudFlareProxyGroup("Bungee", "server"))))),
+                Paths.get("local/cloudflare_cfg.json"));
     }
 
     @Override
-    public CloudFlareConfig load()
+    public Collection<CloudFlareConfig> load()
     {
-        return Document.loadDocument(path).getObject("cloudflare", new TypeToken<CloudFlareConfig>() {
+        File old = new File("local/cloudflare.json");
+
+        if (old.exists())
+        {
+            CloudFlareConfig cloudFlareConfig = Document.loadDocument(old).getObject("cloudflare", new TypeToken<CloudFlareConfig>() {
+            }.getType());
+
+            new Document().append("configurations", new CloudFlareConfig[]{cloudFlareConfig}).saveAsConfig(path);
+            old.delete();
+        }
+
+        Collection<CloudFlareConfig> cloudFlareConfigs = Document.loadDocument(path).getObject("configurations", new TypeToken<Collection<CloudFlareConfig>>() {
         }.getType());
+
+        return cloudFlareConfigs;
     }
 
 }
