@@ -26,7 +26,7 @@
         <dependency.gson.version>2.8.5</dependency.gson.version>
         <dependency.jline.version>2.14.6</dependency.jline.version>
         <dependency.jopt-simple.version>5.0.4</dependency.jopt-simple.version>
-        <dependecy.snakeyaml.version>1.21</dependecy.snakeyaml.version>
+        <dependecy.snakeyaml.version>1.22</dependecy.snakeyaml.version>
         <dependency.bungeecord.version>1.8-1.12</dependency.bungeecord.version>
         <dependency.spigot.version>1.8.8</dependency.spigot.version>
         <dependency.vaultapi.version>1.6</dependency.vaultapi.version>
