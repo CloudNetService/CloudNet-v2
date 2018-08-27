@@ -429,27 +429,29 @@ public final class CommandPermissions extends Command implements TabExecutor {
             }
         } else
         {
-            sender.sendMessage("CloudNet-Permissions: [\"_\" = \" \"]");
-            sender.sendMessage(NetworkUtils.SPACE_STRING);
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms CREATE <groupName>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> add permission <permission>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> remove permission <permission>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> add permission <permission> <group>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> remove permission <permission> <group>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDisplay <display>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setJoinPower <joinPower>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setSuffix <suffix>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setPrefix <prefix>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setTagId <tagId>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDefault <true : false>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms USER <user>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP SET <name> <lifetime | time in days> ");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP ADD <name> <lifetime | time in days> ");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP REMOVE <name>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms USER <user> ADD PERMISSION <permission>");
-            sender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cperms USER <user> REMOVE PERMISSION <permission>");
+            sender.sendMessages(
+                    "CloudNet-Permissions: [\"_\" = \" \"]",
+                    NetworkUtils.SPACE_STRING,
+                    CloudAPI.getInstance().getPrefix() + "/cperms CREATE <groupName>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> add permission <permission>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> remove permission <permission>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> add permission <permission> <group>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> remove permission <permission> <group>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDisplay <display>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setJoinPower <joinPower>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setSuffix <suffix>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setPrefix <prefix>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setTagId <tagId>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDefault <true : false>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms USER <user>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP SET <name> <lifetime | time in days> ",
+                    CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP ADD <name> <lifetime | time in days> ",
+                    CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP REMOVE <name>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms USER <user> ADD PERMISSION <permission>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms USER <user> REMOVE PERMISSION <permission>"
+            );
         }
     }
 

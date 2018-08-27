@@ -23,11 +23,14 @@ import de.dytanic.cloudnetcore.setup.SetupWrapper;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-public class CommandCreate extends Command {
+public final class CommandCreate extends Command {
 
     public CommandCreate()
     {
-        super("create", "cloudnet.command.create");
+        super("create", "cloudnet.command.create", "start");
+
+        description = "Creates new Wrapper, ServerGroup, PermissionGroup, ProxyGroup or custom server";
+
     }
 
     @Override

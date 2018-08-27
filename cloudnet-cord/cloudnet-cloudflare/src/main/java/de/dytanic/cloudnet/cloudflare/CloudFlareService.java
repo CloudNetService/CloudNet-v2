@@ -17,7 +17,6 @@ import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import lombok.Getter;
@@ -26,178 +25,176 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Map;
 
 
 /**
- * CloudFlare Service Supports the with the api.cloudflare.com API dynamic dns records for BungeeCord Server
+ * CloudFlare Service supports the api.cloudflare.com API for dynamic DNS records for BungeeCord Server.
  */
 @Getter
 public class CloudFlareService {
 
-    public static final String PREFIX_URL = "https://api.cloudflare.com/client/v4/";
-
-    private final String prefix = "[CLOUDFLARE] | ";
-
+    private static final String PREFIX_URL = "https://api.cloudflare.com/client/v4/";
     @Getter
     private static CloudFlareService instance;
-
-    private CloudFlareConfig cloudFlareConfig;
+    private final String prefix = "[CLOUDFLARE] | ";
+    private Collection<CloudFlareConfig> cloudFlareConfigs;
 
     // WrapperId DNSRecord
-    private Map<String, PostResponse> ipARecords = NetworkUtils.newConcurrentHashMap();
-    private Map<String, PostResponse> bungeeSRVRecords = NetworkUtils.newConcurrentHashMap();
+    private final Map<String, PostResponse>
+            ipARecords = NetworkUtils.newConcurrentHashMap(),
+            bungeeSRVRecords = NetworkUtils.newConcurrentHashMap();
 
-    public CloudFlareService(CloudFlareConfig cloudFlareConfig)
+    /**
+     * Constructs a new CloudFlare Service module with a given configuration.
+     *
+     * @param cloudFlareConfigs the configurations for this instance
+     */
+    public CloudFlareService(Collection<CloudFlareConfig> cloudFlareConfigs)
     {
         instance = this;
-        this.cloudFlareConfig = cloudFlareConfig;
+
+        this.cloudFlareConfigs = cloudFlareConfigs;
     }
 
     @Deprecated
     public boolean bootstrap(Map<String, SimpledWrapperInfo> wrapperInfoMap, Map<String, ProxyGroup> groups, CloudFlareDatabase cloudFlareDatabase)
     {
-        if (!cloudFlareConfig.isEnabled()) return false;
-
-        for (String id : cloudFlareDatabase.getAndRemove()) this.deleteRecord(id);
+        for (PostResponse id : cloudFlareDatabase.getAndRemove().values())
+            this.deleteRecord(id);
 
         for (String key : cloudFlareDatabase.getAll())
-        {
             if (!key.equalsIgnoreCase(Database.UNIQUE_NAME_KEY) && !wrapperInfoMap.containsKey(key))
-            {
-                deleteRecord(cloudFlareDatabase.getResponse(key).getId());
-            }
-        }
+                deleteRecord(cloudFlareDatabase.getResponse(key));
 
-        for (CloudFlareProxyGroup cloudFlareProxyGroup : cloudFlareConfig.getGroups())
-        {
-            ProxyGroup proxyGroup = groups.get(cloudFlareProxyGroup.getName());
-            for (String wrapper : proxyGroup.getWrapper())
-            {
-                if (!cloudFlareDatabase.contains(wrapper))
+        for (CloudFlareConfig cloudFlareConfig : this.cloudFlareConfigs)
+            if (cloudFlareConfig.isEnabled())
+                for (CloudFlareProxyGroup cloudFlareProxyGroup : cloudFlareConfig.getGroups())
                 {
-                    String host = wrapperInfoMap.get(wrapper).getHostName();
-                    DNSRecord dnsRecord = new DefaultDNSRecord(DNSType.A, wrapper + "." + cloudFlareConfig.getDomainName(), host, new Document().obj());
-                    if (!ipARecords.containsKey(wrapper))
+                    ProxyGroup proxyGroup = groups.get(cloudFlareProxyGroup.getName());
+                    for (String wrapper : proxyGroup.getWrapper())
                     {
-                        PostResponse postResponse = this.createRecord(dnsRecord);
-                        ipARecords.put(wrapper, postResponse);
-                        cloudFlareDatabase.putPostResponse(wrapper, postResponse);
-                        NetworkUtils.sleepUninterruptedly(400);
+                        if (!cloudFlareDatabase.contains(wrapper))
+                        {
+                            String host = wrapperInfoMap.get(wrapper).getHostName();
+                            DNSRecord dnsRecord = new DefaultDNSRecord(DNSType.A, wrapper + "." + cloudFlareConfig.getDomainName(), host, new Document().obj());
+                            if (!ipARecords.containsKey(wrapper))
+                            {
+                                PostResponse postResponse = this.createRecord(cloudFlareConfig, dnsRecord);
+                                ipARecords.put(wrapper, postResponse);
+                                cloudFlareDatabase.putPostResponse(wrapper, postResponse);
+                                NetworkUtils.sleepUninterruptedly(400);
+                            }
+                        }
                     }
                 }
-            }
-        }
         return true;
     }
 
     public boolean shutdown(CloudFlareDatabase cloudFlareDatabase)
     {
-        if (!cloudFlareConfig.isEnabled()) return false;
-
         for (PostResponse postResponse : this.bungeeSRVRecords.values())
         {
-            this.deleteRecord(postResponse.getId());
-            NetworkUtils.sleepUninterruptedly(400);
+            this.deleteRecord(postResponse);
+            NetworkUtils.sleepUninterruptedly(450);
         }
 
-        for (String id : cloudFlareDatabase.getAndRemove())
+        for (PostResponse id : cloudFlareDatabase.getAndRemove().values())
         {
             this.deleteRecord(id);
-            NetworkUtils.sleepUninterruptedly(400);
+            NetworkUtils.sleepUninterruptedly(450);
         }
         return true;
     }
 
     /**
-     * Returns a cloudFlareProxyGroup which is request a parameter
+     * Returns the first {@link CloudFlareProxyGroup} for a given {@code group} name.
      *
-     * @param group
-     * @return
+     * @param group the CloudFlare Proxy Group to search for
+     * @return the CloudFlareProxyGroup with the given group or null
      */
-    public CloudFlareProxyGroup cloudFlareProxyGroup(String group)
+    public CloudFlareProxyGroup cloudFlareProxyGroup(CloudFlareConfig cloudFlareConfig, String group)
     {
-        return CollectionWrapper.filter(this.cloudFlareConfig.getGroups(), new Acceptable<CloudFlareProxyGroup>() {
-            @Override
-            public boolean isAccepted(CloudFlareProxyGroup value)
-            {
-                return value.getName().equals(group);
-            }
-        });
+        return CollectionWrapper.filter(cloudFlareConfig.getGroups(), value -> value.getName().equals(group));
     }
 
+    /**
+     * Adds a new proxy to this service and creates the SRV record at CloudFlare for it.
+     *
+     * @param proxyServer        the proxy server to create the SRV record for
+     * @param cloudFlareDatabase the database to store the response and configuration in.
+     */
     public void addProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase)
     {
-        if (cloudFlareConfig.isEnabled())
-        {
-            CloudFlareProxyGroup cloudFlareProxyGroup = cloudFlareProxyGroup(proxyServer.getServiceId().getGroup());
-            if (cloudFlareProxyGroup != null)
+        for (CloudFlareConfig cloudFlareConfig : this.cloudFlareConfigs)
+            if (cloudFlareConfig.isEnabled())
             {
-                SRVRecord srvRecord = null;
-                if (cloudFlareProxyGroup.getSub().startsWith("@"))
+                CloudFlareProxyGroup cloudFlareProxyGroup = cloudFlareProxyGroup(cloudFlareConfig, proxyServer.getServiceId().getGroup());
+                if (cloudFlareProxyGroup != null)
                 {
-
-                    /*==================================================================================================*/
-
-                    srvRecord = new SRVRecord(
-                            "_minecraft._tcp." + cloudFlareConfig.getDomainName(),
-                            "SRV 1 1 " + proxyServer.getPort() + " " + proxyServer.getServiceId().getWrapperId() + "." +
-                                    cloudFlareConfig.getDomainName(),
-                            "_minecraft",
-                            "_tcp",
-                            cloudFlareConfig.getDomainName(),
-                            1,
-                            1,
-                            proxyServer.getPort(),
-                            proxyServer.getServiceId().getWrapperId() + "." + cloudFlareConfig.getDomainName()
-                    );
-
-                    /*==================================================================================================*/
-
-                } else
-                {
-                    /*==================================================================================================*/
-
-                    srvRecord = new SRVRecord(
-                            "_minecraft._tcp." + cloudFlareConfig.getDomainName(),
-                            "SRV 1 1 " + proxyServer.getPort() + " " + proxyServer.getServiceId().getWrapperId() + "." +
-                                    cloudFlareConfig.getDomainName(),
-                            "_minecraft",
-                            "_tcp",
-                            cloudFlareProxyGroup.getSub(),
-                            1,
-                            1,
-                            proxyServer.getPort(),
-                            proxyServer.getServiceId().getWrapperId() + "." + cloudFlareConfig.getDomainName()
-                    );
-
-                    /*==================================================================================================*/
+                    SRVRecord srvRecord;
+                    if (cloudFlareProxyGroup.getSub().startsWith("@"))
+                    {
+                        srvRecord = new SRVRecord(
+                                "_minecraft._tcp." + cloudFlareConfig.getDomainName(),
+                                "SRV 1 1 " + proxyServer.getPort() + " " + proxyServer.getServiceId().getWrapperId() + "." +
+                                        cloudFlareConfig.getDomainName(),
+                                "_minecraft",
+                                "_tcp",
+                                cloudFlareConfig.getDomainName(),
+                                1,
+                                1,
+                                proxyServer.getPort(),
+                                proxyServer.getServiceId().getWrapperId() + "." + cloudFlareConfig.getDomainName()
+                        );
+                    } else
+                    {
+                        srvRecord = new SRVRecord(
+                                "_minecraft._tcp." + cloudFlareConfig.getDomainName(),
+                                "SRV 1 1 " + proxyServer.getPort() + " " + proxyServer.getServiceId().getWrapperId() + "." +
+                                        cloudFlareConfig.getDomainName(),
+                                "_minecraft",
+                                "_tcp",
+                                cloudFlareProxyGroup.getSub(),
+                                1,
+                                1,
+                                proxyServer.getPort(),
+                                proxyServer.getServiceId().getWrapperId() + "." + cloudFlareConfig.getDomainName()
+                        );
+                    }
+                    PostResponse postResponse1 = this.createRecord(cloudFlareConfig, srvRecord);
+                    cloudFlareDatabase.add(postResponse1);
+                    this.bungeeSRVRecords.put(proxyServer.getServiceId().getServerId(), postResponse1);
                 }
-                PostResponse postResponse1 = this.createRecord(srvRecord);
-                cloudFlareDatabase.add(postResponse1);
-                this.bungeeSRVRecords.put(proxyServer.getServiceId().getServerId(), postResponse1);
             }
-        }
     }
 
+    /**
+     * Removes a proxy and its DNS records from CloudFlare.
+     *
+     * @param proxyServer        the proxy server to remove
+     * @param cloudFlareDatabase the database to remove the proxy server from
+     */
     public void removeProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase)
     {
-        if (!cloudFlareConfig.isEnabled()) return;
+        if (!bungeeSRVRecords.containsKey(proxyServer.getServiceId().getServerId())) return;
+
         PostResponse postResponse = bungeeSRVRecords.get(proxyServer.getServiceId().getServerId());
         if (postResponse != null)
         {
             cloudFlareDatabase.remove(postResponse.getId());
-            deleteRecord(postResponse.getId());
+            deleteRecord(postResponse);
         }
     }
 
     /**
-     * Creates a dns record
+     * Creates a new DNS record in the configured zone.
      *
-     * @param dnsRecord
-     * @return
+     * @param dnsRecord the record to create
+     * @return the response from CloudFlare or null on failure
      */
-    public PostResponse createRecord(DNSRecord dnsRecord)
+    public PostResponse createRecord(CloudFlareConfig cloudFlareConfig, DNSRecord dnsRecord)
     {
         try
         {
@@ -228,7 +225,7 @@ public class CloudFlareService {
                     throw new CloudFlareDNSRecordException("Failed to create DNSRecord \n " + jsonObject.toString());
                 }
                 httpPost.disconnect();
-                return new PostResponse(dnsRecord, jsonObject.get("result").getAsJsonObject().get("id").getAsString());
+                return new PostResponse(cloudFlareConfig, dnsRecord, jsonObject.get("result").getAsJsonObject().get("id").getAsString());
             }
         } catch (IOException e)
         {
@@ -238,19 +235,19 @@ public class CloudFlareService {
     }
 
     /**
-     * Deletes a DNSRecord with the Id of the dns
+     * Deletes a DNSRecord with the id of the DNS record
      *
-     * @param recordId
+     * @param postResponse the cached information about the dns record
      */
-    public void deleteRecord(String recordId)
+    public void deleteRecord(PostResponse postResponse)
     {
 
         try
         {
-            HttpURLConnection delete = (HttpURLConnection) new URL(PREFIX_URL + "zones/" + cloudFlareConfig.getZoneId() + "/dns_records/" + recordId).openConnection();
+            HttpURLConnection delete = (HttpURLConnection) new URL(PREFIX_URL + "zones/" + postResponse.getCloudFlareConfig().getZoneId() + "/dns_records/" + postResponse.getId()).openConnection();
             delete.setRequestMethod("DELETE");
-            delete.setRequestProperty("X-Auth-Email", cloudFlareConfig.getEmail());
-            delete.setRequestProperty("X-Auth-Key", cloudFlareConfig.getToken());
+            delete.setRequestProperty("X-Auth-Email", postResponse.getCloudFlareConfig().getEmail());
+            delete.setRequestProperty("X-Auth-Key", postResponse.getCloudFlareConfig().getToken());
             delete.setRequestProperty("Accept", "application/json");
             delete.setRequestProperty("Content-Type", "application/json");
             delete.connect();
@@ -259,9 +256,8 @@ public class CloudFlareService {
                 JsonObject jsonObject = toJsonInput(inputStream);
                 if (jsonObject.get("success").getAsBoolean())
                 {
-                    System.out.println(prefix + " DNSRecord [" + recordId + "] was removed");
+                    System.out.println(prefix + " DNSRecord [" + postResponse.getId() + "] was removed");
                 }
-                inputStream.close();
             }
             delete.disconnect();
         } catch (Exception ex)
@@ -273,7 +269,7 @@ public class CloudFlareService {
     private JsonObject toJsonInput(InputStream inputStream)
     {
         StringBuilder stringBuilder = new StringBuilder();
-        String input = null;
+        String input;
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         try
         {

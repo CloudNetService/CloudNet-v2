@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.web.client;
 
 import com.google.gson.JsonObject;
@@ -28,23 +24,46 @@ public class WebClient {
 
     public static final String DEFAULT_URL = "https://cloudnetservice.eu/cloudnet/";
 
+    /**
+     * Loads all official modules
+     *
+     * @return a collection containing all official plugins.
+     */
     public Collection<String> getInstallableModules()
     {
         return handleRequest(DEFAULT_URL + "modules", new TypeToken<Collection<String>>() {
         }.getType());
     }
 
+    /**
+     * Loads all official templates
+     *
+     * @return a collection containing all official templates.
+     */
     public Collection<String> getInstallableTemplates()
     {
         return handleRequest(DEFAULT_URL + "templates", new TypeToken<Collection<String>>() {
         }.getType());
     }
 
+    /**
+     * Loads the latest version of the cloud for comparison.
+     *
+     * @return the latest version of the cloud
+     */
     public String getNewstVersion()
     {
         return getString(DEFAULT_URL + "update/config.json", "version");
     }
 
+    /**
+     * Handles a request and downloads JSON from {@code url} and parses it as {@code type}
+     *
+     * @param url  the URL to download the JSON from
+     * @param type the type of data to parse as
+     * @param <E>  the runtime type of the parsed json
+     * @return the data parsed as the specified type or null, if an error occurred.
+     */
     private <E> E handleRequest(String url, Type type)
     {
         try
@@ -61,10 +80,19 @@ public class WebClient {
             }
         } catch (IOException e)
         {
+            e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     * Downloads JSON data from the given {@code url} and returns the given
+     * {@code key} as a string.
+     *
+     * @param url the URL to download the JSON data from.
+     * @param key the key to read the data from
+     * @return the string representation of the data at the given key
+     */
     private String getString(String url, String key)
     {
         try
@@ -81,10 +109,17 @@ public class WebClient {
             }
         } catch (IOException e)
         {
+            e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     * Update the master or wrapper, depending on the environment
+     *
+     * @param version the version to download
+     * @see #getEnvironment()
+     */
     public void update(String version)
     {
         try
@@ -120,6 +155,11 @@ public class WebClient {
     }
 
 
+    /**
+     * Checks for the CloudNet environment
+     *
+     * @return true, when on the master, false when on the wrapper
+     */
     private boolean getEnvironment()
     {
         try

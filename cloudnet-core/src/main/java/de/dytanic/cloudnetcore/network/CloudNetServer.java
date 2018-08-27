@@ -14,8 +14,6 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 import joptsimple.OptionSet;
 import lombok.Getter;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Created by Tareko on 26.05.2017.
  */
@@ -64,7 +62,8 @@ public final class CloudNetServer
                         System.out.println("CloudNet is listening @" + connectableAddress.getHostName() + ":" + connectableAddress.getPort());
                         CloudNet.getInstance().getCloudServers().add(CloudNetServer.this);
 
-                    } else System.out.println("Failed to bind @" + connectableAddress.getHostName() + ":" + connectableAddress.getPort());
+                    } else
+                        System.out.println("Failed to bind @" + connectableAddress.getHostName() + ":" + connectableAddress.getPort());
                 }
             }).addListener(ChannelFutureListener.CLOSE_ON_FAILURE).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
 

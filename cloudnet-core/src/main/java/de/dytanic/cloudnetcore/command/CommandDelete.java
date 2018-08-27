@@ -10,14 +10,14 @@ import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 
-/**
- * Calls
- */
-public class CommandDelete extends Command {
+public final class CommandDelete extends Command {
 
     public CommandDelete()
     {
         super("delete", "cloudnet.command.delete");
+
+        description = "Deletes a servergroup or custom server";
+
     }
 
     @Override

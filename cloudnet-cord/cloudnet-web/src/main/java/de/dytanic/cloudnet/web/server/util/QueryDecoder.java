@@ -10,17 +10,26 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * Created by Tareko on 16.09.2017.
+ * Utility class for decoding and storing query parameters using a weak hash map.
  */
 @Getter
 public class QueryDecoder {
 
+    /**
+     * The decoded query parameters.
+     */
     private final Map<String, String> queryParams = new WeakHashMap<>();
 
+    /**
+     * Constructs a new query decoder for a given query.
+     * Decodes the query immediately.
+     *
+     * @param query the query to decode.
+     */
     public QueryDecoder(String query)
     {
         if (query == null) return;
-        if (query.length() == 0 || query.isEmpty() || query.equals("?")) return;
+        if (query.length() == 0 || query.equals("?")) return;
 
         for (String input : query.split("&"))
         {

@@ -22,6 +22,9 @@ public final class CommandInfo extends Command {
     public CommandInfo()
     {
         super("info", "cloudnet.command.info", "i");
+
+        description = "Shows informations about one instance";
+
     }
 
     @Override
@@ -110,7 +113,7 @@ public final class CommandInfo extends Command {
                         sender.sendMessage(
                                 NetworkUtils.SPACE_STRING,
                                 "Group: " + group.getName(),
-                                "GroupMode:"  + group.getGroupMode().name(),
+                                "GroupMode:" + group.getGroupMode().name(),
                                 "ServerType: " + group.getServerType().name(),
                                 "JoinPower: " + group.getJoinPower(),
                                 "MaxHeapSize: " + group.getMemory() + "MB",

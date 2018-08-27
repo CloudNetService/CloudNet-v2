@@ -11,10 +11,16 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 
 /**
- * Created by Tareko on 16.09.2017.
+ * Adapter for the method web handler.
+ * Returns null by default.
  */
 public class MethodWebHandlerAdapter extends MethodWebHandler {
 
+    /**
+     * Constructs a new method web handler adapter for a given path.
+     *
+     * @param path the path where this handler is available.
+     */
     protected MethodWebHandlerAdapter(String path)
     {
         super(path);

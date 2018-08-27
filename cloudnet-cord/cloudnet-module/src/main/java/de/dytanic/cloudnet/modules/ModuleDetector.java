@@ -7,8 +7,6 @@ package de.dytanic.cloudnet.modules;
 import de.dytanic.cloudnet.modules.exception.ModuleLoadException;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
@@ -18,36 +16,48 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * Created by Tareko on 23.07.2017.
+ * Class for finding modules in a given directory
  */
 public class ModuleDetector {
 
-    public Set<ModuleConfig> detectAvaible(File dir)
+    /**
+     * Finds and reads potential modules from a given directory.
+     *
+     * @param dir the directory to search in
+     * @return a set containing all found and valid modules, an empty set, if
+     * the given {@code dir} is not a directory
+     */
+    public Set<ModuleConfig> detectAvailable(File dir)
     {
         Set<ModuleConfig> moduleConfigs = new HashSet<>();
 
-        for (File file : dir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname)
-            {
-                return pathname.isFile() && pathname.exists() && pathname.getName().endsWith(".jar");
-            }
-        }))
+        File[] files = dir.listFiles(pathname ->
+                pathname.isFile()
+                        && pathname.exists()
+                        && pathname.getName().endsWith(".jar"));
+        if (files == null)
+        {
+            return moduleConfigs;
+        }
+        for (File file : files)
         {
             try (JarFile jarFile = new JarFile(file))
             {
-
                 JarEntry jarEntry = jarFile.getJarEntry("module.properties");
                 if (jarEntry == null)
                 {
                     throw new ModuleLoadException("Cannot find \"module.properties\" file");
                 }
 
-                try (InputStream inputStream = jarFile.getInputStream(jarEntry); InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+                try (InputStreamReader reader = new InputStreamReader(jarFile.getInputStream(jarEntry), StandardCharsets.UTF_8))
                 {
                     Properties properties = new Properties();
                     properties.load(reader);
-                    ModuleConfig moduleConfig = new ModuleConfig(file, properties.getProperty("name"), properties.getProperty("version"), properties.getProperty("author"), properties.getProperty("main"));
+                    ModuleConfig moduleConfig = new ModuleConfig(file,
+                            properties.getProperty("name"),
+                            properties.getProperty("version"),
+                            properties.getProperty("author"),
+                            properties.getProperty("main"));
                     moduleConfigs.add(moduleConfig);
                 }
 

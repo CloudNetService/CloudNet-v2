@@ -362,9 +362,13 @@ public class GameServer implements ServerDispatcher {
         {
             try
             {
-                FileUtility.copyFilesInDirectory(new File(path + "/logs"), new File("local/records/" + serverProcess.getMeta().getServiceId().toString()));
+                File directory = new File("local/records/" + serverProcess.getMeta().getServiceId().toString());
+
+                FileUtility.copyFilesInDirectory(new File(path + "/logs"), directory);
+                FileUtility.copyFilesInDirectory(new File(path + "/crash-reports"), directory);
+
                 new Document("meta", serverProcess.getMeta()).saveAsConfig(Paths.get("local/records/" + serverProcess.getMeta().getServiceId().toString() + "/metadata.json"));
-            } catch (IOException e)
+            } catch (IOException ignored)
             {
             }
         }

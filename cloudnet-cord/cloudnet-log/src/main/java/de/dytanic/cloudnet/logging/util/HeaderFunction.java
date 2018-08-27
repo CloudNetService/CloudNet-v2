@@ -11,13 +11,22 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Created by Tareko on 10.07.2017.
+ * Class that only displays a possible {@code HEADER.txt}, if present.
  */
+@Deprecated
 @Getter
 public class HeaderFunction {
 
+    /**
+     * Whether this class has been run
+     */
     private boolean executed = false;
 
+    /**
+     * Constructs a new instance of the header function and automatically
+     * display the header message either from a {@code HEADER.txt} or from
+     * {@link NetworkUtils#header()}.
+     */
     public HeaderFunction()
     {
         File file = new File("HEADER.txt");
@@ -27,16 +36,8 @@ public class HeaderFunction {
             try (InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
                  BufferedReader bufferedReader = new BufferedReader(inputStreamReader))
             {
-
-                String input;
-                while ((input = bufferedReader.readLine()) != null)
-                {
-                    System.out.println(input);
-                }
+                bufferedReader.lines().forEach(System.out::println);
                 NetworkUtils.headerOut();
-            } catch (FileNotFoundException e)
-            {
-                e.printStackTrace();
             } catch (IOException e)
             {
                 e.printStackTrace();

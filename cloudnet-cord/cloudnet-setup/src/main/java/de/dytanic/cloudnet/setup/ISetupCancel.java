@@ -5,8 +5,15 @@
 package de.dytanic.cloudnet.setup;
 
 /**
- * Created by Tareko on 21.10.2017.
+ * Functional interface for methods that are called when a setup sequence is
+ * cancelled.
+ *
+ * @see ISetup
  */
+@Deprecated
 public interface ISetupCancel {
+    /**
+     * Method to call when a setup sequence is cancelled.
+     */
     void cancel();
 }

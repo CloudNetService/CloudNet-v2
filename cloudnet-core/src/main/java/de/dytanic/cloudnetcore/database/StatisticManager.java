@@ -4,7 +4,7 @@
 
 package de.dytanic.cloudnetcore.database;
 
-import de.dytanic.cloudnet.database.DatabaseUseable;
+import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -14,7 +14,7 @@ import lombok.Getter;
 /**
  * Created by Tareko on 21.08.2017.
  */
-public class StatisticManager extends DatabaseUseable {
+public class StatisticManager extends DatabaseUsable {
 
     private static final String NAME = "statistics";
 

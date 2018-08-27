@@ -23,10 +23,11 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.*;
 
 /**
- * Created by Tareko on 21.05.2017.
+ * Custom logger configured for CloudNet.
  */
 @Getter
 public class CloudLogger
@@ -37,29 +38,31 @@ public class CloudLogger
     private final ConsoleReader reader;
     private final String name = System.getProperty("user.name");
 
-    private final java.util.List<ICloudLoggerHandler> handler = new LinkedList<>();
+    private final List<ICloudLoggerHandler> handler = new LinkedList<>();
 
     @Setter
     private boolean debugging = false;
 
-    public CloudLogger() throws Exception
+    /**
+     * Constructs a new cloud logger instance that handles logging messages from
+     * all sources in an asynchronous matter.
+     *
+     * @throws IOException            when creating directories or files in {@code local/}
+     *                                was not possible
+     * @throws NoSuchFieldException   when the default charset could not be set
+     * @throws IllegalAccessException when the default charset could not be set
+     */
+    public CloudLogger() throws IOException, NoSuchFieldException, IllegalAccessException
     {
         super("CloudNetServerLogger", null);
-
-        try
-        {
-            Field field = Charset.class.getDeclaredField("defaultCharset");
-            field.setAccessible(true);
-            field.set(null, Charset.forName("UTF-8"));
-        } catch (Exception ex)
-        {
-
-        }
+        Field field = Charset.class.getDeclaredField("defaultCharset");
+        field.setAccessible(true);
+        field.set(null, StandardCharsets.UTF_8);
 
         if (!Files.exists(Paths.get("local")))
             Files.createDirectory(Paths.get("local"));
-        if (!Files.exists(Paths.get("local/logs")))
-            Files.createDirectory(Paths.get("local/logs"));
+        if (!Files.exists(Paths.get("local", "logs")))
+            Files.createDirectory(Paths.get("local", "logs"));
 
         setLevel(Level.ALL);
 
@@ -80,32 +83,45 @@ public class CloudLogger
 
         System.setOut(new AsyncPrintStream(new LoggingOutputStream(Level.INFO)));
         System.setErr(new AsyncPrintStream(new LoggingOutputStream(Level.SEVERE)));
-
     }
 
+    /**
+     * This posts a new debug message, if {@link #debugging} is true.
+     *
+     * @param message the message to send to the log
+     */
     public void debug(String message)
     {
         if (debugging)
             log(Level.WARNING, "[DEBUG] " + message);
     }
 
+    /**
+     * Shuts down all handlers and the reader.
+     */
     public void shutdownAll()
     {
-        for (Handler handler : getHandlers()) handler.close();
+        for (Handler handler : getHandlers())
+        {
+            handler.close();
+        }
         try
         {
             this.reader.killLine();
         } catch (IOException e)
         {
+            e.printStackTrace();
         }
     }
 
+    /**
+     * Output stream that sends the last message in the buffer to the log handlers
+     * when flushed.
+     */
     @RequiredArgsConstructor
     private class LoggingOutputStream extends ByteArrayOutputStream {
-        /*========================================================================*/
         private final Level level;
 
-        @SuppressWarnings("deprecation")
         @Override
         public void flush() throws IOException
         {
@@ -116,34 +132,34 @@ public class CloudLogger
         }
     }
 
-    private class LoggingHandler
-            extends Handler {
+    /**
+     * Handler class that forwards all records to {@link CloudLogger#handler}.
+     */
+    private class LoggingHandler extends Handler {
+
+        private boolean closed;
 
         @Override
         public void publish(LogRecord record)
         {
+            if (closed) return;
+
             String formatMessage = getFormatter().formatMessage(record);
-            for (ICloudLoggerHandler handler : CloudLogger.this.getHandler()) handler.handleConsole(formatMessage);
+            for (ICloudLoggerHandler handler : CloudLogger.this.getHandler())
+                handler.handleConsole(formatMessage);
 
-            if (isLoggable(record)) handle(getFormatter().format(record));
-        }
-
-        public void handle(String message)
-        {
-            AsyncPrintStream.ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
+            if (isLoggable(record))
+            {
+                try
                 {
-                    try
-                    {
-                        reader.print(ConsoleReader.RESET_LINE + message);
-                        reader.drawLine();
-                        reader.flush();
-                    } catch (Exception ex)
-                    {
-                    }
+                    reader.print(ConsoleReader.RESET_LINE + getFormatter().format(record));
+                    reader.drawLine();
+                    reader.flush();
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
                 }
-            });
+            }
         }
 
         @Override
@@ -154,6 +170,7 @@ public class CloudLogger
         @Override
         public void close() throws SecurityException
         {
+            closed = true;
         }
     }
 

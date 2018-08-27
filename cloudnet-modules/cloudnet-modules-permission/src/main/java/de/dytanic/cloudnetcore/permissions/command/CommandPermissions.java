@@ -24,11 +24,14 @@ import java.util.*;
 /**
  * Created by Tareko on 20.08.2017.
  */
-public class CommandPermissions extends Command {
+public final class CommandPermissions extends Command {
 
     public CommandPermissions()
     {
         super("perms", "cloudnet.command.permissions", "permissions", "cperms");
+
+        description = "Manages the permissions system of permission module";
+
     }
 
     @Override

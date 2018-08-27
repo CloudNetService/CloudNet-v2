@@ -27,7 +27,6 @@ public class CloudBootstrap {
 
     public static void main(String[] args) throws Exception
     {
-        OSSignalBlocker.initSignalCancel();
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
 
         System.setProperty("file.encoding", "UTF-8");
@@ -64,9 +63,13 @@ public class CloudBootstrap {
             helpService.getDescriptions().put("disable-autoupdate", new ServiceDescription[]{new ServiceDescription("--disable-autoupdate", "Disabled the autoupdate function of cloudnet 2")});
             helpService.getDescriptions().put("version", new ServiceDescription[]{new ServiceDescription("--version | --v", "Displays the current version of CloudNet used")});
             helpService.getDescriptions().put("systemTimer", new ServiceDescription[]{new ServiceDescription("--systemTimer", "Time all informations of this instance into a custom log file")});
+            helpService.getDescriptions().put("requestTerminationSignal", new ServiceDescription[]{new ServiceDescription("--requestTerminationSignal", "Enables the request if you use STRG+C")});
             System.out.println(helpService.toString());
             return;
         }
+
+        if (optionSet.has("requestTerminationSignal"))
+            OSSignalBlocker.initSignalCancel();
 
         if (optionSet.has("systemTimer"))
         {

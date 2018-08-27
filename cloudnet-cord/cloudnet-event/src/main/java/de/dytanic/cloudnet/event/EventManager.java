@@ -11,12 +11,13 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Created by Tareko on 23.07.2017.
+ * Class that manages events
  */
 public final class EventManager implements IEventManager {
 
-    private final java.util.Map<Class, Collection<EventEntity>> registeredListeners = NetworkUtils.newConcurrentHashMap();
+    private final Map<Class<? extends Event>, Collection<EventEntity>> registeredListeners = NetworkUtils.newConcurrentHashMap();
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Event> void registerListener(EventKey eventKey, IEventListener<T> eventListener)
     {
@@ -25,11 +26,12 @@ public final class EventManager implements IEventManager {
         {
             registeredListeners.put(eventClazz, new LinkedList<>());
         }
-        registeredListeners.get(eventClazz).add(new EventEntity(eventListener, eventKey, eventClazz));
+        registeredListeners.get(eventClazz).add(new EventEntity<>(eventListener, eventKey, eventClazz));
     }
 
+    @SafeVarargs
     @Override
-    public <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>... eventListeners)
+    public final <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>... eventListeners)
     {
         for (IEventListener<T> eventListener : eventListeners)
         {
@@ -40,7 +42,7 @@ public final class EventManager implements IEventManager {
     @Override
     public void unregisterListener(EventKey eventKey)
     {
-        for (Map.Entry<Class, Collection<EventEntity>> eventEntities : this.registeredListeners.entrySet())
+        for (Map.Entry<Class<? extends Event>, Collection<EventEntity>> eventEntities : this.registeredListeners.entrySet())
         {
             for (EventEntity entities : eventEntities.getValue())
             {
@@ -51,7 +53,7 @@ public final class EventManager implements IEventManager {
     }
 
     @Override
-    public void unregisterListener(IEventListener<?> eventListener)
+    public void unregisterListener(IEventListener<? extends Event> eventListener)
     {
         try
         {
@@ -75,10 +77,12 @@ public final class EventManager implements IEventManager {
         registeredListeners.remove(eventClass);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Event> boolean callEvent(T event)
     {
-        if (!this.registeredListeners.containsKey(event.getClass())) return true;
+        if (!this.registeredListeners.containsKey(event.getClass()))
+            return true;
 
         if (!(event instanceof AsyncEvent))
         {
@@ -88,18 +92,14 @@ public final class EventManager implements IEventManager {
             }
         } else
         {
-            TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-                @Override
-                public void run()
+            TaskScheduler.runtimeScheduler().schedule(() -> {
+                AsyncEvent asyncEvent = ((AsyncEvent) event);
+                asyncEvent.getPoster().onPreCall(asyncEvent);
+                for (EventEntity eventEntity : registeredListeners.get(event.getClass()))
                 {
-                    AsyncEvent asyncEvent = ((AsyncEvent) event);
-                    asyncEvent.getPoster().onPreCall(asyncEvent);
-                    for (EventEntity eventEntity : registeredListeners.get(event.getClass()))
-                    {
-                        eventEntity.getEventListener().onCall(event);
-                    }
-                    asyncEvent.getPoster().onPostCall(asyncEvent);
+                    eventEntity.getEventListener().onCall(event);
                 }
+                asyncEvent.getPoster().onPostCall(asyncEvent);
             });
         }
         return false;
@@ -110,6 +110,10 @@ public final class EventManager implements IEventManager {
         return eventListener.getClass().getMethod("onCall", Event.class).getParameters()[0].getType();
     }
 
+    /**
+     * Clears all currently registered {@link EventEntity}s from this event
+     * manager instance.
+     */
     public void clearAll()
     {
         this.registeredListeners.clear();

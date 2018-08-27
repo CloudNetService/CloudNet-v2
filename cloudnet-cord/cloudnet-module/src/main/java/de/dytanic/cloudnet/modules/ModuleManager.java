@@ -38,9 +38,9 @@ public class ModuleManager {
         return detect(directory);
     }
 
-    public Collection<ModuleConfig> detect(File directory) throws Exception
+    public Collection<ModuleConfig> detect(File directory)
     {
-        Set<ModuleConfig> modules = moduleDetector.detectAvaible(directory);
+        Set<ModuleConfig> modules = moduleDetector.detectAvailable(directory);
         return modules;
     }
 
@@ -101,10 +101,7 @@ public class ModuleManager {
     {
         System.out.println("Disabling module \"" + module.getModuleConfig().getName() + "\" version: " + module.getModuleConfig().getVersion() + "...");
         module.onShutdown();
-        if (modules.contains(module))
-        {
-            modules.remove(module);
-        }
+        modules.remove(module);
         return this;
     }
 

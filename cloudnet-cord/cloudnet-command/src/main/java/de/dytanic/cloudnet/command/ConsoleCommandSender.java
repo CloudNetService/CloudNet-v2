@@ -6,14 +6,14 @@ package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
 
 /**
- * Created by Tareko on 18.09.2017.
+ * Class that defines a command sender in a terminal.
+ * An instance of this class has all permissions, a random UUID and the name {@code CONSOLE}
  */
 public class ConsoleCommandSender implements CommandSender {
 
@@ -28,19 +28,13 @@ public class ConsoleCommandSender implements CommandSender {
     @Override
     public void sendMessage(String... message)
     {
-        CollectionWrapper.iterator(message, new Runnabled<String>() {
-            @Override
-            public void run(String obj)
-            {
-                System.out.println(obj);
-            }
-        });
+        CollectionWrapper.iterator(message, System.out::println);
     }
 
     @Override
     public boolean hasPermission(String permission)
     {
-        return true; //CONSOLE has all permissions
+        return true; // CONSOLE has all permissions
     }
 
     @Override

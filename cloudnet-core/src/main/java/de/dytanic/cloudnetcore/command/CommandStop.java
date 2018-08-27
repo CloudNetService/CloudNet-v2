@@ -11,11 +11,14 @@ import de.dytanic.cloudnetcore.CloudNet;
 /**
  * Created by Tareko on 30.07.2017.
  */
-public class CommandStop extends Command {
+public final class CommandStop extends Command {
 
     public CommandStop()
     {
-        super("stop", "cloudnet.command.stop", "end");
+        super("stop", "cloudnet.command.stop", "end", "exit");
+
+        description = "Stop this CloudNet-Master application instance";
+
     }
 
     @Override

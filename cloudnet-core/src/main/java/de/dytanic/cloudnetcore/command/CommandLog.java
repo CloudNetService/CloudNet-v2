@@ -13,11 +13,14 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 /**
  * Created by Tareko on 04.10.2017.
  */
-public class CommandLog extends Command {
+public final class CommandLog extends Command {
 
     public CommandLog()
     {
         super("log", "cloudnet.command.log");
+
+        description = "Creates a web server log";
+
     }
 
     @Override

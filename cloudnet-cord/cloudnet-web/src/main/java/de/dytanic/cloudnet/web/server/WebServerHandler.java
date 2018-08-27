@@ -22,19 +22,27 @@ import java.net.URI;
 import java.util.List;
 
 /**
- * Created by Tareko on 14.09.2017.
+ * Class that handles incoming channels and instructs a {@link WebServer} to work.
  */
 final class WebServerHandler extends ChannelInboundHandlerAdapter {
 
+    /**
+     * The web server that is handled by this handler instance.
+     */
     private WebServer webServer;
 
+    /**
+     * Constructs a new web server handler for a given web server.
+     *
+     * @param webServer the web server to handle the inbound channel for.
+     */
     public WebServerHandler(WebServer webServer)
     {
         this.webServer = webServer;
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception
+    public void channelReadComplete(ChannelHandlerContext ctx)
     {
         ctx.flush();
     }
@@ -45,7 +53,7 @@ final class WebServerHandler extends ChannelInboundHandlerAdapter {
         if (!(msg instanceof HttpRequest)) return;
         HttpRequest httpRequest = ((HttpRequest) msg);
 
-        URI uri = new URI(httpRequest.getUri());
+        URI uri = new URI(httpRequest.uri());
         String path = uri.getRawPath();
         if (path == null)
         {
@@ -82,13 +90,13 @@ final class WebServerHandler extends ChannelInboundHandlerAdapter {
             }
             if (fullHttpResponse == null)
             {
-                fullHttpResponse = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), HttpResponseStatus.NOT_FOUND, Unpooled.wrappedBuffer("Error 404 page not found!".getBytes()));
+                fullHttpResponse = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.NOT_FOUND, Unpooled.wrappedBuffer("Error 404 page not found!".getBytes()));
             }
             fullHttpResponse.headers().set("Access-Control-Allow-Origin", "*");
             ctx.writeAndFlush(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
         } else
         {
-            FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), HttpResponseStatus.NOT_FOUND);
+            FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.NOT_FOUND);
             fullHttpResponse.headers().set("Access-Control-Allow-Origin", "*");
             ctx.writeAndFlush(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
         }

@@ -122,7 +122,7 @@ public class SetupSpigotVersion
                     }
                 }
             case "spigot":
-                System.out.println("Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\"]");
+                System.out.println("Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\"]");
                 while (true)
                 {
                     try
@@ -148,7 +148,10 @@ public class SetupSpigotVersion
                                 download.run("https://yivesmirror.com/files/spigot/spigot-1.12.2-R0.1-SNAPSHOT-b1648.jar");
                                 return;
                             case "1.13":
-                                download.run("https://yivesmirror.com/files/spigot/spigot-1.13-R0.1-SNAPSHOT-b1767.jar");
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.13-R0.1-SNAPSHOT-b1851.jar");
+                                return;
+                            case "1.13.1":
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.13.1-R0.1-SNAPSHOT-b1868.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");
@@ -174,7 +177,7 @@ public class SetupSpigotVersion
                                 download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.11.2-b1104.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.12.2-b1515.jar");
+                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.12.2-b1552.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");

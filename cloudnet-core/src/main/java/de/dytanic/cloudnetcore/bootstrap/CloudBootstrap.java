@@ -29,8 +29,6 @@ public final class CloudBootstrap {
 
     public static synchronized void main(String[] args) throws Exception
     {
-        OSSignalBlocker.initSignalCancel();
-
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
 
         System.setProperty("file.encoding", "UTF-8");
@@ -76,9 +74,13 @@ public final class CloudBootstrap {
             helpService.getDescriptions().put("disable-statistics", new ServiceDescription[]{new ServiceDescription("--disable-statistics", "Disables the statistic service from cloudnet")});
             helpService.getDescriptions().put("disable-modules", new ServiceDescription[]{new ServiceDescription("--disable-modules", "Modules doesn't working in the \"/modules\" directory")});
             helpService.getDescriptions().put("installWrapper", new ServiceDescription[]{new ServiceDescription("--installWrapper", "Install a local wrapper automatic")});
+            helpService.getDescriptions().put("requestTerminationSignal", new ServiceDescription[]{new ServiceDescription("--requestTerminationSignal", "Enables the request if you use STRG+C")});
             System.out.println(helpService.toString());
             return;
         }
+
+        if (optionSet.has("requestTerminationSignal"))
+            OSSignalBlocker.initSignalCancel();
 
         if (optionSet.has("systemTimer"))
             new SystemTimer();

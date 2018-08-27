@@ -13,11 +13,14 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 
-public class CommandList extends Command {
+public final class CommandList extends Command {
 
     public CommandList()
     {
         super("list", "cloudnet.command.list");
+
+        description = "Lists some information of the network";
+
     }
 
     @Override

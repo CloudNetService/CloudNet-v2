@@ -10,15 +10,26 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
- * Created by Tareko on 26.08.2017.
+ * Container for CloudFlare responses.
  */
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
 public class PostResponse {
 
+    /**
+     * The provided configuration for this cached record
+     */
+    private CloudFlareConfig cloudFlareConfig;
+
+    /**
+     * The DNS record that created the response
+     */
     private DNSRecord dnsRecord;
 
+    /**
+     * The ID at CloudFlare that identifies this DNS record
+     */
     private String id;
 
 }

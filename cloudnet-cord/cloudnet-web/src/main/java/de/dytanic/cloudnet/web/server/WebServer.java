@@ -13,27 +13,74 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import lombok.Getter;
 
+import javax.net.ssl.SSLException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Tareko on 14.09.2017.
+ * A simple web server class
  */
 @Getter
 public class WebServer {
 
+    /**
+     * The address this web server is bound to.
+     */
     protected String address;
+
+    /**
+     * The port this web server is bound to.
+     */
     protected int port;
+
+    /**
+     * Whether SSL should be enabled.
+     */
     protected boolean ssl;
-    protected EventLoopGroup acceptorGroup = NetworkUtils.eventLoopGroup(), workerGroup = NetworkUtils.eventLoopGroup();
+
+    /**
+     * The connection acceptor event loop group, handling server channels.
+     */
+    protected EventLoopGroup acceptorGroup = NetworkUtils.eventLoopGroup();
+
+    /**
+     * The child event loop group to the acceptor group, handling channels.
+     */
+    protected EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
+
+    /**
+     * The SSL context with certificate and private key, when SSL is enabled.
+     *
+     * @see #ssl
+     */
     protected SslContext sslContext;
 
+    /**
+     * The web handler provider of this web server.
+     */
     protected WebServerProvider webServerProvider;
+
+    /**
+     * The bootstrap of this server using Netty.
+     */
     protected ServerBootstrap serverBootstrap;
 
-    public WebServer(boolean ssl, String host, int port) throws Exception
+    /**
+     * Constructs a new web server with the given configuration.
+     *
+     * @param ssl  whether to use SSL with a self-signed certificate
+     * @param host the host this web server is bound to.
+     * @param port the port this web server is bound to.
+     * @throws CertificateException thrown when the certificate could not
+     *                              be generated.
+     * @throws SSLException         thrown when an error during the creation of the
+     *                              ssl context occurred.
+     */
+    public WebServer(boolean ssl, String host, int port) throws CertificateException, SSLException
     {
         this.ssl = ssl;
         this.address = host;
@@ -43,7 +90,7 @@ public class WebServer {
         if (ssl)
         {
             SelfSignedCertificate ssc = new SelfSignedCertificate();
-            sslContext = SslContext.newServerContext(ssc.certificate(), ssc.privateKey());
+            sslContext = SslContextBuilder.forServer(ssc.key(), ssc.cert()).build();
         }
 
         serverBootstrap = new ServerBootstrap()
@@ -54,15 +101,19 @@ public class WebServer {
                 .channel(NetworkUtils.serverSocketChannel())
                 .childHandler(new ChannelInitializer<Channel>() {
                     @Override
-                    protected void initChannel(Channel channel) throws Exception
+                    protected void initChannel(Channel channel)
                     {
-                        if (sslContext != null) channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
+                        if (sslContext != null)
+                            channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
 
                         channel.pipeline().addLast(new HttpServerCodec(), new HttpObjectAggregator(Integer.MAX_VALUE), new WebServerHandler(WebServer.this));
                     }
                 });
     }
 
+    /**
+     * Shuts the event loop groups down and awaits their termination.
+     */
     public void shutdown()
     {
         acceptorGroup.shutdownGracefully();
@@ -72,12 +123,17 @@ public class WebServer {
         {
             acceptorGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             workerGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-        } catch (InterruptedException ex)
+        } catch (InterruptedException ignored)
         {
         }
     }
 
-    public void bind() throws Exception
+    /**
+     * Actually binds the web server to the configured port.
+     *
+     * @throws InterruptedException thrown when the synchronous call is interrupted.
+     */
+    public void bind() throws InterruptedException
     {
         System.out.println("Bind WebServer at [" + address + ":" + port + "]");
         serverBootstrap.bind(address, port).sync().channel().closeFuture();

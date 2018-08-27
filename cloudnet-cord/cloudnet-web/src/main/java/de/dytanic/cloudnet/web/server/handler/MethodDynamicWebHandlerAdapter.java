@@ -7,7 +7,8 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 
 /**
- * Created by Tareko on 18.11.2017.
+ * Adapter for the dynamic method web handler.
+ * Returns null by default.
  */
 public class MethodDynamicWebHandlerAdapter extends MethodDynamicWebHandler {
 

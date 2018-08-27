@@ -13,11 +13,14 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 
-public class CommandScreen extends Command {
+public final class CommandScreen extends Command {
 
     public CommandScreen()
     {
         super("screen", "cloudnet.command.screen", "sc");
+
+        description = "Shows you the console of one server";
+
     }
 
     @Override

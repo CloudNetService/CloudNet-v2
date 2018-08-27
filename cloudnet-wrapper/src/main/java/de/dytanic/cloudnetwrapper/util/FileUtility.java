@@ -5,10 +5,10 @@
 
 package de.dytanic.cloudnetwrapper.util;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
-
 import java.io.*;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
@@ -20,37 +20,84 @@ public final class FileUtility {
     {
     }
 
-    public static void copyFileToDirectory(File file, File to) throws IOException
+    public static void copy(InputStream inputStream, OutputStream outputStream) throws IOException
     {
-        if (to == null || file == null) return;
+        byte[] buffer = new byte[8192];
+        copy(inputStream, outputStream, buffer);
 
-        if (!to.exists()) to.mkdirs();
+        try
+        {
 
-        File n = new File(to.getAbsolutePath() + NetworkUtils.SLASH_STRING + file.getName());
-        Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Method method = byte[].class.getMethod("finalize");
+            method.setAccessible(true);
+            method.invoke(buffer);
+        } catch (Exception ex)
+        {
+        }
+    }
+
+    public static void copy(InputStream inputStream, OutputStream outputStream, byte[] buffer) throws IOException
+    {
+        int len;
+
+        while ((len = inputStream.read(buffer, 0, buffer.length)) != -1)
+        {
+            outputStream.write(buffer, 0, len);
+            outputStream.flush();
+        }
+    }
+
+    public static void copyFileToDirectory(File from, File to) throws IOException
+    {
+        copy(from.toPath(), new File(to.getPath(), from.getName()).toPath());
+    }
+
+    public static void copy(Path from, Path to) throws IOException
+    {
+        copy(from, to, new byte[16384]);
+    }
+
+    public static void copy(Path from, Path to, byte[] buffer) throws IOException
+    {
+        if (from == null || to == null || !Files.exists(from)) return;
+
+        if (!Files.exists(to))
+        {
+            to.toFile().getParentFile().mkdirs();
+            to.toFile().delete();
+
+            Files.createFile(to);
+        }
+
+        try (InputStream inputStream = Files.newInputStream(from); OutputStream outputStream = Files.newOutputStream(to))
+        {
+            copy(inputStream, outputStream, buffer);
+        }
     }
 
     public static void copyFilesInDirectory(File from, File to) throws IOException
     {
-        if (to == null || from == null) return;
+        if (to == null || from == null || !from.exists()) return;
 
         if (!to.exists()) to.mkdirs();
 
         if (!from.isDirectory()) return;
 
-        for (File file : from.listFiles())
-        {
-            if (file == null) continue;
+        File[] list = from.listFiles();
+        byte[] buffer = new byte[16384];
+        if (list != null)
+            for (File file : list)
+            {
+                if (file == null) continue;
 
-            if (file.isDirectory())
-            {
-                copyFilesInDirectory(file, new File(to.getAbsolutePath() + NetworkUtils.SLASH_STRING + file.getName()));
-            } else
-            {
-                File n = new File(to.getAbsolutePath() + NetworkUtils.SLASH_STRING + file.getName());
-                Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                if (file.isDirectory())
+                    copyFilesInDirectory(file, new File(to.getAbsolutePath() + "/" + file.getName()));
+                else
+                {
+                    File n = new File(to.getAbsolutePath() + "/" + file.getName());
+                    copy(file.toPath(), n.toPath(), buffer);
+                }
             }
-        }
     }
 
     public static void insertData(String paramString1, String paramString2)

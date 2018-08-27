@@ -5,12 +5,18 @@
 package de.dytanic.cloudnet.modules;
 
 /**
- * Created by Tareko on 02.11.2017.
+ * Module loader that is meant to load internal modules that should use the
+ * system class loader.
  */
 public class ModuleInternalLoader implements ModuleLoader {
 
     private ModuleConfig moduleConfig;
 
+    /**
+     * Constructs a new loader for loading an internal module.
+     *
+     * @param moduleConfig the configuration to load the module from
+     */
     public ModuleInternalLoader(ModuleConfig moduleConfig)
     {
         this.moduleConfig = moduleConfig;
@@ -19,7 +25,7 @@ public class ModuleInternalLoader implements ModuleLoader {
     @Override
     public Module loadModule() throws Exception
     {
-        Module module = (Module) getClass().getClassLoader().loadClass(this.moduleConfig.getMain()).newInstance();
+        Module module = (Module) getClass().getClassLoader().loadClass(this.moduleConfig.getMain()).getConstructor().newInstance();
         module.setModuleConfig(moduleConfig);
         module.setClassLoader(null);
         return module;

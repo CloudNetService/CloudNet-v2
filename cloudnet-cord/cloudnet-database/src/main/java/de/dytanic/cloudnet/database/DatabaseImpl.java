@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.concurrent.FutureTask;
 
 /**
- * Created by Tareko on 01.07.2017.
+ * Implementation of {@link Database}.
  */
 @Getter
 @AllArgsConstructor
@@ -34,7 +34,12 @@ public class DatabaseImpl
     @Override
     public Database loadDocuments()
     {
-        for (File file : backendDir.listFiles())
+        File[] files = backendDir.listFiles();
+        if (files == null)
+        {
+            return this;
+        }
+        for (File file : files)
         {
             if (!this.documents.containsKey(file.getName()))
             {
@@ -116,7 +121,13 @@ public class DatabaseImpl
         {
             documents.remove(name);
         }
-        new File("database/" + this.name + NetworkUtils.SLASH_STRING + name).delete();
+        try
+        {
+            Files.delete(Paths.get("database", this.name, name));
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
         return this;
     }
 
@@ -151,7 +162,8 @@ public class DatabaseImpl
     @Override
     public int size()
     {
-        return backendDir.list().length;
+        String[] files = backendDir.list();
+        return files == null ? 0 : files.length;
     }
 
     @Override
@@ -178,17 +190,23 @@ public class DatabaseImpl
         return new FutureTask<>(() -> getDocument(name));
     }
 
+    /**
+     * Saves the currently loaded documents to their files.
+     */
     public void save()
     {
         for (Document document : documents.values())
         {
             if (document.contains(UNIQUE_NAME_KEY))
             {
-                document.saveAsConfig0(new File("database/" + this.name + NetworkUtils.SLASH_STRING + document.getString(UNIQUE_NAME_KEY)));
+                document.saveAsConfig(Paths.get("database", this.name, document.getString(UNIQUE_NAME_KEY)));
             }
         }
     }
 
+    /**
+     * Clears the currently loaded documents.
+     */
     public void clear()
     {
         this.documents.clear();

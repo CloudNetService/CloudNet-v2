@@ -4,7 +4,7 @@
 
 package de.dytanic.cloudnetcore.database;
 
-import de.dytanic.cloudnet.database.DatabaseUseable;
+import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnetcore.network.wrapper.WrapperSession;
@@ -12,7 +12,7 @@ import de.dytanic.cloudnetcore.network.wrapper.WrapperSession;
 /**
  * Created by Tareko on 23.09.2017.
  */
-public class WrapperSessionDatabase extends DatabaseUseable {
+public class WrapperSessionDatabase extends DatabaseUsable {
 
     public WrapperSessionDatabase(Database database)
     {

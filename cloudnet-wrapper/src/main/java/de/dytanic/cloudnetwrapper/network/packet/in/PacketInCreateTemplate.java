@@ -106,7 +106,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                             new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/cauldron-1.7.10-2.1403.1.54-server.jar")
                                     .renameTo(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/cauldron.jar"));
 
-                            System.out.println("Using a cauldron.jar for your minecraft service template " + serverGroup.getName() + ", please copy a eula.txt into the template or into the global folder");
+                            System.out.println("Using a cauldron.jar for your minecraft service template " + serverGroup.getName() + ", please copyFileToDirectory a eula.txt into the template or into the global folder");
                         } catch (Exception e)
                         {
                             e.printStackTrace();
@@ -145,7 +145,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                         new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/cauldron-1.7.10-2.1403.1.54-server.jar")
                                 .renameTo(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/cauldron.jar"));
 
-                        System.out.println("Using a cauldron.jar for your minecraft service template " + serverGroup.getName() + ", please copy a eula.txt into the template or into the global folder");
+                        System.out.println("Using a cauldron.jar for your minecraft service template " + serverGroup.getName() + ", please copyFileToDirectory a eula.txt into the template or into the global folder");
                     } catch (Exception e)
                     {
                         e.printStackTrace();

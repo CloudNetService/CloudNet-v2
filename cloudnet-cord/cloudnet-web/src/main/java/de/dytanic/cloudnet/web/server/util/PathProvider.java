@@ -9,14 +9,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Created by Tareko on 07.10.2017.
+ * Data class that holds information for a dynamic path like in Spring
  */
 @Getter
 @AllArgsConstructor
 public class PathProvider {
 
+    /**
+     * The path where a request has been sent to.
+     */
     private String path;
 
+    /**
+     * The parameters of a request to {@code path}.
+     */
     private WrappedMap pathParameters;
 
 }

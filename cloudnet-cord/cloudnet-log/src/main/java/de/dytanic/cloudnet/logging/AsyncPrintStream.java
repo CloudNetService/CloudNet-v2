@@ -14,38 +14,20 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Created by Tareko on 23.09.2017.
+ * Asynchronous print stream that takes print statements without blocking.
  */
 @Getter
 public class AsyncPrintStream extends PrintStream {
 
-    static final BlockingQueue<Runnable> ASYNC_QUEUE = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final Thread worker = new WorkerThread(queue);
 
-    private static final Thread worker = new Thread() {
-
-        {
-            setPriority(Thread.MIN_PRIORITY);
-            setDaemon(true);
-            start();
-        }
-
-        @Override
-        public void run()
-        {
-            while (!isInterrupted())
-            {
-                try
-                {
-                    Runnable runnable = ASYNC_QUEUE.take();
-                    runnable.run();
-                } catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
-
+    /**
+     * Constructs a new asynchronous print stream.
+     *
+     * @param out the output stream to write to
+     * @throws UnsupportedEncodingException when UTF-8 is mysteriously unavailable
+     */
     public AsyncPrintStream(OutputStream out) throws UnsupportedEncodingException
     {
         super(out, true, StandardCharsets.UTF_8.name());
@@ -59,14 +41,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println()
     {
-        ASYNC_QUEUE.offer(new Runnable() {
-            @Override
-            public void run()
-            {
-                println0();
-            }
-        });
-
+        queue.offer(this::println0);
     }
 
     private void println0(int x)
@@ -77,14 +52,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(int x)
     {
-        ASYNC_QUEUE.offer(new Runnable() {
-            @Override
-            public void run()
-            {
-                println0(x);
-            }
-        });
-
+        queue.offer(() -> println0(x));
     }
 
     private void println0(String x)
@@ -95,13 +63,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(String x)
     {
-        ASYNC_QUEUE.offer(new Runnable() {
-            @Override
-            public void run()
-            {
-                println0(x);
-            }
-        });
+        queue.offer(() -> println0(x));
     }
 
     private void println0(long x)
@@ -112,14 +74,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(long x)
     {
-        ASYNC_QUEUE.offer(new Runnable() {
-            @Override
-            public void run()
-            {
-                println0(x);
-            }
-        });
-
+        queue.offer(() -> println0(x));
     }
 
     private void println0(char x)
@@ -130,14 +85,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(char x)
     {
-        ASYNC_QUEUE.offer(new Runnable() {
-            @Override
-            public void run()
-            {
-                println0(x);
-            }
-        });
-
+        queue.offer(() -> println0(x));
     }
 
     private void println0(double x)
@@ -148,14 +96,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(double x)
     {
-        ASYNC_QUEUE.offer(new Runnable() {
-            @Override
-            public void run()
-            {
-                println0(x);
-            }
-        });
-
+        queue.offer(() -> println0(x));
     }
 
     private void println0(float x)
@@ -166,14 +107,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(float x)
     {
-        ASYNC_QUEUE.offer(new Runnable() {
-            @Override
-            public void run()
-            {
-                println0(x);
-            }
-        });
-
+        queue.offer(() -> println0(x));
     }
 
     private void println0(Object x)
@@ -184,14 +118,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(Object x)
     {
-        ASYNC_QUEUE.offer(new Runnable() {
-            @Override
-            public void run()
-            {
-                println0(x);
-            }
-        });
-
+        queue.offer(() -> println0(x));
     }
 
     private void println0(char[] x)
@@ -202,14 +129,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(char[] x)
     {
-        ASYNC_QUEUE.offer(new Runnable() {
-            @Override
-            public void run()
-            {
-                println0(x);
-            }
-        });
-
+        queue.offer(() -> println0(x));
     }
 
     private void println0(boolean x)
@@ -220,17 +140,8 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void println(boolean x)
     {
-        ASYNC_QUEUE.offer(new Runnable() {
-            @Override
-            public void run()
-            {
-                println0(x);
-            }
-        });
-
+        queue.offer(() -> println0(x));
     }
-
-    /* ============================================== */
 
     private void print0(int x)
     {
@@ -242,14 +153,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
-                {
-                    print0(x);
-                }
-            });
-
+            queue.offer(() -> print0(x));
         } else
         {
             super.print(x);
@@ -266,14 +170,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
-                {
-                    print0(x);
-                }
-            });
-
+            queue.offer(() -> print0(x));
         } else
         {
             super.print(x);
@@ -290,14 +187,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
-                {
-                    print0(x);
-                }
-            });
-
+            queue.offer(() -> print0(x));
         } else
         {
             super.print(x);
@@ -314,14 +204,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
-                {
-                    print0(x);
-                }
-            });
-
+            queue.offer(() -> print0(x));
         } else
         {
             super.print(x);
@@ -338,14 +221,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
-                {
-                    print0(x);
-                }
-            });
-
+            queue.offer(() -> print0(x));
         } else
         {
             super.print(x);
@@ -362,14 +238,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
-                {
-                    print0(x);
-                }
-            });
-
+            queue.offer(() -> print0(x));
         } else
         {
             super.print(x);
@@ -386,14 +255,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
-                {
-                    print0(x);
-                }
-            });
-
+            queue.offer(() -> print0(x));
         } else
         {
             super.print(x);
@@ -410,14 +272,7 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
-                {
-                    print0(x);
-                }
-            });
-
+            queue.offer(() -> print0(x));
         } else
         {
             super.print(x);
@@ -434,18 +289,48 @@ public class AsyncPrintStream extends PrintStream {
     {
         if (Thread.currentThread() != worker)
         {
-            ASYNC_QUEUE.offer(new Runnable() {
-                @Override
-                public void run()
-                {
-                    print0(x);
-                }
-            });
-
+            queue.offer(() -> print0(x));
         } else
         {
             super.print(x);
         }
     }
 
+
+    /**
+     * A worker thread for the {@link AsyncPrintStream}.
+     */
+    private static class WorkerThread extends Thread {
+
+        private final BlockingQueue<Runnable> queue;
+
+        /**
+         * Constructs an worker thread that takes work from {@code queue}.
+         * Automatically started until interrupted.
+         *
+         * @param queue the blocking queue to take work from
+         */
+        WorkerThread(BlockingQueue<Runnable> queue)
+        {
+            this.queue = queue;
+            setPriority(Thread.MIN_PRIORITY);
+            setDaemon(true);
+            start();
+        }
+
+        @Override
+        public void run()
+        {
+            while (!isInterrupted())
+            {
+                try
+                {
+                    queue.take().run();
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }

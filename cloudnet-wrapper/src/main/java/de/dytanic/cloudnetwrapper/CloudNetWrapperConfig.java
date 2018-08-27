@@ -136,7 +136,7 @@ public class CloudNetWrapperConfig {
             configuration.set("general.auto-update", false);
             configuration.set("general.saving-records", false);
             configuration.set("general.viaversion", false);
-            configuration.set("general.maintenance-copy", false);
+            configuration.set("general.maintenance-copyFileToDirectory", false);
             configuration.set("general.devservicePath", new File("Development").getAbsolutePath());
             configuration.set("general.processQueueSize", (Runtime.getRuntime().availableProcessors() / 2));
             configuration.set("general.percentOfCPUForANewServer", 100D);
@@ -165,7 +165,7 @@ public class CloudNetWrapperConfig {
             this.maxMemory = configuration.getInt("general.max-memory");
             this.viaVersion = configuration.getBoolean("general.viaversion");
             this.autoUpdate = configuration.getBoolean("general.auto-update");
-            this.maintenance_copy = configuration.getBoolean("maintenance-copy");
+            this.maintenance_copy = configuration.getBoolean("maintenance-copyFileToDirectory");
             this.percentOfCPUForANewProxy = configuration.getDouble("general.percentOfCPUForANewProxy");
             this.percentOfCPUForANewServer = configuration.getDouble("general.percentOfCPUForANewServer");
 
