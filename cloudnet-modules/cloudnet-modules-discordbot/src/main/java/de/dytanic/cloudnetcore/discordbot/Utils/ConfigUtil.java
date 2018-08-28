@@ -12,17 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * ConfigUtil
- *
- * @author _Klaro | Pasqual K.
- * Created by _Klaro on 26.08.2018.
- * Copyright (c) _Klaro
- * Do not decompile this resource our say it´s yours.
- * Visit our Discord for more information: http://discord.deinsystem.net
- * Or our Teamspeak: deinsystem.net
- */
-
 public class ConfigUtil
 {
     private final Path path = Paths.get("local/discordbot_config.yml");

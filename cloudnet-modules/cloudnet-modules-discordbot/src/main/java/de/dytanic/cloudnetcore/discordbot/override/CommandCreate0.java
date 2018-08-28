@@ -25,17 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * CommandCreate0
- *
- * @author _Klaro | Pasqual K.
- * Created by _Klaro on 27.08.2018.
- * Copyright (c) _Klaro
- * Do not decompile this resource our say it´s yours.
- * Visit our Discord for more information: http://discord.deinsystem.net
- * Or our Teamspeak: deinsystem.net
- */
-
 public class CommandCreate0 extends Command
 {
     private final TextChannel textChannel = DiscordBot.getTextChannel();

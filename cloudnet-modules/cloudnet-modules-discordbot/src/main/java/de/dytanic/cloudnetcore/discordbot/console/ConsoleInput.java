@@ -11,17 +11,6 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-/**
- * ConsoleInput
- *
- * @author _Klaro | Pasqual K.
- * Created by _Klaro on 27.08.2018.
- * Copyright (c) _Klaro
- * Do not decompile this resource our say it´s yours.
- * Visit our Discord for more information: http://discord.deinsystem.net
- * Or our Teamspeak: deinsystem.net
- */
-
 public class ConsoleInput extends ListenerAdapter
 {
     private final String cmd_prefix = DiscordBot.getDiscordBotConfig().getCmd_prefix();

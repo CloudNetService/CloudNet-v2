@@ -22,17 +22,6 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
-/**
- * DiscordBot
- *
- * @author _Klaro | Pasqual K.
- * Created by _Klaro on 26.08.2018.
- * Copyright (c) _Klaro
- * Do not decompile this resource our say it´s yours.
- * Visit our Discord for more information: http://discord.deinsystem.net
- * Or our Teamspeak: deinsystem.net
- */
-
 public class DiscordBot extends CoreModule
 {
     @Getter

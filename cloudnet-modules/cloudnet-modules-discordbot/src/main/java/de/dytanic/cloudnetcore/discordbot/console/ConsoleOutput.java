@@ -11,17 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.Deque;
 import java.util.concurrent.LinkedBlockingDeque;
 
-/**
- * ConsoleOutput
- *
- * @author _Klaro | Pasqual K.
- * Created by _Klaro on 27.08.2018.
- * Copyright (c) _Klaro
- * Do not decompile this resource our say it´s yours.
- * Visit our Discord for more information: http://discord.deinsystem.net
- * Or our Teamspeak: deinsystem.net
- */
-
 public class ConsoleOutput
 {
     @Getter
