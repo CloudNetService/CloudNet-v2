@@ -91,8 +91,9 @@ public final class NetworkManager {
             return;
         }
 
-        LoginRequestEvent loginRequestEvent = new LoginRequestEvent(proxyServer, cloudPlayerConnection);
+        LoginRequestEvent loginRequestEvent = new LoginRequestEvent(uniqueId, cloudPlayerConnection, false);
         CloudNet.getInstance().getEventManager().callEvent(loginRequestEvent);
+        if (loginRequestEvent.isCancelled()) return;
 
         PlayerDatabase playerDatabase = CloudNet.getInstance().getDbHandlers().getPlayerDatabase();
 

@@ -40,7 +40,6 @@ import org.bukkit.scoreboard.Team;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -468,45 +467,26 @@ public class CloudServer implements ICloudService {
     private void addTeamEntry(Player target, Player all, PermissionGroup permissionGroup)
     {
         String teamName = permissionGroup.getTagId() + permissionGroup.getName();
-        try
+        if (teamName.length() > 16)
         {
-            if (teamName.length() > 16)
-            {
-                teamName = shortenStringTo16Bytes(teamName);
-                CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
-                CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the name of the group in your perms.yml");
-                Bukkit.broadcast("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
-                Bukkit.broadcast("Please fix this issue by changing the name of the group in your perms.yml", "cloudnet.notify");
-            }
-        } catch (UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
+            teamName = shortString(teamName);
+            CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
+            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the name of the group in your perms.yml");
+            Bukkit.broadcast("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
+            Bukkit.broadcast("Please fix this issue by changing the name of the group in your perms.yml", "cloudnet.notify");
         }
         Team team = all.getScoreboard().getTeam(teamName);
         if (team == null)
             team = all.getScoreboard().registerNewTeam(teamName);
 
-        try
+        if (permissionGroup.getPrefix().length() > 16 || permissionGroup.getSuffix().length() > 16)
         {
-            if (permissionGroup.getPrefix().length() > 16)
-            {
-                permissionGroup.setPrefix(shortenStringTo16Bytes(permissionGroup.getPrefix()));
-                CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the prefix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
-                CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the prefix in your perms.yml");
-                Bukkit.broadcast("In order to prevent issues, the prefix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
-                Bukkit.broadcast("Please fix this issue by changing the prefix in your perms.yml", "cloudnet.notify");
-            }
-            if (permissionGroup.getSuffix().length() > 16)
-            {
-                permissionGroup.setSuffix(shortenStringTo16Bytes(permissionGroup.getSuffix()));
-                CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
-                CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the suffix in your perms.yml");
-                Bukkit.broadcast("In order to prevent issues, the suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
-                Bukkit.broadcast("Please fix this issue by changing the suffix in your perms.yml", "cloudnet.notify");
-            }
-        } catch (UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
+            permissionGroup.setPrefix(shortString(permissionGroup.getPrefix()));
+            permissionGroup.setSuffix(shortString(permissionGroup.getSuffix()));
+            CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the prefix or suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
+            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the prefix or suffix in your perms.yml");
+            Bukkit.broadcast("In order to prevent issues, the prefix or suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
+            Bukkit.broadcast("Please fix this issue by changing the prefix or suffix in your perms.yml", "cloudnet.notify");
         }
         team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
         team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
@@ -516,7 +496,7 @@ public class CloudServer implements ICloudService {
         target.setDisplayName(ChatColor.translateAlternateColorCodes('&', permissionGroup.getDisplay() + target.getName()));
     }
 
-    private String shortenStringTo16Bytes(String input) throws UnsupportedEncodingException
+    private String shortString(String input)
     {
         return input.substring(0, 16);
     }

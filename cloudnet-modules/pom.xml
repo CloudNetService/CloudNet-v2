@@ -20,6 +20,7 @@
         <module>cloudnet-modules-permission</module>
         <module>cloudnet-modules-cloudflare</module>
         <module>cloudnet-modules-notifyservice</module>
+        <module>cloudnet-modules-discordbot</module>
     </modules>
 
     <dependencies>

@@ -7,27 +7,20 @@ package de.dytanic.cloudnetcore.api.event.player;
 import de.dytanic.cloudnet.event.Cancelable;
 import de.dytanic.cloudnet.event.Event;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
-import de.dytanic.cloudnetcore.network.components.ProxyServer;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.UUID;
 
 /**
  * Created by Tareko on 27.07.2017.
  */
 @Getter
-public class LoginRequestEvent extends Event implements Cancelable {
-
-    private PlayerConnection cloudPlayerConnection;
-
-    private ProxyServer proxyServer;
-
+@AllArgsConstructor
+@ToString
+public class LoginRequestEvent extends Event implements Cancelable
+{
+    private UUID uniqueId;
+    private PlayerConnection playerConnection;
     @Setter
     private boolean cancelled = false;
-
-    public LoginRequestEvent(ProxyServer proxyServer, PlayerConnection cloudPlayerConnection)
-    {
-        this.cloudPlayerConnection = cloudPlayerConnection;
-        this.proxyServer = proxyServer;
-
-    }
 }

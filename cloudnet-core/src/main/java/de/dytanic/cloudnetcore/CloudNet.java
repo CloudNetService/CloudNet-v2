@@ -392,7 +392,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
                 .registerCommand(new CommandLog())
                 .registerCommand(new CommandCreate())
                 .registerCommand(new CommandVersion())
-                .registerCommand(new CommandInfo());
+                .registerCommand(new CommandInfo())
+                .registerCommand(new CommandInstall());
     }
 
     private void initPacketHandlers()
