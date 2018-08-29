@@ -19,8 +19,6 @@ public class ConsoleOutput
     private static Thread thread;
     private static final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-    public ConsoleOutput() { }
-
     public static void start(TextChannel textChannel)
     {
         sendStart(textChannel);

@@ -41,22 +41,19 @@ public class CommandCreate0 extends Command
     @Override
     public void onExecuteCommand(CommandSender sender, String[] args)
     {
-        if (args.length > 2)
+        if (args.length > 2 && args[0].equalsIgnoreCase("dispatchCommand"))
         {
-            if (args[0].equalsIgnoreCase("dispatchCommand"))
+            StringBuilder builder = new StringBuilder();
+            for (short i = 2; i < args.length; i++)
             {
-                StringBuilder builder = new StringBuilder();
-                for (short i = 2; i < args.length; i++)
-                {
-                    builder.append(args[i]);
-                }
-
-                CloudNet.getInstance().getDbHandlers().getCommandDispatcherDatabase().appendCommand(
-                        args[1], builder.substring(0, (builder.substring(0)
-                                .endsWith(" ") ? builder.length() - 1 : builder.length())));
-                textChannel.sendMessage("A dispatcher was created \"" + args[1] + "\": \"" + builder.substring(0) + "\"").queue();
-                return;
+                builder.append(args[i]);
             }
+
+            CloudNet.getInstance().getDbHandlers().getCommandDispatcherDatabase().appendCommand(
+                    args[1], builder.substring(0, (builder.substring(0)
+                            .endsWith(" ") ? builder.length() - 1 : builder.length())));
+            textChannel.sendMessage("A dispatcher was created \"" + args[1] + "\": \"" + builder.substring(0) + "\"").queue();
+            return;
         }
 
         switch (args.length)
