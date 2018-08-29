@@ -9,5 +9,5 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class DiscordBotConfig implements Serializable
 {
-    String token, guild, channel, role, game, cmd_prefix;
+    private String token, guild, channel, role, game, cmd_prefix;
 }

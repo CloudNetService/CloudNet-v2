@@ -84,12 +84,12 @@ public class ConfigUtil
     {
         Configuration section = configuration.getSection("general");
 
-        section.set("Token", "'" + discordBotConfig.getToken() + "'");
+        section.set("Token", discordBotConfig.getToken());
         section.set("Guild", discordBotConfig.getGuild());
         section.set("Channel", discordBotConfig.getChannel());
         section.set("User_role", discordBotConfig.getRole());
-        section.set("Game", "'" + discordBotConfig.getGame() + "'");
-        section.set("Cmd_prefix", "'" + discordBotConfig.getCmd_prefix() + "'");
+        section.set("Game", discordBotConfig.getGame());
+        section.set("Cmd_prefix", discordBotConfig.getCmd_prefix());
 
         DiscordBot.setDiscordBotConfig(discordBotConfig);
     }

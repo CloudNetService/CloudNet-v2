@@ -2,10 +2,10 @@ package de.dytanic.cloudnetcore.discordbot;
 
 import de.dytanic.cloudnetcore.api.CoreModule;
 import de.dytanic.cloudnetcore.discordbot.utils.ConfigUtil;
-import de.dytanic.cloudnetcore.discordbot.utils.DiscordBotConfig;
 import de.dytanic.cloudnetcore.discordbot.console.ConsoleInput;
 import de.dytanic.cloudnetcore.discordbot.console.ConsoleOutput;
 import de.dytanic.cloudnetcore.discordbot.override.CommandCreate0;
+import de.dytanic.cloudnetcore.discordbot.utils.DiscordBotConfig;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.core.AccountType;
@@ -57,18 +57,19 @@ public class DiscordBot extends CoreModule
                         @Override
                         public void onReady(ReadyEvent event)
                         {
-                            event.getJDA().addEventListener(new ConsoleInput());
                             guild = event.getJDA().getGuildById(discordBotConfig.getGuild());
-                            textChannel = guild.getTextChannelById(discordBotConfig.getChannel());
-                            role = guild.getRoleById(discordBotConfig.getRole());
-                            if (!isValid(guild, textChannel, role))
+                            textChannel = guild != null ? guild.getTextChannelById(discordBotConfig.getChannel()) : null;
+                            role = guild != null ? guild.getRoleById(discordBotConfig.getRole()) : null;
+                            if (textChannel == null || role == null)
                             {
-                                System.out.println("The bot couldn't find the guild, channel or user role! Please check the configuration!");
+                                System.out.println("The bot couldn't connect to the Discord Server! Please check the configuration!");
+                                event.getJDA().shutdownNow();
                                 return;
                             }
                             ConsoleOutput.start(textChannel);
                             connected = true;
                             registerCommand(new CommandCreate0());
+                            event.getJDA().addEventListener(new ConsoleInput());
                             event.getJDA().removeEventListener(this);
                         }
                     }).buildAsync();
@@ -82,14 +83,7 @@ public class DiscordBot extends CoreModule
     public void onShutdown()
     {
         if (!ConsoleOutput.getMessageQueue().isEmpty()) ConsoleOutput.getMessageQueue().clear();
-        if (!ConsoleOutput.getThread().isInterrupted()) ConsoleOutput.getThread().stop();
-        jda.removeEventListener(new ConsoleInput());
-        if (connected) jda.shutdownNow();
-        if (!ConsoleOutput.getThread().isInterrupted()) ConsoleOutput.getThread().stop();
-    }
-
-    private boolean isValid(Guild guild, TextChannel textChannel, Role role)
-    {
-        return (textChannel == null || guild == null || role == null);
+        if (ConsoleOutput.getThread() != null && !ConsoleOutput.getThread().isInterrupted()) ConsoleOutput.getThread().stop();
+        if (connected) { jda.shutdownNow(); jda.removeEventListener(new ConsoleInput()); }
     }
 }
