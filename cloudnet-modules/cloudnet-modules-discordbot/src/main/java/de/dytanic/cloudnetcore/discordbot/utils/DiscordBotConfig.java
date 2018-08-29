@@ -1,4 +1,4 @@
-package de.dytanic.cloudnetcore.discordbot.Utils;
+package de.dytanic.cloudnetcore.discordbot.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -45,7 +45,6 @@ public class CommandCreate0 extends Command
         {
             if (args[0].equalsIgnoreCase("dispatchCommand"))
             {
-                //create dispatchCommand name create
                 StringBuilder builder = new StringBuilder();
                 for (short i = 2; i < args.length; i++)
                 {
@@ -84,7 +83,7 @@ public class CommandCreate0 extends Command
                             Arrays.stream(this.TYPE).parallel().anyMatch(args[6].toLowerCase()::equals) &&
                             Arrays.stream(this.TEMPLATE).parallel().anyMatch(args[7].toLowerCase()::equals) &&
                             NetworkUtils.checkIsNumber(args[8]) && NetworkUtils.checkIsNumber(args[9]) && CloudNet.getInstance().getWrappers().containsKey(args[10])) {
-                        java.util.List<String> wrappers = (List<String>) CollectionWrapper.toCollection(args[10], ",");
+                        List<String> wrappers = (List<String>) CollectionWrapper.toCollection(args[10], ",");
                         if (wrappers.size() == 0) return;
                         for (short i = 0; i < wrappers.size(); i++)
                         {
@@ -155,7 +154,7 @@ public class CommandCreate0 extends Command
                             && Arrays.stream(this.TEMPLATE).parallel().anyMatch(args[6].toLowerCase()::equals) &&
                             CloudNet.getInstance().getWrappers().containsKey(args[7]))
                     {
-                        java.util.List<String> wrappers = (List<String>) CollectionWrapper.toCollection(args[7], ",");
+                        List<String> wrappers = (List<String>) CollectionWrapper.toCollection(args[7], ",");
                         if (wrappers.size() == 0) return;
                         for (short i = 0; i < wrappers.size(); i++)
                         {

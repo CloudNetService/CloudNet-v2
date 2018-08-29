@@ -1,8 +1,8 @@
 package de.dytanic.cloudnetcore.discordbot;
 
 import de.dytanic.cloudnetcore.api.CoreModule;
-import de.dytanic.cloudnetcore.discordbot.Utils.ConfigUtil;
-import de.dytanic.cloudnetcore.discordbot.Utils.DiscordBotConfig;
+import de.dytanic.cloudnetcore.discordbot.utils.ConfigUtil;
+import de.dytanic.cloudnetcore.discordbot.utils.DiscordBotConfig;
 import de.dytanic.cloudnetcore.discordbot.console.ConsoleInput;
 import de.dytanic.cloudnetcore.discordbot.console.ConsoleOutput;
 import de.dytanic.cloudnetcore.discordbot.override.CommandCreate0;
@@ -90,8 +90,6 @@ public class DiscordBot extends CoreModule
 
     private boolean isValid(Guild guild, TextChannel textChannel, Role role)
     {
-        if (textChannel == null || guild == null)
-            return false;
-        return true;
+        return (textChannel == null || guild == null || role == null);
     }
 }

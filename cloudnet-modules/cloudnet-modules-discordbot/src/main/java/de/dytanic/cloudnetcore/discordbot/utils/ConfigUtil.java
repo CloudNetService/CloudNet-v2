@@ -1,4 +1,4 @@
-package de.dytanic.cloudnetcore.discordbot.Utils;
+package de.dytanic.cloudnetcore.discordbot.utils;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnetcore.discordbot.DiscordBot;

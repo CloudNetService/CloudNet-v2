@@ -21,12 +21,12 @@ import java.util.Iterator;
 
 public class CommandInstall extends Command
 {
+    private final WebClient webClient = new WebClient();
+
     public CommandInstall()
     {
         super("install", "cloudnet.command.install");
     }
-
-    private final WebClient webClient = new WebClient();
 
     @Override
     public void onExecuteCommand(CommandSender sender, String[] args)
@@ -73,8 +73,12 @@ public class CommandInstall extends Command
                     {
                         sender.sendMessage("Failed to download module \"" + args[1] + ".jar\".");
                     }
+                    return;
                 }
+                break;
             }
+            default:
+                sender.sendMessage("install <update, modules, module <name>");
         }
     }
 }

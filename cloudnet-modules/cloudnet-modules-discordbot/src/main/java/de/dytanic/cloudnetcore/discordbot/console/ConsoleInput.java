@@ -34,12 +34,13 @@ public class ConsoleInput extends ListenerAdapter
                 case "clearqueue":
                     ConsoleOutput.getMessageQueue().clear();
                     event.getChannel().sendMessage("The queue has been cleared.").queue();
-                    break;
+                    return;
                 case "help":
                     event.getChannel().sendMessage("You can use the command \"" + cmd_prefix + "help\" and \"" + cmd_prefix + "clearqueue\"").queue();
-                    break;
+                    return;
                 default: event.getChannel().sendMessage("This command isn't supported, yet. You can use the command \"" + cmd_prefix
                      + "help\" to see a list of all commands.").queue();
+                break;
             }
             return;
         }

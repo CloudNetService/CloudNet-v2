@@ -19,9 +19,7 @@ public class ConsoleOutput
     private static Thread thread;
     private static final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-    public ConsoleOutput()
-    {
-    }
+    public ConsoleOutput() { }
 
     public static void start(TextChannel textChannel)
     {
@@ -71,11 +69,16 @@ public class ConsoleOutput
         })).start();
 
         CloudNet.getLogger().getHandler().add((input) -> {
-            if (!input.isEmpty() && !input.equals(" "))
+            if (isValid(input))
             {
                 messageQueue.offer(input);
             }
         });
+    }
+
+    private static boolean isValid(String input)
+    {
+        return !input.isEmpty() && !input.equals(" ");
     }
 
     private static void sendStart(TextChannel textChannel)
