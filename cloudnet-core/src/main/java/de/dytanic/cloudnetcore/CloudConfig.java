@@ -77,7 +77,8 @@ public class CloudConfig {
                 new File("local/servers"),
                 new File("local/cache"),
                 new File("groups"),
-                new File("modules")
+                new File("modules"),
+                new File("templates")
         })
             directory.mkdirs();
 
