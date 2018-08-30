@@ -133,8 +133,8 @@ public class WebClient {
             {
                 Files.copy(inputStream,
                         (System.getProperty("os.name").contains("Windows") ?
-                                Paths.get("CloudNet-" + (getEnvironment() ? "Master" : "Wrapper") + "-Update" + version + NetworkUtils.RANDOM.nextLong()) :
-                                Paths.get(WebClient.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())
+                                Paths.get("CloudNet-" + (getEnvironment() ? "Master" : "Wrapper") + "-Update" + version + NetworkUtils.RANDOM.nextLong() + ".jar") :
+                                Paths.get(WebClient.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + ".jar")
                                 ), StandardCopyOption.REPLACE_EXISTING);
             }
 
