@@ -23,7 +23,7 @@ public final class DyHash {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             messageDigest.update(encode.getBytes(StandardCharsets.UTF_8));
 
-            String string = new String(messageDigest.digest(), StandardCharsets.UTF_8);
+            String string = bytesToHex(messageDigest.digest());
             return string;
         } catch (Exception ex)
         {
@@ -31,5 +31,14 @@ public final class DyHash {
         }
 
         return encode;
+    }
+    private static String bytesToHex(byte[] hash) {
+        StringBuffer hexString = new StringBuffer();
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if(hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 }
