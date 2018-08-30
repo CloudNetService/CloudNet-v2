@@ -85,7 +85,7 @@ public class CloudConfig {
 
         defaultInit(consoleReader);
         defaultInitDoc(consoleReader);
-        defaultInitUsers(consoleReader);
+        defaultInitUsers();
         load();
     }
 
@@ -164,7 +164,7 @@ public class CloudConfig {
         new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
     }
 
-    private void defaultInitUsers(ConsoleReader consoleReader)
+    private void defaultInitUsers()
     {
         if (Files.exists(usersPath)) return;
 
