@@ -63,6 +63,12 @@ public final class DyHash {
     {
     }
 
+    /**
+     * Hash a Password to String with Salt on the end
+     * @param password
+     * @param salt
+     * @return
+     */
     public static String hashString(String password,String salt)
     {
         byte[] securePassword = hash(password.toCharArray(), salt.getBytes());
