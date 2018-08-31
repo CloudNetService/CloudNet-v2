@@ -16,8 +16,8 @@ import java.util.UUID;
  */
 public class BasicUser extends User {
 
-    public BasicUser(String name, String hashedPassword, Collection<String> permissions)
+    public BasicUser(String name, String hashedPassword,String salt, Collection<String> permissions)
     {
-        super(name, UUID.randomUUID(), NetworkUtils.randomString(16), DyHash.hashString(hashedPassword), permissions, new HashMap<>());
+        super(name, UUID.randomUUID(), NetworkUtils.randomString(16), DyHash.hashString(hashedPassword,salt), permissions, new HashMap<>());
     }
 }
