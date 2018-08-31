@@ -7,6 +7,7 @@ package de.dytanic.cloudnetcore.command;
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.hash.DyHash;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.template.Template;
@@ -136,7 +137,8 @@ public final class CommandCreate extends Command {
                 {
                     if (!CloudNet.getInstance().getUsers().contains(args[1]))
                     {
-                        User user = new BasicUser(args[1], args[2], Arrays.asList());
+                        String salt = DyHash.getSalt(32);
+                        User user = new BasicUser(args[1], args[2], salt,Arrays.asList());
                         CloudNet.getInstance().getUsers().add(user);
                         CloudNet.getInstance().getConfig().save(CloudNet.getInstance().getUsers());
                         sender.sendMessage("The user was created!");

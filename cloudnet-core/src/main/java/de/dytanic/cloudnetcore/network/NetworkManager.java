@@ -382,10 +382,9 @@ public final class NetworkManager {
                                 (packet instanceof PacketOutUpdateServerInfo || packet instanceof PacketOutServerAdd || packet instanceof PacketOutServerRemove))
                             return true;
 
-                        if (serverGroup.getAdvancedServerConfig().isNotifyPlayerUpdatesFromNoCurrentPlayer() &&
+                        return serverGroup.getAdvancedServerConfig().isNotifyPlayerUpdatesFromNoCurrentPlayer() &&
                                 (packet instanceof PacketOutUpdatePlayer || packet instanceof PacketOutLoginPlayer || packet instanceof PacketOutLogoutPlayer ||
-                                        packet instanceof PacketOutUpdateOfflinePlayer))
-                            return true;
+                                        packet instanceof PacketOutUpdateOfflinePlayer);
 
                     }
                 }

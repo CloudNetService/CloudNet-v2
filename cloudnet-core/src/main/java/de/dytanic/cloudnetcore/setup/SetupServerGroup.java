@@ -164,8 +164,7 @@ public class SetupServerGroup {
                                 wrappers.remove(wrappers.get(i));
                         }
 
-                        if (wrappers.size() == 0) return false;
-                        else return true;
+                        return wrappers.size() != 0;
                     }
                 }));
         setup.start(CloudNet.getLogger().getReader());
