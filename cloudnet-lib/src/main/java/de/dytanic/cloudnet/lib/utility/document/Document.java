@@ -242,8 +242,8 @@ public class Document
 
     public Document getDocument(String key)
     {
-        Document document = new Document(dataCatcher.get(key).getAsJsonObject());
-        return document;
+        if (!dataCatcher.has(key)) return null;
+        return new Document(dataCatcher.get(key).getAsJsonObject());
     }
 
     public Document clear()
