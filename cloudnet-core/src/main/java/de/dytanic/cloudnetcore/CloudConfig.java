@@ -157,9 +157,8 @@ public class CloudConfig {
                 break;
             }
         }
-        new Document("wrapper", Arrays.asList(new WrapperMeta("Wrapper-1", hostName, "admin")))
-                //.append("serverGroups", Arrays.asList(new LobbyGroup()))
-                .append("proxyGroups", Arrays.asList(new BungeeGroup()))
+        new Document("wrapper", Collections.singletonList(new WrapperMeta("Wrapper-1", hostName, "admin")))
+                .append("proxyGroups", Collections.singletonList(new BungeeGroup()))
                 .saveAsConfig(servicePath);
 
         new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
@@ -172,7 +171,7 @@ public class CloudConfig {
         String password = NetworkUtils.randomString(32);
         System.out.println("\"admin\" Password: " + password);
         System.out.println(NetworkUtils.SPACE_STRING);
-        new Document().append("users", Arrays.asList(new BasicUser("admin", password, Arrays.asList("*")))).saveAsConfig(usersPath);
+        new Document().append("users", Collections.singletonList(new BasicUser("admin", password, Arrays.asList("*")))).saveAsConfig(usersPath);
     }
 
     public CloudConfig load() throws Exception
@@ -273,20 +272,6 @@ public class CloudConfig {
 
     public void createGroup(@NonNull ServerGroup serverGroup)
     {
-        /*
-        Collection<ServerGroup> groups = this.serviceDocument.getObject("serverGroups", new TypeToken<Collection<ServerGroup>>() {
-        }.getType());
-        CollectionWrapper.checkAndRemove(groups, new Acceptable<ServerGroup>() {
-            @Override
-            public boolean isAccepted(ServerGroup value)
-            {
-                return value.getName().equals(serverGroup.getName());
-            }
-        });
-
-        groups.add(serverGroup);
-        this.serviceDocument.append("serverGroups", groups).saveAsConfig(servicePath);
-        */
 
         new Document("group", serverGroup).saveAsConfig(Paths.get("groups/" + serverGroup.getName() + ".json"));
 
@@ -310,20 +295,6 @@ public class CloudConfig {
 
     public void deleteGroup(ServerGroup serverGroup)
     {
-        /*
-        Collection<ServerGroup> groups = this.serviceDocument.getObject("serverGroups", new TypeToken<Collection<ServerGroup>>() {
-        }.getType());
-        CollectionWrapper.checkAndRemove(groups, new Acceptable<ServerGroup>() {
-            @Override
-            public boolean isAccepted(ServerGroup value)
-            {
-                return value.getName().equals(serverGroup.getName());
-            }
-        });
-
-        this.serviceDocument.append("serverGroups", groups).saveAsConfig(servicePath);
-        */
-
         new File("groups/" + serverGroup.getName() + ".json").delete();
     }
 
@@ -343,18 +314,6 @@ public class CloudConfig {
 
     public java.util.Map<String, ServerGroup> getServerGroups()
     {
-        /*
-        Collection<ServerGroup> collection = serviceDocument.getObject("serverGroups", new TypeToken<Collection<ServerGroup>>() {
-        }.getType());
-        return MapWrapper.collectionCatcherHashMap(collection, new Catcher<String, ServerGroup>() {
-            @Override
-            public String doCatch(ServerGroup key)
-            {
-                return key.getName();
-            }
-        });
-        */
-
         Map<String, ServerGroup> groups = NetworkUtils.newConcurrentHashMap();
 
         if (serviceDocument.contains("serverGroups"))
@@ -374,19 +333,24 @@ public class CloudConfig {
         Document entry;
 
         if (groupsDirectory.isDirectory())
-            for (File file : groupsDirectory.listFiles())
-            {
-                if (file.getName().endsWith(".json"))
-                    try
-                    {
-                        entry = Document.$loadDocument(file);
-                        ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
-                        groups.put(serverGroup.getName(), serverGroup);
-                    } catch (Throwable ex)
-                    {
-                        System.out.println("Cannot load servergroup file [" + file.getName() + "]");
-                    }
-            }
+        {
+            File[] files = groupsDirectory.listFiles();
+
+            if (files != null)
+                for (File file : files)
+                {
+                    if (file.getName().endsWith(".json"))
+                        try
+                        {
+                            entry = Document.$loadDocument(file);
+                            ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
+                            groups.put(serverGroup.getName(), serverGroup);
+                        } catch (Throwable ex)
+                        {
+                            System.out.println("Cannot load servergroup file [" + file.getName() + "]");
+                        }
+                }
+        }
 
         return groups;
     }
