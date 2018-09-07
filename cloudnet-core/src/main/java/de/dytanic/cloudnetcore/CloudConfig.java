@@ -168,7 +168,7 @@ public class CloudConfig {
     {
         if (Files.exists(usersPath)) return;
 
-        String password = NetworkUtils.randomString(8);
+        String password = NetworkUtils.randomString(32);
         System.out.println("\"admin\" Password: " + password);
         System.out.println(NetworkUtils.SPACE_STRING);
         new Document().append("users", Collections.singletonList(new BasicUser("admin", password, Arrays.asList("*")))).saveAsConfig(usersPath);
