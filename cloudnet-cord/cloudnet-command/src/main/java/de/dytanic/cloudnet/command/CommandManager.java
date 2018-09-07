@@ -5,12 +5,12 @@
 package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.utility.Acceptable;
+import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import jline.console.completer.Completer;
 import lombok.Getter;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class that manages commands for the interfaces of CloudNet.
@@ -171,24 +171,34 @@ public final class CommandManager
     {
         String[] input = buffer.split(" ");
 
-        if (input.length == 0) return cursor;
+        List<String> responses = new ArrayList<>();
 
-        Command command = getCommand(input[0]);
-        if (command instanceof TabCompletable)
+        if (buffer.isEmpty() || buffer.indexOf(' ') == -1)
+            responses.addAll(this.commands.keySet());
+        else
         {
-            List<String> tabCompletions = ((TabCompletable) command).onTab(input.length - 1, input[input.length - 1]);
+            Command command = getCommand(input[0]);
 
-            candidates.addAll(tabCompletions);
+            if (command instanceof TabCompletable)
+            {
+                String[] args = buffer.split(" ");
+                String testString = args[args.length - 1];
 
-            final int lastSpace = buffer.lastIndexOf(' ');
-            if (lastSpace == -1)
-            {
-                return cursor - buffer.length();
-            } else
-            {
-                return cursor - (buffer.length() - lastSpace - 1);
+                responses.addAll(CollectionWrapper.filterMany(((TabCompletable) command).onTab(input.length - 1, input[input.length - 1]), new Acceptable<String>() {
+                    @Override
+                    public boolean isAccepted(String s)
+                    {
+                        return s != null && (testString.isEmpty() || s.toLowerCase().contains(testString.toLowerCase()));
+                    }
+                }));
             }
         }
-        return cursor;
+
+        Collections.sort(responses);
+
+        candidates.addAll(responses);
+        int lastSpace = buffer.lastIndexOf(' ');
+
+        return (lastSpace == -1) ? cursor - buffer.length() : cursor - (buffer.length() - lastSpace - 1);
     }
 }

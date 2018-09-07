@@ -102,8 +102,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> objective, List<String> args) throws Exception
     {
-        if (instance == null)
-            this.instance = this;
+        if (instance == null) instance = this;
 
         this.config = config;
         this.logger = cloudNetLogging;
@@ -111,6 +110,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         this.optionSet = optionSet;
         this.arguments = args;
         this.defaultModuleManager = new DefaultModuleManager();
+
+        this.logger.getReader().addCompleter(commandManager);
     }
 
     @Override
