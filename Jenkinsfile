@@ -4,6 +4,9 @@ pipeline {
         maven 'Maven3'
         jdk 'Java8'
   }
+  options {
+    buildDiscarder logRotator(numToKeepStr: '10')
+  }
   stages {
     stage('Clean') {
       steps {
@@ -12,7 +15,7 @@ pipeline {
     }
     stage('Version') {
       steps {
-        sh 'mvn versions:set -DnewVersion=2.1.10'
+        sh 'mvn versions:set -DnewVersion=2.1.11'
       }
     }
     stage('Compile') {

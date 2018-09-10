@@ -6,6 +6,7 @@ package de.dytanic.cloudnetcore.command;
 
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
+import de.dytanic.cloudnet.command.TabCompletable;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnetcore.CloudNet;
@@ -13,7 +14,10 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 
-public final class CommandScreen extends Command {
+import java.util.ArrayList;
+import java.util.List;
+
+public final class CommandScreen extends Command implements TabCompletable {
 
     public CommandScreen()
     {
@@ -113,5 +117,16 @@ public final class CommandScreen extends Command {
                 );
                 break;
         }
+    }
+
+    @Override
+    public List<String> onTab(long argsLength, String lastWord)
+    {
+        List<String> list = new ArrayList<>(CloudNet.getInstance().getServers().size() + CloudNet.getInstance().getProxys().size());
+
+        list.addAll(CloudNet.getInstance().getServers().keySet());
+        list.addAll(CloudNet.getInstance().getProxys().keySet());
+
+        return list;
     }
 }

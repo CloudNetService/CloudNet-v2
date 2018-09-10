@@ -152,6 +152,11 @@ public class Document
     public Document append(String key, Object value)
     {
         if (value == null) return this;
+        if (value instanceof Document)
+        {
+            this.append(key, (Document) value);
+            return this;
+        }
         this.dataCatcher.add(key, GSON.toJsonTree(value));
         return this;
     }
@@ -242,8 +247,8 @@ public class Document
 
     public Document getDocument(String key)
     {
-        Document document = new Document(dataCatcher.get(key).getAsJsonObject());
-        return document;
+        if (!dataCatcher.has(key)) return null;
+        return new Document(dataCatcher.get(key).getAsJsonObject());
     }
 
     public Document clear()
