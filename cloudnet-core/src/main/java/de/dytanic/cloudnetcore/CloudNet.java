@@ -245,10 +245,11 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         databaseManager.save().clear();
 
-        this.users = config.getUsers();
+        this.users.clear();
         this.serverGroups.clear();
         this.proxyGroups.clear();
         this.config.load();
+        this.users = config.getUsers();
 
         NetworkUtils.addAll(this.serverGroups, config.getServerGroups(), new Acceptable<ServerGroup>() {
             public boolean isAccepted(ServerGroup value)

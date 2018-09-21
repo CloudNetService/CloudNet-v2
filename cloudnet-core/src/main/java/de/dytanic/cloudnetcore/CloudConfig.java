@@ -77,8 +77,7 @@ public class CloudConfig {
                 new File("local/servers"),
                 new File("local/cache"),
                 new File("groups"),
-                new File("modules"),
-                new File("templates")
+                new File("modules")
         })
             directory.mkdirs();
 
@@ -86,7 +85,7 @@ public class CloudConfig {
 
         defaultInit(consoleReader);
         defaultInitDoc(consoleReader);
-        defaultInitUsers(consoleReader);
+        defaultInitUsers();
         load();
     }
 
@@ -164,7 +163,7 @@ public class CloudConfig {
         new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
     }
 
-    private void defaultInitUsers(ConsoleReader consoleReader)
+    private void defaultInitUsers()
     {
         if (Files.exists(usersPath)) return;
 

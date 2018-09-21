@@ -27,7 +27,7 @@ public class ConfigPermissions {
 
     private Configuration cache;
 
-    public ConfigPermissions() throws Exception
+    public ConfigPermissions() throws IOException
     {
         if (!Files.exists(path))
         {
@@ -47,7 +47,7 @@ public class ConfigPermissions {
                         9999,
                         0,
                         true,
-                        new HashMap<>(),
+                        (HashMap) MapWrapper.valueableHashMap(new Return<>("bukkit.broadcast", true), new Return<>("bukkit.broadcast.admin", true)),
                         MapWrapper.valueableHashMap(new Return<String, List>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
                         new HashMap<>(),
                         new ArrayList<>()

@@ -74,7 +74,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
                         if (stringBuilder.length() > 32)
                         {
-                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The display cannot be longe then 32 characters");
+                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The display cannot be longer then 32 characters");
                             return false;
                         }
                         ServerMob serverMob = new ServerMob(UUID.randomUUID(), stringBuilder.substring(0, stringBuilder.length() - 1), args[2], entityType.name(), args[3],
