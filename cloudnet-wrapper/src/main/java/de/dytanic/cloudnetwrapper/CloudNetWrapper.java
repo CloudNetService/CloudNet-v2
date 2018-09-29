@@ -19,6 +19,7 @@ import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
+import de.dytanic.cloudnet.modules.ModuleManager;
 import de.dytanic.cloudnet.web.client.WebClient;
 import de.dytanic.cloudnetwrapper.command.*;
 import de.dytanic.cloudnetwrapper.handlers.IWrapperHandler;
@@ -58,6 +59,7 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     private final Scheduler scheduler = new Scheduler(40);
     private final ScreenProvider screenProvider = new ScreenProvider();
     private final CommandManager commandManager = new CommandManager();
+    private final ModuleManager moduleManager = new ModuleManager();
     private final WebClient webClient = new WebClient();
     private Auth auth;
     private OptionSet optionSet;
@@ -202,6 +204,8 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
             }
         });
 
+        this.moduleManager.loadModules().enableModules();
+
         canDeployed = true;
         RUNNING = true;
         Runtime.getRuntime().addShutdownHook(new Thread(this));
@@ -245,6 +249,9 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     {
         if (!RUNNING) return false;
         System.out.println("Wrapper shutdown...");
+
+        this.moduleManager.disableModules();
+
         TaskScheduler.runtimeScheduler().shutdown();
 
         scheduler.cancelAllTasks();

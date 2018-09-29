@@ -22,6 +22,13 @@ public final class CommandReload extends Command {
         CloudNetWrapper.getInstance().getWrapperConfig().load();
         CloudNetWrapper.getInstance().setMaxMemory(CloudNetWrapper.getInstance().getWrapperConfig().getMaxMemory());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutUpdateWrapperInfo());
+
+        try {
+            CloudNetWrapper.getInstance().getModuleManager().disableModules().loadModules().enableModules();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         System.out.println("Reloading was completed successfully");
     }
 }
