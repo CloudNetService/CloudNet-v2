@@ -13,7 +13,7 @@ public final class CommandReload extends Command {
 
     public CommandReload()
     {
-        super("reload", "cloudnet.comamnd.reload", "rl");
+        super("reload", "cloudnet.command.reload", "rl");
     }
 
     @Override
