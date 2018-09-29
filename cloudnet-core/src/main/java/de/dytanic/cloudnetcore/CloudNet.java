@@ -364,6 +364,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     private void initWebHandlers()
     {
+        webServer.getWebServerProvider().registerHandler(new WebsiteUtilsV2());
         webServer.getWebServerProvider().registerHandler(new WebsiteUtils());
         webServer.getWebServerProvider().registerHandler(new WebsiteDocumentation());
         webServer.getWebServerProvider().registerHandler(new WebsiteAuthorization());
