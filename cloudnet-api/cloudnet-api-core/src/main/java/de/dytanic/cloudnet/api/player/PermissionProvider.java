@@ -454,7 +454,7 @@ public final class PermissionProvider {
      * @param time      the time after which the group will be removed
      * @see GroupEntityData
      */
-    public static void addPlayerGroup(OfflinePlayer player, String groupName, Integer time)
+    public static void addPlayerGroup(OfflinePlayer player, String groupName, long time)
     {
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
