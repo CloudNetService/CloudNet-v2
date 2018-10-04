@@ -2,7 +2,7 @@
 cd "$(dirname "$0")"
 while true
 do
-java -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M  -XX:+OptimizeStringConcat -XX:CompileThreshold=100  -Xmx128m -jar CloudNet-Master.jar
+java -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:CompileThreshold=100  -Xmx128m -jar CloudNet-Master.jar
 echo "If you want to completely stop the server process now, press Ctrl+C before
 the time is up!"
 echo "Rebooting in:"
