@@ -664,7 +664,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 break;
             }
         }
-        return new LinkedList<>(StringUtil.copyPartialMatches(args[args.length-1], tabCompletes, new ArrayList<>(tabCompletes.size())));
+        return new LinkedList<>(StringUtil.copyPartialMatches(args[args.length - 1], tabCompletes, new ArrayList<>(tabCompletes.size())));
     }
 
     private LinkedList<String> getProxyAndServerGroups()
