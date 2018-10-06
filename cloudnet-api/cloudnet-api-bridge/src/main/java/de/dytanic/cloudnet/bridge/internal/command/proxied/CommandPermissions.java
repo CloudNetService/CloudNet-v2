@@ -20,6 +20,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 23.08.2017.
@@ -170,38 +171,63 @@ public final class CommandPermissions extends Command implements TabExecutor {
                 {
                     if (args[2].equalsIgnoreCase("add") && args[3].equalsIgnoreCase("permission"))
                     {
-                        if (permissionPool.getGroups().containsKey(args[1]))
+                        if (permissionPool.getGroups().containsKey(args[1]) || args[1].equals("*"))
                         {
-                            PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
                             String permission = args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING);
                             boolean value = !args[4].startsWith("-");
-                            if (!permissionIsSet(permissionGroup.getPermissions(), permission, value))
+
+                            Consumer<PermissionGroup> consumer = new Consumer<PermissionGroup>() {
+
+                                @Override
+                                public void accept(PermissionGroup permissionGroup)
+                                {
+                                    if (!permissionIsSet(permissionGroup.getPermissions(), permission, value))
+                                    {
+                                        permissionGroup.getPermissions().put(permission, value);
+                                        CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+                                        sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\"");
+                                    } else
+                                    {
+                                        sender.sendMessage("The permission " + permission + " with the value " + String.valueOf(value).toLowerCase() + " is already set for the permission group " + permissionGroup.getName());
+                                    }
+                                }
+                            };
+
+                            if (args[1].equals("*"))
+                                for (PermissionGroup permissionGroup : permissionPool.getGroups().values())
+                                    consumer.accept(permissionGroup);
+                            else
                             {
-                                permissionGroup.getPermissions().put(permission, value);
-                                CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                                sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\"");
-                            } else
-                            {
-                                sender.sendMessage("The permission " + permission + " with the value " + String.valueOf(value).toLowerCase() + " is already set for the permission group " + permissionGroup.getName());
+                                PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
+                                consumer.accept(permissionGroup);
                             }
-                        } else
-                        {
-                            sender.sendMessage("The specified permission group doesn't exist");
-                        }
+
+                        } else sender.sendMessage("The specified permission group doesn't exist");
                     }
 
                     if (args[2].equalsIgnoreCase("remove") && args[3].equalsIgnoreCase("permission"))
                     {
-                        if (permissionPool.getGroups().containsKey(args[1]))
+                        if (permissionPool.getGroups().containsKey(args[1]) || args[1].equals("*"))
                         {
-                            PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
-                            permissionGroup.getPermissions().remove(args[4]);
-                            CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\"");
-                        } else
-                        {
-                            sender.sendMessage("The specified permission group doesn't exist");
-                        }
+                            Consumer<PermissionGroup> consumer = new Consumer<PermissionGroup>() {
+                                @Override
+                                public void accept(PermissionGroup permissionGroup)
+                                {
+                                    permissionGroup.getPermissions().remove(args[4]);
+                                    CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+                                    sender.sendMessage("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\"");
+                                }
+                            };
+
+                            if (args[1].equals("*"))
+                                for (PermissionGroup permissionGroup : permissionPool.getGroups().values())
+                                    consumer.accept(permissionGroup);
+                            else
+                            {
+                                PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
+                                consumer.accept(permissionGroup);
+                            }
+                        } else sender.sendMessage("The specified permission group doesn't exist");
                     }
                 }
 
@@ -209,41 +235,64 @@ public final class CommandPermissions extends Command implements TabExecutor {
                 {
                     if (args[2].equalsIgnoreCase("add") && args[3].equalsIgnoreCase("permission"))
                     {
-                        if (permissionPool.getGroups().containsKey(args[1]))
+                        if (permissionPool.getGroups().containsKey(args[1]) || args[1].equals("*"))
                         {
-                            PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
+                            Consumer<PermissionGroup> consumer = new Consumer<PermissionGroup>() {
+                                @Override
+                                public void accept(PermissionGroup permissionGroup)
+                                {
+                                    if (!permissionGroup.getServerGroupPermissions().containsKey(args[5]))
+                                        permissionGroup.getServerGroupPermissions().put(args[5], new ArrayList<>());
 
-                            if (!permissionGroup.getServerGroupPermissions().containsKey(args[5]))
+                                    permissionGroup.getServerGroupPermissions().get(args[5]).add(args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING));
+                                    CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+
+                                    sender.sendMessage("You added the permission " + args[4] + " for the permission group \""
+                                            + permissionGroup.getName() + "\" on server group " + args[5]);
+                                }
+                            };
+
+                            if (args[1].equals("*"))
+                                for (PermissionGroup permissionGroup : permissionPool.getGroups().values())
+                                    consumer.accept(permissionGroup);
+                            else
                             {
-                                permissionGroup.getServerGroupPermissions().put(args[5], new ArrayList<>());
+                                PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
+                                consumer.accept(permissionGroup);
                             }
-                            permissionGroup.getServerGroupPermissions().get(args[5]).add(args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING));
-                            CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\" on server group " + args[5]);
-                        } else
-                        {
-                            sender.sendMessage("The specified permission group doesn't exist");
-                        }
+
+                        } else sender.sendMessage("The specified permission group doesn't exist");
                     }
 
                     if (args[2].equalsIgnoreCase("remove") && args[3].equalsIgnoreCase("permission"))
                     {
-                        if (permissionPool.getGroups().containsKey(args[1]))
+                        if (permissionPool.getGroups().containsKey(args[1]) || args[1].equals("*"))
                         {
-                            PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
+                            Consumer<PermissionGroup> consumer = new Consumer<PermissionGroup>() {
+                                @Override
+                                public void accept(PermissionGroup permissionGroup)
+                                {
+                                    if (!permissionGroup.getServerGroupPermissions().containsKey(args[5]))
+                                    {
+                                        permissionGroup.getServerGroupPermissions().put(args[5], new ArrayList<>());
+                                    }
 
-                            if (!permissionGroup.getServerGroupPermissions().containsKey(args[5]))
+                                    permissionGroup.getServerGroupPermissions().get(args[5]).remove(args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING));
+                                    CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+                                    sender.sendMessage("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\" on server group " + args[5]);
+                                }
+                            };
+
+                            if (args[1].equals("*"))
+                                for (PermissionGroup permissionGroup : permissionPool.getGroups().values())
+                                    consumer.accept(permissionGroup);
+                            else
                             {
-                                permissionGroup.getServerGroupPermissions().put(args[5], new ArrayList<>());
+                                PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
+                                consumer.accept(permissionGroup);
                             }
 
-                            permissionGroup.getServerGroupPermissions().get(args[5]).remove(args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING));
-                            CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\" on server group " + args[5]);
-                        } else
-                        {
-                            sender.sendMessage("The specified permission group doesn't exist");
-                        }
+                        } else sender.sendMessage("The specified permission group doesn't exist");
                     }
                 }
 
@@ -435,10 +484,10 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     CloudAPI.getInstance().getPrefix() + "/cperms CREATE <groupName>",
                     CloudAPI.getInstance().getPrefix() + "/cperms GROUP",
                     CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name>",
-                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> add permission <permission>",
-                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> remove permission <permission>",
-                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> add permission <permission> <group>",
-                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> remove permission <permission> <group>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name | *> add permission <permission>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name | *> remove permission <permission>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name | *> add permission <permission> <group>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name | *> remove permission <permission> <group>",
                     CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDisplay <display>",
                     CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setJoinPower <joinPower>",
                     CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setSuffix <suffix>",
