@@ -126,7 +126,7 @@ public final class SignSelector implements Listener {
             @Override
             public boolean isAccepted(Sign value)
             {
-                return value.getTargetGroup().equals(value) && value.getServerInfo() != null;
+                return value.getTargetGroup().equals(group) && value.getServerInfo() == null;
             }
         });
     }
@@ -169,6 +169,7 @@ public final class SignSelector implements Listener {
 
         for (String b : x) servers.remove(b);
 
+        Collections.sort(servers);
         return servers;
     }
 
@@ -242,7 +243,8 @@ public final class SignSelector implements Listener {
     }
 
     private class ThreadImpl extends Thread {
-        public int animationTick = 1;
+
+        int animationTick = 1;
         private boolean valueTick = false;
 
         @Override
@@ -657,7 +659,7 @@ public final class SignSelector implements Listener {
                 {
                     sign.setServerInfo(serverInfo);
                     Location location = toLocation(sign.getPosition());
-                    if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
+                    if (serverInfo.isOnline() && !serverInfo.isIngame())
                     {
                         if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
                         {
@@ -707,7 +709,7 @@ public final class SignSelector implements Listener {
 
                     Sign next = findFreeSign(serverInfo.getServiceId().getGroup());
                     Location location = toLocation(next.getPosition());
-                    if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
+                    if (serverInfo.isOnline() && !serverInfo.isIngame())
                     {
                         if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
                         {
@@ -760,7 +762,7 @@ public final class SignSelector implements Listener {
                     if (exists(newSign))
                     {
                         Location location = toLocation(newSign.getPosition());
-                        if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
+                        if (serverInfo.isOnline() && !serverInfo.isIngame())
                         {
                             if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
                             {
@@ -845,7 +847,7 @@ public final class SignSelector implements Listener {
                             {
                                 sign.setServerInfo(serverInfo);
                                 Location location = toLocation(sign.getPosition());
-                                if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
+                                if (serverInfo.isOnline() && !serverInfo.isIngame())
                                 {
                                     if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
                                     {
@@ -889,7 +891,7 @@ public final class SignSelector implements Listener {
 
                                 Sign next = findFreeSign(serverInfo.getServiceId().getGroup());
                                 Location location = toLocation(next.getPosition());
-                                if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
+                                if (serverInfo.isOnline() && !serverInfo.isIngame())
                                 {
                                     if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
                                     {
@@ -933,7 +935,7 @@ public final class SignSelector implements Listener {
                                 if (exists(newSign))
                                 {
                                     Location location = toLocation(newSign.getPosition());
-                                    if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame())
+                                    if (serverInfo.isOnline() && !serverInfo.isIngame())
                                     {
                                         if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer())
                                         {

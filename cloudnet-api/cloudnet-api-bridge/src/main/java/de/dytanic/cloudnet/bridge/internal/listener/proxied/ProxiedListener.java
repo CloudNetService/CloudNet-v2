@@ -145,6 +145,8 @@ public class ProxiedListener implements Listener {
                 PermissionCheckEvent permissionCheckEvent = new PermissionCheckEvent(cloudCommandSender, "cloudnet.maintenance", false);
 
                 if (!proxyConfig.getWhitelist().contains(e.getConnection().getName()) &&
+                        !proxyConfig.getWhitelist().contains(e.getConnection().getUniqueId().toString())
+                        &&
                         !ProxyServer.getInstance().getPluginManager().callEvent(permissionCheckEvent).hasPermission())
                 {
                     e.setCancelled(true);

@@ -4,8 +4,10 @@
 
 package de.dytanic.cloudnet.bridge.internal.command.proxied;
 
+import com.google.common.collect.ImmutableList;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.CloudProxy;
+import de.dytanic.cloudnet.bridge.internal.util.StringUtil;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
@@ -19,6 +21,7 @@ import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
+import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -31,6 +34,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 02.06.2017.
@@ -544,7 +548,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         CloudAPI.getInstance().getPrefix() + "§7/cloud startcs <name> <memory> <priorityStop>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud cmds (command server) <server> <command>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud cmdp (command proxy) <proxy> <command>",
-                        CloudAPI.getInstance().getPrefix() + "§7/cloud stop <serverId>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud stop <server>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud stopGroup <group>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud ustopGroup <group>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud listProxys",
@@ -581,6 +585,103 @@ public final class CommandCloud extends Command implements TabExecutor {
     @Override
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] args)
     {
-        return new LinkedList<>(CloudProxy.getInstance().getCachedServers().keySet());
+        List<String> tabCompletes = ImmutableList
+                .of();
+        switch (args.length)
+        {
+            case 1:
+            {
+                tabCompletes = ImmutableList
+                        .of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
+                                , "ustopGroup", "listProxys", "listOnline", "listServers", "log", "listGroups", "rl", "list"
+                                , "maintenance", "copy", "version", "statistics");
+                break;
+            }
+            case 2:
+            {
+                switch (args[0].toLowerCase())
+                {
+                    case "toggle":
+                    {
+                        tabCompletes = ImmutableList.of("autoslot", "maintenance");
+                        break;
+                    }
+                    case "whitelist":
+                    {
+                        tabCompletes = ImmutableList.of("add", "remove");
+                        break;
+                    }
+                    case "start":
+                    case "stopgroup":
+                    case "ustopgroup":
+                    {
+                        tabCompletes = getProxyAndServerGroups();
+                        break;
+                    }
+                    case "stop":
+                    {
+                        tabCompletes = getProxiesAndServers();
+                        break;
+                    }
+                    case "log":
+                    {
+                        tabCompletes = new LinkedList<>(CloudProxy.getInstance().getCachedServers().keySet());
+                        break;
+                    }
+                    case "maintenance":
+                    {
+                        tabCompletes = new LinkedList<>(CloudAPI.getInstance().getServerGroupMap().keySet());
+                        break;
+                    }
+
+                    case "cmds":
+                    {
+                        tabCompletes = CloudAPI.getInstance().getServers().stream()
+                                .map(ServerInfo::getServiceId).map(ServiceId::getServerId).collect(Collectors.toList());
+                        break;
+                    }
+                    case "cmdp":
+                    {
+                        tabCompletes = CloudAPI.getInstance().getProxys().stream()
+                                .map(ProxyInfo::getServiceId).map(ServiceId::getServerId).collect(Collectors.toList());
+                        break;
+                    }
+
+                }
+                break;
+            }
+            case 3:
+            {
+                switch (args[0].toLowerCase())
+                {
+                    case "whitelist":
+                    {
+                        tabCompletes = CloudAPI.getInstance().getOnlinePlayers()
+                                .stream().map(CloudPlayer::getName).collect(Collectors.toList());
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        return new LinkedList<>(StringUtil.copyPartialMatches(args[args.length - 1], tabCompletes, new ArrayList<>(tabCompletes.size())));
+    }
+
+    private LinkedList<String> getProxyAndServerGroups()
+    {
+        LinkedList<String> groups = new LinkedList<>(CloudAPI.getInstance().getProxyGroupMap().keySet());
+        groups.addAll(CloudAPI.getInstance().getServerGroupMap().keySet());
+        groups.sort(Collections.reverseOrder());
+        return groups;
+    }
+
+    private LinkedList<String> getProxiesAndServers()
+    {
+        LinkedList<String> groups = new LinkedList<>(CloudAPI.getInstance().getProxys().stream()
+                .map(ProxyInfo::getServiceId).map(ServiceId::getServerId).collect(Collectors.toList()));
+        groups.addAll(CloudAPI.getInstance().getServers().stream()
+                .map(ServerInfo::getServiceId).map(ServiceId::getServerId).collect(Collectors.toList()));
+        groups.sort(Collections.reverseOrder());
+        return groups;
     }
 }
