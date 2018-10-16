@@ -30,6 +30,10 @@ public class PlayerDatabase extends DatabaseUsable {
 
     public OfflinePlayer registerPlayer(PlayerConnection playerConnection)
     {
+        checkForNullPlayer(playerConnection.getUniqueId());
+        if (database.containsDoc(playerConnection.getUniqueId().toString())) {
+            return database.getDocument(playerConnection.getUniqueId().toString()).getObject("offlinePlayer", OfflinePlayer.TYPE);
+        }
         OfflinePlayer offlinePlayer = new OfflinePlayer(playerConnection.getUniqueId(), playerConnection.getName(), new Document(), System.currentTimeMillis(), System.currentTimeMillis(), playerConnection, new PermissionEntity(playerConnection.getUniqueId(), new HashMap<>(), null, null, new LinkedList<>()));
         database.insert(new DatabaseDocument(playerConnection.getUniqueId().toString()).append("offlinePlayer", offlinePlayer));
         return offlinePlayer;
@@ -37,6 +41,7 @@ public class PlayerDatabase extends DatabaseUsable {
 
     public PlayerDatabase updatePlayer(OfflinePlayer offlinePlayer)
     {
+        checkForNullPlayer(offlinePlayer.getUniqueId());
         Document document = database.getDocument(offlinePlayer.getUniqueId().toString());
         document.append("offlinePlayer", CloudPlayer.newOfflinePlayer(offlinePlayer));
         database.insert(document);
@@ -45,6 +50,7 @@ public class PlayerDatabase extends DatabaseUsable {
 
     public PlayerDatabase updateName(UUID uuid, String name)
     {
+        checkForNullPlayer(uuid);
         Document document = database.getDocument(uuid.toString());
         OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
         offlinePlayer.setName(name);
@@ -60,6 +66,7 @@ public class PlayerDatabase extends DatabaseUsable {
 
     public PlayerDatabase updatePermissionEntity(UUID uuid, PermissionEntity permissionEntity)
     {
+        checkForNullPlayer(uuid);
         Document document = database.getDocument(uuid.toString());
         OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
         offlinePlayer.setPermissionEntity(permissionEntity);
@@ -71,6 +78,7 @@ public class PlayerDatabase extends DatabaseUsable {
     public OfflinePlayer getPlayer(UUID uniqueId)
     {
         if (uniqueId == null) return null;
+        checkForNullPlayer(uniqueId);
         Document document = database.getDocument(uniqueId.toString());
 
         if (document == null) return null;
@@ -91,6 +99,20 @@ public class PlayerDatabase extends DatabaseUsable {
         }
 
         return map;
+    }
+
+    private void checkForNullPlayer(UUID uniqueId) {
+        if (database.containsDoc("null")) {
+            Document document = database.getDocument("null");
+
+            if (document.getString("_database_id_unique").equals(uniqueId.toString())) {
+                if (database.contains(uniqueId.toString())) {
+                    database.delete(uniqueId.toString());
+                }
+                database.delete("null");
+                database.insert(document);
+            }
+        }
     }
 
 }
