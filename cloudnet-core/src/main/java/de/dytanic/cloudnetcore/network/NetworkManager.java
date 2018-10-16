@@ -106,7 +106,7 @@ public final class NetworkManager {
         CloudPlayer cloudPlayer = new CloudPlayer(offlinePlayer, cloudPlayerConnection, proxyServer.getServerId());
         cloudPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
-        if (cloudPlayer.getFirstLogin() != null) cloudPlayer.setFirstLogin(System.currentTimeMillis());
+        if (cloudPlayer.getFirstLogin() == null) cloudPlayer.setFirstLogin(System.currentTimeMillis());
 
         CloudNet.getInstance().getEventManager().callEvent(new PlayerInitEvent(cloudPlayer));
 
