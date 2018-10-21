@@ -12,6 +12,8 @@ import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import de.dytanic.cloudnetcore.CloudNet;
+import de.dytanic.cloudnetcore.api.event.player.UpdatePlayerEvent;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,8 +40,10 @@ public class PlayerDatabase extends DatabaseUsable {
     public PlayerDatabase updatePlayer(OfflinePlayer offlinePlayer)
     {
         Document document = database.getDocument(offlinePlayer.getUniqueId().toString());
+        OfflinePlayer oldOfflinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
         document.append("offlinePlayer", CloudPlayer.newOfflinePlayer(offlinePlayer));
         database.insert(document);
+        CloudNet.getInstance().getEventManager().callEvent(new UpdatePlayerEvent(oldOfflinePlayer, offlinePlayer));
         return this;
     }
 
@@ -61,10 +65,12 @@ public class PlayerDatabase extends DatabaseUsable {
     public PlayerDatabase updatePermissionEntity(UUID uuid, PermissionEntity permissionEntity)
     {
         Document document = database.getDocument(uuid.toString());
-        OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
+        OfflinePlayer oldOfflinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
+        OfflinePlayer offlinePlayer = CloudPlayer.newOfflinePlayer(oldOfflinePlayer);
         offlinePlayer.setPermissionEntity(permissionEntity);
         document.append("offlinePlayer", offlinePlayer);
         database.insert(document);
+        CloudNet.getInstance().getEventManager().callEvent(new UpdatePlayerEvent(oldOfflinePlayer, offlinePlayer));
         return this;
     }
 

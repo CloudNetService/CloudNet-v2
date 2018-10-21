@@ -15,11 +15,13 @@ import lombok.Getter;
 @Getter
 public class UpdatePlayerEvent extends AsyncEvent<UpdatePlayerEvent> {
 
+    private OfflinePlayer oldOfflinePlayer;
     private OfflinePlayer offlinePlayer;
 
-    public UpdatePlayerEvent(OfflinePlayer offlinePlayer)
+    public UpdatePlayerEvent(OfflinePlayer oldOfflinePlayer, OfflinePlayer offlinePlayer)
     {
         super(new AsyncPosterAdapter<>());
+        this.oldOfflinePlayer = oldOfflinePlayer;
         this.offlinePlayer = offlinePlayer;
     }
 }

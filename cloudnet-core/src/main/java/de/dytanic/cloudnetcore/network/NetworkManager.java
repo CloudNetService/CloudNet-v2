@@ -269,8 +269,9 @@ public final class NetworkManager {
 
     public void handlePlayerUpdate(CloudPlayer cloudPlayer)
     {
+        CloudPlayer oldCloudPlayer = this.onlinePlayers.get(cloudPlayer.getUniqueId());
         this.onlinePlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
-        CloudNet.getInstance().getEventManager().callEvent(new UpdatePlayerEvent(cloudPlayer));
+        CloudNet.getInstance().getEventManager().callEvent(new UpdatePlayerEvent(oldCloudPlayer, cloudPlayer));
         this.sendAllUpdate(new PacketOutUpdatePlayer(cloudPlayer));
 
         if (cloudPlayer.getServer() != null)
