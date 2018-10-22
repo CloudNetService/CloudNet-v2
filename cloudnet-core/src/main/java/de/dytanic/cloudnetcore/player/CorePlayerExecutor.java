@@ -36,4 +36,18 @@ public class CorePlayerExecutor extends PlayerExecutor {
         CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "kickPlayer",
                 new Document("uniqueId", cloudPlayer.getUniqueId()).append("name", cloudPlayer.getName()).append("reason", reason));
     }
+
+    @Override
+    public void broadcastMessage(String message)
+    {
+        CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "broadcastMessage",
+                new Document("message", message));
+    }
+
+    @Override
+    public void broadcastMessage(String message, String permission)
+    {
+        CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "broadcastMessage",
+                new Document("message", message).append("permission", permission));
+    }
 }

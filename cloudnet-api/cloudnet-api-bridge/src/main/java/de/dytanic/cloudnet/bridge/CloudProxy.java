@@ -607,6 +607,23 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                     return true;
                 }
 
+                if (message.equalsIgnoreCase("broadcastMessage")) {
+                    BaseComponent[] components = TextComponent.fromLegacyText(document.getString("message"));
+                    if (document.contains("permission")) {
+                        String permission = document.getString("permission");
+                        for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
+                            if (proxiedPlayer.hasPermission(permission)) {
+                                proxiedPlayer.sendMessage(components);
+                            }
+                        }
+                    } else {
+                        for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
+                            proxiedPlayer.sendMessage(components);
+                        }
+                    }
+                    return true;
+                }
+
                 if (message.equalsIgnoreCase("player_server_switch"))
                 {
                     ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerServerSwitchEvent(

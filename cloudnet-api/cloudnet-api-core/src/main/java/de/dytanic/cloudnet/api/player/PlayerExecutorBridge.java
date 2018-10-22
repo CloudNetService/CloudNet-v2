@@ -71,4 +71,20 @@ public class PlayerExecutorBridge extends PlayerExecutor {
                         .append("fadeOut", fadeOut)
         );
     }
+
+    @Override
+    public void broadcastMessage(String message)
+    {
+        CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "broadcastMessage",
+                new Document("message", message)
+        );
+    }
+
+    @Override
+    public void broadcastMessage(String message, String permission)
+    {
+        CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "broadcastMessage",
+                new Document("message", message).append("permission", permission)
+        );
+    }
 }

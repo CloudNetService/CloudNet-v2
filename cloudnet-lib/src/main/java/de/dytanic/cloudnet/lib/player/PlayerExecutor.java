@@ -31,4 +31,12 @@ public class PlayerExecutor {
     {
     }
 
+    public void broadcastMessage(String message)
+    {
+    }
+
+    public void broadcastMessage(String message, String permission)
+    {
+    }
+
 }
