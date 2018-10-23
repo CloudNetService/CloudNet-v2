@@ -5,6 +5,7 @@
 package de.dytanic.cloudnet.lib.player;
 
 import lombok.Getter;
+import net.md_5.bungee.api.chat.BaseComponent;
 
 @Getter
 public class PlayerExecutor {
@@ -36,6 +37,14 @@ public class PlayerExecutor {
     }
 
     public void broadcastMessage(String message, String permission)
+    {
+    }
+
+    public void broadcastMessage(BaseComponent[] baseComponents)
+    {
+    }
+
+    public void broadcastMessage(BaseComponent[] baseComponents, String permission)
     {
     }
 

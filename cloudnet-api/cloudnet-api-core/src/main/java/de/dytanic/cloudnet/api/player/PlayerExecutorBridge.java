@@ -8,6 +8,8 @@ import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.PlayerExecutor;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 
 /**
  * Created by Tareko on 27.08.2017.
@@ -85,6 +87,22 @@ public class PlayerExecutorBridge extends PlayerExecutor {
     {
         CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "broadcastMessage",
                 new Document("message", message).append("permission", permission)
+        );
+    }
+
+    @Override
+    public void broadcastMessage(BaseComponent[] baseComponents)
+    {
+        CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "broadcastMessage",
+                new Document("baseComponents", ComponentSerializer.toJsonTree(baseComponents))
+        );
+    }
+
+    @Override
+    public void broadcastMessage(BaseComponent[] baseComponents, String permission)
+    {
+        CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "broadcastMessage",
+                new Document("baseComponents", ComponentSerializer.toJsonTree(baseComponents)).append("permission", permission)
         );
     }
 }

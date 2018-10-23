@@ -36,6 +36,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.chat.ComponentSerializer;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -608,7 +609,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                 }
 
                 if (message.equalsIgnoreCase("broadcastMessage")) {
-                    BaseComponent[] components = TextComponent.fromLegacyText(document.getString("message"));
+                    BaseComponent[] components = document.contains("message") ?
+                            TextComponent.fromLegacyText(document.getString("message")) :
+                            ComponentSerializer.parse(document.get("baseComponents").toString());
                     if (document.contains("permission")) {
                         String permission = document.getString("permission");
                         for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {

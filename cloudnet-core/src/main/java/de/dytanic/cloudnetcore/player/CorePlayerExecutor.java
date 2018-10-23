@@ -8,6 +8,8 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.PlayerExecutor;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 
 /**
  * Created by Tareko on 10.09.2017.
@@ -49,5 +51,19 @@ public class CorePlayerExecutor extends PlayerExecutor {
     {
         CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "broadcastMessage",
                 new Document("message", message).append("permission", permission));
+    }
+
+    @Override
+    public void broadcastMessage(BaseComponent[] baseComponents)
+    {
+        CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "broadcastMessage",
+                new Document("baseComponents", ComponentSerializer.toJsonTree(baseComponents)));
+    }
+
+    @Override
+    public void broadcastMessage(BaseComponent[] baseComponents, String permission)
+    {
+        CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "broadcastMessage",
+                new Document("baseComponents", ComponentSerializer.toJsonTree(baseComponents)).append("permission", permission));
     }
 }
