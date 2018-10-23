@@ -21,7 +21,7 @@ public abstract class Command
     protected String permission;
     protected String[] aliases;
 
-    protected String description = "Default command discrption";
+    protected String description = "Default command description";
 
     private Collection<CommandArgument> commandArguments = new HashSet<>();
 
