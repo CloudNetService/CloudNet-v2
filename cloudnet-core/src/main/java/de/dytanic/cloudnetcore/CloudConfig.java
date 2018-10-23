@@ -202,7 +202,7 @@ public class CloudConfig {
             );
             this.formatSplitter = configuration.getString("general.server-name-splitter");
             this.networkProperties = configuration.getSection("networkproperties").self;
-            //        configuration.set("general.disabled-modules", new ArrayList<>());
+            
             if (!configuration.getSection("general").self.containsKey("disabled-modules"))
             {
                 configuration.set("general.disabled-modules", new ArrayList<>());
@@ -233,8 +233,7 @@ public class CloudConfig {
         }.getType());
 
         this.userDocument = Document.loadDocument(usersPath);
-
-        /* ============================================================== */
+        
         return this;
     }
 
