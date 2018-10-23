@@ -108,7 +108,7 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
 
         if (key == null)
         {
-            System.out.println("Please copyFileToDirectory the WRAPPER_KEY.cnd for authentication!");
+            System.out.println("Please copy the WRAPPER_KEY.cnd into the root directory of the CloudNet-Wrapper for authentication!");
             System.out.println("The Wrapper stops in 5 seconds");
             NetworkUtils.sleepUninterruptedly(2000);
             System.exit(0);
