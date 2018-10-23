@@ -129,17 +129,15 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             System.out.println("Loading Modules...");
             moduleManager.loadModules();
         }
-
+        
         for (WrapperMeta wrapperMeta : config.getWrappers())
         {
             System.out.println("Loading Wrapper " + wrapperMeta.getId() + " @ " + wrapperMeta.getHostName());
             this.wrappers.put(wrapperMeta.getId(), new Wrapper(wrapperMeta));
         }
-        //Packet Init
 
         this.users = config.getUsers();
-
-        //Groups Loading
+        
         NetworkUtils.addAll(this.serverGroups, config.getServerGroups(), new Acceptable<ServerGroup>() {
             @Override
             public boolean isAccepted(ServerGroup value)
@@ -162,18 +160,15 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         webServer = new WebServer(optionSet.has("ssl"), config.getWebServerConfig().getAddress(), config.getWebServerConfig().getPort());
 
-        //CommandManager Appending
         this.initialCommands();
         this.initWebHandlers();
         this.initPacketHandlers();
 
-        //Scheduler Startup
         {
             Thread thread = new Thread(scheduler);
             thread.setDaemon(true);
             thread.start();
         }
-        /*=====================================*/
 
         for (ConnectableAddress connectableAddress : config.getAddresses())
             new CloudNetServer(optionSet, connectableAddress);
@@ -182,11 +177,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         RUNNING = true;
         Runtime.getRuntime().addShutdownHook(new Thread(this));
-
-        /*==================================*/
+        
         {
-
-
             if (!optionSet.has("onlyConsole"))
             {
                 CloudStartupHandler cloudStartupHandler = new CloudStartupHandler();
@@ -217,11 +209,11 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         }
 
         if (!optionSet.has("disable-modules"))
+        {
             System.out.println("Enabling Modules...");
+            moduleManager.enableModules();
+        }
 
-        moduleManager.enableModules();
-
-        //Event Init
         eventManager.callEvent(new CloudInitEvent());
         new LocalCloudWrapper().run(optionSet);
 
@@ -358,10 +350,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         shutdown();
     }
 
-    //Command Init
-
-    /*===================================================================================================================*/
-
     private void initWebHandlers()
     {
         webServer.getWebServerProvider().registerHandler(new WebsiteUtils());
@@ -462,8 +450,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         packetManager.registerHandler(PacketRC.CN_INTERNAL_CHANNELS + 1, PacketInCreateServerLog.class);
     }
 
-    /*===============================================================================================================*/
-
     @Deprecated
     public void setupGroup(ServerGroup serverGroup)
     {
@@ -517,10 +503,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         }
     }
-
-    /*========================================================================================================*/
-    //Util Methods
-    /*========================================================================================================*/
 
     public boolean authorization(String name, String token)
     {
@@ -1266,8 +1248,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         startProxy(proxyGroup, proxyGroup.getMemory(), new String[]{}, url, collection, new Document(), id, uniqueId);
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     public void startCloudServer(String serverName, int memory, boolean priorityStop)
     {
         startCloudServer(serverName, new BasicServerConfig(), memory, priorityStop);
@@ -1890,8 +1870,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         ServerProcessMeta serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, serverId), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
         wrapper.startGameServer(serverProcessMeta);
     }
-
-    /*=====================================================================================*/
 
     public void startProxyAsync(ProxyProcessMeta proxyProcessMeta, Wrapper wrapper)
     {
