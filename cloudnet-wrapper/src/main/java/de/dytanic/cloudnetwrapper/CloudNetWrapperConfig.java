@@ -81,9 +81,7 @@ public class CloudNetWrapperConfig {
 
             String wrapperId = null;
             if (System.getProperty("wrapper-id") != null)
-            {
                 wrapperId = System.getProperty("wrapper-id");
-            }
 
             if (wrapperId == null)
             {
@@ -97,9 +95,7 @@ public class CloudNetWrapperConfig {
             String cloudNetHost = NetworkUtils.getHostName();
 
             if (System.getProperty("cloudnet-host") != null)
-            {
                 cloudNetHost = System.getProperty("cloudnet-host");
-            }
 
             if (cloudNetHost.equals("127.0.0.1") || cloudNetHost.equals("127.0.1.1") || cloudNetHost.split("\\.").length != 4)
             {
@@ -120,9 +116,7 @@ public class CloudNetWrapperConfig {
 
             long memory = ((NetworkUtils.systemMemory() / 1048576) - 2048);
             if (memory < 1024)
-            {
                 System.out.println("WARINING: YOU CAN'T USE THE CLOUD NETWORK SOFTWARE WITH SUCH A SMALL MEMORY SIZE!");
-            }
 
             Configuration configuration = new Configuration();
             configuration.set("connection.cloudnet-host", cloudNetHost);
@@ -181,14 +175,10 @@ public class CloudNetWrapperConfig {
                 save();
             }
 
-            //generatated configurations
-
             this.proxy_config_host = configuration.getString("general.proxy-config-host");
 
             if (!Files.exists(Paths.get(devServicePath)))
-            {
                 Files.createDirectories(Paths.get(devServicePath));
-            }
 
         } catch (IOException e)
         {
