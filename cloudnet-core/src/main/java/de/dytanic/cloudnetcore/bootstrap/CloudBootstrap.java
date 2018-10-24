@@ -29,6 +29,12 @@ public final class CloudBootstrap {
 
     public static synchronized void main(String[] args) throws Exception
     {
+        if (Float.parseFloat(System.getProperty("java.class.version")) < 52D) 
+        { 
+            System.out.println("This application needs at least Java 8 or 10.0.1!"); 
+            return;
+        }
+        
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
 
         System.setProperty("file.encoding", "UTF-8");
@@ -86,10 +92,7 @@ public final class CloudBootstrap {
             new SystemTimer();
 
         if (optionSet.has("version"))
-        {
             System.out.println("CloudNet-Core RezSyM Version " + CloudBootstrap.class.getPackage().getImplementationVersion() + "-" + CloudBootstrap.class.getPackage().getSpecificationVersion());
-            return;
-        }
 
         CloudLogger cloudNetLogging = new CloudLogger();
         if (optionSet.has("debug")) cloudNetLogging.setDebugging(true);
@@ -103,6 +106,7 @@ public final class CloudBootstrap {
         });
 
         new HeaderFunction();
+        
         CloudConfig coreConfig = new CloudConfig(cloudNetLogging.getReader());
         CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, consolePreInit, Arrays.asList(args));
 
@@ -112,10 +116,9 @@ public final class CloudBootstrap {
         if (!optionSet.has("noconsole"))
         {
             System.out.println("Use the command \"help\" for further information!");
+            
+            final String user = System.getProperty("user.name");
             String commandLine;
-
-            String user = System.getProperty("user.name");
-
             try
             {
                 while (true)
@@ -132,9 +135,7 @@ public final class CloudBootstrap {
                             try
                             {
                                 if (!cloudNetCore.getCommandManager().dispatchCommand(dispatcher))
-                                {
                                     continue;
-                                }
                             } catch (Exception ex)
                             {
                                 ex.printStackTrace();
@@ -142,15 +143,10 @@ public final class CloudBootstrap {
                         }
 
                         if (!cloudNetCore.getCommandManager().dispatchCommand(commandLine))
-                        {
                             System.out.println("Command not found. Use the command \"help\" for further information!");
-                        }
                     }
                 }
-            } catch (Exception ex)
-            {
-
-            }
+            } catch (Exception ex) {}
         } else
         {
             while (true) NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
