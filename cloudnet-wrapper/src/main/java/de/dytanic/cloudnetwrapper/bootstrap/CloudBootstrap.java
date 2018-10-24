@@ -27,6 +27,13 @@ public class CloudBootstrap {
 
     public static void main(String[] args) throws Exception
     {
+        
+        if (Float.parseFloat(System.getProperty("java.class.version")) < 52D) 
+        { 
+            System.out.println("This application needs at least Java 8 or 10.0.1!"); 
+            return;
+        }
+        
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
 
         System.setProperty("file.encoding", "UTF-8");
@@ -72,39 +79,33 @@ public class CloudBootstrap {
             OSSignalBlocker.initSignalCancel();
 
         if (optionSet.has("systemTimer"))
-        {
             new SystemTimer();
-        }
 
         if (optionSet.has("version") || optionSet.has("v"))
-        {
             System.out.println("CloudNet-Wrapper RezSyM Version " + CloudBootstrap.class.getPackage().getImplementationVersion() + "-" + CloudBootstrap.class.getPackage().getSpecificationVersion());
-            return;
-        }
 
-        /*==============================================*/
         FileUtility.deleteDirectory(new File("temp"));
 
         if (Files.exists(Paths.get("local")))
             FileUtility.deleteDirectory(new File("local/cache"));
-        /*==============================================*/
 
         CloudLogger cloudNetLogging = new CloudLogger();
         if (optionSet.has("debug")) cloudNetLogging.setDebugging(true);
 
         new HeaderFunction();
+        
         CloudNetWrapperConfig cloudNetWrapperConfig = new CloudNetWrapperConfig(cloudNetLogging.getReader());
         CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging);
 
-        if (!cloudNetWrapper.bootstrap()) System.exit(0);
+        if (!cloudNetWrapper.bootstrap()) 
+            System.exit(0);
 
         if (!optionSet.has("noconsole"))
         {
             System.out.println("Use the command \"help\" for further information!");
+
+            final String user = System.getProperty("user.name");
             String commandLine;
-
-            String user = System.getProperty("user.name");
-
             while (true)
                 try
                 {
@@ -123,10 +124,7 @@ public class CloudBootstrap {
                             ex.printStackTrace();
                         }
                     }
-                } catch (Exception ex)
-                {
-
-                }
+                } catch (Exception ex) {}
         } else
         {
             while (true) NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
