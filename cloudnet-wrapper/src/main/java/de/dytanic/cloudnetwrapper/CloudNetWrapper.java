@@ -61,14 +61,9 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     private final WebClient webClient = new WebClient();
     private Auth auth;
     private OptionSet optionSet;
-    @Setter
-    private ServerProcessQueue serverProcessQueue;
-    @Setter
-    private SimpledUser simpledUser;
-
-    //Sytem meta
-    @Setter
-    private int maxMemory;
+    @Setter private ServerProcessQueue serverProcessQueue;
+    @Setter private SimpledUser simpledUser;
+    @Setter private int maxMemory;
 
     private final java.util.Map<String, GameServer> servers = NetworkUtils.newConcurrentHashMap();
     private final java.util.Map<String, BungeeCord> proxys = NetworkUtils.newConcurrentHashMap();
@@ -81,11 +76,8 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
 
     public CloudNetWrapper(OptionSet optionSet, CloudNetWrapperConfig cloudNetWrapperConfig, CloudLogger cloudNetLogging) throws Exception
     {
-
         if (instance == null)
-        {
             instance = this;
-        }
 
         this.wrapperConfig = cloudNetWrapperConfig;
         this.cloudNetLogging = cloudNetLogging;
@@ -177,7 +169,6 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         if (!Files.exists(Paths.get("local/server-icon.png")))
             FileUtility.insertData("files/server-icon.png", "local/server-icon.png");
 
-        //Server Handlers
         {
             networkConnection.sendPacket(new PacketOutSetReadyWrapper(true));
             IWrapperHandler iWrapperHandler = new StopTimeHandler();
@@ -211,22 +202,21 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
 
     public int getUsedMemory()
     {
-        int m = 0;
+        int memory = 0;
         for (GameServer gameServer : servers.values())
-            m = m + gameServer.getServerProcess().getMeta().getMemory();
+            memory = memory + gameServer.getServerProcess().getMeta().getMemory();
 
         for (BungeeCord bungeeCord : proxys.values())
-            m = m + bungeeCord.getProxyProcessMeta().getMemory();
+            memory = memory + bungeeCord.getProxyProcessMeta().getMemory();
 
-        return m;
+        return memory;
     }
 
     public void checkForUpdates()
     {
         if (!wrapperConfig.isAutoUpdate()) return;
 
-        String version = webClient.getNewstVersion();
-
+        final String version = webClient.getNewstVersion();
         if (version != null)
         {
             if (!version.equals(CloudNetWrapper.class.getPackage().getImplementationVersion()))
@@ -332,9 +322,5 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
 
     }
 
-    public double getCpuUsage()
-    {
-        return NetworkUtils.cpuUsage();
-    }
-
+    public double getCpuUsage() { return NetworkUtils.cpuUsage(); }
 }
