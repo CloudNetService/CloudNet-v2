@@ -278,10 +278,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         networkManager.updateAll();
     }
 
-    public static CloudLogger getLogger()
-    {
-        return getInstance().logger;
-    }
+    public static CloudLogger getLogger() { return getInstance().logger; }
 
     public void checkForUpdates()
     {
