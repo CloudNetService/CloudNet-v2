@@ -58,9 +58,7 @@ public class CloudNetWrapperConfig {
 
             String hostName = NetworkUtils.getHostName();
             if (System.getProperty("hostAddress") != null)
-            {
                 hostName = System.getProperty("hostAddress");
-            }
 
             if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4)
             {
