@@ -16,6 +16,10 @@ import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.kqueue.KQueue;
+import io.netty.channel.kqueue.KQueueEventLoopGroup;
+import io.netty.channel.kqueue.KQueueServerSocketChannel;
+import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
@@ -62,11 +66,6 @@ public final class NetworkUtils {
             SPACE_STRING = " ",
             SLASH_STRING = "/";
 
-    public static Class<? extends SocketChannel> socketChannel()
-    {
-        return EPOLL ? EpollSocketChannel.class : NioSocketChannel.class;
-    }
-
     private static final char[] VALUES = new char[]{
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'
             , 'J', '1', '2', '3', '4', '5', '6',
@@ -106,35 +105,41 @@ public final class NetworkUtils {
         };
     }
 
+    public static Class<? extends SocketChannel> socketChannel()
+    {
+        return EPOLL ? EpollSocketChannel.class : KQueue.isAvailable() ? KQueueSocketChannel.class : NioSocketChannel.class;
+    }
+
     public static Class<? extends ServerSocketChannel> serverSocketChannel()
     {
-        return EPOLL ? EpollServerSocketChannel.class : NioServerSocketChannel.class;
+        return EPOLL ? EpollServerSocketChannel.class : KQueue.isAvailable() ? KQueueServerSocketChannel.class : NioServerSocketChannel.class;
     }
 
     public static EventLoopGroup eventLoopGroup()
     {
-        return EPOLL ? new EpollEventLoopGroup() : new NioEventLoopGroup();
+        return eventLoopGroup(Runtime.getRuntime().availableProcessors());
     }
 
     public static EventLoopGroup eventLoopGroup(int threads)
     {
-        return EPOLL ? new EpollEventLoopGroup(threads) : new NioEventLoopGroup(threads);
+        return EPOLL ? new EpollEventLoopGroup(threads) : KQueue.isAvailable() ? new KQueueEventLoopGroup(threads) : new NioEventLoopGroup(threads);
     }
 
     public static EventLoopGroup eventLoopGroup(ThreadFactory threadFactory)
     {
-        return EPOLL ? new EpollEventLoopGroup(0, threadFactory) : new NioEventLoopGroup(0, threadFactory);
+        return eventLoopGroup(0, threadFactory);
     }
 
     public static EventLoopGroup eventLoopGroup(int threads, ThreadFactory threadFactory)
     {
-        return EPOLL ? new EpollEventLoopGroup(threads, threadFactory) : new NioEventLoopGroup(threads, threadFactory);
+        return EPOLL ? new EpollEventLoopGroup(threads, threadFactory) : KQueue.isAvailable() ? new KQueueEventLoopGroup(threads, threadFactory) : new NioEventLoopGroup(threads, threadFactory);
     }
 
     public static <T> void addAll(Collection<T> key, Collection<T> value)
     {
-        for (T k : value)
-            key.add(k);
+        if (key == null || value == null) return;
+
+        key.addAll(value);
     }
 
     public static <T, V> void addAll(java.util.Map<T, V> key, java.util.Map<T, V> value)

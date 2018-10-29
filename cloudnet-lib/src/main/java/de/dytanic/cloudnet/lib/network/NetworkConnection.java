@@ -70,9 +70,6 @@ public final class NetworkConnection implements PacketSender {
             if (ssl) sslContext = SslContext.newClientContext(InsecureTrustManagerFactory.INSTANCE);
 
             Bootstrap bootstrap = new Bootstrap()
-                    //.option(ChannelOption.SO_KEEPALIVE, true)
-                    //.option(ChannelOption.TCP_NODELAY, true)
-                    //.option(ChannelOption.IP_TOS, 24)
                     .option(ChannelOption.AUTO_READ, true)
                     .group(eventLoopGroup)
                     .handler(new ChannelInitializer<Channel>() {
