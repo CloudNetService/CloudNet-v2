@@ -174,16 +174,16 @@ public class SetupSpigotVersion
                         switch (reader.readLine().toLowerCase())
                         {
                             case "1.8.8":
-                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
+                                download.run("https://yivesmirror.com/files/paper/PaperSpigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
                                 return;
                             case "1.11.2":
-                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.11.2-b1104.jar");
+                                download.run("https://yivesmirror.com/files/paper/PaperSpigot-1.11.2-b1104.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.12.2-b1552.jar");
+                                download.run("https://yivesmirror.com/files/paper/PaperSpigot-1.12.2-b1552.jar");
                                 return;
                             case "1.13.1":
-                                download.run("https://yivesmirror.com/files/paperspigot/PaperSpigot-1.13.1-b332.jar");
+                                download.run("https://yivesmirror.com/files/paper/PaperSpigot-1.13.1-b332.jar");
                                 return;
                             case "1.13.2":
                                 download.run("https://yivesmirror.com/files/paper/Paper-1.13.2-b409.jar");
