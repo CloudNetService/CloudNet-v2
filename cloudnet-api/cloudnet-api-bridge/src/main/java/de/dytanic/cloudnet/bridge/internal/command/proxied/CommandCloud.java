@@ -80,6 +80,12 @@ public final class CommandCloud extends Command implements TabExecutor {
         switch (args.length)
         {
             case 1:
+                if (args[0].equalsIgnoreCase("whitelist"))
+                {
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "Whitelisted players from " + CloudProxy.getInstance().getProxyGroup().getName());
+                    for (String entry : CloudProxy.getInstance().getProxyGroup().getProxyConfig().getWhitelist())
+                        commandSender.sendMessage("§7- " + entry);
+                }
                 if (args[0].equalsIgnoreCase("rl") && commandSender.hasPermission("cloudnet.command.cloud.reload"))
                 {
                     CloudAPI.getInstance().sendCloudCommand("reload config");
@@ -542,6 +548,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         CloudAPI.getInstance().getPrefix() + "§7/cloud toggle maintenance",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud toggle maintenance <time>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud setMaxPlayers <maxonlinecount>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud whitelist",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud whitelist <add : remove> <name>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud start <group> <count>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud start <group> <template>",
