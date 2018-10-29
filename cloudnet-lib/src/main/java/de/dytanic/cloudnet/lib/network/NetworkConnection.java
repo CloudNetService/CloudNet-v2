@@ -14,6 +14,7 @@ import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,9 +36,9 @@ public final class NetworkConnection implements PacketSender {
     private long connectionTrys = 0;
 
     private final PacketManager packetManager = new PacketManager();
-    private EventLoopGroup eventLoopGroup = NetworkUtils.eventLoopGroup(4);
-    private Runnable task;
+    private final EventLoopGroup eventLoopGroup = NetworkUtils.eventLoopGroup(4);
 
+    private Runnable task;
     private SslContext sslContext;
 
     @Override
@@ -66,8 +67,7 @@ public final class NetworkConnection implements PacketSender {
     {
         try
         {
-            eventLoopGroup = NetworkUtils.eventLoopGroup(4);
-            if (ssl) sslContext = SslContext.newClientContext(InsecureTrustManagerFactory.INSTANCE);
+            if (ssl) sslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
 
             Bootstrap bootstrap = new Bootstrap()
                     .option(ChannelOption.AUTO_READ, true)
@@ -95,10 +95,11 @@ public final class NetworkConnection implements PacketSender {
             System.out.println("Failed to connect... [" + connectionTrys + "]");
             System.out.println("Error: " + ex.getMessage());
 
-            if (eventLoopGroup != null)
-                eventLoopGroup.shutdownGracefully();
-
-            eventLoopGroup = null;
+            if (this.channel != null)
+            {
+                this.channel.close();
+                this.channel = null;
+            }
 
             if (cancelTask != null)
             {
@@ -113,6 +114,7 @@ public final class NetworkConnection implements PacketSender {
     {
         if (channel != null)
             channel.close();
+
         eventLoopGroup.shutdownGracefully();
         return false;
     }
