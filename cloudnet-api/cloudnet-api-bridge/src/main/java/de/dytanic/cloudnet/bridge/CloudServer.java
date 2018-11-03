@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 
 /**
  * Cloud-Server represents
@@ -430,17 +431,24 @@ public class CloudServer implements ICloudService {
     }
 
     /**
-     * Updating and sets the NameTags for one target Player
      *
      * @param player
      */
     public void updateNameTags(Player player)
     {
+        this.updateNameTags(player, null);
+    }
+
+    public void updateNameTags(Player player, Function<Player, PermissionGroup> playerPermissionGroupFunction)
+    {
         if (CloudAPI.getInstance().getPermissionPool() == null || !CloudAPI.getInstance().getPermissionPool().isAvailable())
             return;
 
-        PermissionGroup playerPermissionGroup = CloudServer.getInstance().getCloudPlayers().get(player.getUniqueId())
-                .getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
+        PermissionGroup playerPermissionGroup = playerPermissionGroupFunction != null ? playerPermissionGroupFunction.apply(player) : null;
+
+        if (playerPermissionGroup == null)
+            playerPermissionGroup = CloudServer.getInstance().getCloudPlayers().get(player.getUniqueId())
+                    .getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
 
         initScoreboard(player);
 
