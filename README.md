@@ -36,9 +36,9 @@ Use of KVM virtualization or dedicated servers is recommended.
 
  ### Support
  
-  * Spigot-Support » 1.7.10 - 1.13.1 
+  * Spigot-Support » 1.7.10 - 1.13.2
     * PaperSpigot, TacoSpigot, Hose, Torch
-  * BungeeCord-Support » 1.7.10 - 1.13.1
+  * BungeeCord-Support » 1.7.10 - 1.13.2
     * Flexpipe, HexaCord, Waterfall, TraverTine
     
 ### Discord
