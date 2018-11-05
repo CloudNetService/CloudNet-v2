@@ -431,7 +431,6 @@ public class CloudServer implements ICloudService {
     }
 
     /**
-     *
      * @param player
      */
     public void updateNameTags(Player player)
@@ -441,13 +440,18 @@ public class CloudServer implements ICloudService {
 
     public void updateNameTags(Player player, Function<Player, PermissionGroup> playerPermissionGroupFunction)
     {
+        this.updateNameTags(player, playerPermissionGroupFunction, null);
+    }
+
+    public void updateNameTags(Player player, Function<Player, PermissionGroup> playerPermissionGroupFunction, Function<Player, PermissionGroup> allOtherPlayerPermissionGroupFunction)
+    {
         if (CloudAPI.getInstance().getPermissionPool() == null || !CloudAPI.getInstance().getPermissionPool().isAvailable())
             return;
 
         PermissionGroup playerPermissionGroup = playerPermissionGroupFunction != null ? playerPermissionGroupFunction.apply(player) : null;
 
         if (playerPermissionGroup == null)
-            playerPermissionGroup = CloudServer.getInstance().getCloudPlayers().get(player.getUniqueId())
+            playerPermissionGroup = getCloudPlayers().get(player.getUniqueId())
                     .getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
 
         initScoreboard(player);
@@ -459,8 +463,11 @@ public class CloudServer implements ICloudService {
             if (playerPermissionGroup != null)
                 addTeamEntry(player, all, playerPermissionGroup);
 
-            PermissionGroup targetPermissionGroup = CloudServer.getInstance().getCachedPlayer(all.getUniqueId())
-                    .getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
+            PermissionGroup targetPermissionGroup = allOtherPlayerPermissionGroupFunction != null ? allOtherPlayerPermissionGroupFunction.apply(all) : null;
+
+            if (targetPermissionGroup == null)
+                targetPermissionGroup = getCachedPlayer(all.getUniqueId())
+                        .getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
 
             if (targetPermissionGroup != null)
                 addTeamEntry(all, player, targetPermissionGroup);
