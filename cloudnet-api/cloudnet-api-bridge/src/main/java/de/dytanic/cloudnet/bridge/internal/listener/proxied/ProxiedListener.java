@@ -121,7 +121,8 @@ public class ProxiedListener implements Listener {
                 e.getConnection().getUniqueId(),
                 e.getConnection().getName(), e.getConnection().getVersion(),
                 e.getConnection().getAddress().getAddress().getHostAddress(),
-                e.getConnection().getAddress().getPort(), e.getConnection().isOnlineMode(), e.getConnection().isLegacy()
+                e.getConnection().getAddress().getPort(), e.getConnection().isOnlineMode(),
+                e.getConnection().isLegacy()
         );
 
         CloudPlayer cloudPlayer = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketOutPlayerLoginRequest(playerConnection),
@@ -157,18 +158,20 @@ public class ProxiedListener implements Listener {
         }
 
         ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
-        if (proxyGroup.getProxyConfig().isEnabled())
-            if (CloudAPI.getInstance().getOnlineCount() >= CloudProxy.getInstance().getProxyGroup().getProxyConfig().getMaxPlayers())
-            {
-                PermissionCheckEvent permissionCheckEvent = new PermissionCheckEvent(cloudCommandSender, "cloudnet.fulljoin", false);
 
-                if (!ProxyServer.getInstance().getPluginManager().callEvent(permissionCheckEvent).hasPermission())
+        if (proxyGroup != null)
+            if (proxyGroup.getProxyConfig().isEnabled())
+                if (CloudAPI.getInstance().getOnlineCount() >= CloudProxy.getInstance().getProxyGroup().getProxyConfig().getMaxPlayers())
                 {
-                    e.setCancelled(true);
-                    e.setCancelReason(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("full-join")));
-                    return;
+                    PermissionCheckEvent permissionCheckEvent = new PermissionCheckEvent(cloudCommandSender, "cloudnet.fulljoin", false);
+
+                    if (!ProxyServer.getInstance().getPluginManager().callEvent(permissionCheckEvent).hasPermission())
+                    {
+                        e.setCancelled(true);
+                        e.setCancelReason(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("full-join")));
+                        return;
+                    }
                 }
-            }
 
         CloudProxy.getInstance().getCloudPlayers().put(cloudPlayer.getUniqueId(), cloudPlayer);
     }
