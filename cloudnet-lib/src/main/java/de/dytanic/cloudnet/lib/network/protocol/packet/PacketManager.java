@@ -93,7 +93,7 @@ public final class PacketManager {
             {
             }
 
-        if (i >= 200) synchronizedHandlers.get(uniqueId).setValue(new Result(uniqueId, new Document()));
+        if (i >= 4999) synchronizedHandlers.get(uniqueId).setValue(new Result(uniqueId, new Document()));
 
         Value<Result> values = synchronizedHandlers.get(uniqueId);
         synchronizedHandlers.remove(uniqueId);
