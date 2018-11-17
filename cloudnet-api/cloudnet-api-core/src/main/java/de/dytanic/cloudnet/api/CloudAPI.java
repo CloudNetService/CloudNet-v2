@@ -114,7 +114,6 @@ public final class CloudAPI implements MetaObj {
         this.networkConnection.tryDisconnect();
     }
 
-    @Deprecated
     public CloudAPI update(ServerInfo serverInfo)
     {
         if (networkConnection.isConnected())
@@ -122,7 +121,6 @@ public final class CloudAPI implements MetaObj {
         return this;
     }
 
-    @Deprecated
     public CloudAPI update(ProxyInfo proxyInfo)
     {
         if (networkConnection.isConnected())
