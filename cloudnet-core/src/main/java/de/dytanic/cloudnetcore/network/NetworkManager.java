@@ -41,6 +41,7 @@ import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.UUID;
@@ -217,6 +218,16 @@ public final class NetworkManager {
     public void handleProxyInfoUpdate(ProxyServer proxyServer, ProxyInfo incoming)
     {
         CloudNet.getInstance().getEventManager().callEvent(new ProxyInfoUpdateEvent(proxyServer, incoming));
+
+        Collection<UUID> players = new ArrayList<>();
+
+        for (ProxyServer proxy : CloudNet.getInstance().getProxys().values())
+            for (MultiValue<UUID, String> multiValue : proxy.getProxyInfo().getPlayers())
+                players.add(multiValue.getFirst());
+
+        for (CloudPlayer cloudPlayer : this.onlinePlayers.values())
+            if (!players.contains(cloudPlayer.getUniqueId()))
+                this.onlinePlayers.remove(cloudPlayer.getUniqueId());
 
         this.sendAllUpdate(new PacketOutUpdateProxyInfo(incoming));
         this.sendAll(new PacketOutUpdateOnlineCount(getOnlineCount()));
