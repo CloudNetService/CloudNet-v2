@@ -87,7 +87,7 @@ public final class NetworkManager {
     {
         if (this.onlinePlayers.containsKey(cloudPlayerConnection.getUniqueId()))
         {
-            proxyServer.sendPacketSynchronized(new PacketOutLoginPlayer(uniqueId, null));
+            proxyServer.sendPacketSynchronized(new PacketOutLoginPlayer(uniqueId, null, "Already connected in network"));
             return;
         }
 
@@ -95,7 +95,6 @@ public final class NetworkManager {
         CloudNet.getInstance().getEventManager().callEvent(loginRequestEvent);
 
         PlayerDatabase playerDatabase = CloudNet.getInstance().getDbHandlers().getPlayerDatabase();
-
         OfflinePlayer offlinePlayer = null;
 
         if (!playerDatabase.containsPlayer(cloudPlayerConnection.getUniqueId()))
@@ -116,7 +115,7 @@ public final class NetworkManager {
         cloudPlayer.setName(cloudPlayerConnection.getName());
         CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(CloudPlayer.newOfflinePlayer(cloudPlayer));
 
-        proxyServer.sendPacketSynchronized(new PacketOutLoginPlayer(uniqueId, cloudPlayer));
+        proxyServer.sendPacket(new PacketOutLoginPlayer(uniqueId, cloudPlayer, "successful Login"));
         this.waitingPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
         handlePlayerLogin(cloudPlayer);
     }
@@ -141,14 +140,14 @@ public final class NetworkManager {
         try
         {
             System.out.println("Player [" + playerWhereAmI.getName() + NetworkUtils.SLASH_STRING + playerWhereAmI.getUniqueId() + NetworkUtils.SLASH_STRING + playerWhereAmI.getPlayerConnection().getHost() + "] is disconnected on " + playerWhereAmI.getProxy());
-        } catch (Exception ex)
+        } catch (Exception ignored)
         {
         }
 
         try
         {
             this.onlinePlayers.remove(playerWhereAmI.getUniqueId());
-        } catch (Exception ex)
+        } catch (Exception ignored)
         {
 
         }
@@ -160,7 +159,7 @@ public final class NetworkManager {
             playerWhereAmI.setLastLogin(System.currentTimeMillis());
             playerWhereAmI.setLastPlayerConnection(playerWhereAmI.getPlayerConnection());
             CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(CloudPlayer.newOfflinePlayer(playerWhereAmI));
-        } catch (Exception ex)
+        } catch (Exception ignored)
         {
 
         }
@@ -175,7 +174,7 @@ public final class NetworkManager {
         try
         {
             this.onlinePlayers.remove(uniqueId);
-        } catch (Exception ex)
+        } catch (Exception ignored)
         {
         }
 

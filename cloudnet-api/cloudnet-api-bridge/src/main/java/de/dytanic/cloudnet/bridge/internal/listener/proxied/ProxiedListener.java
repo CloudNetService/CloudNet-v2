@@ -125,13 +125,15 @@ public class ProxiedListener implements Listener {
                 e.getConnection().isLegacy()
         );
 
-        CloudPlayer cloudPlayer = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketOutPlayerLoginRequest(playerConnection),
-                CloudAPI.getInstance().getNetworkConnection()).getResult().getObject("player", new TypeToken<CloudPlayer>() {
+        Document result = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketOutPlayerLoginRequest(playerConnection),
+                CloudAPI.getInstance().getNetworkConnection()).getResult();
+
+        CloudPlayer cloudPlayer = result.getObject("player", new TypeToken<CloudPlayer>() {
         }.getType());
 
         if (cloudPlayer == null)
         {
-            e.setCancelReason(TextComponent.fromLegacyText("§cUnverified login."));
+            e.setCancelReason(TextComponent.fromLegacyText("§cUnverified login. Reason: §e" + (result.contains("reason") ? result.getString("reason") : "no reason defined")));
             e.setCancelled(true);
             return;
         }
