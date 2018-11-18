@@ -18,7 +18,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
-        <service.version>2.1.13</service.version>
+        <service.version>2.1.13.1</service.version>
         <service.type>RELEASE</service.type>
         <!-- Dependencies -->
         <dependency.lombok.version>1.18.4</dependency.lombok.version>

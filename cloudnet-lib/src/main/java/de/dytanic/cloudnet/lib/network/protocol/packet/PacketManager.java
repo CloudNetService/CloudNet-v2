@@ -64,18 +64,17 @@ public final class PacketManager {
     public PacketManager dispatchQueue(PacketSender packetSender)
     {
         while (!this.packetQueue.isEmpty())
-        {
             packetSender.sendPacket(this.packetQueue.remove());
-        }
+
         return this;
     }
 
     public Result sendQuery(Packet packet, PacketSender packetSender)
     {
-        UUID uniq = UUID.randomUUID();
-        packet.uniqueId = uniq;
+        UUID uniqueId = UUID.randomUUID();
+        packet.uniqueId = uniqueId;
         Value<Result> handled = new Value<>(null);
-        synchronizedHandlers.put(uniq, handled);
+        synchronizedHandlers.put(uniqueId, handled);
         executorService.schedule(new Runnable() {
             @Override
             public void run()
@@ -84,20 +83,20 @@ public final class PacketManager {
             }
         });
 
-        short i = 0;
+        int i = 0;
 
-        while (synchronizedHandlers.get(uniq).getValue() == null && i++ < 5000)
+        while (synchronizedHandlers.get(uniqueId).getValue() == null && i++ < 5000)
             try
             {
-                Thread.sleep(0, 300000);
+                Thread.sleep(0, 500000);
             } catch (InterruptedException ignored)
             {
             }
 
-        if (i >= 200) synchronizedHandlers.get(uniq).setValue(new Result(uniq, new Document()));
+        if (i >= 4999) synchronizedHandlers.get(uniqueId).setValue(new Result(uniqueId, new Document()));
 
-        Value<Result> values = synchronizedHandlers.get(uniq);
-        synchronizedHandlers.remove(uniq);
+        Value<Result> values = synchronizedHandlers.get(uniqueId);
+        synchronizedHandlers.remove(uniqueId);
         return values.getValue();
     }
 

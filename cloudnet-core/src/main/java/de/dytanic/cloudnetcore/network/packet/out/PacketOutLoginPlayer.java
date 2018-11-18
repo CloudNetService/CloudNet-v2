@@ -21,8 +21,8 @@ public class PacketOutLoginPlayer extends Packet {
         super(PacketRC.PLAYER_HANDLE + 1, new Document("player", cloudPlayer));
     }
 
-    public PacketOutLoginPlayer(UUID uniqueId, CloudPlayer cloudPlayer)
+    public PacketOutLoginPlayer(UUID uniqueId, CloudPlayer cloudPlayer, String reason)
     {
-        super(uniqueId, PacketRC.PLAYER_HANDLE + 1, new Document("player", cloudPlayer));
+        super(uniqueId, PacketRC.PLAYER_HANDLE + 1, new Document("player", cloudPlayer).append("reason", reason));
     }
 }
