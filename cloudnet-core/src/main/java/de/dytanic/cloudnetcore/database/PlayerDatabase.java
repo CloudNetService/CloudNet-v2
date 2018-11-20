@@ -12,6 +12,8 @@ import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import de.dytanic.cloudnetcore.CloudNet;
+import de.dytanic.cloudnetcore.api.event.player.UpdatePlayerEvent;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,9 +39,13 @@ public class PlayerDatabase extends DatabaseUsable {
 
     public PlayerDatabase updatePlayer(OfflinePlayer offlinePlayer)
     {
+        CloudNet.getLogger().debug("PlayerDatabase updatePlayer offlinePlayer null: " + (offlinePlayer == null));
+        if (offlinePlayer == null) return this;
         Document document = database.getDocument(offlinePlayer.getUniqueId().toString());
         document.append("offlinePlayer", CloudPlayer.newOfflinePlayer(offlinePlayer));
         database.insert(document);
+        CloudNet.getLogger().debug("PlayerDatabase updatePlayer call UpdatePlayerEvent");
+        CloudNet.getInstance().getEventManager().callEvent(new UpdatePlayerEvent(offlinePlayer));
         return this;
     }
 
@@ -70,11 +76,12 @@ public class PlayerDatabase extends DatabaseUsable {
 
     public OfflinePlayer getPlayer(UUID uniqueId)
     {
+        CloudNet.getLogger().debug("PlayerDatabase getPlayer uniqueId " + uniqueId);
         if (uniqueId == null) return null;
         Document document = database.getDocument(uniqueId.toString());
-
+        CloudNet.getLogger().debug("PlayerDatabase getPlayer document null: " + (document == null));
         if (document == null) return null;
-
+        CloudNet.getLogger().debug("PlayerDatabase getPlayer offlinePlayer contained: " + document.contains("offlinePlayer"));
         return document.getObject("offlinePlayer", OfflinePlayer.TYPE);
     }
 

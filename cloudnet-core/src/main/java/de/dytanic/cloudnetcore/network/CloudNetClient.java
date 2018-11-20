@@ -134,8 +134,14 @@ public class CloudNetClient
 
         if (!(obj instanceof Packet)) return;
 
-        CloudNet.getLogger().debug("Receiving Packet on " + getChannel().remoteAddress().toString());
         Packet packet = (Packet) obj;
+        CloudNet.getLogger().debug(
+                "Receiving Packet (id=" +
+                        CloudNet.getInstance().getPacketManager().packetId(packet) +
+                        ";dataLength=" +
+                        CloudNet.getInstance().getPacketManager().packetData(packet).size()
+                        + ") by " + getNetworkComponent().getServerId()
+        );
         CloudNet.getInstance().getPacketManager().dispatchPacket(packet, networkComponent);
     }
 
