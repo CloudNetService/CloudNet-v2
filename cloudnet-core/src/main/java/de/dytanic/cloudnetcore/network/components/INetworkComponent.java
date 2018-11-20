@@ -22,7 +22,13 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
 
     default void sendPacket(Packet packet)
     {
-        CloudNet.getLogger().debug("Sending Packet " + packet.getClass().getSimpleName() + " to " + getServerId());
+        CloudNet.getLogger().debug(
+                "Sending Packet " +
+                        packet.getClass().getSimpleName() +
+                        " (id=" + CloudNet.getInstance().getPacketManager().packetId(packet) +
+                        ";dataLength=" + CloudNet.getInstance().getPacketManager().packetData(packet).size() +
+                        ") to " + getServerId()
+        );
 
         if (getChannel() == null) return;
         if (getChannel().eventLoop().inEventLoop())
@@ -62,6 +68,13 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
     default void sendPacketSynchronized(Packet packet)
     {
         if (getChannel() == null) return;
+        CloudNet.getLogger().debug(
+                "Sending Packet " +
+                        packet.getClass().getSimpleName() +
+                        " (id=" + CloudNet.getInstance().getPacketManager().packetId(packet) +
+                        ";dataLength=" + CloudNet.getInstance().getPacketManager().packetData(packet).size() +
+                        ") to " + getServerId()
+        );
         getChannel().writeAndFlush(packet).syncUninterruptibly();
     }
 
