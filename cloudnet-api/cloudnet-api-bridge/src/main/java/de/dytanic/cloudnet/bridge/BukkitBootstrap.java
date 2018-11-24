@@ -44,6 +44,8 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
     @Override
     public void onEnable()
     {
+        new CloudServer(this, CloudAPI.getInstance());
+
         CloudAPI.getInstance().bootstrap();
         checkRegistryAccess();
 
@@ -56,7 +58,6 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         {
         }
 
-        new CloudServer(this, CloudAPI.getInstance());
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
 
         CloudServer.getInstance().registerCommand(new CommandResource());
