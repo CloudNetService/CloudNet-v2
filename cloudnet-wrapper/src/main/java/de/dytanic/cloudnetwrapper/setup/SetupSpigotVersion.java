@@ -130,31 +130,31 @@ public class SetupSpigotVersion
                         switch (reader.readLine().toLowerCase())
                         {
                             case "1.7.10":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
                                 return;
                             case "1.8.8":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
                                 return;
                             case "1.9.4":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar");
-                                return;
-                            case "1.10.2":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.10.2-R0.1-SNAPSHOT-latest.jar");
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.9.4-R0.1-SNAPSHOT.jar");
                                 return;
                             case "1.11.2":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.11.2.jar");
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.11.2-R0.1-SNAPSHOT.jar");
+                                return;
+                            case "1.10.2":
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.10.2-R0.1-SNAPSHOT.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.12.2.jar");
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.12.2-R0.1-SNAPSHOT-b1647.jar");
                                 return;
                             case "1.13":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.jar");
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.13-R0.1-SNAPSHOT-b1851.jar");
                                 return;
                             case "1.13.1":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.1.jar");
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.13.1-R0.1-SNAPSHOT-b1947.jar");
                                 return;
                             case "1.13.2":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.2.jar");
+                                download.run("https://yivesmirror.com/files/spigot/spigot-1.13.2-R0.1-SNAPSHOT-b1974.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");
@@ -174,16 +174,19 @@ public class SetupSpigotVersion
                         switch (reader.readLine().toLowerCase())
                         {
                             case "1.8.8":
-                                download.run("https://papermc.io/ci/job/Paper/443/artifact/Paperclip.jar");
+                                download.run("https://yivesmirror.com/files/paper/PaperSpigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
                                 return;
                             case "1.11.2":
-                                download.run("https://papermc.io/ci/job/Paper/1104/artifact/paperclip.jar");
+                                download.run("https://yivesmirror.com/files/paper/PaperSpigot-1.11.2-b1104.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://papermc.io/ci/job/Paper/1587/artifact/paperclip.jar");
+                                download.run("https://yivesmirror.com/files/paper/PaperSpigot-1.12.2-b1552.jar");
+                                return;
+                            case "1.13.1":
+                                download.run("https://yivesmirror.com/files/paper/PaperSpigot-1.13.1-b332.jar");
                                 return;
                             case "1.13.2":
-                                download.run("https://papermc.io/ci/job/Paper-1.13/447/artifact/paperclip.jar");
+                                download.run("https://yivesmirror.com/files/paper/Paper-1.13.2-b409.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");
