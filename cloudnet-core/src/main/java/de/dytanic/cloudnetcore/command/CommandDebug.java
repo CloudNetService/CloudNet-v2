@@ -8,8 +8,6 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnetcore.CloudNet;
 
-import java.io.IOException;
-
 public final class CommandDebug extends Command {
 
     public CommandDebug()
