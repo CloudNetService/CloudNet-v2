@@ -457,6 +457,7 @@ public class GameServer implements ServerDispatcher {
                 new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getTemplate().getName() + "/plugins/CloudNetAPI.jar").delete();
             } catch (Exception e)
             {
+                e.printStackTrace();
             }
 
             System.out.println("Template " + template.getName() + " was copied!");
