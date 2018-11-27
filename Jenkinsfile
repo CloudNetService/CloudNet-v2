@@ -51,7 +51,7 @@ pipeline {
         cp cloudnet-core/target/CloudNet-Master.jar temp/CloudNet-Master/;
         cp cloudnet-wrapper/target/CloudNet-Wrapper.jar temp/CloudNet-Wrapper/;
         find cloudnet-tools/ -type f -name "cloudnet-tools-*.jar" -and -not -name "*-sources.jar" -and -not -name "*-javadoc.jar" -exec cp "{}" temp/tools/ ';' '''
-        zip archive: true, dir: 'temp', glob: '', zipFile: 'CloudNet.zip'
+        zip archive: true, dir: 'temp', glob: '', zipFile: 'CloudNet-$POM_VERSION.zip'
         sh 'rm -r temp/';
       }
     }
