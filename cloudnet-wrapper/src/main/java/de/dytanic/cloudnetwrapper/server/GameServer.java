@@ -474,10 +474,15 @@ public class GameServer implements ServerDispatcher {
         if (instance.isAlive())
         {
             executeCommand("stop");
-            NetworkUtils.sleepUninterruptedly(500);
         }
 
-        instance.destroyForcibly();
+        try {
+            if (!instance.waitFor(45, TimeUnit.SECONDS)) {
+                instance.destroyForcibly();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void copyDirectory(String name)
