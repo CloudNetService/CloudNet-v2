@@ -474,7 +474,7 @@ public class GameServer implements ServerDispatcher {
         if (instance.isAlive())
         {
             executeCommand("stop");
-            NetworkUtils.sleepUninterruptedly(500);
+            NetworkUtils.sleepUninterruptedly(1500);
         }
 
         instance.destroyForcibly();
