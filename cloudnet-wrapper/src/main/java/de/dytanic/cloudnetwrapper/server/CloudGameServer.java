@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 17.10.2017.
@@ -394,15 +395,15 @@ public class CloudGameServer implements ServerDispatcher {
         if (instance.isAlive())
         {
             executeCommand("stop");
-            try
-            {
-                Thread.sleep(1000);
-            } catch (InterruptedException e)
-            {
-            }
         }
 
-        instance.destroyForcibly();
+        try {
+            if (!instance.waitFor(45, TimeUnit.SECONDS)) {
+                instance.destroyForcibly();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         try
         {
