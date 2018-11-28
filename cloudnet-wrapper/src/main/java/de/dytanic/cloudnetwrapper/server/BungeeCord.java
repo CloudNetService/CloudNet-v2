@@ -397,10 +397,15 @@ public class BungeeCord implements ServerDispatcher {
         if (instance.isAlive())
         {
             executeCommand("end");
-            NetworkUtils.sleepUninterruptedly(500);
         }
 
-        instance.destroyForcibly();
+        try {
+            if (!instance.waitFor(45, TimeUnit.SECONDS)) {
+                instance.destroyForcibly();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isSavingRecords())
         {
