@@ -43,6 +43,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 @EqualsAndHashCode
 @Getter
@@ -474,10 +475,15 @@ public class GameServer implements ServerDispatcher {
         if (instance.isAlive())
         {
             executeCommand("stop");
-            NetworkUtils.sleepUninterruptedly(500);
         }
 
-        instance.destroyForcibly();
+        try {
+            if (!instance.waitFor(45, TimeUnit.SECONDS)) {
+                instance.destroyForcibly();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void copyDirectory(String name)
