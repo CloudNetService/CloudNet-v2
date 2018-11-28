@@ -394,15 +394,15 @@ public class CloudGameServer implements ServerDispatcher {
         if (instance.isAlive())
         {
             executeCommand("stop");
-            try
-            {
-                Thread.sleep(1000);
-            } catch (InterruptedException e)
-            {
-            }
         }
 
-        instance.destroyForcibly();
+        try {
+            if (!instance.waitFor(45, TimeUnit.SECONDS)) {
+                instance.destroyForcibly();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         try
         {
