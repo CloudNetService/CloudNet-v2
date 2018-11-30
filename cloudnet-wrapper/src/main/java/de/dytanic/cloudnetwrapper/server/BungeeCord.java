@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 
 @EqualsAndHashCode
 @Getter
@@ -397,10 +398,15 @@ public class BungeeCord implements ServerDispatcher {
         if (instance.isAlive())
         {
             executeCommand("end");
-            NetworkUtils.sleepUninterruptedly(500);
+            try {
+                if (!instance.waitFor(45, TimeUnit.SECONDS)) {
+                    instance.destroyForcibly();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                instance.destroyForcibly();
+            }
         }
-
-        instance.destroyForcibly();
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isSavingRecords())
         {

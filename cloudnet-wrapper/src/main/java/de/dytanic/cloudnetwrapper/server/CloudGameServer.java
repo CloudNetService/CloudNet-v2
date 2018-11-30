@@ -38,6 +38,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -394,15 +395,15 @@ public class CloudGameServer implements ServerDispatcher {
         if (instance.isAlive())
         {
             executeCommand("stop");
-            try
-            {
-                Thread.sleep(1000);
-            } catch (InterruptedException e)
-            {
+            try {
+                if (!instance.waitFor(45, TimeUnit.SECONDS)) {
+                    instance.destroyForcibly();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                instance.destroyForcibly();
             }
         }
-
-        instance.destroyForcibly();
 
         try
         {
