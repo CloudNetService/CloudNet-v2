@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.bridge.internal.util.CloudPermissble;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
+import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -124,14 +125,26 @@ public final class BukkitListener implements Listener {
             {
                 CloudPlayer cloudPlayer = CloudServer.getInstance().getCloudPlayers().get(event.getPlayer().getUniqueId());
                 int joinPower = CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getJoinPower();
-                boolean acceptLogin = false;
-                for (GroupEntityData entityData : cloudPlayer.getPermissionEntity().getGroups())
-                {
-                    if (CloudAPI.getInstance().getPermissionGroup(entityData.getGroup()).getJoinPower() >= joinPower)
-                        acceptLogin = true;
 
-                    if (event.getPlayer().hasPermission("cloudnet.joinpower." + CloudAPI.getInstance().getPermissionGroup(entityData.getGroup()).getJoinPower()))
-                        acceptLogin = true;
+                boolean acceptLogin = false;
+
+                if (CloudAPI.getInstance().getPermissionPool() != null)
+                {
+                    for (GroupEntityData entityData : cloudPlayer.getPermissionEntity().getGroups())
+                    {
+                        PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionGroup(entityData.getGroup());
+
+                        if (permissionGroup != null)
+                        {
+                            if (permissionGroup.getJoinPower() >= joinPower)
+                                acceptLogin = true;
+                        }
+                    }
+                }
+
+                if (event.getPlayer().hasPermission("cloudnet.joinpower." + joinPower))
+                {
+                    acceptLogin = true;
                 }
 
                 if (!acceptLogin)
