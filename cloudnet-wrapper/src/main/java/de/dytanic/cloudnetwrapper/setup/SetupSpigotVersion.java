@@ -48,7 +48,7 @@ public class SetupSpigotVersion
     {
         System.out.println("No spigot.jar has been found!");
 
-        System.out.println("Choose a minecraft server version [\"paper\", \"spigot\"]");
+        System.out.println("Choose a minecraft server version [\"paper\" (coming soon), \"spigot\"]");
 
         String answer = null;
 
@@ -133,6 +133,7 @@ public class SetupSpigotVersion
                         e.printStackTrace();
                     }
                 }
+                /*
             case "paper":
                 System.out.println("Choose a PaperSpigot version [\"1.8.8\", \"1.11.2\", \"1.12.2\", \"1.13.1\", \"1.13.2\"]");
                 while (true)
@@ -162,6 +163,7 @@ public class SetupSpigotVersion
                         e.printStackTrace();
                     }
                 }
+                */
         }
     }
 }
