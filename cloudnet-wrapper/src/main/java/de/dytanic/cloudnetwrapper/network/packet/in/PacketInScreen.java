@@ -4,22 +4,16 @@
 
 package de.dytanic.cloudnetwrapper.network.packet.in;
 
-import com.google.gson.reflect.TypeToken;
-import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
-import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnetwrapper.CloudNetWrapper;
-import de.dytanic.cloudnetwrapper.server.BungeeCord;
-import de.dytanic.cloudnetwrapper.server.GameServer;
 
 public final class PacketInScreen extends PacketInHandler {
 
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
+        /*
         if (data.getObject("type", DefaultType.class) != DefaultType.BUNGEE_CORD)
         {
             ServerInfo server = data.getObject("serverInfo", new TypeToken<ServerInfo>() {
@@ -45,5 +39,6 @@ public final class PacketInScreen extends PacketInHandler {
                     CloudNetWrapper.getInstance().getScreenProvider().cancel(gameServer);
             }
         }
+        */
     }
 }
