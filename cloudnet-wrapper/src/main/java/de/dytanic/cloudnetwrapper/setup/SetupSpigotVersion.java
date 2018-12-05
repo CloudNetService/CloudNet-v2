@@ -48,7 +48,7 @@ public class SetupSpigotVersion
     {
         System.out.println("No spigot.jar has been found!");
 
-        System.out.println("Choose a minecraft server version [\"taco\", \"paper\", \"hose\", \"spigot\"]");
+        System.out.println("Choose a minecraft server version [\"paper\", \"spigot\"]");
 
         String answer = null;
 
@@ -66,17 +66,11 @@ public class SetupSpigotVersion
                 input = reader.readLine();
                 switch (input.toLowerCase())
                 {
-                    case "taco":
-                        answer = "taco";
-                        break;
                     case "spigot":
                         answer = "spigot";
                         break;
                     case "paper":
                         answer = "paper";
-                        break;
-                    case "hose":
-                        answer = "hose";
                         break;
                     default:
                         System.out.println("This version is not supported!");
@@ -95,32 +89,6 @@ public class SetupSpigotVersion
 
         switch (answer)
         {
-            case "taco":
-                System.out.println("Choose a TacoSpigot version [\"1.8.8\", \"1.11.2\", \"1.12.2\"]");
-                while (true)
-                {
-                    try
-                    {
-                        switch (reader.readLine().toLowerCase())
-                        {
-                            case "1.8.8":
-                                download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.8.8-b31.jar");
-                                return;
-                            case "1.11.2":
-                                download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.11.2-b102.jar");
-                                return;
-                            case "1.12.2":
-                                download.run("https://yivesmirror.com/files/tacospigot/TacoSpigot-1.12.2-b114.jar");
-                                return;
-                            default:
-                                System.out.println("This version is not supported!");
-                                break;
-                        }
-                    } catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
             case "spigot":
                 System.out.println("Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\"]");
                 while (true)
@@ -184,35 +152,6 @@ public class SetupSpigotVersion
                                 return;
                             case "1.13.2":
                                 download.run("https://papermc.io/ci/job/Paper-1.13/447/artifact/paperclip.jar");
-                                return;
-                            default:
-                                System.out.println("This version is not supported!");
-                                break;
-                        }
-                    } catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            case "hose":
-                System.out.println("Choose a Hose version [\"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\"]");
-                while (true)
-                {
-                    try
-                    {
-                        switch (reader.readLine().toLowerCase())
-                        {
-                            case "1.8.8":
-                                download.run("https://yivesmirror.com/files/hose/hose-1.8.8.jar");
-                                return;
-                            case "1.9.4":
-                                download.run("https://yivesmirror.com/files/hose/hose-1.9.4.jar");
-                                return;
-                            case "1.10.2":
-                                download.run("https://yivesmirror.com/files/hose/hose-1.10.2.jar");
-                                return;
-                            case "1.11.2":
-                                download.run("https://yivesmirror.com/files/hose/hose-1.11.2.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");
