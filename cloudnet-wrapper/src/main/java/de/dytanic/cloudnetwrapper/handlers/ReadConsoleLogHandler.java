@@ -36,7 +36,7 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
                 readConsoleLog(gameServer);
     }
 
-    private void readConsoleLog(ServerDispatcher server)
+    private synchronized void readConsoleLog(ServerDispatcher server)
     {
         if (server.getInstance().isAlive() && server.getInstance().getInputStream() != null)
         {
