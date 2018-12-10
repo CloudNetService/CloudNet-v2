@@ -58,9 +58,17 @@ Maven:
     </repositories>
 
     <dependencies>
+        <!-- Spigot/BungeeCord -->
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-api-bridge</artifactId>
+            <version>2.1.14</version>
+            <scope>provided</scope>
+        </dependency>
+         <!-- CloudNet Core -->
+        <dependency>
+            <groupId>de.dytanic.cloudnet</groupId>
+            <artifactId>cloudnet-core</artifactId>
             <version>2.1.14</version>
             <scope>provided</scope>
         </dependency>
