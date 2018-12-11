@@ -350,10 +350,7 @@ public final class NetworkManager {
 
     public NetworkManager sendAll(Packet packet, ChannelFilter filter)
     {
-        this.executorService.submit(new Runnable() {
-            @Override
-            public void run()
-            {
+        this.executorService.submit(() -> {
                 for (Wrapper cn : CloudNet.getInstance().getWrappers().values())
                 {
                     if (cn.getChannel() != null && filter.accept(cn))
@@ -371,9 +368,7 @@ public final class NetworkManager {
                         if (cloudServer.getChannel() != null && filter.accept(cloudServer))
                             cloudServer.sendPacket(packet);
 
-                }
-            }
-        });
+                }});
         return this;
     }
 

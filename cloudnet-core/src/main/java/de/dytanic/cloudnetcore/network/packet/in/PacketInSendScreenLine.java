@@ -13,20 +13,24 @@ import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.server.ScreenInfoEvent;
 import de.dytanic.cloudnetcore.network.components.INetworkComponent;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 
-public class PacketInSendScreenLine extends PacketInHandler {
+public final class PacketInSendScreenLine extends PacketInHandler {
+
+    private static final Type TYPE = new TypeToken<Collection<ScreenInfo>>() {
+    }.getType();
 
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        Collection<ScreenInfo> screenInfos = data.getObject("screenInfo", new TypeToken<Collection<ScreenInfo>>() {
-        }.getType());
+        Collection<ScreenInfo> screenInfos = data.getObject("screenInfo", TYPE);
         CloudNet.getInstance().getEventManager().callEvent(new ScreenInfoEvent(screenInfos));
 
         for (ScreenInfo screenInfo : screenInfos)
         {
-            if (CloudNet.getInstance().getScreenProvider().getMainServiceId() != null && screenInfo.getServiceId().getServerId().equalsIgnoreCase(CloudNet.getInstance().getScreenProvider().getMainServiceId().getServerId()))
+            if (CloudNet.getInstance().getScreenProvider().getMainServiceId() != null &&
+                    screenInfo.getServiceId().getServerId().equalsIgnoreCase(CloudNet.getInstance().getScreenProvider().getMainServiceId().getServerId()))
                 System.out.println("[" + screenInfo.getServiceId().getServerId() + "] " + screenInfo.getLine());
         }
 

@@ -46,3 +46,32 @@ Use of KVM virtualization or dedicated servers is recommended.
  
 ### Developer
 If you would like to contribute to this repository, feel free to fork the repo and then create a pull request to our current dev branch. 
+  
+Maven:
+```xml
+
+    <repositories>
+        <repository>
+            <id>cloudnet-repo</id>
+            <url>https://cloudnetservice.eu/repositories</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Spigot/BungeeCord -->
+        <dependency>
+            <groupId>de.dytanic.cloudnet</groupId>
+            <artifactId>cloudnet-api-bridge</artifactId>
+            <version>2.1.14</version>
+            <scope>provided</scope>
+        </dependency>
+         <!-- CloudNet Core -->
+        <dependency>
+            <groupId>de.dytanic.cloudnet</groupId>
+            <artifactId>cloudnet-core</artifactId>
+            <version>2.1.14</version>
+            <scope>provided</scope>
+        </dependency>
+     </dependencies>
+
+```
