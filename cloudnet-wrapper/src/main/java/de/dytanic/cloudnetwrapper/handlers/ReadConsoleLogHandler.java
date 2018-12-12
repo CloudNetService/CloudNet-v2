@@ -1,24 +1,19 @@
 package de.dytanic.cloudnetwrapper.handlers;
 
-import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
-import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutSendScreenLine;
+import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.BungeeCord;
 import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
-import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 
 public final class ReadConsoleLogHandler implements IWrapperHandler {
 
     private final StringBuffer stringBuffer = new StringBuffer();
 
     private final byte[] buffer = new byte[1024];
-
-    private int len;
 
     @Override
     public void run(CloudNetWrapper obj)
@@ -36,32 +31,36 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
                 readConsoleLog(gameServer);
     }
 
-    private synchronized void readConsoleLog(ServerDispatcher server)
+    private synchronized void readConsoleLog(AbstractScreenService server)
     {
         if (server.getInstance().isAlive() && server.getInstance().getInputStream() != null)
         {
-            try
-            {
+            readStream(server, server.getInstance().getInputStream());
+            readStream(server, server.getInstance().getErrorStream());
+        }
+    }
 
-                InputStream inputStream = server.getInstance().getInputStream();
+    private synchronized void readStream(AbstractScreenService screenService, InputStream inputStream)
+    {
+        try
+        {
+            int len;
+            while (inputStream.available() > 0 && (len = inputStream.read(buffer, 0, buffer.length)) != -1)
+                stringBuffer.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
 
-                while (inputStream.available() > 0 && (len = inputStream.read(buffer, 0, buffer.length)) != -1)
-                    stringBuffer.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
+            String stringText = stringBuffer.toString();
+            if (!stringText.contains("\n") && !stringText.contains("\r")) return;
 
-                for (String input : stringBuffer.toString().split("\r"))
-                    for (String text : input.split("\n"))
-                        if (!text.trim().isEmpty())
-                        {
-                            CloudNetWrapper.getInstance().getNetworkConnection()
-                                    .sendPacket(new PacketOutSendScreenLine(Collections.singletonList(new ScreenInfo(server.getServiceId(), input))));
-                        }
+            for (String input : stringText.split("\r"))
+                for (String text : input.split("\n"))
+                    if (!text.trim().isEmpty())
+                        screenService.addCachedItem(text);
 
-            } catch (Exception ignored)
-            {
-            } finally
-            {
-                stringBuffer.setLength(0);
-            }
+            stringBuffer.setLength(0);
+
+        } catch (Exception ignored)
+        {
+            stringBuffer.setLength(0);
         }
     }
 

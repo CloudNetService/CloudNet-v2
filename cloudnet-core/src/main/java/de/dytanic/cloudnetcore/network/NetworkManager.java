@@ -14,6 +14,7 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerCommandExecution;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
@@ -45,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Created by Tareko on 19.07.2017.
@@ -56,7 +56,6 @@ public final class NetworkManager {
     private java.util.Map<UUID, CloudPlayer> waitingPlayers = NetworkUtils.newConcurrentHashMap();
     private java.util.Map<UUID, CloudPlayer> onlinePlayers = NetworkUtils.newConcurrentHashMap();
     private Document moduleProperties = new Document();
-    private ExecutorService executorService = java.util.concurrent.Executors.newFixedThreadPool(4);
 
     private MessageConfig messageConfig;
 
@@ -353,24 +352,28 @@ public final class NetworkManager {
 
     public NetworkManager sendAll(Packet packet, ChannelFilter filter)
     {
-        this.executorService.submit(() -> {
-            for (Wrapper cn : CloudNet.getInstance().getWrappers().values())
+        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
+            @Override
+            public void run()
             {
-                if (cn.getChannel() != null && filter.accept(cn))
-                    cn.sendPacket(packet);
+                for (Wrapper cn : CloudNet.getInstance().getWrappers().values())
+                {
+                    if (cn.getChannel() != null && filter.accept(cn))
+                        cn.sendPacket(packet);
 
-                for (ProxyServer proxyServer : cn.getProxys().values())
-                    if (proxyServer.getChannel() != null && filter.accept(proxyServer))
-                        proxyServer.sendPacket(packet);
+                    for (ProxyServer proxyServer : cn.getProxys().values())
+                        if (proxyServer.getChannel() != null && filter.accept(proxyServer))
+                            proxyServer.sendPacket(packet);
 
-                for (MinecraftServer minecraftServer : cn.getServers().values())
-                    if (minecraftServer.getChannel() != null && filter.accept(minecraftServer))
-                        minecraftServer.sendPacket(packet);
+                    for (MinecraftServer minecraftServer : cn.getServers().values())
+                        if (minecraftServer.getChannel() != null && filter.accept(minecraftServer))
+                            minecraftServer.sendPacket(packet);
 
-                for (CloudServer cloudServer : cn.getCloudServers().values())
-                    if (cloudServer.getChannel() != null && filter.accept(cloudServer))
-                        cloudServer.sendPacket(packet);
+                    for (CloudServer cloudServer : cn.getCloudServers().values())
+                        if (cloudServer.getChannel() != null && filter.accept(cloudServer))
+                            cloudServer.sendPacket(packet);
 
+                }
             }
         });
         return this;

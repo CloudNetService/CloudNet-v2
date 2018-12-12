@@ -23,6 +23,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutAddProxy;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveProxy;
+import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import lombok.EqualsAndHashCode;
@@ -39,9 +40,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 
-@EqualsAndHashCode
 @Getter
-public class BungeeCord implements ServerDispatcher {
+@EqualsAndHashCode(callSuper = false)
+public class BungeeCord extends AbstractScreenService implements ServerDispatcher {
 
     private ProxyProcessMeta proxyProcessMeta;
 

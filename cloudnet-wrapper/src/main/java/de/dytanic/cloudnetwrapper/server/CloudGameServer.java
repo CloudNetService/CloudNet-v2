@@ -18,6 +18,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutAddCloudServer;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveCloudServer;
+import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import de.dytanic.cloudnetwrapper.util.MasterTemplateDeploy;
@@ -44,9 +45,9 @@ import java.util.zip.ZipFile;
 /**
  * Created by Tareko on 17.10.2017.
  */
-@EqualsAndHashCode
 @Getter
-public class CloudGameServer implements ServerDispatcher {
+@EqualsAndHashCode(callSuper = false)
+public class CloudGameServer extends AbstractScreenService implements ServerDispatcher {
 
     private CloudServerMeta cloudServerMeta;
 

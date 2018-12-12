@@ -24,6 +24,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutAddServer;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveServer;
+import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.server.process.ServerProcess;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
@@ -44,9 +45,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
-@EqualsAndHashCode
 @Getter
-public class GameServer implements ServerDispatcher {
+@EqualsAndHashCode(callSuper = false)
+public class GameServer extends AbstractScreenService implements ServerDispatcher {
 
     private ServerProcess serverProcess;
 
