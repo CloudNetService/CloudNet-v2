@@ -67,7 +67,8 @@ public final class NetworkConnection implements PacketSender {
     {
         try
         {
-            if (ssl) sslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+            if (ssl)
+                sslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
 
             Bootstrap bootstrap = new Bootstrap()
                     .option(ChannelOption.AUTO_READ, true)

@@ -101,12 +101,14 @@ public final class NetworkManager {
         OfflinePlayer offlinePlayer = null;
 
         CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + "#" + uniqueId + " database contains");
-        if (!playerDatabase.containsPlayer(cloudPlayerConnection.getUniqueId())) {
+        if (!playerDatabase.containsPlayer(cloudPlayerConnection.getUniqueId()))
+        {
             CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + "#" + uniqueId + " database register");
             offlinePlayer = playerDatabase.registerPlayer(cloudPlayerConnection);
         }
 
-        if (offlinePlayer == null) {
+        if (offlinePlayer == null)
+        {
             CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + "#" + uniqueId + " database get");
             offlinePlayer = playerDatabase.getPlayer(cloudPlayerConnection.getUniqueId());
         }
@@ -115,7 +117,8 @@ public final class NetworkManager {
         CloudPlayer cloudPlayer = new CloudPlayer(offlinePlayer, cloudPlayerConnection, proxyServer.getServerId());
         cloudPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
-        if (cloudPlayer.getFirstLogin() == null) {
+        if (cloudPlayer.getFirstLogin() == null)
+        {
             CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + "#" + uniqueId + " set firstLogin");
             cloudPlayer.setFirstLogin(System.currentTimeMillis());
         }
@@ -351,24 +354,25 @@ public final class NetworkManager {
     public NetworkManager sendAll(Packet packet, ChannelFilter filter)
     {
         this.executorService.submit(() -> {
-                for (Wrapper cn : CloudNet.getInstance().getWrappers().values())
-                {
-                    if (cn.getChannel() != null && filter.accept(cn))
-                        cn.sendPacket(packet);
+            for (Wrapper cn : CloudNet.getInstance().getWrappers().values())
+            {
+                if (cn.getChannel() != null && filter.accept(cn))
+                    cn.sendPacket(packet);
 
-                    for (ProxyServer proxyServer : cn.getProxys().values())
-                        if (proxyServer.getChannel() != null && filter.accept(proxyServer))
-                            proxyServer.sendPacket(packet);
+                for (ProxyServer proxyServer : cn.getProxys().values())
+                    if (proxyServer.getChannel() != null && filter.accept(proxyServer))
+                        proxyServer.sendPacket(packet);
 
-                    for (MinecraftServer minecraftServer : cn.getServers().values())
-                        if (minecraftServer.getChannel() != null && filter.accept(minecraftServer))
-                            minecraftServer.sendPacket(packet);
+                for (MinecraftServer minecraftServer : cn.getServers().values())
+                    if (minecraftServer.getChannel() != null && filter.accept(minecraftServer))
+                        minecraftServer.sendPacket(packet);
 
-                    for (CloudServer cloudServer : cn.getCloudServers().values())
-                        if (cloudServer.getChannel() != null && filter.accept(cloudServer))
-                            cloudServer.sendPacket(packet);
+                for (CloudServer cloudServer : cn.getCloudServers().values())
+                    if (cloudServer.getChannel() != null && filter.accept(cloudServer))
+                        cloudServer.sendPacket(packet);
 
-                }});
+            }
+        });
         return this;
     }
 
