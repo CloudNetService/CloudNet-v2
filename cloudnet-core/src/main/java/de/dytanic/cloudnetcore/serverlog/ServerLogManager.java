@@ -62,7 +62,7 @@ public final class ServerLogManager implements Runnable {
                     {
                         this.screenInfos.getS(key).addAll(screenInfos);
 
-                        while (this.screenInfos.getS(key).size() > 64)
+                        while (this.screenInfos.getS(key).size() >= 64)
                             this.screenInfos.getS(key).poll();
                     }
                 }
