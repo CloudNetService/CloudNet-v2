@@ -22,9 +22,11 @@ public final class CommandDebug extends Command {
     public void onExecuteCommand(CommandSender sender, String[] args)
     {
         CloudNet.getLogger().setDebugging(!CloudNet.getLogger().isDebugging());
-        if (CloudNet.getLogger().isDebugging()) {
+        if (CloudNet.getLogger().isDebugging())
+        {
             sender.sendMessage("debugging was enabled");
-        } else {
+        } else
+        {
             sender.sendMessage("debugging was disabled");
         }
     }

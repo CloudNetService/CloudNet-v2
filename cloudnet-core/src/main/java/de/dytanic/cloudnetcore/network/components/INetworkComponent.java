@@ -10,6 +10,7 @@ import de.dytanic.cloudnet.lib.network.protocol.ProtocolRequest;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnetcore.CloudNet;
+import io.netty.channel.ChannelFutureListener;
 
 /**
  * Created by Tareko on 27.05.2017.
@@ -35,8 +36,8 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
         {
             try
             {
-                getChannel().writeAndFlush(packet);
-            } catch (Exception ex)
+                getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            } catch (Exception ignored)
             {
             }
         } else
@@ -47,10 +48,9 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
                 {
                     try
                     {
-                        getChannel().writeAndFlush(packet);
-                    } catch (Exception ex)
+                        getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+                    } catch (Exception ignored)
                     {
-
                     }
                 }
             });

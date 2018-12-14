@@ -175,7 +175,7 @@ public final class PermissionProvider {
         final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
             return permissionPool.getGroups().get(groupName).getPrefix();
-        
+
         return null;
     }
 
@@ -193,7 +193,7 @@ public final class PermissionProvider {
         final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
             return permissionPool.getGroups().get(groupName).getSuffix();
-        
+
         return null;
     }
 
@@ -222,7 +222,7 @@ public final class PermissionProvider {
         final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
             return permissionPool.getGroups().get(groupName).getDisplay();
-        
+
         return null;
     }
 
@@ -239,7 +239,7 @@ public final class PermissionProvider {
         final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
             return Collections.unmodifiableCollection(permissionPool.getGroups().get(groupName).getImplementGroups());
-        
+
         return null;
     }
 

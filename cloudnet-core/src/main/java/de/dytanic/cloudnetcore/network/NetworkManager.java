@@ -14,6 +14,7 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerCommandExecution;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
+import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
@@ -45,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Created by Tareko on 19.07.2017.
@@ -56,7 +56,6 @@ public final class NetworkManager {
     private java.util.Map<UUID, CloudPlayer> waitingPlayers = NetworkUtils.newConcurrentHashMap();
     private java.util.Map<UUID, CloudPlayer> onlinePlayers = NetworkUtils.newConcurrentHashMap();
     private Document moduleProperties = new Document();
-    private ExecutorService executorService = java.util.concurrent.Executors.newFixedThreadPool(4);
 
     private MessageConfig messageConfig;
 
@@ -101,12 +100,14 @@ public final class NetworkManager {
         OfflinePlayer offlinePlayer = null;
 
         CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + "#" + uniqueId + " database contains");
-        if (!playerDatabase.containsPlayer(cloudPlayerConnection.getUniqueId())) {
+        if (!playerDatabase.containsPlayer(cloudPlayerConnection.getUniqueId()))
+        {
             CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + "#" + uniqueId + " database register");
             offlinePlayer = playerDatabase.registerPlayer(cloudPlayerConnection);
         }
 
-        if (offlinePlayer == null) {
+        if (offlinePlayer == null)
+        {
             CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + "#" + uniqueId + " database get");
             offlinePlayer = playerDatabase.getPlayer(cloudPlayerConnection.getUniqueId());
         }
@@ -115,7 +116,8 @@ public final class NetworkManager {
         CloudPlayer cloudPlayer = new CloudPlayer(offlinePlayer, cloudPlayerConnection, proxyServer.getServerId());
         cloudPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
-        if (cloudPlayer.getFirstLogin() == null) {
+        if (cloudPlayer.getFirstLogin() == null)
+        {
             CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + "#" + uniqueId + " set firstLogin");
             cloudPlayer.setFirstLogin(System.currentTimeMillis());
         }
@@ -350,7 +352,10 @@ public final class NetworkManager {
 
     public NetworkManager sendAll(Packet packet, ChannelFilter filter)
     {
-        this.executorService.submit(() -> {
+        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
+            @Override
+            public void run()
+            {
                 for (Wrapper cn : CloudNet.getInstance().getWrappers().values())
                 {
                     if (cn.getChannel() != null && filter.accept(cn))
@@ -368,7 +373,9 @@ public final class NetworkManager {
                         if (cloudServer.getChannel() != null && filter.accept(cloudServer))
                             cloudServer.sendPacket(packet);
 
-                }});
+                }
+            }
+        });
         return this;
     }
 
