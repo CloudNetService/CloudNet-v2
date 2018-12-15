@@ -177,7 +177,6 @@ public class CloudServer implements ICloudService {
         update();
     }
 
-    @Deprecated
     public void getPlayerAndCache(UUID uniqueId)
     {
         CloudPlayer cloudPlayer = CloudAPI.getInstance().getOnlinePlayer(uniqueId);

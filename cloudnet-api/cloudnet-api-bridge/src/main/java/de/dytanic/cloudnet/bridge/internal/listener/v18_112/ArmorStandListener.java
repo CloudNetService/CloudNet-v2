@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 public final class ArmorStandListener implements Listener {
 
     @EventHandler
-    public void handle(PlayerArmorStandManipulateEvent e)
+    public void handle(final PlayerArmorStandManipulateEvent playerArmorStandManipulateEvent)
     {
         MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
             @Override
@@ -29,32 +29,28 @@ public final class ArmorStandListener implements Listener {
             {
                 try
                 {
-                    return e.getRightClicked().getUniqueId().equals(value.getDisplayMessage().getClass().getMethod("getUniqueId").invoke(value.getDisplayMessage()));
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1)
+                    return playerArmorStandManipulateEvent.getRightClicked().getUniqueId().equals(value.getDisplayMessage().getClass().getMethod("getUniqueId").invoke(value.getDisplayMessage()));
+                } catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e1)
                 {
                     return false;
                 }
             }
         });
         if (mob != null)
-        {
-            e.setCancelled(true);
-        }
+            playerArmorStandManipulateEvent.setCancelled(true);
     }
 
     @EventHandler
-    public void handle(ItemDespawnEvent e)
+    public void handle(final ItemDespawnEvent itemDespawnEvent)
     {
         MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
             @Override
             public boolean isAccepted(MobSelector.MobImpl value)
             {
-                return ((Entity) value.getDisplayMessage()).getPassenger() != null && e.getEntity().getEntityId() == ((Entity) value.getDisplayMessage()).getPassenger().getEntityId();
+                return ((Entity) value.getDisplayMessage()).getPassenger() != null && itemDespawnEvent.getEntity().getEntityId() == ((Entity) value.getDisplayMessage()).getPassenger().getEntityId();
             }
         });
         if (mob != null)
-        {
-            e.setCancelled(true);
-        }
+            itemDespawnEvent.setCancelled(true);
     }
 }
