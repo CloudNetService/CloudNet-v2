@@ -799,7 +799,7 @@ public final class SignSelector implements Listener {
                             changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
                         } else
                         {
-                            sign.setServerInfo(null);
+                            newSign.setServerInfo(null);
                             SignLayout signLayout = getSearchingLayout(((ThreadImpl) worker).animationTick);
                             String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), sign);
                             for (Player all : Bukkit.getOnlinePlayers())
