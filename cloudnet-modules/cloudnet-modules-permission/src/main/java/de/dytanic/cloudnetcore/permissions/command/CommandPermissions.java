@@ -20,6 +20,7 @@ import de.dytanic.cloudnetcore.permissions.PermissionModule;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 20.08.2017.
@@ -504,7 +505,7 @@ public final class CommandPermissions extends Command {
 
     private long calcDays(int value)
     {
-        return System.currentTimeMillis() + ((60 * 60 * 1000 * 24 * value));
+        return (System.currentTimeMillis() + ((TimeUnit.DAYS.toMillis(value))));
     }
 
     private boolean permissionIsSet(Map<String, Boolean> permissions, String permission, boolean value)
