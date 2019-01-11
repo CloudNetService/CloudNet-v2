@@ -11,8 +11,6 @@ import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.Return;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -56,9 +54,13 @@ public class CloudFlareDatabase extends DatabaseUsable {
     public boolean contains(CloudFlareConfig cloudFlareConfig, String wrapper)
     {
         Document document = database.getDocument(CLOUDFLARE_CACHE);
+
+        /*
         Map<String, MultiValue<PostResponse, String>> responses = document.getObject("requests", new TypeToken<Map<String, MultiValue<PostResponse, String>>>() {
         }.getType());
+        */
 
+        /*
         return CollectionWrapper.filter(responses.values(), new Acceptable<MultiValue<PostResponse, String>>() {
             @Override
             public boolean isAccepted(MultiValue<PostResponse, String> value)
@@ -66,7 +68,19 @@ public class CloudFlareDatabase extends DatabaseUsable {
                 return value.getSecond().equalsIgnoreCase(wrapper) && value.getFirst().getCloudFlareConfig().getDomainName().equalsIgnoreCase(cloudFlareConfig.getDomainName());
             }
         }) != null;
+        */
 
+        for (String key : document.keys())
+            if (!key.equalsIgnoreCase(Database.UNIQUE_NAME_KEY))
+            {
+                MultiValue<PostResponse, String> value = document.getObject(key, new TypeToken<MultiValue<PostResponse, String>>() {
+                }.getType());
+
+                if (value.getSecond().equalsIgnoreCase(wrapper) && value.getFirst().getCloudFlareConfig().getDomainName().equalsIgnoreCase(cloudFlareConfig.getDomainName()))
+                    return true;
+            }
+
+        return false;
         //return document.contains(wrapper);
     }
 
