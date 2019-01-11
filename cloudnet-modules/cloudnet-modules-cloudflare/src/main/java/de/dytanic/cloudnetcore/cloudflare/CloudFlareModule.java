@@ -45,7 +45,7 @@ public class CloudFlareModule extends CoreModule {
     public void onBootstrap()
     {
         configCloudFlare = new ConfigCloudFlare();
-        cloudFlareDatabase = new CloudFlareDatabase(getCloud().getDatabaseManager().getDatabase("cloud_internal_cfg"));
+        cloudFlareDatabase = new CloudFlareDatabase(getCloud().getDatabaseManager().getDatabase("cloudnet_internal_cfg"));
         try
         {
 
