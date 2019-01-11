@@ -72,7 +72,7 @@ public class CloudFlareService {
                     ProxyGroup proxyGroup = groups.get(cloudFlareProxyGroup.getName());
                     for (String wrapper : proxyGroup.getWrapper())
                     {
-                        if (!cloudFlareDatabase.contains(cloudFlareConfig, wrapper)) //TODO
+                        if (!cloudFlareDatabase.contains(cloudFlareConfig, wrapper))
                         {
                             String host = wrapperInfoMap.get(wrapper).getHostName();
                             DNSRecord dnsRecord = new DefaultDNSRecord(DNSType.A, wrapper + "." + cloudFlareConfig.getDomainName(), host, new Document().obj());
