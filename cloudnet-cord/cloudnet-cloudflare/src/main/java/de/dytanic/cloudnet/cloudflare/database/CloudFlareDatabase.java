@@ -76,7 +76,7 @@ public class CloudFlareDatabase extends DatabaseUsable {
                 MultiValue<PostResponse, String> value = document.getObject(key, new TypeToken<MultiValue<PostResponse, String>>() {
                 }.getType());
 
-                if (value.getSecond().equalsIgnoreCase(wrapper) && value.getFirst().getCloudFlareConfig().getDomainName().equalsIgnoreCase(cloudFlareConfig.getDomainName()))
+                if (value != null && value.getSecond().equalsIgnoreCase(wrapper) && value.getFirst().getCloudFlareConfig().getDomainName().equalsIgnoreCase(cloudFlareConfig.getDomainName()))
                     return true;
             }
 
