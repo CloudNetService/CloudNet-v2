@@ -20,11 +20,11 @@ import java.util.UUID;
 /**
  * Created by Tareko on 18.08.2017.
  */
-public class CloudPermissble extends PermissibleBase {
+public class CloudPermissible extends PermissibleBase {
 
     private UUID uniqueId;
 
-    public CloudPermissble(Player player)
+    public CloudPermissible(Player player)
     {
         super(player);
         this.uniqueId = player.getUniqueId();

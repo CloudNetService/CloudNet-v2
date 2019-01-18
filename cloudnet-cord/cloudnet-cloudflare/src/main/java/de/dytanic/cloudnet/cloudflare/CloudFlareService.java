@@ -185,7 +185,7 @@ public class CloudFlareService {
 
         while (true)
         {
-            MultiValue<PostResponse, String> postResponse = CollectionWrapper.filter(bungeeSRVRecords.values(), new Acceptable<MultiValue<PostResponse, String>>() {
+            Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(), new Acceptable<MultiValue<PostResponse, String>>() {
                 @Override
                 public boolean isAccepted(MultiValue<PostResponse, String> postResponseStringMultiValue)
                 {
@@ -194,11 +194,23 @@ public class CloudFlareService {
             });
 
             //MultiValue<PostResponse, String> postResponse = bungeeSRVRecords.get(proxyServer.getServiceId().getServerId());
+            /*
             if (postResponse != null)
             {
                 cloudFlareDatabase.remove(postResponse.getFirst().getId());
                 deleteRecord(postResponse.getFirst());
             } else break;
+            */
+
+            for (MultiValue<PostResponse, String> postResponse : postResponses)
+                if (postResponse != null)
+                {
+                    bungeeSRVRecords.remove(postResponse.getSecond());
+                    cloudFlareDatabase.remove(postResponse.getFirst().getId());
+                    deleteRecord(postResponse.getFirst());
+
+                    NetworkUtils.sleepUninterruptedly(500);
+                }
         }
     }
 
@@ -223,6 +235,7 @@ public class CloudFlareService {
             httpPost.setRequestProperty("Content-Type", "application/json");
             httpPost.setDoOutput(true);
             httpPost.connect();
+
             try (DataOutputStream dataOutputStream = new DataOutputStream(httpPost.getOutputStream()))
             {
                 dataOutputStream.writeBytes(values);
@@ -260,12 +273,14 @@ public class CloudFlareService {
         try
         {
             HttpURLConnection delete = (HttpURLConnection) new URL(PREFIX_URL + "zones/" + postResponse.getCloudFlareConfig().getZoneId() + "/dns_records/" + postResponse.getId()).openConnection();
+
             delete.setRequestMethod("DELETE");
             delete.setRequestProperty("X-Auth-Email", postResponse.getCloudFlareConfig().getEmail());
             delete.setRequestProperty("X-Auth-Key", postResponse.getCloudFlareConfig().getToken());
             delete.setRequestProperty("Accept", "application/json");
             delete.setRequestProperty("Content-Type", "application/json");
             delete.connect();
+
             try (InputStream inputStream = delete.getInputStream())
             {
                 JsonObject jsonObject = toJsonInput(inputStream);
@@ -274,6 +289,7 @@ public class CloudFlareService {
                     System.out.println(prefix + " DNSRecord [" + postResponse.getId() + "] was removed");
                 }
             }
+
             delete.disconnect();
         } catch (Exception ex)
         {
