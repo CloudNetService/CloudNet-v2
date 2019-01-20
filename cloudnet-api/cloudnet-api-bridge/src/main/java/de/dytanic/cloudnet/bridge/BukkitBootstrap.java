@@ -105,7 +105,7 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         {
             Class.forName("net.md_5.bungee.api.chat.BaseComponent");
             Class.forName("de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry").getMethod("fire").invoke(null);
-        } catch (Exception ex)
+        } catch (Exception ignored)
         {
         }
     }

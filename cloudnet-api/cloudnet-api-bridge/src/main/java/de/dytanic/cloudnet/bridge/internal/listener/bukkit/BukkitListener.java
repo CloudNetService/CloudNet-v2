@@ -7,7 +7,7 @@ package de.dytanic.cloudnet.bridge.internal.listener.bukkit;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitSubChannelMessageEvent;
-import de.dytanic.cloudnet.bridge.internal.util.CloudPermissble;
+import de.dytanic.cloudnet.bridge.internal.util.CloudPermissible;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
@@ -97,8 +97,8 @@ public final class BukkitListener implements Listener {
                     else field = Class.forName("net.glowstone.entity.GlowHumanEntity").getDeclaredField("permissions");
 
                     field.setAccessible(true);
-                    final CloudPermissble cloudPermissble = new CloudPermissble(event.getPlayer());
-                    field.set(event.getPlayer(), cloudPermissble);
+                    final CloudPermissible cloudPermissible = new CloudPermissible(event.getPlayer());
+                    field.set(event.getPlayer(), cloudPermissible);
                 } catch (Exception ex)
                 {
                     ex.printStackTrace();

@@ -124,8 +124,12 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
 
     public String readString()
     {
-        long integer = readVarLong();
-        return byteBuf.readBytes((int) integer).toString(StandardCharsets.UTF_8);
+        int integer = (int) readVarLong();
+
+        byte[] buffer = new byte[integer];
+        byteBuf.readBytes(buffer, 0, integer);
+
+        return new String(buffer, StandardCharsets.UTF_8);
     }
 
     @Override
