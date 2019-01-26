@@ -48,7 +48,7 @@ public class SetupSpigotVersion
     {
         System.out.println("No spigot.jar has been found!");
 
-        System.out.println("Choose a minecraft server version [\"paper\" (coming soon), \"spigot\"]");
+        System.out.println("Choose a minecraft server version [" +/*"\"paper\" (coming soon)", */"\"spigot\"]");
 
         String answer = null;
 
@@ -69,9 +69,11 @@ public class SetupSpigotVersion
                     case "spigot":
                         answer = "spigot";
                         break;
+                        /*
                     case "paper":
                         answer = "paper";
                         break;
+                        */
                     default:
                         System.out.println("This version is not supported!");
                 }
