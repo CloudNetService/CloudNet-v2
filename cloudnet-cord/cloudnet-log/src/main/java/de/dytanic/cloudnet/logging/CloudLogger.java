@@ -31,7 +31,7 @@ import java.util.logging.*;
  */
 @Getter
 public class CloudLogger
-        extends Logger {
+    extends Logger {
 
     private final String separator = System.getProperty("line.separator");
     private final LoggingFormatter formatter = new LoggingFormatter();
@@ -155,9 +155,8 @@ public class CloudLogger
                     reader.print(ConsoleReader.RESET_LINE + getFormatter().format(record));
                     reader.drawLine();
                     reader.flush();
-                } catch (IOException e)
+                } catch (Throwable ignored)
                 {
-                    e.printStackTrace();
                 }
             }
         }
@@ -175,7 +174,7 @@ public class CloudLogger
     }
 
     private class LoggingFormatter
-            extends Formatter {
+        extends Formatter {
 
         private final DateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
@@ -191,13 +190,13 @@ public class CloudLogger
             }
 
             return ConsoleReader.RESET_LINE +
-                    "[" +
-                    format.format(record.getMillis()) +
-                    "] " +
-                    record.getLevel().getName() +
-                    ": " +
-                    formatMessage(record) +
-                    "\n" + builder.toString();
+                "[" +
+                format.format(record.getMillis()) +
+                "] " +
+                record.getLevel().getName() +
+                ": " +
+                formatMessage(record) +
+                "\n" + builder.toString();
         }
     }
 }
