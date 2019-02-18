@@ -40,6 +40,8 @@ import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class CloudAPI implements MetaObj {
 
@@ -59,6 +61,12 @@ public final class CloudAPI implements MetaObj {
     private CloudNetwork cloudNetwork = new CloudNetwork();
     private NetworkHandlerProvider networkHandlerProvider = new NetworkHandlerProvider();
     private DatabaseManager databaseManager = new DatabaseManager();
+
+    /**
+     * Logger instance set by the respective bootstrap.
+     * Don't use in constructor!
+     */
+    private Logger logger;
 
     public CloudAPI(CloudConfigLoader loader, Runnable cancelTask)
     {
@@ -1225,4 +1233,23 @@ public final class CloudAPI implements MetaObj {
         return cloudService != null ? cloudService.getCachedPlayer(name) : null;
     }
 
+    public Logger getLogger() {
+        return logger;
+    }
+
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
+    public boolean isDebug() {
+        return logger.isLoggable(Level.FINEST);
+    }
+
+    public void setDebug(boolean debug) {
+        if (debug) {
+            logger.setLevel(Level.ALL);
+        } else {
+            logger.setLevel(Level.INFO);
+        }
+    }
 }
