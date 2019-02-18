@@ -210,6 +210,14 @@ public final class CommandCloud extends Command implements TabExecutor {
                     commandSender.sendMessage(builder.substring(0));
                     return;
                 }
+                if (args[0].equalsIgnoreCase("debug")) {
+                    CloudAPI.getInstance().setDebug(!CloudAPI.getInstance().isDebug());
+                    if(CloudAPI.getInstance().isDebug()) {
+                        commandSender.sendMessage("§aDebug output for proxy has been enabled.");
+                    } else {
+                        commandSender.sendMessage("§cDebug output for proxy has been disabled.");
+                    }
+                }
                 break;
             case 2:
                 if (args[0].equalsIgnoreCase("toggle"))
@@ -570,6 +578,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         CloudAPI.getInstance().getPrefix() + "§7/cloud copy <server> <directory>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud version",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud statistics",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud debug",
                         NetworkUtils.SPACE_STRING
                 );
                 break;
@@ -601,7 +610,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 tabCompletes = ImmutableList
                         .of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
                                 , "ustopGroup", "listProxys", "listOnline", "listServers", "log", "listGroups", "rl", "list"
-                                , "maintenance", "copy", "version", "statistics");
+                                , "maintenance", "copy", "version", "statistics", "debug");
                 break;
             }
             case 2:

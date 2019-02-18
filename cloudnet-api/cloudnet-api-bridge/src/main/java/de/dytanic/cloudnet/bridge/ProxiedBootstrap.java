@@ -37,6 +37,7 @@ public class ProxiedBootstrap extends Plugin {
                 getProxy().stop("CloudNet-Stop!");
             }
         });
+        CloudAPI.getInstance().setLogger(getLogger());
     }
 
     @Override
