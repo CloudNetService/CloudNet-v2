@@ -69,9 +69,11 @@ public class CloudPermissible extends PermissibleBase {
         if (inName.equalsIgnoreCase("bukkit.broadcast.user")) return true;
 
         CloudPlayer cloudPlayer = CloudServer.getInstance().getCloudPlayers().get(this.uniqueId);
-        if (cloudPlayer != null)
-            return cloudPlayer.getPermissionEntity().hasPermission(CloudAPI.getInstance().getPermissionPool(), inName, CloudAPI.getInstance().getGroup());
-        else
+        if (cloudPlayer != null) {
+            boolean hasPermission = cloudPlayer.getPermissionEntity().hasPermission(CloudAPI.getInstance().getPermissionPool(), inName, CloudAPI.getInstance().getGroup());
+            CloudAPI.getInstance().getLogger().finest(cloudPlayer.getName() + " hasPermission \"" + inName + "\": " + hasPermission);
+            return hasPermission;
+        } else
             return false;
     }
 
