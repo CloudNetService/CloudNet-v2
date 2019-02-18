@@ -186,7 +186,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    Block block = player.getTargetBlock((Set<Material>) null, 15);
+                    Block block = player.getTargetBlock(null, 15);
                     if (block.getState() instanceof org.bukkit.block.Sign)
                         if (!SignSelector.getInstance().containsPosition(block.getLocation()))
                         {
@@ -248,7 +248,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    Block block = player.getTargetBlock((Set<Material>) null, 15);
+                    Block block = player.getTargetBlock(null, 15);
                     if (block.getState() instanceof org.bukkit.block.Sign)
                     {
                         if (SignSelector.getInstance().containsPosition(block.getLocation()))
@@ -292,6 +292,14 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                     {
                         if (entityType.isAlive() && entityType.isSpawnable())
                             commandSender.sendMessage("- " + entityType.name());
+                    }
+                }
+                if (args[0].equalsIgnoreCase("debug")) {
+                    CloudAPI.getInstance().setDebug(!CloudAPI.getInstance().isDebug());
+                    if(CloudAPI.getInstance().isDebug()) {
+                        commandSender.sendMessage("§aDebug output for server has been enabled.");
+                    } else {
+                        commandSender.sendMessage("§cDebug output for server has been disabled.");
                     }
                 }
                 break;
@@ -339,6 +347,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs setItem <name> <itemId>");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs editMobLine <name> <display>");
                 }
+                commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs debug");
                 break;
         }
 
