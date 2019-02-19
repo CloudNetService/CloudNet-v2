@@ -186,7 +186,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    Block block = player.getTargetBlock(null, 15);
+                    Block block = player.getTargetBlock((Set<Material>) null, 15);
                     if (block.getState() instanceof org.bukkit.block.Sign)
                         if (!SignSelector.getInstance().containsPosition(block.getLocation()))
                         {
@@ -248,7 +248,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    Block block = player.getTargetBlock(null, 15);
+                    Block block = player.getTargetBlock((Set<Material>) null, 15);
                     if (block.getState() instanceof org.bukkit.block.Sign)
                     {
                         if (SignSelector.getInstance().containsPosition(block.getLocation()))
