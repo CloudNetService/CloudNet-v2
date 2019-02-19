@@ -12,6 +12,7 @@ import de.dytanic.cloudnet.lib.server.version.ProxyVersion;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Collection;
 
@@ -21,6 +22,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public class ProxyGroup
         implements Nameable {
 
