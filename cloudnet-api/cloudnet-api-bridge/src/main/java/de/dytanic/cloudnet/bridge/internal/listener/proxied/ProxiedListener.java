@@ -94,7 +94,7 @@ public class ProxiedListener implements Listener {
                 Level.FINEST,
                 this.getClass().getSimpleName(),
                 "handlePluginMessage",
-                "Handling plugin message event: ",
+                "Handling plugin message event: %s",
                 e);
         if (e.getTag().equals("MC|BSign") || e.getTag().equals("MC|BEdit"))
             if (CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance().getProxyGroup().getProxyConfig().getCustomPayloadFixer())
@@ -108,7 +108,7 @@ public class ProxiedListener implements Listener {
                 Level.FINEST,
                 this.getClass().getSimpleName(),
                 "handlePlayerServerSwitch",
-                "Handling server switch event: ",
+                "Handling server switch event: %s",
                 e);
         CloudPlayer cloudPlayer = CloudProxy.getInstance().getCloudPlayers().get(e.getPlayer().getUniqueId());
         cloudPlayer.setServer(e.getPlayer().getServer().getInfo().getName());
@@ -134,7 +134,7 @@ public class ProxiedListener implements Listener {
                 Level.FINEST,
                 this.getClass().getSimpleName(),
                 "handleLogin",
-                "Handling login event: ",
+                "Handling login event: %s",
                 e);
         PlayerConnection playerConnection = new PlayerConnection(
                 e.getConnection().getUniqueId(),
@@ -205,7 +205,7 @@ public class ProxiedListener implements Listener {
                 Level.FINEST,
                 this.getClass().getSimpleName(),
                 "handlePost",
-                "Handling post login event: ",
+                "Handling post login event: %s",
                 e);
         CloudProxy.getInstance().update();
         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutLoginSuccess(e.getPlayer().getUniqueId()));
@@ -314,7 +314,7 @@ public class ProxiedListener implements Listener {
                 Level.FINEST,
                 this.getClass().getSimpleName(),
                 "handleServerConnect",
-                "Handling server connect event: ",
+                "Handling server connect event: %s",
                 event);
         if (event.getPlayer().getServer() == null)
         {
