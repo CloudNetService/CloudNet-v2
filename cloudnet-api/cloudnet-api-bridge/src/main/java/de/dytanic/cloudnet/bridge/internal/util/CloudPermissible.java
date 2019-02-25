@@ -8,12 +8,14 @@ import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
+import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created by Tareko on 18.08.2017.
@@ -54,6 +56,15 @@ public class CloudPermissible extends PermissibleBase {
         permissionEntity.getGroups().stream()
                 .filter(g -> g.getTimeout() > System.currentTimeMillis())
                 .map(g -> CloudAPI.getInstance().getPermissionGroup(g.getGroup()))
+                .filter(Objects::nonNull)
+                .flatMap(g -> {
+                    Stream.Builder<PermissionGroup> builder = Stream.<PermissionGroup>builder().add(g);
+                    g.getImplementGroups().stream()
+                            .map(i -> CloudAPI.getInstance().getPermissionGroup(i))
+                            .filter(Objects::nonNull)
+                            .forEach(builder);
+                    return builder.build();
+                })
                 .forEach(g -> {
                     g.getPermissions().forEach((key, value) -> {
                         PermissionAttachmentInfo permissionAttachmentInfo = new PermissionAttachmentInfo(this, key, null, value);
