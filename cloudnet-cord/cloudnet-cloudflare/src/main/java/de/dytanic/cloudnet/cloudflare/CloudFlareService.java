@@ -183,17 +183,15 @@ public class CloudFlareService {
     {
         //if (!bungeeSRVRecords.containsKey(proxyServer.getServiceId().getServerId())) return;
 
-        while (true)
-        {
-            Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(), new Acceptable<MultiValue<PostResponse, String>>() {
-                @Override
-                public boolean isAccepted(MultiValue<PostResponse, String> postResponseStringMultiValue)
-                {
-                    return postResponseStringMultiValue.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId());
-                }
-            });
+        Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(), new Acceptable<MultiValue<PostResponse, String>>() {
+            @Override
+            public boolean isAccepted(MultiValue<PostResponse, String> postResponseStringMultiValue)
+            {
+                return postResponseStringMultiValue.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId());
+            }
+        });
 
-            //MultiValue<PostResponse, String> postResponse = bungeeSRVRecords.get(proxyServer.getServiceId().getServerId());
+        //MultiValue<PostResponse, String> postResponse = bungeeSRVRecords.get(proxyServer.getServiceId().getServerId());
             /*
             if (postResponse != null)
             {
@@ -202,16 +200,15 @@ public class CloudFlareService {
             } else break;
             */
 
-            for (MultiValue<PostResponse, String> postResponse : postResponses)
-                if (postResponse != null)
-                {
-                    bungeeSRVRecords.remove(postResponse.getSecond());
-                    cloudFlareDatabase.remove(postResponse.getFirst().getId());
-                    deleteRecord(postResponse.getFirst());
+        for (MultiValue<PostResponse, String> postResponse : postResponses)
+            if (postResponse != null)
+            {
+                bungeeSRVRecords.remove(postResponse.getSecond());
+                cloudFlareDatabase.remove(postResponse.getFirst().getId());
+                deleteRecord(postResponse.getFirst());
 
-                    NetworkUtils.sleepUninterruptedly(500);
-                } else break;
-        }
+                NetworkUtils.sleepUninterruptedly(500);
+            }
     }
 
     /**
