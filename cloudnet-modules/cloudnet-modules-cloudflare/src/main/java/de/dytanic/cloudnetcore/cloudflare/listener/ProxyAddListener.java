@@ -23,7 +23,7 @@ public class ProxyAddListener implements IEventListener<ProxyAddEvent> {
             public void run()
             {
                 CloudFlareService.getInstance().addProxy(event.getProxyServer().getProcessMeta(), CloudFlareModule.getInstance().getCloudFlareDatabase());
-                NetworkUtils.sleepUninterruptedly(400);
+                NetworkUtils.sleepUninterruptedly(500);
             }
         });
     }

@@ -105,6 +105,8 @@ public class CloudFlareService {
 
         for (MultiValue<PostResponse, String> id : cloudFlareDatabase.getAndRemove().values())
         {
+            if (id.getFirst() == null) continue;
+
             this.deleteRecord(id.getFirst());
             NetworkUtils.sleepUninterruptedly(500);
         }
@@ -169,6 +171,7 @@ public class CloudFlareService {
                     PostResponse postResponse = this.createRecord(cloudFlareConfig, srvRecord);
                     cloudFlareDatabase.add(postResponse);
                     this.bungeeSRVRecords.put(postResponse.getId(), new MultiValue<>(postResponse, proxyServer.getServiceId().getServerId()));
+                    NetworkUtils.sleepUninterruptedly(500);
                 }
             }
     }
@@ -283,7 +286,7 @@ public class CloudFlareService {
                 JsonObject jsonObject = toJsonInput(inputStream);
                 if (jsonObject.get("success").getAsBoolean())
                 {
-                    System.out.println(prefix + " DNSRecord [" + postResponse.getId() + "] was removed");
+                    System.out.println(prefix + "DNSRecord [" + postResponse.getId() + "] was removed");
                 } else
                     throw new CloudFlareDNSRecordException("Failed to delete DNSRecord \n " + jsonObject.toString());
             }
