@@ -19,7 +19,6 @@ import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,9 +27,9 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -39,8 +38,12 @@ import java.util.UUID;
 public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args)
+    public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args)
     {
+        CloudAPI.getInstance().getLogger().finest(
+                String.format("%s executed %s (label = %s) with arguments %s",
+                        commandSender, command, label, Arrays.toString(args))
+        );
         if (!(commandSender instanceof Player)) return false;
 
         Player player = (Player) commandSender;
@@ -186,7 +189,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    Block block = player.getTargetBlock((Set<Material>) null, 15);
+                    Block block = player.getTargetBlock(null, 15);
                     if (block.getState() instanceof org.bukkit.block.Sign)
                         if (!SignSelector.getInstance().containsPosition(block.getLocation()))
                         {
@@ -248,7 +251,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    Block block = player.getTargetBlock((Set<Material>) null, 15);
+                    Block block = player.getTargetBlock(null, 15);
                     if (block.getState() instanceof org.bukkit.block.Sign)
                     {
                         if (SignSelector.getInstance().containsPosition(block.getLocation()))
