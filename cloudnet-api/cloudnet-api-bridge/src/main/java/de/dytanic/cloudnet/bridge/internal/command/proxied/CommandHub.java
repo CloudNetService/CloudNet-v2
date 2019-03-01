@@ -14,6 +14,8 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.util.Arrays;
+
 /**
  * Created by Tareko on 20.08.2017.
  */
@@ -33,6 +35,10 @@ public final class CommandHub extends Command {
     @Override
     public void execute(CommandSender commandSender, String[] args)
     {
+        CloudAPI.getInstance().getLogger().finest(
+                String.format("%s executed %s with arguments %s",
+                        commandSender, this, Arrays.toString(args))
+        );
         if (!(commandSender instanceof ProxiedPlayer)) return;
 
         ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(((ProxiedPlayer) commandSender).getServer().getInfo().getName());

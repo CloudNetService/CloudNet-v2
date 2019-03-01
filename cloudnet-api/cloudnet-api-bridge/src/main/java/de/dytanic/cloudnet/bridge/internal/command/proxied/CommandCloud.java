@@ -49,6 +49,10 @@ public final class CommandCloud extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender commandSender, String[] args)
     {
+        CloudAPI.getInstance().getLogger().finest(
+                String.format("%s executed %s with arguments %s",
+                        commandSender, this, Arrays.toString(args))
+        );
         if (args.length > 2)
         {
             if (args[0].equalsIgnoreCase("cmds") && commandSender.hasPermission("cloudnet.command.cloud.commandserver"))
