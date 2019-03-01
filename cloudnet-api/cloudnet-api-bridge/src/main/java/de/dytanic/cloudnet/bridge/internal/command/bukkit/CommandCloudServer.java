@@ -19,6 +19,7 @@ import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,10 +28,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Tareko on 23.08.2017.
@@ -189,7 +187,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    Block block = player.getTargetBlock(null, 15);
+                    Block block = player.getTargetBlock((Set<Material>) null, 15);
                     if (block.getState() instanceof org.bukkit.block.Sign)
                         if (!SignSelector.getInstance().containsPosition(block.getLocation()))
                         {
@@ -251,7 +249,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    Block block = player.getTargetBlock(null, 15);
+                    Block block = player.getTargetBlock((Set<Material>) null, 15);
                     if (block.getState() instanceof org.bukkit.block.Sign)
                     {
                         if (SignSelector.getInstance().containsPosition(block.getLocation()))
