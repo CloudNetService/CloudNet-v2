@@ -12,6 +12,7 @@
 
 # CloudNet | The Cloud Network Environment Technology 2
 ![Image of CloudNet](https://cdn.discordapp.com/attachments/325383142464552972/354670548292206594/CloudNet.png)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FCloudNetService%2FCloudNet.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FCloudNetService%2FCloudNet?ref=badge_shield)
 
 
 This is the CloudNet project, which has already taken a lot of time and effort for over 1 year. 
@@ -74,3 +75,7 @@ Maven:
      </dependencies>
 
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FCloudNetService%2FCloudNet.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FCloudNetService%2FCloudNet?ref=badge_large)
