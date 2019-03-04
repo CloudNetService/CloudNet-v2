@@ -42,11 +42,12 @@ public class CloudPermissible extends PermissibleBase {
     }
 
     @Override
-    public void recalculatePermissions() {
+    public void recalculatePermissions()
+    {
         this.permissions.clear();
-        if (this.uniqueId == null) {
-            return;
-        }
+
+        if (this.uniqueId == null) return;
+
         PermissionEntity permissionEntity = CloudServer.getInstance().getCloudPlayers().get(this.uniqueId).getPermissionEntity();
         final Map<String, Boolean> playerPermissions = permissionEntity.getPermissions();
         playerPermissions.forEach((key, value) -> {
@@ -54,27 +55,29 @@ public class CloudPermissible extends PermissibleBase {
             permissions.put(key, permissionAttachmentInfo);
         });
         permissionEntity.getGroups().stream()
-                .filter(g -> g.getTimeout() > System.currentTimeMillis())
-                .map(g -> CloudAPI.getInstance().getPermissionGroup(g.getGroup()))
-                .filter(Objects::nonNull)
-                .flatMap(g -> {
-                    Stream.Builder<PermissionGroup> builder = Stream.<PermissionGroup>builder().add(g);
-                    g.getImplementGroups().stream()
-                            .map(i -> CloudAPI.getInstance().getPermissionGroup(i))
-                            .filter(Objects::nonNull)
-                            .forEach(builder);
-                    return builder.build();
-                })
-                .forEach(g -> {
-                    g.getPermissions().forEach((key, value) -> {
-                        PermissionAttachmentInfo permissionAttachmentInfo = new PermissionAttachmentInfo(this, key, null, value);
-                        permissions.put(key, permissionAttachmentInfo);
-                    });
+            .filter(g -> g.getTimeout() > System.currentTimeMillis())
+            .map(g -> CloudAPI.getInstance().getPermissionGroup(g.getGroup()))
+            .filter(Objects::nonNull)
+            .flatMap(g -> {
+                Stream.Builder<PermissionGroup> builder = Stream.<PermissionGroup>builder().add(g);
+                g.getImplementGroups().stream()
+                    .map(i -> CloudAPI.getInstance().getPermissionGroup(i))
+                    .filter(Objects::nonNull)
+                    .forEach(builder);
+
+                return builder.build();
+            })
+            .forEach(g -> {
+                g.getPermissions().forEach((key, value) -> {
+                    PermissionAttachmentInfo permissionAttachmentInfo = new PermissionAttachmentInfo(this, key, null, value);
+                    permissions.put(key, permissionAttachmentInfo);
                 });
+            });
     }
 
     @Override
-    public boolean isPermissionSet(String name) {
+    public boolean isPermissionSet(String name)
+    {
         return hasPermission(name);
     }
 
@@ -96,10 +99,13 @@ public class CloudPermissible extends PermissibleBase {
         if (inName.equalsIgnoreCase("bukkit.broadcast.user")) return true;
 
         CloudPlayer cloudPlayer = CloudServer.getInstance().getCloudPlayers().get(this.uniqueId);
-        if (cloudPlayer != null) {
+
+        if (cloudPlayer != null)
+        {
             boolean hasPermission = cloudPlayer.getPermissionEntity().hasPermission(CloudAPI.getInstance().getPermissionPool(), inName, CloudAPI.getInstance().getGroup());
             CloudAPI.getInstance().getLogger().finest(cloudPlayer.getName() + " hasPermission \"" + inName + "\": " + hasPermission);
             return hasPermission;
+
         } else
             return false;
     }
