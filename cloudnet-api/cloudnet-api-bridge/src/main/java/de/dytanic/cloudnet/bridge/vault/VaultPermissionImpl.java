@@ -144,7 +144,7 @@ public class VaultPermissionImpl extends Permission {
 
     @Override
     public String[] getGroups() {
-        return (String[]) CloudAPI.getInstance().getPermissionPool().getGroups().keySet().toArray();
+        return CloudAPI.getInstance().getPermissionPool().getGroups().keySet().toArray(new String[0]);
     }
 
     @Override
@@ -164,5 +164,4 @@ public class VaultPermissionImpl extends Permission {
 
         return offlinePlayer;
     }
-
 }
