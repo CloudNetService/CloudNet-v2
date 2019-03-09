@@ -24,12 +24,13 @@ public class CloudPermissible extends PermissibleBase {
 
     private UUID uniqueId;
 
-    private Map<String, PermissionAttachmentInfo> permissions = new HashMap<>();
+    private Map<String, PermissionAttachmentInfo> permissions;
 
     public CloudPermissible(Player player)
     {
         super(player);
         this.uniqueId = player.getUniqueId();
+        this.permissions = new HashMap<>();
 
         player.setOp(false);
         recalculatePermissions();
