@@ -345,6 +345,7 @@ public class CloudConfig {
                             groups.put(serverGroup.getName(), serverGroup);
                         } catch (Throwable ex)
                         {
+                            ex.printStackTrace();
                             System.out.println("Cannot load servergroup file [" + file.getName() + "]");
                         }
                 }
