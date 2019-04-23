@@ -16,7 +16,7 @@ public final class PermissionProvider {
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy-HH:mm:ss");
 
     /**
-     * Update the given player in the player database.
+     * Updates the given player in the player database.
      *
      * @param offlinePlayer the player to update
      */
@@ -36,7 +36,7 @@ public final class PermissionProvider {
     }
 
     /**
-     * Calculate the permission group timeout for the given days in future.
+     * Calculates the permission group timeout for the given days in future.
      *
      * @param value the amount of days
      * @return timeout value for use with {@link PermissionGroup}
@@ -244,15 +244,19 @@ public final class PermissionProvider {
     }
 
     /**
-     * Gets the join power of the given player by their highest permission group.
+     * Gets the highest join power of the given player.
      *
      * @param player the player
-     * @return the join power of the highest permission group of the player
+     * @return the highest join power
      * @see PermissionGroup
      */
     public static int getJoinPower(OfflinePlayer player)
     {
-        return player.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool()).getJoinPower();
+        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        return player.getPermissionEntity().getGroups().stream()
+                .mapToInt(groupEntityData -> permissionPool.getGroups().get(groupEntityData.getGroup()).getJoinPower())
+                .max()
+                .orElse(0);
     }
 
     /**
