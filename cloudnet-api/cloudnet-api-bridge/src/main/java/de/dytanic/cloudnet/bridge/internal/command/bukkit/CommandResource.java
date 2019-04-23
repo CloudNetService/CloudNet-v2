@@ -11,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import java.lang.management.ManagementFactory;
+import java.util.Arrays;
 
 /**
  * Created by Tareko on 07.07.2017.
@@ -25,8 +26,12 @@ public final class CommandResource
     }
 
     @Override
-    public boolean execute(CommandSender sender, String s, String[] args)
+    public boolean execute(CommandSender sender, String alias, String[] args)
     {
+        CloudAPI.getInstance().getLogger().finest(
+                String.format("%s executed %s with arguments %s",
+                        sender, alias, Arrays.toString(args))
+        );
         if (!testPermission(sender)) return false;
         long used = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1048576L;
         long max = Runtime.getRuntime().maxMemory() / 1048576L;

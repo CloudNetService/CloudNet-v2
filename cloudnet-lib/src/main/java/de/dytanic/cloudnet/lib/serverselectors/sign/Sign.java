@@ -17,7 +17,7 @@ public class Sign {
     private Position position;
 
     @Setter
-    private ServerInfo serverInfo;
+    private volatile ServerInfo serverInfo;
 
     public Sign(String targetGroup, Position signPosition)
     {

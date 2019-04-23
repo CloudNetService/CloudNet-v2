@@ -27,10 +27,11 @@ public final class PacketInScreen extends PacketInHandler {
             if (CloudNetWrapper.getInstance().getServers().containsKey(server.getServiceId().getServerId()))
             {
                 GameServer gameServer = CloudNetWrapper.getInstance().getServers().get(server.getServiceId().getServerId());
+
                 if (data.getBoolean("enable"))
-                    CloudNetWrapper.getInstance().getScreenProvider().putScreenRequest(gameServer);
+                    gameServer.enableScreenSystem();
                 else
-                    CloudNetWrapper.getInstance().getScreenProvider().cancel(gameServer);
+                    gameServer.disableScreenSystem();
             }
         } else
         {
@@ -38,11 +39,11 @@ public final class PacketInScreen extends PacketInHandler {
             }.getType());
             if (CloudNetWrapper.getInstance().getProxys().containsKey(server.getServiceId().getServerId()))
             {
-                BungeeCord gameServer = CloudNetWrapper.getInstance().getProxys().get(server.getServiceId().getServerId());
+                BungeeCord bungee = CloudNetWrapper.getInstance().getProxys().get(server.getServiceId().getServerId());
                 if (data.getBoolean("enable"))
-                    CloudNetWrapper.getInstance().getScreenProvider().putScreenRequest(gameServer);
-                else if (CloudNetWrapper.getInstance().getScreenProvider().contains(gameServer))
-                    CloudNetWrapper.getInstance().getScreenProvider().cancel(gameServer);
+                    bungee.enableScreenSystem();
+                else
+                    bungee.disableScreenSystem();
             }
         }
     }

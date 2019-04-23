@@ -13,6 +13,7 @@ import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import lombok.Getter;
 
 import java.util.Collection;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -21,7 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Getter
 public final class ServerLogManager implements Runnable {
 
-    private final NetorHashMap<String, MultiValue<String, Long>, Collection<ScreenInfo>> screenInfos = new NetorHashMap<>();
+    private final NetorHashMap<String, MultiValue<String, Long>, Queue<ScreenInfo>> screenInfos = new NetorHashMap<>();
 
     public void append(String rnd, String serverId)
     {
@@ -60,9 +61,11 @@ public final class ServerLogManager implements Runnable {
                     if (this.screenInfos.getF(key).getFirst().equalsIgnoreCase(screenInfo.getServiceId().getServerId()))
                     {
                         this.screenInfos.getS(key).addAll(screenInfos);
+
+                        while (this.screenInfos.getS(key).size() >= 64)
+                            this.screenInfos.getS(key).poll();
                     }
                 }
-                break;
             }
     }
 

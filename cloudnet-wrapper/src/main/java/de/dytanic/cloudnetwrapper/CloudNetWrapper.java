@@ -22,13 +22,13 @@ import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import de.dytanic.cloudnet.web.client.WebClient;
 import de.dytanic.cloudnetwrapper.command.*;
 import de.dytanic.cloudnetwrapper.handlers.IWrapperHandler;
+import de.dytanic.cloudnetwrapper.handlers.ReadConsoleLogHandler;
 import de.dytanic.cloudnetwrapper.handlers.StopTimeHandler;
 import de.dytanic.cloudnetwrapper.network.packet.in.*;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutSetReadyWrapper;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutUpdateCPUUsage;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutUpdateWrapperInfo;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutWrapperScreen;
-import de.dytanic.cloudnetwrapper.screen.ScreenProvider;
 import de.dytanic.cloudnetwrapper.server.BungeeCord;
 import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
@@ -56,7 +56,6 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     private final CloudLogger cloudNetLogging;
     private final CloudNetWrapperConfig wrapperConfig;
     private final Scheduler scheduler = new Scheduler(40);
-    private final ScreenProvider screenProvider = new ScreenProvider();
     private final CommandManager commandManager = new CommandManager();
     private final WebClient webClient = new WebClient();
     private Auth auth;
@@ -108,7 +107,7 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
 
         if (key == null)
         {
-            System.out.println("Please copyFileToDirectory the WRAPPER_KEY.cnd for authentication!");
+            System.out.println("Please copy the WRAPPER_KEY.cnd into the root directory of the CloudNet-Wrapper for authentication!");
             System.out.println("The Wrapper stops in 5 seconds");
             NetworkUtils.sleepUninterruptedly(2000);
             System.exit(0);
@@ -180,9 +179,10 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         //Server Handlers
         {
             networkConnection.sendPacket(new PacketOutSetReadyWrapper(true));
-            IWrapperHandler iWrapperHandler = new StopTimeHandler();
+            IWrapperHandler iWrapperHandler = new StopTimeHandler(), readConsoleLogWrapperHandler = new ReadConsoleLogHandler();
 
             scheduler.runTaskRepeatSync(iWrapperHandler.toExecutor(), 0, iWrapperHandler.getTicks());
+            scheduler.runTaskRepeatSync(readConsoleLogWrapperHandler.toExecutor(), 0, readConsoleLogWrapperHandler.getTicks());
 
             scheduler.runTaskRepeatAsync(new Runnable() {
                 @Override

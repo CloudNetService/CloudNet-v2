@@ -13,8 +13,8 @@ import lombok.Setter;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by Tareko on 21.05.2017.
@@ -78,7 +78,7 @@ public class ServerGroup
                 new PriorityConfig(groupPriority, priorityForGroupOnlineCount)
         );
 
-        this.templates = Arrays.asList(new Template("default", TemplateResource.LOCAL, null, new String[]{}, new ArrayList<>()));
+        this.templates = new ArrayList<>(Collections.singletonList(new Template("default", TemplateResource.LOCAL, null, new String[]{}, new ArrayList<>())));
     }
 
     public SimpleServerGroup toSimple()

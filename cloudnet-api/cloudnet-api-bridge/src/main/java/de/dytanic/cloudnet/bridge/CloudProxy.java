@@ -374,7 +374,14 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
             if (serverInfo == null) return;
 
             ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerRemoveEvent(serverInfo));
-            ProxyServer.getInstance().getServers().remove(serverInfo.getServiceId().getServerId());
+
+            try
+            {
+                ProxyServer.getInstance().getServers().remove(serverInfo.getServiceId().getServerId());
+            } catch (Throwable ignored)
+            {
+            }
+
             cachedServers.remove(serverInfo.getServiceId().getServerId());
 
             if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback()))

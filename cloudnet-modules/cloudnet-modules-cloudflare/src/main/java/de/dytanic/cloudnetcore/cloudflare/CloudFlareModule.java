@@ -31,7 +31,7 @@ public class CloudFlareModule extends CoreModule {
 
     private ConfigCloudFlare configCloudFlare;
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(1);
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private CloudFlareDatabase cloudFlareDatabase;
 
@@ -45,7 +45,7 @@ public class CloudFlareModule extends CoreModule {
     public void onBootstrap()
     {
         configCloudFlare = new ConfigCloudFlare();
-        cloudFlareDatabase = new CloudFlareDatabase(getCloud().getDatabaseManager().getDatabase("cloud_internal_cfg"));
+        cloudFlareDatabase = new CloudFlareDatabase(getCloud().getDatabaseManager().getDatabase("cloudnet_internal_cfg"));
         try
         {
 
@@ -77,13 +77,12 @@ public class CloudFlareModule extends CoreModule {
     public void onShutdown()
     {
 
-        executor.shutdown();
+        executor.shutdownNow();
 
         try
         {
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             CloudFlareService.getInstance().shutdown(cloudFlareDatabase);
-        } catch (Exception ex)
+        } catch (Exception ignored)
         {
         }
     }

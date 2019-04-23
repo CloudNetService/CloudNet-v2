@@ -10,6 +10,7 @@ import de.dytanic.cloudnet.lib.network.protocol.ProtocolRequest;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnetcore.CloudNet;
+import io.netty.channel.ChannelFutureListener;
 
 /**
  * Created by Tareko on 27.05.2017.
@@ -22,15 +23,21 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
 
     default void sendPacket(Packet packet)
     {
-        CloudNet.getLogger().debug("Sending Packet " + packet.getClass().getSimpleName() + " to " + getServerId());
+        CloudNet.getLogger().debug(
+                "Sending Packet " +
+                        packet.getClass().getSimpleName() +
+                        " (id=" + CloudNet.getInstance().getPacketManager().packetId(packet) +
+                        ";dataLength=" + CloudNet.getInstance().getPacketManager().packetData(packet).size() +
+                        ") to " + getServerId()
+        );
 
         if (getChannel() == null) return;
         if (getChannel().eventLoop().inEventLoop())
         {
             try
             {
-                getChannel().writeAndFlush(packet);
-            } catch (Exception ex)
+                getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            } catch (Exception ignored)
             {
             }
         } else
@@ -41,10 +48,9 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
                 {
                     try
                     {
-                        getChannel().writeAndFlush(packet);
-                    } catch (Exception ex)
+                        getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+                    } catch (Exception ignored)
                     {
-
                     }
                 }
             });
@@ -62,6 +68,13 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
     default void sendPacketSynchronized(Packet packet)
     {
         if (getChannel() == null) return;
+        CloudNet.getLogger().debug(
+                "Sending Packet " +
+                        packet.getClass().getSimpleName() +
+                        " (id=" + CloudNet.getInstance().getPacketManager().packetId(packet) +
+                        ";dataLength=" + CloudNet.getInstance().getPacketManager().packetData(packet).size() +
+                        ") to " + getServerId()
+        );
         getChannel().writeAndFlush(packet).syncUninterruptibly();
     }
 

@@ -5,10 +5,7 @@ import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.*;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -175,12 +172,10 @@ public final class PermissionProvider {
      */
     public static String getGroupPrefix(String groupName)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
-            return permissionGroup.getPrefix();
-        }
+            return permissionPool.getGroups().get(groupName).getPrefix();
+
         return null;
     }
 
@@ -195,12 +190,10 @@ public final class PermissionProvider {
      */
     public static String getGroupSuffix(String groupName)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
-            return permissionGroup.getSuffix();
-        }
+            return permissionPool.getGroups().get(groupName).getSuffix();
+
         return null;
     }
 
@@ -226,12 +219,10 @@ public final class PermissionProvider {
      */
     public static String getGroupDisplay(String groupName)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
-            return permissionGroup.getDisplay();
-        }
+            return permissionPool.getGroups().get(groupName).getDisplay();
+
         return null;
     }
 
@@ -245,12 +236,10 @@ public final class PermissionProvider {
      */
     public static Collection<String> getImplementedGroups(String groupName)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
-            return Collections.unmodifiableCollection(permissionGroup.getImplementGroups());
-        }
+            return Collections.unmodifiableCollection(permissionPool.getGroups().get(groupName).getImplementGroups());
+
         return null;
     }
 
@@ -275,12 +264,10 @@ public final class PermissionProvider {
      */
     public static Integer getGroupJoinPower(String groupName)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
-        {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
-            return permissionGroup.getJoinPower();
-        }
+            return permissionPool.getGroups().get(groupName).getJoinPower();
+
         return null;
     }
 
@@ -347,7 +334,7 @@ public final class PermissionProvider {
      */
     public static void addPermission(String permissionGroupName, String permission)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(permissionGroupName))
         {
             PermissionGroup permissionGroup = permissionPool.getGroups().get(permissionGroupName);
@@ -365,7 +352,7 @@ public final class PermissionProvider {
      */
     public static void removePermission(String permissionGroupName, String permission)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(permissionGroupName))
         {
             PermissionGroup permissionGroup = permissionPool.getGroups().get(permissionGroupName);
@@ -383,9 +370,9 @@ public final class PermissionProvider {
      * @param permission          the permission to add
      * @param serverGroup         the server group to restrict the permission to
      */
-    public static void addServergroupPermission(String permissionGroupName, String permission, String serverGroup)
+    public static void addServerGroupPermission(String permissionGroupName, String permission, String serverGroup)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(permissionGroupName))
         {
             PermissionGroup permissionGroup = permissionPool.getGroups().get(permissionGroupName);
@@ -409,18 +396,15 @@ public final class PermissionProvider {
      */
     public static void removeServerGroupPermission(String permissionGroupName, String permission, String serverGroup)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(permissionGroupName))
         {
             PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionGroup(permissionGroupName);
-            if (permissionGroup == null)
-            {
-                return;
-            }
+            if (permissionGroup == null) return;
+
             if (!permissionGroup.getServerGroupPermissions().containsKey(permission))
-            {
                 permissionGroup.getServerGroupPermissions().put(permission, new ArrayList<>());
-            }
+
             permissionGroup.getServerGroupPermissions().get(serverGroup).remove(permission.replaceFirst("-", ""));
             updatePermissionGroup(permissionGroup);
         }
@@ -436,7 +420,7 @@ public final class PermissionProvider {
      */
     public static void setPlayerGroup(OfflinePlayer offlinePlayer, String groupName, long time)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
         {
             offlinePlayer.getPermissionEntity().getGroups().clear();
@@ -454,9 +438,9 @@ public final class PermissionProvider {
      * @param time      the time after which the group will be removed
      * @see GroupEntityData
      */
-    public static void addPlayerGroup(OfflinePlayer player, String groupName, Integer time)
+    public static void addPlayerGroup(OfflinePlayer player, String groupName, long time)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
         {
             player.getPermissionEntity().getGroups().add(new GroupEntityData(groupName,
@@ -474,15 +458,16 @@ public final class PermissionProvider {
      */
     public static void removePlayerGroup(String groupName, OfflinePlayer offlinePlayer)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
-        offlinePlayer.getPermissionEntity().getGroups().stream()
-                .filter(e -> e.getGroup().equals(groupName))
-                .forEach(e -> offlinePlayer.getPermissionEntity().getGroups().remove(e));
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final List<GroupEntityData> groupEntityData = new ArrayList<>(offlinePlayer.getPermissionEntity().getGroups());
+        groupEntityData.forEach(group -> {
+            if (group.getGroup().equals(groupName))
+                offlinePlayer.getPermissionEntity().getGroups().remove(group);
+        });
 
         if (offlinePlayer.getPermissionEntity().getGroups().size() == 0)
-        {
             offlinePlayer.getPermissionEntity().getGroups().add(new GroupEntityData(permissionPool.getDefaultGroup().getName(), 0));
-        }
+
         updatePlayer(offlinePlayer);
     }
 
@@ -527,11 +512,10 @@ public final class PermissionProvider {
      */
     public static PermissionGroup getPermissionGroup(String groupName)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
-        {
             return permissionPool.getGroups().get(groupName);
-        }
+
         return null;
     }
 
@@ -543,10 +527,10 @@ public final class PermissionProvider {
      */
     public static void setDisplay(String groupName, String display)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
         {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            final PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             permissionGroup.setDisplay(display);
             updatePermissionGroup(permissionGroup);
         }
@@ -560,10 +544,10 @@ public final class PermissionProvider {
      */
     public static void setPrefix(String groupName, String prefix)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
         {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            final PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             permissionGroup.setPrefix(prefix);
             updatePermissionGroup(permissionGroup);
         }
@@ -577,10 +561,10 @@ public final class PermissionProvider {
      */
     public static void setSuffix(String groupName, String suffix)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
         {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            final PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             permissionGroup.setSuffix(suffix);
             updatePermissionGroup(permissionGroup);
         }
@@ -593,14 +577,14 @@ public final class PermissionProvider {
      */
     public static void setDefaultGroup(String groupName)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
         {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
-            PermissionGroup olddefault = permissionPool.getDefaultGroup();
-            olddefault.setDefaultGroup(false);
+            final PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            final PermissionGroup old = permissionPool.getDefaultGroup();
+            old.setDefaultGroup(false);
             permissionGroup.setDefaultGroup(true);
-            updatePermissionGroup(olddefault);
+            updatePermissionGroup(old);
             updatePermissionGroup(permissionGroup);
         }
     }
@@ -613,10 +597,10 @@ public final class PermissionProvider {
      */
     public static void setJoinPower(String groupName, int joinPower)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
         {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            final PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             permissionGroup.setJoinPower(joinPower);
             updatePermissionGroup(permissionGroup);
         }
@@ -630,10 +614,10 @@ public final class PermissionProvider {
      */
     public static void setTagID(String groupName, int tagId)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (permissionPool.getGroups().containsKey(groupName))
         {
-            PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
+            final PermissionGroup permissionGroup = permissionPool.getGroups().get(groupName);
             permissionGroup.setTagId(tagId);
             updatePermissionGroup(permissionGroup);
         }
@@ -648,10 +632,10 @@ public final class PermissionProvider {
      */
     public PermissionGroup createPermissionGroup(String permissionGroupName)
     {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
+        final PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (!permissionPool.getGroups().containsKey(permissionGroupName))
         {
-            PermissionGroup permissionGroup = new DefaultPermissionGroup(permissionGroupName);
+            final PermissionGroup permissionGroup = new DefaultPermissionGroup(permissionGroupName);
             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
             return permissionGroup;
         }

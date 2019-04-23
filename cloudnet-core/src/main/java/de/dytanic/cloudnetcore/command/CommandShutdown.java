@@ -79,7 +79,7 @@ public final class CommandShutdown extends Command {
                     sender.sendMessage("Group doesn't exist");
                     return;
                 }
-                if (args[0].equalsIgnoreCase("server"))
+                if (args[0].equalsIgnoreCase("server") || args[0].equalsIgnoreCase("-s"))
                 {
                     MinecraftServer proxyServer = CloudNet.getInstance().getServer(args[1]);
                     if (proxyServer != null)
@@ -99,7 +99,7 @@ public final class CommandShutdown extends Command {
                     }
                     return;
                 }
-                if (args[0].equalsIgnoreCase("proxy"))
+                if (args[0].equalsIgnoreCase("proxy") || args[0].equalsIgnoreCase("-p"))
                 {
                     ProxyServer proxyServer = CloudNet.getInstance().getProxy(args[1]);
                     if (proxyServer != null)
