@@ -74,7 +74,7 @@ public class PermissionEntity {
                 permissionGroup = permissionPool.getGroups().get(groupEntityData.getGroup());
             else
             {
-                if (permissionGroup.getJoinPower() < permissionPool.getGroups().get(groupEntityData.getGroup()).getJoinPower())
+                if (permissionGroup.getTagId() > permissionPool.getGroups().get(groupEntityData.getGroup()).getTagId())
                 {
                     permissionGroup = permissionPool.getGroups().get(groupEntityData.getGroup());
                 }
