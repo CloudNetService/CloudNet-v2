@@ -548,55 +548,64 @@ public class CloudServer implements ICloudService {
         @Override
         public void onServerAdd(ServerInfo serverInfo)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitServerAddEvent(serverInfo));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitServerAddEvent(serverInfo)));
         }
 
         @Override
         public void onServerInfoUpdate(ServerInfo serverInfo)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitServerInfoUpdateEvent(serverInfo));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitServerInfoUpdateEvent(serverInfo)));
         }
 
         @Override
         public void onServerRemove(ServerInfo serverInfo)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitServerRemoveEvent(serverInfo));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitServerRemoveEvent(serverInfo)));
         }
 
         @Override
         public void onProxyAdd(ProxyInfo proxyInfo)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitProxyAddEvent(proxyInfo));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitProxyAddEvent(proxyInfo)));
         }
 
         @Override
         public void onProxyInfoUpdate(ProxyInfo proxyInfo)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitProxyInfoUpdateEvent(proxyInfo));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitProxyInfoUpdateEvent(proxyInfo)));
         }
 
         @Override
         public void onProxyRemove(ProxyInfo proxyInfo)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitProxyRemoveEvent(proxyInfo));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitProxyRemoveEvent(proxyInfo)));
         }
 
         @Override
         public void onCloudNetworkUpdate(CloudNetwork cloudNetwork)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitCloudNetworkUpdateEvent(cloudNetwork));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitCloudNetworkUpdateEvent(cloudNetwork)));
         }
 
         @Override
         public void onCustomChannelMessageReceive(String channel, String message, Document document)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitCustomChannelMessageReceiveEvent(channel, message, document));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitCustomChannelMessageReceiveEvent(channel, message, document)));
         }
 
         @Override
         public void onCustomSubChannelMessageReceive(String channel, String message, Document document)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitSubChannelMessageEvent(channel, message, document));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitSubChannelMessageEvent(channel, message, document)));
 
             if (channel.equalsIgnoreCase("cloudnet_internal"))
             {
@@ -611,9 +620,17 @@ public class CloudServer implements ICloudService {
                         Files.copy(urlConnection.getInputStream(), Paths.get("plugins/" + document.getString("name") + ".jar"));
                         File file = new File("plugins/" + document.getString("name") + ".jar");
 
-                        Plugin plugin = Bukkit.getPluginManager().loadPlugin(file);
-                        Bukkit.getPluginManager().enablePlugin(plugin);
-                    } catch (IOException | InvalidDescriptionException | InvalidPluginException e)
+                        Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(), () -> {
+                            try
+                            {
+                                Plugin plugin = Bukkit.getPluginManager().loadPlugin(file);
+                                Bukkit.getPluginManager().enablePlugin(plugin);
+                            } catch (InvalidPluginException | InvalidDescriptionException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        });
+                    } catch (IOException e)
                     {
                         e.printStackTrace();
                     }
@@ -626,13 +643,15 @@ public class CloudServer implements ICloudService {
         public void onPlayerLoginNetwork(CloudPlayer cloudPlayer)
         {
             //cloudPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
-            Bukkit.getPluginManager().callEvent(new BukkitPlayerLoginNetworkEvent(cloudPlayer));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitPlayerLoginNetworkEvent(cloudPlayer)));
         }
 
         @Override
         public void onPlayerDisconnectNetwork(CloudPlayer cloudPlayer)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitPlayerDisconnectEvent(cloudPlayer));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitPlayerDisconnectEvent(cloudPlayer)));
         }
 
         @Override
@@ -648,19 +667,22 @@ public class CloudServer implements ICloudService {
             {
                 cloudPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
             }
-            Bukkit.getPluginManager().callEvent(new BukkitPlayerUpdateEvent(cloudPlayer));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitPlayerUpdateEvent(cloudPlayer)));
         }
 
         @Override
         public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitOfflinePlayerUpdateEvent(offlinePlayer));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitOfflinePlayerUpdateEvent(offlinePlayer)));
         }
 
         @Override
         public void onUpdateOnlineCount(int onlineCount)
         {
-            Bukkit.getPluginManager().callEvent(new BukkitOnlineCountUpdateEvent(onlineCount));
+            Bukkit.getScheduler().runTask(CloudServer.this.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new BukkitOnlineCountUpdateEvent(onlineCount)));
         }
     }
 }
