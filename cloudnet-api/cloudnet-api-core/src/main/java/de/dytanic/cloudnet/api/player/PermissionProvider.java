@@ -52,7 +52,6 @@ public final class PermissionProvider {
      * @see #getDisplay(UUID)
      */
     public static String getDisplay(OfflinePlayer offlinePlayer) {
-        offlinePlayer.getPermissionEntity().ha
         return offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool()).getDisplay();
     }
 
