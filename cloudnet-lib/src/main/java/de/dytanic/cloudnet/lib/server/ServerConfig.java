@@ -4,6 +4,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Created by Tareko on 25.07.2017.
@@ -11,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class ServerConfig {
 
     private boolean hideServer;

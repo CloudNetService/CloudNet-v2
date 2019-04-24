@@ -4,6 +4,7 @@ import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import java.util.UUID;
  */
 @AllArgsConstructor
 @Getter
+@ToString
 public class ProxyInfo {
 
     private ServiceId serviceId;

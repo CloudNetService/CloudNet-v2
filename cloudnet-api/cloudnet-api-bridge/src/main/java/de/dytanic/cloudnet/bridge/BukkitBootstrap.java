@@ -39,6 +39,8 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         CloudAPI cloudAPI = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"), Paths.get("CLOUD/config.json"), ConfigTypeLoader.INTERNAL), this);
         cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 1, PacketInSignSelector.class);
         cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInMobSelector.class);
+
+        cloudAPI.setLogger(getLogger());
     }
 
     @Override
@@ -105,7 +107,7 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         {
             Class.forName("net.md_5.bungee.api.chat.BaseComponent");
             Class.forName("de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry").getMethod("fire").invoke(null);
-        } catch (Exception ex)
+        } catch (Exception ignored)
         {
         }
     }

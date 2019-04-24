@@ -13,8 +13,8 @@ import de.dytanic.cloudnetcore.config.ILoader;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by Tareko on 26.08.2017.
@@ -23,7 +23,15 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collecti
 
     public ConfigCloudFlare()
     {
-        super(new Document("configurations", Arrays.asList(new CloudFlareConfig(false, "example@gmail.com", "token", "example.com", "zone", Arrays.asList(new CloudFlareProxyGroup("Bungee", "server"))))),
+        super(new Document("configurations", Collections.singletonList(
+                new CloudFlareConfig(
+                        false,
+                        "example@gmail.com",
+                        "token",
+                        "example.com",
+                        "zone",
+                        Collections.singletonList(new CloudFlareProxyGroup("Bungee", "server"))))
+                ),
                 Paths.get("local/cloudflare_cfg.json"));
     }
 

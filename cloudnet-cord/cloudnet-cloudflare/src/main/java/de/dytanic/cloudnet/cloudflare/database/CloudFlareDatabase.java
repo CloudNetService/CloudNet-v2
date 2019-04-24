@@ -5,8 +5,10 @@
 package de.dytanic.cloudnet.cloudflare.database;
 
 import com.google.gson.reflect.TypeToken;
+import de.dytanic.cloudnet.cloudflare.CloudFlareConfig;
 import de.dytanic.cloudnet.cloudflare.PostResponse;
 import de.dytanic.cloudnet.database.DatabaseUsable;
+import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
@@ -42,17 +44,44 @@ public class CloudFlareDatabase extends DatabaseUsable {
         return collection;
     }
 
-    public void putPostResponse(String wrapper, PostResponse postResponse)
+    public void putPostResponse(MultiValue<PostResponse, String> postResponse)
     {
         Document document = database.getDocument(CLOUDFLARE_CACHE);
-        document.append(wrapper, postResponse);
+        document.append(postResponse.getFirst().getId(), postResponse);
         database.insert(document);
     }
 
-    public boolean contains(String wrapper)
+    public boolean contains(CloudFlareConfig cloudFlareConfig, String wrapper)
     {
         Document document = database.getDocument(CLOUDFLARE_CACHE);
-        return document.contains(wrapper);
+
+        /*
+        Map<String, MultiValue<PostResponse, String>> responses = document.getObject("requests", new TypeToken<Map<String, MultiValue<PostResponse, String>>>() {
+        }.getType());
+        */
+
+        /*
+        return CollectionWrapper.filter(responses.values(), new Acceptable<MultiValue<PostResponse, String>>() {
+            @Override
+            public boolean isAccepted(MultiValue<PostResponse, String> value)
+            {
+                return value.getSecond().equalsIgnoreCase(wrapper) && value.getFirst().getCloudFlareConfig().getDomainName().equalsIgnoreCase(cloudFlareConfig.getDomainName());
+            }
+        }) != null;
+        */
+
+        for (String key : document.keys())
+            if (!key.equalsIgnoreCase(Database.UNIQUE_NAME_KEY))
+            {
+                MultiValue<PostResponse, String> value = document.getObject(key, new TypeToken<MultiValue<PostResponse, String>>() {
+                }.getType());
+
+                if (value != null && value.getSecond().equalsIgnoreCase(wrapper) && value.getFirst().getCloudFlareConfig().getDomainName().equalsIgnoreCase(cloudFlareConfig.getDomainName()))
+                    return true;
+            }
+
+        return false;
+        //return document.contains(wrapper);
     }
 
     public void remove(String wrapper)
@@ -102,18 +131,17 @@ public class CloudFlareDatabase extends DatabaseUsable {
         database.insert(document);
     }
 
-    public Map<String, PostResponse> getAndRemove()
+    public Map<String, MultiValue<PostResponse, String>> getAndRemove()
     {
         Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
         if (document.contains("requests"))
         {
-            Map<String, PostResponse> responses = document.getObject("requests", new TypeToken<Map<String, PostResponse>>() {
+            Map<String, MultiValue<PostResponse, String>> responses = document.getObject("requests", new TypeToken<Map<String, MultiValue<PostResponse, String>>>() {
             }.getType());
-            document.append("requests", new HashMap<>(0));
+            document.append("requests", Collections.EMPTY_MAP);
             database.insert(document);
             return responses;
         }
         return Collections.EMPTY_MAP;
     }
-
 }
