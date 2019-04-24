@@ -14,6 +14,13 @@ import org.bukkit.event.Event;
 public abstract class BukkitCloudEvent extends Event {
 
     /**
+     * Marks BukkitCloudEvents as async
+     */
+    public BukkitCloudEvent() {
+        super(true);
+    }
+
+    /**
      * Returns the CloudAPI instance
      *
      * @return
