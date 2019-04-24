@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -66,21 +67,10 @@ public class PermissionEntity {
 
     public PermissionGroup getHighestPermissionGroup(PermissionPool permissionPool)
     {
-        PermissionGroup permissionGroup = null;
-
-        for (GroupEntityData groupEntityData : getGroups())
-        {
-            if (permissionGroup == null)
-                permissionGroup = permissionPool.getGroups().get(groupEntityData.getGroup());
-            else
-            {
-                if (permissionGroup.getTagId() > permissionPool.getGroups().get(groupEntityData.getGroup()).getTagId())
-                {
-                    permissionGroup = permissionPool.getGroups().get(groupEntityData.getGroup());
-                }
-            }
-        }
-        return permissionGroup;
+        return this.getGroups()
+                .stream()
+                .map(groupEntityData -> permissionPool.getGroups().get(groupEntityData.getGroup()))
+                .min(Comparator.comparingInt(PermissionGroup::getTagId)).orElse(null);
     }
 
     public boolean isInGroup(String group)
