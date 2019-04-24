@@ -32,27 +32,22 @@ public class SetupProxyGroup {
 
     private String name;
 
-    public SetupProxyGroup(CommandSender commandSender, String name)
-    {
+    public SetupProxyGroup(CommandSender commandSender, String name) {
         this.name = name;
 
         Setup setup = new Setup()
                 .setupCancel(new ISetupCancel() {
-                    public void cancel()
-                    {
+                    public void cancel() {
                         commandSender.sendMessage("Setup cancelled!");
                     }
                 })
                 .setupComplete(new ISetupComplete() {
                     @Override
-                    public void complete(Document data)
-                    {
+                    public void complete(Document data) {
                         java.util.List<String> wrappers = (List<String>) CollectionWrapper.toCollection(data.getString("wrapper"), ",");
                         if (wrappers.size() == 0) return;
-                        for (short i = 0; i < wrappers.size(); i++)
-                        {
-                            if (!CloudNet.getInstance().getWrappers().containsKey(wrappers.get(i)))
-                            {
+                        for (short i = 0; i < wrappers.size(); i++) {
+                            if (!CloudNet.getInstance().getWrappers().containsKey(wrappers.get(i))) {
                                 wrappers.remove(wrappers.get(i));
                             }
                         }
@@ -61,8 +56,7 @@ public class SetupProxyGroup {
                         ProxyGroupMode proxyGroupMode = null;
 
                         for (ProxyGroupMode proxyGroup : ProxyGroupMode.values())
-                            if (proxyGroup.name().equalsIgnoreCase(data.getString("mode").toUpperCase()))
-                            {
+                            if (proxyGroup.name().equalsIgnoreCase(data.getString("mode").toUpperCase())) {
                                 proxyGroupMode = proxyGroup;
                             }
 
@@ -81,51 +75,43 @@ public class SetupProxyGroup {
                         CloudNet.getInstance().getProxyGroups().put(proxyGroup.getName(), proxyGroup);
                         commandSender.sendMessage("The proxy group " + proxyGroup.getName() + " was created!");
                         CloudNet.getInstance().setupProxy(proxyGroup);
-                        for (Wrapper wrapper : CloudNet.getInstance().toWrapperInstances(wrappers))
-                        {
+                        for (Wrapper wrapper : CloudNet.getInstance().toWrapperInstances(wrappers)) {
                             wrapper.updateWrapper();
                         }
                     }
                 })
                 .request(new SetupRequest("memory", "How many MB of RAM should the proxy group have?", "Specified memory is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         return NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 64;
                     }
                 }))
                 .request(new SetupRequest("startport", "What's the starting port of the proxygroup?", "Specified starting port is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         return NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 128 && Integer.parseInt(key) < 70000;
                     }
                 }))
                 .request(new SetupRequest("startup", "How many proxys should always be online?", "Specified startup count is invalid", SetupResponseType.NUMBER, null))
                 .request(new SetupRequest("mode", "Should the group be STATIC or DYNAMIC?", "Group mode is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         return key.equalsIgnoreCase("STATIC") || key.equalsIgnoreCase("DYNAMIC");
                     }
                 }))
                 .request(new SetupRequest("template", "What is the backend of the group default template? [\"LOCAL\" for the wrapper local | \"MASTER\" for the master backend]", "String is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         return key.equals("MASTER") || key.equals("LOCAL");
                     }
                 }))
                 .request(new SetupRequest("wrapper", "Which wrappers should be used for this group?", "String is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         java.util.List<String> wrappers = (List<String>) CollectionWrapper.toCollection(key, ",");
                         if (wrappers.size() == 0) return false;
-                        for (short i = 0; i < wrappers.size(); i++)
-                        {
-                            if (!CloudNet.getInstance().getWrappers().containsKey(wrappers.get(i)))
-                            {
+                        for (short i = 0; i < wrappers.size(); i++) {
+                            if (!CloudNet.getInstance().getWrappers().containsKey(wrappers.get(i))) {
                                 wrappers.remove(wrappers.get(i));
                             }
                         }

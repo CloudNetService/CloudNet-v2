@@ -24,8 +24,7 @@ public class CustomChannelMessageEvent extends AsyncEvent<CustomChannelMessageEv
 
     private PacketSender packetSender;
 
-    public CustomChannelMessageEvent(PacketSender packetSender, String channel, String message, Document document)
-    {
+    public CustomChannelMessageEvent(PacketSender packetSender, String channel, String message, Document document) {
         super(new AsyncPosterAdapter<>());
         this.channel = channel;
         this.message = message;

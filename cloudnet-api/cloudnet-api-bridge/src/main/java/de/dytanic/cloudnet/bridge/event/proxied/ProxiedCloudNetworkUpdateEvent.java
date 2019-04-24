@@ -15,8 +15,7 @@ public class ProxiedCloudNetworkUpdateEvent extends ProxiedCloudEvent {
 
     private CloudNetwork cloudNetwork;
 
-    public CloudNetwork getCloudNetwork()
-    {
+    public CloudNetwork getCloudNetwork() {
         return cloudNetwork;
     }
 }

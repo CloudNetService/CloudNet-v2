@@ -11,13 +11,11 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 
 public class PacketInCopyDirectory extends PacketInHandler {
 
-    public PacketInCopyDirectory()
-    {
+    public PacketInCopyDirectory() {
     }
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         if (!data.contains("serverInfo") || !data.contains("directory")) return;
 
         ServerInfo info = data.getObject("serverInfo", ServerInfo.TYPE);

@@ -32,28 +32,23 @@ public class SetupServerGroup {
 
     private String name;
 
-    public SetupServerGroup(CommandSender commandSender, String name)
-    {
+    public SetupServerGroup(CommandSender commandSender, String name) {
         this.name = name;
 
         Setup setup = new Setup()
                 .setupCancel(new ISetupCancel() {
                     @Override
-                    public void cancel()
-                    {
+                    public void cancel() {
                         System.out.println("Setup cancelled!");
                     }
                 })
                 .setupComplete(new ISetupComplete() {
                     @Override
-                    public void complete(Document data)
-                    {
+                    public void complete(Document data) {
                         java.util.List<String> wrappers = (List<String>) CollectionWrapper.toCollection(data.getString("wrapper"), ",");
                         if (wrappers.size() == 0) return;
-                        for (short i = 0; i < wrappers.size(); i++)
-                        {
-                            if (!CloudNet.getInstance().getWrappers().containsKey(wrappers.get(i)))
-                            {
+                        for (short i = 0; i < wrappers.size(); i++) {
+                            if (!CloudNet.getInstance().getWrappers().containsKey(wrappers.get(i))) {
                                 wrappers.remove(wrappers.get(i));
                             }
                         }
@@ -63,10 +58,8 @@ public class SetupServerGroup {
 
                         ServerGroupType serverGroupType = null;
 
-                        for (ServerGroupType serverGroup : ServerGroupType.values())
-                        {
-                            if (serverGroup.name().equalsIgnoreCase(data.getString("type").toUpperCase()))
-                            {
+                        for (ServerGroupType serverGroup : ServerGroupType.values()) {
+                            if (serverGroup.name().equalsIgnoreCase(data.getString("type").toUpperCase())) {
                                 serverGroupType = serverGroup;
                             }
                         }
@@ -100,8 +93,7 @@ public class SetupServerGroup {
                         CloudNet.getInstance().getConfig().createGroup(serverGroup);
                         CloudNet.getInstance().getServerGroups().put(serverGroup.getName(), serverGroup);
                         CloudNet.getInstance().setupGroup(serverGroup);
-                        for (Wrapper wrapper : CloudNet.getInstance().toWrapperInstances(wrappers))
-                        {
+                        for (Wrapper wrapper : CloudNet.getInstance().toWrapperInstances(wrappers)) {
                             wrapper.updateWrapper();
                         }
                         commandSender.sendMessage("The server group " + serverGroup.getName() + " is now created!");
@@ -109,43 +101,37 @@ public class SetupServerGroup {
                 })
                 .request(new SetupRequest("memory", "How many MB RAM should the server group have?", "Specified Memory is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         return NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 64;
                     }
                 }))
                 .request(new SetupRequest("startup", "How many servers should always be online?", "Specified startup count is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         return true;
                     }
                 }))
                 .request(new SetupRequest("percent", "How full does the server have to be until a new server is started? (In Percent)?", "Specified percent count is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         return NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) <= 100;
                     }
                 }))
                 .request(new SetupRequest("mode", "Which server group mode should be used? [STATIC, STATIC_LOBBY, LOBBY, DYNAMIC]", "Specified server group mode is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         return key.equalsIgnoreCase("STATIC") || key.equalsIgnoreCase("STATIC_LOBBY") || key.equalsIgnoreCase("LOBBY") || key.equalsIgnoreCase("DYNAMIC");
                     }
                 }))
                 .request(new SetupRequest("type", "Which servergroup type should be used? [BUKKIT, CAULDRON, GLOWSTONE]", "Specified group type is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         return key.equals("BUKKIT") || key.equals("GLOWSTONE") || key.equals("CAULDRON");
                     }
                 }))
                 .request(new SetupRequest("template", "What is the backend of the group default template? [\"LOCAL\" for the wrapper local | \"MASTER\" for the master backend]", "Specified string is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         return key.equals("MASTER") || key.equals("LOCAL");
                     }
                 }))
@@ -154,12 +140,10 @@ public class SetupServerGroup {
 
                 .request(new SetupRequest("wrapper", "Which wrappers should be used for this group?", "Specified string is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
                     @Override
-                    public Boolean doCatch(String key)
-                    {
+                    public Boolean doCatch(String key) {
                         java.util.List<String> wrappers = (List<String>) CollectionWrapper.toCollection(key, ",");
                         if (wrappers.size() == 0) return false;
-                        for (short i = 0; i < wrappers.size(); i++)
-                        {
+                        for (short i = 0; i < wrappers.size(); i++) {
                             if (!CloudNet.getInstance().getWrappers().containsKey(wrappers.get(i)))
                                 wrappers.remove(wrappers.get(i));
                         }

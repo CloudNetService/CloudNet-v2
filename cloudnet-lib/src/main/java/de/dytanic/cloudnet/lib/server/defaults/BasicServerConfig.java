@@ -12,8 +12,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class BasicServerConfig extends ServerConfig {
 
-    public BasicServerConfig()
-    {
+    public BasicServerConfig() {
         super(false, "null", new Document(), System.currentTimeMillis());
     }
 }

@@ -10,8 +10,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutAuthResult extends Packet {
 
-    public PacketOutAuthResult(AuthLoginResult loginResult)
-    {
+    public PacketOutAuthResult(AuthLoginResult loginResult) {
         super(PacketRC.INTERNAL - 2, new Document("result", loginResult));
     }
 }

@@ -15,8 +15,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutAddCloudServer extends Packet {
 
-    public PacketOutAddCloudServer(ServerInfo serverInfo, CloudServerMeta cloudServerMeta)
-    {
+    public PacketOutAddCloudServer(ServerInfo serverInfo, CloudServerMeta cloudServerMeta) {
         super(PacketRC.CN_WRAPPER + 13, new Document("serverInfo", serverInfo).append("cloudServerMeta", cloudServerMeta));
     }
 }

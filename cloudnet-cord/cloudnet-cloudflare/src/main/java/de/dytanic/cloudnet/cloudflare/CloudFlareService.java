@@ -52,32 +52,26 @@ public class CloudFlareService {
      *
      * @param cloudFlareConfigs the configurations for this instance
      */
-    public CloudFlareService(Collection<CloudFlareConfig> cloudFlareConfigs)
-    {
+    public CloudFlareService(Collection<CloudFlareConfig> cloudFlareConfigs) {
         instance = this;
 
         this.cloudFlareConfigs = cloudFlareConfigs;
     }
 
     @Deprecated
-    public boolean bootstrap(Map<String, SimpledWrapperInfo> wrapperInfoMap, Map<String, ProxyGroup> groups, CloudFlareDatabase cloudFlareDatabase)
-    {
+    public boolean bootstrap(Map<String, SimpledWrapperInfo> wrapperInfoMap, Map<String, ProxyGroup> groups, CloudFlareDatabase cloudFlareDatabase) {
         for (MultiValue<PostResponse, String> id : cloudFlareDatabase.getAndRemove().values())
             this.deleteRecord(id.getFirst());
 
         for (CloudFlareConfig cloudFlareConfig : this.cloudFlareConfigs)
             if (cloudFlareConfig.isEnabled())
-                for (CloudFlareProxyGroup cloudFlareProxyGroup : cloudFlareConfig.getGroups())
-                {
+                for (CloudFlareProxyGroup cloudFlareProxyGroup : cloudFlareConfig.getGroups()) {
                     ProxyGroup proxyGroup = groups.get(cloudFlareProxyGroup.getName());
-                    for (String wrapper : proxyGroup.getWrapper())
-                    {
-                        if (!cloudFlareDatabase.contains(cloudFlareConfig, wrapper))
-                        {
+                    for (String wrapper : proxyGroup.getWrapper()) {
+                        if (!cloudFlareDatabase.contains(cloudFlareConfig, wrapper)) {
                             String host = wrapperInfoMap.get(wrapper).getHostName();
                             DNSRecord dnsRecord = new DefaultDNSRecord(DNSType.A, wrapper + "." + cloudFlareConfig.getDomainName(), host, new Document().obj());
-                            if (!ipARecords.containsKey(wrapper))
-                            {
+                            if (!ipARecords.containsKey(wrapper)) {
                                 PostResponse postResponse = this.createRecord(cloudFlareConfig, dnsRecord);
                                 ipARecords.put(postResponse.getId(), new MultiValue<>(postResponse, wrapper));
                                 cloudFlareDatabase.putPostResponse(new MultiValue<>(postResponse, wrapper));
@@ -89,22 +83,17 @@ public class CloudFlareService {
         return true;
     }
 
-    public boolean shutdown(CloudFlareDatabase cloudFlareDatabase)
-    {
-        for (MultiValue<PostResponse, String> postResponse : this.bungeeSRVRecords.values())
-        {
-            try
-            {
+    public boolean shutdown(CloudFlareDatabase cloudFlareDatabase) {
+        for (MultiValue<PostResponse, String> postResponse : this.bungeeSRVRecords.values()) {
+            try {
                 this.deleteRecord(postResponse.getFirst());
                 NetworkUtils.sleepUninterruptedly(500);
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        for (MultiValue<PostResponse, String> id : cloudFlareDatabase.getAndRemove().values())
-        {
+        for (MultiValue<PostResponse, String> id : cloudFlareDatabase.getAndRemove().values()) {
             if (id.getFirst() == null) continue;
 
             this.deleteRecord(id.getFirst());
@@ -119,8 +108,7 @@ public class CloudFlareService {
      * @param group the CloudFlare Proxy Group to search for
      * @return the CloudFlareProxyGroup with the given group or null
      */
-    public CloudFlareProxyGroup cloudFlareProxyGroup(CloudFlareConfig cloudFlareConfig, String group)
-    {
+    public CloudFlareProxyGroup cloudFlareProxyGroup(CloudFlareConfig cloudFlareConfig, String group) {
         return CollectionWrapper.filter(cloudFlareConfig.getGroups(), value -> value.getName().equals(group));
     }
 
@@ -130,42 +118,37 @@ public class CloudFlareService {
      * @param proxyServer        the proxy server to create the SRV record for
      * @param cloudFlareDatabase the database to store the response and configuration in.
      */
-    public void addProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase)
-    {
+    public void addProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase) {
         for (CloudFlareConfig cloudFlareConfig : this.cloudFlareConfigs)
-            if (cloudFlareConfig.isEnabled())
-            {
+            if (cloudFlareConfig.isEnabled()) {
                 CloudFlareProxyGroup cloudFlareProxyGroup = cloudFlareProxyGroup(cloudFlareConfig, proxyServer.getServiceId().getGroup());
-                if (cloudFlareProxyGroup != null)
-                {
+                if (cloudFlareProxyGroup != null) {
                     SRVRecord srvRecord;
-                    if (cloudFlareProxyGroup.getSub().startsWith("@"))
-                    {
+                    if (cloudFlareProxyGroup.getSub().startsWith("@")) {
                         srvRecord = new SRVRecord(
-                            "_minecraft._tcp." + cloudFlareConfig.getDomainName(),
-                            "SRV 1 1 " + proxyServer.getPort() + " " + proxyServer.getServiceId().getWrapperId() + "." +
+                                "_minecraft._tcp." + cloudFlareConfig.getDomainName(),
+                                "SRV 1 1 " + proxyServer.getPort() + " " + proxyServer.getServiceId().getWrapperId() + "." +
+                                        cloudFlareConfig.getDomainName(),
+                                "_minecraft",
+                                "_tcp",
                                 cloudFlareConfig.getDomainName(),
-                            "_minecraft",
-                            "_tcp",
-                            cloudFlareConfig.getDomainName(),
-                            1,
-                            1,
-                            proxyServer.getPort(),
-                            proxyServer.getServiceId().getWrapperId() + "." + cloudFlareConfig.getDomainName()
+                                1,
+                                1,
+                                proxyServer.getPort(),
+                                proxyServer.getServiceId().getWrapperId() + "." + cloudFlareConfig.getDomainName()
                         );
-                    } else
-                    {
+                    } else {
                         srvRecord = new SRVRecord(
-                            "_minecraft._tcp." + cloudFlareConfig.getDomainName(),
-                            "SRV 1 1 " + proxyServer.getPort() + " " + proxyServer.getServiceId().getWrapperId() + "." +
-                                cloudFlareConfig.getDomainName(),
-                            "_minecraft",
-                            "_tcp",
-                            cloudFlareProxyGroup.getSub(),
-                            1,
-                            1,
-                            proxyServer.getPort(),
-                            proxyServer.getServiceId().getWrapperId() + "." + cloudFlareConfig.getDomainName()
+                                "_minecraft._tcp." + cloudFlareConfig.getDomainName(),
+                                "SRV 1 1 " + proxyServer.getPort() + " " + proxyServer.getServiceId().getWrapperId() + "." +
+                                        cloudFlareConfig.getDomainName(),
+                                "_minecraft",
+                                "_tcp",
+                                cloudFlareProxyGroup.getSub(),
+                                1,
+                                1,
+                                proxyServer.getPort(),
+                                proxyServer.getServiceId().getWrapperId() + "." + cloudFlareConfig.getDomainName()
                         );
                     }
                     PostResponse postResponse = this.createRecord(cloudFlareConfig, srvRecord);
@@ -182,14 +165,12 @@ public class CloudFlareService {
      * @param proxyServer        the proxy server to remove
      * @param cloudFlareDatabase the database to remove the proxy server from
      */
-    public void removeProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase)
-    {
+    public void removeProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase) {
         //if (!bungeeSRVRecords.containsKey(proxyServer.getServiceId().getServerId())) return;
 
         Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(), new Acceptable<MultiValue<PostResponse, String>>() {
             @Override
-            public boolean isAccepted(MultiValue<PostResponse, String> postResponseStringMultiValue)
-            {
+            public boolean isAccepted(MultiValue<PostResponse, String> postResponseStringMultiValue) {
                 return postResponseStringMultiValue.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId());
             }
         });
@@ -204,8 +185,7 @@ public class CloudFlareService {
             */
 
         for (MultiValue<PostResponse, String> postResponse : postResponses)
-            if (postResponse != null)
-            {
+            if (postResponse != null) {
                 bungeeSRVRecords.remove(postResponse.getSecond());
                 cloudFlareDatabase.remove(postResponse.getFirst().getId());
                 deleteRecord(postResponse.getFirst());
@@ -220,10 +200,8 @@ public class CloudFlareService {
      * @param dnsRecord the record to create
      * @return the response from CloudFlare or null on failure
      */
-    public PostResponse createRecord(CloudFlareConfig cloudFlareConfig, DNSRecord dnsRecord)
-    {
-        try
-        {
+    public PostResponse createRecord(CloudFlareConfig cloudFlareConfig, DNSRecord dnsRecord) {
+        try {
             HttpURLConnection httpPost = (HttpURLConnection) new URL(PREFIX_URL + "zones/" + cloudFlareConfig.getZoneId() + "/dns_records").openConnection();
             String values = NetworkUtils.GSON.toJson(dnsRecord);
 
@@ -236,17 +214,14 @@ public class CloudFlareService {
             httpPost.setDoOutput(true);
             httpPost.connect();
 
-            try (DataOutputStream dataOutputStream = new DataOutputStream(httpPost.getOutputStream()))
-            {
+            try (DataOutputStream dataOutputStream = new DataOutputStream(httpPost.getOutputStream())) {
                 dataOutputStream.writeBytes(values);
                 dataOutputStream.flush();
             }
 
-            try (InputStream inputStream = httpPost.getResponseCode() < 400 ? httpPost.getInputStream() : httpPost.getErrorStream())
-            {
+            try (InputStream inputStream = httpPost.getResponseCode() < 400 ? httpPost.getInputStream() : httpPost.getErrorStream()) {
                 JsonObject jsonObject = toJsonInput(inputStream);
-                if (jsonObject.get("success").getAsBoolean())
-                {
+                if (jsonObject.get("success").getAsBoolean()) {
                     System.out.println(prefix + "DNSRecord [" + dnsRecord.getName() + "/" + dnsRecord.getType() + "] was created");
                 } else
                     throw new CloudFlareDNSRecordException("Failed to create DNSRecord \n " + jsonObject.toString());
@@ -254,8 +229,7 @@ public class CloudFlareService {
                 httpPost.disconnect();
                 return new PostResponse(cloudFlareConfig, dnsRecord, jsonObject.get("result").getAsJsonObject().get("id").getAsString());
             }
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -267,11 +241,9 @@ public class CloudFlareService {
      *
      * @param postResponse the cached information about the dns record
      */
-    public void deleteRecord(PostResponse postResponse)
-    {
+    public void deleteRecord(PostResponse postResponse) {
 
-        try
-        {
+        try {
             HttpURLConnection delete = (HttpURLConnection) new URL(PREFIX_URL + "zones/" + postResponse.getCloudFlareConfig().getZoneId() + "/dns_records/" + postResponse.getId()).openConnection();
 
             delete.setRequestMethod("DELETE");
@@ -281,35 +253,29 @@ public class CloudFlareService {
             delete.setRequestProperty("Content-Type", "application/json");
             delete.connect();
 
-            try (InputStream inputStream = delete.getResponseCode() < 400 ? delete.getInputStream() : delete.getErrorStream())
-            {
+            try (InputStream inputStream = delete.getResponseCode() < 400 ? delete.getInputStream() : delete.getErrorStream()) {
                 JsonObject jsonObject = toJsonInput(inputStream);
-                if (jsonObject.get("success").getAsBoolean())
-                {
+                if (jsonObject.get("success").getAsBoolean()) {
                     System.out.println(prefix + "DNSRecord [" + postResponse.getId() + "] was removed");
                 } else
                     throw new CloudFlareDNSRecordException("Failed to delete DNSRecord \n " + jsonObject.toString());
             }
 
             delete.disconnect();
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private JsonObject toJsonInput(InputStream inputStream)
-    {
+    private JsonObject toJsonInput(InputStream inputStream) {
         StringBuilder stringBuilder = new StringBuilder();
         String input;
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-        try
-        {
+        try {
             while ((input = bufferedReader.readLine()) != null) stringBuilder.append(input);
 
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return new JsonParser().parse(stringBuilder.substring(0)).getAsJsonObject();

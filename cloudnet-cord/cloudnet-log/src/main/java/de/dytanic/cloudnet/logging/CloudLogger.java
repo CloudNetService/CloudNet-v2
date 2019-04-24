@@ -31,7 +31,7 @@ import java.util.logging.*;
  */
 @Getter
 public class CloudLogger
-    extends Logger {
+        extends Logger {
 
     private final String separator = System.getProperty("line.separator");
     private final LoggingFormatter formatter = new LoggingFormatter();
@@ -52,8 +52,7 @@ public class CloudLogger
      * @throws NoSuchFieldException   when the default charset could not be set
      * @throws IllegalAccessException when the default charset could not be set
      */
-    public CloudLogger() throws IOException, NoSuchFieldException, IllegalAccessException
-    {
+    public CloudLogger() throws IOException, NoSuchFieldException, IllegalAccessException {
         super("CloudNetServerLogger", null);
         Field field = Charset.class.getDeclaredField("defaultCharset");
         field.setAccessible(true);
@@ -90,8 +89,7 @@ public class CloudLogger
      *
      * @param message the message to send to the log
      */
-    public void debug(String message)
-    {
+    public void debug(String message) {
         if (debugging)
             log(Level.WARNING, "[DEBUG] " + message);
     }
@@ -99,17 +97,13 @@ public class CloudLogger
     /**
      * Shuts down all handlers and the reader.
      */
-    public void shutdownAll()
-    {
-        for (Handler handler : getHandlers())
-        {
+    public void shutdownAll() {
+        for (Handler handler : getHandlers()) {
             handler.close();
         }
-        try
-        {
+        try {
             this.reader.killLine();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -123,8 +117,7 @@ public class CloudLogger
         private final Level level;
 
         @Override
-        public void flush() throws IOException
-        {
+        public void flush() throws IOException {
             String contents = toString(StandardCharsets.UTF_8.name());
             super.reset();
             if (!contents.isEmpty() && !contents.equals(separator))
@@ -140,63 +133,55 @@ public class CloudLogger
         private boolean closed;
 
         @Override
-        public void publish(LogRecord record)
-        {
+        public void publish(LogRecord record) {
             if (closed) return;
 
             String formatMessage = getFormatter().formatMessage(record);
             for (ICloudLoggerHandler handler : CloudLogger.this.getHandler())
                 handler.handleConsole(formatMessage);
 
-            if (isLoggable(record))
-            {
-                try
-                {
+            if (isLoggable(record)) {
+                try {
                     reader.print(ConsoleReader.RESET_LINE + getFormatter().format(record));
                     reader.drawLine();
                     reader.flush();
-                } catch (Throwable ignored)
-                {
+                } catch (Throwable ignored) {
                 }
             }
         }
 
         @Override
-        public void flush()
-        {
+        public void flush() {
         }
 
         @Override
-        public void close() throws SecurityException
-        {
+        public void close() throws SecurityException {
             closed = true;
         }
     }
 
     private class LoggingFormatter
-        extends Formatter {
+            extends Formatter {
 
         private final DateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
         @Override
-        public String format(LogRecord record)
-        {
+        public String format(LogRecord record) {
             StringBuilder builder = new StringBuilder();
-            if (record.getThrown() != null)
-            {
+            if (record.getThrown() != null) {
                 StringWriter writer = new StringWriter();
                 record.getThrown().printStackTrace(new PrintWriter(writer));
                 builder.append(writer).append("\n");
             }
 
             return ConsoleReader.RESET_LINE +
-                "[" +
-                format.format(record.getMillis()) +
-                "] " +
-                record.getLevel().getName() +
-                ": " +
-                formatMessage(record) +
-                "\n" + builder.toString();
+                    "[" +
+                    format.format(record.getMillis()) +
+                    "] " +
+                    record.getLevel().getName() +
+                    ": " +
+                    formatMessage(record) +
+                    "\n" + builder.toString();
         }
     }
 }

@@ -24,23 +24,19 @@ import java.nio.charset.StandardCharsets;
  */
 public class WebsiteLog extends WebHandler {
 
-    public WebsiteLog()
-    {
+    public WebsiteLog() {
         super("/cloudnet/log");
     }
 
     @Override
-    public FullHttpResponse handleRequest(ChannelHandlerContext channelHandlerContext, QueryDecoder queryDecoder, PathProvider path, HttpRequest httpRequest) throws Exception
-    {
+    public FullHttpResponse handleRequest(ChannelHandlerContext channelHandlerContext, QueryDecoder queryDecoder, PathProvider path, HttpRequest httpRequest) throws Exception {
         CloudNet.getLogger().debug("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
-        if (!queryDecoder.getQueryParams().containsKey("server"))
-        {
+        if (!queryDecoder.getQueryParams().containsKey("server")) {
             FullHttpResponse fullHttpResponse = newResponse(httpRequest.getProtocolVersion());
             fullHttpResponse.setStatus(HttpResponseStatus.NOT_FOUND);
             return fullHttpResponse;
         }
-        if (!CloudNet.getInstance().getServerLogManager().getScreenInfos().contains(queryDecoder.getQueryParams().get("server")))
-        {
+        if (!CloudNet.getInstance().getServerLogManager().getScreenInfos().contains(queryDecoder.getQueryParams().get("server"))) {
             FullHttpResponse fullHttpResponse = newResponse(httpRequest.getProtocolVersion());
             fullHttpResponse.setStatus(HttpResponseStatus.NOT_FOUND);
             return fullHttpResponse;
@@ -52,11 +48,9 @@ public class WebsiteLog extends WebHandler {
 
         StringBuilder stringBuilder = new StringBuilder();
         try (InputStream inputStream = WebsiteDocumentation.class.getClassLoader().getResourceAsStream("files/log.html");
-             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)))
-        {
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String input;
-            while ((input = bufferedReader.readLine()) != null)
-            {
+            while ((input = bufferedReader.readLine()) != null) {
                 stringBuilder.append(input).append(System.lineSeparator());
             }
         }

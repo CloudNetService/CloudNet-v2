@@ -11,19 +11,16 @@ public class BukkitOfflinePlayerUpdateEvent extends BukkitCloudEvent {
 
     private OfflinePlayer offlinePlayer;
 
-    public BukkitOfflinePlayerUpdateEvent(OfflinePlayer offlinePlayer)
-    {
+    public BukkitOfflinePlayerUpdateEvent(OfflinePlayer offlinePlayer) {
         this.offlinePlayer = offlinePlayer;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 

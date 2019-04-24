@@ -12,8 +12,7 @@ import de.dytanic.cloudnet.lib.server.ServerState;
  */
 public class GameAPIExample {
 
-    public void updateGameMode()
-    {
+    public void updateGameMode() {
         CloudServer.getInstance().setMotd("My Map"); //Motd will updated
         CloudServer.getInstance().setAllowAutoStart(false); //Set the allow to autostart for a new server disabling
         CloudServer.getInstance().setServerState(ServerState.INGAME); //The ServerState can changed to ingame without a new server auto startup

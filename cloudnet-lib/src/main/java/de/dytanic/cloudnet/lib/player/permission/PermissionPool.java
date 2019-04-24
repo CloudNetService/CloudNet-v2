@@ -24,25 +24,20 @@ public class PermissionPool {
 
     private java.util.Map<String, PermissionGroup> groups = new HashMap<>();
 
-    public PermissionGroup getDefaultGroup()
-    {
-        for (PermissionGroup group : groups.values())
-        {
-            if (group.isDefaultGroup())
-            {
+    public PermissionGroup getDefaultGroup() {
+        for (PermissionGroup group : groups.values()) {
+            if (group.isDefaultGroup()) {
                 return group;
             }
         }
         return null;
     }
 
-    public PermissionEntity getNewPermissionEntity(PlayerConnection playerWhereAmI)
-    {
+    public PermissionEntity getNewPermissionEntity(PlayerConnection playerWhereAmI) {
         return new PermissionEntity(playerWhereAmI.getUniqueId(), new HashMap<>(), null, null, Arrays.asList(new GroupEntityData(getDefaultGroup().getName(), 0L)));
     }
 
-    public PermissionEntity getNewPermissionEntity(OfflinePlayer playerWhereAmI)
-    {
+    public PermissionEntity getNewPermissionEntity(OfflinePlayer playerWhereAmI) {
         return new PermissionEntity(playerWhereAmI.getUniqueId(), new HashMap<>(), null, null, Arrays.asList(new GroupEntityData(getDefaultGroup().getName(), 0L)));
     }
 

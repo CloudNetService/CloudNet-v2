@@ -17,8 +17,7 @@ public class ProxyAddEvent extends AsyncEvent<ProxyAddEvent> {
 
     private ProxyServer proxyServer;
 
-    public ProxyAddEvent(ProxyServer proxyServer)
-    {
+    public ProxyAddEvent(ProxyServer proxyServer) {
         super(new AsyncPosterAdapter<>());
         this.proxyServer = proxyServer;
     }

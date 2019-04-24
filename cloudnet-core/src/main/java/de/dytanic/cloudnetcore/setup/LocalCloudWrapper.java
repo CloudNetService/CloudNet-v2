@@ -23,15 +23,11 @@ public class LocalCloudWrapper implements Runnabled<OptionSet> {
     private Process process;
 
     @Override
-    public void run(OptionSet obj)
-    {
-        if (obj.has("installWrapper"))
-        {
-            if (!Files.exists(Paths.get("wrapper")))
-            {
+    public void run(OptionSet obj) {
+        if (obj.has("installWrapper")) {
+            if (!Files.exists(Paths.get("wrapper"))) {
 
-                try
-                {
+                try {
                     Files.createDirectories(Paths.get("wrapper"));
                     System.out.println("Downloading wrapper...");
                     URLConnection urlConnection = new URL(WebClient.DEFAULT_URL + "cloud/wrapper").openConnection();
@@ -39,19 +35,16 @@ public class LocalCloudWrapper implements Runnabled<OptionSet> {
                     urlConnection.connect();
                     Files.copy(urlConnection.getInputStream(), Paths.get("wrapper/CloudNet-Wrapper.jar"));
                     System.out.println("Download completed!");
-                } catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     System.out.println("Error on setting up wrapper: " + ex.getMessage());
                     return;
                 }
             }
 
-            try
-            {
+            try {
                 process = new ProcessBuilder("java", "-Xmx256M", "-jar", "CloudNet-Wrapper.jar").directory(new File("wrapper")).inheritIO().start();
                 Runtime.getRuntime().addShutdownHook(new Thread(process::destroy));
-            } catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

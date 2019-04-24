@@ -18,19 +18,16 @@ public class BukkitCloudServerInitEvent extends BukkitCloudEvent {
 
     private CloudServer cloudServer;
 
-    public CloudServer getCloudServer()
-    {
+    public CloudServer getCloudServer() {
         return cloudServer;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 }

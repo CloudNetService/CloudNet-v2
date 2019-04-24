@@ -29,8 +29,7 @@ public final class WebServerProvider {
      * @param httpHandler the web handler to add
      * @return this provider
      */
-    public WebServerProvider registerHandler(WebHandler httpHandler)
-    {
+    public WebServerProvider registerHandler(WebHandler httpHandler) {
         handlers.add(httpHandler);
         return this;
     }
@@ -41,8 +40,7 @@ public final class WebServerProvider {
      * @param dynamicWebHandler the dynamic web handler to add
      * @return this provider
      */
-    public WebServerProvider registerDynamicHandler(DynamicWebHandler dynamicWebHandler)
-    {
+    public WebServerProvider registerDynamicHandler(DynamicWebHandler dynamicWebHandler) {
         dynamicWebHandlers.add(dynamicWebHandler);
         return this;
     }
@@ -54,8 +52,7 @@ public final class WebServerProvider {
      *
      * @return a new list containing the currently registered web handlers
      */
-    public List<WebHandler> getHandlers()
-    {
+    public List<WebHandler> getHandlers() {
         return new ArrayList<>(handlers);
     }
 
@@ -69,8 +66,7 @@ public final class WebServerProvider {
      * @param path the path to filter the registered web handlers by
      * @return a new list containing the currently registered web handlers
      */
-    public List<WebHandler> getHandlers(String path)
-    {
+    public List<WebHandler> getHandlers(String path) {
         return handlers.stream().filter(webHandler -> {
             if ((path.equals(NetworkUtils.SLASH_STRING) || path.isEmpty()) && webHandler.getPath().equals("/"))
                 return true;
@@ -80,8 +76,7 @@ public final class WebServerProvider {
 
             if (array.length != pathArray.length) return false;
 
-            for (short i = 0; i < array.length; i++)
-            {
+            for (short i = 0; i < array.length; i++) {
                 if (!((pathArray[i].startsWith("{") && pathArray[i].endsWith("}")) || pathArray[i].equals(array[i])))
                     return false;
             }
@@ -96,16 +91,14 @@ public final class WebServerProvider {
      *
      * @return a new list containing the currently registered dynamic web handlers
      */
-    public List<DynamicWebHandler> getDynamicHandlers()
-    {
+    public List<DynamicWebHandler> getDynamicHandlers() {
         return new ArrayList<>(dynamicWebHandlers);
     }
 
     /**
      * Clears the currently registered web handlers and dynamic web handlers.
      */
-    public void clear()
-    {
+    public void clear() {
         handlers.clear();
         dynamicWebHandlers.clear();
     }

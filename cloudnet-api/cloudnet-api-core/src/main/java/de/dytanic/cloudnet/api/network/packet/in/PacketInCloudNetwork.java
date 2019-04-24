@@ -19,16 +19,13 @@ import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 public class PacketInCloudNetwork extends PacketInHandlerDefault {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (CloudAPI.getInstance() != null)
-        {
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (CloudAPI.getInstance() != null) {
             CloudNetwork cloudNetwork = data.getObject("cloudnetwork", NetworkUtils.cloudnet().getType());
             CloudAPI.getInstance().setCloudNetwork(cloudNetwork);
             CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
                 @Override
-                public void run(NetworkHandler obj)
-                {
+                public void run(NetworkHandler obj) {
                     obj.onCloudNetworkUpdate(cloudNetwork);
                 }
             });

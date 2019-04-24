@@ -17,8 +17,7 @@ public abstract class AbstractScreenService implements Screenable {
     @Getter
     protected volatile boolean screenSystemEnabled;
 
-    public void addCachedItem(String text)
-    {
+    public void addCachedItem(String text) {
         if (text == null) return;
 
         while (cachedLogMessages.size() >= 64)
@@ -29,21 +28,18 @@ public abstract class AbstractScreenService implements Screenable {
         if (this.screenSystemEnabled) this.sendScreenLine0(text);
     }
 
-    public void enableScreenSystem()
-    {
+    public void enableScreenSystem() {
         for (String text : this.cachedLogMessages)
             this.sendScreenLine0(text);
 
         this.screenSystemEnabled = true;
     }
 
-    public void disableScreenSystem()
-    {
+    public void disableScreenSystem() {
         this.screenSystemEnabled = false;
     }
 
-    private void sendScreenLine0(String text)
-    {
+    private void sendScreenLine0(String text) {
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutSendScreenLine(Collections.singletonList(new ScreenInfo(getServiceId(), text))));
     }
 }

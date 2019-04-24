@@ -18,8 +18,7 @@ import de.dytanic.cloudnetcore.mobs.MobModule;
 public class PacketInAddMob extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         ServerMob serverMob = data.getObject("mob", new TypeToken<ServerMob>() {
         }.getType());
         MobModule.getInstance().getMobDatabase().append(serverMob);

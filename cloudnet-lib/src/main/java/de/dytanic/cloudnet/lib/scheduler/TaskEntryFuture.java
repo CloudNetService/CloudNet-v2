@@ -20,11 +20,9 @@ public class TaskEntryFuture<T> implements Future<T> {
     protected volatile boolean waits;
 
     @Override
-    public boolean cancel(boolean pMayInterruptIfRunning)
-    {
+    public boolean cancel(boolean pMayInterruptIfRunning) {
 
-        if (pMayInterruptIfRunning)
-        {
+        if (pMayInterruptIfRunning) {
             entry.task = null;
             entry.repeat = 0;
         }
@@ -32,22 +30,19 @@ public class TaskEntryFuture<T> implements Future<T> {
     }
 
     @Override
-    public boolean isCancelled()
-    {
+    public boolean isCancelled() {
         return entry.task == null;
     }
 
 
     @Override
-    public boolean isDone()
-    {
+    public boolean isDone() {
         return entry.completed;
     }
 
 
     @Override
-    public synchronized T get() throws InterruptedException, ExecutionException
-    {
+    public synchronized T get() throws InterruptedException, ExecutionException {
         waits = true;
         while (!isDone()) this.wait();
 
@@ -56,8 +51,7 @@ public class TaskEntryFuture<T> implements Future<T> {
 
 
     @Override
-    public synchronized T get(long pTimeout, TimeUnit pUnit) throws InterruptedException, ExecutionException, TimeoutException
-    {
+    public synchronized T get(long pTimeout, TimeUnit pUnit) throws InterruptedException, ExecutionException, TimeoutException {
 
         waits = true;
         /*

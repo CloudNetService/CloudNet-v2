@@ -13,8 +13,7 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 
 public final class PacketOutUpdateWrapperInfo extends Packet {
 
-    public PacketOutUpdateWrapperInfo()
-    {
+    public PacketOutUpdateWrapperInfo() {
         super(PacketRC.CN_WRAPPER + 8, new Document("wrapperInfo", new WrapperInfo(
                 CloudNetWrapper.getInstance().getWrapperConfig().getWrapperId(),
                 NetworkUtils.getHostName(), CloudNetWrapper.RUNNING, Runtime.getRuntime().availableProcessors(),

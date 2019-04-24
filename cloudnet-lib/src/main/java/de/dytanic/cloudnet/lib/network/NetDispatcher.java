@@ -23,20 +23,16 @@ public class NetDispatcher extends SimpleChannelInboundHandler {
     private boolean shutdownOnInactive;
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception
-    {
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception
-    {
-        if ((!ctx.channel().isActive() || !ctx.channel().isOpen() || !ctx.channel().isWritable()))
-        {
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        if ((!ctx.channel().isActive() || !ctx.channel().isOpen() || !ctx.channel().isWritable())) {
             networkConnection.setChannel(null);
             ctx.channel().close().syncUninterruptibly();
-            if (networkConnection.getTask() != null)
-            {
+            if (networkConnection.getTask() != null) {
                 networkConnection.getTask().run();
             }
             if (shutdownOnInactive) System.exit(0);
@@ -44,35 +40,27 @@ public class NetDispatcher extends SimpleChannelInboundHandler {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
-    {
-        if (!(cause instanceof IOException))
-        {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        if (!(cause instanceof IOException)) {
             cause.printStackTrace();
         }
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception
-    {
-        if (o instanceof Packet)
-        {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
+        if (o instanceof Packet) {
             TaskScheduler.runtimeScheduler().schedule(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     networkConnection.getPacketManager().dispatchPacket(((Packet) o), networkConnection);
                 }
             });
-        } else
-        {
-            if (o instanceof FileDeploy)
-            {
+        } else {
+            if (o instanceof FileDeploy) {
                 FileDeploy deploy = ((FileDeploy) o);
                 TaskScheduler.runtimeScheduler().schedule(new Runnable() {
                     @Override
-                    public void run()
-                    {
+                    public void run() {
                         deploy.toWrite();
                     }
                 });

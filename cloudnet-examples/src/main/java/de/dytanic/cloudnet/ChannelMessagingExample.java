@@ -15,8 +15,7 @@ import net.md_5.bungee.event.EventHandler;
  */
 public class ChannelMessagingExample {
 
-    public void sendCustomMessage()
-    {
+    public void sendCustomMessage() {
         CloudAPI.getInstance().getNetworkConnection()
                 .sendPacket(new PacketOutCustomChannelMessage("some-sub-channel-for-proxy", "handle", new Document("foo", "bar"))); //send a custom channel message to all
         CloudAPI.getInstance().sendCustomSubProxyMessage("some-sub-channel-for-proxy", "handle", new Document("foo", "bar")); //send a custom channel message to all proxys
@@ -25,10 +24,8 @@ public class ChannelMessagingExample {
     @EventHandler
     public void channelSubReceive(ProxiedSubChannelMessageEvent e) //handle the received channel message
     {
-        if (e.getChannel().equalsIgnoreCase("some-sub-channel-for-proxy"))
-        {
-            if (e.getMessage().equalsIgnoreCase("handle"))
-            {
+        if (e.getChannel().equalsIgnoreCase("some-sub-channel-for-proxy")) {
+            if (e.getMessage().equalsIgnoreCase("handle")) {
                 System.out.println(e.getDocument().convertToJson());
             }
         }

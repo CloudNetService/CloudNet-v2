@@ -17,10 +17,8 @@ public class MessageConfig {
 
     private Path path = Paths.get("local/ingame_messages.json");
 
-    public MessageConfig()
-    {
-        if (!Files.exists(path))
-        {
+    public MessageConfig() {
+        if (!Files.exists(path)) {
             new Document()
                     .append("prefix", "§bCloud §8|§7 ")
                     .append("kick-maintenance", "§cThe network is currently in maintenance mode")
@@ -37,14 +35,12 @@ public class MessageConfig {
         }
     }
 
-    public Document load()
-    {
+    public Document load() {
 
         boolean resave = false;
         Document document = Document.loadDocument(path);
 
-        if (!document.contains("server-kick-proxy-disallow"))
-        {
+        if (!document.contains("server-kick-proxy-disallow")) {
             document.append("server-kick-proxy-disallow", "§cYou have to connect from a internal proxy server!");
             resave = true;
         }

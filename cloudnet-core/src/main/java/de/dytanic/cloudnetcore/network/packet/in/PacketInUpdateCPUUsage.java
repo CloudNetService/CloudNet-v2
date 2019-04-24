@@ -15,8 +15,7 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 public class PacketInUpdateCPUUsage extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         if (!(packetSender instanceof Wrapper)) return;
         double cpuUsage = data.getDouble("cpuUsage");
         ((Wrapper) packetSender).setCpuUsage(cpuUsage);

@@ -22,8 +22,7 @@ public class NetworkHandlerProvider {
      *
      * @param networkHandler
      */
-    public void registerHandler(NetworkHandler networkHandler)
-    {
+    public void registerHandler(NetworkHandler networkHandler) {
         this.handlers.add(networkHandler);
     }
 
@@ -32,13 +31,11 @@ public class NetworkHandlerProvider {
      *
      * @param handlerTask
      */
-    public void iterator(Runnabled<NetworkHandler> handlerTask)
-    {
+    public void iterator(Runnabled<NetworkHandler> handlerTask) {
         CollectionWrapper.iterator(handlers, handlerTask);
     }
 
-    public void clear()
-    {
+    public void clear() {
         handlers.clear();
     }
 }

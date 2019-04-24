@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 public class PacketInOnlineServer extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         /*
         ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>(){}.getType());
         GameServer gameServer = CloudNetWrapper.getInstance().getServers().get(serverInfo.getServiceId().getServerId());

@@ -26,8 +26,7 @@ public final class CommandManager
      * Constructs a new command manager with a {@link ConsoleCommandSender} and
      * no commands.
      */
-    public CommandManager()
-    {
+    public CommandManager() {
     }
 
     /**
@@ -35,8 +34,7 @@ public final class CommandManager
      *
      * @return the command manager this was called on, allows for chaining
      */
-    public CommandManager clearCommands()
-    {
+    public CommandManager clearCommands() {
         commands.clear();
         return this;
     }
@@ -47,16 +45,13 @@ public final class CommandManager
      * @param command the command to register
      * @return the command manager this was called on, allows for chaining
      */
-    public CommandManager registerCommand(Command command)
-    {
+    public CommandManager registerCommand(Command command) {
         if (command == null) return this;
 
         this.commands.put(command.getName().toLowerCase(), command);
 
-        if (command.getAliases().length != 0)
-        {
-            for (String aliases : command.getAliases())
-            {
+        if (command.getAliases().length != 0) {
+            for (String aliases : command.getAliases()) {
                 commands.put(aliases.toLowerCase(), command);
             }
         }
@@ -69,8 +64,7 @@ public final class CommandManager
      *
      * @return a set containing all the registered command names and aliases
      */
-    public Set<String> getCommands()
-    {
+    public Set<String> getCommands() {
         return commands.keySet();
     }
 
@@ -81,8 +75,7 @@ public final class CommandManager
      * @return the command, if there is one with the given {@code name} or alias
      * or {@code null}, if no command matches the {@code name}
      */
-    public Command getCommand(String name)
-    {
+    public Command getCommand(String name) {
         return commands.get(name.toLowerCase());
     }
 
@@ -100,49 +93,38 @@ public final class CommandManager
      * @param command the command line to parse and dispatch
      * @return whether the command executed successfully
      */
-    public boolean dispatchCommand(CommandSender sender, String command)
-    {
+    public boolean dispatchCommand(CommandSender sender, String command) {
         String[] a = command.split(" ");
-        if (this.commands.containsKey(a[0].toLowerCase()))
-        {
+        if (this.commands.containsKey(a[0].toLowerCase())) {
             String b = command.replace((command.contains(" ") ? command.split(" ")[0] + " " : command), NetworkUtils.EMPTY_STRING);
-            try
-            {
-                for (String argument : a)
-                {
-                    for (CommandArgument commandArgument : this.commands.get(a[0].toLowerCase()).getCommandArguments())
-                    {
+            try {
+                for (String argument : a) {
+                    for (CommandArgument commandArgument : this.commands.get(a[0].toLowerCase()).getCommandArguments()) {
                         if (commandArgument.getName().equalsIgnoreCase(argument))
                             commandArgument.preExecute(this.commands.get(a[0]), command);
                     }
                 }
 
-                if (b.equals(NetworkUtils.EMPTY_STRING))
-                {
+                if (b.equals(NetworkUtils.EMPTY_STRING)) {
                     this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, new String[0]);
-                } else
-                {
+                } else {
                     String[] c = b.split(" ");
                     this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, c);
                 }
 
-                for (String argument : a)
-                {
-                    for (CommandArgument commandArgument : this.commands.get(a[0].toLowerCase()).getCommandArguments())
-                    {
+                for (String argument : a) {
+                    for (CommandArgument commandArgument : this.commands.get(a[0].toLowerCase()).getCommandArguments()) {
                         if (commandArgument.getName().equalsIgnoreCase(argument))
                             commandArgument.postExecute(this.commands.get(a[0]), command);
                     }
                 }
 
             } catch
-                    (Exception ex)
-            {
+            (Exception ex) {
                 ex.printStackTrace();
             }
             return true;
-        } else
-        {
+        } else {
             return false;
         }
     }
@@ -161,33 +143,28 @@ public final class CommandManager
      * @return whether the command executed successfully
      * @see CommandManager#dispatchCommand(CommandSender, String)
      */
-    public boolean dispatchCommand(String command)
-    {
+    public boolean dispatchCommand(String command) {
         return dispatchCommand(consoleSender, command);
     }
 
     @Override
-    public int complete(String buffer, int cursor, List<CharSequence> candidates)
-    {
+    public int complete(String buffer, int cursor, List<CharSequence> candidates) {
         String[] input = buffer.split(" ");
 
         List<String> responses = new ArrayList<>();
 
         if (buffer.isEmpty() || buffer.indexOf(' ') == -1)
             responses.addAll(this.commands.keySet());
-        else
-        {
+        else {
             Command command = getCommand(input[0]);
 
-            if (command instanceof TabCompletable)
-            {
+            if (command instanceof TabCompletable) {
                 String[] args = buffer.split(" ");
                 String testString = args[args.length - 1];
 
                 responses.addAll(CollectionWrapper.filterMany(((TabCompletable) command).onTab(input.length - 1, input[input.length - 1]), new Acceptable<String>() {
                     @Override
-                    public boolean isAccepted(String s)
-                    {
+                    public boolean isAccepted(String s) {
                         return s != null && (testString.isEmpty() || s.toLowerCase().contains(testString.toLowerCase()));
                     }
                 }));

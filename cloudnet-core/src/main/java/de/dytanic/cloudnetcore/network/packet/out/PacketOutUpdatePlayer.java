@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutUpdatePlayer extends Packet {
 
-    public PacketOutUpdatePlayer(CloudPlayer cloudPlayer)
-    {
+    public PacketOutUpdatePlayer(CloudPlayer cloudPlayer) {
         super(PacketRC.PLAYER_HANDLE + 3, new Document("player", cloudPlayer));
     }
 }

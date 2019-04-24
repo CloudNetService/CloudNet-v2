@@ -23,111 +23,91 @@ public class StatisticManager extends DatabaseUsable {
     @Getter
     private static StatisticManager instance;
 
-    public StatisticManager(Database database)
-    {
+    public StatisticManager(Database database) {
         super(database);
         instance = this;
-        if (!database.containsDoc(NAME))
-        {
+        if (!database.containsDoc(NAME)) {
             Document document = new DatabaseDocument(NAME);
             database.insert(document);
         }
 
-        if (CloudNet.getInstance().getOptionSet().has("disable-statistics"))
-        {
+        if (CloudNet.getInstance().getOptionSet().has("disable-statistics")) {
             statistic = false;
         }
     }
 
-    public Document getStatistics()
-    {
+    public Document getStatistics() {
         return database.getDocument(NAME);
     }
 
-    public void addPlayerLogin()
-    {
+    public void addPlayerLogin() {
         if (!statistic) return;
-        try
-        {
+        try {
             Document document = database.getDocument(NAME);
-            if (!document.contains("playerLogin"))
-            {
+            if (!document.contains("playerLogin")) {
                 document.append("playerLogin", 0L);
             }
 
             document.append("playerLogin", document.getLong("playerLogin") + 1L);
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
 
         }
     }
 
-    public void addStartedProxys()
-    {
+    public void addStartedProxys() {
         if (!statistic) return;
         Document document = database.getDocument(NAME);
-        if (!document.contains("startedProxys"))
-        {
+        if (!document.contains("startedProxys")) {
             document.append("startedProxys", 0);
         }
 
         document.append("startedProxys", document.getInt("startedProxys") + 1);
     }
 
-    public void addStartedServers()
-    {
+    public void addStartedServers() {
         if (!statistic) return;
         Document document = database.getDocument(NAME);
-        if (!document.contains("startedServers"))
-        {
+        if (!document.contains("startedServers")) {
             document.append("startedServers", 0L);
         }
 
         document.append("startedServers", document.getLong("startedServers") + 1L);
     }
 
-    public void addStartup()
-    {
+    public void addStartup() {
         if (!statistic) return;
         Document document = database.getDocument(NAME);
-        if (!document.contains("cloudStartup"))
-        {
+        if (!document.contains("cloudStartup")) {
             document.append("cloudStartup", 0L);
         }
 
         document.append("cloudStartup", document.getLong("cloudStartup") + 1L);
     }
 
-    public void wrapperConnections()
-    {
+    public void wrapperConnections() {
         if (!statistic) return;
         Document document = database.getDocument(NAME);
-        if (!document.contains("wrapperConnections"))
-        {
+        if (!document.contains("wrapperConnections")) {
             document.append("wrapperConnections", 0);
         }
 
         document.append("wrapperConnections", document.getLong("wrapperConnections") + 1L);
     }
 
-    public void playerCommandExecutions()
-    {
+    public void playerCommandExecutions() {
         if (!statistic) return;
         Document document = database.getDocument(NAME);
-        if (!document.contains("playerCommandExecutions"))
-        {
+        if (!document.contains("playerCommandExecutions")) {
             document.append("playerCommandExecutions", 0L);
         }
 
         document.append("playerCommandExecutions", document.getLong("playerCommandExecutions") + 1L);
     }
 
-    public void highestServerOnlineCount(int value)
-    {
+    public void highestServerOnlineCount(int value) {
         if (!statistic) return;
         Document document = database.getDocument(NAME);
-        if (!document.contains("highestServerOnlineCount"))
-        {
+        if (!document.contains("highestServerOnlineCount")) {
             document.append("highestServerOnlineCount", 0);
         }
 
@@ -135,12 +115,10 @@ public class StatisticManager extends DatabaseUsable {
             document.append("highestServerOnlineCount", value);
     }
 
-    public void highestPlayerOnlineCount(int value)
-    {
+    public void highestPlayerOnlineCount(int value) {
         if (!statistic) return;
         Document document = database.getDocument(NAME);
-        if (!document.contains("highestPlayerOnline"))
-        {
+        if (!document.contains("highestPlayerOnline")) {
             document.append("highestPlayerOnline", 0);
         }
 
@@ -148,12 +126,10 @@ public class StatisticManager extends DatabaseUsable {
             document.append("highestPlayerOnline", value);
     }
 
-    public void cloudOnlineTime(long activeNow)
-    {
+    public void cloudOnlineTime(long activeNow) {
         if (!statistic) return;
         Document document = database.getDocument(NAME);
-        if (!document.contains("cloudOnlineTime"))
-        {
+        if (!document.contains("cloudOnlineTime")) {
             document.append("cloudOnlineTime", 0);
         }
         long append = System.currentTimeMillis() - activeNow;

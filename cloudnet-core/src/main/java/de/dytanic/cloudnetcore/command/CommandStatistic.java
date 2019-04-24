@@ -17,8 +17,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class CommandStatistic extends Command {
 
-    public CommandStatistic()
-    {
+    public CommandStatistic() {
         super("statistic", "cloudnet.command.statistic");
 
         description = "Shows a list of all statistics of cloudnet!";
@@ -26,8 +25,7 @@ public final class CommandStatistic extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
         Document document = StatisticManager.getInstance().getStatistics();
         sender.sendMessage(
                 "CloudNet2 Statistics:",

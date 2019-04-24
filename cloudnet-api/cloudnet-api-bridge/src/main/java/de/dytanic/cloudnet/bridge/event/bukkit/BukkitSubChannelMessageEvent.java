@@ -22,29 +22,24 @@ public class BukkitSubChannelMessageEvent extends BukkitCloudEvent {
 
     private Document document;
 
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
-    public Document getDocument()
-    {
+    public Document getDocument() {
         return document;
     }
 
-    public String getChannel()
-    {
+    public String getChannel() {
         return channel;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

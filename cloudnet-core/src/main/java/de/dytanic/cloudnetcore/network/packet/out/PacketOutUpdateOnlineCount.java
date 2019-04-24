@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutUpdateOnlineCount extends Packet {
 
-    public PacketOutUpdateOnlineCount(int onlineCount)
-    {
+    public PacketOutUpdateOnlineCount(int onlineCount) {
         super(PacketRC.PLAYER_HANDLE + 4, new Document("onlineCount", onlineCount));
     }
 }

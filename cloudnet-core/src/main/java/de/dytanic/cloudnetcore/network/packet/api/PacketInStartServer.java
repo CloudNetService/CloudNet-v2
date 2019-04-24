@@ -22,14 +22,11 @@ import java.util.Properties;
 public class PacketInStartServer extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         CloudNet.getInstance().getScheduler().runTaskSync(new Runnable() {
             @Override
-            public void run()
-            {
-                if (data.contains("customServer"))
-                {
+            public void run() {
+                if (data.contains("customServer")) {
                     CloudNet.getInstance().startGameServer(
                             CloudNet.getInstance().getServerGroups().get(data.getString("group")),
                             data.getObject("serverConfig", new TypeToken<ServerConfig>() {
@@ -40,12 +37,9 @@ public class PacketInStartServer extends PacketInHandler {
                             }.getType()), data.getString("customServer"), data.getObject("properties",
                                     new TypeToken<Properties>() {
                                     }.getType()));
-                } else
-                {
-                    if (data.contains("template"))
-                    {
-                        if (data.contains("wrapper"))
-                        {
+                } else {
+                    if (data.contains("template")) {
+                        if (data.contains("wrapper")) {
                             CloudNet.getInstance().startGameServer(
                                     CloudNet.getInstance().getWrappers().get(data.getString("wrapper")),
                                     CloudNet.getInstance().getServerGroups().get(data.getString("group")),
@@ -58,8 +52,7 @@ public class PacketInStartServer extends PacketInHandler {
                                     }.getType()), data.getString("customServer"), data.getObject("properties",
                                             new TypeToken<Properties>() {
                                             }.getType()));
-                        } else
-                        {
+                        } else {
                             CloudNet.getInstance().startGameServer(
                                     CloudNet.getInstance().getServerGroups().get(data.getString("group")),
                                     (ServerConfig) data.getObject("serverConfig", new TypeToken<ServerConfig>() {
@@ -72,10 +65,8 @@ public class PacketInStartServer extends PacketInHandler {
                                             new TypeToken<Properties>() {
                                             }.getType()));
                         }
-                    } else
-                    {
-                        if (data.contains("wrapper"))
-                        {
+                    } else {
+                        if (data.contains("wrapper")) {
                             CloudNet.getInstance().startGameServer(
                                     CloudNet.getInstance().getWrappers().get(data.getString("wrapper")),
                                     CloudNet.getInstance().getServerGroups().get(data.getString("group")),
@@ -87,8 +78,7 @@ public class PacketInStartServer extends PacketInHandler {
                                     }.getType()), data.getString("customServer"), data.getObject("properties",
                                             new TypeToken<Properties>() {
                                             }.getType()));
-                        } else
-                        {
+                        } else {
                             CloudNet.getInstance().startGameServer(
                                     CloudNet.getInstance().getServerGroups().get(data.getString("group")),
                                     data.getObject("serverConfig", new TypeToken<ServerConfig>() {

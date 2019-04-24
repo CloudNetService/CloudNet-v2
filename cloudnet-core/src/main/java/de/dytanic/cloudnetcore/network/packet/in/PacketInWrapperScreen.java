@@ -23,8 +23,7 @@ public class PacketInWrapperScreen extends PacketInHandler {
     }.getType();
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         if (!(packetSender instanceof Wrapper)) return;
 
         CloudNet.getInstance().getNetworkManager().handleWrapperScreenInput(((Wrapper) packetSender), data.getObject("screen", TYPE));

@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutExecuteCommand
         extends Packet {
-    public PacketOutExecuteCommand(String command)
-    {
+    public PacketOutExecuteCommand(String command) {
         super(PacketRC.CN_CORE + 9, new Document("commandLine", command));
     }
 }

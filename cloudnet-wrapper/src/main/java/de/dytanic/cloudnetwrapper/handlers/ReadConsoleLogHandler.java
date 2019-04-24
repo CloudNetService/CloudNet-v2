@@ -16,8 +16,7 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
     private final byte[] buffer = new byte[1024];
 
     @Override
-    public void run(CloudNetWrapper obj)
-    {
+    public void run(CloudNetWrapper obj) {
         for (CloudGameServer cloudGameServer : obj.getCloudServers().values())
             if (cloudGameServer.isAlive() && cloudGameServer.getInstance() != null)
                 readConsoleLog(cloudGameServer);
@@ -31,19 +30,15 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
                 readConsoleLog(gameServer);
     }
 
-    private synchronized void readConsoleLog(AbstractScreenService server)
-    {
-        if (server.getInstance().isAlive() && server.getInstance().getInputStream() != null)
-        {
+    private synchronized void readConsoleLog(AbstractScreenService server) {
+        if (server.getInstance().isAlive() && server.getInstance().getInputStream() != null) {
             readStream(server, server.getInstance().getInputStream());
             readStream(server, server.getInstance().getErrorStream());
         }
     }
 
-    private synchronized void readStream(AbstractScreenService screenService, InputStream inputStream)
-    {
-        try
-        {
+    private synchronized void readStream(AbstractScreenService screenService, InputStream inputStream) {
+        try {
             int len;
             while (inputStream.available() > 0 && (len = inputStream.read(buffer, 0, buffer.length)) != -1)
                 stringBuffer.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
@@ -58,15 +53,13 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
 
             stringBuffer.setLength(0);
 
-        } catch (Exception ignored)
-        {
+        } catch (Exception ignored) {
             stringBuffer.setLength(0);
         }
     }
 
     @Override
-    public int getTicks()
-    {
+    public int getTicks() {
         return 40;
     }
 }

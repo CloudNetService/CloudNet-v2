@@ -14,12 +14,10 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 public class PacketInStopProxy extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         ProxyInfo serverInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>() {
         }.getType());
-        if (CloudNetWrapper.getInstance().getProxys().containsKey(serverInfo.getServiceId().getServerId()))
-        {
+        if (CloudNetWrapper.getInstance().getProxys().containsKey(serverInfo.getServiceId().getServerId())) {
             CloudNetWrapper.getInstance().getProxys().get(serverInfo.getServiceId().getServerId()).shutdown();
         }
     }

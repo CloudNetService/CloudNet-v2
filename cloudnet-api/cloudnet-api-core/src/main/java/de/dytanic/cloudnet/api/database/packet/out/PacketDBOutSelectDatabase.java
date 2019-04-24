@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketDBOutSelectDatabase extends Packet {
 
-    public PacketDBOutSelectDatabase(String name)
-    {
+    public PacketDBOutSelectDatabase(String name) {
         super(PacketRC.DB + 6, new Document("name", name));
     }
 }

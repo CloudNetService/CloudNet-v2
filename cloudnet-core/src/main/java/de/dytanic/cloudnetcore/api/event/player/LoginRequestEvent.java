@@ -24,8 +24,7 @@ public class LoginRequestEvent extends Event implements Cancelable {
     @Setter
     private boolean cancelled = false;
 
-    public LoginRequestEvent(ProxyServer proxyServer, PlayerConnection cloudPlayerConnection)
-    {
+    public LoginRequestEvent(ProxyServer proxyServer, PlayerConnection cloudPlayerConnection) {
         this.cloudPlayerConnection = cloudPlayerConnection;
         this.proxyServer = proxyServer;
 

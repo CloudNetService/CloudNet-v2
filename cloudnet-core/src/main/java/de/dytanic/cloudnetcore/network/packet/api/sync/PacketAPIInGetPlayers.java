@@ -16,15 +16,13 @@ import de.dytanic.cloudnetcore.CloudNet;
 public class PacketAPIInGetPlayers extends PacketAPIIO {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         Packet packet = getResult(new Document().append("players", CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values()));
         packetSender.sendPacket(packet);
     }
 
     @Override
-    protected Packet getResult(Document result)
-    {
+    protected Packet getResult(Document result) {
         return new Packet(packetUniqueId, PacketRC.PLAYER_HANDLE, result);
     }
 }

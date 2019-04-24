@@ -21,92 +21,77 @@ import java.util.UUID;
 public class NetworkHandlerAdapter implements NetworkHandler {
 
     @Override
-    public void onServerAdd(ServerInfo serverInfo)
-    {
+    public void onServerAdd(ServerInfo serverInfo) {
 
     }
 
     @Override
-    public void onServerInfoUpdate(ServerInfo serverInfo)
-    {
+    public void onServerInfoUpdate(ServerInfo serverInfo) {
 
     }
 
     @Override
-    public void onServerRemove(ServerInfo serverInfo)
-    {
+    public void onServerRemove(ServerInfo serverInfo) {
 
     }
 
     @Override
-    public void onProxyAdd(ProxyInfo proxyInfo)
-    {
+    public void onProxyAdd(ProxyInfo proxyInfo) {
 
     }
 
     @Override
-    public void onProxyInfoUpdate(ProxyInfo proxyInfo)
-    {
+    public void onProxyInfoUpdate(ProxyInfo proxyInfo) {
 
     }
 
     @Override
-    public void onProxyRemove(ProxyInfo proxyInfo)
-    {
+    public void onProxyRemove(ProxyInfo proxyInfo) {
 
     }
 
     @Override
-    public void onCloudNetworkUpdate(CloudNetwork cloudNetwork)
-    {
+    public void onCloudNetworkUpdate(CloudNetwork cloudNetwork) {
 
     }
 
     @Override
-    public void onCustomChannelMessageReceive(String channel, String message, Document document)
-    {
+    public void onCustomChannelMessageReceive(String channel, String message, Document document) {
 
     }
 
     @Override
-    public void onCustomSubChannelMessageReceive(String channel, String message, Document document)
-    {
+    public void onCustomSubChannelMessageReceive(String channel, String message, Document document) {
 
     }
 
     @Override
-    public void onPlayerLoginNetwork(CloudPlayer cloudPlayer)
-    {
+    public void onPlayerLoginNetwork(CloudPlayer cloudPlayer) {
 
     }
 
     @Override
-    public void onPlayerDisconnectNetwork(CloudPlayer cloudPlayer)
-    {
+    public void onPlayerDisconnectNetwork(CloudPlayer cloudPlayer) {
 
     }
 
     @Override
-    public void onPlayerDisconnectNetwork(UUID uniqueId)
-    {
+    public void onPlayerDisconnectNetwork(UUID uniqueId) {
 
     }
 
     @Override
-    public void onPlayerUpdate(CloudPlayer cloudPlayer)
-    {
+    public void onPlayerUpdate(CloudPlayer cloudPlayer) {
 
     }
 
     @Override
-    public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer)
-    {
+    public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer) {
 
     }
 
     @Override
-    public void onUpdateOnlineCount(int onlineCount)
-    {
+    public void onUpdateOnlineCount(int onlineCount) {
 
     }
 }

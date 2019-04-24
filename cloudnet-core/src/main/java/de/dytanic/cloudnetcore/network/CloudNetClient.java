@@ -36,16 +36,14 @@ public class CloudNetClient
     private Channel channel;
     private INetworkComponent networkComponent;
 
-    public CloudNetClient(INetworkComponent iNetworkComponent, Channel channel)
-    {
+    public CloudNetClient(INetworkComponent iNetworkComponent, Channel channel) {
         this.networkComponent = iNetworkComponent;
         this.networkComponent.setChannel(channel);
         this.channel = channel;
 
         System.out.println("Channel connected [" + channel.remoteAddress().toString() + "/serverId=" + networkComponent.getServerId() + "]");
 
-        if (networkComponent instanceof Wrapper)
-        {
+        if (networkComponent instanceof Wrapper) {
             StatisticManager.getInstance().wrapperConnections();
             System.out.println("Wrapper [" + networkComponent.getServerId() + "] is connected.");
             CloudNet.getInstance().getEventManager().callEvent(new WrapperChannelInitEvent((Wrapper) networkComponent, channel));
@@ -56,13 +54,11 @@ public class CloudNetClient
         CloudNetwork cloudNetwork = CloudNet.getInstance().getNetworkManager().newCloudNetwork();
         channel.writeAndFlush(new PacketOutCloudNetwork(cloudNetwork));
 
-        if (networkComponent instanceof MinecraftServer)
-        {
+        if (networkComponent instanceof MinecraftServer) {
             ((MinecraftServer) networkComponent).setChannelLostTime(0L);
             networkComponent.getWrapper().sendPacket(new PacketOutOnlineServer(((MinecraftServer) networkComponent).getServerInfo()));
         }
-        if (networkComponent instanceof ProxyServer)
-        {
+        if (networkComponent instanceof ProxyServer) {
             ((ProxyServer) networkComponent).setChannelLostTime(0L);
         }
         CloudNet.getInstance().getEventManager().callEvent(new ChannelInitEvent(channel, networkComponent));
@@ -70,33 +66,25 @@ public class CloudNetClient
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception
-    {
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
         this.channel = ctx.channel();
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception
-    {
-        if ((!channel.isActive() || !channel.isOpen() || !channel.isWritable()))
-        {
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        if ((!channel.isActive() || !channel.isOpen() || !channel.isWritable())) {
             System.out.println("Channel disconnected [" + channel.remoteAddress().toString() + "/serverId=" + networkComponent.getServerId() + "]");
             ctx.close().syncUninterruptibly();
-            if (networkComponent instanceof MinecraftServer)
-            {
+            if (networkComponent instanceof MinecraftServer) {
                 ((MinecraftServer) networkComponent).setChannelLostTime(System.currentTimeMillis());
             }
-            if (networkComponent instanceof ProxyServer)
-            {
+            if (networkComponent instanceof ProxyServer) {
                 ((ProxyServer) networkComponent).setChannelLostTime(System.currentTimeMillis());
             }
-            if (networkComponent instanceof Wrapper)
-            {
-                try
-                {
+            if (networkComponent instanceof Wrapper) {
+                try {
                     ((Wrapper) networkComponent).disconnct();
-                } catch (Exception ex)
-                {
+                } catch (Exception ex) {
 
                     ((Wrapper) networkComponent).getServers().clear();
                     ((Wrapper) networkComponent).getProxys().clear();
@@ -111,11 +99,9 @@ public class CloudNetClient
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
-    {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 
-        if (!(cause instanceof IOException))
-        {
+        if (!(cause instanceof IOException)) {
             cause.printStackTrace();
         }
         //TODO:
@@ -123,14 +109,12 @@ public class CloudNetClient
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception
-    {
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object obj) throws Exception
-    {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object obj) throws Exception {
 
         if (!(obj instanceof Packet)) return;
 
@@ -145,12 +129,10 @@ public class CloudNetClient
         CloudNet.getInstance().getPacketManager().dispatchPacket(packet, networkComponent);
     }
 
-    public void init(CloudNetwork cloudNetwork)
-    {
+    public void init(CloudNetwork cloudNetwork) {
         CloudNet.getInstance().getScheduler().runTaskAsync(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 CloudNet.getInstance().getNetworkManager().sendAll(new PacketOutCloudNetwork(cloudNetwork));
             }
         });

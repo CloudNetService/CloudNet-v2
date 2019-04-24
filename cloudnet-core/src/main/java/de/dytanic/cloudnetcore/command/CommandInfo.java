@@ -19,8 +19,7 @@ import java.util.Arrays;
  */
 public final class CommandInfo extends Command {
 
-    public CommandInfo()
-    {
+    public CommandInfo() {
         super("info", "cloudnet.command.info", "i");
 
         description = "Shows informations about one instance";
@@ -28,16 +27,11 @@ public final class CommandInfo extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
-        switch (args.length)
-        {
-            case 2:
-            {
-                switch (args[0].toLowerCase())
-                {
-                    case "server":
-                    {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
+        switch (args.length) {
+            case 2: {
+                switch (args[0].toLowerCase()) {
+                    case "server": {
                         MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[1]);
                         if (minecraftServer == null) return;
 
@@ -60,8 +54,7 @@ public final class CommandInfo extends Command {
                         );
                     }
                     break;
-                    case "proxy":
-                    {
+                    case "proxy": {
                         ProxyServer proxyServer = CloudNet.getInstance().getProxy(args[1]);
                         if (proxyServer == null) return;
 
@@ -83,8 +76,7 @@ public final class CommandInfo extends Command {
                         );
                     }
                     break;
-                    case "wrapper":
-                    {
+                    case "wrapper": {
                         Wrapper wrapper = CloudNet.getInstance().getWrappers().get(args[1]);
                         if (wrapper == null) return;
 
@@ -105,8 +97,7 @@ public final class CommandInfo extends Command {
 
                     }
                     break;
-                    case "sg":
-                    {
+                    case "sg": {
                         ServerGroup group = CloudNet.getInstance().getServerGroup(args[1]);
                         if (group == null) return;
 
@@ -123,8 +114,7 @@ public final class CommandInfo extends Command {
                                 "Wrappers: " + Arrays.toString(group.getWrapper().toArray(new String[0])),
                                 "Templates: " + Arrays.toString(CollectionWrapper.transform(group.getTemplates(), new Catcher<String, Template>() {
                                     @Override
-                                    public String doCatch(Template key)
-                                    {
+                                    public String doCatch(Template key) {
                                         return key.getName() + ":" + key.getBackend().name();
                                     }
                                 }).toArray()),

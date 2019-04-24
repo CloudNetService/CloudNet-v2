@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketDBOutInsertDocument extends Packet {
 
-    public PacketDBOutInsertDocument(String db, Document... documents)
-    {
+    public PacketDBOutInsertDocument(String db, Document... documents) {
         super(PacketRC.DB + 2, new Document("insert", documents).append("db", db));
     }
 }

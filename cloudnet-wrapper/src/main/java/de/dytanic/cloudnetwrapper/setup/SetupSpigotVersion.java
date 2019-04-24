@@ -23,49 +23,40 @@ public class SetupSpigotVersion
 
     private final Runnabled<String> download = new Runnabled<String>() {
         @Override
-        public void run(String url)
-        {
-            try
-            {
+        public void run(String url) {
+            try {
                 System.out.println("Downloading spigot.jar...");
                 URLConnection connection = new URL(url).openConnection();
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
                 connection.connect();
-                try (InputStream inputStream = connection.getInputStream())
-                {
+                try (InputStream inputStream = connection.getInputStream()) {
                     Files.copy(inputStream, Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
                 }
                 System.out.println("Download was successfully completed!");
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     };
 
     @Override
-    public void run(ConsoleReader reader)
-    {
+    public void run(ConsoleReader reader) {
         System.out.println("No spigot.jar has been found!");
 
         System.out.println("Choose a minecraft server version [" +/*"\"paper\" (coming soon)", */"\"spigot\"]");
 
         String answer = null;
 
-        if (System.getProperty("spigot-type") != null)
-        {
+        if (System.getProperty("spigot-type") != null) {
             answer = System.getProperty("spigot-type");
         }
 
         String input;
 
-        while (answer == null)
-        {
-            try
-            {
+        while (answer == null) {
+            try {
                 input = reader.readLine();
-                switch (input.toLowerCase())
-                {
+                switch (input.toLowerCase()) {
                     case "spigot":
                         answer = "spigot";
                         break;
@@ -78,27 +69,21 @@ public class SetupSpigotVersion
                         System.out.println("This version is not supported!");
                 }
 
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        if (System.getProperty("spigot-version") != null)
-        {
+        if (System.getProperty("spigot-version") != null) {
             answer = System.getProperty("spigot-version");
         }
 
-        switch (answer)
-        {
+        switch (answer) {
             case "spigot":
                 System.out.println("Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\"]");
-                while (true)
-                {
-                    try
-                    {
-                        switch (reader.readLine().toLowerCase())
-                        {
+                while (true) {
+                    try {
+                        switch (reader.readLine().toLowerCase()) {
                             case "1.7.10":
                                 download.run("https://cdn.getbukkit.org/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
                                 return;
@@ -130,8 +115,7 @@ public class SetupSpigotVersion
                                 System.out.println("This version is not supported!");
                                 break;
                         }
-                    } catch (IOException e)
-                    {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }

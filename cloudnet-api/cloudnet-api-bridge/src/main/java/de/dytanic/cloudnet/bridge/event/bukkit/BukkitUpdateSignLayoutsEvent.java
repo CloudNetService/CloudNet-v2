@@ -18,19 +18,16 @@ public class BukkitUpdateSignLayoutsEvent extends BukkitCloudEvent {
 
     private SignLayoutConfig signLayoutConfig;
 
-    public SignLayoutConfig getSignLayoutConfig()
-    {
+    public SignLayoutConfig getSignLayoutConfig() {
         return signLayoutConfig;
     }
 
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutAddSign extends Packet {
 
-    public PacketOutAddSign(Sign sign)
-    {
+    public PacketOutAddSign(Sign sign) {
         super(PacketRC.SERVER_SELECTORS + 1, new Document("sign", sign));
     }
 }

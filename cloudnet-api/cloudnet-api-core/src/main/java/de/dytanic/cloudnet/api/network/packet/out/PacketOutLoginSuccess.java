@@ -15,8 +15,7 @@ import java.util.UUID;
  */
 public class PacketOutLoginSuccess extends Packet {
 
-    public PacketOutLoginSuccess(UUID uniqueId)
-    {
+    public PacketOutLoginSuccess(UUID uniqueId) {
         super(PacketRC.PLAYER_HANDLE + 6, new Document("uniqueId", uniqueId));
     }
 }

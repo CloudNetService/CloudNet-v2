@@ -21,8 +21,7 @@ public class PacketInLogoutPlayer
         extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         CloudPlayer cloudPlayer = data.getObject("player", new TypeToken<CloudPlayer>() {
         }.getType());
         if (cloudPlayer != null)

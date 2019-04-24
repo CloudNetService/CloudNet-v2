@@ -16,8 +16,7 @@ import de.dytanic.cloudnetcore.CloudNet;
 public class PacketInCommandExecute extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         PlayerCommandExecution playerCommandExecutor = data.getObject("playerCommandExecution", PlayerCommandExecution.class);
         CloudNet.getInstance().getNetworkManager().handleCommandExecute(playerCommandExecutor);
     }

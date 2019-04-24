@@ -6,8 +6,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 
 public class PacketAPIOutGetStatistic extends Packet {
 
-    public PacketAPIOutGetStatistic()
-    {
+    public PacketAPIOutGetStatistic() {
         super(PacketRC.API + 10, new Document());
     }
 }

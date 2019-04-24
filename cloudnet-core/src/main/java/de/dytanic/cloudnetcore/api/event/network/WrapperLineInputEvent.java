@@ -20,8 +20,7 @@ public class WrapperLineInputEvent extends AsyncEvent<WrapperLineInputEvent> {
 
     private Wrapper wrapper;
 
-    public WrapperLineInputEvent(Wrapper wrapper, WrapperScreen wrapperScreen)
-    {
+    public WrapperLineInputEvent(Wrapper wrapper, WrapperScreen wrapperScreen) {
         super(new AsyncPosterAdapter<>());
         this.wrapper = wrapper;
         this.wrapperScreen = wrapperScreen;

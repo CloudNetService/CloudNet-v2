@@ -16,21 +16,16 @@ import java.nio.file.Paths;
 public class PacketInInstallUpdate extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        try
-        {
+    public void handleInput(Document data, PacketSender packetSender) {
+        try {
             URLConnection url = new java.net.URL(data.getString("url")).openConnection();
             url.connect();
-            if (System.getProperty("os.name").toLowerCase().contains("windows"))
-            {
+            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
                 Files.copy(url.getInputStream(), Paths.get("CloudNet-Wrapper-" + NetworkUtils.RANDOM.nextLong() + ".jar"));
-            } else
-            {
+            } else {
                 Files.copy(url.getInputStream(), Paths.get("CloudNet-Wrapper.jar"));
             }
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }

@@ -22,13 +22,11 @@ public class CloudConfigLoader {
 
     private ConfigTypeLoader type;
 
-    public Document loadConfig()
-    {
+    public Document loadConfig() {
         return Document.loadDocument(pathConfigJson);
     }
 
-    public ConnectableAddress loadConnnection()
-    {
+    public ConnectableAddress loadConnnection() {
         return Document.loadDocument(pathConnectionJson).getObject("connection", new TypeToken<ConnectableAddress>() {
         }.getType());
     }

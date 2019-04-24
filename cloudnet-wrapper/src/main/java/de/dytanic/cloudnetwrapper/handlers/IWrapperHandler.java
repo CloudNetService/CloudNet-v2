@@ -11,12 +11,10 @@ public interface IWrapperHandler extends Runnabled<CloudNetWrapper> {
 
     int getTicks();
 
-    default Runnable toExecutor()
-    {
+    default Runnable toExecutor() {
         return new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 IWrapperHandler.this.run(CloudNetWrapper.getInstance());
             }
         };

@@ -23,116 +23,95 @@ public class ItemStackBuilder {
     protected ItemMeta itemMeta;
     protected ItemStack itemStack;
 
-    public ItemStackBuilder(Material material)
-    {
+    public ItemStackBuilder(Material material) {
         this.itemStack = new ItemStack(material);
         this.itemMeta = itemStack.getItemMeta();
     }
 
-    public ItemStackBuilder(int material)
-    {
+    public ItemStackBuilder(int material) {
         this.itemStack = new ItemStack(Material.getMaterial(material));
         this.itemMeta = itemStack.getItemMeta();
     }
 
-    public ItemStackBuilder(Material material, int amount)
-    {
+    public ItemStackBuilder(Material material, int amount) {
         this.itemStack = new ItemStack(material, amount);
         this.itemMeta = itemStack.getItemMeta();
     }
 
-    public ItemStackBuilder(int material, int amount)
-    {
+    public ItemStackBuilder(int material, int amount) {
         this.itemStack = new ItemStack(material, amount);
         this.itemMeta = itemStack.getItemMeta();
     }
 
-    public ItemStackBuilder(Material material, int amount, int sub)
-    {
+    public ItemStackBuilder(Material material, int amount, int sub) {
         this.itemStack = new ItemStack(material, amount, (short) sub);
         this.itemMeta = itemStack.getItemMeta();
     }
 
-    public ItemStackBuilder(int material, int amount, int sub)
-    {
+    public ItemStackBuilder(int material, int amount, int sub) {
         this.itemStack = new ItemStack(Material.getMaterial(material), amount, (short) sub);
         this.itemMeta = itemStack.getItemMeta();
     }
 
-    public static ItemStackBuilder builder(Material material)
-    {
+    public static ItemStackBuilder builder(Material material) {
         return new ItemStackBuilder(material);
     }
 
-    public static ItemStackBuilder builder(Material material, int amount)
-    {
+    public static ItemStackBuilder builder(Material material, int amount) {
         return new ItemStackBuilder(material, amount);
     }
 
-    public static ItemStackBuilder builder(Material material, int amount, int sub)
-    {
+    public static ItemStackBuilder builder(Material material, int amount, int sub) {
         return new ItemStackBuilder(material, amount, sub);
     }
 
-    public static ItemStackBuilder builder(int material)
-    {
+    public static ItemStackBuilder builder(int material) {
         return new ItemStackBuilder(material);
     }
 
-    public static ItemStackBuilder builder(int material, int amount)
-    {
+    public static ItemStackBuilder builder(int material, int amount) {
         return new ItemStackBuilder(material, amount);
     }
 
-    public static ItemStackBuilder builder(int material, int amount, int sub)
-    {
+    public static ItemStackBuilder builder(int material, int amount, int sub) {
         return new ItemStackBuilder(material, amount, sub);
     }
 
-    public ItemStackBuilder enchantment(Enchantment enchantment, int value)
-    {
+    public ItemStackBuilder enchantment(Enchantment enchantment, int value) {
         itemMeta.addEnchant(enchantment, value, true);
         return this;
     }
 
-    public ItemStackBuilder color(Color color)
-    {
-        if (itemMeta instanceof LeatherArmorMeta)
-        {
+    public ItemStackBuilder color(Color color) {
+        if (itemMeta instanceof LeatherArmorMeta) {
             ((LeatherArmorMeta) itemMeta).setColor(color);
         }
         return this;
     }
 
-    public ItemStackBuilder owner(String name)
-    {
-        if (itemMeta instanceof SkullMeta)
-        {
+    public ItemStackBuilder owner(String name) {
+        if (itemMeta instanceof SkullMeta) {
             ((SkullMeta) itemMeta).setOwner(name);
         }
         return this;
     }
 
-    public ItemStackBuilder displayName(String name)
-    {
+    public ItemStackBuilder displayName(String name) {
         itemMeta.setDisplayName(name);
         return this;
     }
 
-    public ItemStackBuilder lore(String... lore)
-    {
+    public ItemStackBuilder lore(String... lore) {
         itemMeta.setLore(Arrays.asList(lore));
         return this;
     }
 
-    public ItemStackBuilder lore(List<String> lore)
-    {
+    public ItemStackBuilder lore(List<String> lore) {
         itemMeta.setLore(lore);
         return this;
     }
 
-    public ItemStack build()
-    {
+    public ItemStack build() {
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }

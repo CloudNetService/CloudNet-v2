@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutEnableScreen extends Packet {
 
-    public PacketOutEnableScreen(ServiceId serviceId)
-    {
+    public PacketOutEnableScreen(ServiceId serviceId) {
         super(PacketRC.CN_WRAPPER + 9, new Document("serviceId", serviceId));
     }
 }

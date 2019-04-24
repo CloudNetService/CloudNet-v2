@@ -25,10 +25,8 @@ public class ConfigSignLayout {
 
     private final Path path = Paths.get("local/signLayout.json");
 
-    public ConfigSignLayout()
-    {
-        if (!Files.exists(path))
-        {
+    public ConfigSignLayout() {
+        if (!Files.exists(path)) {
             new Document().append("layout_config", new de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig(true, false, 1D, 0.8D,
                     Arrays.asList(new SignGroupLayouts(
                             "default",
@@ -77,34 +75,29 @@ public class ConfigSignLayout {
         }
     }
 
-    public ConfigSignLayout saveLayout(de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig signLayoutConfig)
-    {
+    public ConfigSignLayout saveLayout(de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig signLayoutConfig) {
         Document document = Document.loadDocument(path);
         document.append("layout_config", signLayoutConfig);
         document.saveAsConfig(path);
         return this;
     }
 
-    public de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig loadLayout()
-    {
+    public de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig loadLayout() {
         Document document = Document.loadDocument(path);
 
-        if (!document.getDocument("layout_config").contains("knockbackOnSmallDistance"))
-        {
+        if (!document.getDocument("layout_config").contains("knockbackOnSmallDistance")) {
             Document document1 = document.getDocument("layout_config").append("knockbackOnSmallDistance", false);
             document.append("layout_config", document1);
             document.saveAsConfig(path);
         }
 
-        if (!document.getDocument("layout_config").contains("distance"))
-        {
+        if (!document.getDocument("layout_config").contains("distance")) {
             Document document1 = document.getDocument("layout_config").append("distance", 1D);
             document.append("layout_config", document1);
             document.saveAsConfig(path);
         }
 
-        if (!document.getDocument("layout_config").contains("strength"))
-        {
+        if (!document.getDocument("layout_config").contains("strength")) {
             Document document1 = document.getDocument("layout_config").append("strength", 0.8D);
             document.append("layout_config", document1);
             document.saveAsConfig(path);
@@ -115,27 +108,23 @@ public class ConfigSignLayout {
 
         boolean injectable = false;
 
-        for (SignGroupLayouts groupLayouts : signLayoutConfig.getGroupLayouts())
-        {
+        for (SignGroupLayouts groupLayouts : signLayoutConfig.getGroupLayouts()) {
 
             {
                 SignLayout signLayout = CollectionWrapper.filter(groupLayouts.getLayouts(), new Acceptable<SignLayout>() {
                     @Override
-                    public boolean isAccepted(SignLayout signLayout)
-                    {
+                    public boolean isAccepted(SignLayout signLayout) {
                         return signLayout.getName().equalsIgnoreCase("empty");
                     }
                 });
-                if (signLayout == null)
-                {
+                if (signLayout == null) {
                     groupLayouts.getLayouts().add(new SignLayout("empty", new String[]{"%server%", "&6%state%", "%online_players%/%max_players%", "%motd%"}, 159, 1));
                     injectable = true;
                 }
             }
         }
 
-        if (injectable)
-        {
+        if (injectable) {
             document.append("layout_config", signLayoutConfig).saveAsConfig(path);
         }
 

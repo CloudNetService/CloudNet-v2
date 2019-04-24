@@ -21,8 +21,7 @@ import java.util.Collections;
  */
 public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collection<CloudFlareConfig>> {
 
-    public ConfigCloudFlare()
-    {
+    public ConfigCloudFlare() {
         super(new Document("configurations", Collections.singletonList(
                 new CloudFlareConfig(
                         false,
@@ -36,12 +35,10 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collecti
     }
 
     @Override
-    public Collection<CloudFlareConfig> load()
-    {
+    public Collection<CloudFlareConfig> load() {
         File old = new File("local/cloudflare.json");
 
-        if (old.exists())
-        {
+        if (old.exists()) {
             CloudFlareConfig cloudFlareConfig = Document.loadDocument(old).getObject("cloudflare", new TypeToken<CloudFlareConfig>() {
             }.getType());
 

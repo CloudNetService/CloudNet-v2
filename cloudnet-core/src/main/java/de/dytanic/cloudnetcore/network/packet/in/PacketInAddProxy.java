@@ -17,8 +17,7 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 public final class PacketInAddProxy extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         if (!(packetSender instanceof Wrapper)) return;
         Wrapper cn = ((Wrapper) packetSender);
         ProxyInfo nullServerInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>() {

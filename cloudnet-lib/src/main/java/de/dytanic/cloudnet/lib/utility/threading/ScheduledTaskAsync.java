@@ -10,32 +10,26 @@ public class ScheduledTaskAsync
 
     protected Scheduler scheduler;
 
-    public ScheduledTaskAsync(long taskId, Runnable runnable, int delay, int repeatDelay, Scheduler scheduler)
-    {
+    public ScheduledTaskAsync(long taskId, Runnable runnable, int delay, int repeatDelay, Scheduler scheduler) {
         super(taskId, runnable, delay, repeatDelay);
         this.scheduler = scheduler;
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         if (interrupted) return;
 
         if (delay != 0
-                && delayTime != 0)
-        {
+                && delayTime != 0) {
             delayTime--;
             return;
         }
 
-        if (repeatTime > 0)
-        {
+        if (repeatTime > 0) {
             repeatTime--;
-        } else
-        {
+        } else {
             TaskScheduler.runtimeScheduler().schedule(runnable);
-            if (repeatTime == -1)
-            {
+            if (repeatTime == -1) {
                 cancel();
                 return;
             }
@@ -45,8 +39,7 @@ public class ScheduledTaskAsync
     }
 
     @Override
-    protected boolean isAsync()
-    {
+    protected boolean isAsync() {
         return true;
     }
 }

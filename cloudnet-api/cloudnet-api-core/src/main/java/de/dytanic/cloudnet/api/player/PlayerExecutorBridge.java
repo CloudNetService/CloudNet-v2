@@ -18,14 +18,12 @@ public class PlayerExecutorBridge extends PlayerExecutor {
 
     private static final String CHANNEL_NAME = "cloudnet_internal";
 
-    public PlayerExecutorBridge()
-    {
+    public PlayerExecutorBridge() {
         this.available = true;
     }
 
     @Override
-    public void kickPlayer(CloudPlayer cloudPlayer, String reason)
-    {
+    public void kickPlayer(CloudPlayer cloudPlayer, String reason) {
         if (cloudPlayer == null || reason == null) return;
 
         CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "kickPlayer",
@@ -33,8 +31,7 @@ public class PlayerExecutorBridge extends PlayerExecutor {
     }
 
     @Override
-    public void sendPlayer(CloudPlayer cloudPlayer, String server)
-    {
+    public void sendPlayer(CloudPlayer cloudPlayer, String server) {
         if (cloudPlayer == null || server == null) return;
 
         CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "sendPlayer",
@@ -42,8 +39,7 @@ public class PlayerExecutorBridge extends PlayerExecutor {
     }
 
     @Override
-    public void sendMessage(CloudPlayer cloudPlayer, String message)
-    {
+    public void sendMessage(CloudPlayer cloudPlayer, String message) {
         if (cloudPlayer == null || message == null) return;
 
         CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "sendMessage",
@@ -51,8 +47,7 @@ public class PlayerExecutorBridge extends PlayerExecutor {
     }
 
     @Override
-    public void sendActionbar(CloudPlayer cloudPlayer, String message)
-    {
+    public void sendActionbar(CloudPlayer cloudPlayer, String message) {
         if (cloudPlayer == null || message == null) return;
 
         CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "sendActionbar",
@@ -60,8 +55,7 @@ public class PlayerExecutorBridge extends PlayerExecutor {
     }
 
     @Override
-    public void sendTitle(CloudPlayer cloudPlayer, String title, String subTitle, int fadeIn, int stay, int fadeOut)
-    {
+    public void sendTitle(CloudPlayer cloudPlayer, String title, String subTitle, int fadeIn, int stay, int fadeOut) {
         CloudAPI.getInstance().sendCustomSubProxyMessage(CHANNEL_NAME, "sendTitle",
                 new Document("uniqueId", cloudPlayer.getUniqueId())
                         .append("title", title)

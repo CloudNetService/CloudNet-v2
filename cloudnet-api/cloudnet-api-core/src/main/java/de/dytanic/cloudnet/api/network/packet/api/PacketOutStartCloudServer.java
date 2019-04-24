@@ -21,8 +21,7 @@ import java.util.Properties;
 public class PacketOutStartCloudServer extends Packet {
 
     public PacketOutStartCloudServer(String serverName, ServerConfig serverConfig, int memory, boolean priorityStop, String[] processPreParameters, Collection<ServerInstallablePlugin> plugins,
-                                     Properties properties, ServerGroupType serverGroupType)
-    {
+                                     Properties properties, ServerGroupType serverGroupType) {
         super(PacketRC.SERVER_HANDLE + 9, new Document
                 ("serverName", serverName)
                 .append("serverConfig", serverConfig)
@@ -35,8 +34,7 @@ public class PacketOutStartCloudServer extends Packet {
     }
 
     public PacketOutStartCloudServer(WrapperInfo wrapperInfo, String serverName, ServerConfig serverConfig, int memory, boolean priorityStop, String[] processPreParameters, Collection<ServerInstallablePlugin> plugins,
-                                     Properties properties, ServerGroupType serverGroupType)
-    {
+                                     Properties properties, ServerGroupType serverGroupType) {
         super(PacketRC.SERVER_HANDLE + 9, new Document
                 ("serverName", serverName)
                 .append("wrapperInfo", wrapperInfo)

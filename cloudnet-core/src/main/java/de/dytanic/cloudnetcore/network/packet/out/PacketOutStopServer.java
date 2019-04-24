@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutStopServer
         extends Packet {
-    public PacketOutStopServer(ServerInfo serviceId)
-    {
+    public PacketOutStopServer(ServerInfo serviceId) {
         super(PacketRC.CN_CORE + 4, new Document("serverInfo", serviceId));
     }
 }

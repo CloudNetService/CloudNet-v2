@@ -11,12 +11,10 @@ import net.md_5.bungee.chat.TranslatableComponentSerializer;
 
 public final class DocumentRegistry {
 
-    private DocumentRegistry()
-    {
+    private DocumentRegistry() {
     }
 
-    public static void fire()
-    {
+    public static void fire() {
         Document.GSON = new GsonBuilder()
                 .serializeNulls()
                 .setPrettyPrinting()

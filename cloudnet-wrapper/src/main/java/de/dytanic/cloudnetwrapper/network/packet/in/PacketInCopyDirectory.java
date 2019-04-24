@@ -11,8 +11,7 @@ import de.dytanic.cloudnetwrapper.server.GameServer;
 public final class PacketInCopyDirectory extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         if (!data.contains("directory") || !data.contains("serverInfo")) return;
 
         ServerInfo serverInfo = data.getObject("serverInfo", ServerInfo.TYPE);

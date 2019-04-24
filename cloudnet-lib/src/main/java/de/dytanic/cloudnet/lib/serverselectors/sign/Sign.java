@@ -19,8 +19,7 @@ public class Sign {
     @Setter
     private volatile ServerInfo serverInfo;
 
-    public Sign(String targetGroup, Position signPosition)
-    {
+    public Sign(String targetGroup, Position signPosition) {
         this.uniqueId = UUID.randomUUID();
         this.targetGroup = targetGroup;
         this.position = signPosition;

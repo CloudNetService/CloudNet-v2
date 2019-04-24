@@ -22,12 +22,10 @@ import java.util.Collection;
 public class PacketAPIInGetCloudServers extends PacketAPIIO {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         Collection<ServerInfo> serverInfos = CollectionWrapper.transform(CloudNet.getInstance().getCloudGameServers().values(), new Catcher<ServerInfo, CloudServer>() {
             @Override
-            public ServerInfo doCatch(CloudServer key)
-            {
+            public ServerInfo doCatch(CloudServer key) {
                 return key.getServerInfo();
             }
         });
@@ -35,8 +33,7 @@ public class PacketAPIInGetCloudServers extends PacketAPIIO {
     }
 
     @Override
-    protected Packet getResult(Document value)
-    {
+    protected Packet getResult(Document value) {
         return new Packet(packetUniqueId, PacketRC.API, value);
     }
 }

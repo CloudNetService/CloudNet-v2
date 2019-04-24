@@ -12,8 +12,7 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 
 public final class CommandDelete extends Command {
 
-    public CommandDelete()
-    {
+    public CommandDelete() {
         super("delete", "cloudnet.command.delete");
 
         description = "Deletes a servergroup or custom server";
@@ -21,26 +20,20 @@ public final class CommandDelete extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
-        switch (args.length)
-        {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
+        switch (args.length) {
             case 2:
-                if (args[0].equalsIgnoreCase("serverGroup"))
-                {
-                    if (CloudNet.getInstance().getServerGroups().containsKey(args[1]))
-                    {
+                if (args[0].equalsIgnoreCase("serverGroup")) {
+                    if (CloudNet.getInstance().getServerGroups().containsKey(args[1])) {
                         ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(args[1]);
                         CloudNet.getInstance().getConfig().deleteGroup(serverGroup);
                         CloudNet.getInstance().getServerGroups().remove(args[1]);
                         CloudNet.getInstance().getNetworkManager().updateAll();
-                        for (MinecraftServer minecraftServer : CloudNet.getInstance().getServers(args[1]))
-                        {
+                        for (MinecraftServer minecraftServer : CloudNet.getInstance().getServers(args[1])) {
                             minecraftServer.getWrapper().stopServer(minecraftServer);
                         }
                         sender.sendMessage("The group was successfully deleted");
-                    } else
-                    {
+                    } else {
                         sender.sendMessage("The server group doesn't exists");
                     }
                 }

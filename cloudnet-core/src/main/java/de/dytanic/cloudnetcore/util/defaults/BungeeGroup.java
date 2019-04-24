@@ -16,8 +16,7 @@ import java.util.Arrays;
 
 public class BungeeGroup extends ProxyGroup {
 
-    public BungeeGroup()
-    {
+    public BungeeGroup() {
         super("Bungee", Arrays.asList("Wrapper-1"), new Template(
                 "default",
                 TemplateResource.LOCAL,

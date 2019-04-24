@@ -17,8 +17,7 @@ public class UpdatePlayerEvent extends AsyncEvent<UpdatePlayerEvent> {
 
     private OfflinePlayer offlinePlayer;
 
-    public UpdatePlayerEvent(OfflinePlayer offlinePlayer)
-    {
+    public UpdatePlayerEvent(OfflinePlayer offlinePlayer) {
         super(new AsyncPosterAdapter<>());
         this.offlinePlayer = offlinePlayer;
     }

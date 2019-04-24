@@ -18,8 +18,7 @@ import java.util.UUID;
  */
 public class PacketOutSignSelector extends Packet {
 
-    public PacketOutSignSelector(Map<UUID, Sign> signMap, SignLayoutConfig signLayoutConfig)
-    {
+    public PacketOutSignSelector(Map<UUID, Sign> signMap, SignLayoutConfig signLayoutConfig) {
         super(PacketRC.SERVER_SELECTORS + 1, new Document("signs", signMap).append("signLayoutConfig", signLayoutConfig));
     }
 }

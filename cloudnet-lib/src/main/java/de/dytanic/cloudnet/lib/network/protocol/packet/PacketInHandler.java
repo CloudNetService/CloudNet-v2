@@ -15,8 +15,7 @@ public abstract class PacketInHandler {
 
     protected UUID packetUniqueId;
 
-    public PacketInHandler()
-    {
+    public PacketInHandler() {
     }
 
     public abstract void handleInput(Document data, PacketSender packetSender);

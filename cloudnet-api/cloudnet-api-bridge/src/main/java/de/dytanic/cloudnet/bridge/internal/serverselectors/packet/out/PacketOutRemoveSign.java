@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutRemoveSign extends Packet {
 
-    public PacketOutRemoveSign(Sign sign)
-    {
+    public PacketOutRemoveSign(Sign sign) {
         super(PacketRC.SERVER_SELECTORS + 2, new Document("sign", sign));
     }
 }

@@ -10,8 +10,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 @Deprecated
 public final class PacketAPIOutGetRegisteredPlayers extends Packet {
 
-    public PacketAPIOutGetRegisteredPlayers()
-    {
+    public PacketAPIOutGetRegisteredPlayers() {
         super(PacketRC.API + 11, new Document());
     }
 }

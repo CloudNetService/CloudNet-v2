@@ -19,15 +19,13 @@ import java.util.Arrays;
 public final class CommandResource
         extends Command {
 
-    public CommandResource()
-    {
+    public CommandResource() {
         super("resource");
         setPermission("cloudnet.command.resource");
     }
 
     @Override
-    public boolean execute(CommandSender sender, String alias, String[] args)
-    {
+    public boolean execute(CommandSender sender, String alias, String[] args) {
         CloudAPI.getInstance().getLogger().finest(
                 String.format("%s executed %s with arguments %s",
                         sender, alias, Arrays.toString(args))

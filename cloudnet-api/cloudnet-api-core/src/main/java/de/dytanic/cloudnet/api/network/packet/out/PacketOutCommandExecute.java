@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutCommandExecute extends Packet {
 
-    public PacketOutCommandExecute(PlayerCommandExecution playerCommandExecution)
-    {
+    public PacketOutCommandExecute(PlayerCommandExecution playerCommandExecution) {
         super(PacketRC.PLAYER_HANDLE + 4, new Document("playerCommandExecution", playerCommandExecution));
     }
 }

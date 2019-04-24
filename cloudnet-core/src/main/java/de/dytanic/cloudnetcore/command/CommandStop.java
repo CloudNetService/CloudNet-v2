@@ -13,8 +13,7 @@ import de.dytanic.cloudnetcore.CloudNet;
  */
 public final class CommandStop extends Command {
 
-    public CommandStop()
-    {
+    public CommandStop() {
         super("stop", "cloudnet.command.stop", "end", "exit");
 
         description = "Stop this CloudNet-Master application instance";
@@ -22,8 +21,7 @@ public final class CommandStop extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
         sender.sendMessage("CloudNetV2 will be stopped...");
         CloudNet.getInstance().shutdown();
     }

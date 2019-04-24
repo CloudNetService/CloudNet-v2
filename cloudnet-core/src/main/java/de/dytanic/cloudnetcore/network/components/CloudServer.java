@@ -37,8 +37,7 @@ public class CloudServer implements INetworkComponent {
     @Setter
     private Channel channel;
 
-    public CloudServer(Wrapper wrapper, ServerInfo serverInfo, CloudServerMeta cloudServerMeta)
-    {
+    public CloudServer(Wrapper wrapper, ServerInfo serverInfo, CloudServerMeta cloudServerMeta) {
         this.serverInfo = serverInfo;
         this.serviceId = cloudServerMeta.getServiceId();
         this.lastServerInfo = serverInfo;
@@ -48,21 +47,17 @@ public class CloudServer implements INetworkComponent {
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return getServerId();
     }
 
     @Override
-    public String getServerId()
-    {
+    public String getServerId() {
         return serviceId.getServerId();
     }
 
-    public void disconnect()
-    {
-        if (this.channel != null)
-        {
+    public void disconnect() {
+        if (this.channel != null) {
             this.channel.close().syncUninterruptibly();
         }
     }

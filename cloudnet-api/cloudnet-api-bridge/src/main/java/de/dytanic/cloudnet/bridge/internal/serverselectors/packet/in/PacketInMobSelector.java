@@ -16,8 +16,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.Bukkit;
@@ -36,140 +34,93 @@ import java.util.UUID;
 /**
  * Created by Tareko on 25.08.2017.
  */
+
 public class PacketInMobSelector extends PacketInHandlerDefault {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         Map<UUID, ServerMob> mobMap = data.getObject("mobs", new TypeToken<Map<UUID, ServerMob>>() {
         }.getType());
         MobConfig mobConfig = data.getObject("mobConfig", new TypeToken<MobConfig>() {
         }.getType());
 
-        Map<UUID, ServerMob> filteredMobs = MapWrapper.filter(mobMap, new Acceptable<ServerMob>() {
-            @Override
-            public boolean isAccepted(ServerMob value)
-            {
-                return value.getPosition().getGroup().equalsIgnoreCase(CloudAPI.getInstance().getGroup());
-            }
-        });
+        Map<UUID, ServerMob> filteredMobs = MapWrapper.filter(mobMap,
+                value -> value.getPosition().getGroup().equalsIgnoreCase(CloudAPI.getInstance().getGroup()));
 
-        if (MobSelector.getInstance() != null)
-        {
-            Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-                @Override
-                public void run()
-                {
-                    MobSelector.getInstance().shutdown();
-                    MobSelector.getInstance().setMobConfig(mobConfig);
-                    MobSelector.getInstance().setMobs(new HashMap<>());
-                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Catcher<UUID, UUID>() {
-                        @Override
-                        public UUID doCatch(UUID key)
-                        {
-                            return key;
+        if (MobSelector.getInstance() != null) {
+            Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
+                MobSelector.getInstance().shutdown();
+                MobSelector.getInstance().setMobConfig(mobConfig);
+                MobSelector.getInstance().setMobs(new HashMap<>());
+                MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, key -> key, key -> {
+                    MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
+                    Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
+                    entity.setFireTicks(0);
+                    Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);
+
+                    if (armorStand != null) {
+                        MobSelector.getInstance().updateCustom(key, armorStand);
+                        Entity armor = (Entity) armorStand;
+                        if (armor.getPassenger() == null && key.getItemId() != null) {
+
+                            Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(Material.getMaterial(key.getItemId())));
+                            item.setTicksLived(Integer.MAX_VALUE);
+                            item.setPickupDelay(Integer.MAX_VALUE);
+                            armor.setPassenger(item);
                         }
-                    }, new Catcher<MobSelector.MobImpl, ServerMob>() {
+                    }
 
-                        @Override
-                        public MobSelector.MobImpl doCatch(ServerMob key)
-                        {
-                            MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
-                            Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
-                            entity.setFireTicks(0);
-                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);
+                    if (entity instanceof Villager) {
+                        ((Villager) entity).setProfession(Villager.Profession.FARMER);
+                    }
 
-                            if (armorStand != null)
-                            {
-                                MobSelector.getInstance().updateCustom(key, armorStand);
-                                Entity armor = (Entity) armorStand;
-                                if (armor.getPassenger() == null && key.getItemId() != null)
-                                {
-
-                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(Material.getMaterial(key.getItemId())));
-                                    item.setTicksLived(Integer.MAX_VALUE);
-                                    item.setPickupDelay(Integer.MAX_VALUE);
-                                    armor.setPassenger(item);
-                                }
-                            }
-
-                            if (entity instanceof Villager)
-                            {
-                                ((Villager) entity).setProfession(Villager.Profession.FARMER);
-                            }
-
-                            MobSelector.getInstance().unstableEntity(entity);
-                            entity.setCustomNameVisible(true);
-                            entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay()));
-                            MobSelector.MobImpl mob = new MobSelector.MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
-                            Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
-                            return mob;
-                        }
-                    }));
-                    Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), new Runnable() {
-                        @Override
-                        public void run()
-                        {
-                            for (ServerInfo serverInfo : MobSelector.getInstance().getServers().values())
-                            {
-                                MobSelector.getInstance().handleUpdate(serverInfo);
-                            }
-                        }
-                    });
-                }
+                    MobSelector.getInstance().unstableEntity(entity);
+                    entity.setCustomNameVisible(true);
+                    entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay()));
+                    MobSelector.MobImpl mob = new MobSelector.MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
+                    Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
+                    return mob;
+                }));
+                Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), () -> {
+                    for (ServerInfo serverInfo : MobSelector.getInstance().getServers().values()) {
+                        MobSelector.getInstance().handleUpdate(serverInfo);
+                    }
+                });
             });
 
-        } else
-        {
+        } else {
             MobSelector mobSelector = new MobSelector(mobConfig);
             MobSelector.getInstance().setMobs(new HashMap<>());
-            Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-                @Override
-                public void run()
-                {
-                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Catcher<UUID, UUID>() {
-                        @Override
-                        public UUID doCatch(UUID key)
-                        {
-                            return key;
-                        }
-                    }, new Catcher<MobSelector.MobImpl, ServerMob>() {
-                        @Override
-                        public MobSelector.MobImpl doCatch(ServerMob key)
-                        {
-                            MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
-                            Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
-                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);
+            Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () ->
+                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, key -> key,
+                            key -> {
+                                MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
+                                Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
+                                Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);
 
-                            if (armorStand != null)
-                            {
-                                MobSelector.getInstance().updateCustom(key, armorStand);
-                                Entity armor = (Entity) armorStand;
-                                if (armor.getPassenger() == null && key.getItemId() != null)
-                                {
-                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(Material.getMaterial(key.getItemId())));
-                                    item.setTicksLived(Integer.MAX_VALUE);
-                                    item.setPickupDelay(Integer.MAX_VALUE);
-                                    armor.setPassenger(item);
+                                if (armorStand != null) {
+                                    MobSelector.getInstance().updateCustom(key, armorStand);
+                                    Entity armor = (Entity) armorStand;
+                                    if (armor.getPassenger() == null && key.getItemId() != null) {
+                                        Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(Material.getMaterial(key.getItemId())));
+                                        item.setTicksLived(Integer.MAX_VALUE);
+                                        item.setPickupDelay(Integer.MAX_VALUE);
+                                        armor.setPassenger(item);
+                                    }
                                 }
-                            }
 
-                            if (entity instanceof Villager)
-                            {
-                                ((Villager) entity).setProfession(Villager.Profession.FARMER);
-                            }
+                                if (entity instanceof Villager) {
+                                    ((Villager) entity).setProfession(Villager.Profession.FARMER);
+                                }
 
-                            MobSelector.getInstance().unstableEntity(entity);
-                            entity.setCustomNameVisible(true);
-                            entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay() + NetworkUtils.EMPTY_STRING));
+                                MobSelector.getInstance().unstableEntity(entity);
+                                entity.setCustomNameVisible(true);
+                                entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay() + NetworkUtils.EMPTY_STRING));
 
-                            MobSelector.MobImpl mob = new MobSelector.MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
-                            Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
-                            return mob;
-                        }
-                    }));
-                }
-            });
+                                MobSelector.MobImpl mob = new MobSelector.MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
+                                Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
+                                return mob;
+                            })));
             mobSelector.init();
         }
     }

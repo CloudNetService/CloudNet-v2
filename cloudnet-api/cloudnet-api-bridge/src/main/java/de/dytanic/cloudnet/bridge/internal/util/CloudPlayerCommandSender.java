@@ -21,68 +21,57 @@ public class CloudPlayerCommandSender implements CommandSender {
     private final CloudPlayer cloudPlayer;
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return cloudPlayer.getName();
     }
 
     @Override
-    public void sendMessage(String s)
-    {
+    public void sendMessage(String s) {
         cloudPlayer.getPlayerExecutor().sendMessage(cloudPlayer, s);
     }
 
     @Override
-    public void sendMessages(String... strings)
-    {
+    public void sendMessages(String... strings) {
         for (String m : strings) sendMessage(m);
     }
 
     @Override
-    public void sendMessage(BaseComponent... baseComponents)
-    {
+    public void sendMessage(BaseComponent... baseComponents) {
         for (BaseComponent m : baseComponents) sendMessage(m);
     }
 
     @Override
-    public void sendMessage(BaseComponent baseComponent)
-    {
+    public void sendMessage(BaseComponent baseComponent) {
         sendMessage(baseComponent.toLegacyText());
     }
 
     @Override
-    public Collection<String> getGroups()
-    {
+    public Collection<String> getGroups() {
         return new ArrayList<>();
     }
 
     @Override
-    public void addGroups(String... strings)
-    {
+    public void addGroups(String... strings) {
 
     }
 
     @Override
-    public void removeGroups(String... strings)
-    {
+    public void removeGroups(String... strings) {
 
     }
 
     @Override
-    public boolean hasPermission(String s)
-    {
+    public boolean hasPermission(String s) {
         return new PermissionCheckEvent(this, s, false).hasPermission();
     }
 
     @Override
-    public void setPermission(String s, boolean b)
-    {
+    public void setPermission(String s, boolean b) {
 
     }
 
     @Override
-    public Collection<String> getPermissions()
-    {
+    public Collection<String> getPermissions() {
         return new ArrayDeque<>();
     }
 }

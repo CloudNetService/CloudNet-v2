@@ -27,23 +27,18 @@ import io.netty.channel.Channel;
 public final class PacketInAuthHandler extends PacketInAuthReader {
 
     @Override
-    public void handleAuth(Auth auth, AuthType authType, Document authData, PacketSender packetSender)
-    {
+    public void handleAuth(Auth auth, AuthType authType, Document authData, PacketSender packetSender) {
         if (!(packetSender instanceof CloudNetClientAuth)) return;
         CloudNetClientAuth client = (CloudNetClientAuth) packetSender;
-        switch (authType)
-        {
-            case CLOUD_NET:
-            {
+        switch (authType) {
+            case CLOUD_NET: {
                 String key = authData.getString("key");
                 String id = authData.getString("id");
 
-                if (CloudNet.getInstance().getWrappers().containsKey(id))
-                {
+                if (CloudNet.getInstance().getWrappers().containsKey(id)) {
                     Wrapper cn = CloudNet.getInstance().getWrappers().get(id);
                     String wrapperKey = CloudNet.getInstance().getConfig().getWrapperKey();
-                    if (wrapperKey != null && cn.getChannel() == null && wrapperKey.equals(key))
-                    {
+                    if (wrapperKey != null && cn.getChannel() == null && wrapperKey.equals(key)) {
                         Channel channel = client.getChannel();
                         channel.pipeline().remove("client");
                         client.getChannel().writeAndFlush(new PacketOutAuthResult(new AuthLoginResult(true))).syncUninterruptibly();
@@ -51,29 +46,23 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                                 new CloudNetClient(cn, channel)
                         );
                         return;
-                    } else
-                    {
+                    } else {
                         client.getChannel().writeAndFlush(new PacketOutAuthResult(new AuthLoginResult(false))).syncUninterruptibly();
                         CloudNet.getLogger().info("Authentication failed [" + (wrapperKey != null ? "Invalid WrapperKey or Wrapper is already connected!" : "WrapperKey not found, please copy a wrapper key to this instance") + "]");
                     }
-                } else
-                {
+                } else {
                     client.getChannel().writeAndFlush(new PacketOutAuthResult(new AuthLoginResult(false))).syncUninterruptibly();
                 }
             }
             return;
-            case GAMESERVER_OR_BUNGEE:
-            {
+            case GAMESERVER_OR_BUNGEE: {
                 ServiceId serviceId = authData.getObject("serviceId", ServiceId.class);
-                if (CloudNet.getInstance().getWrappers().containsKey(serviceId.getWrapperId()))
-                {
+                if (CloudNet.getInstance().getWrappers().containsKey(serviceId.getWrapperId())) {
 
                     Wrapper wrapper = CloudNet.getInstance().getWrappers().get(serviceId.getWrapperId());
-                    if (wrapper.getServers().containsKey(serviceId.getServerId()))
-                    {
+                    if (wrapper.getServers().containsKey(serviceId.getServerId())) {
                         MinecraftServer minecraftServer = wrapper.getServers().get(serviceId.getServerId());
-                        if (minecraftServer.getChannel() == null && minecraftServer.getServerInfo().getServiceId().getUniqueId().equals(serviceId.getUniqueId()))
-                        {
+                        if (minecraftServer.getChannel() == null && minecraftServer.getServerInfo().getServiceId().getUniqueId().equals(serviceId.getUniqueId())) {
                             Channel channel = client.getChannel();
                             channel.pipeline().remove("client");
                             channel.pipeline().addLast(
@@ -81,11 +70,9 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                             );
                             return;
                         }
-                    } else if (wrapper.getCloudServers().containsKey(serviceId.getServerId()))
-                    {
+                    } else if (wrapper.getCloudServers().containsKey(serviceId.getServerId())) {
                         CloudServer minecraftServer = wrapper.getCloudServers().get(serviceId.getServerId());
-                        if (minecraftServer.getChannel() == null && minecraftServer.getServerInfo().getServiceId().getUniqueId().equals(serviceId.getUniqueId()))
-                        {
+                        if (minecraftServer.getChannel() == null && minecraftServer.getServerInfo().getServiceId().getUniqueId().equals(serviceId.getUniqueId())) {
                             Channel channel = client.getChannel();
                             channel.pipeline().remove("client");
                             channel.pipeline().addLast(
@@ -93,11 +80,9 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                             );
                             return;
                         }
-                    } else if (wrapper.getProxys().containsKey(serviceId.getServerId()))
-                    {
+                    } else if (wrapper.getProxys().containsKey(serviceId.getServerId())) {
                         ProxyServer minecraftServer = wrapper.getProxys().get(serviceId.getServerId());
-                        if (minecraftServer.getChannel() == null && minecraftServer.getProxyInfo().getServiceId().getUniqueId().equals(serviceId.getUniqueId()))
-                        {
+                        if (minecraftServer.getChannel() == null && minecraftServer.getProxyInfo().getServiceId().getUniqueId().equals(serviceId.getUniqueId())) {
                             Channel channel = client.getChannel();
                             channel.pipeline().remove("client");
                             channel.pipeline().addLast(
@@ -105,12 +90,10 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                             );
                             return;
                         }
-                    } else
-                    {
+                    } else {
                         client.getChannel().close().syncUninterruptibly();
                     }
-                } else
-                {
+                } else {
                     client.getChannel().close().syncUninterruptibly();
                 }
             }

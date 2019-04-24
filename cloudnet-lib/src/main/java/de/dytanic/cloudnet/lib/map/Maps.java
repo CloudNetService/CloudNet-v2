@@ -13,8 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class Maps {
 
-    private Maps()
-    {
+    private Maps() {
     }
 
     public static class CollectionMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {

@@ -23,17 +23,14 @@ import java.util.function.Consumer;
 public class PacketInUpdateServerGroup extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         ServerGroup proxyGroup = data.getObject("group", new TypeToken<ServerGroup>() {
         }.getType());
         CloudNet.getInstance().getConfig().createGroup(proxyGroup);
 
-        try
-        {
+        try {
             CloudNet.getInstance().getConfig().load();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         CloudNet.getInstance().getServerGroups().clear();
@@ -41,8 +38,7 @@ public class PacketInUpdateServerGroup extends PacketInHandler {
 
         NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Acceptable<ServerGroup>() {
             @Override
-            public boolean isAccepted(ServerGroup value)
-            {
+            public boolean isAccepted(ServerGroup value) {
                 System.out.println("Loading server group: " + value.getName());
                 return true;
             }
@@ -50,8 +46,7 @@ public class PacketInUpdateServerGroup extends PacketInHandler {
 
         NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Acceptable<ProxyGroup>() {
             @Override
-            public boolean isAccepted(ProxyGroup value)
-            {
+            public boolean isAccepted(ProxyGroup value) {
                 System.out.println("Loading proxy group: " + value.getName());
                 return true;
             }
@@ -61,8 +56,7 @@ public class PacketInUpdateServerGroup extends PacketInHandler {
         CloudNet.getInstance().getNetworkManager().updateAll0();
         CloudNet.getInstance().getWrappers().values().forEach(new Consumer<Wrapper>() {
             @Override
-            public void accept(Wrapper wrapper)
-            {
+            public void accept(Wrapper wrapper) {
                 wrapper.updateWrapper();
             }
         });

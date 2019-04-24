@@ -36,10 +36,8 @@ public class MasterTemplateLoader {
 
     private String customName;
 
-    public MasterTemplateLoader load()
-    {
-        try
-        {
+    public MasterTemplateLoader load() {
+        try {
             HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
@@ -54,21 +52,17 @@ public class MasterTemplateLoader {
 
             urlConnection.disconnect();
 
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public MasterTemplateLoader unZip(String dest)
-    {
-        try
-        {
+    public MasterTemplateLoader unZip(String dest) {
+        try {
             ZipConverter.extract(Paths.get(this.dest), Paths.get(dest));
             new File(this.dest).delete();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;

@@ -9,10 +9,8 @@ package de.dytanic.cloudnetcore.bootstrap;
  */
 public class CloudNetLauncher {
 
-    public static synchronized void main(String[] args) throws Exception
-    {
-        if (Float.parseFloat(System.getProperty("java.class.version")) < 52D)
-        {
+    public static synchronized void main(String[] args) throws Exception {
+        if (Float.parseFloat(System.getProperty("java.class.version")) < 52D) {
             System.out.println("This application needs Java 8 or 10.0.1");
             return;
         }

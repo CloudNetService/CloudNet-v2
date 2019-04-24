@@ -16,10 +16,8 @@ public enum ProxyVersion {
     WATERFALL,
     HEXACORD;
 
-    public static MultiValue<String, String> url(ProxyVersion proxyVersion)
-    {
-        switch (proxyVersion)
-        {
+    public static MultiValue<String, String> url(ProxyVersion proxyVersion) {
+        switch (proxyVersion) {
             /*
             case TRAVERTINE:
                 return new MultiValue<>("https://yivesmirror.com/files/travertine/Travertine-latest.jar", "Travertine.jar");

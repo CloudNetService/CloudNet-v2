@@ -24,23 +24,19 @@ public class DynamicFallback {
 
     private List<ServerFallback> fallbacks;
 
-    public ServerFallback getDefault()
-    {
+    public ServerFallback getDefault() {
         return CollectionWrapper.filter(fallbacks, new Acceptable<ServerFallback>() {
             @Override
-            public boolean isAccepted(ServerFallback serverFallback)
-            {
+            public boolean isAccepted(ServerFallback serverFallback) {
                 return serverFallback.getGroup().equals(defaultFallback);
             }
         });
     }
 
-    public Collection<String> getNamedFallbackes()
-    {
+    public Collection<String> getNamedFallbackes() {
         return CollectionWrapper.transform(this.fallbacks, new Catcher<String, ServerFallback>() {
             @Override
-            public String doCatch(ServerFallback key)
-            {
+            public String doCatch(ServerFallback key) {
                 return key.getGroup();
             }
         });

@@ -45,20 +45,20 @@ commands:
   tab-complete: 0
   log: true
   replace-commands:
-  - setblock
-  - summon
-  - testforblock
-  - tellraw
+    - setblock
+    - summon
+    - testforblock
+    - tellraw
   spam-exclusions:
-  - /skill
+    - /skill
   silent-commandblock-console: false
 timings:
   enabled: true
   verbose: true
   server-name-privacy: false
   hidden-config-entries:
-  - database
-  - settings.bungeecord-addresses
+    - database
+    - settings.bungeecord-addresses
   history-interval: 300
   history-length: 3600
 stats:
@@ -96,22 +96,22 @@ world-settings:
       enabled: true
       engine-mode: 1
       hide-blocks:
-      - 14
-      - 15
-      - 16
-      - 21
-      - 48
-      - 49
-      - 54
-      - 56
-      - 73
-      - 74
-      - 82
-      - 129
-      - 130
+        - 14
+        - 15
+        - 16
+        - 21
+        - 48
+        - 49
+        - 54
+        - 56
+        - 73
+        - 74
+        - 82
+        - 129
+        - 130
       replace-blocks:
-      - 1
-      - 5
+        - 1
+        - 5
     mob-spawn-range: 4
     nerf-spawner-mobs: false
     entity-activation-range:

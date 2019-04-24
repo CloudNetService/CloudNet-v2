@@ -15,8 +15,7 @@ public class ProxiedPlayerUpdateEvent extends ProxiedCloudEvent {
 
     private CloudPlayer cloudPlayer;
 
-    public CloudPlayer getCloudPlayer()
-    {
+    public CloudPlayer getCloudPlayer() {
         return cloudPlayer;
     }
 }

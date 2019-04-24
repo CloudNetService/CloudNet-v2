@@ -41,16 +41,13 @@ public class MasterTemplateDeploy {
 
     private String customName;
 
-    public void deploy() throws Exception
-    {
+    public void deploy() throws Exception {
         System.out.println("Trying to setup the new template... [" + template.getName() + "]");
         Path dir = Paths.get("local/cache/" + NetworkUtils.randomString(10));
-        try
-        {
+        try {
             FileUtility.copyFilesInDirectory(new File(this.dir), dir.toFile());
             new File(dir.toString() + "/plugins/CloudNetAPI.jar").delete();
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
         }
         HttpURLConnection urlConnection = (HttpURLConnection) new URL((ssl ? "https" : "http") +
                 "://" +
@@ -69,24 +66,20 @@ public class MasterTemplateDeploy {
         urlConnection.connect();
         System.out.println("Connected and deployed template... [" + template.getName() + "]");
 
-        try (OutputStream outputStream = urlConnection.getOutputStream())
-        {
+        try (OutputStream outputStream = urlConnection.getOutputStream()) {
             outputStream.write(ZipConverter.convert(new Path[]{dir}));
             outputStream.flush();
         }
 
-        try (InputStream inputStream = urlConnection.getInputStream(); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)))
-        {
+        try (InputStream inputStream = urlConnection.getInputStream(); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String input;
             while ((input = bufferedReader.readLine()) != null) ;
         }
         System.out.println("Successfully deploy template [" + template.getName() + "]");
         urlConnection.disconnect();
-        try
-        {
+        try {
             FileUtility.deleteDirectory(dir.toFile());
-        } catch (Exception ignored)
-        {
+        } catch (Exception ignored) {
 
         }
     }

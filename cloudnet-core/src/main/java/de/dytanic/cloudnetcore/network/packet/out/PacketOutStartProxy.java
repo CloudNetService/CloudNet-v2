@@ -11,13 +11,11 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 
 public class PacketOutStartProxy extends Packet {
 
-    public PacketOutStartProxy(ProxyProcessMeta proxyProcessMeta)
-    {
+    public PacketOutStartProxy(ProxyProcessMeta proxyProcessMeta) {
         super(PacketRC.CN_CORE + 1, new Document("proxyProcess", proxyProcessMeta));
     }
 
-    public PacketOutStartProxy(ProxyProcessMeta proxyProcessMeta, boolean async)
-    {
+    public PacketOutStartProxy(ProxyProcessMeta proxyProcessMeta, boolean async) {
         super(PacketRC.CN_CORE + 1, new Document("proxyProcess", proxyProcessMeta).append("async", async));
     }
 }

@@ -14,18 +14,15 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 public class PacketInStopServer extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {
         }.getType());
-        if (CloudNetWrapper.getInstance().getServers().containsKey(serverInfo.getServiceId().getServerId()))
-        {
+        if (CloudNetWrapper.getInstance().getServers().containsKey(serverInfo.getServiceId().getServerId())) {
             CloudNetWrapper.getInstance().getServers().get(serverInfo.getServiceId().getServerId()).shutdown();
             return;
         }
 
-        if (CloudNetWrapper.getInstance().getCloudServers().containsKey(serverInfo.getServiceId().getServerId()))
-        {
+        if (CloudNetWrapper.getInstance().getCloudServers().containsKey(serverInfo.getServiceId().getServerId())) {
             CloudNetWrapper.getInstance().getCloudServers().get(serverInfo.getServiceId().getServerId()).shutdown();
         }
     }

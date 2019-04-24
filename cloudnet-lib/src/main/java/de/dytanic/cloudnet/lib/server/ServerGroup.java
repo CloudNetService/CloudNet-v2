@@ -51,8 +51,7 @@ public class ServerGroup
 
     public ServerGroup(String name, Collection<String> wrapper, boolean kickedForceFallback, int memory, int dynamicMemory, int joinPower, boolean maintenance, int startup,
                        int priority, int groupPriority, int priorityStopTime, int onlineCountForPriority, int priorityForGroupOnlineCount, int percentForNewServerAutomatically,
-                       ServerGroupType serverType, ServerGroupMode groupMode, Collection<Template> templates, AdvancedServerConfig advancedServerConfig)
-    {
+                       ServerGroupType serverType, ServerGroupMode groupMode, Collection<Template> templates, AdvancedServerConfig advancedServerConfig) {
         this.name = name;
         this.kickedForceFallback = kickedForceFallback;
         this.wrapper = wrapper;
@@ -81,8 +80,7 @@ public class ServerGroup
         this.templates = new ArrayList<>(Collections.singletonList(new Template("default", TemplateResource.LOCAL, null, new String[]{}, new ArrayList<>())));
     }
 
-    public SimpleServerGroup toSimple()
-    {
+    public SimpleServerGroup toSimple() {
         return new SimpleServerGroup(name, kickedForceFallback, joinPower, memory, groupMode, maintenance, percentForNewServerAutomatically, settings, advancedServerConfig);
     }
 }

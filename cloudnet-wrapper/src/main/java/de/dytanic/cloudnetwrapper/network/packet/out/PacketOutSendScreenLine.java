@@ -13,8 +13,7 @@ import java.util.Collection;
 
 public class PacketOutSendScreenLine extends Packet {
 
-    public PacketOutSendScreenLine(Collection<ScreenInfo> screenInfo)
-    {
+    public PacketOutSendScreenLine(Collection<ScreenInfo> screenInfo) {
         super(PacketRC.CN_WRAPPER + 6, new Document("screenInfo", screenInfo));
     }
 }

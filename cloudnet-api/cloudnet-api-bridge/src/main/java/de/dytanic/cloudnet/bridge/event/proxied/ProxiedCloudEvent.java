@@ -18,8 +18,7 @@ public abstract class ProxiedCloudEvent extends Event {
      *
      * @return
      */
-    public CloudAPI getCloud()
-    {
+    public CloudAPI getCloud() {
         return CloudAPI.getInstance();
     }
 
@@ -28,8 +27,7 @@ public abstract class ProxiedCloudEvent extends Event {
      *
      * @return
      */
-    public CloudProxy getCloudProxy()
-    {
+    public CloudProxy getCloudProxy() {
         return CloudProxy.getInstance();
     }
 

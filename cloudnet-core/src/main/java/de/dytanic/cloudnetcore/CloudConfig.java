@@ -67,8 +67,7 @@ public class CloudConfig {
 
     private Map<String, Object> networkProperties;
 
-    public CloudConfig(ConsoleReader consoleReader) throws Exception
-    {
+    public CloudConfig(ConsoleReader consoleReader) throws Exception {
 
         for (File directory : new File[]{
                 new File("local/servers"),
@@ -89,19 +88,15 @@ public class CloudConfig {
         load();
     }
 
-    private void defaultInit(ConsoleReader consoleReader) throws Exception
-    {
+    private void defaultInit(ConsoleReader consoleReader) throws Exception {
         if (Files.exists(configPath)) return;
 
         String hostName = NetworkUtils.getHostName();
-        if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4)
-        {
+        if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4) {
             String input;
             System.out.println("Your IP address where located is 127.0.0.1 please write your service ip");
-            while ((input = consoleReader.readLine()) != null)
-            {
-                if ((input.equals("127.0.0.1") || input.equals("127.0.1.1")) || input.split("\\.").length != 4)
-                {
+            while ((input = consoleReader.readLine()) != null) {
+                if ((input.equals("127.0.0.1") || input.equals("127.0.1.1")) || input.split("\\.").length != 4) {
                     System.out.println("Please write your real ip address :)");
                     continue;
                 }
@@ -129,25 +124,20 @@ public class CloudConfig {
 
         configuration.set("networkproperties.test", true);
 
-        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8))
-        {
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
         }
     }
 
-    private void defaultInitDoc(ConsoleReader consoleReader) throws Exception
-    {
+    private void defaultInitDoc(ConsoleReader consoleReader) throws Exception {
         if (Files.exists(servicePath)) return;
 
         String hostName = NetworkUtils.getHostName();
-        if (hostName.equals("127.0.0.1") || hostName.equalsIgnoreCase("127.0.1.1") || hostName.split("\\.").length != 4)
-        {
+        if (hostName.equals("127.0.0.1") || hostName.equalsIgnoreCase("127.0.1.1") || hostName.split("\\.").length != 4) {
             String input;
             System.out.println("Please write the first Wrapper IP address:");
-            while ((input = consoleReader.readLine()) != null)
-            {
-                if ((input.equals("127.0.0.1") || input.equalsIgnoreCase("127.0.1.1") || input.split("\\.").length != 4))
-                {
+            while ((input = consoleReader.readLine()) != null) {
+                if ((input.equals("127.0.0.1") || input.equalsIgnoreCase("127.0.1.1") || input.split("\\.").length != 4)) {
                     System.out.println("Please write the real ip address :)");
                     continue;
                 }
@@ -163,8 +153,7 @@ public class CloudConfig {
         new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
     }
 
-    private void defaultInitUsers(ConsoleReader consoleReader)
-    {
+    private void defaultInitUsers(ConsoleReader consoleReader) {
         if (Files.exists(usersPath)) return;
 
         String password = NetworkUtils.randomString(32);
@@ -173,19 +162,16 @@ public class CloudConfig {
         new Document().append("users", Collections.singletonList(new BasicUser("admin", password, Arrays.asList("*")))).saveAsConfig(usersPath);
     }
 
-    public CloudConfig load() throws Exception
-    {
+    public CloudConfig load() throws Exception {
 
-        try (InputStream inputStream = Files.newInputStream(configPath); InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8))
-        {
+        try (InputStream inputStream = Files.newInputStream(configPath); InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
             Configuration configuration = CONFIGURATION_PROVIDER.load(inputStreamReader);
             this.config = configuration;
 
             String host = configuration.getString("server.hostaddress");
 
             Collection<ConnectableAddress> addresses = new ArrayList<>();
-            for (int value : configuration.getIntList("server.ports"))
-            {
+            for (int value : configuration.getIntList("server.ports")) {
                 addresses.add(new ConnectableAddress(host, value));
             }
             this.addresses = addresses;
@@ -202,22 +188,18 @@ public class CloudConfig {
             this.formatSplitter = configuration.getString("general.server-name-splitter");
             this.networkProperties = configuration.getSection("networkproperties").self;
 
-            if (!configuration.getSection("general").self.containsKey("disabled-modules"))
-            {
+            if (!configuration.getSection("general").self.containsKey("disabled-modules")) {
                 configuration.set("general.disabled-modules", new ArrayList<>());
 
-                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8))
-                {
+                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
                     CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
                 }
             }
 
-            if (!configuration.getSection("general").self.containsKey("cloudGameServer-wrapperList"))
-            {
+            if (!configuration.getSection("general").self.containsKey("cloudGameServer-wrapperList")) {
                 configuration.set("general.cloudGameServer-wrapperList", Arrays.asList("Wrapper-1"));
 
-                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8))
-                {
+                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
                     CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
                 }
             }
@@ -236,14 +218,12 @@ public class CloudConfig {
         return this;
     }
 
-    public void createWrapper(WrapperMeta wrapperMeta)
-    {
+    public void createWrapper(WrapperMeta wrapperMeta) {
         Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>() {
         }.getType());
         WrapperMeta is = CollectionWrapper.filter(wrapperMetas, new Acceptable<WrapperMeta>() {
             @Override
-            public boolean isAccepted(WrapperMeta wrapperMeta_)
-            {
+            public boolean isAccepted(WrapperMeta wrapperMeta_) {
                 return wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId());
             }
         });
@@ -254,35 +234,30 @@ public class CloudConfig {
         CloudNet.getInstance().getWrappers().put(wrapperMeta.getId(), new Wrapper(wrapperMeta));
     }
 
-    public Collection<User> getUsers()
-    {
+    public Collection<User> getUsers() {
         if (this.userDocument == null) return null;
         return userDocument.getObject("users", new TypeToken<Collection<User>>() {
         }.getType());
     }
 
-    public CloudConfig save(Collection<User> users)
-    {
+    public CloudConfig save(Collection<User> users) {
         if (userDocument != null)
             userDocument.append("users", users).saveAsConfig(usersPath);
         return this;
     }
 
-    public void createGroup(@NonNull ServerGroup serverGroup)
-    {
+    public void createGroup(@NonNull ServerGroup serverGroup) {
 
         new Document("group", serverGroup).saveAsConfig(Paths.get("groups/" + serverGroup.getName() + ".json"));
 
     }
 
-    public void createGroup(@NonNull ProxyGroup serverGroup)
-    {
+    public void createGroup(@NonNull ProxyGroup serverGroup) {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
         CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
             @Override
-            public boolean isAccepted(ProxyGroup value)
-            {
+            public boolean isAccepted(ProxyGroup value) {
                 return value.getName().equals(serverGroup.getName());
             }
         });
@@ -291,31 +266,26 @@ public class CloudConfig {
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
     }
 
-    public void deleteGroup(ServerGroup serverGroup)
-    {
+    public void deleteGroup(ServerGroup serverGroup) {
         new File("groups/" + serverGroup.getName() + ".json").delete();
     }
 
-    public void deleteGroup(ProxyGroup proxyGroup)
-    {
+    public void deleteGroup(ProxyGroup proxyGroup) {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
         CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
             @Override
-            public boolean isAccepted(ProxyGroup value)
-            {
+            public boolean isAccepted(ProxyGroup value) {
                 return value.getName().equals(proxyGroup.getName());
             }
         });
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
     }
 
-    public java.util.Map<String, ServerGroup> getServerGroups()
-    {
+    public java.util.Map<String, ServerGroup> getServerGroups() {
         Map<String, ServerGroup> groups = NetworkUtils.newConcurrentHashMap();
 
-        if (serviceDocument.contains("serverGroups"))
-        {
+        if (serviceDocument.contains("serverGroups")) {
 
             Collection<ServerGroup> collection = serviceDocument.getObject("serverGroups", new TypeToken<Collection<ServerGroup>>() {
             }.getType());
@@ -330,21 +300,17 @@ public class CloudConfig {
         File groupsDirectory = new File("groups");
         Document entry;
 
-        if (groupsDirectory.isDirectory())
-        {
+        if (groupsDirectory.isDirectory()) {
             File[] files = groupsDirectory.listFiles();
 
             if (files != null)
-                for (File file : files)
-                {
+                for (File file : files) {
                     if (file.getName().endsWith(".json"))
-                        try
-                        {
+                        try {
                             entry = Document.$loadDocument(file);
                             ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
                             groups.put(serverGroup.getName(), serverGroup);
-                        } catch (Throwable ex)
-                        {
+                        } catch (Throwable ex) {
                             ex.printStackTrace();
                             System.out.println("Cannot load servergroup file [" + file.getName() + "]");
                         }
@@ -354,15 +320,13 @@ public class CloudConfig {
         return groups;
     }
 
-    public Map<String, ProxyGroup> getProxyGroups()
-    {
+    public Map<String, ProxyGroup> getProxyGroups() {
         Collection<ProxyGroup> collection = serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
 
         return MapWrapper.collectionCatcherHashMap(collection, new Catcher<String, ProxyGroup>() {
             @Override
-            public String doCatch(ProxyGroup key)
-            {
+            public String doCatch(ProxyGroup key) {
                 return key.getName();
             }
         });

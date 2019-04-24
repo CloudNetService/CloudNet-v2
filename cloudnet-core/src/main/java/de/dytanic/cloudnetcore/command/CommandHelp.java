@@ -20,14 +20,12 @@ import java.util.List;
  */
 public class CommandHelp extends Command {
 
-    public CommandHelp()
-    {
+    public CommandHelp() {
         super("help", "cloudnet.command.help");
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
         List<String> messages = new ArrayList<>(CloudNet.getInstance().getCommandManager().getCommands().size() + 9);
 
         for (String command : CloudNet.getInstance().getCommandManager().getCommands())

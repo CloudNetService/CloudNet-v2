@@ -19,10 +19,8 @@ import java.util.UUID;
 public class PacketAPIInGetOfflinePlayer extends PacketAPIIO {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (data.contains("uniqueId"))
-        {
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (data.contains("uniqueId")) {
             UUID uniqueId = data.getObject("uniqueId", UUID.class);
 
             OfflinePlayer offlinePlayer = CloudNet.getInstance().getNetworkManager().getOnlinePlayer(uniqueId); //use cache for offline player instance
@@ -31,8 +29,7 @@ public class PacketAPIInGetOfflinePlayer extends PacketAPIIO {
                 offlinePlayer = CloudNet.getInstance().getDbHandlers().getPlayerDatabase().getPlayer(uniqueId);
 
             packetSender.sendPacket(getResult(new Document("player", offlinePlayer)));
-        } else
-        {
+        } else {
             String name = data.getString("name");
 
             OfflinePlayer offlinePlayer = CloudNet.getInstance().getNetworkManager().getPlayer(name); //use cache for offline player instance
@@ -45,8 +42,7 @@ public class PacketAPIInGetOfflinePlayer extends PacketAPIIO {
     }
 
     @Override
-    protected Packet getResult(Document value)
-    {
+    protected Packet getResult(Document value) {
         return new Packet(packetUniqueId, PacketRC.PLAYER_HANDLE, value);
     }
 }

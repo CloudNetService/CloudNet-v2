@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutUpdateCPUUsage extends Packet {
 
-    public PacketOutUpdateCPUUsage(double cpuUsage)
-    {
+    public PacketOutUpdateCPUUsage(double cpuUsage) {
         super(PacketRC.CN_WRAPPER + 11, new Document().append("cpuUsage", cpuUsage));
     }
 }

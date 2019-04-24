@@ -17,8 +17,7 @@ public class LoginEvent extends AsyncEvent<LoginEvent> {
     @Getter
     private CloudPlayer cloudPlayer;
 
-    public LoginEvent(CloudPlayer cloudPlayer)
-    {
+    public LoginEvent(CloudPlayer cloudPlayer) {
         super(new AsyncPosterAdapter<>());
         this.cloudPlayer = cloudPlayer;
     }

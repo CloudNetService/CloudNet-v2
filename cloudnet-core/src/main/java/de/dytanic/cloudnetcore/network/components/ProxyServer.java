@@ -40,8 +40,7 @@ public class ProxyServer
             ProxyProcessMeta processMeta,
             Wrapper wrapper,
             ProxyInfo proxyInfo
-    )
-    {
+    ) {
         this.processMeta = processMeta;
         this.wrapper = wrapper;
         this.serviceId = proxyInfo.getServiceId();
@@ -52,25 +51,21 @@ public class ProxyServer
         this.lastProxyInfo = proxyInfo;
     }
 
-    public void disconnect()
-    {
+    public void disconnect() {
         if (this.channel != null) this.channel.close().syncUninterruptibly();
     }
 
-    public void sendCustomMessage(String channel, String message, Document value)
-    {
+    public void sendCustomMessage(String channel, String message, Document value) {
         this.sendPacket(new PacketOutCustomChannelMessage(channel, message, value));
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return serviceId.getServerId();
     }
 
     @Override
-    public String getServerId()
-    {
+    public String getServerId() {
         return serviceId.getServerId();
     }
 }

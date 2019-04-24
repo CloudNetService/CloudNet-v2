@@ -11,12 +11,10 @@ import org.bukkit.plugin.ServicesManager;
  */
 public final class VaultInvoker {
 
-    private VaultInvoker()
-    {
+    private VaultInvoker() {
     }
 
-    public static void invoke()
-    {
+    public static void invoke() {
         ServicesManager servicesManager = BukkitBootstrap.getPlugin(BukkitBootstrap.class).getServer().getServicesManager();
 
         Permission permission = new VaultPermissionImpl();

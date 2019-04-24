@@ -28,8 +28,7 @@ public class PermissionEntity {
 
     protected Collection<GroupEntityData> groups;
 
-    public boolean hasPermission(PermissionPool permissionPool, String permission, String group)
-    {
+    public boolean hasPermission(PermissionPool permissionPool, String permission, String group) {
         if (permission != null && (permission.equals("bukkit.broadcast") || permission.equals("bukkit.broadcast.admin")))
             return true;
 
@@ -43,8 +42,7 @@ public class PermissionEntity {
             return true;
         else if ((permissions.containsKey(permission)) && permissions.get(permission)) return true;
 
-        for (GroupEntityData implg : groups)
-        {
+        for (GroupEntityData implg : groups) {
             if (!permissionPool.getGroups().containsKey(implg.getGroup())) continue;
             PermissionGroup permissionGroup = permissionPool.getGroups().get(implg.getGroup());
 
@@ -52,8 +50,7 @@ public class PermissionEntity {
 
             if (checkAccess(permissionGroup, permission, group)) return true;
 
-            for (String implGroup : permissionGroup.getImplementGroups())
-            {
+            for (String implGroup : permissionGroup.getImplementGroups()) {
                 if (!permissionPool.getGroups().containsKey(implGroup)) continue;
 
                 PermissionGroup subGroup = permissionPool.getGroups().get(implGroup);
@@ -64,18 +61,14 @@ public class PermissionEntity {
         return false;
     }
 
-    public PermissionGroup getHighestPermissionGroup(PermissionPool permissionPool)
-    {
+    public PermissionGroup getHighestPermissionGroup(PermissionPool permissionPool) {
         PermissionGroup permissionGroup = null;
 
-        for (GroupEntityData groupEntityData : getGroups())
-        {
+        for (GroupEntityData groupEntityData : getGroups()) {
             if (permissionGroup == null)
                 permissionGroup = permissionPool.getGroups().get(groupEntityData.getGroup());
-            else
-            {
-                if (permissionGroup.getJoinPower() < permissionPool.getGroups().get(groupEntityData.getGroup()).getJoinPower())
-                {
+            else {
+                if (permissionGroup.getJoinPower() < permissionPool.getGroups().get(groupEntityData.getGroup()).getJoinPower()) {
                     permissionGroup = permissionPool.getGroups().get(groupEntityData.getGroup());
                 }
             }
@@ -83,20 +76,17 @@ public class PermissionEntity {
         return permissionGroup;
     }
 
-    public boolean isInGroup(String group)
-    {
+    public boolean isInGroup(String group) {
         return CollectionWrapper.filter(this.groups, value -> value.getGroup().equals(group)) != null;
     }
 
-    public void setPrefix(String prefix)
-    {
+    public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
 
     /*= -------------------------------------------------------------------------------- =*/
 
-    private boolean hasWildcardPermission(PermissionGroup permissionGroup, String permission, String group)
-    {
+    private boolean hasWildcardPermission(PermissionGroup permissionGroup, String permission, String group) {
         for (Map.Entry<String, Boolean> entry : permissionGroup.getPermissions().entrySet())
             if (entry.getKey().endsWith("*") && entry.getKey().length() > 1 && permission.startsWith(entry.getKey().substring(0, entry.getKey().length() - 1)))
                 return true;
@@ -109,8 +99,7 @@ public class PermissionEntity {
         return false;
     }
 
-    private boolean hasWildcardPermission(String permission)
-    {
+    private boolean hasWildcardPermission(String permission) {
         for (Map.Entry<String, Boolean> entry : getPermissions().entrySet())
             if (entry.getKey().endsWith("*") && entry.getKey().length() > 1 && permission.startsWith(entry.getKey().substring(0, entry.getKey().length() - 1)))
                 return true;
@@ -118,8 +107,7 @@ public class PermissionEntity {
         return false;
     }
 
-    private boolean checkAccess(PermissionGroup permissionGroup, String permission, String group)
-    {
+    private boolean checkAccess(PermissionGroup permissionGroup, String permission, String group) {
         if ((permissionGroup.getPermissions().containsKey("*") && !permissionGroup.getPermissions().get("*")) ||
                 (permissionGroup.getPermissions().containsKey(permission) && !permissionGroup.getPermissions().get(permission)))
             return false;
@@ -131,8 +119,7 @@ public class PermissionEntity {
             return true;
 
         if (group != null)
-            if (permissionGroup.getServerGroupPermissions().containsKey(group))
-            {
+            if (permissionGroup.getServerGroupPermissions().containsKey(group)) {
                 return permissionGroup.getServerGroupPermissions().get(group).contains(permission) ||
                         permissionGroup.getServerGroupPermissions().get(group).contains("*");
             }

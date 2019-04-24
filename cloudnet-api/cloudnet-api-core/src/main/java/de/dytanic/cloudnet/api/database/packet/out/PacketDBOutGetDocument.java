@@ -13,13 +13,11 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketDBOutGetDocument extends Packet {
 
-    public PacketDBOutGetDocument(String name, String db)
-    {
+    public PacketDBOutGetDocument(String name, String db) {
         super(PacketRC.DB + 1, new Document("name", name).append("db", db));
     }
 
-    public PacketDBOutGetDocument(String db)
-    {
+    public PacketDBOutGetDocument(String db) {
         super(PacketRC.DB + 1, new Document("all", true).append("db", db));
     }
 }

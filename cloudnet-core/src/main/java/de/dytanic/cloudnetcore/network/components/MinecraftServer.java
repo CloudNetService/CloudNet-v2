@@ -38,8 +38,7 @@ public final class MinecraftServer
     @Setter
     private Channel channel;
 
-    public MinecraftServer(ServerProcessMeta processMeta, Wrapper wrapper, ServerGroup group, ServerInfo serverInfo)
-    {
+    public MinecraftServer(ServerProcessMeta processMeta, Wrapper wrapper, ServerGroup group, ServerInfo serverInfo) {
         this.processMeta = processMeta;
         this.serviceId = serverInfo.getServiceId();
         this.wrapper = wrapper;
@@ -49,33 +48,27 @@ public final class MinecraftServer
         this.lastServerInfo = serverInfo;
     }
 
-    public void disconnect()
-    {
-        if (this.channel != null)
-        {
+    public void disconnect() {
+        if (this.channel != null) {
             this.channel.close().syncUninterruptibly();
         }
     }
 
-    public void sendCustomMessage(String channel, String message, Document value)
-    {
+    public void sendCustomMessage(String channel, String message, Document value) {
         this.sendPacket(new PacketOutCustomSubChannelMessage(channel, message, value));
     }
 
-    public ServerGroup getGroup()
-    {
+    public ServerGroup getGroup() {
         return CloudNet.getInstance().getServerGroup(serviceId.getGroup());
     }
 
     @Override
-    public String getServerId()
-    {
+    public String getServerId() {
         return serviceId.getServerId();
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return serviceId.getServerId();
     }
 }

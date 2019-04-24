@@ -26,8 +26,7 @@ public class ProxyInfo {
     private int memory;
     private int onlineCount;
 
-    public SimpleProxyInfo toSimple()
-    {
+    public SimpleProxyInfo toSimple() {
         return new SimpleProxyInfo(serviceId, online, host, port, memory, onlineCount);
     }
 

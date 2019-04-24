@@ -21,8 +21,7 @@ public class Position {
     private double z;
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
 
         if (!(obj instanceof Position)) return false;
         Position signPosition = (Position) obj;
@@ -30,8 +29,7 @@ public class Position {
         if (signPosition.x == x
                 && signPosition.y == y &&
                 signPosition.z == z && signPosition.world.equals(world) &&
-                signPosition.group.equals(group))
-        {
+                signPosition.group.equals(group)) {
             return true;
         }
 

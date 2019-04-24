@@ -15,14 +15,12 @@ public class CommandExecutionEvent extends AsyncEvent<CommandExecutionEvent> {
 
     private PlayerCommandExecution playerCommandExecution;
 
-    public CommandExecutionEvent(PlayerCommandExecution playerCommandExecution)
-    {
+    public CommandExecutionEvent(PlayerCommandExecution playerCommandExecution) {
         super(new AsyncPosterAdapter<>());
         this.playerCommandExecution = playerCommandExecution;
     }
 
-    public PlayerCommandExecution getPlayerCommandExecution()
-    {
+    public PlayerCommandExecution getPlayerCommandExecution() {
         return playerCommandExecution;
     }
 }

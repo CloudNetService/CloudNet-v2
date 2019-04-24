@@ -18,8 +18,7 @@ public class TaskEntry<T> {
 
     private final TaskEntryFuture<T> future;
 
-    public TaskEntry(Callable<T> task, Callback<T> complete, long delay, long repeat)
-    {
+    public TaskEntry(Callable<T> task, Callback<T> complete, long delay, long repeat) {
 
         this.task = task;
         this.callback = complete;
@@ -30,8 +29,7 @@ public class TaskEntry<T> {
     }
 
 
-    protected void invoke() throws Exception
-    {
+    protected void invoke() throws Exception {
 
         if (task == null)
             return;
@@ -47,14 +45,11 @@ public class TaskEntry<T> {
 
         if (repeat != 0)
             this.delayTimeOut = System.currentTimeMillis() + delay;
-        else
-        {
+        else {
             completed = true;
 
-            if (future.waits)
-            {
-                synchronized (future)
-                {
+            if (future.waits) {
+                synchronized (future) {
                     future.notifyAll();
                 }
             }
@@ -62,32 +57,27 @@ public class TaskEntry<T> {
     }
 
 
-    public Callback<T> getCallback()
-    {
+    public Callback<T> getCallback() {
         return callback;
     }
 
 
-    public long getDelayTimeOut()
-    {
+    public long getDelayTimeOut() {
         return delayTimeOut;
     }
 
 
-    public long getRepeat()
-    {
+    public long getRepeat() {
         return repeat;
     }
 
 
-    protected TaskEntryFuture<T> drop()
-    {
+    protected TaskEntryFuture<T> drop() {
         return future;
     }
 
 
-    public boolean isCompleted()
-    {
+    public boolean isCompleted() {
         return completed;
     }
 

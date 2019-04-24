@@ -30,19 +30,15 @@ public class PermissionModule extends CoreModule {
     private PermissionPool permissionPool;
 
     @Override
-    public void onLoad()
-    {
+    public void onLoad() {
         instance = this;
     }
 
     @Override
-    public void onBootstrap()
-    {
-        try
-        {
+    public void onBootstrap() {
+        try {
             configPermission = new ConfigPermissions();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         permissionPool = new PermissionPool();

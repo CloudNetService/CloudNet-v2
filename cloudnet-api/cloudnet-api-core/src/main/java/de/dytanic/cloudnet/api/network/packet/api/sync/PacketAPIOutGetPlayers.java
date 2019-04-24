@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketAPIOutGetPlayers extends Packet {
 
-    public PacketAPIOutGetPlayers()
-    {
+    public PacketAPIOutGetPlayers() {
         super(PacketRC.API + 2, new Document());
     }
 }

@@ -65,26 +65,22 @@ public final class Wrapper
 
     private String serverId;
 
-    public Wrapper(WrapperMeta networkInfo)
-    {
+    public Wrapper(WrapperMeta networkInfo) {
         this.serverId = networkInfo.getId();
         this.networkInfo = networkInfo;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return serverId;
     }
 
     @Override
-    public Wrapper getWrapper()
-    {
+    public Wrapper getWrapper() {
         return this;
     }
 
-    public int getUsedMemory()
-    {
+    public int getUsedMemory() {
         int mem = 0;
 
         for (ProxyServer proxyServer : proxys.values())
@@ -96,14 +92,12 @@ public final class Wrapper
         return mem;
     }
 
-    public int getUsedMemoryAndWaitings()
-    {
+    public int getUsedMemoryAndWaitings() {
         AtomicInteger integer = new AtomicInteger(getUsedMemory());
 
         CollectionWrapper.iterator(this.waitingServices.values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
             @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
-            {
+            public void run(Quad<Integer, Integer, ServiceId, Template> obj) {
                 integer.addAndGet(obj.getSecond());
             }
         });
@@ -111,39 +105,31 @@ public final class Wrapper
         return integer.get();
     }
 
-    public void sendCommand(String commandLine)
-    {
+    public void sendCommand(String commandLine) {
         sendPacket(new PacketOutExecuteCommand(commandLine));
     }
 
-    public void disconnct()
-    {
+    public void disconnct() {
         this.wrapperInfo = null;
         this.maxMemory = 0;
         for (MinecraftServer minecraftServer : servers.values())
-            try
-            {
+            try {
                 minecraftServer.disconnect();
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
 
             }
 
         for (CloudServer cloudServer : cloudServers.values())
-            try
-            {
+            try {
                 cloudServer.disconnect();
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
 
             }
 
         for (ProxyServer minecraftServer : proxys.values())
-            try
-            {
+            try {
                 minecraftServer.disconnect();
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
 
             }
 
@@ -153,23 +139,20 @@ public final class Wrapper
         proxys.clear();
     }
 
-    public Wrapper updateWrapper()
-    {
+    public Wrapper updateWrapper() {
 
         if (getChannel() == null) return this;
 
         java.util.Map<String, ServerGroup> groups = NetworkUtils.newConcurrentHashMap();
         for (ServerGroup serverGroup : CloudNet.getInstance().getServerGroups().values())
-            if (serverGroup.getWrapper().contains(networkInfo.getId()))
-            {
+            if (serverGroup.getWrapper().contains(networkInfo.getId())) {
                 groups.put(serverGroup.getName(), serverGroup);
                 sendPacket(new PacketOutCreateTemplate(serverGroup));
             }
 
         java.util.Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
         for (ProxyGroup serverGroup : CloudNet.getInstance().getProxyGroups().values())
-            if (serverGroup.getWrapper().contains(networkInfo.getId()))
-            {
+            if (serverGroup.getWrapper().contains(networkInfo.getId())) {
                 proxyGroups.put(serverGroup.getName(), serverGroup);
                 sendPacket(new PacketOutCreateTemplate(serverGroup));
             }
@@ -177,13 +160,11 @@ public final class Wrapper
         SimpledUser simpledUser = null;
         User user = CollectionWrapper.filter(CloudNet.getInstance().getUsers(), new Acceptable<User>() {
             @Override
-            public boolean isAccepted(User value)
-            {
+            public boolean isAccepted(User value) {
                 return networkInfo.getUser().equals(value.getName());
             }
         });
-        if (user != null)
-        {
+        if (user != null) {
             simpledUser = user.toSimple();
         }
 
@@ -192,23 +173,19 @@ public final class Wrapper
         return this;
     }
 
-    public void writeCommand(String commandLine)
-    {
+    public void writeCommand(String commandLine) {
         sendPacket(new PacketOutExecuteCommand(commandLine));
     }
 
-    public void writeServerCommand(String commandLine, ServerInfo serverInfo)
-    {
+    public void writeServerCommand(String commandLine, ServerInfo serverInfo) {
         sendPacket(new PacketOutExecuteServerCommand(serverInfo, commandLine));
     }
 
-    public void writeProxyCommand(String commandLine, ProxyInfo proxyInfo)
-    {
+    public void writeProxyCommand(String commandLine, ProxyInfo proxyInfo) {
         sendPacket(new PacketOutExecuteServerCommand(proxyInfo, commandLine));
     }
 
-    public Collection<Integer> getBinndedPorts()
-    {
+    public Collection<Integer> getBinndedPorts() {
         Collection<Integer> ports = new ArrayList<>();
 
         for (Quad<Integer, Integer, ServiceId, Template> serviceIdValues : waitingServices.values())
@@ -223,56 +200,49 @@ public final class Wrapper
         return ports;
     }
 
-    public void startProxy(ProxyProcessMeta proxyProcessMeta)
-    {
+    public void startProxy(ProxyProcessMeta proxyProcessMeta) {
         sendPacket(new PacketOutStartProxy(proxyProcessMeta));
         System.out.println("Proxy [" + proxyProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(), new Quad<>(proxyProcessMeta.getPort(), proxyProcessMeta.getMemory(), proxyProcessMeta.getServiceId(), null));
     }
 
-    public void startProxyAsync(ProxyProcessMeta proxyProcessMeta)
-    {
+    public void startProxyAsync(ProxyProcessMeta proxyProcessMeta) {
         sendPacket(new PacketOutStartProxy(proxyProcessMeta, true));
         System.out.println("Proxy [" + proxyProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(), new Quad<>(proxyProcessMeta.getPort(), proxyProcessMeta.getMemory(), proxyProcessMeta.getServiceId(), null));
     }
 
-    public void startGameServer(ServerProcessMeta serverProcessMeta)
-    {
+    public void startGameServer(ServerProcessMeta serverProcessMeta) {
         sendPacket(new PacketOutStartServer(serverProcessMeta));
         System.out.println("Server [" + serverProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(), new Quad<>(serverProcessMeta.getPort(), serverProcessMeta.getMemory(), serverProcessMeta.getServiceId(), serverProcessMeta.getTemplate()));
     }
 
-    public void startGameServerAsync(ServerProcessMeta serverProcessMeta)
-    {
+    public void startGameServerAsync(ServerProcessMeta serverProcessMeta) {
         sendPacket(new PacketOutStartServer(serverProcessMeta, true));
         System.out.println("Server [" + serverProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(), new Quad<>(serverProcessMeta.getPort(), serverProcessMeta.getMemory(), serverProcessMeta.getServiceId(), serverProcessMeta.getTemplate()));
     }
 
-    public void startCloudServer(CloudServerMeta cloudServerMeta)
-    {
+    public void startCloudServer(CloudServerMeta cloudServerMeta) {
         sendPacket(new PacketOutStartCloudServer(cloudServerMeta));
         System.out.println("CloudServer [" + cloudServerMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(), new Quad<>(cloudServerMeta.getPort(), cloudServerMeta.getMemory(), cloudServerMeta.getServiceId(), cloudServerMeta.getTemplate()));
     }
 
-    public void startCloudServerAsync(CloudServerMeta cloudServerMeta)
-    {
+    public void startCloudServerAsync(CloudServerMeta cloudServerMeta) {
         sendPacket(new PacketOutStartCloudServer(cloudServerMeta, true));
         System.out.println("CloudServer [" + cloudServerMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(), new Quad<>(cloudServerMeta.getPort(), cloudServerMeta.getMemory(), cloudServerMeta.getServiceId(), cloudServerMeta.getTemplate()));
     }
 
-    public Wrapper stopServer(MinecraftServer minecraftServer)
-    {
+    public Wrapper stopServer(MinecraftServer minecraftServer) {
         if (this.servers.containsKey(minecraftServer.getServerId()))
             sendPacket(new PacketOutStopServer(minecraftServer.getServerInfo()));
 
@@ -280,8 +250,7 @@ public final class Wrapper
         return this;
     }
 
-    public Wrapper stopServer(CloudServer cloudServer)
-    {
+    public Wrapper stopServer(CloudServer cloudServer) {
         if (this.servers.containsKey(cloudServer.getServerId()))
             sendPacket(new PacketOutStopServer(cloudServer.getServerInfo()));
 
@@ -289,8 +258,7 @@ public final class Wrapper
         return this;
     }
 
-    public Wrapper stopProxy(ProxyServer proxyServer)
-    {
+    public Wrapper stopProxy(ProxyServer proxyServer) {
         if (this.proxys.containsKey(proxyServer.getServerId()))
             sendPacket(new PacketOutStopProxy(proxyServer.getProxyInfo()));
 
@@ -298,44 +266,37 @@ public final class Wrapper
         return this;
     }
 
-    public Wrapper enableScreen(ServerInfo serverInfo)
-    {
+    public Wrapper enableScreen(ServerInfo serverInfo) {
         sendPacket(new PacketOutScreen(serverInfo, DefaultType.BUKKIT, true));
         return this;
     }
 
-    public Wrapper enableScreen(ProxyInfo serverInfo)
-    {
+    public Wrapper enableScreen(ProxyInfo serverInfo) {
         sendPacket(new PacketOutScreen(serverInfo, DefaultType.BUNGEE_CORD, true));
         return this;
     }
 
-    public Wrapper disableScreen(ProxyInfo serverInfo)
-    {
+    public Wrapper disableScreen(ProxyInfo serverInfo) {
         sendPacket(new PacketOutScreen(serverInfo, DefaultType.BUNGEE_CORD, false));
         return this;
     }
 
-    public Wrapper disableScreen(ServerInfo serverInfo)
-    {
+    public Wrapper disableScreen(ServerInfo serverInfo) {
         sendPacket(new PacketOutScreen(serverInfo, DefaultType.BUKKIT, false));
         return this;
     }
 
-    public Wrapper copyServer(ServerInfo serverInfo)
-    {
+    public Wrapper copyServer(ServerInfo serverInfo) {
         sendPacket(new PacketOutCopyServer(serverInfo));
         return this;
     }
 
-    public Wrapper copyServer(ServerInfo serverInfo, Template template)
-    {
+    public Wrapper copyServer(ServerInfo serverInfo, Template template) {
         sendPacket(new PacketOutCopyServer(serverInfo, template));
         return this;
     }
 
-    public void setConfigProperties(Configuration properties)
-    {
+    public void setConfigProperties(Configuration properties) {
         sendPacket(new PacketOutUpdateWrapperProperties(properties));
     }
 }

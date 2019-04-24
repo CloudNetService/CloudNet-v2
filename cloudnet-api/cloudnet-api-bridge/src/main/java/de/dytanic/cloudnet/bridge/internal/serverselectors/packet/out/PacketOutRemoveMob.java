@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutRemoveMob extends Packet {
 
-    public PacketOutRemoveMob(ServerMob mob)
-    {
+    public PacketOutRemoveMob(ServerMob mob) {
         super(PacketRC.SERVER_SELECTORS + 4, new Document("mob", mob));
     }
 }

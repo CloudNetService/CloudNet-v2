@@ -18,8 +18,7 @@ public class ServerInfoUpdateEvent extends Event {
     private INetworkComponent minecraftServer;
     private ServerInfo serverInfo;
 
-    public ServerInfoUpdateEvent(INetworkComponent minecraftServer, ServerInfo serverInfo)
-    {
+    public ServerInfoUpdateEvent(INetworkComponent minecraftServer, ServerInfo serverInfo) {
         this.serverInfo = serverInfo;
         this.minecraftServer = minecraftServer;
     }

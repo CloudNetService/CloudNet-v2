@@ -13,13 +13,11 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 
 public class PacketOutExecuteServerCommand
         extends Packet {
-    public PacketOutExecuteServerCommand(ServerInfo serverInfo, String commandLine)
-    {
+    public PacketOutExecuteServerCommand(ServerInfo serverInfo, String commandLine) {
         super(PacketRC.CN_CORE + 7, new Document("serverInfo", serverInfo).append("type", DefaultType.BUKKIT).append("commandLine", commandLine));
     }
 
-    public PacketOutExecuteServerCommand(ProxyInfo serverInfo, String commandLine)
-    {
+    public PacketOutExecuteServerCommand(ProxyInfo serverInfo, String commandLine) {
         super(PacketRC.CN_CORE + 7, new Document("proxyInfo", serverInfo).append("type", DefaultType.BUNGEE_CORD).append("commandLine", commandLine));
     }
 }

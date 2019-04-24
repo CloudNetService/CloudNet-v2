@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
  */
 public class UtilExample {
 
-    public void toDo()
-    {
+    public void toDo() {
         CloudAPI.getInstance().getOnlineCount(); //Returns the OnlineCount
 
         /*===========================*/
@@ -28,8 +27,7 @@ public class UtilExample {
         CloudAPI.getInstance().updateServerGroup(serverGroup); //update the server group
 
         SimpleServerGroup simpleServerGroup = CloudAPI.getInstance().getServerGroupData("Lobby"); //Returns a cached server group
-        if (simpleServerGroup.isMaintenance())
-        {
+        if (simpleServerGroup.isMaintenance()) {
             System.out.println("Is a maintenance group");
         }
 

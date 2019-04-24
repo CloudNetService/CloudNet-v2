@@ -32,8 +32,7 @@ public abstract class Command
      * @param permission the permission a user has to have
      * @param aliases    other names of this command
      */
-    protected Command(String name, String permission, String... aliases)
-    {
+    protected Command(String name, String permission, String... aliases) {
         this.name = name;
         this.permission = permission;
         this.aliases = aliases;
@@ -46,8 +45,7 @@ public abstract class Command
      * @param <T>             a subclass of {@link Command}
      * @return the command for chaining
      */
-    protected <T extends Command> T appendArgument(CommandArgument commandArgument)
-    {
+    protected <T extends Command> T appendArgument(CommandArgument commandArgument) {
         this.commandArguments.add(commandArgument);
         //noinspection unchecked
         return (T) this;

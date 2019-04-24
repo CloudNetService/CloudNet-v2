@@ -14,20 +14,17 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 public final class PacketInUpdateWrapperInfo extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         if (!(packetSender instanceof Wrapper)) return;
 
         WrapperInfo wrapperInfo = data.getObject("wrapperInfo", new TypeToken<WrapperInfo>() {
         }.getType());
 
-        if (((Wrapper) packetSender).getWrapperInfo() != null)
-        {
+        if (((Wrapper) packetSender).getWrapperInfo() != null) {
             ((Wrapper) packetSender).setWrapperInfo(wrapperInfo);
             ((Wrapper) packetSender).setMaxMemory(wrapperInfo.getMemory());
             System.out.println("Wrapper [" + ((Wrapper) packetSender).getServerId() + "] is ready with C" + wrapperInfo.getAvailableProcessors() + " and " + wrapperInfo.getMemory() + "MB");
-        } else
-        {
+        } else {
             ((Wrapper) packetSender).setWrapperInfo(wrapperInfo);
             ((Wrapper) packetSender).setMaxMemory(wrapperInfo.getMemory());
             ((Wrapper) packetSender).updateWrapper();

@@ -17,8 +17,7 @@ public class ProxyRemoveEvent extends AsyncEvent<ProxyRemoveEvent> {
 
     private ProxyServer proxyServer;
 
-    public ProxyRemoveEvent(ProxyServer proxyServer)
-    {
+    public ProxyRemoveEvent(ProxyServer proxyServer) {
         super(new AsyncPosterAdapter<>());
         this.proxyServer = proxyServer;
     }

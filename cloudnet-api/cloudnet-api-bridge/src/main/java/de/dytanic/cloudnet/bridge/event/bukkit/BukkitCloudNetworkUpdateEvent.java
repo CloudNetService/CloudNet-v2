@@ -18,19 +18,16 @@ public class BukkitCloudNetworkUpdateEvent extends BukkitCloudEvent {
 
     private CloudNetwork cloudNetwork;
 
-    public CloudNetwork getCloudNetwork()
-    {
+    public CloudNetwork getCloudNetwork() {
         return cloudNetwork;
     }
 
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

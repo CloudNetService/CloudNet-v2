@@ -12,8 +12,7 @@ import java.util.Arrays;
 
 public class BasicProxyConfig extends ProxyConfig {
 
-    public BasicProxyConfig()
-    {
+    public BasicProxyConfig() {
         super(true, false, Arrays.asList(new Motd(
                         "   §b§lCloud§f§lNet§8■ §7your §bfree §7cloudsystem §8§l【§f%version%§8§l】",
                         "         §aOnline §8» §7We are now §aavailable §7for §ball"

@@ -22,15 +22,13 @@ public final class ChatListener implements Listener {
     private final boolean permissionService = Bukkit.getPluginManager().isPluginEnabled("CloudNetAPI");
 
     @EventHandler
-    public void handle(AsyncPlayerChatEvent e)
-    {
+    public void handle(AsyncPlayerChatEvent e) {
         PermissionGroup permissionGroup = permissionService ? CloudServer.getInstance()
                 .getCachedPlayer(e.getPlayer().getUniqueId()).getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool())
                 :
                 null;
 
-        if (permissionGroup == null)
-        {
+        if (permissionGroup == null) {
             return;
         }
 

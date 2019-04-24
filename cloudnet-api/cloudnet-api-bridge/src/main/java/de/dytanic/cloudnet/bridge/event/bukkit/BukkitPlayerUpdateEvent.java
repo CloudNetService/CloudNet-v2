@@ -16,21 +16,18 @@ public class BukkitPlayerUpdateEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 
     private CloudPlayer cloudPlayer;
 
-    public CloudPlayer getCloudPlayer()
-    {
+    public CloudPlayer getCloudPlayer() {
         return cloudPlayer;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

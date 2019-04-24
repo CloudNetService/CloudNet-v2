@@ -18,39 +18,32 @@ import java.util.List;
 public final class ProtocolLengthDeserializer extends ByteToMessageDecoder {
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception
-    {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 
         in.markReaderIndex();
         byte[] lengthBytes = new byte[3];
 
-        for (int i = 0; i < 3; i++)
-        {
-            if (!in.isReadable())
-            {
+        for (int i = 0; i < 3; i++) {
+            if (!in.isReadable()) {
                 in.resetReaderIndex();
                 return;
             }
 
             lengthBytes[i] = in.readByte();
 
-            if (lengthBytes[i] >= 0)
-            {
+            if (lengthBytes[i] >= 0) {
                 ProtocolBuffer buffer = new ProtocolBuffer(Unpooled.wrappedBuffer(lengthBytes));
 
-                try
-                {
+                try {
                     int packetLength = buffer.readVarInt();
 
-                    if (in.readableBytes() < packetLength)
-                    {
+                    if (in.readableBytes() < packetLength) {
                         in.resetReaderIndex();
                         return;
                     }
 
                     out.add(in.readBytes(packetLength));
-                } finally
-                {
+                } finally {
                     buffer.release();
                 }
 

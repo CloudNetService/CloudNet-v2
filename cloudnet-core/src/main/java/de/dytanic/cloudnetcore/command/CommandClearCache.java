@@ -16,8 +16,7 @@ import java.util.function.Consumer;
  */
 public final class CommandClearCache extends Command {
 
-    public CommandClearCache()
-    {
+    public CommandClearCache() {
         super("clearcache", "cloudnet.command.clearcache", "cc");
 
         description = "Clears the plugin and template cache for all wrappers";
@@ -25,14 +24,11 @@ public final class CommandClearCache extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
         CloudNet.getInstance().getWrappers().values().forEach(new Consumer<Wrapper>() {
             @Override
-            public void accept(Wrapper wrapper)
-            {
-                if (wrapper.getChannel() != null)
-                {
+            public void accept(Wrapper wrapper) {
+                if (wrapper.getChannel() != null) {
                     wrapper.sendCommand("clearcache");
                 }
             }

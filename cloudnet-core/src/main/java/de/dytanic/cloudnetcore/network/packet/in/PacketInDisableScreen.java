@@ -17,8 +17,7 @@ import de.dytanic.cloudnetcore.CloudNet;
 public class PacketInDisableScreen extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         ServiceId serviceId = data.getObject("serviceId", new TypeToken<ServiceId>() {
         }.getType());
         CloudNet.getInstance().getScreenProvider().handleDisableScreen(serviceId);

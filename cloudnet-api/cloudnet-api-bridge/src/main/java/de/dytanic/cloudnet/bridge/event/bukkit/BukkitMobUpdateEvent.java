@@ -18,19 +18,16 @@ public class BukkitMobUpdateEvent extends BukkitCloudEvent {
 
     private ServerMob serverMob;
 
-    public ServerMob getServerMob()
-    {
+    public ServerMob getServerMob() {
         return serverMob;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 }

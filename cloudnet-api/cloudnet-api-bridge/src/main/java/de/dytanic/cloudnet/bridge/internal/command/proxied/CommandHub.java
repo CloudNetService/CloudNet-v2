@@ -21,20 +21,17 @@ import java.util.Arrays;
  */
 public final class CommandHub extends Command {
 
-    public CommandHub()
-    {
+    public CommandHub() {
         super("hub");
     }
 
     @Override
-    public String[] getAliases()
-    {
+    public String[] getAliases() {
         return new String[]{"lobby", "leave", "game", "l"};
     }
 
     @Override
-    public void execute(CommandSender commandSender, String[] args)
-    {
+    public void execute(CommandSender commandSender, String[] args) {
         CloudAPI.getInstance().getLogger().finest(
                 String.format("%s executed %s with arguments %s",
                         commandSender, this, Arrays.toString(args))
@@ -44,8 +41,7 @@ public final class CommandHub extends Command {
         ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(((ProxiedPlayer) commandSender).getServer().getInfo().getName());
 
         if (serverInfo != null)
-            if (CloudProxy.getInstance().getProxyGroup().getProxyConfig().getDynamicFallback().getNamedFallbackes().contains(serverInfo.getServiceId().getGroup()))
-            {
+            if (CloudProxy.getInstance().getProxyGroup().getProxyConfig().getDynamicFallback().getNamedFallbackes().contains(serverInfo.getServiceId().getGroup())) {
                 commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("hub-already")));
                 return;
             }

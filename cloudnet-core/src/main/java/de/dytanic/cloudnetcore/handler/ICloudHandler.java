@@ -13,8 +13,7 @@ public interface ICloudHandler extends Runnable {
 
     void onHandle(CloudNet cloudNet);
 
-    default void run()
-    {
+    default void run() {
         onHandle(CloudNet.getInstance());
     }
 

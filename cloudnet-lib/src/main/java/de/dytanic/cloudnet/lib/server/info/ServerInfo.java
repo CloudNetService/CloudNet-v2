@@ -37,8 +37,7 @@ public class ServerInfo {
     private ServerConfig serverConfig;
     private Template template;
 
-    public boolean isIngame()
-    {
+    public boolean isIngame() {
 
         if (serverState == null) serverState = ServerState.LOBBY;
 
@@ -47,8 +46,7 @@ public class ServerInfo {
         return serverState == ServerState.INGAME || (motd.equalsIgnoreCase("INGAME") || motd.equalsIgnoreCase("RUNNING"));
     }
 
-    public SimpleServerInfo toSimple()
-    {
+    public SimpleServerInfo toSimple() {
         return new SimpleServerInfo(serviceId, host, port, onlineCount, maxPlayers);
     }
 

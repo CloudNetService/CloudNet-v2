@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutTestResult extends Packet {
 
-    public PacketOutTestResult()
-    {
+    public PacketOutTestResult() {
         super(PacketRC.TEST + 1, new Document());
     }
 }

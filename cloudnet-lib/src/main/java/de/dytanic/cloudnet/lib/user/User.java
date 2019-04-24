@@ -35,13 +35,11 @@ public class User implements Nameable {
 
     protected Map<String, Object> metaData;
 
-    public SimpledUser toSimple()
-    {
+    public SimpledUser toSimple() {
         return new SimpledUser(name, apiToken);
     }
 
-    public boolean hasPermission(String permission)
-    {
+    public boolean hasPermission(String permission) {
         return permissions.contains("*") || permissions.contains(permission);
     }
 

@@ -18,24 +18,21 @@ public abstract class BukkitCloudEvent extends Event {
      *
      * @return
      */
-    public CloudAPI getCloud()
-    {
+    public CloudAPI getCloud() {
         return CloudAPI.getInstance();
     }
 
     /**
      * Returns the CloudServer instance
      */
-    public CloudServer getCloudServer()
-    {
+    public CloudServer getCloudServer() {
         return CloudServer.getInstance();
     }
 
     /**
      * Execute the CloudServer update(); method
      */
-    public void update()
-    {
+    public void update() {
         CloudServer.getInstance().update();
     }
 

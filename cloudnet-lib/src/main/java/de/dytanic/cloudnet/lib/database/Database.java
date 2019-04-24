@@ -40,8 +40,7 @@ public interface Database {
 
     FutureTask<Document> getDocumentAsync(String name);
 
-    static DatabaseDocument createEmptyDocument(String name)
-    {
+    static DatabaseDocument createEmptyDocument(String name) {
         return new DatabaseDocument(name);
     }
 }

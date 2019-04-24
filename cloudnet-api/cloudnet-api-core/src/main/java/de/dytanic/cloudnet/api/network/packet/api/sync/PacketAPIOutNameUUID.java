@@ -15,13 +15,11 @@ import java.util.UUID;
  */
 public class PacketAPIOutNameUUID extends Packet {
 
-    public PacketAPIOutNameUUID(String name)
-    {
+    public PacketAPIOutNameUUID(String name) {
         super(PacketRC.API + 7, new Document("name", name));
     }
 
-    public PacketAPIOutNameUUID(UUID uniqueId)
-    {
+    public PacketAPIOutNameUUID(UUID uniqueId) {
         super(PacketRC.API + 7, new Document("uniqueId", uniqueId));
     }
 }
