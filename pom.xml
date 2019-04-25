@@ -28,7 +28,7 @@
         <dependency.jopt-simple.version>5.0.4</dependency.jopt-simple.version>
         <dependecy.snakeyaml.version>1.24</dependecy.snakeyaml.version>
         <dependency.bungeecord.version>1.8-1.12</dependency.bungeecord.version>
-        <dependency.spigot.version>1.8.8</dependency.spigot.version>
+        <dependency.spigot.version>1.8.8-R0.1-SNAPSHOT</dependency.spigot.version>
         <dependency.vaultapi.version>1.7</dependency.vaultapi.version>
         <dependency.typetools.version>0.6.1</dependency.typetools.version>
         <!-- test dependencies -->

@@ -75,12 +75,20 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
                         if (stringBuilder.length() > 32)
                         {
-                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The display cannot be longe then 32 characters");
+                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The display cannot be longer then 32 characters");
                             return false;
                         }
+
+                        String material = args[4].toUpperCase();
+
+                        if(Material.getMaterial(material) == null)
+                        {
+                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "An item with this itemName does not exist");
+                            return false;
+                        }
+
                         ServerMob serverMob = new ServerMob(UUID.randomUUID(), stringBuilder.substring(0, stringBuilder.length() - 1), args[2], entityType.name(), args[3],
-                                NetworkUtils.checkIsNumber(args[4]) ? (Integer.parseInt(args[4]) != 0 ? Integer.parseInt(args[4]) : 138) : 138
-                                , args[5].equalsIgnoreCase("true"),
+                                -1, material, args[5].equalsIgnoreCase("true"),
                                 MobSelector.getInstance().toPosition(CloudAPI.getInstance().getGroup(), player.getLocation()), "§8#§c%group% &bPlayers online §8|§7 %group_online% of %max_players%", new Document());
                         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(serverMob));
                         player.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob will be created, please wait...");
@@ -340,7 +348,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                 }
                 if (MobSelector.getInstance() != null)
                 {
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs createMob <entityType> <name> <targetGroup> <itemId> <autoJoin> <displayName>");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs createMob <entityType> <name> <targetGroup> <itemName> <autoJoin> <displayName>");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs removeMob <name>");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs listMobs");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs moblist");
