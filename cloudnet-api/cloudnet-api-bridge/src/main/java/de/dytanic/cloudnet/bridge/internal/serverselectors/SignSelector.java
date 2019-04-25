@@ -9,6 +9,7 @@ import com.google.common.io.ByteStreams;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.handlers.adapter.NetworkHandlerAdapter;
 import de.dytanic.cloudnet.bridge.CloudServer;
+import de.dytanic.cloudnet.bridge.internal.util.ItemStackBuilder;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
@@ -23,12 +24,16 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.material.Attachable;
+import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -87,7 +92,7 @@ public final class SignSelector implements Listener {
     @EventHandler
     public void handleInteract(PlayerInteractEvent e)
     {
-        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) && (e.getClickedBlock().getType().equals(Material.SIGN_POST) || e.getClickedBlock().getType().equals(Material.WALL_SIGN)))
+        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) && e.getClickedBlock() != null && e.getClickedBlock().getState() instanceof org.bukkit.block.Sign)
             if (containsPosition(e.getClickedBlock().getLocation()))
             {
                 Sign sign = getSignByPosition(e.getClickedBlock().getLocation());
@@ -272,7 +277,7 @@ public final class SignSelector implements Listener {
                                             @Override
                                             public void run()
                                             {
-                                                if (location.getBlock().getType().equals(Material.SIGN_POST) || location.getBlock().getType().equals(Material.WALL_SIGN))
+                                                if (location.getBlock().getState() instanceof org.bukkit.block.Sign)
                                                     try
                                                     {
                                                         Location entityLocation = entity.getLocation();
@@ -320,7 +325,7 @@ public final class SignSelector implements Listener {
                                 String[] layout = updateOfflineAndMaintenance(_signLayout.getSignLayout().clone(), sign);
                                 sign.setServerInfo(null);
                                 sendUpdateSynchronized(toLocation(sign.getPosition()), layout);
-                                changeBlock(toLocation(sign.getPosition()), _signLayout.getBlockId(), _signLayout.getSubId());
+                                changeBlock(toLocation(sign.getPosition()), _signLayout.getBlockName(), _signLayout.getBlockId(),_signLayout.getSubId());
                                 continue;
                             }
 
@@ -339,7 +344,7 @@ public final class SignSelector implements Listener {
                                             String[] layout = updateOfflineAndMaintenance(searchLayer.getSignLayout().clone(), sign);
                                             layout = updateOfflineAndMaintenance(layout, sign);
                                             sendUpdateSynchronized(location, layout);
-                                            changeBlock(location, searchLayer.getBlockId(), searchLayer.getSubId());
+                                            changeBlock(location, searchLayer.getBlockName(), searchLayer.getBlockId(), searchLayer.getSubId());
                                             continue;
                                         }
 
@@ -361,7 +366,7 @@ public final class SignSelector implements Listener {
                                         }
                                         updateArray(layout, serverInfo);
                                         sendUpdateSynchronized(location, layout);
-                                        changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                                        changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                                     } else
                                     {
                                         sign.setServerInfo(null);
@@ -373,7 +378,7 @@ public final class SignSelector implements Listener {
                                     sign.setServerInfo(null);
                                     String[] layout = updateOfflineAndMaintenance(searchLayer.getSignLayout().clone(), sign);
                                     sendUpdateSynchronized(location, layout);
-                                    changeBlock(location, searchLayer.getBlockId(), searchLayer.getSubId());
+                                    changeBlock(location, searchLayer.getBlockName(), searchLayer.getBlockId(), searchLayer.getSubId());
                                 }
 
                                 continue;
@@ -413,7 +418,7 @@ public final class SignSelector implements Listener {
                                             sign.setServerInfo(serverInfo);
                                             updateArray(layout, serverInfo);
                                             sendUpdateSynchronized(location, layout);
-                                            changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                                            changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                                         } else
                                         {
                                             sign.setServerInfo(null);
@@ -426,7 +431,7 @@ public final class SignSelector implements Listener {
                                         SignLayout _signLayout = getLayout(sign.getTargetGroup(), "maintenance");
                                         String[] layout = updateOfflineAndMaintenance(_signLayout.getSignLayout().clone(), sign);
                                         sendUpdateSynchronized(location, layout);
-                                        changeBlock(location, _signLayout.getBlockId(), _signLayout.getSubId());
+                                        changeBlock(location, _signLayout.getBlockName(), _signLayout.getBlockId(), _signLayout.getSubId());
                                     }
                                 }
                         }
@@ -459,7 +464,7 @@ public final class SignSelector implements Listener {
             if (Bukkit.getWorld(sign.getPosition().getWorld()) != null)
             {
                 Location location = toLocation(sign.getPosition());
-                return location.getBlock().getType() == Material.SIGN_POST || location.getBlock().getType() == Material.WALL_SIGN;
+                return location.getBlock().getState() instanceof org.bukkit.block.Sign;
             } else
             {
                 return false;
@@ -470,16 +475,24 @@ public final class SignSelector implements Listener {
         }
     }
 
-    public void changeBlock(Location location, int id, int subId)
+    public void changeBlock(Location location, String blockName, int blockId, int subId)
     {
         Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
             @Override
             public void run()
             {
-                if (id != -1 && id != 0 && subId != -1)
+                Material material = ItemStackBuilder.getMaterialIgnoreVersion(blockName, blockId);
+                if (material != null && subId != -1)
                 {
-                    org.bukkit.material.Sign sign = (org.bukkit.material.Sign) location.getBlock().getState().getData();
-                    location.getBlock().getRelative(sign.getAttachedFace()).setTypeIdAndData(id, (byte) subId, true);
+                    MaterialData materialData = location.getBlock().getState().getData();
+                    if(materialData instanceof Attachable) {
+                        Attachable attachable = (Attachable) materialData;
+                        Block signBlock = location.getBlock().getRelative(attachable.getAttachedFace());
+                        BlockState blockState = signBlock.getState();
+                        blockState.setType(material);
+                        blockState.setData(new MaterialData(material, (byte) subId));
+                        blockState.update(true);
+                    }
                 }
             }
         });
@@ -597,7 +610,7 @@ public final class SignSelector implements Listener {
             for (Player all : Bukkit.getOnlinePlayers())
                 sendUpdate(all, location, layout);
             sendUpdateSynchronizedTask(toLocation(sign.getPosition()), layout);
-            changeBlock(location, _signLayout.getBlockId(), _signLayout.getSubId());
+            changeBlock(location, _signLayout.getBlockName(), _signLayout.getBlockId(), _signLayout.getSubId());
             return;
         }
 
@@ -634,7 +647,7 @@ public final class SignSelector implements Listener {
             for (Player all : Bukkit.getOnlinePlayers())
                 sendUpdate(all, location, layout);
             sendUpdateSynchronizedTask(location, layout);
-            changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+            changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
         } else
         {
             sign.setServerInfo(null);
@@ -670,7 +683,7 @@ public final class SignSelector implements Listener {
                             for (Player all : Bukkit.getOnlinePlayers())
                                 sendUpdate(all, location, layout);
                             sendUpdateSynchronizedTask(toLocation(sign.getPosition()), layout);
-                            changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                            changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                             return;
                         }
                         String[] layout;
@@ -693,7 +706,7 @@ public final class SignSelector implements Listener {
                         for (Player all : Bukkit.getOnlinePlayers())
                             sendUpdate(all, location, layout);
                         sendUpdateSynchronizedTask(location, layout);
-                        changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                        changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                     } else
                     {
                         sign.setServerInfo(null);
@@ -719,7 +732,7 @@ public final class SignSelector implements Listener {
                             for (Player all : Bukkit.getOnlinePlayers())
                                 sendUpdate(all, location, layout);
                             sendUpdateSynchronizedTask(toLocation(next.getPosition()), layout);
-                            changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                            changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                             return;
                         }
                         String[] layout;
@@ -742,7 +755,7 @@ public final class SignSelector implements Listener {
                         for (Player all : Bukkit.getOnlinePlayers())
                             sendUpdate(all, location, layout);
                         sendUpdateSynchronizedTask(location, layout);
-                        changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                        changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                     } else
                     {
                         sign.setServerInfo(null);
@@ -751,7 +764,7 @@ public final class SignSelector implements Listener {
                         for (Player all : Bukkit.getOnlinePlayers())
                             sendUpdate(all, location, layout);
                         sendUpdateSynchronizedTask(location, layout);
-                        changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                        changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                     }
                 }
             else
@@ -772,7 +785,7 @@ public final class SignSelector implements Listener {
                                 for (Player all : Bukkit.getOnlinePlayers())
                                     sendUpdate(all, location, layout);
                                 sendUpdateSynchronizedTask(toLocation(sign.getPosition()), layout);
-                                changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                                changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                                 return;
                             }
 
@@ -796,7 +809,7 @@ public final class SignSelector implements Listener {
                             for (Player all : Bukkit.getOnlinePlayers())
                                 sendUpdate(all, location, layout);
                             sendUpdateSynchronizedTask(location, layout);
-                            changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                            changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                         } else
                         {
                             newSign.setServerInfo(null);
@@ -805,7 +818,7 @@ public final class SignSelector implements Listener {
                             for (Player all : Bukkit.getOnlinePlayers())
                                 sendUpdate(all, location, layout);
                             sendUpdateSynchronizedTask(location, layout);
-                            changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                            changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                         }
                     }
                 }
@@ -875,14 +888,14 @@ public final class SignSelector implements Listener {
                                     sign.setServerInfo(serverInfo);
                                     updateArray(layout, serverInfo);
                                     sendUpdateSynchronized(location, layout);
-                                    changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                                    changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                                 } else
                                 {
                                     sign.setServerInfo(null);
                                     SignLayout signLayout = getSearchingLayout(((ThreadImpl) worker).animationTick);
                                     String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), sign);
                                     sendUpdateSynchronized(location, layout);
-                                    changeBlock(location, signLayout.getBlockId(), signLayout.getSubId());
+                                    changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
                                 }
 
                             } else
