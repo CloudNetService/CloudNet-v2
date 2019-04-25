@@ -28,7 +28,7 @@
         <dependency.jopt-simple.version>5.0.4</dependency.jopt-simple.version>
         <dependecy.snakeyaml.version>1.24</dependecy.snakeyaml.version>
         <dependency.bungeecord.version>1.8-1.12</dependency.bungeecord.version>
-        <dependency.spigot.version>1.8.8</dependency.spigot.version>
+        <dependency.spigot.version>1.8.8-R0.1-SNAPSHOT</dependency.spigot.version>
         <dependency.vaultapi.version>1.7</dependency.vaultapi.version>
         <dependency.typetools.version>0.6.1</dependency.typetools.version>
         <!-- test dependencies -->
@@ -70,35 +70,35 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${plugin.javadoc.version}</version>
-                <configuration>
-                    <show>private</show>
-                    <additionalJOption>-Xdoclint:none</additionalJOption>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>aggregate</id>
-                        <goals>
-                            <goal>aggregate-jar</goal>
-                        </goals>
-                        <phase>site</phase>
-                        <configuration>
-                            <show>private</show>
-                            <additionalJOption>-Xdoclint:none
-                            </additionalJOption>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
+<!--                <version>${plugin.javadoc.version}</version>-->
+<!--                <configuration>-->
+<!--                    <show>private</show>-->
+<!--                    <additionalJOption>-Xdoclint:none</additionalJOption>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>attach-javadocs</id>-->
+<!--                        <goals>-->
+<!--                            <goal>jar</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>aggregate</id>-->
+<!--                        <goals>-->
+<!--                            <goal>aggregate-jar</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>site</phase>-->
+<!--                        <configuration>-->
+<!--                            <show>private</show>-->
+<!--                            <additionalJOption>-Xdoclint:none-->
+<!--                            </additionalJOption>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>

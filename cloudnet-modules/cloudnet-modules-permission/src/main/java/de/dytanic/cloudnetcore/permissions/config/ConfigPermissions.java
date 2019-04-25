@@ -48,7 +48,7 @@ public class ConfigPermissions {
                         0,
                         true,
                         new HashMap<>(),
-                        MapWrapper.valueableHashMap(new Return<String, List>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
+                        MapWrapper.valueableHashMap(new Return<>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
                         new HashMap<>(),
                         new ArrayList<>()
                 );
@@ -62,8 +62,8 @@ public class ConfigPermissions {
                         0,
                         100,
                         false,
-                        (HashMap) MapWrapper.valueableHashMap(new Return<>("*", true)),
-                        MapWrapper.valueableHashMap(new Return<String, java.util.List>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
+                        MapWrapper.valueableHashMap(new Return<>("*", true)),
+                        MapWrapper.valueableHashMap(new Return<>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
                         new HashMap<>(),
                         new ArrayList<>()
                 );

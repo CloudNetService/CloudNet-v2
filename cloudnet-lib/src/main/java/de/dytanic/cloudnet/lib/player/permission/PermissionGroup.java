@@ -3,8 +3,8 @@ package de.dytanic.cloudnet.lib.player.permission;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Tareko on 01.06.2017.
@@ -20,9 +20,9 @@ public class PermissionGroup {
     protected int tagId;
     protected int joinPower;
     protected boolean defaultGroup;
-    protected HashMap<String, Boolean> permissions;
-    protected java.util.Map<String, List<String>> serverGroupPermissions;
-    protected java.util.Map<String, Object> options;
-    protected java.util.List<String> implementGroups;
+    protected Map<String, Boolean> permissions;
+    protected Map<String, List<String>> serverGroupPermissions;
+    protected Map<String, Object> options;
+    protected List<String> implementGroups;
 
 }

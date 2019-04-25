@@ -517,10 +517,13 @@ public final class MobSelector {
                                 Entity armor = (Entity) armorStand;
                                 if (armor.getPassenger() == null && key.getItemId() != null)
                                 {
-                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(key.getItemId()));
-                                    item.setPickupDelay(Integer.MAX_VALUE);
-                                    item.setTicksLived(Integer.MAX_VALUE);
-                                    armor.setPassenger(item);
+                                    Material material = ItemStackBuilder.getMaterialIgnoreVersion(key.getItemName(), key.getItemId());
+                                    if(material != null) {
+                                        Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(material));
+                                        item.setPickupDelay(Integer.MAX_VALUE);
+                                        item.setTicksLived(Integer.MAX_VALUE);
+                                        armor.setPassenger(item);
+                                    }
                                 }
                             }
 
