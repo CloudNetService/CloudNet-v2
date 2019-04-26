@@ -32,7 +32,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.material.Attachable;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
@@ -475,20 +474,19 @@ public final class SignSelector implements Listener {
         }
     }
 
-    public void changeBlock(Location location, String blockName, int blockId, int subId)
-    {
-        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-            @Override
-            public void run()
-            {
-                Material material = ItemStackBuilder.getMaterialIgnoreVersion(blockName, blockId);
-                if (material != null && subId != -1)
-                {
-                    MaterialData materialData = location.getBlock().getState().getData();
-                    if(materialData instanceof Attachable) {
-                        Attachable attachable = (Attachable) materialData;
-                        Block signBlock = location.getBlock().getRelative(attachable.getAttachedFace());
-                        BlockState blockState = signBlock.getState();
+    public void changeBlock(Location location, String blockName, int blockId, int subId) {
+        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
+            Material material = ItemStackBuilder.getMaterialIgnoreVersion(blockName, blockId);
+            BlockState signBlockState = location.getBlock().getState();
+
+            if (material != null && subId != -1 && signBlockState instanceof org.bukkit.block.Sign) {
+                MaterialData materialData = signBlockState.getData();
+
+                if(materialData instanceof org.bukkit.material.Sign) { // this will return false in newer 1.14 spigot versions, even if it's a sign
+                    org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) materialData;
+                    if(materialSign.isWallSign()) {
+                        Block backBlock = location.getBlock().getRelative(materialSign.getAttachedFace());
+                        BlockState blockState = backBlock.getState();
                         blockState.setType(material);
                         blockState.setData(new MaterialData(material, (byte) subId));
                         blockState.update(true);
