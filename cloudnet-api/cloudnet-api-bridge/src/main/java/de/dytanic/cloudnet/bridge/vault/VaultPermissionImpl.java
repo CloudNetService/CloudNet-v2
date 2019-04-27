@@ -47,7 +47,7 @@ public class VaultPermissionImpl extends Permission {
         permissionEntity.getPermissions().put(permission, true);
         offlinePlayer.setPermissionEntity(permissionEntity);
         updatePlayer(offlinePlayer);
-        CloudAPI.getInstance().getLogger().finest(player + " added permission \"" + permission + "\"");
+        CloudAPI.getInstance().getLogger().finest(player + " added permission \"" + permission + '"');
         return true;
     }
 
@@ -58,7 +58,7 @@ public class VaultPermissionImpl extends Permission {
         permissionEntity.getPermissions().remove(permission);
         offlinePlayer.setPermissionEntity(permissionEntity);
         updatePlayer(offlinePlayer);
-        CloudAPI.getInstance().getLogger().finest(player + " removed permission \"" + permission + "\"");
+        CloudAPI.getInstance().getLogger().finest(player + " removed permission \"" + permission + '"');
         return true;
     }
 
@@ -73,7 +73,7 @@ public class VaultPermissionImpl extends Permission {
         PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionGroup(group);
         permissionGroup.getPermissions().put(permission, true);
         CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-        CloudAPI.getInstance().getLogger().finest(group + " added permission \"" + permission + "\"");
+        CloudAPI.getInstance().getLogger().finest(group + " added permission \"" + permission + '"');
         return true;
     }
 
@@ -82,7 +82,7 @@ public class VaultPermissionImpl extends Permission {
         PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionGroup(group);
         permissionGroup.getPermissions().remove(permission);
         CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-        CloudAPI.getInstance().getLogger().finest(group + " removed permission \"" + permission + "\"");
+        CloudAPI.getInstance().getLogger().finest(group + " removed permission \"" + permission + '"');
         return true;
     }
 
@@ -106,7 +106,7 @@ public class VaultPermissionImpl extends Permission {
         permissionEntity.getGroups().add(new GroupEntityData(group, 0));
         offlinePlayer.setPermissionEntity(permissionEntity);
         updatePlayer(offlinePlayer);
-        CloudAPI.getInstance().getLogger().finest(player + " added to group \"" + group + "\"");
+        CloudAPI.getInstance().getLogger().finest(player + " added to group \"" + group + '"');
         return true;
     }
 
@@ -123,7 +123,7 @@ public class VaultPermissionImpl extends Permission {
 
         offlinePlayer.setPermissionEntity(permissionEntity);
         updatePlayer(offlinePlayer);
-        CloudAPI.getInstance().getLogger().finest(player + " removed from group \"" + group + "\"");
+        CloudAPI.getInstance().getLogger().finest(player + " removed from group \"" + group + '"');
         return true;
     }
 
