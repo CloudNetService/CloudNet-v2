@@ -214,12 +214,12 @@ public final class CommandCloud extends Command implements TabExecutor {
                     commandSender.sendMessage(builder.substring(0));
                     return;
                 }
-                if (args[0].equalsIgnoreCase("debug")) {
+                if (args[0].equalsIgnoreCase("debug") && commandSender.hasPermission("cloudnet.command.cloud.debug")) {
                     CloudAPI.getInstance().setDebug(!CloudAPI.getInstance().isDebug());
                     if(CloudAPI.getInstance().isDebug()) {
-                        commandSender.sendMessage("§aDebug output for proxy has been enabled.");
+                        commandSender.sendMessage(TextComponent.fromLegacyText("§aDebug output for proxy has been enabled."));
                     } else {
-                        commandSender.sendMessage("§cDebug output for proxy has been disabled.");
+                        commandSender.sendMessage(TextComponent.fromLegacyText("§cDebug output for proxy has been disabled."));
                     }
                 }
                 break;
