@@ -4,14 +4,13 @@
 
 package de.dytanic.cloudnet.logging;
 
-import lombok.Getter;
-
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import lombok.Getter;
 
 /**
  * Asynchronous print stream that takes print statements without blocking.

@@ -4,10 +4,9 @@
 
 package de.dytanic.cloudnet.lib.server.advanced;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.UUID;
 
 /**
  * Created by Tareko on 14.10.2017.

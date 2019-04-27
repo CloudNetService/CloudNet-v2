@@ -7,11 +7,10 @@ package de.dytanic.cloudnet.lib.user.permission;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.user.User;
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import lombok.Getter;
 
 /**
  * Created by Tareko on 27.09.2017.

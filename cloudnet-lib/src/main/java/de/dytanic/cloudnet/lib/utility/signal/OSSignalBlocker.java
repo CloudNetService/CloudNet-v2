@@ -1,12 +1,11 @@
 package de.dytanic.cloudnet.lib.utility.signal;
 
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 public final class OSSignalBlocker {
 

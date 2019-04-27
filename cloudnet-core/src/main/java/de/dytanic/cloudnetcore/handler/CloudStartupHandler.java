@@ -7,7 +7,6 @@ package de.dytanic.cloudnetcore.handler;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnetcore.CloudNet;
-
 import java.util.Collection;
 
 /**

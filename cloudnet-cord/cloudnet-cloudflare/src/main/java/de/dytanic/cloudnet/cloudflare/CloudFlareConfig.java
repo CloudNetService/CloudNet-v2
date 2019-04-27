@@ -4,10 +4,9 @@
 
 package de.dytanic.cloudnet.cloudflare;
 
+import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.Collection;
 
 /**
  * Container for the CloudFlare configuration.

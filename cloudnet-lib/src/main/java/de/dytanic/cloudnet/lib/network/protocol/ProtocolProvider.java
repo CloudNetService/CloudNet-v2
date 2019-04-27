@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.file.FileProtocol;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketProtocol;
 import io.netty.buffer.ByteBuf;
-
 import java.util.Collection;
 import java.util.Map;
 

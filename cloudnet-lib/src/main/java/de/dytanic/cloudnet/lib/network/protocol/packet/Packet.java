@@ -9,10 +9,9 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolBuffer;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolStream;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.NonNull;
-
 import java.lang.reflect.Type;
 import java.util.UUID;
+import lombok.NonNull;
 
 /**
  * Packet objective

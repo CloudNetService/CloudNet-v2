@@ -5,10 +5,9 @@
 package de.dytanic.cloudnet.lib.network.protocol.packet.result;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.UUID;
 
 /**
  * Created by Tareko on 26.07.2017.

@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.lib.network.protocol.packet;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.util.UUID;
 
 /**

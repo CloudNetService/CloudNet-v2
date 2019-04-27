@@ -6,10 +6,9 @@ package de.dytanic.cloudnet.setup;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import jline.console.ConsoleReader;
-
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import jline.console.ConsoleReader;
 
 /**
  * Builder class for setup sequences.
@@ -80,7 +79,7 @@ public class Setup implements ISetup {
                         }
                         if (setupRequest.getValidater() != null)
                         {
-                            if (setupRequest.getValidater().doCatch(input))
+                            if (setupRequest.getValidater().apply(input))
                             {
                                 document.append(setupRequest.getName(), Integer.parseInt(input));
                                 setupRequest = null;
@@ -96,13 +95,13 @@ public class Setup implements ISetup {
                         }
                         break;
                     case BOOL:
-                        if (input.equalsIgnoreCase("yes") || (setupRequest.getValidater() != null && setupRequest.getValidater().doCatch(input)))
+                        if (input.equalsIgnoreCase("yes") || (setupRequest.getValidater() != null && setupRequest.getValidater().apply(input)))
                         {
                             document.append(setupRequest.getName(), true);
                             setupRequest = null;
                             continue;
                         }
-                        if (input.equalsIgnoreCase("no") || (setupRequest.getValidater() != null && setupRequest.getValidater().doCatch(input)))
+                        if (input.equalsIgnoreCase("no") || (setupRequest.getValidater() != null && setupRequest.getValidater().apply(input)))
                         {
                             document.append(setupRequest.getName(), false);
                             setupRequest = null;
@@ -114,7 +113,7 @@ public class Setup implements ISetup {
                     case STRING:
                         if (setupRequest.getValidater() != null)
                         {
-                            if (setupRequest.getValidater().doCatch(input))
+                            if (setupRequest.getValidater().apply(input))
                             {
                                 document.append(setupRequest.getName(), input);
                                 setupRequest = null;

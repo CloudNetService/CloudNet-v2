@@ -4,15 +4,14 @@
 
 package de.dytanic.cloudnet.modules;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by Tareko on 23.07.2017.

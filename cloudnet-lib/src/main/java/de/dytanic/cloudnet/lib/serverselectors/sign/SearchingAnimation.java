@@ -4,10 +4,9 @@
 
 package de.dytanic.cloudnet.lib.serverselectors.sign;
 
+import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.Collection;
 
 @Getter
 @AllArgsConstructor

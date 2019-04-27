@@ -9,7 +9,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.util.Map;
 import java.util.UUID;
 

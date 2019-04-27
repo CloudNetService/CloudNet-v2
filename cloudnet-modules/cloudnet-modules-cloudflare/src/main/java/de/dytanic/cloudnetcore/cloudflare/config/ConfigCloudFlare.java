@@ -10,7 +10,6 @@ import de.dytanic.cloudnet.cloudflare.CloudFlareProxyGroup;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.config.ConfigAbstract;
 import de.dytanic.cloudnetcore.config.ILoader;
-
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Collection;

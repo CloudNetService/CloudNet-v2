@@ -8,7 +8,22 @@ import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
-import de.dytanic.cloudnet.bridge.event.proxied.*;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedCloudNetworkUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedCustomChannelMessageReceiveEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedOfflinePlayerUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedOnlineCountUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedPlayerLoginEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedPlayerLogoutEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedPlayerLogoutUniqueEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedPlayerServerSwitchEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedPlayerUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedProxyAddEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedProxyInfoUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedProxyRemoveEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedServerAddEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedServerInfoUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedServerRemoveEvent;
+import de.dytanic.cloudnet.bridge.event.proxied.ProxiedSubChannelMessageEvent;
 import de.dytanic.cloudnet.bridge.internal.chat.PlayerChatExecutor;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.MultiValue;
@@ -21,12 +36,18 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.ProxyServer;
@@ -36,13 +57,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This Class represents the Proxy Instance on based on cloudnet
@@ -69,9 +83,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
             @Override
             public void run()
             {
-                NetworkUtils.addAll(cachedServers, MapWrapper.collectionCatcherHashMap(cloudAPI.getServers(), new Catcher<String, ServerInfo>() {
+                NetworkUtils.addAll(cachedServers, MapWrapper.collectionCatcherHashMap(cloudAPI.getServers(), new Function<ServerInfo, String>() {
                     @Override
-                    public String doCatch(ServerInfo key)
+                    public String apply(ServerInfo key)
                     {
                         ProxyServer.getInstance().getServers().put(
                                 key.getServiceId().getServerId(),
@@ -130,9 +144,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         }
 
         String fallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
-        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
+        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Predicate<ServerInfo>() {
             @Override
-            public boolean isAccepted(ServerInfo value)
+            public boolean test(ServerInfo value)
             {
                 return value.getServiceId().getGroup().equalsIgnoreCase(fallback);
             }
@@ -166,9 +180,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         }
 
         String fallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
-        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
+        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Predicate<ServerInfo>() {
             @Override
-            public boolean isAccepted(ServerInfo value)
+            public boolean test(ServerInfo value)
             {
                 return value.getServiceId().getGroup().equalsIgnoreCase(fallback);
             }
@@ -203,9 +217,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         }
 
         {
-            List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
+            List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Predicate<ServerInfo>() {
                 @Override
-                public boolean isAccepted(ServerInfo value)
+                public boolean test(ServerInfo value)
                 {
                     return value.getServiceId().getGroup().equalsIgnoreCase(group);
                 }
@@ -218,9 +232,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         }
 
         String fallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
-        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
+        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Predicate<ServerInfo>() {
             @Override
-            public boolean isAccepted(ServerInfo value)
+            public boolean test(ServerInfo value)
             {
                 return value.getServiceId().getGroup().equalsIgnoreCase(fallback);
             }
@@ -241,9 +255,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     {
         ProxyInfo proxyInfo = new ProxyInfo(CloudAPI.getInstance().getServiceId(),
                 CloudAPI.getInstance().getConfig().getString("host"), 0, true,
-                new ArrayList<>(CollectionWrapper.transform(ProxyServer.getInstance().getPlayers(), new Catcher<MultiValue<UUID, String>, ProxiedPlayer>() {
+                new ArrayList<>(CollectionWrapper.transform(ProxyServer.getInstance().getPlayers(), new Function<ProxiedPlayer, MultiValue<UUID, String>>() {
                     @Override
-                    public MultiValue<UUID, String> doCatch(ProxiedPlayer key)
+                    public MultiValue<UUID, String> apply(ProxiedPlayer key)
                     {
                         return new MultiValue<>(key.getUniqueId(), key.getName());
                     }
@@ -310,9 +324,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
     public CloudPlayer getCachedPlayer(String name)
     {
-        return CollectionWrapper.filter(this.cloudPlayers.values(), new Acceptable<CloudPlayer>() {
+        return CollectionWrapper.filter(this.cloudPlayers.values(), new Predicate<CloudPlayer>() {
             @Override
-            public boolean isAccepted(CloudPlayer cloudPlayer)
+            public boolean test(CloudPlayer cloudPlayer)
             {
                 return cloudPlayer.getName().equalsIgnoreCase(name);
             }

@@ -5,14 +5,13 @@
 package de.dytanic.cloudnet.lib.user;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
+import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created by Tareko on 11.09.2017.

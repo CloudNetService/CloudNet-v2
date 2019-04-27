@@ -5,11 +5,10 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
-import lombok.AllArgsConstructor;
-import org.bukkit.event.HandlerList;
-
 import java.util.Map;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import org.bukkit.event.HandlerList;
 
 /**
  * Created by Tareko on 19.08.2017.

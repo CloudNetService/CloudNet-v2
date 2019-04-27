@@ -22,8 +22,6 @@ import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnet.lib.service.wrapper.WrapperScreen;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -31,21 +29,52 @@ import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.network.CustomChannelMessageEvent;
 import de.dytanic.cloudnetcore.api.event.network.UpdateAllEvent;
 import de.dytanic.cloudnetcore.api.event.network.WrapperLineInputEvent;
-import de.dytanic.cloudnetcore.api.event.player.*;
-import de.dytanic.cloudnetcore.api.event.server.*;
+import de.dytanic.cloudnetcore.api.event.player.CommandExecutionEvent;
+import de.dytanic.cloudnetcore.api.event.player.LoginEvent;
+import de.dytanic.cloudnetcore.api.event.player.LoginRequestEvent;
+import de.dytanic.cloudnetcore.api.event.player.LogoutEvent;
+import de.dytanic.cloudnetcore.api.event.player.LogoutEventUnique;
+import de.dytanic.cloudnetcore.api.event.player.PlayerInitEvent;
+import de.dytanic.cloudnetcore.api.event.player.UpdatePlayerEvent;
+import de.dytanic.cloudnetcore.api.event.server.CloudServerAddEvent;
+import de.dytanic.cloudnetcore.api.event.server.CloudServerRemoveEvent;
+import de.dytanic.cloudnetcore.api.event.server.ProxyAddEvent;
+import de.dytanic.cloudnetcore.api.event.server.ProxyInfoUpdateEvent;
+import de.dytanic.cloudnetcore.api.event.server.ProxyRemoveEvent;
+import de.dytanic.cloudnetcore.api.event.server.ServerAddEvent;
+import de.dytanic.cloudnetcore.api.event.server.ServerInfoUpdateEvent;
+import de.dytanic.cloudnetcore.api.event.server.ServerRemoveEvent;
 import de.dytanic.cloudnetcore.database.PlayerDatabase;
 import de.dytanic.cloudnetcore.database.StatisticManager;
-import de.dytanic.cloudnetcore.network.components.*;
+import de.dytanic.cloudnetcore.network.components.CloudServer;
+import de.dytanic.cloudnetcore.network.components.INetworkComponent;
+import de.dytanic.cloudnetcore.network.components.MinecraftServer;
+import de.dytanic.cloudnetcore.network.components.ProxyServer;
+import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.network.components.util.ChannelFilter;
-import de.dytanic.cloudnetcore.network.packet.out.*;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutCustomChannelMessage;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutCustomSubChannelMessage;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutLoginPlayer;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutLogoutPlayer;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutProxyAdd;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutProxyRemove;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutServerAdd;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutServerRemove;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateOfflinePlayer;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateOnlineCount;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdatePlayer;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateProxyInfo;
+import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateServerInfo;
 import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import lombok.Getter;
 
 /**
  * Created by Tareko on 19.07.2017.
@@ -381,9 +410,9 @@ public final class NetworkManager {
 
     public CloudPlayer getPlayer(String name)
     {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
+        return CollectionWrapper.filter(this.onlinePlayers.values(), new Predicate<CloudPlayer>() {
             @Override
-            public boolean isAccepted(CloudPlayer value)
+            public boolean test(CloudPlayer value)
             {
                 return value.getName().equalsIgnoreCase(name);
             }
@@ -470,9 +499,9 @@ public final class NetworkManager {
 
     public CloudPlayer getOnlinePlayer(UUID uniqueId)
     {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
+        return CollectionWrapper.filter(this.onlinePlayers.values(), new Predicate<CloudPlayer>() {
             @Override
-            public boolean isAccepted(CloudPlayer cloudPlayer)
+            public boolean test(CloudPlayer cloudPlayer)
             {
                 return cloudPlayer.getUniqueId().equals(uniqueId);
             }
@@ -499,16 +528,16 @@ public final class NetworkManager {
             if (wrapper.getWrapperInfo() != null) wrappers.add(wrapper.getWrapperInfo());
         cloudNetwork.setWrappers(wrappers);
         cloudNetwork.setServerGroups(MapWrapper.transform(
-                CloudNet.getInstance().getServerGroups(), new Catcher<String, String>() {
+                CloudNet.getInstance().getServerGroups(), new Function<String, String>() {
                     @Override
-                    public String doCatch(String key)
+                    public String apply(String key)
                     {
                         return key;
                     }
                 },
-                new Catcher<SimpleServerGroup, ServerGroup>() {
+                new Function<ServerGroup, SimpleServerGroup>() {
                     @Override
-                    public SimpleServerGroup doCatch(ServerGroup key)
+                    public SimpleServerGroup apply(ServerGroup key)
                     {
                         return key.toSimple();
                     }

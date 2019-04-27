@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

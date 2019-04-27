@@ -1,7 +1,6 @@
 package de.dytanic.cloudnet.lib.scheduler;
 
 import de.dytanic.cloudnet.lib.utility.threading.Callback;
-
 import java.util.concurrent.Callable;
 
 public class TaskEntry<T> {

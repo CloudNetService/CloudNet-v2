@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-
 import java.util.function.Consumer;
 
 /**

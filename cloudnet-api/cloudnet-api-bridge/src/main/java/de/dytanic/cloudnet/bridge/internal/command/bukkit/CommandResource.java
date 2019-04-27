@@ -7,11 +7,10 @@ package de.dytanic.cloudnet.bridge.internal.command.bukkit;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 
 /**
  * Created by Tareko on 07.07.2017.

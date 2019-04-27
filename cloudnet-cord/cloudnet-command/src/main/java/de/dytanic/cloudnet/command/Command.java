@@ -5,10 +5,9 @@
 package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
-import lombok.Getter;
-
 import java.util.Collection;
 import java.util.HashSet;
+import lombok.Getter;
 
 /**
  * Abstract class to define a command with an executor and a name

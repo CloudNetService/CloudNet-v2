@@ -4,12 +4,11 @@
 
 package de.dytanic.cloudnet.lib.proxylayout;
 
+import java.util.Collection;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Collection;
-import java.util.List;
 
 @Getter
 @Setter

@@ -13,11 +13,22 @@ import de.dytanic.cloudnet.bridge.internal.util.ItemStackBuilder;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.serverselectors.sign.*;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
+import de.dytanic.cloudnet.lib.serverselectors.sign.Position;
+import de.dytanic.cloudnet.lib.serverselectors.sign.SearchingAnimation;
+import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
+import de.dytanic.cloudnet.lib.serverselectors.sign.SignGroupLayouts;
+import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayout;
+import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
@@ -34,8 +45,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
-
-import java.util.*;
 
 
 /**
@@ -77,9 +86,9 @@ public final class SignSelector implements Listener {
             @Override
             public void run()
             {
-                NetworkUtils.addAll(servers, MapWrapper.collectionCatcherHashMap(CloudAPI.getInstance().getServers(), new Catcher<String, ServerInfo>() {
+                NetworkUtils.addAll(servers, MapWrapper.collectionCatcherHashMap(CloudAPI.getInstance().getServers(), new Function<ServerInfo, String>() {
                     @Override
-                    public String doCatch(ServerInfo key)
+                    public String apply(ServerInfo key)
                     {
                         return key.getServiceId().getServerId();
                     }
@@ -126,9 +135,9 @@ public final class SignSelector implements Listener {
 
     private Sign findFreeSign(String group)
     {
-        return CollectionWrapper.filter(this.signs.values(), new Acceptable<Sign>() {
+        return CollectionWrapper.filter(this.signs.values(), new Predicate<Sign>() {
             @Override
-            public boolean isAccepted(Sign value)
+            public boolean test(Sign value)
             {
                 return value.getTargetGroup().equals(group) && value.getServerInfo() == null;
             }
@@ -137,9 +146,9 @@ public final class SignSelector implements Listener {
 
     private Collection<ServerInfo> getServers(String group)
     {
-        return CollectionWrapper.filterMany(servers.values(), new Acceptable<ServerInfo>() {
+        return CollectionWrapper.filterMany(servers.values(), new Predicate<ServerInfo>() {
             @Override
-            public boolean isAccepted(ServerInfo value)
+            public boolean test(ServerInfo value)
             {
                 return value.getServiceId().getGroup().equals(group);
             }
@@ -179,9 +188,9 @@ public final class SignSelector implements Listener {
 
     public Sign filter(ServerInfo serverInfo)
     {
-        return CollectionWrapper.filter(signs.values(), new Acceptable<Sign>() {
+        return CollectionWrapper.filter(signs.values(), new Predicate<Sign>() {
             @Override
-            public boolean isAccepted(Sign value)
+            public boolean test(Sign value)
             {
                 return value.getServerInfo() != null && value.getServerInfo().getServiceId().getServerId().equals(serverInfo.getServiceId().getServerId());
             }
@@ -195,9 +204,9 @@ public final class SignSelector implements Listener {
         {
             signGroupLayouts = getGroupLayout("default");
         }
-        return CollectionWrapper.filter(signGroupLayouts.getLayouts(), new Acceptable<SignLayout>() {
+        return CollectionWrapper.filter(signGroupLayouts.getLayouts(), new Predicate<SignLayout>() {
             @Override
-            public boolean isAccepted(SignLayout value)
+            public boolean test(SignLayout value)
             {
                 return value.getName().equals(name);
             }
@@ -217,9 +226,9 @@ public final class SignSelector implements Listener {
 
     public SignGroupLayouts getGroupLayout(String group)
     {
-        return CollectionWrapper.filter(signLayoutConfig.getGroupLayouts(), new Acceptable<SignGroupLayouts>() {
+        return CollectionWrapper.filter(signLayoutConfig.getGroupLayouts(), new Predicate<SignGroupLayouts>() {
             @Override
-            public boolean isAccepted(SignGroupLayouts value)
+            public boolean test(SignGroupLayouts value)
             {
                 return value.getName().equals(group);
             }
@@ -237,9 +246,9 @@ public final class SignSelector implements Listener {
 
     public Sign getSignByPosition(Location location)
     {
-        return CollectionWrapper.filter(signs.values(), new Acceptable<Sign>() {
+        return CollectionWrapper.filter(signs.values(), new Predicate<Sign>() {
             @Override
-            public boolean isAccepted(Sign value)
+            public boolean test(Sign value)
             {
                 return value.getPosition().equals(toPosition(location));
             }
@@ -543,9 +552,9 @@ public final class SignSelector implements Listener {
 
     public Sign getSign(ServerInfo serverInfo)
     {
-        return CollectionWrapper.filter(signs.values(), new Acceptable<Sign>() {
+        return CollectionWrapper.filter(signs.values(), new Predicate<Sign>() {
             @Override
-            public boolean isAccepted(Sign value)
+            public boolean test(Sign value)
             {
                 return value.getServerInfo() != null && value.getServerInfo().getServiceId().getServerId().equals(serverInfo.getServiceId().getServerId());
             }

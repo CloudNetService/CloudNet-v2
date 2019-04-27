@@ -11,7 +11,6 @@ import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.UUID;

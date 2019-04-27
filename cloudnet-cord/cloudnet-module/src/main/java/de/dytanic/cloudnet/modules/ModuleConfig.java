@@ -4,10 +4,9 @@
 
 package de.dytanic.cloudnet.modules;
 
+import java.io.File;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.io.File;
 
 /**
  * Data class that stores information about a {@link Module}

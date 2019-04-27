@@ -5,7 +5,7 @@
 package de.dytanic.cloudnet.setup;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
+import java.util.function.Function;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,6 +43,6 @@ public class SetupRequest implements Nameable {
     /**
      * The validation function that determines whether the input is valid or not.
      */
-    private Catcher<Boolean, String> validater;
+    private Function<String, Boolean> validater;
 
 }

@@ -5,7 +5,6 @@
 package de.dytanic.cloudnetcore.util;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

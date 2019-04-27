@@ -12,17 +12,20 @@ import de.dytanic.cloudnet.lib.server.ProxyGroupMode;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.server.version.ProxyVersion;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.setup.*;
+import de.dytanic.cloudnet.setup.ISetupCancel;
+import de.dytanic.cloudnet.setup.ISetupComplete;
+import de.dytanic.cloudnet.setup.Setup;
+import de.dytanic.cloudnet.setup.SetupRequest;
+import de.dytanic.cloudnet.setup.SetupResponseType;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.util.defaults.BasicProxyConfig;
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import lombok.Getter;
 
 /**
  * Created by Tareko on 23.10.2017.
@@ -87,38 +90,38 @@ public class SetupProxyGroup {
                         }
                     }
                 })
-                .request(new SetupRequest("memory", "How many MB of RAM should the proxy group have?", "Specified memory is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("memory", "How many MB of RAM should the proxy group have?", "Specified memory is invalid", SetupResponseType.NUMBER, new Function<String, Boolean>() {
                     @Override
-                    public Boolean doCatch(String key)
+                    public Boolean apply(String key)
                     {
                         return NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 64;
                     }
                 }))
-                .request(new SetupRequest("startport", "What's the starting port of the proxygroup?", "Specified starting port is invalid", SetupResponseType.NUMBER, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("startport", "What's the starting port of the proxygroup?", "Specified starting port is invalid", SetupResponseType.NUMBER, new Function<String, Boolean>() {
                     @Override
-                    public Boolean doCatch(String key)
+                    public Boolean apply(String key)
                     {
                         return NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 128 && Integer.parseInt(key) < 70000;
                     }
                 }))
                 .request(new SetupRequest("startup", "How many proxys should always be online?", "Specified startup count is invalid", SetupResponseType.NUMBER, null))
-                .request(new SetupRequest("mode", "Should the group be STATIC or DYNAMIC?", "Group mode is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("mode", "Should the group be STATIC or DYNAMIC?", "Group mode is invalid", SetupResponseType.STRING, new Function<String, Boolean>() {
                     @Override
-                    public Boolean doCatch(String key)
+                    public Boolean apply(String key)
                     {
                         return key.equalsIgnoreCase("STATIC") || key.equalsIgnoreCase("DYNAMIC");
                     }
                 }))
-                .request(new SetupRequest("template", "What is the backend of the group default template? [\"LOCAL\" for the wrapper local | \"MASTER\" for the master backend]", "String is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("template", "What is the backend of the group default template? [\"LOCAL\" for the wrapper local | \"MASTER\" for the master backend]", "String is invalid", SetupResponseType.STRING, new Function<String, Boolean>() {
                     @Override
-                    public Boolean doCatch(String key)
+                    public Boolean apply(String key)
                     {
                         return key.equals("MASTER") || key.equals("LOCAL");
                     }
                 }))
-                .request(new SetupRequest("wrapper", "Which wrappers should be used for this group?", "String is invalid", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+                .request(new SetupRequest("wrapper", "Which wrappers should be used for this group?", "String is invalid", SetupResponseType.STRING, new Function<String, Boolean>() {
                     @Override
-                    public Boolean doCatch(String key)
+                    public Boolean apply(String key)
                     {
                         java.util.List<String> wrappers = (List<String>) CollectionWrapper.toCollection(key, ",");
                         if (wrappers.size() == 0) return false;

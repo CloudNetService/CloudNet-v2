@@ -7,7 +7,6 @@ package de.dytanic.cloudnet.api.network.packet.out;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.util.UUID;
 
 /**

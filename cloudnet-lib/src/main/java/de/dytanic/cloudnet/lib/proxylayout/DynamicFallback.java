@@ -4,14 +4,13 @@
 
 package de.dytanic.cloudnet.lib.proxylayout;
 
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Created by Tareko on 05.10.2017.
@@ -26,9 +25,9 @@ public class DynamicFallback {
 
     public ServerFallback getDefault()
     {
-        return CollectionWrapper.filter(fallbacks, new Acceptable<ServerFallback>() {
+        return CollectionWrapper.filter(fallbacks, new Predicate<ServerFallback>() {
             @Override
-            public boolean isAccepted(ServerFallback serverFallback)
+            public boolean test(ServerFallback serverFallback)
             {
                 return serverFallback.getGroup().equals(defaultFallback);
             }
@@ -37,9 +36,9 @@ public class DynamicFallback {
 
     public Collection<String> getNamedFallbackes()
     {
-        return CollectionWrapper.transform(this.fallbacks, new Catcher<String, ServerFallback>() {
+        return CollectionWrapper.transform(this.fallbacks, new Function<ServerFallback, String>() {
             @Override
-            public String doCatch(ServerFallback key)
+            public String apply(ServerFallback key)
             {
                 return key.getGroup();
             }

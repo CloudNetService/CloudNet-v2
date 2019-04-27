@@ -12,7 +12,6 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.server.ScreenInfoEvent;
 import de.dytanic.cloudnetcore.network.components.INetworkComponent;
-
 import java.lang.reflect.Type;
 import java.util.Collection;
 

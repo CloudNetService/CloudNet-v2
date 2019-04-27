@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.lib.network.protocol.file;
 
 import de.dytanic.cloudnet.lib.network.protocol.IProtocol;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolStream;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

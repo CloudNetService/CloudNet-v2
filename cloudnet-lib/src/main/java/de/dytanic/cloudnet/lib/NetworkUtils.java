@@ -7,8 +7,6 @@ import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolInDecoder;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolLengthDeserializer;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolLengthSerializer;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolOutEncoder;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -25,7 +23,6 @@ import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.management.ManagementFactory;
@@ -42,6 +39,8 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Created by Tareko on 24.05.2017.
@@ -154,16 +153,16 @@ public final class NetworkUtils {
             key.append(keys, value.get(keys));
     }
 
-    public static <T, V> void addAll(java.util.Map<T, V> map, List<V> list, Catcher<T, V> catcher)
+    public static <T, V> void addAll(java.util.Map<T, V> map, List<V> list, Function<V, T> catcher)
     {
         for (V ke : list)
-            map.put(catcher.doCatch(ke), ke);
+            map.put(catcher.apply(ke), ke);
     }
 
-    public static <T, V> void addAll(java.util.Map<T, V> key, java.util.Map<T, V> value, Acceptable<V> handle)
+    public static <T, V> void addAll(java.util.Map<T, V> key, java.util.Map<T, V> value, Predicate<V> handle)
     {
         for (T key_ : value.keySet())
-            if (handle.isAccepted(value.get(key_))) key.put(key_, value.get(key_));
+            if (handle.test(value.get(key_))) key.put(key_, value.get(key_));
     }
 
     public static Channel initChannel(Channel channel)

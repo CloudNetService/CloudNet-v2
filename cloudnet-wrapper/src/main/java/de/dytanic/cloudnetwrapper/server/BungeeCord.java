@@ -26,9 +26,6 @@ import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveProxy;
 import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -39,6 +36,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)

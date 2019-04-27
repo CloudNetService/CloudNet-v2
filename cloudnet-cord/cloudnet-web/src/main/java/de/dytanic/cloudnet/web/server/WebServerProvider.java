@@ -7,7 +7,6 @@ package de.dytanic.cloudnet.web.server;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.web.server.handler.DynamicWebHandler;
 import de.dytanic.cloudnet.web.server.handler.WebHandler;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

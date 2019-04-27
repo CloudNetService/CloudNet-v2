@@ -1,9 +1,8 @@
 package de.dytanic.cloudnet.lib.serverselectors.sign;
 
+import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.Collection;
 
 /**
  * Created by Tareko on 22.07.2017.

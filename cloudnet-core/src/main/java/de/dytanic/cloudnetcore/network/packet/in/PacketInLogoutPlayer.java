@@ -11,7 +11,6 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
-
 import java.util.UUID;
 
 /**

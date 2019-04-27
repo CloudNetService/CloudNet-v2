@@ -11,7 +11,6 @@ import de.dytanic.cloudnet.lib.service.wrapper.WrapperScreen;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-
 import java.lang.reflect.Type;
 
 /**

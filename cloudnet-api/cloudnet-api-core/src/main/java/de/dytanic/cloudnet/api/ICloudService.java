@@ -2,7 +2,6 @@ package de.dytanic.cloudnet.api;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-
 import java.util.Map;
 import java.util.UUID;
 

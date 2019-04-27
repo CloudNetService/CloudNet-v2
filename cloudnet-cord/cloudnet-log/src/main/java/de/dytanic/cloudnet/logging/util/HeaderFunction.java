@@ -5,10 +5,13 @@
 package de.dytanic.cloudnet.logging.util;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import lombok.Getter;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import lombok.Getter;
 
 /**
  * Class that only displays a possible {@code HEADER.txt}, if present.

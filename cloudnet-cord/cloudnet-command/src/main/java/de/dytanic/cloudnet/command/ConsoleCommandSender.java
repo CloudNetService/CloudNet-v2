@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;

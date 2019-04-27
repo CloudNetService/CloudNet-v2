@@ -4,11 +4,10 @@
 
 package de.dytanic.cloudnet.modules;
 
-import lombok.Getter;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import lombok.Getter;
 
 /**
  * Class loader for {@link Module}s that assigns itself ti the module's class loader.

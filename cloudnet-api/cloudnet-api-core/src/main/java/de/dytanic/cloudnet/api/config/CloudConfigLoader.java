@@ -7,10 +7,9 @@ package de.dytanic.cloudnet.api.config;
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import java.nio.file.Path;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.nio.file.Path;
 
 @Getter
 @AllArgsConstructor

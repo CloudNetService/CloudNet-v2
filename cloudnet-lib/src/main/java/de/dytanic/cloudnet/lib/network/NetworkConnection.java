@@ -12,16 +12,19 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import java.io.File;
+import java.nio.file.Path;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.File;
-import java.nio.file.Path;
 
 /**
  * Created by Tareko on 22.07.2017.

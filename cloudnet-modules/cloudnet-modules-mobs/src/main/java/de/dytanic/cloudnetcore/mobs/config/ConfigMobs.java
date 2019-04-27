@@ -12,7 +12,6 @@ import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.Return;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.config.ILoader;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

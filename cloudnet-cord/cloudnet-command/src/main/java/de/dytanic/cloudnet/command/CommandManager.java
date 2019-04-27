@@ -5,12 +5,15 @@
 package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 import jline.console.completer.Completer;
 import lombok.Getter;
-
-import java.util.*;
 
 /**
  * Class that manages commands for the interfaces of CloudNet.
@@ -184,9 +187,9 @@ public final class CommandManager
                 String[] args = buffer.split(" ");
                 String testString = args[args.length - 1];
 
-                responses.addAll(CollectionWrapper.filterMany(((TabCompletable) command).onTab(input.length - 1, input[input.length - 1]), new Acceptable<String>() {
+                responses.addAll(CollectionWrapper.filterMany(((TabCompletable) command).onTab(input.length - 1, input[input.length - 1]), new Predicate<String>() {
                     @Override
-                    public boolean isAccepted(String s)
+                    public boolean test(String s)
                     {
                         return s != null && (testString.isEmpty() || s.toLowerCase().contains(testString.toLowerCase()));
                     }

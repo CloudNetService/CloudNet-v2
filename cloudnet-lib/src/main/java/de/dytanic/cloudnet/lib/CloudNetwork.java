@@ -4,10 +4,9 @@ import de.dytanic.cloudnet.lib.network.WrapperInfo;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.Data;
-
 import java.util.HashMap;
 import java.util.LinkedList;
+import lombok.Data;
 
 /**
  * Created by Tareko on 19.07.2017.

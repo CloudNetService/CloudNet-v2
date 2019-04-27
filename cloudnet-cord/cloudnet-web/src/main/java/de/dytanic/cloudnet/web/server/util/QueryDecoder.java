@@ -4,10 +4,9 @@
 
 package de.dytanic.cloudnet.web.server.util;
 
-import lombok.Getter;
-
 import java.util.Map;
 import java.util.WeakHashMap;
+import lombok.Getter;
 
 /**
  * Utility class for decoding and storing query parameters using a weak hash map.

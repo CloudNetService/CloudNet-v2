@@ -9,12 +9,11 @@ import de.dytanic.cloudnet.lib.map.WrappedMap;
 import de.dytanic.cloudnet.lib.proxylayout.ProxyConfig;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.version.ProxyVersion;
+import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.util.Collection;
 
 /**
  * Created by Tareko on 18.07.2017.

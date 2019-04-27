@@ -5,8 +5,12 @@
 package de.dytanic.cloudnetcore.util.defaults;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.proxylayout.*;
-
+import de.dytanic.cloudnet.lib.proxylayout.AutoSlot;
+import de.dytanic.cloudnet.lib.proxylayout.DynamicFallback;
+import de.dytanic.cloudnet.lib.proxylayout.Motd;
+import de.dytanic.cloudnet.lib.proxylayout.ProxyConfig;
+import de.dytanic.cloudnet.lib.proxylayout.ServerFallback;
+import de.dytanic.cloudnet.lib.proxylayout.TabList;
 import java.util.ArrayList;
 import java.util.Arrays;
 

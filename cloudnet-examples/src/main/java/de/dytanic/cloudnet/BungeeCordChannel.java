@@ -7,11 +7,10 @@ package de.dytanic.cloudnet;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.event.proxied.ProxiedSubChannelMessageEvent;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import java.util.UUID;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.event.EventHandler;
-
-import java.util.UUID;
 
 /**
  * Created by Tareko on 19.10.2017.

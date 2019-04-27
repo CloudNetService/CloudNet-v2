@@ -4,7 +4,11 @@
 
 package de.dytanic.cloudnet.lib.network.protocol.codec;
 
-import de.dytanic.cloudnet.lib.network.protocol.*;
+import de.dytanic.cloudnet.lib.network.protocol.IProtocol;
+import de.dytanic.cloudnet.lib.network.protocol.ProtocolBuffer;
+import de.dytanic.cloudnet.lib.network.protocol.ProtocolProvider;
+import de.dytanic.cloudnet.lib.network.protocol.ProtocolRequest;
+import de.dytanic.cloudnet.lib.network.protocol.ProtocolStream;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;

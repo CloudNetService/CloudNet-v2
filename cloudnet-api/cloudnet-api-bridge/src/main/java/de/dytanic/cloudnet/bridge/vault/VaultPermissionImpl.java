@@ -6,10 +6,9 @@ import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
+import java.util.Optional;
 import lombok.val;
 import net.milkbowl.vault.permission.Permission;
-
-import java.util.Optional;
 
 /**
  * Created by Tareko on 25.11.2017.

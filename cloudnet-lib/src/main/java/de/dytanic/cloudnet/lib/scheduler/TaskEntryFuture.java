@@ -1,12 +1,11 @@
 package de.dytanic.cloudnet.lib.scheduler;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Created by Tareko on 19.01.2018.

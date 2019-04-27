@@ -8,13 +8,12 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-
 import java.util.HashSet;
+import java.util.function.Predicate;
 
 /**
  * Created by Tareko on 28.08.2017.
@@ -55,9 +54,9 @@ public final class CommandCopy extends Command {
                     ServerGroup serverGroup = minecraftServer.getGroup();
                     if (serverGroup != null)
                     {
-                        Template template = CollectionWrapper.filter(serverGroup.getTemplates(), new Acceptable<Template>() {
+                        Template template = CollectionWrapper.filter(serverGroup.getTemplates(), new Predicate<Template>() {
                             @Override
-                            public boolean isAccepted(Template template)
+                            public boolean test(Template template)
                             {
                                 return template.getName().equalsIgnoreCase(args[1]);
                             }

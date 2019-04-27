@@ -5,15 +5,15 @@
 package de.dytanic.cloudnet.bridge.internal.listener.v18_112;
 
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
+import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector.MobImpl;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
+import java.lang.reflect.InvocationTargetException;
+import java.util.function.Predicate;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by Tareko on 14.09.2017.
@@ -23,9 +23,9 @@ public final class ArmorStandListener implements Listener {
     @EventHandler
     public void handle(PlayerArmorStandManipulateEvent e)
     {
-        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
+        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Predicate<MobImpl>() {
             @Override
-            public boolean isAccepted(MobSelector.MobImpl value)
+            public boolean test(MobSelector.MobImpl value)
             {
                 try
                 {
@@ -45,9 +45,9 @@ public final class ArmorStandListener implements Listener {
     @EventHandler
     public void handle(ItemDespawnEvent e)
     {
-        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
+        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Predicate<MobSelector.MobImpl>() {
             @Override
-            public boolean isAccepted(MobSelector.MobImpl value)
+            public boolean test(MobSelector.MobImpl value)
             {
                 return ((Entity) value.getDisplayMessage()).getPassenger() != null && e.getEntity().getEntityId() == ((Entity) value.getDisplayMessage()).getPassenger().getEntityId();
             }

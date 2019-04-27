@@ -2,11 +2,10 @@ package de.dytanic.cloudnet.lib.serverselectors.mob;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.UUID;
 
 /**
  * Created by Tareko on 09.07.2017.

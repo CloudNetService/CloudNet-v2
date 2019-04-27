@@ -17,10 +17,13 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -29,10 +32,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created by Tareko on 25.08.2017.
@@ -46,9 +45,9 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
         MobConfig mobConfig = data.getObject("mobConfig", new TypeToken<MobConfig>() {
         }.getType());
 
-        Map<UUID, ServerMob> filteredMobs = MapWrapper.filter(mobMap, new Acceptable<ServerMob>() {
+        Map<UUID, ServerMob> filteredMobs = MapWrapper.filter(mobMap, new Predicate<ServerMob>() {
             @Override
-            public boolean isAccepted(ServerMob value) {
+            public boolean test(ServerMob value) {
                 return value.getPosition().getGroup().equalsIgnoreCase(CloudAPI.getInstance().getGroup());
             }
         });
@@ -60,15 +59,15 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                     MobSelector.getInstance().shutdown();
                     MobSelector.getInstance().setMobConfig(mobConfig);
                     MobSelector.getInstance().setMobs(new HashMap<>());
-                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Catcher<UUID, UUID>() {
+                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Function<UUID, UUID>() {
                         @Override
-                        public UUID doCatch(UUID key) {
+                        public UUID apply(UUID key) {
                             return key;
                         }
-                    }, new Catcher<MobSelector.MobImpl, ServerMob>() {
+                    }, new Function<ServerMob, MobSelector.MobImpl>() {
 
                         @Override
-                        public MobSelector.MobImpl doCatch(ServerMob key) {
+                        public MobSelector.MobImpl apply(ServerMob key) {
                             MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
                             Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
                             entity.setFireTicks(0);
@@ -118,14 +117,14 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
             Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Catcher<UUID, UUID>() {
+                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Function<UUID, UUID>() {
                         @Override
-                        public UUID doCatch(UUID key) {
+                        public UUID apply(UUID key) {
                             return key;
                         }
-                    }, new Catcher<MobSelector.MobImpl, ServerMob>() {
+                    }, new Function<ServerMob, MobSelector.MobImpl>() {
                         @Override
-                        public MobSelector.MobImpl doCatch(ServerMob key) {
+                        public MobSelector.MobImpl apply(ServerMob key) {
                             MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
                             Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
                             Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);

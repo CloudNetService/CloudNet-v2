@@ -6,14 +6,13 @@ package de.dytanic.cloudnetcore.setup;
 
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnet.web.client.WebClient;
-import joptsimple.OptionSet;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import joptsimple.OptionSet;
 
 /**
  * Created by Tareko on 01.10.2017.

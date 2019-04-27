@@ -7,15 +7,14 @@ package de.dytanic.cloudnet.lib.server.template;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.zip.ZipConverter;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Created by Tareko on 24.09.2017.

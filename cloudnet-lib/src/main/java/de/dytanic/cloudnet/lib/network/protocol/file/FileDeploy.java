@@ -6,12 +6,11 @@ package de.dytanic.cloudnet.lib.network.protocol.file;
 
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolBuffer;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolStream;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by Tareko on 09.09.2017.

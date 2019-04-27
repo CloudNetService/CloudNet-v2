@@ -5,11 +5,12 @@
 package de.dytanic.cloudnet.lib.utility;
 
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public final class CollectionWrapper {
 
@@ -17,29 +18,29 @@ public final class CollectionWrapper {
     {
     }
 
-    public static <E, X> Collection<X> transform(Collection<E> collection, Catcher<X, E> catcher)
+    public static <E, X> Collection<X> transform(Collection<E> collection, Function<E, X> catcher)
     {
         Collection<X> xCollection = newCopyOnWriteArrayList();
-        for (E e : collection) xCollection.add(catcher.doCatch(e));
+        for (E e : collection) xCollection.add(catcher.apply(e));
         return xCollection;
     }
 
-    public static <E> Collection<E> filterMany(Collection<E> elements, Acceptable<E> acceptable)
+    public static <E> Collection<E> filterMany(Collection<E> elements, Predicate<E> acceptable)
     {
         Collection<E> collection = new LinkedList<>();
         for (E element : elements)
         {
-            if (acceptable.isAccepted(element))
+            if (acceptable.test(element))
                 collection.add(element);
         }
         return collection;
     }
 
-    public static <E> E filter(Collection<E> elements, Acceptable<E> acceptable)
+    public static <E> E filter(Collection<E> elements, Predicate<E> acceptable)
     {
         for (E element : elements)
         {
-            if (acceptable.isAccepted(element)) return element;
+            if (acceptable.test(element)) return element;
         }
         return null;
     }
@@ -64,22 +65,22 @@ public final class CollectionWrapper {
         for (E el : collection) for (Runnabled<E> runnabled : runnableds) runnabled.run(el);
     }
 
-    public static <E, X, C> Collection<E> getCollection(java.util.Map<X, C> map, Catcher<E, C> catcher)
+    public static <E, X, C> Collection<E> getCollection(java.util.Map<X, C> map, Function<C, E> catcher)
     {
         Collection<E> collection = new LinkedList<>();
         for (C values : map.values())
         {
-            collection.add(catcher.doCatch(values));
+            collection.add(catcher.apply(values));
         }
         return collection;
     }
 
-    public static <E> void checkAndRemove(Collection<E> collection, Acceptable<E> acceptable)
+    public static <E> void checkAndRemove(Collection<E> collection, Predicate<E> acceptable)
     {
         E e = null;
         for (E element : collection)
         {
-            if (acceptable.isAccepted(element))
+            if (acceptable.test(element))
                 e = element;
         }
 

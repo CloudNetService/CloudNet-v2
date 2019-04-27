@@ -2,21 +2,30 @@ package de.dytanic.cloudnetcore.permissions.config;
 
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.Return;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
-
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 
 /**
  * Created by Tareko on 11.11.2017.
@@ -76,9 +85,9 @@ public class ConfigPermissions {
                 Document document = Document.loadDocument(Paths.get("local/permissions.yml"));
                 Collection<PermissionGroup> groups = document.getObject("groups", new TypeToken<Collection<PermissionGroup>>() {
                 }.getType());
-                Map<String, PermissionGroup> maps = MapWrapper.collectionCatcherHashMap(groups, new Catcher<String, PermissionGroup>() {
+                Map<String, PermissionGroup> maps = MapWrapper.collectionCatcherHashMap(groups, new Function<PermissionGroup, String>() {
                     @Override
-                    public String doCatch(PermissionGroup key)
+                    public String apply(PermissionGroup key)
                     {
                         return key.getName();
                     }

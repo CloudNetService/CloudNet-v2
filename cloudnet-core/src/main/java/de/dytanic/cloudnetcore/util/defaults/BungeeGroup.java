@@ -10,7 +10,6 @@ import de.dytanic.cloudnet.lib.server.ProxyGroupMode;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.server.version.ProxyVersion;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 

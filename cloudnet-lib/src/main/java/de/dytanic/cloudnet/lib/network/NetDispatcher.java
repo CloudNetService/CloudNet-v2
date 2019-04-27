@@ -9,10 +9,9 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import java.io.IOException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.io.IOException;
 
 @Getter
 @AllArgsConstructor

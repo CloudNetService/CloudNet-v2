@@ -22,19 +22,25 @@ import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
-
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 02.06.2017.
@@ -257,9 +263,9 @@ public final class CommandCloud extends Command implements TabExecutor {
                 if (args[0].equalsIgnoreCase("log") && commandSender.hasPermission("cloudnet.command.cloud.log"))
                 {
                     if (CloudProxy.getInstance().getCachedServers().containsKey(args[1]) ||
-                            CollectionWrapper.filter(CloudAPI.getInstance().getProxys(), new Acceptable<ProxyInfo>() {
+                            CollectionWrapper.filter(CloudAPI.getInstance().getProxys(), new Predicate<ProxyInfo>() {
                                 @Override
-                                public boolean isAccepted(ProxyInfo proxyInfo)
+                                public boolean test(ProxyInfo proxyInfo)
                                 {
                                     return proxyInfo.getServiceId().getServerId().equalsIgnoreCase(args[1]);
                                 }
@@ -330,9 +336,9 @@ public final class CommandCloud extends Command implements TabExecutor {
                         CloudAPI.getInstance().stopServer(args[1]);
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
                                 "The information was sent to the cloud");
-                    } else if (CollectionWrapper.filter(CloudAPI.getInstance().getProxys(), new Acceptable<ProxyInfo>() {
+                    } else if (CollectionWrapper.filter(CloudAPI.getInstance().getProxys(), new Predicate<ProxyInfo>() {
                         @Override
-                        public boolean isAccepted(ProxyInfo proxyInfo)
+                        public boolean test(ProxyInfo proxyInfo)
                         {
                             return proxyInfo.getServiceId().getServerId().equalsIgnoreCase(args[1]);
                         }
@@ -381,9 +387,9 @@ public final class CommandCloud extends Command implements TabExecutor {
                     if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1]))
                     {
                         Collection<ServerInfo> servers = CollectionWrapper.filterMany(CloudProxy.getInstance().getCachedServers().values(),
-                                new Acceptable<ServerInfo>() {
+                                new Predicate<ServerInfo>() {
                                     @Override
-                                    public boolean isAccepted(ServerInfo serverInfo)
+                                    public boolean test(ServerInfo serverInfo)
                                     {
                                         return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(args[1]);
                                     }
@@ -477,17 +483,17 @@ public final class CommandCloud extends Command implements TabExecutor {
                         } else
                         {
                             ServerGroup serverGroup = CloudAPI.getInstance().getServerGroup(args[1]);
-                            if (CollectionWrapper.filter(serverGroup.getTemplates(), new Acceptable<Template>() {
+                            if (CollectionWrapper.filter(serverGroup.getTemplates(), new Predicate<Template>() {
                                 @Override
-                                public boolean isAccepted(Template value)
+                                public boolean test(Template value)
                                 {
                                     return value.getName().equalsIgnoreCase(args[2]);
                                 }
                             }) != null)
                             {
-                                CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData(args[1]), new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()), true, CollectionWrapper.filter(serverGroup.getTemplates(), new Acceptable<Template>() {
+                                CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData(args[1]), new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()), true, CollectionWrapper.filter(serverGroup.getTemplates(), new Predicate<Template>() {
                                     @Override
-                                    public boolean isAccepted(Template value)
+                                    public boolean test(Template value)
                                     {
                                         return value.getName().equalsIgnoreCase(args[2]);
                                     }

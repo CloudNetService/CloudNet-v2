@@ -10,7 +10,6 @@ import de.dytanic.cloudnet.lib.server.ServerGroupType;
 import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

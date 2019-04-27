@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.lib.network.protocol.packet;
 
 import de.dytanic.cloudnet.lib.network.protocol.IProtocol;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolStream;
-
 import java.util.Arrays;
 import java.util.Collection;
 

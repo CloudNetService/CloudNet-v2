@@ -11,7 +11,6 @@ import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerGroupType;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.util.Collection;
 import java.util.Properties;
 

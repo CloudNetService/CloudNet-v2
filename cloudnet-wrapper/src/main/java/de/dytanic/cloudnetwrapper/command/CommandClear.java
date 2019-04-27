@@ -7,7 +7,6 @@ package de.dytanic.cloudnetwrapper.command;
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
-
 import java.io.IOException;
 
 /**

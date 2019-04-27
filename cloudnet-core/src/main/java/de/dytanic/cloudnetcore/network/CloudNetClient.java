@@ -21,10 +21,9 @@ import de.dytanic.cloudnetcore.network.wrapper.WrapperSession;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import lombok.Getter;
-
 import java.io.IOException;
 import java.util.UUID;
+import lombok.Getter;
 
 /**
  * This is the SimpleChannelInboundHandler of netty handled for a networkComponent

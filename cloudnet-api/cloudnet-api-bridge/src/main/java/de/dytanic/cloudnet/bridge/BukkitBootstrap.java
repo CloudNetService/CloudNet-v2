@@ -17,16 +17,15 @@ import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.in.PacketInMob
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.in.PacketInSignSelector;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.net.InetSocketAddress;
+import java.nio.file.Paths;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.net.InetSocketAddress;
-import java.nio.file.Paths;
 
 /**
  * Created by Tareko on 17.08.2017.

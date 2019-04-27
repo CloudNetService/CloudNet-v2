@@ -1,9 +1,8 @@
 package de.dytanic.cloudnet.lib.player;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.UUID;
 
 /**
  * Created by Tareko on 27.07.2017.

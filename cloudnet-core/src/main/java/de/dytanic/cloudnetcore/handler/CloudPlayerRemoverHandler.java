@@ -6,7 +6,6 @@ import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;

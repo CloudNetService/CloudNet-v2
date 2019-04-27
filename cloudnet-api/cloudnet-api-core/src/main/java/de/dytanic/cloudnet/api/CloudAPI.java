@@ -4,10 +4,48 @@ import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.config.CloudConfigLoader;
 import de.dytanic.cloudnet.api.database.DatabaseManager;
 import de.dytanic.cloudnet.api.handlers.NetworkHandlerProvider;
-import de.dytanic.cloudnet.api.network.packet.api.*;
-import de.dytanic.cloudnet.api.network.packet.api.sync.*;
-import de.dytanic.cloudnet.api.network.packet.in.*;
-import de.dytanic.cloudnet.api.network.packet.out.*;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutCopyDirectory;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutExecuteCommand;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutServerDispatchCommand;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutStartCloudServer;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutStartProxy;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutStartServer;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutStopProxy;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutStopServer;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutUpdatePermissionGroup;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutUpdateProxyGroup;
+import de.dytanic.cloudnet.api.network.packet.api.PacketOutUpdateServerGroup;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutGetCloudServers;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutGetOfflinePlayer;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutGetPlayer;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutGetPlayers;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutGetProxys;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutGetRegisteredPlayers;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutGetServer;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutGetServerGroup;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutGetServers;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutGetStatistic;
+import de.dytanic.cloudnet.api.network.packet.api.sync.PacketAPIOutNameUUID;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInCloudNetwork;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInCustomChannelMessage;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInCustomSubChannelMessage;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInLoginPlayer;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInLogoutPlayer;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInProxyAdd;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInProxyInfoUpdate;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInProxyRemove;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInServerAdd;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInServerInfoUpdate;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInServerRemove;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInUpdateOfflinePlayer;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInUpdateOnlineCount;
+import de.dytanic.cloudnet.api.network.packet.in.PacketInUpdatePlayer;
+import de.dytanic.cloudnet.api.network.packet.out.PacketOutCreateServerLog;
+import de.dytanic.cloudnet.api.network.packet.out.PacketOutCustomSubChannelMessage;
+import de.dytanic.cloudnet.api.network.packet.out.PacketOutDispatchConsoleMessage;
+import de.dytanic.cloudnet.api.network.packet.out.PacketOutUpdatePlayer;
+import de.dytanic.cloudnet.api.network.packet.out.PacketOutUpdateProxyInfo;
+import de.dytanic.cloudnet.api.network.packet.out.PacketOutUpdateServerInfo;
 import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
@@ -26,20 +64,29 @@ import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
-import de.dytanic.cloudnet.lib.server.*;
+import de.dytanic.cloudnet.lib.server.ProxyGroup;
+import de.dytanic.cloudnet.lib.server.ServerConfig;
+import de.dytanic.cloudnet.lib.server.ServerGroup;
+import de.dytanic.cloudnet.lib.server.ServerGroupType;
+import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.server.defaults.BasicServerConfig;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -395,9 +442,9 @@ public final class CloudAPI implements MetaObj {
      */
     public WrapperInfo getWrapper(String wrapperId)
     {
-        return CollectionWrapper.filter(cloudNetwork.getWrappers(), new Acceptable<WrapperInfo>() {
+        return CollectionWrapper.filter(cloudNetwork.getWrappers(), new Predicate<WrapperInfo>() {
             @Override
-            public boolean isAccepted(WrapperInfo value)
+            public boolean test(WrapperInfo value)
             {
                 return value.getServerId().equalsIgnoreCase(wrapperId);
             }
@@ -1146,9 +1193,9 @@ public final class CloudAPI implements MetaObj {
     public Collection<ServerInfo> getCloudServers()
     {
         if (cloudService != null && cloudService.isProxyInstance())
-            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
+            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Predicate<ServerInfo>() {
                 @Override
-                public boolean isAccepted(ServerInfo serverInfo)
+                public boolean test(ServerInfo serverInfo)
                 {
                     return serverInfo.getServiceId().getGroup() == null;
                 }
@@ -1167,9 +1214,9 @@ public final class CloudAPI implements MetaObj {
     public Collection<ServerInfo> getServers(String group)
     {
         if (cloudService != null && cloudService.isProxyInstance())
-            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
+            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Predicate<ServerInfo>() {
                 @Override
-                public boolean isAccepted(ServerInfo serverInfo)
+                public boolean test(ServerInfo serverInfo)
                 {
                     return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
                 }

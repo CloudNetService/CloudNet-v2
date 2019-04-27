@@ -5,8 +5,6 @@
 package de.dytanic.cloudnetwrapper.setup;
 
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-import jline.console.ConsoleReader;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -14,6 +12,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import jline.console.ConsoleReader;
 
 /**
  * Created by Tareko on 25.05.2017.

@@ -1,10 +1,9 @@
 package de.dytanic.cloudnet.lib.player;
 
 import com.google.gson.reflect.TypeToken;
-import lombok.Data;
-
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
+import lombok.Data;
 
 /**
  *

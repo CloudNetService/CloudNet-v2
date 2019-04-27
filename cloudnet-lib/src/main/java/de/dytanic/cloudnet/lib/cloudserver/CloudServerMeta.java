@@ -10,11 +10,10 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
+import lombok.Getter;
 
 /**
  * Created by Tareko on 17.10.2017.

@@ -6,9 +6,8 @@ package de.dytanic.cloudnetcore.api.event.player;
 
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.async.AsyncPosterAdapter;
-import lombok.Getter;
-
 import java.util.UUID;
+import lombok.Getter;
 
 /**
  * Calls if a player

@@ -14,7 +14,6 @@ import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.player.UpdatePlayerEvent;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;

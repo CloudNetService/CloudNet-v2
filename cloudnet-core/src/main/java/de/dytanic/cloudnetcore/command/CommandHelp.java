@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnetcore.CloudNet;
-
 import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
 import java.util.ArrayList;

@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.lib.user;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.hash.DyHash;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;

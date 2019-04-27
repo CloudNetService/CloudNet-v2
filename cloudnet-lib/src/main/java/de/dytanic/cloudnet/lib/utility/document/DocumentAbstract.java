@@ -2,7 +2,6 @@ package de.dytanic.cloudnet.lib.utility.document;
 
 import com.google.gson.JsonElement;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
-
 import java.io.File;
 import java.util.Set;
 

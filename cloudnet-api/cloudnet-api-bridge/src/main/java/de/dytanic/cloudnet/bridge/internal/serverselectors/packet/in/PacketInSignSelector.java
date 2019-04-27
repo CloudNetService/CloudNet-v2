@@ -12,15 +12,14 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import org.bukkit.Bukkit;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
+import org.bukkit.Bukkit;
 
 /**
  * Created by Tareko on 23.08.2017.
@@ -35,9 +34,9 @@ public class PacketInSignSelector extends PacketInHandler {
         SignLayoutConfig signLayoutConfig = data.getObject("signLayoutConfig", new TypeToken<SignLayoutConfig>() {
         }.getType());
 
-        Map<UUID, Sign> values = MapWrapper.filter(signMap, new Acceptable<Sign>() {
+        Map<UUID, Sign> values = MapWrapper.filter(signMap, new Predicate<Sign>() {
             @Override
-            public boolean isAccepted(Sign value)
+            public boolean test(Sign value)
             {
                 return value.getPosition().getGroup().equals(CloudAPI.getInstance().getGroup());
             }

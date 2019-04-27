@@ -4,10 +4,9 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import java.util.Random;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.Random;
 
 /**
  * Created by Tareko on 22.07.2017.

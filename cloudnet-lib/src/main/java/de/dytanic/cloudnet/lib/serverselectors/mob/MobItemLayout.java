@@ -1,9 +1,8 @@
 package de.dytanic.cloudnet.lib.serverselectors.mob;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.List;
 
 /**
  * Created by Tareko on 22.07.2017.

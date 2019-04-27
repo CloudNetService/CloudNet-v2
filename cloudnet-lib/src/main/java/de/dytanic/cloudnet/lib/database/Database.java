@@ -1,7 +1,6 @@
 package de.dytanic.cloudnet.lib.database;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.util.Collection;
 import java.util.concurrent.FutureTask;
 

@@ -15,13 +15,12 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.CloudNetWrapperConfig;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import io.netty.util.ResourceLeakDetector;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 
 public class CloudBootstrap {
 

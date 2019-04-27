@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.event.IEventListener;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnetcore.api.event.player.PlayerInitEvent;
 import de.dytanic.cloudnetcore.permissions.PermissionModule;
-
 import java.util.Collection;
 import java.util.LinkedList;
 

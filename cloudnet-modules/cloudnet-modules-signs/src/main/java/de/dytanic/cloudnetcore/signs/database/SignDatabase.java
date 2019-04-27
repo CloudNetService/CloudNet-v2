@@ -10,7 +10,6 @@ import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.UUID;

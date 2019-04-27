@@ -9,11 +9,10 @@ import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public final class CommandReload extends Command {
 
@@ -60,9 +59,9 @@ public final class CommandReload extends Command {
                     CloudNet.getInstance().getUsers().clear();
                     CloudNet.getInstance().getUsers().addAll(CloudNet.getInstance().getConfig().getUsers());
 
-                    NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Acceptable<ServerGroup>() {
+                    NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Predicate<ServerGroup>() {
                         @Override
-                        public boolean isAccepted(ServerGroup value)
+                        public boolean test(ServerGroup value)
                         {
                             System.out.println("Loading ServerGroup: " + value.getName());
                             CloudNet.getInstance().setupGroup(value);
@@ -70,9 +69,9 @@ public final class CommandReload extends Command {
                         }
                     });
 
-                    NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Acceptable<ProxyGroup>() {
+                    NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Predicate<ProxyGroup>() {
 
-                        public boolean isAccepted(ProxyGroup value)
+                        public boolean test(ProxyGroup value)
                         {
                             System.out.println("Loading ProxyGroup: " + value.getName());
                             CloudNet.getInstance().setupProxy(value);

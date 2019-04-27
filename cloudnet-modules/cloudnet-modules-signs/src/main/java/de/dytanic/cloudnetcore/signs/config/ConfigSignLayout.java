@@ -9,14 +9,13 @@ import de.dytanic.cloudnet.lib.serverselectors.sign.SearchingAnimation;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignGroupLayouts;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayout;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 /**
  * Created by Tareko on 22.07.2017.
@@ -119,9 +118,9 @@ public class ConfigSignLayout {
         {
 
             {
-                SignLayout signLayout = CollectionWrapper.filter(groupLayouts.getLayouts(), new Acceptable<SignLayout>() {
+                SignLayout signLayout = CollectionWrapper.filter(groupLayouts.getLayouts(), new Predicate<SignLayout>() {
                     @Override
-                    public boolean isAccepted(SignLayout signLayout)
+                    public boolean test(SignLayout signLayout)
                     {
                         return signLayout.getName().equalsIgnoreCase("empty");
                     }

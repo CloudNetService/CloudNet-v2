@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.api.database;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
-
 import java.util.Collection;
 import java.util.Map;
 

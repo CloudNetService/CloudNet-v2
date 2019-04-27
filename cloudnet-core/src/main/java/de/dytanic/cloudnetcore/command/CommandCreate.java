@@ -13,15 +13,14 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.user.BasicUser;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.setup.SetupProxyGroup;
 import de.dytanic.cloudnetcore.setup.SetupServerGroup;
 import de.dytanic.cloudnetcore.setup.SetupWrapper;
-
 import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public final class CommandCreate extends Command {
 
@@ -201,17 +200,17 @@ public final class CommandCreate extends Command {
                             serverGroup.getTemplates().add(new Template(args[1], TemplateResource.LOCAL, null, new String[]{}, Arrays.asList()));
                             CloudNet.getInstance().getConfig().createGroup(serverGroup);
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Acceptable<ServerGroup>() {
+                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Predicate<ServerGroup>() {
                                 @Override
-                                public boolean isAccepted(ServerGroup value)
+                                public boolean test(ServerGroup value)
                                 {
                                     return true;
                                 }
                             });
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Acceptable<ProxyGroup>() {
+                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Predicate<ProxyGroup>() {
                                 @Override
-                                public boolean isAccepted(ProxyGroup value)
+                                public boolean test(ProxyGroup value)
                                 {
                                     return true;
                                 }
@@ -231,17 +230,17 @@ public final class CommandCreate extends Command {
                             serverGroup.getTemplates().add(new Template(args[1], TemplateResource.MASTER, null, new String[]{}, Arrays.asList()));
                             CloudNet.getInstance().getConfig().createGroup(serverGroup);
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Acceptable<ServerGroup>() {
+                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Predicate<ServerGroup>() {
                                 @Override
-                                public boolean isAccepted(ServerGroup value)
+                                public boolean test(ServerGroup value)
                                 {
                                     return true;
                                 }
                             });
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Acceptable<ProxyGroup>() {
+                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Predicate<ProxyGroup>() {
                                 @Override
-                                public boolean isAccepted(ProxyGroup value)
+                                public boolean test(ProxyGroup value)
                                 {
                                     return true;
                                 }
@@ -272,17 +271,17 @@ public final class CommandCreate extends Command {
                             serverGroup.getTemplates().add(new Template(args[1], TemplateResource.URL, args[4], new String[]{("-Dtest=true")}, Arrays.asList()));
                             CloudNet.getInstance().getConfig().createGroup(serverGroup);
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Acceptable<ServerGroup>() {
+                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Predicate<ServerGroup>() {
                                 @Override
-                                public boolean isAccepted(ServerGroup value)
+                                public boolean test(ServerGroup value)
                                 {
                                     return true;
                                 }
                             });
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Acceptable<ProxyGroup>() {
+                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Predicate<ProxyGroup>() {
                                 @Override
-                                public boolean isAccepted(ProxyGroup value)
+                                public boolean test(ProxyGroup value)
                                 {
                                     return true;
                                 }

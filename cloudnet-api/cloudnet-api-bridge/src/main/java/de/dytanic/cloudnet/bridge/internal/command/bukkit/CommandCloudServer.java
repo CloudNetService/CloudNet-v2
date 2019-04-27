@@ -6,6 +6,7 @@ package de.dytanic.cloudnet.bridge.internal.command.bukkit;
 
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
+import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector.MobImpl;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.SignSelector;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutAddMob;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutAddSign;
@@ -15,10 +16,15 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
 import de.dytanic.cloudnet.lib.serverselectors.sign.Position;
 import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -27,8 +33,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-
-import java.util.*;
 
 /**
  * Created by Tareko on 23.08.2017.
@@ -61,9 +65,9 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                 {
                     EntityType entityType = EntityType.valueOf(args[1].toUpperCase());
                     if (!entityType.isAlive() || !entityType.isSpawnable()) return false;
-                    if (CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
+                    if (CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Predicate<MobImpl>() {
                         @Override
-                        public boolean isAccepted(MobSelector.MobImpl value)
+                        public boolean test(MobSelector.MobImpl value)
                         {
                             return value.getMob().getName().equalsIgnoreCase(args[2]);
                         }
@@ -116,9 +120,9 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                     return false;
                 }
 
-                MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
+                MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Predicate<MobSelector.MobImpl>() {
                     @Override
-                    public boolean isAccepted(MobSelector.MobImpl value)
+                    public boolean test(MobSelector.MobImpl value)
                     {
                         return value.getMob().getName().equalsIgnoreCase(args[1]);
                     }
@@ -138,9 +142,9 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
             }
             if (args[0].equalsIgnoreCase("setDisplay"))
             {
-                MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
+                MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Predicate<MobSelector.MobImpl>() {
                     @Override
-                    public boolean isAccepted(MobSelector.MobImpl value)
+                    public boolean test(MobSelector.MobImpl value)
                     {
                         return value.getMob().getName().equalsIgnoreCase(args[1]);
                     }
@@ -232,9 +236,9 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
+                    MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Predicate<MobSelector.MobImpl>() {
                         @Override
-                        public boolean isAccepted(MobSelector.MobImpl value)
+                        public boolean test(MobSelector.MobImpl value)
                         {
                             return value.getMob().getName().equalsIgnoreCase(args[1]);
                         }
@@ -321,9 +325,9 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
+                    MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Predicate<MobSelector.MobImpl>() {
                         @Override
-                        public boolean isAccepted(MobSelector.MobImpl value)
+                        public boolean test(MobSelector.MobImpl value)
                         {
                             return value.getMob().getName().equalsIgnoreCase(args[1]);
                         }

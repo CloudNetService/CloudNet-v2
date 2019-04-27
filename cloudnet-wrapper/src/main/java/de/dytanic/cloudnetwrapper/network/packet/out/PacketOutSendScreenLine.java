@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.util.Collection;
 
 public class PacketOutSendScreenLine extends Packet {

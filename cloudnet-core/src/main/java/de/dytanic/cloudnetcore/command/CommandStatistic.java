@@ -9,7 +9,6 @@ import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.database.StatisticManager;
-
 import java.util.concurrent.TimeUnit;
 
 /**

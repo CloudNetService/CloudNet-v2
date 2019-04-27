@@ -5,7 +5,6 @@ import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.BungeeCord;
 import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
-
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 

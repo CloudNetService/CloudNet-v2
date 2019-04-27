@@ -15,12 +15,11 @@ import de.dytanic.cloudnet.logging.util.HeaderFunction;
 import de.dytanic.cloudnetcore.CloudConfig;
 import de.dytanic.cloudnetcore.CloudNet;
 import io.netty.util.ResourceLeakDetector;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 
 /**
  * Created by Tareko on 24.07.2017.

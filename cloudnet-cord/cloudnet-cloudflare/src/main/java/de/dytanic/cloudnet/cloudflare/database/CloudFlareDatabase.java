@@ -14,7 +14,6 @@ import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.Return;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,9 +60,9 @@ public class CloudFlareDatabase extends DatabaseUsable {
         */
 
         /*
-        return CollectionWrapper.filter(responses.values(), new Acceptable<MultiValue<PostResponse, String>>() {
+        return CollectionWrapper.filter(responses.values(), new Predicate<MultiValue<PostResponse, String>>() {
             @Override
-            public boolean isAccepted(MultiValue<PostResponse, String> value)
+            public boolean test(MultiValue<PostResponse, String> value)
             {
                 return value.getSecond().equalsIgnoreCase(wrapper) && value.getFirst().getCloudFlareConfig().getDomainName().equalsIgnoreCase(cloudFlareConfig.getDomainName());
             }

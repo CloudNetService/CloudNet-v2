@@ -12,7 +12,6 @@ import de.dytanic.cloudnet.lib.player.PlayerConnection;
 import de.dytanic.cloudnet.lib.player.PlayerExecutor;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
-
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 

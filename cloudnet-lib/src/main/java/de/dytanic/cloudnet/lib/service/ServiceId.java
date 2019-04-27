@@ -1,9 +1,8 @@
 package de.dytanic.cloudnet.lib.service;
 
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-
-import java.util.UUID;
 
 /**
  * Created by Tareko on 18.07.2017.

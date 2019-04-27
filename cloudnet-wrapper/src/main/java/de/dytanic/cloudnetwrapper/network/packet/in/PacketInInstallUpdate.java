@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;

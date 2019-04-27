@@ -5,10 +5,9 @@
 package de.dytanic.cloudnetcore.config;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.Getter;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
+import lombok.Getter;
 
 /**
  * Created by Tareko on 05.09.2017.

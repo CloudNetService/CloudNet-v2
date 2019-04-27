@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.modules;
 
 import de.dytanic.cloudnet.modules.exception.ModuleLoadException;
-
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;

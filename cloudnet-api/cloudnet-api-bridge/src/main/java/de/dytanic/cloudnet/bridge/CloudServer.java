@@ -10,7 +10,20 @@ import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.api.network.packet.out.PacketOutUpdateServerInfo;
 import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
-import de.dytanic.cloudnet.bridge.event.bukkit.*;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudNetworkUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCustomChannelMessageReceiveEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitOfflinePlayerUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitOnlineCountUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitPlayerDisconnectEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitPlayerLoginNetworkEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitPlayerUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitProxyAddEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitProxyInfoUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitProxyRemoveEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitServerAddEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitServerInfoUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitServerRemoveEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitSubChannelMessageEvent;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.NetworkUtils;
@@ -24,13 +37,25 @@ import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -41,21 +66,6 @@ import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Function;
 
 /**
  * Cloud-Server represents
@@ -199,9 +209,9 @@ public class CloudServer implements ICloudService {
 
     public CloudPlayer getCachedPlayer(String name)
     {
-        return CollectionWrapper.filter(this.cloudPlayers.values(), new Acceptable<CloudPlayer>() {
+        return CollectionWrapper.filter(this.cloudPlayers.values(), new Predicate<CloudPlayer>() {
             @Override
-            public boolean isAccepted(CloudPlayer cloudPlayer)
+            public boolean test(CloudPlayer cloudPlayer)
             {
                 return cloudPlayer.getName().equalsIgnoreCase(name);
             }

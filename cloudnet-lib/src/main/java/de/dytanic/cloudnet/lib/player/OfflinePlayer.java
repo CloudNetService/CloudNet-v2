@@ -9,12 +9,11 @@ import de.dytanic.cloudnet.lib.interfaces.Nameable;
 import de.dytanic.cloudnet.lib.player.permission.Permissible;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import java.lang.reflect.Type;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.lang.reflect.Type;
-import java.util.UUID;
 
 @Getter
 @Setter

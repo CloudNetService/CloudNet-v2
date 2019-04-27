@@ -3,11 +3,10 @@ package de.dytanic.cloudnet.lib.server;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Collection;
 import java.util.Properties;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Created by Tareko on 30.07.2017.
