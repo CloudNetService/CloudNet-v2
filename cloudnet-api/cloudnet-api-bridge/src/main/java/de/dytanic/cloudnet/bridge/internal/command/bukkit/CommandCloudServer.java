@@ -19,6 +19,11 @@ import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -305,11 +310,19 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                 }
                 if (args[0].equalsIgnoreCase("debug")) {
                     CloudAPI.getInstance().setDebug(!CloudAPI.getInstance().isDebug());
-                    if(CloudAPI.getInstance().isDebug()) {
+
+                    final LoggerContext context = (LoggerContext) LogManager.getContext(false);
+                    final Configuration configuration = context.getConfiguration();
+                    final LoggerConfig rootLoggerConfig = configuration.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
+
+                    if (CloudAPI.getInstance().isDebug()) {
+                        rootLoggerConfig.setLevel(Level.ALL);
                         commandSender.sendMessage("§aDebug output for server has been enabled.");
                     } else {
+                        rootLoggerConfig.setLevel(Level.INFO);
                         commandSender.sendMessage("§cDebug output for server has been disabled.");
                     }
+                    context.updateLoggers(configuration);
                 }
                 break;
             case 3:
