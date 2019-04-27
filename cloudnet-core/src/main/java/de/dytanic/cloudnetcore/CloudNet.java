@@ -158,7 +158,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             }
         });
 
-        webServer = new WebServer(optionSet.has("ssl"), config.getWebServerConfig().getAddress(), config.getWebServerConfig().getPort());
+        webServer = new WebServer(config.getWebServerConfig().getAddress(), config.getWebServerConfig().getPort());
 
         this.initialCommands();
         this.initWebHandlers();
