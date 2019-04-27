@@ -72,13 +72,8 @@ public final class BukkitListener implements Listener {
             if (uniqueId != null)
             {
                 requests.add(uniqueId);
-                Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(), new Runnable() {
-                    @Override
-                    public void run()
-                    {
-                        requests.remove(uniqueId);
-                    }
-                }, 20L);
+                Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(),
+                    () -> requests.remove(uniqueId), 20L);
             }
         }
     }
@@ -195,13 +190,8 @@ public final class BukkitListener implements Listener {
             CloudAPI.getInstance().startGameServer(CloudServer.getInstance().getGroupData(), new ServerConfig(false, "null", new Document(), System.currentTimeMillis()), true, CloudServer.getInstance().getTemplate());
             CloudServer.getInstance().setAllowAutoStart(false);
 
-            Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(), new Runnable() {
-                @Override
-                public void run()
-                {
-                    CloudServer.getInstance().setAllowAutoStart(true);
-                }
-            }, 6000);
+            Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(),
+                () -> CloudServer.getInstance().setAllowAutoStart(true), 6000);
         }
 
     }

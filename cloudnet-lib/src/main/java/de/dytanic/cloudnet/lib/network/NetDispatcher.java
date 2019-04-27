@@ -57,25 +57,15 @@ public class NetDispatcher extends SimpleChannelInboundHandler {
     {
         if (o instanceof Packet)
         {
-            TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-                @Override
-                public void run()
-                {
-                    networkConnection.getPacketManager().dispatchPacket(((Packet) o), networkConnection);
-                }
+            TaskScheduler.runtimeScheduler().schedule(() -> {
+                networkConnection.getPacketManager().dispatchPacket(((Packet) o), networkConnection);
             });
         } else
         {
             if (o instanceof FileDeploy)
             {
                 FileDeploy deploy = ((FileDeploy) o);
-                TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-                    @Override
-                    public void run()
-                    {
-                        deploy.toWrite();
-                    }
-                });
+                TaskScheduler.runtimeScheduler().schedule(() -> deploy.toWrite());
             }
         }
     }

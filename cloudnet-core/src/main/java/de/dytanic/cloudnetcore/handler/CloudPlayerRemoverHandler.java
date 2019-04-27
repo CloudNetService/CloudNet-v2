@@ -24,13 +24,8 @@ public class CloudPlayerRemoverHandler implements ICloudHandler {
 
         for (ProxyServer proxyServer : CloudNet.getInstance().getProxys().values())
         {
-            CollectionWrapper.iterator(proxyServer.getProxyInfo().getPlayers(), new Runnabled<MultiValue<UUID, String>>() {
-                @Override
-                public void run(MultiValue<UUID, String> obj)
-                {
-                    collection.add(obj.getFirst());
-                }
-            });
+            CollectionWrapper.iterator(proxyServer.getProxyInfo().getPlayers(),
+                (Runnabled<MultiValue<UUID, String>>) obj -> collection.add(obj.getFirst()));
         }
 
         for (CloudPlayer entries : CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values())

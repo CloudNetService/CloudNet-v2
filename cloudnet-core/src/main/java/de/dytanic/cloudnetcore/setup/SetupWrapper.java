@@ -26,40 +26,21 @@ public class SetupWrapper {
     {
         this.name = name;
 
-        Setup setup = new Setup().setupCancel(new ISetupCancel() {
-            @Override
-            public void cancel()
-            {
-                System.out.println("Setup was cancelled");
-            }
-        }).setupComplete(new ISetupComplete() {
-            @Override
-            public void complete(Document data)
-            {
+        Setup setup = new Setup().setupCancel(() -> System.out.println("Setup was cancelled")).setupComplete(
+            data -> {
                 String host = data.getString("address");
                 String user = data.getString("user");
 
                 WrapperMeta wrapperMeta = new WrapperMeta(name, host, user);
                 CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
                 commandSender.sendMessage("Wrapper [" + wrapperMeta.getId() + "] was registered on CloudNet");
-            }
-        });
+            });
 
         Consumer<SetupRequest> request = setup::request;
-        request.accept(new SetupRequest("address", "What's the IP address of the wrapper?", "Specified IP address is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
-            @Override
-            public Boolean doCatch(String key)
-            {
-                return key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1");
-            }
-        }));
-        request.accept(new SetupRequest("user", "What's the user of the wrapper?", "Specified name is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
-            @Override
-            public Boolean doCatch(String key)
-            {
-                return CloudNet.getInstance().getUser(key) != null;
-            }
-        }));
+        request.accept(new SetupRequest("address", "What's the IP address of the wrapper?", "Specified IP address is invalid!", SetupResponseType.STRING,
+            key -> key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1")));
+        request.accept(new SetupRequest("user", "What's the user of the wrapper?", "Specified name is invalid!", SetupResponseType.STRING,
+            key -> CloudNet.getInstance().getUser(key) != null));
         setup.start(CloudNet.getLogger().getReader());
     }
 

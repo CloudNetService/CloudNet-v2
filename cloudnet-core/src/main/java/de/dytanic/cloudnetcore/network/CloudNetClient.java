@@ -147,12 +147,7 @@ public class CloudNetClient
 
     public void init(CloudNetwork cloudNetwork)
     {
-        CloudNet.getInstance().getScheduler().runTaskAsync(new Runnable() {
-            @Override
-            public void run()
-            {
-                CloudNet.getInstance().getNetworkManager().sendAll(new PacketOutCloudNetwork(cloudNetwork));
-            }
-        });
+        CloudNet.getInstance().getScheduler().runTaskAsync(
+            () -> CloudNet.getInstance().getNetworkManager().sendAll(new PacketOutCloudNetwork(cloudNetwork)));
     }
 }

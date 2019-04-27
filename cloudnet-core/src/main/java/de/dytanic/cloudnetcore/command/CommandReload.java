@@ -60,35 +60,24 @@ public final class CommandReload extends Command {
                     CloudNet.getInstance().getUsers().clear();
                     CloudNet.getInstance().getUsers().addAll(CloudNet.getInstance().getConfig().getUsers());
 
-                    NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Acceptable<ServerGroup>() {
-                        @Override
-                        public boolean isAccepted(ServerGroup value)
-                        {
+                    NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(),
+                        value -> {
                             System.out.println("Loading ServerGroup: " + value.getName());
                             CloudNet.getInstance().setupGroup(value);
                             return true;
-                        }
-                    });
+                        });
 
-                    NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Acceptable<ProxyGroup>() {
-
-                        public boolean isAccepted(ProxyGroup value)
-                        {
+                    NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(),
+                        value -> {
                             System.out.println("Loading ProxyGroup: " + value.getName());
                             CloudNet.getInstance().setupProxy(value);
                             return true;
-                        }
-                    });
+                        });
 
                     CloudNet.getInstance().getNetworkManager().reload();
                     CloudNet.getInstance().getNetworkManager().updateAll();
-                    CloudNet.getInstance().getWrappers().values().forEach(new Consumer<Wrapper>() {
-                        @Override
-                        public void accept(Wrapper wrapper)
-                        {
-                            wrapper.updateWrapper();
-                        }
-                    });
+                    CloudNet.getInstance().getWrappers().values().forEach(
+                        wrapper -> wrapper.updateWrapper());
                     sender.sendMessage("[RELOAD] Reloading was completed successfully");
                 }
                 if (args[0].equalsIgnoreCase("wrapper"))

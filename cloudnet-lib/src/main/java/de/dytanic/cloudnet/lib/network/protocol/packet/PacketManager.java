@@ -75,13 +75,7 @@ public final class PacketManager {
         packet.uniqueId = uniqueId;
         Value<Result> handled = new Value<>(null);
         synchronizedHandlers.put(uniqueId, handled);
-        executorService.schedule(new Runnable() {
-            @Override
-            public void run()
-            {
-                packetSender.sendPacket(packet);
-            }
-        });
+        executorService.schedule(() -> packetSender.sendPacket(packet));
 
         int i = 0;
 
@@ -111,15 +105,11 @@ public final class PacketManager {
         }
 
         Collection<PacketInHandler> handlers = buildHandlers(incoming.id);
-        CollectionWrapper.iterator(handlers, new Runnabled<PacketInHandler>() {
-            @Override
-            public void run(PacketInHandler handler)
+        CollectionWrapper.iterator(handlers, (Runnabled<PacketInHandler>) handler -> {
+            if (incoming.uniqueId != null) handler.packetUniqueId = incoming.uniqueId;
+            if (handler != null)
             {
-                if (incoming.uniqueId != null) handler.packetUniqueId = incoming.uniqueId;
-                if (handler != null)
-                {
-                    handler.handleInput(incoming.data, packetSender);
-                }
+                handler.handleInput(incoming.data, packetSender);
             }
         });
         return true;

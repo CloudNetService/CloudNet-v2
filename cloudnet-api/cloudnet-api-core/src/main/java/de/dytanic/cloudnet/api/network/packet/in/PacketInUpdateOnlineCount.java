@@ -21,12 +21,7 @@ public class PacketInUpdateOnlineCount extends PacketInHandlerDefault {
     {
         int online = data.getInt("onlineCount");
         CloudAPI.getInstance().getCloudNetwork().setOnlineCount(online);
-        CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
-            @Override
-            public void run(NetworkHandler obj)
-            {
-                obj.onUpdateOnlineCount(online);
-            }
-        });
+        CloudAPI.getInstance().getNetworkHandlerProvider().iterator(
+            obj -> obj.onUpdateOnlineCount(online));
     }
 }

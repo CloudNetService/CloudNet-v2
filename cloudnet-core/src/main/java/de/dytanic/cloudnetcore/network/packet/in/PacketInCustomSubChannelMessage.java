@@ -46,13 +46,9 @@ public class PacketInCustomSubChannelMessage extends PacketInHandler {
                 }
             } else
             {
-                CloudNet.getInstance().getNetworkManager().sendAll(new PacketOutCustomSubChannelMessage(channel, message, document), new ChannelFilter() {
-                    @Override
-                    public boolean accept(INetworkComponent networkComponent)
-                    {
-                        return networkComponent instanceof MinecraftServer || networkComponent instanceof CloudServer;
-                    }
-                });
+                CloudNet.getInstance().getNetworkManager().sendAll(new PacketOutCustomSubChannelMessage(channel, message, document),
+                    networkComponent ->
+                        networkComponent instanceof MinecraftServer || networkComponent instanceof CloudServer);
             }
         } else
         {

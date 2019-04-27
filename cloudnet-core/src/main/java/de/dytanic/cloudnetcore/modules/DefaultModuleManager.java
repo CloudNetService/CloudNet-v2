@@ -36,13 +36,9 @@ public class DefaultModuleManager {
         }
 
         Collection<?> property = Collections.list(properties.propertyNames());
-        CollectionWrapper.iterator(property, new Runnabled() {
-            @Override
-            public void run(Object obj)
-            {
-                String pro = obj.toString();
-                modules.add(new DefaultModule(pro, properties.getProperty(pro)));
-            }
+        CollectionWrapper.iterator(property, (Runnabled) obj -> {
+            String pro = obj.toString();
+            modules.add(new DefaultModule(pro, properties.getProperty(pro)));
         });
 
         Path path;

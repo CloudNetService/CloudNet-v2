@@ -712,17 +712,12 @@ public class TaskScheduler {
 
         public VoidTaskEntry(Runnable ptask, Callback<Void> pComplete, long pDelay, long pRepeat)
         {
-            super(new Callable<Void>() {
+            super(() -> {
 
-                @Override
-                public Void call() throws Exception
-                {
+                if (ptask != null)
+                    ptask.run();
 
-                    if (ptask != null)
-                        ptask.run();
-
-                    return null;
-                }
+                return null;
             }, pComplete, pDelay, pRepeat);
         }
     }

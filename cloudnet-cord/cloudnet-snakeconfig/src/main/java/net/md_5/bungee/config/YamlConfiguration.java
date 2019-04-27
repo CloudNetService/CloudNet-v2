@@ -23,13 +23,8 @@ public class YamlConfiguration extends ConfigurationProvider {
         {
             Representer representer = new Representer() {
                 {
-                    representers.put(Configuration.class, new Represent() {
-                        @Override
-                        public Node representData(Object data)
-                        {
-                            return represent(((Configuration) data).self);
-                        }
-                    });
+                    representers.put(Configuration.class,
+                        data -> represent(((Configuration) data).self));
                 }
             };
 

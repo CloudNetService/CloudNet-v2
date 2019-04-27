@@ -21,13 +21,8 @@ public class PacketInCustomChannelMessage extends PacketInHandlerDefault {
     {
         if (CloudAPI.getInstance() != null)
         {
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
-                @Override
-                public void run(NetworkHandler obj)
-                {
-                    obj.onCustomChannelMessageReceive(data.getString("channel"), data.getString("message"), data.getDocument("value"));
-                }
-            });
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(
+                obj -> obj.onCustomChannelMessageReceive(data.getString("channel"), data.getString("message"), data.getDocument("value")));
         }
     }
 }

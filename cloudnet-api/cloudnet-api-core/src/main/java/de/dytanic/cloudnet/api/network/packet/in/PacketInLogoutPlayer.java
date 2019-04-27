@@ -30,26 +30,16 @@ public final class PacketInLogoutPlayer extends PacketInHandlerDefault {
         {
             if (CloudAPI.getInstance() != null)
             {
-                CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
-                    @Override
-                    public void run(NetworkHandler obj)
-                    {
-                        obj.onPlayerDisconnectNetwork(cloudPlayer);
-                    }
-                });
+                CloudAPI.getInstance().getNetworkHandlerProvider().iterator(
+                    obj -> obj.onPlayerDisconnectNetwork(cloudPlayer));
             }
         } else
         {
             UUID uuid = data.getObject("uniqueId", UUID.class);
             if (CloudAPI.getInstance() != null)
             {
-                CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
-                    @Override
-                    public void run(NetworkHandler obj)
-                    {
-                        obj.onPlayerDisconnectNetwork(uuid);
-                    }
-                });
+                CloudAPI.getInstance().getNetworkHandlerProvider().iterator(
+                    obj -> obj.onPlayerDisconnectNetwork(uuid));
             }
         }
     }

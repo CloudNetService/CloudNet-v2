@@ -257,13 +257,8 @@ public final class CommandCloud extends Command implements TabExecutor {
                 if (args[0].equalsIgnoreCase("log") && commandSender.hasPermission("cloudnet.command.cloud.log"))
                 {
                     if (CloudProxy.getInstance().getCachedServers().containsKey(args[1]) ||
-                            CollectionWrapper.filter(CloudAPI.getInstance().getProxys(), new Acceptable<ProxyInfo>() {
-                                @Override
-                                public boolean isAccepted(ProxyInfo proxyInfo)
-                                {
-                                    return proxyInfo.getServiceId().getServerId().equalsIgnoreCase(args[1]);
-                                }
-                            }) != null)
+                            CollectionWrapper.filter(CloudAPI.getInstance().getProxys(),
+                                proxyInfo -> proxyInfo.getServiceId().getServerId().equalsIgnoreCase(args[1])) != null)
                     {
                         String url = CloudAPI.getInstance().createServerLogUrl(args[1]);
                         TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText("§n§l§b" + url));
@@ -330,13 +325,8 @@ public final class CommandCloud extends Command implements TabExecutor {
                         CloudAPI.getInstance().stopServer(args[1]);
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
                                 "The information was sent to the cloud");
-                    } else if (CollectionWrapper.filter(CloudAPI.getInstance().getProxys(), new Acceptable<ProxyInfo>() {
-                        @Override
-                        public boolean isAccepted(ProxyInfo proxyInfo)
-                        {
-                            return proxyInfo.getServiceId().getServerId().equalsIgnoreCase(args[1]);
-                        }
-                    }) != null)
+                    } else if (CollectionWrapper.filter(CloudAPI.getInstance().getProxys(),
+                        proxyInfo -> proxyInfo.getServiceId().getServerId().equalsIgnoreCase(args[1])) != null)
                     {
                         CloudAPI.getInstance().stopProxy(args[1]);
                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
@@ -381,13 +371,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                     if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1]))
                     {
                         Collection<ServerInfo> servers = CollectionWrapper.filterMany(CloudProxy.getInstance().getCachedServers().values(),
-                                new Acceptable<ServerInfo>() {
-                                    @Override
-                                    public boolean isAccepted(ServerInfo serverInfo)
-                                    {
-                                        return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(args[1]);
-                                    }
-                                });
+                            serverInfo -> serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(args[1]));
 
                         for (ServerInfo server : servers)
                             if (server.getOnlineCount() == 0)
@@ -445,16 +429,13 @@ public final class CommandCloud extends Command implements TabExecutor {
                             if (commandSender.hasPermission("cloudnet.command.cloud.maintenance"))
                             {
                                 if (!NetworkUtils.checkIsNumber(args[2])) return;
-                                ProxyServer.getInstance().getScheduler().schedule(CloudProxy.getInstance().getPlugin(), new Runnable() {
-                                    @Override
-                                    public void run()
-                                    {
+                                ProxyServer.getInstance().getScheduler().schedule(CloudProxy.getInstance().getPlugin(),
+                                    () -> {
                                         ProxyGroup proxyGroup = CloudProxy.getInstance().getProxyGroup();
                                         proxyGroup.getProxyConfig().setMaintenance(!proxyGroup.getProxyConfig().isMaintenance());
                                         CloudAPI.getInstance().updateProxyGroup(proxyGroup);
                                         commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The maintenance state was updated.");
-                                    }
-                                }, Integer.parseInt(args[2]), TimeUnit.SECONDS);
+                                    }, Integer.parseInt(args[2]), TimeUnit.SECONDS);
                                 commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The maintenance will be changed in " + args[2] + " seconds");
                             }
                             return;
@@ -477,21 +458,11 @@ public final class CommandCloud extends Command implements TabExecutor {
                         } else
                         {
                             ServerGroup serverGroup = CloudAPI.getInstance().getServerGroup(args[1]);
-                            if (CollectionWrapper.filter(serverGroup.getTemplates(), new Acceptable<Template>() {
-                                @Override
-                                public boolean isAccepted(Template value)
-                                {
-                                    return value.getName().equalsIgnoreCase(args[2]);
-                                }
-                            }) != null)
+                            if (CollectionWrapper.filter(serverGroup.getTemplates(),
+                                value -> value.getName().equalsIgnoreCase(args[2])) != null)
                             {
-                                CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData(args[1]), new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()), true, CollectionWrapper.filter(serverGroup.getTemplates(), new Acceptable<Template>() {
-                                    @Override
-                                    public boolean isAccepted(Template value)
-                                    {
-                                        return value.getName().equalsIgnoreCase(args[2]);
-                                    }
-                                }));
+                                CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData(args[1]), new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()), true, CollectionWrapper.filter(serverGroup.getTemplates(),
+                                    value -> value.getName().equalsIgnoreCase(args[2])));
                                 commandSender.sendMessage(CloudAPI.getInstance().getPrefix() +
                                         "The information was sent to the cloud");
                             }

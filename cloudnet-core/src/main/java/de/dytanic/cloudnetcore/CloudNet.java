@@ -138,24 +138,16 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         this.users = config.getUsers();
 
-        NetworkUtils.addAll(this.serverGroups, config.getServerGroups(), new Acceptable<ServerGroup>() {
-            @Override
-            public boolean isAccepted(ServerGroup value)
-            {
-                System.out.println("Loading ServerGroup: " + value.getName());
-                setupGroup(value);
-                return true;
-            }
+        NetworkUtils.addAll(this.serverGroups, config.getServerGroups(), value -> {
+            System.out.println("Loading ServerGroup: " + value.getName());
+            setupGroup(value);
+            return true;
         });
 
-        NetworkUtils.addAll(this.proxyGroups, config.getProxyGroups(), new Acceptable<ProxyGroup>() {
-            @Override
-            public boolean isAccepted(ProxyGroup value)
-            {
-                System.out.println("Loading ProxyGroup: " + value.getName());
-                setupProxy(value);
-                return true;
-            }
+        NetworkUtils.addAll(this.proxyGroups, config.getProxyGroups(), value -> {
+            System.out.println("Loading ProxyGroup: " + value.getName());
+            setupProxy(value);
+            return true;
         });
 
         webServer = new WebServer(optionSet.has("ssl"), config.getWebServerConfig().getAddress(), config.getWebServerConfig().getPort());
@@ -197,14 +189,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             scheduler.runTaskRepeatSync(cloudStopCheck, 0, cloudStopCheck.getTicks());
             scheduler.runTaskRepeatSync(serverLogManager, 0, 2000);
 
-            scheduler.runTaskRepeatSync(new Runnable() {
-                @Override
-                public void run()
-                {
-                    for (CloudPlayer cloudPlayer : networkManager.getWaitingPlayers().values())
-                        if ((cloudPlayer.getLoginTimeStamp().getTime() + 10000L) < System.currentTimeMillis())
-                            networkManager.getWaitingPlayers().remove(cloudPlayer.getUniqueId());
-                }
+            scheduler.runTaskRepeatSync(() -> {
+                for (CloudPlayer cloudPlayer : networkManager.getWaitingPlayers().values())
+                    if ((cloudPlayer.getLoginTimeStamp().getTime() + 10000L) < System.currentTimeMillis())
+                        networkManager.getWaitingPlayers().remove(cloudPlayer.getUniqueId());
             }, 0, 100);
         }
 
@@ -245,22 +233,16 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         this.users = config.getUsers();
 
-        NetworkUtils.addAll(this.serverGroups, config.getServerGroups(), new Acceptable<ServerGroup>() {
-            public boolean isAccepted(ServerGroup value)
-            {
-                System.out.println("Loading server group: " + value.getName());
-                setupGroup(value);
-                return true;
-            }
+        NetworkUtils.addAll(this.serverGroups, config.getServerGroups(), value -> {
+            System.out.println("Loading server group: " + value.getName());
+            setupGroup(value);
+            return true;
         });
 
-        NetworkUtils.addAll(this.proxyGroups, config.getProxyGroups(), new Acceptable<ProxyGroup>() {
-            public boolean isAccepted(ProxyGroup value)
-            {
-                System.out.println("Loading proxy group: " + value.getName());
-                setupProxy(value);
-                return true;
-            }
+        NetworkUtils.addAll(this.proxyGroups, config.getProxyGroups(), value -> {
+            System.out.println("Loading proxy group: " + value.getName());
+            setupProxy(value);
+            return true;
         });
 
         this.initialCommands();
@@ -510,13 +492,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public boolean authorization(String name, String token)
     {
-        User user = CollectionWrapper.filter(users, new Acceptable<User>() {
-            @Override
-            public boolean isAccepted(User value)
-            {
-                return value.getName().equalsIgnoreCase(name);
-            }
-        });
+        User user = CollectionWrapper.filter(users, value -> value.getName().equalsIgnoreCase(name));
         if (user != null)
         {
             if (user.getApiToken().equals(token)) return true;
@@ -526,13 +502,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public boolean authorizationPassword(String name, String password)
     {
-        User user = CollectionWrapper.filter(users, new Acceptable<User>() {
-            @Override
-            public boolean isAccepted(User value)
-            {
-                return value.getName().equalsIgnoreCase(name);
-            }
-        });
+        User user = CollectionWrapper.filter(users, value -> value.getName().equalsIgnoreCase(name));
         if (user != null)
         {
             if (user.getHashedPassword().equals(DyHash.hashString(password))) return true;
@@ -552,30 +522,22 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public User getUser(String name)
     {
-        return CollectionWrapper.filter(users, new Acceptable<User>() {
-            @Override
-            public boolean isAccepted(User value)
-            {
-                return name.toLowerCase().equals(value.getName().toLowerCase());
-            }
-        });
+        return CollectionWrapper.filter(users,
+            value -> name.toLowerCase().equals(value.getName().toLowerCase()));
     }
 
     public int getGlobalUsedMemoryAndWaitings()
     {
         AtomicInteger atomicInteger = new AtomicInteger(0);
-        CollectionWrapper.iterator(CloudNet.getInstance().getWrappers().values(), new Runnabled<Wrapper>() {
-            @Override
-            public void run(Wrapper obj)
-            {
+        CollectionWrapper.iterator(CloudNet.getInstance().getWrappers().values(),
+            (Runnabled<Wrapper>) obj -> {
                 atomicInteger.addAndGet(obj.getUsedMemory());
 
                 for (Quad<Integer, Integer, ServiceId, Template> serviceIdTrio : obj.getWaitingServices().values())
                 {
                     atomicInteger.addAndGet(serviceIdTrio.getSecond());
                 }
-            }
-        });
+            });
         return atomicInteger.get();
     }
 
@@ -593,13 +555,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 1;
         Collection<ServiceId> serviceIds = getProxysServiceIdsAndWaitings(proxyGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key)
-            {
-                return key.getId();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
         while (collection.contains(id)) id++;
 
         return new ServiceId(proxyGroup.getName(), id, UUID.randomUUID(), wrapper.getNetworkInfo().getId(), proxyGroup.getName() + config.getFormatSplitter() + id);
@@ -609,13 +565,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 1;
         Collection<ServiceId> serviceIds = getProxysServiceIdsAndWaitings(proxyGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key)
-            {
-                return key.getId();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
         while (collection.contains(id)) id++;
 
         return new ServiceId(proxyGroup.getName(), id, uuid, wrapper.getNetworkInfo().getId(), proxyGroup.getName() + config.getFormatSplitter() + id);
@@ -630,13 +580,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 1;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key)
-            {
-                return key.getId();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
         while (collection.contains(id)) id++;
 
         return new ServiceId(serverGroup.getName(), id, UUID.randomUUID(), wrapper.getNetworkInfo().getId(), serverGroup.getName() + config.getFormatSplitter() + id);
@@ -646,13 +590,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 1;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key)
-            {
-                return key.getId();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
         while (collection.contains(id)) id++;
 
         return new ServiceId(serverGroup.getName(), id, UUID.randomUUID(), wrapper.getNetworkInfo().getId(), serverId);
@@ -672,13 +610,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 0;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key)
-            {
-                return key.getId();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
         while (collection.contains(id)) id++;
         return new ServiceId(serverGroup.getName(), id, uniqueId, wrapper.getNetworkInfo().getId(), serverGroup.getName() + config.getFormatSplitter() + id);
     }
@@ -697,13 +629,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 0;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key)
-            {
-                return key.getId();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
         while (collection.contains(id)) id++;
         return new ServiceId(serverGroup.getName(), id, uniqueId, wrapper.getNetworkInfo().getId(), serverId);
     }
@@ -718,33 +644,18 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public long globalMaxMemory()
     {
         AtomicInteger atomicInteger = new AtomicInteger();
-        CollectionWrapper.iterator(getWrappers().values(), new Runnabled<Wrapper>() {
-            @Override
-            public void run(Wrapper obj)
-            {
-                atomicInteger.addAndGet(obj.getMaxMemory());
-            }
-        });
+        CollectionWrapper.iterator(getWrappers().values(),
+            (Runnabled<Wrapper>) obj -> atomicInteger.addAndGet(obj.getMaxMemory()));
         return atomicInteger.get();
     }
 
     public long globalUsedMemory()
     {
         AtomicInteger atomicInteger = new AtomicInteger(0);
-        CollectionWrapper.iterator(getServers().values(), new Runnabled<MinecraftServer>() {
-            @Override
-            public void run(MinecraftServer obj)
-            {
-                atomicInteger.addAndGet(obj.getProcessMeta().getMemory());
-            }
-        });
-        CollectionWrapper.iterator(getProxys().values(), new Runnabled<ProxyServer>() {
-            @Override
-            public void run(ProxyServer obj)
-            {
-                atomicInteger.addAndGet(obj.getProcessMeta().getMemory());
-            }
-        });
+        CollectionWrapper.iterator(getServers().values(),
+            (Runnabled<MinecraftServer>) obj -> atomicInteger.addAndGet(obj.getProcessMeta().getMemory()));
+        CollectionWrapper.iterator(getProxys().values(),
+            (Runnabled<ProxyServer>) obj -> atomicInteger.addAndGet(obj.getProcessMeta().getMemory()));
         return atomicInteger.get();
     }
 
@@ -793,13 +704,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public Collection<String> getServersAndWaitings(String group)
     {
-        Collection<String> strings = CollectionWrapper.transform(getServers(group), new Catcher<String, MinecraftServer>() {
-            @Override
-            public String doCatch(MinecraftServer key)
-            {
-                return key.getServerId();
-            }
-        });
+        Collection<String> strings = CollectionWrapper.transform(getServers(group),
+            key -> key.getServerId());
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -814,13 +720,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public Collection<Trio<String, Integer, Integer>> getServersAndWaitingData(String group)
     {
-        Collection<Trio<String, Integer, Integer>> strings = CollectionWrapper.transform(getServers(group), new Catcher<Trio<String, Integer, Integer>, MinecraftServer>() {
-            @Override
-            public Trio<String, Integer, Integer> doCatch(MinecraftServer key)
-            {
-                return new Trio<>(key.getServerId(), key.getServerInfo().getOnlineCount(), key.getServerInfo().getMaxPlayers());
-            }
-        });
+        Collection<Trio<String, Integer, Integer>> strings = CollectionWrapper.transform(getServers(group),
+            key -> new Trio<>(key.getServerId(), key.getServerInfo().getOnlineCount(), key.getServerInfo().getMaxPlayers()));
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -835,13 +736,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public Collection<ServiceId> getServerServiceIdsAndWaitings(String group)
     {
-        Collection<ServiceId> strings = CollectionWrapper.transform(getServers(group), new Catcher<ServiceId, MinecraftServer>() {
-            @Override
-            public ServiceId doCatch(MinecraftServer key)
-            {
-                return key.getServiceId();
-            }
-        });
+        Collection<ServiceId> strings = CollectionWrapper.transform(getServers(group),
+            key -> key.getServiceId());
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -856,13 +752,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public Collection<String> getServersAndWaitings()
     {
-        Collection<String> strings = CollectionWrapper.transform(getServers().values(), new Catcher<String, MinecraftServer>() {
-            @Override
-            public String doCatch(MinecraftServer key)
-            {
-                return key.getServerId();
-            }
-        });
+        Collection<String> strings = CollectionWrapper.transform(getServers().values(),
+            key -> key.getServerId());
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -876,13 +767,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public Collection<String> getProxysAndWaitings(String group)
     {
-        Collection<String> strings = CollectionWrapper.transform(getProxys(group), new Catcher<String, ProxyServer>() {
-            @Override
-            public String doCatch(ProxyServer key)
-            {
-                return key.getServerId();
-            }
-        });
+        Collection<String> strings = CollectionWrapper.transform(getProxys(group),
+            key -> key.getServerId());
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -897,13 +783,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public Collection<ServiceId> getProxysServiceIdsAndWaitings(String group)
     {
-        Collection<ServiceId> strings = CollectionWrapper.transform(getProxys(group), new Catcher<ServiceId, ProxyServer>() {
-            @Override
-            public ServiceId doCatch(ProxyServer key)
-            {
-                return key.getServiceId();
-            }
-        });
+        Collection<ServiceId> strings = CollectionWrapper.transform(getProxys(group),
+            key -> key.getServiceId());
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -918,13 +799,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public CloudServer getCloudGameServer(String serverId)
     {
-        return CollectionWrapper.filter(getCloudGameServers().values(), new Acceptable<CloudServer>() {
-            @Override
-            public boolean isAccepted(CloudServer cloudServer)
-            {
-                return cloudServer.getServerId().equalsIgnoreCase(serverId);
-            }
-        });
+        return CollectionWrapper.filter(getCloudGameServers().values(),
+            cloudServer -> cloudServer.getServerId().equalsIgnoreCase(serverId));
     }
 
     public Map<String, CloudServer> getCloudGameServers()
@@ -1067,13 +943,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public void startProxy(Wrapper wrapper, ProxyGroup proxyGroup)
     {
-        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
-            @Override
-            public Integer doCatch(ProxyServer key)
-            {
-                return key.getProxyInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(),
+            key -> key.getProxyInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
 
         int startport = proxyGroup.getStartPort();
@@ -1099,13 +970,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
         if (wrapper == null) return;
 
-        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
-            @Override
-            public Integer doCatch(ProxyServer key)
-            {
-                return key.getProxyInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(),
+            key -> key.getProxyInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         int startport = proxyGroup.getStartPort();
         while (collection.contains(startport))
@@ -1120,13 +986,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         if (wrapper == null) return;
 
-        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
-            @Override
-            public Integer doCatch(ProxyServer key)
-            {
-                return key.getProxyInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(),
+            key -> key.getProxyInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         int startport = proxyGroup.getStartPort();
         while (collection.contains(startport))
@@ -1142,13 +1003,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
         if (wrapper == null) return;
 
-        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
-            @Override
-            public Integer doCatch(ProxyServer key)
-            {
-                return key.getProxyInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(),
+            key -> key.getProxyInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         int startport = proxyGroup.getStartPort();
         while (collection.contains(startport))
@@ -1164,13 +1020,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
         if (wrapper == null) return;
 
-        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
-            @Override
-            public Integer doCatch(ProxyServer key)
-            {
-                return key.getProxyInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(),
+            key -> key.getProxyInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         int startport = proxyGroup.getStartPort();
         while (collection.contains(startport))
@@ -1185,13 +1036,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         if (wrapper == null) return;
 
-        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
-            @Override
-            public Integer doCatch(ProxyServer key)
-            {
-                return key.getProxyInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(),
+            key -> key.getProxyInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         int startport = proxyGroup.getStartPort();
         while (collection.contains(startport))
@@ -1275,13 +1121,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public void startCloudServer(Wrapper wrapper, String serverName, ServerConfig serverConfig, int memory, boolean priorityStop, String[] processPreParameters, Collection<ServerInstallablePlugin> plugins,
                                  Properties properties, ServerGroupType serverGroupType)
     {
-        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(), new Catcher<Integer, MinecraftServer>() {
-            @Override
-            public Integer doCatch(MinecraftServer key)
-            {
-                return key.getServerInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(),
+            key -> key.getServerInfo().getPort());
         int startport = wrapper.getWrapperInfo().getStartPort();
         startport = (startport + NetworkUtils.RANDOM.nextInt(20) + 1);
         while (collection.contains(startport))
@@ -1462,38 +1303,27 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         if (serverGroup.getTemplates().size() == 0) return;
         Map<String, Integer> templateMap = new WeakHashMap<>();
-        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(), new Catcher<Integer, MinecraftServer>() {
-            @Override
-            public Integer doCatch(MinecraftServer key)
-            {
-                return key.getServerInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(),
+            key -> key.getServerInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
-            @Override
-            public void run(MinecraftServer obj)
-            {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()),
+            (Runnabled<MinecraftServer>) obj -> {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
                     templateMap.put(template.getName(), 1);
                 else
                     templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
-            }
-        });
+            });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
-            @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
-            {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(),
+            (Runnabled<Quad<Integer, Integer, ServiceId, Template>>) obj -> {
                 Template template = obj.getFourth();
                 if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
                 }
-            }
-        });
+            });
 
         for (Template template : serverGroup.getTemplates())
         {
@@ -1550,38 +1380,27 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         if (serverGroup.getTemplates().size() == 0) return;
         Map<String, Integer> templateMap = new WeakHashMap<>();
-        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(), new Catcher<Integer, MinecraftServer>() {
-            @Override
-            public Integer doCatch(MinecraftServer key)
-            {
-                return key.getServerInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(),
+            key -> key.getServerInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
-            @Override
-            public void run(MinecraftServer obj)
-            {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()),
+            (Runnabled<MinecraftServer>) obj -> {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
                     templateMap.put(template.getName(), 1);
                 else
                     templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
-            }
-        });
+            });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
-            @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
-            {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(),
+            (Runnabled<Quad<Integer, Integer, ServiceId, Template>>) obj -> {
                 Template template = obj.getFourth();
                 if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
                 }
-            }
-        });
+            });
 
         for (Template template : serverGroup.getTemplates())
         {
@@ -1637,13 +1456,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         if (wrapper == null) return;
 
         if (serverGroup.getTemplates().size() == 0) return;
-        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(), new Catcher<Integer, MinecraftServer>() {
-            @Override
-            public Integer doCatch(MinecraftServer key)
-            {
-                return key.getServerInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(),
+            key -> key.getServerInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         if (template == null) return;
         int startport = wrapper.getWrapperInfo().getStartPort();
@@ -1670,13 +1484,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         if (wrapper == null) return;
 
         if (serverGroup.getTemplates().size() == 0) return;
-        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(), new Catcher<Integer, MinecraftServer>() {
-            @Override
-            public Integer doCatch(MinecraftServer key)
-            {
-                return key.getServerInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(),
+            key -> key.getServerInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         if (template == null) return;
         int startport = wrapper.getWrapperInfo().getStartPort();
@@ -1704,38 +1513,27 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         if (serverGroup.getTemplates().size() == 0) return;
         Map<String, Integer> templateMap = new WeakHashMap<>();
-        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(), new Catcher<Integer, MinecraftServer>() {
-            @Override
-            public Integer doCatch(MinecraftServer key)
-            {
-                return key.getServerInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(),
+            key -> key.getServerInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
-            @Override
-            public void run(MinecraftServer obj)
-            {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()),
+            (Runnabled<MinecraftServer>) obj -> {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
                     templateMap.put(template.getName(), 1);
                 else
                     templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
-            }
-        });
+            });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
-            @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
-            {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(),
+            (Runnabled<Quad<Integer, Integer, ServiceId, Template>>) obj -> {
                 Template template = obj.getFourth();
                 if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
                 }
-            }
-        });
+            });
 
         for (Template template : serverGroup.getTemplates())
         {
@@ -1796,37 +1594,26 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         if (serverGroup.getTemplates().size() == 0) return;
         Map<String, Integer> templateMap = new WeakHashMap<>();
-        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(), new Catcher<Integer, MinecraftServer>() {
-            @Override
-            public Integer doCatch(MinecraftServer key)
-            {
-                return key.getServerInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(),
+            key -> key.getServerInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
 
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
-            @Override
-            public void run(MinecraftServer obj)
-            {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()),
+            (Runnabled<MinecraftServer>) obj -> {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                 else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
-            }
-        });
+            });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
-            @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
-            {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(),
+            (Runnabled<Quad<Integer, Integer, ServiceId, Template>>) obj -> {
                 Template template = obj.getFourth();
                 if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
                 }
-            }
-        });
+            });
 
         for (Template template : serverGroup.getTemplates())
         {
@@ -1885,13 +1672,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         Wrapper wrapper = fetchPerformanceWrapper(proxyGroup.getMemory(), toWrapperInstances(proxyGroup.getWrapper()));
         if (wrapper == null) return;
 
-        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
-            @Override
-            public Integer doCatch(ProxyServer key)
-            {
-                return key.getProxyInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(),
+            key -> key.getProxyInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         int startport = proxyGroup.getStartPort();
         while (collection.contains(startport))
@@ -1907,13 +1689,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
         if (wrapper == null) return;
 
-        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
-            @Override
-            public Integer doCatch(ProxyServer key)
-            {
-                return key.getProxyInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(),
+            key -> key.getProxyInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         int startport = proxyGroup.getStartPort();
         while (collection.contains(startport))
@@ -1929,13 +1706,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
         if (wrapper == null) return;
 
-        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
-            @Override
-            public Integer doCatch(ProxyServer key)
-            {
-                return key.getProxyInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(),
+            key -> key.getProxyInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         int startport = proxyGroup.getStartPort();
         while (collection.contains(startport))
@@ -1951,13 +1723,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
         if (wrapper == null) return;
 
-        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(), new Catcher<Integer, ProxyServer>() {
-            @Override
-            public Integer doCatch(ProxyServer key)
-            {
-                return key.getProxyInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(getProxys(),
+            key -> key.getProxyInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
         int startport = proxyGroup.getStartPort();
         while (collection.contains(startport))
@@ -2150,38 +1917,27 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         if (serverGroup.getTemplates().size() == 0) return;
         Map<String, Integer> templateMap = new WeakHashMap<>();
-        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(), new Catcher<Integer, MinecraftServer>() {
-            @Override
-            public Integer doCatch(MinecraftServer key)
-            {
-                return key.getServerInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(),
+            key -> key.getServerInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
-            @Override
-            public void run(MinecraftServer obj)
-            {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()),
+            (Runnabled<MinecraftServer>) obj -> {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
                     templateMap.put(template.getName(), 1);
                 else
                     templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
-            }
-        });
+            });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
-            @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
-            {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(),
+            (Runnabled<Quad<Integer, Integer, ServiceId, Template>>) obj -> {
                 Template template = obj.getFourth();
                 if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
                 }
-            }
-        });
+            });
 
         for (Template template : serverGroup.getTemplates())
         {
@@ -2235,38 +1991,27 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         if (serverGroup.getTemplates().size() == 0) return;
         Map<String, Integer> templateMap = new WeakHashMap<>();
-        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(), new Catcher<Integer, MinecraftServer>() {
-            @Override
-            public Integer doCatch(MinecraftServer key)
-            {
-                return key.getServerInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(),
+            key -> key.getServerInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
-            @Override
-            public void run(MinecraftServer obj)
-            {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()),
+            (Runnabled<MinecraftServer>) obj -> {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
                     templateMap.put(template.getName(), 1);
                 else
                     templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
-            }
-        });
+            });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
-            @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
-            {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(),
+            (Runnabled<Quad<Integer, Integer, ServiceId, Template>>) obj -> {
                 Template template = obj.getFourth();
                 if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
                 }
-            }
-        });
+            });
 
         for (Template template : serverGroup.getTemplates())
         {
@@ -2323,38 +2068,27 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         if (serverGroup.getTemplates().size() == 0) return;
         Map<String, Integer> templateMap = new WeakHashMap<>();
-        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(), new Catcher<Integer, MinecraftServer>() {
-            @Override
-            public Integer doCatch(MinecraftServer key)
-            {
-                return key.getServerInfo().getPort();
-            }
-        });
+        Collection<Integer> collection = CollectionWrapper.getCollection(wrapper.getServers(),
+            key -> key.getServerInfo().getPort());
         collection.addAll(wrapper.getBinndedPorts());
-        CollectionWrapper.iterator(getServers(serverGroup.getName()), new Runnabled<MinecraftServer>() {
-            @Override
-            public void run(MinecraftServer obj)
-            {
+        CollectionWrapper.iterator(getServers(serverGroup.getName()),
+            (Runnabled<MinecraftServer>) obj -> {
                 Template template = obj.getProcessMeta().getTemplate();
                 if (!templateMap.containsKey(template.getName()))
                     templateMap.put(template.getName(), 1);
                 else
                     templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
-            }
-        });
+            });
 
-        CollectionWrapper.iterator(wrapper.getWaitingServices().values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
-            @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
-            {
+        CollectionWrapper.iterator(wrapper.getWaitingServices().values(),
+            (Runnabled<Quad<Integer, Integer, ServiceId, Template>>) obj -> {
                 Template template = obj.getFourth();
                 if (template != null)
                 {
                     if (!templateMap.containsKey(template.getName())) templateMap.put(template.getName(), 1);
                     else templateMap.put(template.getName(), templateMap.get(template.getName()) + 1);
                 }
-            }
-        });
+            });
 
         for (Template template : serverGroup.getTemplates())
         {

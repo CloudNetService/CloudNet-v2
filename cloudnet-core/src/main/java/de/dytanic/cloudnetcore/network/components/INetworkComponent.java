@@ -42,16 +42,12 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
             }
         } else
         {
-            getChannel().eventLoop().execute(new Runnable() {
-                @Override
-                public void run()
+            getChannel().eventLoop().execute(() -> {
+                try
                 {
-                    try
-                    {
-                        getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-                    } catch (Exception ignored)
-                    {
-                    }
+                    getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+                } catch (Exception ignored)
+                {
                 }
             });
         }
@@ -88,13 +84,7 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
             getChannel().writeAndFlush(object);
         } else
         {
-            getChannel().eventLoop().execute(new Runnable() {
-                @Override
-                public void run()
-                {
-                    getChannel().writeAndFlush(object);
-                }
-            });
+            getChannel().eventLoop().execute(() -> getChannel().writeAndFlush(object));
         }
     }
 

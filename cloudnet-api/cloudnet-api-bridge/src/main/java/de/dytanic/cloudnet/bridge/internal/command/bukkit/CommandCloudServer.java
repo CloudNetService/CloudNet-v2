@@ -6,6 +6,7 @@ package de.dytanic.cloudnet.bridge.internal.command.bukkit;
 
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
+import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector.MobImpl;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.SignSelector;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutAddMob;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutAddSign;
@@ -61,13 +62,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                 {
                     EntityType entityType = EntityType.valueOf(args[1].toUpperCase());
                     if (!entityType.isAlive() || !entityType.isSpawnable()) return false;
-                    if (CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
-                        @Override
-                        public boolean isAccepted(MobSelector.MobImpl value)
-                        {
-                            return value.getMob().getName().equalsIgnoreCase(args[2]);
-                        }
-                    }) == null)
+                    if (CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(),
+                        value -> value.getMob().getName().equalsIgnoreCase(args[2])) == null)
                     {
                         StringBuilder stringBuilder = new StringBuilder();
                         for (short i = 6; i < args.length; i++)
@@ -116,13 +112,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                     return false;
                 }
 
-                MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
-                    @Override
-                    public boolean isAccepted(MobSelector.MobImpl value)
-                    {
-                        return value.getMob().getName().equalsIgnoreCase(args[1]);
-                    }
-                });
+                MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(),
+                    value -> value.getMob().getName().equalsIgnoreCase(args[1]));
                 if (mob != null)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
@@ -138,13 +129,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
             }
             if (args[0].equalsIgnoreCase("setDisplay"))
             {
-                MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
-                    @Override
-                    public boolean isAccepted(MobSelector.MobImpl value)
-                    {
-                        return value.getMob().getName().equalsIgnoreCase(args[1]);
-                    }
-                });
+                MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(),
+                    value -> value.getMob().getName().equalsIgnoreCase(args[1]));
                 if (mob != null)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
@@ -232,13 +218,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
-                        @Override
-                        public boolean isAccepted(MobSelector.MobImpl value)
-                        {
-                            return value.getMob().getName().equalsIgnoreCase(args[1]);
-                        }
-                    });
+                    MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(),
+                        value -> value.getMob().getName().equalsIgnoreCase(args[1]));
                     if (mob != null)
                     {
                         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveMob(mob.getMob()));
@@ -281,13 +262,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    CollectionWrapper.iterator(MobSelector.getInstance().getMobs().values(), new Runnabled<MobSelector.MobImpl>() {
-                        @Override
-                        public void run(MobSelector.MobImpl obj)
-                        {
-                            commandSender.sendMessage("- " + obj.getMob().getName());
-                        }
-                    });
+                    CollectionWrapper.iterator(MobSelector.getInstance().getMobs().values(),
+                        (Runnabled<MobImpl>) obj -> commandSender.sendMessage("- " + obj.getMob().getName()));
                 }
                 if (args[0].equalsIgnoreCase("moblist"))
                 {
@@ -321,13 +297,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                         return false;
                     }
 
-                    MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
-                        @Override
-                        public boolean isAccepted(MobSelector.MobImpl value)
-                        {
-                            return value.getMob().getName().equalsIgnoreCase(args[1]);
-                        }
-                    });
+                    MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(),
+                        value -> value.getMob().getName().equalsIgnoreCase(args[1]));
                     if (mob != null)
                     {
                         int itemId = NetworkUtils.checkIsNumber(args[2]) ? Integer.parseInt(args[2]) : 138;

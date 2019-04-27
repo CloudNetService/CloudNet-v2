@@ -72,13 +72,8 @@ public final class CommandPermissions extends Command {
                         for (Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet())
                         {
                             sender.sendMessage(x.getKey() + ":");
-                            CollectionWrapper.iterator(x.getValue(), new Runnabled<String>() {
-                                @Override
-                                public void run(String obj)
-                                {
-                                    sender.sendMessage("- " + obj);
-                                }
-                            });
+                            CollectionWrapper.iterator(x.getValue(),
+                                (Runnabled<String>) obj -> sender.sendMessage("- " + obj));
                         }
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                     } else

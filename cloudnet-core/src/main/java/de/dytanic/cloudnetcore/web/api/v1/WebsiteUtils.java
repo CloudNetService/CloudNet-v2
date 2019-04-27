@@ -168,13 +168,8 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 if (httpRequest.headers().contains("-Xvalue"))
                 {
                     String group = httpRequest.headers().get("-Xvalue");
-                    CloudNet.getInstance().getScheduler().runTaskSync(new Runnable() {
-                        @Override
-                        public void run()
-                        {
-                            CloudNet.getInstance().startGameServer(CloudNet.getInstance().getServerGroup(group));
-                        }
-                    });
+                    CloudNet.getInstance().getScheduler().runTaskSync(
+                        () -> CloudNet.getInstance().startGameServer(CloudNet.getInstance().getServerGroup(group)));
                 }
 
                 return fullHttpResponse;
@@ -195,13 +190,8 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 if (httpRequest.headers().contains("-Xvalue"))
                 {
                     String group = httpRequest.headers().get("-Xvalue");
-                    CloudNet.getInstance().getScheduler().runTaskSync(new Runnable() {
-                        @Override
-                        public void run()
-                        {
-                            CloudNet.getInstance().startProxy(CloudNet.getInstance().getProxyGroup(group));
-                        }
-                    });
+                    CloudNet.getInstance().getScheduler().runTaskSync(
+                        () -> CloudNet.getInstance().startProxy(CloudNet.getInstance().getProxyGroup(group)));
                 }
 
                 return fullHttpResponse;

@@ -184,13 +184,9 @@ public final class CommandManager
                 String[] args = buffer.split(" ");
                 String testString = args[args.length - 1];
 
-                responses.addAll(CollectionWrapper.filterMany(((TabCompletable) command).onTab(input.length - 1, input[input.length - 1]), new Acceptable<String>() {
-                    @Override
-                    public boolean isAccepted(String s)
-                    {
-                        return s != null && (testString.isEmpty() || s.toLowerCase().contains(testString.toLowerCase()));
-                    }
-                }));
+                responses.addAll(CollectionWrapper.filterMany(((TabCompletable) command).onTab(input.length - 1, input[input.length - 1]),
+                    s ->
+                        s != null && (testString.isEmpty() || s.toLowerCase().contains(testString.toLowerCase()))));
             }
         }
 

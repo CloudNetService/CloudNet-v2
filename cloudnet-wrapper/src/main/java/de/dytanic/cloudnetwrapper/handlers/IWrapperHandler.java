@@ -13,12 +13,6 @@ public interface IWrapperHandler extends Runnabled<CloudNetWrapper> {
 
     default Runnable toExecutor()
     {
-        return new Runnable() {
-            @Override
-            public void run()
-            {
-                IWrapperHandler.this.run(CloudNetWrapper.getInstance());
-            }
-        };
+        return () -> IWrapperHandler.this.run(CloudNetWrapper.getInstance());
     }
 }

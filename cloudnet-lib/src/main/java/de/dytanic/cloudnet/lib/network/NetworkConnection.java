@@ -142,13 +142,9 @@ public final class NetworkConnection implements PacketSender {
                 channel.writeAndFlush(packet);
         } else
         {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run()
-                {
-                    for (Packet packet : packets)
-                        channel.writeAndFlush(packet);
-                }
+            channel.eventLoop().execute(() -> {
+                for (Packet packet : packets)
+                    channel.writeAndFlush(packet);
             });
         }
     }
@@ -168,13 +164,7 @@ public final class NetworkConnection implements PacketSender {
             channel.writeAndFlush(packet).syncUninterruptibly();
         } else
         {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run()
-                {
-                    channel.writeAndFlush(packet).syncUninterruptibly();
-                }
-            });
+            channel.eventLoop().execute(() -> channel.writeAndFlush(packet).syncUninterruptibly());
         }
     }
 
@@ -188,13 +178,7 @@ public final class NetworkConnection implements PacketSender {
             channel.writeAndFlush(packet);
         } else
         {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run()
-                {
-                    channel.writeAndFlush(packet);
-                }
-            });
+            channel.eventLoop().execute(() -> channel.writeAndFlush(packet));
         }
     }
 
@@ -208,13 +192,7 @@ public final class NetworkConnection implements PacketSender {
             channel.writeAndFlush(object);
         } else
         {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run()
-                {
-                    channel.writeAndFlush(object);
-                }
-            });
+            channel.eventLoop().execute(() -> channel.writeAndFlush(object));
         }
     }
 
@@ -227,12 +205,8 @@ public final class NetworkConnection implements PacketSender {
     @Override
     public void sendAsynchronized(Object object)
     {
-        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-            @Override
-            public void run()
-            {
-                channel.writeAndFlush(object);
-            }
+        TaskScheduler.runtimeScheduler().schedule(() -> {
+            channel.writeAndFlush(object);
         });
     }
 

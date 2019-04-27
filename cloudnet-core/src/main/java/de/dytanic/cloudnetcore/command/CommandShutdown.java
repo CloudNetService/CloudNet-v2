@@ -52,27 +52,21 @@ public final class CommandShutdown extends Command {
                     if (CloudNet.getInstance().getServerGroups().containsKey(args[1]))
                     {
                         System.out.println("All servers of the server group " + args[1] + " will be stopped...");
-                        CollectionWrapper.iterator(CloudNet.getInstance().getServers(args[1]), new Runnabled<MinecraftServer>() {
-                            @Override
-                            public void run(MinecraftServer obj)
-                            {
+                        CollectionWrapper.iterator(CloudNet.getInstance().getServers(args[1]),
+                            (Runnabled<MinecraftServer>) obj -> {
                                 obj.getWrapper().stopServer(obj);
                                 NetworkUtils.sleepUninterruptedly(1000);
-                            }
-                        });
+                            });
                         return;
                     }
                     if (CloudNet.getInstance().getProxyGroups().containsKey(args[1]))
                     {
                         System.out.println("All proxies of the proxy group " + args[1] + " will be stopped");
-                        CollectionWrapper.iterator(CloudNet.getInstance().getProxys(args[1]), new Runnabled<ProxyServer>() {
-                            @Override
-                            public void run(ProxyServer obj)
-                            {
+                        CollectionWrapper.iterator(CloudNet.getInstance().getProxys(args[1]),
+                            (Runnabled<ProxyServer>) obj -> {
                                 obj.getWrapper().stopProxy(obj);
                                 NetworkUtils.sleepUninterruptedly(1000);
-                            }
-                        });
+                            });
                         return;
                     }
 

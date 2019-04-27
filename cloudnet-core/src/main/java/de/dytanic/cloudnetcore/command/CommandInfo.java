@@ -121,13 +121,8 @@ public final class CommandInfo extends Command {
                                 "MinOnlineServers: " + group.getMinOnlineServers(),
                                 "MaxOnlineServers: " + group.getMaxOnlineServers(),
                                 "Wrappers: " + Arrays.toString(group.getWrapper().toArray(new String[0])),
-                                "Templates: " + Arrays.toString(CollectionWrapper.transform(group.getTemplates(), new Catcher<String, Template>() {
-                                    @Override
-                                    public String doCatch(Template key)
-                                    {
-                                        return key.getName() + ":" + key.getBackend().name();
-                                    }
-                                }).toArray()),
+                                "Templates: " + Arrays.toString(CollectionWrapper.transform(group.getTemplates(),
+                                    key -> key.getName() + ":" + key.getBackend().name()).toArray()),
                                 NetworkUtils.SPACE_STRING
                         );
                     }

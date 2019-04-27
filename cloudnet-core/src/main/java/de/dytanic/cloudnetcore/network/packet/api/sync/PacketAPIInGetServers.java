@@ -27,24 +27,14 @@ public class PacketAPIInGetServers extends PacketAPIIO {
         if (packetUniqueId == null) return;
         if (data.contains("group"))
         {
-            Collection<ServerInfo> proxyInfos = CollectionWrapper.transform(CloudNet.getInstance().getServers(data.getString("group")), new Catcher<ServerInfo, MinecraftServer>() {
-                @Override
-                public ServerInfo doCatch(MinecraftServer key)
-                {
-                    return key.getServerInfo();
-                }
-            });
+            Collection<ServerInfo> proxyInfos = CollectionWrapper.transform(CloudNet.getInstance().getServers(data.getString("group")),
+                key -> key.getServerInfo());
 
             packetSender.sendPacket(getResult(new Document("serverInfos", proxyInfos)));
         } else
         {
-            Collection<ServerInfo> proxyInfos = CollectionWrapper.transform(CloudNet.getInstance().getServers().values(), new Catcher<ServerInfo, MinecraftServer>() {
-                @Override
-                public ServerInfo doCatch(MinecraftServer key)
-                {
-                    return key.getServerInfo();
-                }
-            });
+            Collection<ServerInfo> proxyInfos = CollectionWrapper.transform(CloudNet.getInstance().getServers().values(),
+                key -> key.getServerInfo());
 
             packetSender.sendPacket(getResult(new Document("serverInfos", proxyInfos)));
         }

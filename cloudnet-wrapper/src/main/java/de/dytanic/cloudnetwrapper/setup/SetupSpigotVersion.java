@@ -21,25 +21,21 @@ import java.nio.file.StandardCopyOption;
 public class SetupSpigotVersion
         implements Runnabled<ConsoleReader> {
 
-    private final Runnabled<String> download = new Runnabled<String>() {
-        @Override
-        public void run(String url)
+    private final Runnabled<String> download = url -> {
+        try
         {
-            try
+            System.out.println("Downloading spigot.jar...");
+            URLConnection connection = new URL(url).openConnection();
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            connection.connect();
+            try (InputStream inputStream = connection.getInputStream())
             {
-                System.out.println("Downloading spigot.jar...");
-                URLConnection connection = new URL(url).openConnection();
-                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-                connection.connect();
-                try (InputStream inputStream = connection.getInputStream())
-                {
-                    Files.copy(inputStream, Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
-                }
-                System.out.println("Download was successfully completed!");
-            } catch (Exception e)
-            {
-                e.printStackTrace();
+                Files.copy(inputStream, Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
             }
+            System.out.println("Download was successfully completed!");
+        } catch (Exception e)
+        {
+            e.printStackTrace();
         }
     };
 

@@ -126,12 +126,6 @@ public class DatabaseImpl implements Database {
     @Override
     public FutureTask<Document> getDocumentAsync(String name)
     {
-        return new FutureTask<>(new Callable<Document>() {
-            @Override
-            public Document call() throws Exception
-            {
-                return getDocument(name);
-            }
-        });
+        return new FutureTask<>(() -> getDocument(name));
     }
 }

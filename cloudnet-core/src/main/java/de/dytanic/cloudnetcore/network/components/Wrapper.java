@@ -100,13 +100,8 @@ public final class Wrapper
     {
         AtomicInteger integer = new AtomicInteger(getUsedMemory());
 
-        CollectionWrapper.iterator(this.waitingServices.values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
-            @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
-            {
-                integer.addAndGet(obj.getSecond());
-            }
-        });
+        CollectionWrapper.iterator(this.waitingServices.values(),
+            (Runnabled<Quad<Integer, Integer, ServiceId, Template>>) obj -> integer.addAndGet(obj.getSecond()));
 
         return integer.get();
     }
@@ -175,13 +170,8 @@ public final class Wrapper
             }
 
         SimpledUser simpledUser = null;
-        User user = CollectionWrapper.filter(CloudNet.getInstance().getUsers(), new Acceptable<User>() {
-            @Override
-            public boolean isAccepted(User value)
-            {
-                return networkInfo.getUser().equals(value.getName());
-            }
-        });
+        User user = CollectionWrapper.filter(CloudNet.getInstance().getUsers(),
+            value -> networkInfo.getUser().equals(value.getName()));
         if (user != null)
         {
             simpledUser = user.toSimple();

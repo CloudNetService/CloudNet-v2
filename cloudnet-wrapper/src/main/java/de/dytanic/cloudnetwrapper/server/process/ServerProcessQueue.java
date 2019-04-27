@@ -151,17 +151,13 @@ public class ServerProcessQueue implements Runnable {
             return;
         }
         GameServer gameServer = new GameServer(new ServerProcess(process, ServerStage.SETUP), ServerStage.SETUP, CloudNetWrapper.getInstance().getServerGroups().get(process.getServiceId().getGroup()));
-        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-            @Override
-            public void run()
+        TaskScheduler.runtimeScheduler().schedule(() -> {
+            try
             {
-                try
-                {
-                    gameServer.bootstrap();
-                } catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                gameServer.bootstrap();
+            } catch (Exception e)
+            {
+                e.printStackTrace();
             }
         });
     }
@@ -169,17 +165,13 @@ public class ServerProcessQueue implements Runnable {
     public void patchAsync(CloudServerMeta cloudServerMeta)
     {
         CloudGameServer cloudGameServer = new CloudGameServer(cloudServerMeta);
-        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-            @Override
-            public void run()
+        TaskScheduler.runtimeScheduler().schedule(() -> {
+            try
             {
-                try
-                {
-                    cloudGameServer.bootstrap();
-                } catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                cloudGameServer.bootstrap();
+            } catch (Exception e)
+            {
+                e.printStackTrace();
             }
         });
     }
@@ -194,17 +186,13 @@ public class ServerProcessQueue implements Runnable {
             return;
         }
 
-        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-            @Override
-            public void run()
+        TaskScheduler.runtimeScheduler().schedule(() -> {
+            try
             {
-                try
-                {
-                    bungeeCord.bootstrap();
-                } catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                bungeeCord.bootstrap();
+            } catch (Exception e)
+            {
+                e.printStackTrace();
             }
         });
     }

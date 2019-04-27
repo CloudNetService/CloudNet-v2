@@ -25,13 +25,8 @@ public class PacketInProxyAdd extends PacketInHandlerDefault {
         }.getType());
         if (CloudAPI.getInstance() != null)
         {
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
-                @Override
-                public void run(NetworkHandler obj)
-                {
-                    obj.onProxyAdd(proxyInfo);
-                }
-            });
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(
+                obj -> obj.onProxyAdd(proxyInfo));
         }
     }
 }

@@ -55,13 +55,8 @@ public final class CommandCopy extends Command {
                     ServerGroup serverGroup = minecraftServer.getGroup();
                     if (serverGroup != null)
                     {
-                        Template template = CollectionWrapper.filter(serverGroup.getTemplates(), new Acceptable<Template>() {
-                            @Override
-                            public boolean isAccepted(Template template)
-                            {
-                                return template.getName().equalsIgnoreCase(args[1]);
-                            }
-                        });
+                        Template template = CollectionWrapper.filter(serverGroup.getTemplates(),
+                            template1 -> template1.getName().equalsIgnoreCase(args[1]));
                         if (template == null)
                         {
                             template = new Template(args[1], minecraftServer.getProcessMeta().getTemplate().getBackend(),

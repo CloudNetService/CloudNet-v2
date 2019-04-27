@@ -57,13 +57,8 @@ public class CloudNetClientAuth
                 channel.writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             } else
             {
-                channel.eventLoop().execute(new Runnable() {
-                    @Override
-                    public void run()
-                    {
-                        channel.writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-                    }
-                });
+                channel.eventLoop().execute(
+                    () -> channel.writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE));
             }
         }
     }
@@ -103,13 +98,7 @@ public class CloudNetClientAuth
             channel.writeAndFlush(object);
         } else
         {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run()
-                {
-                    channel.writeAndFlush(object);
-                }
-            });
+            channel.eventLoop().execute(() -> channel.writeAndFlush(object));
         }
     }
 
