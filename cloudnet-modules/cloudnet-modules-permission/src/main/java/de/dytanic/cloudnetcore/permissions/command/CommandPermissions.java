@@ -136,6 +136,21 @@ public final class CommandPermissions extends Command {
                             sender.sendMessage("The specified permission group doesn't exist");
                         }
                     }
+                    if (args[2].equalsIgnoreCase("setColor"))
+                    {
+                        if (permissionPool.getGroups().containsKey(args[1]))
+                        {
+                            PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
+                            permissionGroup.setColor(args[3].toLowerCase());
+                            PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
+                            CloudNet.getInstance().getNetworkManager().reload();
+                            CloudNet.getInstance().getNetworkManager().updateAll0();
+                            sender.sendMessage("You set the color for the permission group " + permissionGroup.getName() + " to \"" + permissionGroup.getColor() + "\"");
+                        } else
+                        {
+                            sender.sendMessage("The specified permission group doesn't exist");
+                        }
+                    }
 
                     if (args[2].equalsIgnoreCase("setDefault"))
                     {
@@ -482,6 +497,7 @@ public final class CommandPermissions extends Command {
                     "perms GROUP <name> setTagId <tagId>",
                     "perms GROUP <name> setDefault <true : false>",
                     "perms GROUP <name> setJoinPower <joinPower>",
+                    "perms GROUP <name> setColor <colorCode>",
                     "perms USER <user>",
                     "perms USER <user> GROUP SET <name> <lifetime | time in days>",
                     "perms USER <user> GROUP ADD <name> <lifetime | time in days>",

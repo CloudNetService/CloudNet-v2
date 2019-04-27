@@ -14,6 +14,7 @@ import java.util.Map;
 public class PermissionGroup {
 
     protected String name;
+    protected String color;
     protected String prefix;
     protected String suffix;
     protected String display;

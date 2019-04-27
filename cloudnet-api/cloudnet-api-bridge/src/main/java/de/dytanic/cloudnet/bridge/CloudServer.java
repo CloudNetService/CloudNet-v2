@@ -27,6 +27,10 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import java.lang.reflect.Method;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -523,6 +527,24 @@ public class CloudServer implements ICloudService {
         {
             e.printStackTrace();
         }
+        try {
+            Optional<Method> setColor = Optional.of(team.getClass().getDeclaredMethod("setColor", ChatColor.class));
+            if (setColor.isPresent()) {
+                Method method = setColor.get();
+                method.setAccessible(true);
+                if(permissionGroup.getColor().length() != 0){
+                    method.invoke(team,ChatColor.getByChar(permissionGroup.getColor().replaceAll("&","").replaceAll("§","")));
+                }else{
+                    method.invoke(team,ChatColor.getByChar(ChatColor.getLastColors(permissionGroup.getPrefix().replace('&','§')).replaceAll("&","").replaceAll("§","")));
+                }
+
+            }
+        } catch (NoSuchMethodException ignored) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+
         team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
         team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
 
