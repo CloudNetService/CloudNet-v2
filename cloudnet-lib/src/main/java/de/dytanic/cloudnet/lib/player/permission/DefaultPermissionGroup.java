@@ -14,6 +14,6 @@ public class DefaultPermissionGroup extends PermissionGroup {
 
     public DefaultPermissionGroup(String name)
     {
-        super(name, "§e", "§f", "§7", 98, 0, false, new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>());
+        super(name, "§c","§e", "§f", "§7", 98, 0, false, new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>());
     }
 }
