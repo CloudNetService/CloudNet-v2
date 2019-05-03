@@ -90,7 +90,7 @@ public class SetupSpigotVersion
         switch (answer)
         {
             case "spigot":
-                System.out.println("Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\"]");
+                System.out.println("Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\", \"1.14\"]");
                 while (true)
                 {
                     try
@@ -123,6 +123,9 @@ public class SetupSpigotVersion
                                 return;
                             case "1.13.2":
                                 download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.2.jar");
+                                return;
+                            case "1.14":
+                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");
