@@ -35,9 +35,9 @@ Use of KVM virtualization or dedicated servers is recommended.
 
  ### Support
  
-  * Spigot-Support » 1.7.10 - 1.13.2
+  * Spigot-Support » 1.7.10 - 1.14.2
     * PaperSpigot, TacoSpigot, Hose, Torch
-  * BungeeCord-Support » 1.7.10 - 1.13.2
+  * BungeeCord-Support » 1.7.10 - 1.14.2
     * Flexpipe, HexaCord, Waterfall, TraverTine
     
 ### Discord
@@ -61,14 +61,14 @@ Maven:
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-api-bridge</artifactId>
-            <version>2.1.14</version>
+            <version>2.1.15</version>
             <scope>provided</scope>
         </dependency>
          <!-- CloudNet Core -->
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-core</artifactId>
-            <version>2.1.14</version>
+            <version>2.1.15</version>
             <scope>provided</scope>
         </dependency>
      </dependencies>
