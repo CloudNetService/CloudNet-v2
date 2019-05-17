@@ -94,28 +94,47 @@ public final class PaperBuilder {
     buildFolder.mkdirs();
     File paperclip = new File(buildFolder, "paperclip.jar");
     if (!paperclip.exists()) {
-      System.out.println("Download PaperClip");
-      try (InputStream inputStream = connection.getInputStream()) {
-        Files.copy(inputStream, Paths.get(paperclip.toURI()), StandardCopyOption.REPLACE_EXISTING);
-      }
-      Process exec = Runtime.getRuntime()
-          .exec("java -jar paperclip.jar", null, buildFolder);
-      printProcessOutputToConsole(exec);
-      Files.copy(new FileInputStream(Objects.requireNonNull(
-          buildFolder.listFiles(pathname -> pathname.getName().startsWith("paperclip")))[0]),
-          Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+      runPaperClip(connection, buildFolder, paperclip);
     } else {
-      System.out.println("Skipping build");
-      System.out.println("Copy spigot.jar");
-      try {
-        Files.copy(new FileInputStream(Objects.requireNonNull(
-            buildFolder.listFiles(pathname -> pathname.getName().startsWith("paper")))[0]),
-            Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
-      } catch (IOException e) {
-        e.printStackTrace();
+      if(Objects.requireNonNull(
+          buildFolder.listFiles(pathname -> pathname.getName().startsWith("paperclip"))).length > 0){
+        System.out.println("Skipping build");
+        System.out.println("Copy spigot.jar");
+        try {
+          Files.copy(new FileInputStream(Objects.requireNonNull(
+              buildFolder.listFiles(pathname -> pathname.getName().startsWith("paper")))[0]),
+              Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }else{
+        runPaperClip(connection, buildFolder, paperclip);
+        return;
       }
+
     }
 
+  }
+
+  /**
+   * Run paperclip if the jar not exists
+   * @param connection the connection of the jar
+   * @param buildFolder the build folder of the jar
+   * @param paperclip the jar file path
+   * @throws IOException Throws if input stream null
+   */
+  private static void runPaperClip(URLConnection connection, File buildFolder, File paperclip)
+      throws IOException {
+    System.out.println("Download PaperClip");
+    try (InputStream inputStream = connection.getInputStream()) {
+      Files.copy(inputStream, Paths.get(paperclip.toURI()), StandardCopyOption.REPLACE_EXISTING);
+    }
+    Process exec = Runtime.getRuntime()
+        .exec("java -jar paperclip.jar", null, buildFolder);
+    printProcessOutputToConsole(exec);
+    Files.copy(new FileInputStream(Objects.requireNonNull(
+        buildFolder.listFiles(pathname -> pathname.getName().startsWith("paperclip")))[0]),
+        Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
   }
 
   /**

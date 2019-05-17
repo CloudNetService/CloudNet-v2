@@ -97,38 +97,53 @@ public final class SpigotBuilder {
     buildFolder.mkdirs();
     File buildTools = new File(buildFolder, "buildtools.jar");
     if (!buildTools.exists()) {
-      try {
-        System.out.println("Downloading BuildTools.jar...");
-        URLConnection connection = new URL(buildToolsUrl).openConnection();
-        connection.setRequestProperty("User-Agent",
-            "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-        connection.connect();
-        try (InputStream inputStream = connection.getInputStream()) {
-          Files.copy(inputStream, Paths.get(buildTools.toURI()),
-              StandardCopyOption.REPLACE_EXISTING);
-        }
-        System.out.println("Download was successfully completed!");
-        System.out.println("Building Spigot " + version);
-        Process exec = Runtime.getRuntime()
-            .exec(String.format("java -jar buildtools.jar --rev %s", version), null, buildFolder);
-        PaperBuilder.printProcessOutputToConsole(exec);
-        Files.copy(new FileInputStream(Objects.requireNonNull(
-            buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
-            Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      runBuildTools(version, buildFolder, buildTools);
     } else {
+      if(Objects.requireNonNull(
+          buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-"))).length > 0){
       System.out.println("Skipping build");
       System.out.println("Copy spigot.jar");
       try {
-        Files.copy(new FileInputStream(Objects.requireNonNull(
-            buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
-            Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
-      } catch (IOException e) {
-        e.printStackTrace();
+          Files.copy(new FileInputStream(Objects.requireNonNull(
+              buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
+              Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }else{
+        runBuildTools(version, buildFolder, buildTools);
       }
     }
 
+  }
+
+  /**
+   * Run the build tools of the jar not exists
+   * @param version the version of spigot
+   * @param buildFolder the folder in there are build
+   * @param buildTools the path of the build tools
+   */
+  private static void runBuildTools(String version, File buildFolder, File buildTools) {
+    try {
+      System.out.println("Downloading BuildTools.jar...");
+      URLConnection connection = new URL(buildToolsUrl).openConnection();
+      connection.setRequestProperty("User-Agent",
+          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+      connection.connect();
+      try (InputStream inputStream = connection.getInputStream()) {
+        Files.copy(inputStream, Paths.get(buildTools.toURI()),
+            StandardCopyOption.REPLACE_EXISTING);
+      }
+      System.out.println("Download was successfully completed!");
+      System.out.println("Building Spigot " + version);
+      Process exec = Runtime.getRuntime()
+          .exec(String.format("java -jar buildtools.jar --rev %s", version), null, buildFolder);
+      PaperBuilder.printProcessOutputToConsole(exec);
+      Files.copy(new FileInputStream(Objects.requireNonNull(
+          buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
+          Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }
