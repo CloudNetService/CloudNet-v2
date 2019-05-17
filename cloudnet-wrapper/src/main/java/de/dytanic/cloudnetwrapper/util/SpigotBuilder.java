@@ -25,7 +25,7 @@ public final class SpigotBuilder {
 
   private final static String buildToolsUrl = "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar";
   private final static String versionsUrl = "https://hub.spigotmc.org/versions/";
-  public static Process exec;
+  private static Process exec;
 
   /**
    * Start the process to choice the Spigot version And build after choice
@@ -188,5 +188,9 @@ public final class SpigotBuilder {
       }
     });
     System.out.println("Build failed. Retry Build");
+  }
+
+  public static Process getExec() {
+    return exec;
   }
 }

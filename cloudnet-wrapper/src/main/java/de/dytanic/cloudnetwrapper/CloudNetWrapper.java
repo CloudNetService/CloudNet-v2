@@ -36,6 +36,7 @@ import de.dytanic.cloudnetwrapper.server.process.ServerProcessQueue;
 import de.dytanic.cloudnetwrapper.setup.SetupSpigotVersion;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import de.dytanic.cloudnetwrapper.util.PaperBuilder;
+import de.dytanic.cloudnetwrapper.util.ShutdownHook;
 import de.dytanic.cloudnetwrapper.util.ShutdownOnCentral;
 import de.dytanic.cloudnetwrapper.util.SpigotBuilder;
 import joptsimple.OptionSet;
@@ -47,7 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Getter
-public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCentral {
+public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
     public static volatile boolean RUNNING = false;
 
@@ -126,7 +127,7 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     public boolean bootstrap() throws Exception
     {
 
-        Runtime.getRuntime().addShutdownHook(new Thread(this));
+        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHook(this)));
         if (!optionSet.has("disable-autoupdate")) checkForUpdates();
 
         if (!optionSet.has("disallow_bukkit_download") && !Files.exists(Paths.get("local/spigot.jar")))
@@ -247,8 +248,8 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     public boolean shutdown()
     {
 
-        if(SpigotBuilder.exec != null) SpigotBuilder.exec.destroyForcibly();
-        if(PaperBuilder.exec != null) PaperBuilder.exec.destroyForcibly();
+        if(SpigotBuilder.getExec() != null) SpigotBuilder.getExec().destroyForcibly();
+        if(PaperBuilder.getExec() != null) PaperBuilder.getExec().destroyForcibly();
         if (!RUNNING) return false;
         System.out.println("Wrapper shutdown...");
         TaskScheduler.runtimeScheduler().shutdown();
@@ -282,28 +283,18 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
                 "                                                          \n" +
                 "                                                          ");
         RUNNING = false;
-        if (x_bnosxo)
-            System.exit(0);
+        System.exit(0);
         return true;
     }
 
-    private boolean x_bnosxo = true;
 
-    @Override
-    public void run()
-    {
-        x_bnosxo = false;
-        if(SpigotBuilder.exec != null) SpigotBuilder.exec.destroyForcibly();
-        if(PaperBuilder.exec != null) PaperBuilder.exec.destroyForcibly();
-        shutdown();
-    }
 
     @Override
     public void onShutdownCentral() throws Exception
     {
 
-        if(SpigotBuilder.exec != null) SpigotBuilder.exec.destroyForcibly();
-        if(PaperBuilder.exec != null) PaperBuilder.exec.destroyForcibly();
+        if(SpigotBuilder.getExec() != null) SpigotBuilder.getExec().destroyForcibly();
+        if(PaperBuilder.getExec() != null) PaperBuilder.getExec().destroyForcibly();
         canDeployed = false;
         if (serverProcessQueue != null)
         {

@@ -21,7 +21,7 @@ import jline.console.ConsoleReader;
 public final class PaperBuilder {
 
   private static Gson gson = new Gson();
-  public static Process exec;
+  private static Process exec;
 
   /**
    * Start the process of choice the paper version And build after choice
@@ -148,23 +148,20 @@ public final class PaperBuilder {
    */
   static void printProcessOutputToConsole(Process exec) throws IOException {
     while (exec.isAlive()) {
-      InputStream is = exec.getInputStream();
-      InputStreamReader isr = new InputStreamReader(is);
-      BufferedReader br = new BufferedReader(isr);
-      String line;
-      while ((line = br.readLine()) != null) {
-        System.out.println(line);
-      }
-      InputStream eis = exec.getErrorStream();
-      InputStreamReader eisr = new InputStreamReader(eis);
-      BufferedReader ebr = new BufferedReader(eisr);
-      String eline;
-      while ((eline = ebr.readLine()) != null) {
-        System.err.println(eline);
-      }
+      InputStream inputStream = exec.getInputStream();
+      InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+      BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+      bufferedReader.lines().forEach(System.out::println);
+      InputStream errorStream = exec.getErrorStream();
+      InputStreamReader errorInputStreamReader = new InputStreamReader(errorStream);
+      BufferedReader errorBufferedReader = new BufferedReader(errorInputStreamReader);
+      errorBufferedReader.lines().forEach(System.err::println);
     }
     System.out.println("Build finish!");
     System.out.println("Copy spigot.jar");
   }
 
+  public static Process getExec() {
+    return exec;
+  }
 }
