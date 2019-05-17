@@ -289,8 +289,8 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     public void run()
     {
         x_bnosxo = false;
-        SpigotBuilder.exec.destroyForcibly();
-        PaperBuilder.exec.destroyForcibly();
+        if(SpigotBuilder.exec != null) SpigotBuilder.exec.destroyForcibly();
+        if(PaperBuilder.exec != null) PaperBuilder.exec.destroyForcibly();
         shutdown();
     }
 
