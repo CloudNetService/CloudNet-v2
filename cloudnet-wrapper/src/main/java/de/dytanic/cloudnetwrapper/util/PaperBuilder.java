@@ -133,9 +133,12 @@ public final class PaperBuilder {
     exec = Runtime.getRuntime()
         .exec("java -jar paperclip.jar", null, buildFolder);
     printProcessOutputToConsole(exec);
-    Files.copy(new FileInputStream(Objects.requireNonNull(
-        buildFolder.listFiles(pathname -> pathname.getName().startsWith("paperclip")))[0]),
-        Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+    if(Objects.requireNonNull(
+        buildFolder.listFiles(pathname -> pathname.getName().startsWith("paperclip"))).length > 0){
+      Files.copy(new FileInputStream(Objects.requireNonNull(
+          buildFolder.listFiles(pathname -> pathname.getName().startsWith("paperclip")))[0]),
+          Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+    }
   }
 
   /**
