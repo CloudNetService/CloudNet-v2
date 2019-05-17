@@ -140,9 +140,13 @@ public final class SpigotBuilder {
       exec = Runtime.getRuntime()
           .exec(String.format("java -jar buildtools.jar --rev %s", version), null, buildFolder);
       PaperBuilder.printProcessOutputToConsole(exec);
-      Files.copy(new FileInputStream(Objects.requireNonNull(
-          buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
-          Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+      if(Objects.requireNonNull(
+          buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-"))).length > 0){
+
+        Files.copy(new FileInputStream(Objects.requireNonNull(
+            buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
+            Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
