@@ -130,6 +130,7 @@ public final class SpigotBuilder {
    */
   private static void runBuildTools(String version, File buildFolder, File buildTools) {
     try {
+      long startTime = System.currentTimeMillis();
       buildFolder.mkdirs();
       System.out.println("Downloading BuildTools.jar...");
       URLConnection connection = new URL(buildToolsUrl).openConnection();
@@ -150,6 +151,10 @@ public final class SpigotBuilder {
         Files.copy(new FileInputStream(Objects.requireNonNull(
             buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
             Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+        long endTime = System.currentTimeMillis();
+        long minutes = ((endTime-startTime) / 1000) / 60;
+        long seconds = ((endTime-startTime) / 1000) % 60;
+        System.out.printf("Total Build Time %dMin %dSec\n", minutes,seconds);
       }else{
         deleteBuildFolder(buildFolder);
         buildSpigot(version);
