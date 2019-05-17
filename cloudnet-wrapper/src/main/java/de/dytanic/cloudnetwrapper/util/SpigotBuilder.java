@@ -126,6 +126,7 @@ public final class SpigotBuilder {
    */
   private static void runBuildTools(String version, File buildFolder, File buildTools) {
     try {
+      buildFolder.mkdirs();
       System.out.println("Downloading BuildTools.jar...");
       URLConnection connection = new URL(buildToolsUrl).openConnection();
       connection.setRequestProperty("User-Agent",
@@ -147,6 +148,7 @@ public final class SpigotBuilder {
             Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
       }else{
         FileUtility.deleteDirectory(buildFolder);
+        buildFolder.mkdirs();
         runBuildTools(version,buildFolder,buildTools);
       }
     } catch (Exception e) {
