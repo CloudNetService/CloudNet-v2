@@ -154,6 +154,13 @@ public final class PaperBuilder {
       while ((line = br.readLine()) != null) {
         System.out.println(line);
       }
+      InputStream eis = exec.getErrorStream();
+      InputStreamReader eisr = new InputStreamReader(eis);
+      BufferedReader ebr = new BufferedReader(eisr);
+      String eline;
+      while ((eline = ebr.readLine()) != null) {
+        System.err.println(eline);
+      }
     }
     System.out.println("Build finish!");
     System.out.println("Copy spigot.jar");
