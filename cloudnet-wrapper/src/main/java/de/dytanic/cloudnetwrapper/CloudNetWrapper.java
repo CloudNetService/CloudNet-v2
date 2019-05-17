@@ -35,7 +35,9 @@ import de.dytanic.cloudnetwrapper.server.GameServer;
 import de.dytanic.cloudnetwrapper.server.process.ServerProcessQueue;
 import de.dytanic.cloudnetwrapper.setup.SetupSpigotVersion;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
+import de.dytanic.cloudnetwrapper.util.PaperBuilder;
 import de.dytanic.cloudnetwrapper.util.ShutdownOnCentral;
+import de.dytanic.cloudnetwrapper.util.SpigotBuilder;
 import joptsimple.OptionSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -287,6 +289,8 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     public void run()
     {
         x_bnosxo = false;
+        SpigotBuilder.exec.destroyForcibly();
+        PaperBuilder.exec.destroyForcibly();
         shutdown();
     }
 

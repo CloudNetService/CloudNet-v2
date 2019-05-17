@@ -21,6 +21,7 @@ public final class SpigotBuilder {
 
   private final static String buildToolsUrl = "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar";
   private final static String versionsUrl = "https://hub.spigotmc.org/versions/";
+  public static Process exec;
 
   /**
    * Start the process to choice the Spigot version And build after choice
@@ -136,7 +137,7 @@ public final class SpigotBuilder {
       }
       System.out.println("Download was successfully completed!");
       System.out.println("Building Spigot " + version);
-      Process exec = Runtime.getRuntime()
+      exec = Runtime.getRuntime()
           .exec(String.format("java -jar buildtools.jar --rev %s", version), null, buildFolder);
       PaperBuilder.printProcessOutputToConsole(exec);
       Files.copy(new FileInputStream(Objects.requireNonNull(

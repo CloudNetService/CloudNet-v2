@@ -21,6 +21,7 @@ import jline.console.ConsoleReader;
 public final class PaperBuilder {
 
   private static Gson gson = new Gson();
+  public static Process exec;
 
   /**
    * Start the process of choice the paper version And build after choice
@@ -129,7 +130,7 @@ public final class PaperBuilder {
     try (InputStream inputStream = connection.getInputStream()) {
       Files.copy(inputStream, Paths.get(paperclip.toURI()), StandardCopyOption.REPLACE_EXISTING);
     }
-    Process exec = Runtime.getRuntime()
+    exec = Runtime.getRuntime()
         .exec("java -jar paperclip.jar", null, buildFolder);
     printProcessOutputToConsole(exec);
     Files.copy(new FileInputStream(Objects.requireNonNull(
