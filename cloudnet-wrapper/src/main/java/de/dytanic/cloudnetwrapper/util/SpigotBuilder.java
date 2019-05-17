@@ -1,17 +1,16 @@
 package de.dytanic.cloudnetwrapper.util;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import jline.console.ConsoleReader;
 import org.jsoup.Jsoup;
@@ -19,22 +18,31 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public final class SpigotBuilder {
+
   private final static String buildToolsUrl = "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar";
   private final static String versionsUrl = "https://hub.spigotmc.org/versions/";
 
-  public static void start(final ConsoleReader reader){
+  /**
+   * Start the process to choice the Spigot version And build after choice
+   *
+   * @param reader to read the answer
+   */
+  public static void start(final ConsoleReader reader) {
     System.out.println("Fetch Spigot Versions");
-    LinkedList<String> versions = loadVersions();
+    List<String> versions = loadVersions();
     System.out.println("Available Spigot Versions");
-    System.out.println("-----------------------------------------------------------------------------");
-    System.out.format("%s", "Spigot Version");
+    System.out
+        .println("-----------------------------------------------------------------------------");
+    System.out.println("Spigot Version");
     System.out.println();
-    System.out.println("-----------------------------------------------------------------------------");
-    versions.forEach(v->{
+    System.out
+        .println("-----------------------------------------------------------------------------");
+    versions.forEach(v -> {
       System.out.format("%s", v);
       System.out.println();
     });
-    System.out.println("-----------------------------------------------------------------------------");
+    System.out
+        .println("-----------------------------------------------------------------------------");
     String answer = null;
     while (answer == null) {
       String name = null;
@@ -43,79 +51,80 @@ public final class SpigotBuilder {
       } catch (IOException e) {
         e.printStackTrace();
       }
-      String finalAwnser = name;
-      if (versions.stream().anyMatch(e->e.equalsIgnoreCase(finalAwnser))) {
+      String finalAnswer = name;
+      if (versions.stream().anyMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
         answer = name;
-        buildSpigot(finalAwnser);
-      }else if(versions.stream().noneMatch(e->e.equalsIgnoreCase(finalAwnser))) {
-        System.out.println("Version not exists!");
+        buildSpigot(finalAnswer);
+      } else if (versions.stream().noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
+        System.out.println("Version does not exist!");
       }
     }
   }
-  private static LinkedList<String> loadVersions(){
+
+  /**
+   * @return A list for available versions of spigot
+   */
+  private static LinkedList<String> loadVersions() {
     LinkedList<String> array = new LinkedList<>();
     try {
-      Document doc = Jsoup.connect(versionsUrl).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11").get();
+      Document doc = Jsoup.connect(versionsUrl).userAgent(
+          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11")
+          .get();
       for (Element file : doc.select("a")) {
         String rawName = file.attr("href");
-        if(rawName.contains("../")){
+        if (rawName.contains("../")) {
           continue;
         }
-        if (!(rawName.contains("latest.json") | rawName.startsWith("1."))) continue;
-        array.add(rawName.replace(".json",""));
+        if (!(rawName.contains("latest.json") | rawName.startsWith("1."))) {
+          continue;
+        }
+        array.add(rawName.replace(".json", ""));
       }
-    }catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
     return array;
   }
-  private static void buildSpigot(final String version){
+
+  /**
+   * Build the spigot or copy if exists
+   *
+   * @param version the version of spigot
+   */
+  private static void buildSpigot(final String version) {
     File builder = new File("local/builder/spigot");
-    File buildFolder = new File(builder,version);
+    File buildFolder = new File(builder, version);
     buildFolder.mkdirs();
-    File buildTools = new File(buildFolder,"buildtools.jar");
-    if(!buildTools.exists()){
-      try
-      {
+    File buildTools = new File(buildFolder, "buildtools.jar");
+    if (!buildTools.exists()) {
+      try {
         System.out.println("Downloading BuildTools.jar...");
         URLConnection connection = new URL(buildToolsUrl).openConnection();
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+        connection.setRequestProperty("User-Agent",
+            "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
         connection.connect();
-        try (InputStream inputStream = connection.getInputStream())
-        {
-          Files.copy(inputStream, Paths.get(buildTools.toURI()), StandardCopyOption.REPLACE_EXISTING);
+        try (InputStream inputStream = connection.getInputStream()) {
+          Files.copy(inputStream, Paths.get(buildTools.toURI()),
+              StandardCopyOption.REPLACE_EXISTING);
         }
         System.out.println("Download was successfully completed!");
-        System.out.println("Building Spigot "+version);
+        System.out.println("Building Spigot " + version);
         Process exec = Runtime.getRuntime()
-            .exec(String.format("java -jar buildtools.jar --rev %s",version), null, buildFolder);
-        while (true) {
-          if (!exec.isAlive()) {
-            System.out.println("Build finish!");
-            System.out.println("Copy spigot.jar");
-            Files.copy(new FileInputStream(Objects.requireNonNull(
-                buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]), Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
-            break;
-          }else{
-            InputStream is = exec.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String line;
-            while ((line = br.readLine()) != null) {
-              System.out.println(line);
-            }
-          }
-        }
-      } catch (Exception e)
-      {
+            .exec(String.format("java -jar buildtools.jar --rev %s", version), null, buildFolder);
+        PaperBuilder.printProcessOutputToConsole(exec);
+        Files.copy(new FileInputStream(Objects.requireNonNull(
+            buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
+            Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+      } catch (Exception e) {
         e.printStackTrace();
       }
-    }else{
+    } else {
       System.out.println("Skipping build");
       System.out.println("Copy spigot.jar");
       try {
         Files.copy(new FileInputStream(Objects.requireNonNull(
-            buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]), Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+            buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
+            Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
       } catch (IOException e) {
         e.printStackTrace();
       }

@@ -1,6 +1,7 @@
 package de.dytanic.cloudnetwrapper.models;
 
 public class PaperMCProjectVersion {
+
   private final String project;
   private final String version;
   private final PaperMCProjectBuilds builds;
