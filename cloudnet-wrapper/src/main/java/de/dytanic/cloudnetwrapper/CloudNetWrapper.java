@@ -245,6 +245,9 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     @Override
     public boolean shutdown()
     {
+
+        if(SpigotBuilder.exec != null) SpigotBuilder.exec.destroyForcibly();
+        if(PaperBuilder.exec != null) PaperBuilder.exec.destroyForcibly();
         if (!RUNNING) return false;
         System.out.println("Wrapper shutdown...");
         TaskScheduler.runtimeScheduler().shutdown();
@@ -297,6 +300,9 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     @Override
     public void onShutdownCentral() throws Exception
     {
+
+        if(SpigotBuilder.exec != null) SpigotBuilder.exec.destroyForcibly();
+        if(PaperBuilder.exec != null) PaperBuilder.exec.destroyForcibly();
         canDeployed = false;
         if (serverProcessQueue != null)
         {

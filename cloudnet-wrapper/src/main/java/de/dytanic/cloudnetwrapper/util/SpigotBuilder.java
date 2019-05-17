@@ -142,10 +142,12 @@ public final class SpigotBuilder {
       PaperBuilder.printProcessOutputToConsole(exec);
       if(Objects.requireNonNull(
           buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-"))).length > 0){
-
         Files.copy(new FileInputStream(Objects.requireNonNull(
             buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
             Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+      }else{
+        FileUtility.deleteDirectory(buildFolder);
+        runBuildTools(version,buildFolder,buildTools);
       }
     } catch (Exception e) {
       e.printStackTrace();
