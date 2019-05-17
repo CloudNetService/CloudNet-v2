@@ -206,8 +206,8 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
         if (serverGroup.getGroupMode().equals(ServerGroupMode.STATIC))
         {
-            if (!Files.exists(dir)) if (!a()) return false;
-        } else if (!a()) return false;
+            if (!Files.exists(dir) & !tempalteDownloader()) return false;
+        } else if (!tempalteDownloader()) return false;
 
         for (ServerInstallablePlugin plugin : serverProcess.getMeta().getDownloadablePlugins())
             FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
@@ -528,7 +528,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, new File(path));
     }
 
-    private boolean a() throws Exception
+    private boolean tempalteDownloader() throws Exception
     {
         Files.createDirectories(dir);
 
@@ -536,50 +536,27 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             Template template = this.serverGroup.getGlobalTemplate();
             if (custom != null)
             {
-                MasterTemplateLoader templateLoader = new MasterTemplateLoader(new StringBuilder(
-                        CloudNetWrapper.getInstance().getOptionSet().has("ssl") ? "https://" : "http://"
-                )
-                        .append(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost())
-                        .append(":")
-                        .append(CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())
-                        .append("/cloudnet/api/v1/download").toString()
+                MasterTemplateLoader templateLoader = new MasterTemplateLoader(
+                    (CloudNetWrapper.getInstance().getOptionSet().has("ssl") ? "https://"
+                        : "http://")
+                        + CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost()
+                        + ":"
+                        + CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()
+                        + "/cloudnet/api/v1/download"
                         , dir.toString() + "/template.zip", CloudNetWrapper.getInstance().getSimpledUser(), template, serverGroup.getName(), custom);
                 System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup() + " " + template.getName());
                 templateLoader.load();
                 templateLoader.unZip(dir.toString());
                 FileUtility.copyFilesInDirectory(new File(dir.toString()), new File(path));
+                return true;
             } else if (template.getBackend().equals(TemplateResource.URL) && template.getUrl() != null)
             {
-                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
-                if (!Files.exists(Paths.get(groupTemplates)))
-                {
-                    Files.createDirectories(Paths.get(groupTemplates));
-                    TemplateLoader templateLoader = new TemplateLoader(template.getUrl(), groupTemplates + "/template.zip");
-                    System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup() + " " + template.getName());
-                    templateLoader.load();
-                    templateLoader.unZip(groupTemplates);
-                }
-
-                FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
+                downloadURL(template);
+                return true;
             } else if (template.getBackend().equals(TemplateResource.MASTER) && CloudNetWrapper.getInstance().getSimpledUser() != null)
             {
-                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
-                if (!Files.exists(Paths.get(groupTemplates)))
-                {
-                    Files.createDirectories(Paths.get(groupTemplates));
-                    MasterTemplateLoader templateLoader = new MasterTemplateLoader(new StringBuilder(
-                            CloudNetWrapper.getInstance().getOptionSet().has("ssl") ? "https://" : "http://"
-                    )
-                            .append(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost())
-                            .append(":")
-                            .append(CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())
-                            .append("/cloudnet/api/v1/download").substring(0)
-                            , groupTemplates + "/template.zip", CloudNetWrapper.getInstance().getSimpledUser(), template, serverGroup.getName(), custom);
-                    System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup() + " " + template.getName());
-                    templateLoader.load();
-                    templateLoader.unZip(groupTemplates);
-                }
-                FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
+                downloadTemplate(template);
+                return true;
             } else if (Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName())))
             {
 
@@ -609,42 +586,51 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             Template template = this.serverProcess.getMeta().getTemplate();
             if (template.getBackend().equals(TemplateResource.URL) && template.getUrl() != null)
             {
-                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
-                if (!Files.exists(Paths.get(groupTemplates)))
-                {
-                    Files.createDirectories(Paths.get(groupTemplates));
-                    TemplateLoader templateLoader = new TemplateLoader(template.getUrl(), groupTemplates + "/template.zip");
-                    System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup() + " " + template.getName());
-                    templateLoader.load();
-                    templateLoader.unZip(groupTemplates);
-                }
-                FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
+                downloadURL(template);
+                return true;
             } else if (template.getBackend().equals(TemplateResource.MASTER) && CloudNetWrapper.getInstance().getSimpledUser() != null)
             {
-                String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
-                if (!Files.exists(Paths.get(groupTemplates)))
-                {
-                    Files.createDirectories(Paths.get(groupTemplates));
-                    MasterTemplateLoader templateLoader = new MasterTemplateLoader(new StringBuilder(
-                            CloudNetWrapper.getInstance().getOptionSet().has("ssl") ? "https://" : "http://"
-                    )
-                            .append(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost())
-                            .append(":")
-                            .append(CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())
-                            .append("/cloudnet/api/v1/download").substring(0)
-                            , groupTemplates + "/template.zip", CloudNetWrapper.getInstance().getSimpledUser(), template, serverGroup.getName(), custom);
-                    System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup() + " " + template.getName());
-                    templateLoader.load();
-                    templateLoader.unZip(groupTemplates);
-                }
-                FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
+                downloadTemplate(template);
+                return true;
             } else if (Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName())))
             {
                 FileUtility.copyFilesInDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()), new File(path));
-            } else
-                return false;
+            } else return false;
         }
         return true;
+    }
+
+    private void downloadURL(Template template) throws IOException {
+        String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
+        if (!Files.exists(Paths.get(groupTemplates)))
+        {
+            Files.createDirectories(Paths.get(groupTemplates));
+            TemplateLoader templateLoader = new TemplateLoader(template.getUrl(), groupTemplates + "/template.zip");
+            System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup() + " " + template.getName());
+            templateLoader.load();
+            templateLoader.unZip(groupTemplates);
+        }
+        FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
+    }
+
+    private void downloadTemplate(Template template) throws IOException {
+        String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
+        if (!Files.exists(Paths.get(groupTemplates)))
+        {
+            Files.createDirectories(Paths.get(groupTemplates));
+            MasterTemplateLoader templateLoader = new MasterTemplateLoader(new StringBuilder(
+                    CloudNetWrapper.getInstance().getOptionSet().has("ssl") ? "https://" : "http://"
+            )
+                    .append(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost())
+                    .append(":")
+                    .append(CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())
+                    .append("/cloudnet/api/v1/download").substring(0)
+                    , groupTemplates + "/template.zip", CloudNetWrapper.getInstance().getSimpledUser(), template, serverGroup.getName(), custom);
+            System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getGroup() + " " + template.getName());
+            templateLoader.load();
+            templateLoader.unZip(groupTemplates);
+        }
+        FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
     }
 
     @Override
