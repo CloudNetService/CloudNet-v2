@@ -6,9 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -147,12 +151,42 @@ public final class SpigotBuilder {
             buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
             Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
       }else{
-        FileUtility.deleteDirectory(buildFolder);
-        buildFolder.mkdirs();
-        runBuildTools(version,buildFolder,buildTools);
+        deletBuildFolder(buildFolder);
+        buildSpigot(version);
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Delete the build folder
+   * @param buildFolder foldr path
+   * @throws IOException throws if tree throws
+   */
+  static void deletBuildFolder(File buildFolder) throws IOException {
+    Files.walkFileTree(buildFolder.toPath(),new SimpleFileVisitor<Path>(){
+      @Override
+      public FileVisitResult visitFile(Path file,
+          BasicFileAttributes attrs) throws IOException {
+        File toFile = file.toFile();
+        toFile.setExecutable(true,false);
+        toFile.setWritable(true,false);
+        toFile.delete();
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+          throws IOException {
+
+        File file = dir.toFile();
+        file.setExecutable(true,false);
+        file.setWritable(true,false);
+        file.delete();
+        return FileVisitResult.CONTINUE;
+      }
+    });
+    System.out.println("Build failed. Retry Build");
   }
 }

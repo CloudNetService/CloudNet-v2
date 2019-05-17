@@ -109,6 +109,7 @@ public final class PaperBuilder {
           e.printStackTrace();
         }
       }else{
+        SpigotBuilder.deletBuildFolder(buildFolder);
         runPaperClip(connection, buildFolder, paperclip);
         return;
       }
