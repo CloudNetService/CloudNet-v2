@@ -5,6 +5,8 @@
 package de.dytanic.cloudnetwrapper.setup;
 
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+import de.dytanic.cloudnetwrapper.util.PaperBuilder;
+import de.dytanic.cloudnetwrapper.util.SpigotBuilder;
 import jline.console.ConsoleReader;
 
 import java.io.IOException;
@@ -48,7 +50,7 @@ public class SetupSpigotVersion
     {
         System.out.println("No spigot.jar has been found!");
 
-        System.out.println("Choose a minecraft server version [" +/*"\"paper\" (coming soon)", */"\"spigot\"]");
+        System.out.println("Choose a minecraft server version [\"paper\",\"spigot\", \"buildtools\"]");
 
         String answer = null;
 
@@ -68,6 +70,13 @@ public class SetupSpigotVersion
                 {
                     case "spigot":
                         answer = "spigot";
+                        break;
+                    case "buildtools":
+                        answer = "buildtools";
+                        break;
+
+                    case "paper":
+                        answer = "paper";
                         break;
                         /*
                     case "paper":
@@ -135,6 +144,9 @@ public class SetupSpigotVersion
                         e.printStackTrace();
                     }
                 }
+            case "buildtools": SpigotBuilder.start(reader);
+            case "paper":
+                PaperBuilder.start(reader);
                 /*
             case "paper":
                 System.out.println("Choose a PaperSpigot version [\"1.8.8\", \"1.11.2\", \"1.12.2\", \"1.13.1\", \"1.13.2\"]");
