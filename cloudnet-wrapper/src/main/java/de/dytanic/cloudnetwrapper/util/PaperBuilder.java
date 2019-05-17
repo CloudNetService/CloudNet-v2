@@ -1,7 +1,6 @@
 package de.dytanic.cloudnetwrapper.util;
 
 import com.google.gson.Gson;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnetwrapper.models.PaperMCProject;
 import de.dytanic.cloudnetwrapper.models.PaperMCProjectVersion;
 import java.io.BufferedReader;
@@ -19,12 +18,10 @@ import java.util.Arrays;
 import java.util.Objects;
 import jline.console.ConsoleReader;
 
-public class PaperBuilder {
-  private static String API_URL = "https://papermc.io/api/v1/";
-  private static String API_PROJECT_URL = "https://papermc.io/api/v1/%s";
-  private static String API_PROJECT_VERSION_URL = "https://papermc.io/api/v1/%s/%s";
-  private static String API_PROJECT_VERSION_BUILD_URL = "https://papermc.io/api/v1/%s/%s";
-  private static String API_PROJECT_VERSION_DOWNLOAD = "https://papermc.io/api/v1/%s/%s/%s/download";
+public final class PaperBuilder {
+  private static String API_PROJECT_URL = "https://papermc.io/api/v1/paper";
+  private static String API_PROJECT_VERSION_URL = "https://papermc.io/api/v1/paper/%s";
+  private static String API_PROJECT_VERSION_DOWNLOAD = "https://papermc.io/api/v1/paper/%s/%s/download";
   private static Gson gson = new Gson();
   private static PaperMCProject paperMCProject;
   private static PaperMCProjectVersion paperMCProjectVersion;
@@ -32,7 +29,7 @@ public class PaperBuilder {
   public static void start(ConsoleReader reader){
     try {
       System.out.println("Fetch Versions");
-      URLConnection connection = new URL(String.format(API_PROJECT_URL,"paper")).openConnection();
+      URLConnection connection = new URL(API_PROJECT_URL).openConnection();
       connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
       connection.connect();
       paperMCProject = gson
@@ -47,8 +44,8 @@ public class PaperBuilder {
         System.out.println();
       }
       System.out.println("-----------------------------------------------------------------------------");
-      String awnser = null;
-      while (awnser == null) {
+      String answer = null;
+      while (answer == null) {
         String name = null;
         try {
           name = reader.readLine().toLowerCase();
@@ -57,10 +54,10 @@ public class PaperBuilder {
         }
         String finalAwnser = name;
         if (Arrays.stream(paperMCProject.getVersions()).anyMatch(e->e.equalsIgnoreCase(finalAwnser))) {
-          awnser = name;
-          buildPaperVersion(awnser);
+          answer = name;
+          buildPaperVersion(answer);
         }else if(Arrays.stream(paperMCProject.getVersions()).noneMatch(e->e.equalsIgnoreCase(finalAwnser))) {
-          System.out.println("Version donsent exsists!");
+          System.out.println("Version not exists!");
         }
       }
     } catch (Exception e) {
@@ -69,16 +66,15 @@ public class PaperBuilder {
   }
   private static void buildPaperVersion(String version) throws Exception {
     System.out.println("Fetch Builds");
-    URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL,"paper",version)).openConnection();
+    URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL,version)).openConnection();
     connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
     connection.connect();
     paperMCProjectVersion = gson
         .fromJson(new InputStreamReader(connection.getInputStream()), PaperMCProjectVersion.class);
-    connection = new URL(String.format(API_PROJECT_VERSION_DOWNLOAD,"paper",version,paperMCProjectVersion.getBuilds().getLatest())).openConnection();
+    connection = new URL(String.format(API_PROJECT_VERSION_DOWNLOAD,version,paperMCProjectVersion.getBuilds().getLatest())).openConnection();
     connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
     connection.connect();
     File builder = new File("local/builder/papermc");
-    builder.delete();
     File buildFolder = new File(builder,version);
     buildFolder.mkdirs();
     File paperclip = new File(buildFolder,"paperclip.jar");
@@ -88,11 +84,8 @@ public class PaperBuilder {
       {
         Files.copy(inputStream, Paths.get(paperclip.toURI()), StandardCopyOption.REPLACE_EXISTING);
       }
-      StringBuilder commandBuilder = new StringBuilder();
-      commandBuilder.append("java -jar ");
-      commandBuilder.append("paperclip.jar");
       Process exec = Runtime.getRuntime()
-          .exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, buildFolder);
+          .exec("java -jar paperclip.jar", null, buildFolder);
       while (true) {
         if (!exec.isAlive()) {
           System.out.println("Build finish!");

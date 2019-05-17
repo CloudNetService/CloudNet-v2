@@ -1,7 +1,5 @@
 package de.dytanic.cloudnetwrapper.util;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnetwrapper.models.SpigotVersion;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,9 +11,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import jline.console.ConsoleReader;
 import org.jsoup.Jsoup;
@@ -25,23 +21,22 @@ import org.jsoup.nodes.Element;
 public final class SpigotBuilder {
   private final static String buildToolsUrl = "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar";
   private final static String versionsUrl = "https://hub.spigotmc.org/versions/";
-  private final static SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
   public static void start(final ConsoleReader reader){
     System.out.println("Fetch Spigot Versions");
-    List<SpigotVersion> versions = loadVersions();
+    LinkedList<String> versions = loadVersions();
     System.out.println("Available Spigot Versions");
     System.out.println("-----------------------------------------------------------------------------");
     System.out.format("%s", "Spigot Version");
     System.out.println();
     System.out.println("-----------------------------------------------------------------------------");
     versions.forEach(v->{
-      System.out.format("%s", v.getName());
+      System.out.format("%s", v);
       System.out.println();
     });
     System.out.println("-----------------------------------------------------------------------------");
-    String awnser = null;
-    while (awnser == null) {
+    String answer = null;
+    while (answer == null) {
       String name = null;
       try {
         name = reader.readLine().toLowerCase();
@@ -49,39 +44,33 @@ public final class SpigotBuilder {
         e.printStackTrace();
       }
       String finalAwnser = name;
-      if (versions.stream().anyMatch(e->e.getName().equalsIgnoreCase(finalAwnser))) {
-        awnser = name;
-        buildSpigot(finalAwnser,reader);
-      }else if(versions.stream().noneMatch(e->e.getName().equalsIgnoreCase(finalAwnser))) {
-        System.out.println("Version donsent exsists!");
+      if (versions.stream().anyMatch(e->e.equalsIgnoreCase(finalAwnser))) {
+        answer = name;
+        buildSpigot(finalAwnser);
+      }else if(versions.stream().noneMatch(e->e.equalsIgnoreCase(finalAwnser))) {
+        System.out.println("Version not exists!");
       }
     }
   }
-  private static List<SpigotVersion> loadVersions(){
-    List<SpigotVersion> array = new LinkedList<>();
+  private static LinkedList<String> loadVersions(){
+    LinkedList<String> array = new LinkedList<>();
     try {
       Document doc = Jsoup.connect(versionsUrl).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11").get();
       for (Element file : doc.select("a")) {
-        //String[] rawDate = file.nextSibling().toString().trim().split(" ");
         String rawName = file.attr("href");
         if(rawName.contains("../")){
           continue;
         }
         if (!(rawName.contains("latest.json") | rawName.startsWith("1."))) continue;
-        /*if(rawName.endsWith(".json") && !( rawName.replace(".json","").startsWith("1.") || rawName.replace(".json","").contains("latest"))){
-          continue;
-        }*/
-        SpigotVersion version = new SpigotVersion(rawName.replace(".json",""),versionsUrl+rawName);
-        array.add(version);
+        array.add(rawName.replace(".json",""));
       }
     }catch (Exception e){
       e.printStackTrace();
     }
     return array;
   }
-  private static void buildSpigot(final String version,ConsoleReader reader){
+  private static void buildSpigot(final String version){
     File builder = new File("local/builder/spigot");
-    builder.delete();
     File buildFolder = new File(builder,version);
     buildFolder.mkdirs();
     File buildTools = new File(buildFolder,"buildtools.jar");
@@ -98,12 +87,8 @@ public final class SpigotBuilder {
         }
         System.out.println("Download was successfully completed!");
         System.out.println("Building Spigot "+version);
-        StringBuilder commandBuilder = new StringBuilder();
-        commandBuilder.append("java -jar ");
-        commandBuilder.append("buildtools.jar ");
-        commandBuilder.append("--rev "+version);
         Process exec = Runtime.getRuntime()
-            .exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, buildFolder);
+            .exec(String.format("java -jar buildtools.jar --rev %s",version), null, buildFolder);
         while (true) {
           if (!exec.isAlive()) {
             System.out.println("Build finish!");

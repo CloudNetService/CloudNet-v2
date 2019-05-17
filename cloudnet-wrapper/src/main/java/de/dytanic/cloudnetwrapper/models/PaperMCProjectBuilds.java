@@ -1,11 +1,11 @@
 package de.dytanic.cloudnetwrapper.models;
 
-public class PaperMCProjectBuild {
+public class PaperMCProjectBuilds {
 
   private final String latest;
   private final String[] all;
 
-  public PaperMCProjectBuild(String latest, String[] all) {
+  public PaperMCProjectBuilds(String latest, String[] all) {
     this.latest = latest;
     this.all = all;
   }

@@ -3,11 +3,11 @@ package de.dytanic.cloudnetwrapper.models;
 public class PaperMCProjectVersion {
   private final String project;
   private final String version;
-  private final PaperMCProjectBuild builds;
+  private final PaperMCProjectBuilds builds;
 
 
   public PaperMCProjectVersion(String project, String version,
-      PaperMCProjectBuild builds) {
+      PaperMCProjectBuilds builds) {
     this.project = project;
     this.version = version;
     this.builds = builds;
@@ -17,7 +17,7 @@ public class PaperMCProjectVersion {
     return project;
   }
 
-  public PaperMCProjectBuild getBuilds() {
+  public PaperMCProjectBuilds getBuilds() {
     return builds;
   }
 

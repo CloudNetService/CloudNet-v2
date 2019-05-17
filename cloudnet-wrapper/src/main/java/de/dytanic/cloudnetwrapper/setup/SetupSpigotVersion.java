@@ -144,9 +144,12 @@ public class SetupSpigotVersion
                         e.printStackTrace();
                     }
                 }
-            case "buildtools": SpigotBuilder.start(reader);
+            case "buildtools":
+                SpigotBuilder.start(reader);
+                break;
             case "paper":
                 PaperBuilder.start(reader);
+                break;
                 /*
             case "paper":
                 System.out.println("Choose a PaperSpigot version [\"1.8.8\", \"1.11.2\", \"1.12.2\", \"1.13.1\", \"1.13.2\"]");
