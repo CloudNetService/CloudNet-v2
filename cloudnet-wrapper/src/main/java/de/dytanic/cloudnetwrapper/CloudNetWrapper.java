@@ -125,6 +125,8 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     @Override
     public boolean bootstrap() throws Exception
     {
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this));
         if (!optionSet.has("disable-autoupdate")) checkForUpdates();
 
         if (!optionSet.has("disallow_bukkit_download") && !Files.exists(Paths.get("local/spigot.jar")))
@@ -206,7 +208,6 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
 
         canDeployed = true;
         RUNNING = true;
-        Runtime.getRuntime().addShutdownHook(new Thread(this));
 
         return true;
     }
