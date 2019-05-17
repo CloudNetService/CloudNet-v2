@@ -151,7 +151,7 @@ public final class SpigotBuilder {
             buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
             Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
       }else{
-        deletBuildFolder(buildFolder);
+        deleteBuildFolder(buildFolder);
         buildSpigot(version);
       }
     } catch (Exception e) {
@@ -164,7 +164,7 @@ public final class SpigotBuilder {
    * @param buildFolder foldr path
    * @throws IOException throws if tree throws
    */
-  static void deletBuildFolder(File buildFolder) throws IOException {
+  static void deleteBuildFolder(File buildFolder) throws IOException {
     Files.walkFileTree(buildFolder.toPath(),new SimpleFileVisitor<Path>(){
       @Override
       public FileVisitResult visitFile(Path file,
