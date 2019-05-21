@@ -14,7 +14,12 @@ public class SignLayout
 
     private String name;
     private String[] signLayout;
-    private int blockId;
+    /**
+     * blockIds are not supported in all versions, use {@link SignLayout#blockName} instead
+     */
+    @Deprecated
+    int blockId;
+    private String blockName;
     private int subId;
 
 }

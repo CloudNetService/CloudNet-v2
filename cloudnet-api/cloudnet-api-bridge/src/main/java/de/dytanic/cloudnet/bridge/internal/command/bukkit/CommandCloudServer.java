@@ -19,6 +19,11 @@ import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -28,10 +33,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Tareko on 23.08.2017.
@@ -39,8 +41,12 @@ import java.util.UUID;
 public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args)
+    public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args)
     {
+        CloudAPI.getInstance().getLogger().finest(
+                String.format("%s executed %s (label = %s) with arguments %s",
+                        commandSender, command, label, Arrays.toString(args))
+        );
         if (!(commandSender instanceof Player)) return false;
 
         Player player = (Player) commandSender;
@@ -74,12 +80,20 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
                         if (stringBuilder.length() > 32)
                         {
-                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The display cannot be longe then 32 characters");
+                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The display cannot be longer then 32 characters");
                             return false;
                         }
+
+                        String material = args[4].toUpperCase();
+
+                        if(Material.getMaterial(material) == null)
+                        {
+                            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "An item with this itemName does not exist");
+                            return false;
+                        }
+
                         ServerMob serverMob = new ServerMob(UUID.randomUUID(), stringBuilder.substring(0, stringBuilder.length() - 1), args[2], entityType.name(), args[3],
-                                NetworkUtils.checkIsNumber(args[4]) ? (Integer.parseInt(args[4]) != 0 ? Integer.parseInt(args[4]) : 138) : 138
-                                , args[5].equalsIgnoreCase("true"),
+                                -1, material, args[5].equalsIgnoreCase("true"),
                                 MobSelector.getInstance().toPosition(CloudAPI.getInstance().getGroup(), player.getLocation()), "§8#§c%group% &bPlayers online §8|§7 %group_online% of %max_players%", new Document());
                         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(serverMob));
                         player.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob will be created, please wait...");
@@ -294,6 +308,22 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                             commandSender.sendMessage("- " + entityType.name());
                     }
                 }
+                if (args[0].equalsIgnoreCase("debug")) {
+                    CloudAPI.getInstance().setDebug(!CloudAPI.getInstance().isDebug());
+
+                    final LoggerContext context = (LoggerContext) LogManager.getContext(false);
+                    final Configuration configuration = context.getConfiguration();
+                    final LoggerConfig rootLoggerConfig = configuration.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
+
+                    if (CloudAPI.getInstance().isDebug()) {
+                        rootLoggerConfig.setLevel(Level.ALL);
+                        commandSender.sendMessage("§aDebug output for server has been enabled.");
+                    } else {
+                        rootLoggerConfig.setLevel(Level.INFO);
+                        commandSender.sendMessage("§cDebug output for server has been disabled.");
+                    }
+                    context.updateLoggers(configuration);
+                }
                 break;
             case 3:
                 if (args[0].equalsIgnoreCase("setItem"))
@@ -331,7 +361,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                 }
                 if (MobSelector.getInstance() != null)
                 {
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs createMob <entityType> <name> <targetGroup> <itemId> <autoJoin> <displayName>");
+                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs createMob <entityType> <name> <targetGroup> <itemName> <autoJoin> <displayName>");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs removeMob <name>");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs listMobs");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs moblist");
@@ -339,6 +369,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs setItem <name> <itemId>");
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs editMobLine <name> <display>");
                 }
+                commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs debug");
                 break;
         }
 

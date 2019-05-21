@@ -4,6 +4,7 @@ import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Collection;
 
@@ -13,6 +14,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public class Template {
 
     private String name;

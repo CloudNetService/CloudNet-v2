@@ -156,7 +156,8 @@ public final class MobSelector {
 
     private ItemStack transform(MobItemLayout mobItemLayout)
     {
-        return ItemStackBuilder.builder(mobItemLayout.getItemId(), 1, mobItemLayout.getSubId())
+        Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
+        return material == null ? null : ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId())
                 .lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), new Catcher<String, String>() {
                     @Override
                     public String doCatch(String key)
@@ -168,7 +169,8 @@ public final class MobSelector {
 
     private ItemStack transform(MobItemLayout mobItemLayout, ServerInfo serverInfo)
     {
-        return ItemStackBuilder.builder(mobItemLayout.getItemId(), 1, mobItemLayout.getSubId())
+        Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
+        return material == null ? null :  ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId())
                 .lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), new Catcher<String, String>() {
                     @Override
                     public String doCatch(String key)
@@ -457,7 +459,7 @@ public final class MobSelector {
             if (inventories().contains(e.getInventory()) && e.getCurrentItem() != null && e.getSlot() == e.getRawSlot())
             {
                 e.setCancelled(true);
-                if (mobConfig.getItemLayout().getItemId() == e.getCurrentItem().getTypeId())
+                if (ItemStackBuilder.getMaterialIgnoreVersion(mobConfig.getItemLayout().getItemName(), mobConfig.getItemLayout().getItemId()) == e.getCurrentItem().getType())
                 {
                     MobImpl mob = find(e.getInventory());
                     if (mob.getServerPosition().containsKey(e.getSlot()))
@@ -517,10 +519,13 @@ public final class MobSelector {
                                 Entity armor = (Entity) armorStand;
                                 if (armor.getPassenger() == null && key.getItemId() != null)
                                 {
-                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(key.getItemId()));
-                                    item.setPickupDelay(Integer.MAX_VALUE);
-                                    item.setTicksLived(Integer.MAX_VALUE);
-                                    armor.setPassenger(item);
+                                    Material material = ItemStackBuilder.getMaterialIgnoreVersion(key.getItemName(), key.getItemId());
+                                    if(material != null) {
+                                        Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(material));
+                                        item.setPickupDelay(Integer.MAX_VALUE);
+                                        item.setTicksLived(Integer.MAX_VALUE);
+                                        armor.setPassenger(item);
+                                    }
                                 }
                             }
 

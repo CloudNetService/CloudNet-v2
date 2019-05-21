@@ -18,4 +18,9 @@ public class CloudFlareDNSRecordException extends RuntimeException {
     {
         super(message);
     }
+
+    public CloudFlareDNSRecordException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
 }

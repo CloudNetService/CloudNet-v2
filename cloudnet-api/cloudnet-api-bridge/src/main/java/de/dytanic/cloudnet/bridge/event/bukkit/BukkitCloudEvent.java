@@ -6,12 +6,20 @@ package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.CloudServer;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 
 /**
  * This Class defind the Bukkit CloudNet Event API
  */
 public abstract class BukkitCloudEvent extends Event {
+
+    /**
+     * Marks this BukkitCloudEvent as async or sync based on on which thread it's being called
+     */
+    public BukkitCloudEvent() {
+        super(!Bukkit.isPrimaryThread());
+    }
 
     /**
      * Returns the CloudAPI instance

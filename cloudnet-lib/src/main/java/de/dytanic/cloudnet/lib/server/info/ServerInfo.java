@@ -7,6 +7,7 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @Getter
 @AllArgsConstructor
+@ToString
 public class ServerInfo {
 
     public static final Type TYPE = new TypeToken<ServerInfo>() {

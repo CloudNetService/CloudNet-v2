@@ -41,14 +41,16 @@ public class ConfigPermissions {
             {
                 PermissionGroup member = new PermissionGroup(
                         "default",
+                        "&8",
                         "§eMember §7▎ ",
                         "§f",
                         "§e",
-                        9999,
+                        9999
+                    ,
                         0,
                         true,
                         new HashMap<>(),
-                        MapWrapper.valueableHashMap(new Return<String, List>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
+                        MapWrapper.valueableHashMap(new Return<>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
                         new HashMap<>(),
                         new ArrayList<>()
                 );
@@ -56,14 +58,15 @@ public class ConfigPermissions {
 
                 PermissionGroup admin = new PermissionGroup(
                         "Admin",
+                        "&c",
                         "§cAdmin §7▎ ",
                         "§f",
                         "§c",
                         0,
                         100,
                         false,
-                        (HashMap) MapWrapper.valueableHashMap(new Return<>("*", true)),
-                        MapWrapper.valueableHashMap(new Return<String, java.util.List>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
+                        MapWrapper.valueableHashMap(new Return<>("*", true)),
+                        MapWrapper.valueableHashMap(new Return<>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
                         new HashMap<>(),
                         new ArrayList<>()
                 );
@@ -156,6 +159,7 @@ public class ConfigPermissions {
         group.set("prefix", permissionGroup.getPrefix());
         group.set("suffix", permissionGroup.getSuffix());
         group.set("display", permissionGroup.getDisplay());
+        group.set("color", permissionGroup.getColor());
         group.set("tagId", permissionGroup.getTagId());
         group.set("joinPower", permissionGroup.getJoinPower());
         group.set("defaultGroup", permissionGroup.isDefaultGroup());
@@ -211,6 +215,7 @@ public class ConfigPermissions {
 
             PermissionGroup permissionGroup = new PermissionGroup(
                     key,
+                    group.getString("color"),
                     group.getString("prefix"),
                     group.getString("suffix"),
                     group.getString("display"),

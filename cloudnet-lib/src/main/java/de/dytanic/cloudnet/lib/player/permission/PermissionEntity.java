@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -66,21 +67,10 @@ public class PermissionEntity {
 
     public PermissionGroup getHighestPermissionGroup(PermissionPool permissionPool)
     {
-        PermissionGroup permissionGroup = null;
-
-        for (GroupEntityData groupEntityData : getGroups())
-        {
-            if (permissionGroup == null)
-                permissionGroup = permissionPool.getGroups().get(groupEntityData.getGroup());
-            else
-            {
-                if (permissionGroup.getJoinPower() < permissionPool.getGroups().get(groupEntityData.getGroup()).getJoinPower())
-                {
-                    permissionGroup = permissionPool.getGroups().get(groupEntityData.getGroup());
-                }
-            }
-        }
-        return permissionGroup;
+        return this.getGroups()
+                .stream()
+                .map(groupEntityData -> permissionPool.getGroups().get(groupEntityData.getGroup()))
+                .min(Comparator.comparingInt(PermissionGroup::getTagId)).orElse(null);
     }
 
     public boolean isInGroup(String group)
@@ -99,7 +89,7 @@ public class PermissionEntity {
     {
         for (Map.Entry<String, Boolean> entry : permissionGroup.getPermissions().entrySet())
             if (entry.getKey().endsWith("*") && entry.getKey().length() > 1 && permission.startsWith(entry.getKey().substring(0, entry.getKey().length() - 1)))
-                return true;
+                return entry.getValue();
 
         if (group != null && permissionGroup.getServerGroupPermissions().containsKey(group))
             for (String perms : permissionGroup.getServerGroupPermissions().get(group))
@@ -113,7 +103,7 @@ public class PermissionEntity {
     {
         for (Map.Entry<String, Boolean> entry : getPermissions().entrySet())
             if (entry.getKey().endsWith("*") && entry.getKey().length() > 1 && permission.startsWith(entry.getKey().substring(0, entry.getKey().length() - 1)))
-                return true;
+                return entry.getValue();
 
         return false;
     }

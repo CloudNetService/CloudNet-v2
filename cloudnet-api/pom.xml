@@ -24,12 +24,11 @@
             <id>cloudnet-repo</id>
             <url>https://cloudnetservice.eu/repositories</url>
         </repository>
-        <!-- SpigotMC repository
+        <!-- SpigotMC repository -->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-        -->
     </repositories>
 
     <dependencies>
@@ -41,8 +40,8 @@
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot <!-- spigot-api --> </artifactId>
-            <version>${dependency.spigot.version} <!-- 1.13-R0.1-SNAPSHOT --> </version>
+            <artifactId>spigot-api</artifactId>
+            <version>${dependency.spigot.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

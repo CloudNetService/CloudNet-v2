@@ -2,12 +2,14 @@ package de.dytanic.cloudnet.lib.network;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Created by Tareko on 29.06.2017.
  */
 @Getter
 @AllArgsConstructor
+@ToString
 public class WrapperInfo {
 
     private String serverId;

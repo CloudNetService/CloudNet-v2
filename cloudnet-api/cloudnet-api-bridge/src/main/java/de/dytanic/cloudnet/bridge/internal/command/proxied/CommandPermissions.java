@@ -35,6 +35,10 @@ public final class CommandPermissions extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args)
     {
+        CloudAPI.getInstance().getLogger().finest(
+                String.format("%s executed %s with arguments %s",
+                        sender, this, Arrays.toString(args))
+        );
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (args.length > 0)
         {
@@ -145,6 +149,19 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             permissionGroup.setJoinPower(Integer.parseInt(args[3]));
                             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
                             sender.sendMessage("You set the needed join power of the permission group " + permissionGroup.getName() + " to \"" + permissionGroup.getJoinPower() + "\"");
+                        } else
+                        {
+                            sender.sendMessage("The specified permission group doesn't exist");
+                        }
+                    }
+                    if (args[2].equalsIgnoreCase("setColor"))
+                    {
+                        if (permissionPool.getGroups().containsKey(args[1]))
+                        {
+                            PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
+                            permissionGroup.setColor(args[3]);
+                            CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+                            sender.sendMessage("You set the needed color of the permission group " + permissionGroup.getName() + " to \"" + permissionGroup.getColor() + "\"");
                         } else
                         {
                             sender.sendMessage("The specified permission group doesn't exist");
@@ -494,6 +511,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setPrefix <prefix>",
                     CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setTagId <tagId>",
                     CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDefault <true : false>",
+                    CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setColor <colorCode>",
                     CloudAPI.getInstance().getPrefix() + "/cperms USER <user>",
                     CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP SET <name> <lifetime | time in days> ",
                     CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP ADD <name> <lifetime | time in days> ",

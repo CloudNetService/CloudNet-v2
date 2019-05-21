@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
 
 /**
  * Created by Tareko on 17.08.2017.
@@ -39,6 +40,11 @@ public final class BukkitListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void handle0(AsyncPlayerPreLoginEvent e)
     {
+        CloudAPI.getInstance().getLogger().logp(
+                Level.FINEST,
+                this.getClass().getSimpleName(),
+                "handle0",
+                String.format("Handling async player pre login event: %s", e));
         for (Player all : Bukkit.getOnlinePlayers())
             if (all.getUniqueId().equals(e.getUniqueId()))
             {
@@ -52,6 +58,11 @@ public final class BukkitListener implements Listener {
     @EventHandler
     public void handle(BukkitSubChannelMessageEvent event)
     {
+        CloudAPI.getInstance().getLogger().logp(
+                Level.FINEST,
+                this.getClass().getSimpleName(),
+                "handle",
+                String.format("Handling bukkit sub channel message event: %s", event));
         if (event.getChannel().equalsIgnoreCase("cloudnet_internal") ||
                 event.getMessage().equalsIgnoreCase("server_connect_request"))
         {
@@ -73,6 +84,11 @@ public final class BukkitListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void handleLast(PlayerLoginEvent event)
     {
+        CloudAPI.getInstance().getLogger().logp(
+                Level.FINEST,
+                this.getClass().getSimpleName(),
+                "handleLast",
+                String.format("Handling player login event: %s", event));
         if (this.kicks.contains(event.getPlayer().getUniqueId()))
         {
             this.kicks.remove(event.getPlayer().getUniqueId());
@@ -84,6 +100,11 @@ public final class BukkitListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void handleFirst(PlayerLoginEvent event)
     {
+        CloudAPI.getInstance().getLogger().logp(
+                Level.FINEST,
+                this.getClass().getSimpleName(),
+                "handleFirst",
+                String.format("Handling player login event: %s", event));
         if (CloudServer.getInstance().getCloudPlayers().containsKey(event.getPlayer().getUniqueId()) && requests.contains(event.getPlayer().getUniqueId()))
         {
             requests.remove(event.getPlayer().getUniqueId());

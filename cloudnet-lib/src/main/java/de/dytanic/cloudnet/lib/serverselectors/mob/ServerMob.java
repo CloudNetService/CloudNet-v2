@@ -21,7 +21,12 @@ public class ServerMob implements Nameable {
     protected String name;
     protected String type;
     protected String targetGroup;
+    /**
+     * itemIds are not supported in all versions, use {@link ServerMob#itemName} instead
+     */
+    @Deprecated
     protected Integer itemId;
+    protected String itemName;
     protected Boolean autoJoin;
     protected MobPosition position;
     protected String displayMessage;
