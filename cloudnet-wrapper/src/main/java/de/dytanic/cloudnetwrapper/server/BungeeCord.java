@@ -450,4 +450,11 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
     {
         return proxyProcessMeta.getServiceId();
     }
+
+    @Override
+    public void addCachedItem(String text) {
+        if (text != null && !text.equals(">")) {
+            super.addCachedItem(text);
+        }
+    }
 }
