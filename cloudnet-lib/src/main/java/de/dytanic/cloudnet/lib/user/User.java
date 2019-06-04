@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.lib.user;
 
+import de.dytanic.cloudnet.lib.hash.DyHash;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -38,6 +39,10 @@ public class User implements Nameable {
     public SimpledUser toSimple()
     {
         return new SimpledUser(name, apiToken);
+    }
+
+    public void setPassword(String password) {
+        this.hashedPassword = DyHash.hashString(password);
     }
 
     public boolean hasPermission(String permission)
