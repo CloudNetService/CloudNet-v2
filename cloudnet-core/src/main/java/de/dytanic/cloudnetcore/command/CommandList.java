@@ -35,6 +35,8 @@ public final class CommandList extends Command {
 
             sender.sendMessage("Wrapper: [" + wrapper.getServerId() + "] @" + wrapper.getNetworkInfo().getHostName());
             sender.sendMessage("Info: CPU Usage: " + NetworkUtils.DECIMAL_FORMAT.format(wrapper.getCpuUsage()) + "/100% | Memory: " + wrapper.getUsedMemory() + NetworkUtils.SLASH_STRING + wrapper.getMaxMemory() + "MB");
+            if (wrapper.getWrapperInfo() != null)
+                sender.sendMessage("CloudNet-Wrapper Version: " + wrapper.getWrapperInfo().getVersion());
 
             sender.sendMessage(" ", "Proxys:");
             for (ProxyServer proxyServer : wrapper.getProxys().values())
