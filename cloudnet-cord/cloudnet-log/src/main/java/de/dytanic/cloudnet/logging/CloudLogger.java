@@ -42,6 +42,8 @@ public class CloudLogger
 
     @Setter
     private boolean debugging = false;
+    @Setter
+    private boolean showPrompt = !Boolean.getBoolean("cloudnet.logging.prompt.disabled");
 
     /**
      * Constructs a new cloud logger instance that handles logging messages from
@@ -83,6 +85,9 @@ public class CloudLogger
 
         System.setOut(new AsyncPrintStream(new LoggingOutputStream(Level.INFO)));
         System.setErr(new AsyncPrintStream(new LoggingOutputStream(Level.SEVERE)));
+
+        this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
+        this.reader.resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
     }
 
     /**
@@ -94,6 +99,17 @@ public class CloudLogger
     {
         if (debugging)
             log(Level.WARNING, "[DEBUG] " + message);
+    }
+
+    public String readLine(String prompt) {
+        try {
+            String line = this.reader.readLine(this.showPrompt ? prompt : null);
+            this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
+            return line;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
