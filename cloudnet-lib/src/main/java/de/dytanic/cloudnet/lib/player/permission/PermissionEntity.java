@@ -89,7 +89,7 @@ public class PermissionEntity {
     {
         for (Map.Entry<String, Boolean> entry : permissionGroup.getPermissions().entrySet())
             if (entry.getKey().endsWith("*") && entry.getKey().length() > 1 && permission.startsWith(entry.getKey().substring(0, entry.getKey().length() - 1)))
-                return true;
+                return entry.getValue();
 
         if (group != null && permissionGroup.getServerGroupPermissions().containsKey(group))
             for (String perms : permissionGroup.getServerGroupPermissions().get(group))
@@ -103,7 +103,7 @@ public class PermissionEntity {
     {
         for (Map.Entry<String, Boolean> entry : getPermissions().entrySet())
             if (entry.getKey().endsWith("*") && entry.getKey().length() > 1 && permission.startsWith(entry.getKey().substring(0, entry.getKey().length() - 1)))
-                return true;
+                return entry.getValue();
 
         return false;
     }
