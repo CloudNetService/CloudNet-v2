@@ -100,6 +100,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     private final java.util.Map<String, ServerGroup> serverGroups = NetworkUtils.newConcurrentHashMap();
     private final java.util.Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
 
+    private final LocalCloudWrapper localCloudWrapper = new LocalCloudWrapper();
+
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> objective, List<String> args) throws Exception
     {
         if (instance == null) instance = this;
@@ -215,7 +217,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         }
 
         eventManager.callEvent(new CloudInitEvent());
-        new LocalCloudWrapper().run(optionSet);
+        this.localCloudWrapper.run(optionSet);
 
         return true;
     }
@@ -326,6 +328,12 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         for (CloudNetServer cloudNetServer : this.cloudServers)
             cloudNetServer.close();
+
+        try {
+            this.localCloudWrapper.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("\n    _  _     _______   _                       _          \n" +
                 "  _| || |_  |__   __| | |                     | |         \n" +

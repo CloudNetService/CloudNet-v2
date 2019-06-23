@@ -254,6 +254,20 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             {
                 properties.load(inputStreamReader);
             }
+            if ((properties.isEmpty() || !properties.containsKey("max-players"))) {
+                properties.setProperty("max-players", "100");
+                FileUtility.insertData("files/server.properties", path + "/server.properties");
+                try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/server.properties")))) {
+                    properties.load(inputStreamReader);
+                }
+                if (this.serverGroup.getGroupMode() == ServerGroupMode.STATIC || this.serverGroup.getGroupMode() == ServerGroupMode.STATIC_LOBBY) {
+                    System.err.println("Filled empty server.properties (or missing \"max-players\" entry) of server [" + this.serverProcess.getMeta().getServiceId() + "] at " + (new File(path, "server.properties").getAbsolutePath()));
+                } else {
+                    System.err.println("Filled empty server.properties (or missing \"max-players\" entry) of server [" + this.serverProcess.getMeta().getServiceId() + "], " +
+                            "please fix this error in the server.properties (check the template [" + this.serverProcess.getMeta().getTemplate().getName() + "@" + this.serverProcess.getMeta().getTemplate().getBackend()
+                            + "] and the global directory [" + new File("local/global").getAbsolutePath() + "])");
+                }
+            }
 
             Enumeration enumeration = this.serverProcess.getMeta().getServerProperties().keys();
             while (enumeration.hasMoreElements())
@@ -268,7 +282,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             //properties.setProperty("server-name", serverProcess.getMeta().getServiceId().getServerId());
 
             motd = properties.getProperty("motd");
-            maxPlayers = Integer.parseInt(properties.getProperty("max-players"));
+            try {
+                maxPlayers = Integer.parseInt(properties.getProperty("max-players"));
+            } catch (NumberFormatException e) {
+                maxPlayers = 100;
+            }
 
             try (OutputStream outputStream = Files.newOutputStream(Paths.get(path + "/server.properties")))
             {
