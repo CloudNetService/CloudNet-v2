@@ -22,6 +22,9 @@ public final class PaperBuilder {
 
   private static Gson gson = new Gson();
   private static Process exec;
+  private static String apiProjectUrl = "https://papermc.io/api/v1/paper";
+  private static String apiProjectVersionDownload = "https://papermc.io/api/v1/paper/%s/%s/download";
+  private static String API_PROJECT_VERSION_URL = "https://papermc.io/api/v1/paper/%s";
 
   /**
    * Start the process of choice the paper version And build after choice
@@ -31,8 +34,7 @@ public final class PaperBuilder {
   public static void start(ConsoleReader reader) {
     try {
       System.out.println("Fetch Versions");
-      String API_PROJECT_URL = "https://papermc.io/api/v1/paper";
-      URLConnection connection = new URL(API_PROJECT_URL).openConnection();
+      URLConnection connection = new URL(apiProjectUrl).openConnection();
       connection.connect();
       PaperMCProject paperMCProject = gson
           .fromJson(new InputStreamReader(connection.getInputStream()), PaperMCProject.class);
@@ -79,15 +81,14 @@ public final class PaperBuilder {
    */
   private static void buildPaperVersion(String version) throws Exception {
     System.out.println("Fetch Builds");
-    String API_PROJECT_VERSION_URL = "https://papermc.io/api/v1/paper/%s";
     URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version))
         .openConnection();
     connection.connect();
     PaperMCProjectVersion paperMCProjectVersion = gson
         .fromJson(new InputStreamReader(connection.getInputStream()), PaperMCProjectVersion.class);
-    String API_PROJECT_VERSION_DOWNLOAD = "https://papermc.io/api/v1/paper/%s/%s/download";
+
     connection = new URL(String.format(
-        API_PROJECT_VERSION_DOWNLOAD, version, paperMCProjectVersion.getBuilds().getLatest()))
+        apiProjectVersionDownload, version, paperMCProjectVersion.getBuilds().getLatest()))
         .openConnection();
     connection.connect();
     File builder = new File("local/builder/papermc");
@@ -132,7 +133,7 @@ public final class PaperBuilder {
       Files.copy(inputStream, Paths.get(paperclip.toURI()), StandardCopyOption.REPLACE_EXISTING);
     }
     exec = Runtime.getRuntime()
-        .exec("java -jar paperclip.jar", null, buildFolder);
+        .exec("java -jar pa perclip.jar", null, buildFolder);
     printProcessOutputToConsole(exec);
 
     Files.copy(new FileInputStream(Objects.requireNonNull(
