@@ -33,7 +33,7 @@ import de.dytanic.cloudnetwrapper.server.BungeeCord;
 import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
 import de.dytanic.cloudnetwrapper.server.process.ServerProcessQueue;
-import de.dytanic.cloudnetwrapper.setup.SetupSpigotVersion;
+import de.dytanic.cloudnet.setup.spigot.SetupSpigotVersion;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import de.dytanic.cloudnetwrapper.util.PaperBuilder;
 import de.dytanic.cloudnetwrapper.util.ShutdownHook;

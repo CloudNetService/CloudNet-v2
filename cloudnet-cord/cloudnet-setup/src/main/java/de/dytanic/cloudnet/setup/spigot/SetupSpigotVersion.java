@@ -2,18 +2,20 @@
  * Copyright (c) Tarek Hosni El Alaoui 2017
  */
 
-package de.dytanic.cloudnetwrapper.setup;
+package de.dytanic.cloudnet.setup.spigot;
 
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetwrapper.util.PaperBuilder;
 import de.dytanic.cloudnetwrapper.util.SpigotBuilder;
 import jline.console.ConsoleReader;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
@@ -22,6 +24,9 @@ import java.nio.file.StandardCopyOption;
  */
 public class SetupSpigotVersion
         implements Runnabled<ConsoleReader> {
+
+    @Setter
+    private Path target;
 
     private final Runnabled<String> download = new Runnabled<String>() {
         @Override
@@ -35,7 +40,7 @@ public class SetupSpigotVersion
                 connection.connect();
                 try (InputStream inputStream = connection.getInputStream())
                 {
-                    Files.copy(inputStream, Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(inputStream, target != null ? target : Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
                 }
                 System.out.println("Download was successfully completed!");
             } catch (Exception e)
