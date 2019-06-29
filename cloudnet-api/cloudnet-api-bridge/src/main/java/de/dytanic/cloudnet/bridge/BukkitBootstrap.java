@@ -157,18 +157,18 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
                                         CloudServer.getInstance().getMotd(), Bukkit.getOnlinePlayers().size(), CloudServer.getInstance().getMaxPlayers()
                                 );
                                 Bukkit.getPluginManager().callEvent(serverListPingEvent);
-                                if (!serverListPingEvent.getMotd().equals(CloudServer.getInstance().getMotd()))
-                                {
+                                if (!serverListPingEvent.getMotd().equals(CloudServer.getInstance().getMotd())) {
                                     CloudServer.getInstance().setMotd(serverListPingEvent.getMotd());
-                                    if (serverListPingEvent.getMotd().toLowerCase().contains("running") || serverListPingEvent.getMotd().toLowerCase().contains("ingame"))
-                                    {
-                                        CloudServer.getInstance().changeToIngame();
+                                    if (serverListPingEvent.getMaxPlayers() != CloudServer.getInstance().getMaxPlayers()) {
+                                        CloudServer.getInstance().setMaxPlayers(serverListPingEvent.getMaxPlayers());
                                     }
-                                }
-
-                                if (serverListPingEvent.getMaxPlayers() != CloudServer.getInstance().getMaxPlayers())
-                                {
-                                    CloudServer.getInstance().setMaxPlayers(serverListPingEvent.getMaxPlayers());
+                                    if (serverListPingEvent.getMotd().toLowerCase().contains("running") || serverListPingEvent.getMotd().toLowerCase().contains("ingame")) {
+                                        CloudServer.getInstance().changeToIngame();
+                                    } else {
+                                        CloudServer.getInstance().update();
+                                    }
+                                } else if (serverListPingEvent.getMaxPlayers() != CloudServer.getInstance().getMaxPlayers()) {
+                                    CloudServer.getInstance().setMaxPlayersAndUpdate(serverListPingEvent.getMaxPlayers());
                                 }
                             } catch (Exception ex)
                             {
