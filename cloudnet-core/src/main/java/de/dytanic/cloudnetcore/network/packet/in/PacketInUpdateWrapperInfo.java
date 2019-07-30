@@ -5,6 +5,7 @@
 package de.dytanic.cloudnetcore.network.packet.in;
 
 import com.google.gson.reflect.TypeToken;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
@@ -32,6 +33,16 @@ public final class PacketInUpdateWrapperInfo extends PacketInHandler {
             ((Wrapper) packetSender).setMaxMemory(wrapperInfo.getMemory());
             ((Wrapper) packetSender).updateWrapper();
             System.out.println("Wrapper [" + ((Wrapper) packetSender).getServerId() + "] is ready with C" + wrapperInfo.getAvailableProcessors() + " and " + wrapperInfo.getMemory() + "MB");
+
+            if (wrapperInfo.getVersion() != null && !wrapperInfo.getVersion().equals(NetworkUtils.class.getPackage().getImplementationVersion())) {
+                System.err.println(
+                        "Wrapper ["
+                                + ((Wrapper) packetSender).getServerId()
+                                + "] does not use the same version as this CloudNet Master [Master:" +
+                                NetworkUtils.class.getPackage().getImplementationVersion() + "/Wrapper:" + wrapperInfo.getVersion()
+                                + "], please update"
+                );
+            }
         }
     }
 }
