@@ -14,6 +14,7 @@ public class WrapperInfo {
 
     private String serverId;
     private String hostName;
+    private String version;
     private boolean ready;
     private int availableProcessors;
     private int startPort;

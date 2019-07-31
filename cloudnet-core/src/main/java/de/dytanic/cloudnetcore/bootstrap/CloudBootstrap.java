@@ -120,12 +120,8 @@ public final class CloudBootstrap {
             {
                 while (true)
                 {
-                    cloudNetLogging.getReader().setPrompt(NetworkUtils.EMPTY_STRING);
-                    cloudNetLogging.getReader().resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
-                    while ((commandLine = cloudNetLogging.getReader().readLine(user + "@Master $ ")) != null && CloudNet.RUNNING)
+                    while ((commandLine = cloudNetLogging.readLine(user + "@Master $ ")) != null && CloudNet.RUNNING)
                     {
-                        cloudNetLogging.getReader().setPrompt(NetworkUtils.EMPTY_STRING);
-
                         String dispatcher = cloudNetCore.getDbHandlers().getCommandDispatcherDatabase().findDispatcher(commandLine);
                         if (dispatcher != null)
                         {
