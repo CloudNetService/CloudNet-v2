@@ -207,9 +207,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
     private boolean listMobs(CommandSender commandSender) {
         if (checkMobSelectorActive(commandSender)) return true;
 
-        MobSelector.getInstance().getMobs().forEach((uuid, mob) -> {
-            commandSender.sendMessage("- " + mob.getMob().getName());
-        });
+        MobSelector.getInstance().getMobs().forEach((uuid, mob) ->
+                commandSender.sendMessage("- " + mob.getMob().getName()));
         return false;
     }
 
