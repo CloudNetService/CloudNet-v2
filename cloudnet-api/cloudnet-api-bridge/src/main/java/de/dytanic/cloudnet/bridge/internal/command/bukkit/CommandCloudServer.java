@@ -83,9 +83,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                 return playerGuard(commandSender,
                         player -> createMob(commandSender, args, player));
             }
-        }
-
-        if (args.length > 2) {
+        } else if (args.length > 2) {
             if (args[0].equalsIgnoreCase("editMobLine")) {
                 return editMobLine(commandSender, args);
             }
@@ -94,48 +92,37 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
             }
         }
 
-        switch (args.length) {
-            case 2:
-                if (args[0].equalsIgnoreCase("copyTo")) {
-                    return copyTo(commandSender, args[1]);
-                }
-                if (args[0].equalsIgnoreCase("createSign")) {
-                    return playerGuard(commandSender,
-                            player -> createSign(commandSender, args, player));
-                }
-                if (args[0].equalsIgnoreCase("removeSigns")) {
-                    return removeSigns(commandSender, args[1]);
+        if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("removeSign")) {
+                return playerGuard(commandSender,
+                        player -> removeSign(commandSender, player));
 
-                }
-                if (args[0].equalsIgnoreCase("removeMob")) {
-                    return removeMob(commandSender, args[1]);
-                }
-                break;
-            case 1:
-                if (args[0].equalsIgnoreCase("removeSign")) {
-                    return playerGuard(commandSender,
-                            player -> removeSign(commandSender, player));
+            } else if (args[0].equalsIgnoreCase("listMobs")) {
+                return listMobs(commandSender);
+            } else if (args[0].equalsIgnoreCase("moblist")) {
+                return mobList(commandSender);
+            } else if (args[0].equalsIgnoreCase("debug")) {
+                return debug(commandSender);
+            }
+        } else if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("copyTo")) {
+                return copyTo(commandSender, args[1]);
+            } else if (args[0].equalsIgnoreCase("createSign")) {
+                return playerGuard(commandSender,
+                        player -> createSign(commandSender, args, player));
+            } else if (args[0].equalsIgnoreCase("removeSigns")) {
+                return removeSigns(commandSender, args[1]);
 
-                }
-                if (args[0].equalsIgnoreCase("listMobs")) {
-                    return listMobs(commandSender);
-                }
-                if (args[0].equalsIgnoreCase("moblist")) {
-                    return mobList(commandSender);
-                }
-                if (args[0].equalsIgnoreCase("debug")) {
-                    return debug(commandSender);
-                }
-                break;
-            case 3:
-                if (args[0].equalsIgnoreCase("setItem")) {
-                    return setItem(commandSender, args);
-                }
-                break;
-            default:
-                help(commandSender);
-                break;
+            } else if (args[0].equalsIgnoreCase("removeMob")) {
+                return removeMob(commandSender, args[1]);
+            }
+        } else if (args.length == 3) {
+            if (args[0].equalsIgnoreCase("setItem")) {
+                return setItem(commandSender, args);
+            }
         }
+
+        help(commandSender);
 
         return false;
     }
