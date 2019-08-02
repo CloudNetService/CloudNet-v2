@@ -321,7 +321,9 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
         try {
             EntityType entityType = EntityType.valueOf(args[1].toUpperCase());
-            if (!entityType.isAlive() || !entityType.isSpawnable()) return true;
+            if (!entityType.isAlive() || !entityType.isSpawnable()) {
+                return true;
+            }
             if (MobSelector.getInstance().getMobs().values().stream().noneMatch(
                     mob -> mob.getMob().getName().equalsIgnoreCase(args[2])
             )) {
