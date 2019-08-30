@@ -130,7 +130,7 @@ public final class PaperBuilder {
             Files.copy(inputStream, Paths.get(paperclip.toURI()), StandardCopyOption.REPLACE_EXISTING);
         }
         exec = Runtime.getRuntime()
-                .exec("java -jar pa perclip.jar", null, buildFolder);
+                .exec("java -jar paperclip.jar", null, buildFolder);
         printProcessOutputToConsole(exec);
 
         Files.copy(new FileInputStream(Objects.requireNonNull(
