@@ -29,5 +29,5 @@ jobs:
         find cloudnet-tools/ -type f -name "cloudnet-tools-*.jar" -and -not -name "*-sources.jar" -and -not -name "*-javadoc.jar" -exec cp "{}" temp/tools/ ';'
     - uses: actions/upload-artifact@master
       with:
-      name: CloudNet-V2
-      path: temp/
+        name: CloudNet-V2
+        path: temp/
