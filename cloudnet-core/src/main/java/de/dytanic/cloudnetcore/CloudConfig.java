@@ -29,12 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import jline.console.ConsoleReader;
@@ -131,6 +126,9 @@ public class CloudConfig {
         configuration.set("server.ports", Arrays.asList(1410));
         configuration.set("server.webservice.hostaddress", hostName);
         configuration.set("server.webservice.port", 1420);
+
+        configuration.set("cloudnet-statistics.enabled", true);
+        configuration.set("cloudnet-statistics.uuid", UUID.randomUUID().toString());
 
         configuration.set("networkproperties.test", true);
 

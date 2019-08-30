@@ -24,11 +24,14 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 04.10.2017.
  */
 public final class CommandLog extends Command {
+
+  private final Gson g = new Gson();
 
   public CommandLog() {
     super("log", "cloudnet.command.log");
@@ -45,7 +48,8 @@ public final class CommandLog extends Command {
         if (minecraftServer != null) {
           String rndm = NetworkUtils.randomString(10);
           CloudNet.getInstance().getServerLogManager().append(rndm, minecraftServer.getServerId());
-          List<String> hasteServer = CloudNet.getInstance().getConfig().getHasteServer();
+          List<String> hasteServer = CloudNet.getInstance().getConfig().getHasteServer().stream().filter(this::checkUrl)
+                  .collect(Collectors.toList());
           Random r = new Random();
           sendPaste(sender, rndm, hasteServer.get(r.nextInt(hasteServer.size())), minecraftServer);
           String x = new StringBuilder("http://")
@@ -75,38 +79,36 @@ public final class CommandLog extends Command {
    */
   private void sendPaste(CommandSender sender, String random, String url,
       MinecraftServer minecraftServer) {
-    final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    executorService.schedule(() -> {
+    CloudNet.getInstance().getScheduler().runTaskDelayAsync(() -> {
       StringBuilder paste = new StringBuilder();
       paste.append("----------------------------------------------------------------")
-          .append('\n');
+              .append('\n');
       paste.append(String.format("Time: %s", ZonedDateTime.now())).append('\n');
       paste.append(String.format("Server: %s", minecraftServer.getServerId())).append('\n');
       paste.append(String.format("Java Version: %s", System.getProperty("java.version")))
-          .append('\n');
+              .append('\n');
       paste.append(String.format("User: %s", System.getProperty("user.name")))
-          .append('\n');
+              .append('\n');
       paste.append(String.format("OS: %s %s (%s)", System.getProperty("os.name"),
-          System.getProperty("os.arch"),
-          System.getProperty("os.version")))
-          .append('\n');
+              System.getProperty("os.arch"),
+              System.getProperty("os.version")))
+              .append('\n');
       paste.append(String.format("Memory Used: %d Mb", (NetworkUtils.system().getTotalPhysicalMemorySize() -
               NetworkUtils.system().getFreePhysicalMemorySize() )/ 1024L)).append('\n');
       paste.append(String.format("Memory Free: %d Mb", NetworkUtils.system().getFreePhysicalMemorySize() / 1024L)).append('\n');
       paste.append(String.format("Memory Max: %d Mb", NetworkUtils.system().getTotalPhysicalMemorySize() / 1024L)).append('\n');
       paste.append(String.format("CPU Cores: %d", NetworkUtils.system().getAvailableProcessors())).append('\n');
       paste.append(String.format("CloudNet Version: %s # %s",
-          NetworkUtils.class.getPackage().getSpecificationVersion(),
-          NetworkUtils.class.getPackage().getImplementationVersion())).append('\n');
+              NetworkUtils.class.getPackage().getSpecificationVersion(),
+              NetworkUtils.class.getPackage().getImplementationVersion())).append('\n');
 
       paste.append("----------------------------------------------------------------").append('\n');
       CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
-          screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
+              screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
       String key = postTo(url + "/documents", paste);
       sender.sendMessage(
-          "You can see the log at: " + String.format(url + "/%s", key));
-    }, 3, TimeUnit.SECONDS);
-    executorService.shutdown();
+              "You can see the log at: " + String.format(url + "/%s", key));
+    }, 3*50);
   }
 
   /**
@@ -129,7 +131,7 @@ public final class CommandLog extends Command {
       outputStream.flush();
       outputStream.close();
       InputStream inputStream = connection.getInputStream();
-      Gson g = new Gson();
+
       JsonObject object = g.fromJson(new InputStreamReader(inputStream), JsonObject.class);
       connection.disconnect();
       return object.get("key").getAsString();
@@ -137,5 +139,25 @@ public final class CommandLog extends Command {
       e.printStackTrace();
     }
     return "KEY_NOT_FOUND";
+  }
+
+  /**
+   * Check url is page available
+   * @param url The url to check
+   * @return Return true if exist and connectible, else return false
+   */
+  private boolean checkUrl(String url) {
+    HttpURLConnection.setFollowRedirects(false);
+    HttpURLConnection con = null;
+    try {
+      con = (HttpURLConnection) new URL(url).openConnection();
+      con.setConnectTimeout(5);
+      con.setReadTimeout(5);
+      con.setRequestMethod("HEAD");
+      return con.getResponseCode() == HttpURLConnection.HTTP_OK;
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return false;
   }
 }
