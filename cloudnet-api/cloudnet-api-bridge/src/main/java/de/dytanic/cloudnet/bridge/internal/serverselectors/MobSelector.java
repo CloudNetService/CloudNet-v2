@@ -339,7 +339,7 @@ public final class MobSelector {
 
     public Collection<Inventory> inventories()
     {
-        return CollectionWrapper.getCollection(this.mobs, key -> key.getInventory());
+        return CollectionWrapper.getCollection(this.mobs, MobImpl::getInventory);
     }
 
     public MobImpl find(Inventory inventory)
@@ -421,7 +421,7 @@ public final class MobSelector {
         public void onSave(WorldSaveEvent e)
         {
             Map<UUID, ServerMob> filteredMobs = MapWrapper.transform(MobSelector.this.mobs,
-                key -> key, key -> key.getMob());
+                key -> key, MobImpl::getMob);
 
             MobSelector.getInstance().shutdown();
 

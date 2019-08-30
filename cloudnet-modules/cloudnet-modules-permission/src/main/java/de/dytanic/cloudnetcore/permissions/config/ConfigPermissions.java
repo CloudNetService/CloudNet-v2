@@ -77,7 +77,7 @@ public class ConfigPermissions {
                 Collection<PermissionGroup> groups = document.getObject("groups", new TypeToken<Collection<PermissionGroup>>() {
                 }.getType());
                 Map<String, PermissionGroup> maps = MapWrapper.collectionCatcherHashMap(groups,
-                    key -> key.getName());
+                        PermissionGroup::getName);
 
                 configuration.set("enabled", document.getBoolean("enabled"));
 

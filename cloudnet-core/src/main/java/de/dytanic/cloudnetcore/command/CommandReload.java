@@ -77,7 +77,7 @@ public final class CommandReload extends Command {
                     CloudNet.getInstance().getNetworkManager().reload();
                     CloudNet.getInstance().getNetworkManager().updateAll();
                     CloudNet.getInstance().getWrappers().values().forEach(
-                        wrapper -> wrapper.updateWrapper());
+                            Wrapper::updateWrapper);
                     sender.sendMessage("[RELOAD] Reloading was completed successfully");
                 }
                 if (args[0].equalsIgnoreCase("wrapper"))

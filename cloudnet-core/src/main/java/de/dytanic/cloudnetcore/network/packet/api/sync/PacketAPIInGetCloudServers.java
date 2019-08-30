@@ -25,7 +25,7 @@ public class PacketAPIInGetCloudServers extends PacketAPIIO {
     public void handleInput(Document data, PacketSender packetSender)
     {
         Collection<ServerInfo> serverInfos = CollectionWrapper.transform(CloudNet.getInstance().getCloudGameServers().values(),
-            key -> key.getServerInfo());
+                CloudServer::getServerInfo);
         packetSender.sendPacket(getResult(new Document("serverInfos", serverInfos)));
     }
 

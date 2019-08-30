@@ -566,7 +566,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 1;
         Collection<ServiceId> serviceIds = getProxysServiceIdsAndWaitings(proxyGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, ServiceId::getId);
         while (collection.contains(id)) id++;
 
         return new ServiceId(proxyGroup.getName(), id, UUID.randomUUID(), wrapper.getNetworkInfo().getId(), proxyGroup.getName() + config.getFormatSplitter() + id);
@@ -576,7 +576,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 1;
         Collection<ServiceId> serviceIds = getProxysServiceIdsAndWaitings(proxyGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, ServiceId::getId);
         while (collection.contains(id)) id++;
 
         return new ServiceId(proxyGroup.getName(), id, uuid, wrapper.getNetworkInfo().getId(), proxyGroup.getName() + config.getFormatSplitter() + id);
@@ -591,7 +591,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 1;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, ServiceId::getId);
         while (collection.contains(id)) id++;
 
         return new ServiceId(serverGroup.getName(), id, UUID.randomUUID(), wrapper.getNetworkInfo().getId(), serverGroup.getName() + config.getFormatSplitter() + id);
@@ -601,7 +601,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 1;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, ServiceId::getId);
         while (collection.contains(id)) id++;
 
         return new ServiceId(serverGroup.getName(), id, UUID.randomUUID(), wrapper.getNetworkInfo().getId(), serverId);
@@ -621,7 +621,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 0;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, ServiceId::getId);
         while (collection.contains(id)) id++;
         return new ServiceId(serverGroup.getName(), id, uniqueId, wrapper.getNetworkInfo().getId(), serverGroup.getName() + config.getFormatSplitter() + id);
     }
@@ -640,7 +640,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     {
         int id = 0;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, key -> key.getId());
+        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, ServiceId::getId);
         while (collection.contains(id)) id++;
         return new ServiceId(serverGroup.getName(), id, uniqueId, wrapper.getNetworkInfo().getId(), serverId);
     }
@@ -716,7 +716,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public Collection<String> getServersAndWaitings(String group)
     {
         Collection<String> strings = CollectionWrapper.transform(getServers(group),
-            key -> key.getServerId());
+                MinecraftServer::getServerId);
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -748,7 +748,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public Collection<ServiceId> getServerServiceIdsAndWaitings(String group)
     {
         Collection<ServiceId> strings = CollectionWrapper.transform(getServers(group),
-            key -> key.getServiceId());
+                MinecraftServer::getServiceId);
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -764,7 +764,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public Collection<String> getServersAndWaitings()
     {
         Collection<String> strings = CollectionWrapper.transform(getServers().values(),
-            key -> key.getServerId());
+                MinecraftServer::getServerId);
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -779,7 +779,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public Collection<String> getProxysAndWaitings(String group)
     {
         Collection<String> strings = CollectionWrapper.transform(getProxys(group),
-            key -> key.getServerId());
+                ProxyServer::getServerId);
 
         for (Wrapper wrapper : wrappers.values())
         {
@@ -795,7 +795,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public Collection<ServiceId> getProxysServiceIdsAndWaitings(String group)
     {
         Collection<ServiceId> strings = CollectionWrapper.transform(getProxys(group),
-            key -> key.getServiceId());
+                ProxyServer::getServiceId);
 
         for (Wrapper wrapper : wrappers.values())
         {

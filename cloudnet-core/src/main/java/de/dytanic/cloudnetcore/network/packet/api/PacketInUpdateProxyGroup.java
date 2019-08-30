@@ -53,7 +53,7 @@ public class PacketInUpdateProxyGroup extends PacketInHandler {
 
         CloudNet.getInstance().getNetworkManager().reload();
         CloudNet.getInstance().getNetworkManager().updateAll0();
-        CloudNet.getInstance().getWrappers().values().forEach(wrapper -> wrapper.updateWrapper());
+        CloudNet.getInstance().getWrappers().values().forEach(Wrapper::updateWrapper);
 
     }
 }

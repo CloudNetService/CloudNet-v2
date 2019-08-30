@@ -117,9 +117,7 @@ public class VaultPermissionImpl extends Permission {
         permissionEntity.getGroups().stream()
                 .filter(ged -> ged.getGroup().equalsIgnoreCase(group))
                 .findFirst()
-                .ifPresent(ged -> {
-                    permissionEntity.getGroups().remove(ged);
-                });
+                .ifPresent(ged -> permissionEntity.getGroups().remove(ged));
 
         offlinePlayer.setPermissionEntity(permissionEntity);
         updatePlayer(offlinePlayer);

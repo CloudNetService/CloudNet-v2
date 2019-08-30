@@ -27,12 +27,12 @@ public class PacketAPIInGetProxys extends PacketAPIIO {
         if (data.contains("group"))
         {
             Collection<ProxyInfo> proxyInfos = CollectionWrapper.transform(CloudNet.getInstance().getProxys(data.getString("group")),
-                key -> key.getProxyInfo());
+                    ProxyServer::getProxyInfo);
             packetSender.sendPacket(getResult(new Document("proxyInfos", proxyInfos)));
         } else
         {
             Collection<ProxyInfo> proxyInfos = CollectionWrapper.transform(CloudNet.getInstance().getProxys().values(),
-                key -> key.getProxyInfo());
+                    ProxyServer::getProxyInfo);
             packetSender.sendPacket(getResult(new Document("proxyInfos", proxyInfos)));
         }
     }

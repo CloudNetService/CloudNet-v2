@@ -505,13 +505,7 @@ public final class NetworkManager {
                         return key;
                     }
                 },
-                new Catcher<SimpleServerGroup, ServerGroup>() {
-                    @Override
-                    public SimpleServerGroup doCatch(ServerGroup key)
-                    {
-                        return key.toSimple();
-                    }
-                }
+                ServerGroup::toSimple
         ));
         //cloudNetwork.setPermissionPool(permissionPool);
         cloudNetwork.setProxyGroups(CloudNet.getInstance().getProxyGroups());

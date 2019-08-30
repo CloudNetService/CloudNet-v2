@@ -344,7 +344,7 @@ public class CloudConfig {
         Collection<ProxyGroup> collection = serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
 
-        return MapWrapper.collectionCatcherHashMap(collection, key -> key.getName());
+        return MapWrapper.collectionCatcherHashMap(collection, ProxyGroup::getName);
     }
 
 }

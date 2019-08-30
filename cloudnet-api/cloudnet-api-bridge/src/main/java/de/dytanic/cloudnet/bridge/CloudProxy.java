@@ -222,7 +222,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
     public void updateAsync()
     {
-        proxiedBootstrap.getProxy().getScheduler().runAsync(proxiedBootstrap, () -> update());
+        proxiedBootstrap.getProxy().getScheduler().runAsync(proxiedBootstrap, this::update);
     }
 
     /**

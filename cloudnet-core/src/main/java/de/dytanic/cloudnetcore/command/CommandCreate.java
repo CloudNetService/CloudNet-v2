@@ -207,7 +207,7 @@ public final class CommandCreate extends Command {
                             NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(),
                                 value -> true);
                             CloudNet.getInstance().getWrappers().values().forEach(
-                                wrapper -> wrapper.updateWrapper());
+                                    Wrapper::updateWrapper);
                             sender.sendMessage("The template was created and all wrappers were updated!");
                         }
                         if (args[3].equalsIgnoreCase("MASTER"))
@@ -222,7 +222,7 @@ public final class CommandCreate extends Command {
                             NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(),
                                 value -> true);
                             CloudNet.getInstance().getWrappers().values().forEach(
-                                wrapper -> wrapper.updateWrapper());
+                                    Wrapper::updateWrapper);
                             sender.sendMessage("The template was created and all wrappers were updated!");
                         }
                     } else
@@ -248,7 +248,7 @@ public final class CommandCreate extends Command {
                             NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(),
                                 value -> true);
                             CloudNet.getInstance().getWrappers().values().forEach(
-                                wrapper -> wrapper.updateWrapper());
+                                    Wrapper::updateWrapper);
                             sender.sendMessage("The template was created and all wrappers were updated!");
                         }
                     } else

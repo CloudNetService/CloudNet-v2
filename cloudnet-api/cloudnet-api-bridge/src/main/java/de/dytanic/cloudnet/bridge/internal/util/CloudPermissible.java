@@ -69,12 +69,10 @@ public class CloudPermissible extends PermissibleBase {
 
                     return builder.build();
                 })
-                .forEach(g -> {
-                    g.getPermissions().forEach((key, value) -> {
-                        PermissionAttachmentInfo permissionAttachmentInfo = new PermissionAttachmentInfo(this, key, null, value);
-                        permissions.put(key, permissionAttachmentInfo);
-                    });
-                });
+                .forEach(g -> g.getPermissions().forEach((key, value) -> {
+                    PermissionAttachmentInfo permissionAttachmentInfo = new PermissionAttachmentInfo(this, key, null, value);
+                    permissions.put(key, permissionAttachmentInfo);
+                }));
     }
 
     @Override

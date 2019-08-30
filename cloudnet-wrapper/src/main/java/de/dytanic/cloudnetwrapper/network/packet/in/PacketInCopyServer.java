@@ -29,7 +29,7 @@ public class PacketInCopyServer extends PacketInHandler {
         {
             if (!data.contains("template"))
             {
-                CloudNetWrapper.getInstance().getScheduler().runTaskAsync(() -> gameServer.copy());
+                CloudNetWrapper.getInstance().getScheduler().runTaskAsync(gameServer::copy);
             } else
             {
                 CloudNetWrapper.getInstance().getScheduler().runTaskAsync(

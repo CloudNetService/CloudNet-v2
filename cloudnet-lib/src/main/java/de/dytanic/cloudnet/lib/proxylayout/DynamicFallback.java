@@ -32,7 +32,7 @@ public class DynamicFallback {
 
     public Collection<String> getNamedFallbackes()
     {
-        return CollectionWrapper.transform(this.fallbacks, key -> key.getGroup());
+        return CollectionWrapper.transform(this.fallbacks, ServerFallback::getGroup);
     }
 
 }

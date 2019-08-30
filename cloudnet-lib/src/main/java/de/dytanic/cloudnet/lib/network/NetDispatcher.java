@@ -65,7 +65,7 @@ public class NetDispatcher extends SimpleChannelInboundHandler {
             if (o instanceof FileDeploy)
             {
                 FileDeploy deploy = ((FileDeploy) o);
-                TaskScheduler.runtimeScheduler().schedule(() -> deploy.toWrite());
+                TaskScheduler.runtimeScheduler().schedule(deploy::toWrite);
             }
         }
     }
