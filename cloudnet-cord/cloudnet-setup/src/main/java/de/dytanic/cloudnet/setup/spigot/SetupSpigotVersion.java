@@ -2,16 +2,18 @@
  * Copyright (c) Tarek Hosni El Alaoui 2017
  */
 
-package de.dytanic.cloudnetwrapper.setup;
+package de.dytanic.cloudnet.setup.spigot;
 
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import jline.console.ConsoleReader;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
@@ -21,21 +23,28 @@ import java.nio.file.StandardCopyOption;
 public class SetupSpigotVersion
         implements Runnabled<ConsoleReader> {
 
-    private final Runnabled<String> download = url -> {
-        try
+    @Setter
+    private Path target;
+
+    private final Runnabled<String> download = new Runnabled<String>() {
+        @Override
+        public void run(String url)
         {
-            System.out.println("Downloading spigot.jar...");
-            URLConnection connection = new URL(url).openConnection();
-            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-            connection.connect();
-            try (InputStream inputStream = connection.getInputStream())
+            try
             {
-                Files.copy(inputStream, Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Downloading spigot.jar...");
+                URLConnection connection = new URL(url).openConnection();
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                connection.connect();
+                try (InputStream inputStream = connection.getInputStream())
+                {
+                    Files.copy(inputStream, target != null ? target : Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+                }
+                System.out.println("Download was successfully completed!");
+            } catch (Exception e)
+            {
+                e.printStackTrace();
             }
-            System.out.println("Download was successfully completed!");
-        } catch (Exception e)
-        {
-            e.printStackTrace();
         }
     };
 

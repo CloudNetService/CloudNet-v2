@@ -44,8 +44,7 @@ public final class BukkitListener implements Listener {
                 Level.FINEST,
                 this.getClass().getSimpleName(),
                 "handle0",
-                "Handling async player pre login event: %s",
-                e);
+                String.format("Handling async player pre login event: %s", e));
         for (Player all : Bukkit.getOnlinePlayers())
             if (all.getUniqueId().equals(e.getUniqueId()))
             {
@@ -63,8 +62,7 @@ public final class BukkitListener implements Listener {
                 Level.FINEST,
                 this.getClass().getSimpleName(),
                 "handle",
-                "Handling bukkit sub channel message event: %s",
-                event);
+                String.format("Handling bukkit sub channel message event: %s", event));
         if (event.getChannel().equalsIgnoreCase("cloudnet_internal") ||
                 event.getMessage().equalsIgnoreCase("server_connect_request"))
         {
@@ -85,8 +83,7 @@ public final class BukkitListener implements Listener {
                 Level.FINEST,
                 this.getClass().getSimpleName(),
                 "handleLast",
-                "Handling player login event: %s",
-                event);
+                String.format("Handling player login event: %s", event));
         if (this.kicks.contains(event.getPlayer().getUniqueId()))
         {
             this.kicks.remove(event.getPlayer().getUniqueId());
@@ -102,8 +99,7 @@ public final class BukkitListener implements Listener {
                 Level.FINEST,
                 this.getClass().getSimpleName(),
                 "handleFirst",
-                "Handling player login event: %s",
-                event);
+                String.format("Handling player login event: %s", event));
         if (CloudServer.getInstance().getCloudPlayers().containsKey(event.getPlayer().getUniqueId()) && requests.contains(event.getPlayer().getUniqueId()))
         {
             requests.remove(event.getPlayer().getUniqueId());
