@@ -34,6 +34,7 @@ public class ItemStackBuilder {
     /**
      * @deprecated will only work in versions lower than 1.13
      */
+    @Deprecated
     public ItemStackBuilder(int material)
     {
         this.itemStack = new ItemStack(Material.getMaterial(material));
@@ -49,6 +50,7 @@ public class ItemStackBuilder {
     /**
      * @deprecated will only work in versions lower than 1.13
      */
+    @Deprecated
     public ItemStackBuilder(int material, int amount)
     {
         this.itemStack = new ItemStack(material, amount);
