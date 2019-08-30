@@ -440,7 +440,6 @@ public final class CommandPermissions extends Command implements TabExecutor {
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender commandSender, String[] strings) {
-        commandSender.sendMessage("DEBUG: "+ Arrays.toString(strings));
         switch (strings.length) {
             ///cperms
             case 1: {
@@ -525,7 +524,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
 		        }
 	        }
         }
-        return Collections.singletonList("cperms");
+        return new ArrayList<>();
 	}
 
 	private boolean permissionIsSet(Map<String, Boolean> permissions, String permission, boolean value) {
