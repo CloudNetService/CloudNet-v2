@@ -17,30 +17,24 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
+import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Predicate;
-import lombok.Getter;
 
 
 /**
  * CloudFlare Service supports the api.cloudflare.com API for dynamic DNS records for BungeeCord Server.
  */
-@Getter
 public class CloudFlareService {
 
     private static final String PREFIX_URL = "https://api.cloudflare.com/client/v4/";
-    @Getter
     private static CloudFlareService instance;
     private final String prefix = "[CLOUDFLARE] | ";
     private Collection<CloudFlareConfig> cloudFlareConfigs;
@@ -60,6 +54,26 @@ public class CloudFlareService {
         instance = this;
 
         this.cloudFlareConfigs = cloudFlareConfigs;
+    }
+
+    public static CloudFlareService getInstance() {
+        return instance;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public Collection<CloudFlareConfig> getCloudFlareConfigs() {
+        return cloudFlareConfigs;
+    }
+
+    public Map<String, MultiValue<PostResponse, String>> getBungeeSRVRecords() {
+        return bungeeSRVRecords;
+    }
+
+    public Map<String, MultiValue<PostResponse, String>> getIpARecords() {
+        return ipARecords;
     }
 
     @Deprecated
@@ -189,7 +203,13 @@ public class CloudFlareService {
     {
         //if (!bungeeSRVRecords.containsKey(proxyServer.getServiceId().getServerId())) return;
 
-        Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(), postResponseStringMultiValue -> postResponseStringMultiValue.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId()));
+        Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(), new Acceptable<MultiValue<PostResponse, String>>() {
+            @Override
+            public boolean isAccepted(MultiValue<PostResponse, String> postResponseStringMultiValue)
+            {
+                return postResponseStringMultiValue.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId());
+            }
+        });
 
         //MultiValue<PostResponse, String> postResponse = bungeeSRVRecords.get(proxyServer.getServiceId().getServerId());
             /*

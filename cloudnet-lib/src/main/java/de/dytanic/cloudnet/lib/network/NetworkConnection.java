@@ -12,27 +12,19 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+
 import java.io.File;
 import java.nio.file.Path;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by Tareko on 22.07.2017.
  */
-@Getter
 public final class NetworkConnection implements PacketSender {
 
-    @Setter(AccessLevel.PROTECTED)
     private Channel channel;
     private ConnectableAddress connectableAddress;
 
@@ -43,6 +35,38 @@ public final class NetworkConnection implements PacketSender {
 
     private Runnable task;
     private SslContext sslContext;
+
+    public PacketManager getPacketManager() {
+        return packetManager;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public SslContext getSslContext() {
+        return sslContext;
+    }
+
+    public ConnectableAddress getConnectableAddress() {
+        return connectableAddress;
+    }
+
+    public EventLoopGroup getEventLoopGroup() {
+        return eventLoopGroup;
+    }
+
+    public long getConnectionTrys() {
+        return connectionTrys;
+    }
+
+    public Runnable getTask() {
+        return task;
+    }
+
+    protected void setChannel(Channel channel) {
+        this.channel = channel;
+    }
 
     @Override
     public String getName()
@@ -145,9 +169,13 @@ public final class NetworkConnection implements PacketSender {
                 channel.writeAndFlush(packet);
         } else
         {
-            channel.eventLoop().execute(() -> {
-                for (Packet packet : packets)
-                    channel.writeAndFlush(packet);
+            channel.eventLoop().execute(new Runnable() {
+                @Override
+                public void run()
+                {
+                    for (Packet packet : packets)
+                        channel.writeAndFlush(packet);
+                }
             });
         }
     }
@@ -167,7 +195,13 @@ public final class NetworkConnection implements PacketSender {
             channel.writeAndFlush(packet).syncUninterruptibly();
         } else
         {
-            channel.eventLoop().execute(() -> channel.writeAndFlush(packet).syncUninterruptibly());
+            channel.eventLoop().execute(new Runnable() {
+                @Override
+                public void run()
+                {
+                    channel.writeAndFlush(packet).syncUninterruptibly();
+                }
+            });
         }
     }
 
@@ -181,7 +215,13 @@ public final class NetworkConnection implements PacketSender {
             channel.writeAndFlush(packet);
         } else
         {
-            channel.eventLoop().execute(() -> channel.writeAndFlush(packet));
+            channel.eventLoop().execute(new Runnable() {
+                @Override
+                public void run()
+                {
+                    channel.writeAndFlush(packet);
+                }
+            });
         }
     }
 
@@ -195,7 +235,13 @@ public final class NetworkConnection implements PacketSender {
             channel.writeAndFlush(object);
         } else
         {
-            channel.eventLoop().execute(() -> channel.writeAndFlush(object));
+            channel.eventLoop().execute(new Runnable() {
+                @Override
+                public void run()
+                {
+                    channel.writeAndFlush(object);
+                }
+            });
         }
     }
 
@@ -208,8 +254,12 @@ public final class NetworkConnection implements PacketSender {
     @Override
     public void sendAsynchronized(Object object)
     {
-        TaskScheduler.runtimeScheduler().schedule(() -> {
-            channel.writeAndFlush(object);
+        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
+            @Override
+            public void run()
+            {
+                channel.writeAndFlush(object);
+            }
         });
     }
 

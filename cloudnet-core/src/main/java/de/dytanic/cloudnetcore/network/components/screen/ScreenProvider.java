@@ -10,20 +10,17 @@ import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
+
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
 
 /**
  * Created by Tareko on 20.08.2017.
  */
-@Getter
 public class ScreenProvider {
 
     private Map<String, EnabledScreen> screens = NetworkUtils.newConcurrentHashMap();
 
-    @Setter
     private ServiceId mainServiceId;
 
     public void handleEnableScreen(ServiceId serviceId, Wrapper wrapper)
@@ -50,5 +47,17 @@ public class ScreenProvider {
         {
             proxyServer.getWrapper().disableScreen(proxyServer.getProxyInfo());
         }
+    }
+
+    public void setMainServiceId(ServiceId mainServiceId) {
+        this.mainServiceId = mainServiceId;
+    }
+
+    public Map<String, EnabledScreen> getScreens() {
+        return screens;
+    }
+
+    public ServiceId getMainServiceId() {
+        return mainServiceId;
     }
 }

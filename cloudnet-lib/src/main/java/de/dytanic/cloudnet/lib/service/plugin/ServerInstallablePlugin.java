@@ -4,11 +4,6 @@
 
 package de.dytanic.cloudnet.lib.service.plugin;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public class ServerInstallablePlugin {
 
     private String name;
@@ -17,4 +12,21 @@ public class ServerInstallablePlugin {
 
     private String url;
 
+    public ServerInstallablePlugin(String name, PluginResourceType pluginResourceType, String url) {
+        this.name = name;
+        this.pluginResourceType = pluginResourceType;
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public PluginResourceType getPluginResourceType() {
+        return pluginResourceType;
+    }
 }

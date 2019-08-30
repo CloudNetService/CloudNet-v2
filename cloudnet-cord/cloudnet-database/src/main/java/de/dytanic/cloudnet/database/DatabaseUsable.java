@@ -5,14 +5,10 @@
 package de.dytanic.cloudnet.database;
 
 import de.dytanic.cloudnet.lib.database.Database;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Parent class for all databases used by CloudNet.
  */
-@Getter
-@AllArgsConstructor
 public class DatabaseUsable {
 
     /**
@@ -20,4 +16,11 @@ public class DatabaseUsable {
      */
     protected Database database;
 
+    public DatabaseUsable(Database database) {
+        this.database = database;
+    }
+
+    public Database getDatabase() {
+        return database;
+    }
 }

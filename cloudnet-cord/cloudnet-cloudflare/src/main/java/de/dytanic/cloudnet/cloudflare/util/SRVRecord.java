@@ -5,12 +5,10 @@
 package de.dytanic.cloudnet.cloudflare.util;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.Getter;
 
 /**
  * A representation of an SRV DNS record
  */
-@Getter
 public class SRVRecord extends DNSRecord {
 
     /**

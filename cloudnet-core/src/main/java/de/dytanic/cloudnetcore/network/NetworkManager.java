@@ -22,6 +22,8 @@ import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnet.lib.service.wrapper.WrapperScreen;
+import de.dytanic.cloudnet.lib.utility.Acceptable;
+import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -29,57 +31,21 @@ import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.network.CustomChannelMessageEvent;
 import de.dytanic.cloudnetcore.api.event.network.UpdateAllEvent;
 import de.dytanic.cloudnetcore.api.event.network.WrapperLineInputEvent;
-import de.dytanic.cloudnetcore.api.event.player.CommandExecutionEvent;
-import de.dytanic.cloudnetcore.api.event.player.LoginEvent;
-import de.dytanic.cloudnetcore.api.event.player.LoginRequestEvent;
-import de.dytanic.cloudnetcore.api.event.player.LogoutEvent;
-import de.dytanic.cloudnetcore.api.event.player.LogoutEventUnique;
-import de.dytanic.cloudnetcore.api.event.player.PlayerInitEvent;
-import de.dytanic.cloudnetcore.api.event.player.UpdatePlayerEvent;
-import de.dytanic.cloudnetcore.api.event.server.CloudServerAddEvent;
-import de.dytanic.cloudnetcore.api.event.server.CloudServerRemoveEvent;
-import de.dytanic.cloudnetcore.api.event.server.ProxyAddEvent;
-import de.dytanic.cloudnetcore.api.event.server.ProxyInfoUpdateEvent;
-import de.dytanic.cloudnetcore.api.event.server.ProxyRemoveEvent;
-import de.dytanic.cloudnetcore.api.event.server.ServerAddEvent;
-import de.dytanic.cloudnetcore.api.event.server.ServerInfoUpdateEvent;
-import de.dytanic.cloudnetcore.api.event.server.ServerRemoveEvent;
+import de.dytanic.cloudnetcore.api.event.player.*;
+import de.dytanic.cloudnetcore.api.event.server.*;
 import de.dytanic.cloudnetcore.database.PlayerDatabase;
 import de.dytanic.cloudnetcore.database.StatisticManager;
-import de.dytanic.cloudnetcore.network.components.CloudServer;
-import de.dytanic.cloudnetcore.network.components.INetworkComponent;
-import de.dytanic.cloudnetcore.network.components.MinecraftServer;
-import de.dytanic.cloudnetcore.network.components.ProxyServer;
-import de.dytanic.cloudnetcore.network.components.Wrapper;
+import de.dytanic.cloudnetcore.network.components.*;
 import de.dytanic.cloudnetcore.network.components.util.ChannelFilter;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutCustomChannelMessage;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutCustomSubChannelMessage;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutLoginPlayer;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutLogoutPlayer;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutProxyAdd;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutProxyRemove;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutServerAdd;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutServerRemove;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateOfflinePlayer;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateOnlineCount;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdatePlayer;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateProxyInfo;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateServerInfo;
+import de.dytanic.cloudnetcore.network.packet.out.*;
 import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import lombok.Getter;
+
+import java.util.*;
 
 /**
  * Created by Tareko on 19.07.2017.
  */
-@Getter
 public final class NetworkManager {
 
     private java.util.Map<UUID, CloudPlayer> waitingPlayers = NetworkUtils.newConcurrentHashMap();
@@ -87,6 +53,22 @@ public final class NetworkManager {
     private Document moduleProperties = new Document();
 
     private MessageConfig messageConfig;
+
+    public Map<UUID, CloudPlayer> getWaitingPlayers() {
+        return waitingPlayers;
+    }
+
+    public Map<UUID, CloudPlayer> getOnlinePlayers() {
+        return onlinePlayers;
+    }
+
+    public Document getModuleProperties() {
+        return moduleProperties;
+    }
+
+    public MessageConfig getMessageConfig() {
+        return messageConfig;
+    }
 
     public NetworkManager()
     {
@@ -369,30 +351,40 @@ public final class NetworkManager {
 
     public NetworkManager sendAll(Packet packet)
     {
-        sendAll(packet, networkComponent -> true);
+        sendAll(packet, new ChannelFilter() {
+            @Override
+            public boolean accept(INetworkComponent networkComponent)
+            {
+                return true;
+            }
+        });
         return this;
     }
 
     public NetworkManager sendAll(Packet packet, ChannelFilter filter)
     {
-        TaskScheduler.runtimeScheduler().schedule(() -> {
-            for (Wrapper cn : CloudNet.getInstance().getWrappers().values())
+        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
+            @Override
+            public void run()
             {
-                if (cn.getChannel() != null && filter.accept(cn))
-                    cn.sendPacket(packet);
+                for (Wrapper cn : CloudNet.getInstance().getWrappers().values())
+                {
+                    if (cn.getChannel() != null && filter.accept(cn))
+                        cn.sendPacket(packet);
 
-                for (ProxyServer proxyServer : cn.getProxys().values())
-                    if (proxyServer.getChannel() != null && filter.accept(proxyServer))
-                        proxyServer.sendPacket(packet);
+                    for (ProxyServer proxyServer : cn.getProxys().values())
+                        if (proxyServer.getChannel() != null && filter.accept(proxyServer))
+                            proxyServer.sendPacket(packet);
 
-                for (MinecraftServer minecraftServer : cn.getServers().values())
-                    if (minecraftServer.getChannel() != null && filter.accept(minecraftServer))
-                        minecraftServer.sendPacket(packet);
+                    for (MinecraftServer minecraftServer : cn.getServers().values())
+                        if (minecraftServer.getChannel() != null && filter.accept(minecraftServer))
+                            minecraftServer.sendPacket(packet);
 
-                for (CloudServer cloudServer : cn.getCloudServers().values())
-                    if (cloudServer.getChannel() != null && filter.accept(cloudServer))
-                        cloudServer.sendPacket(packet);
+                    for (CloudServer cloudServer : cn.getCloudServers().values())
+                        if (cloudServer.getChannel() != null && filter.accept(cloudServer))
+                            cloudServer.sendPacket(packet);
 
+                }
             }
         });
         return this;
@@ -400,37 +392,47 @@ public final class NetworkManager {
 
     public CloudPlayer getPlayer(String name)
     {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), value -> value.getName().equalsIgnoreCase(name));
+        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
+            @Override
+            public boolean isAccepted(CloudPlayer value)
+            {
+                return value.getName().equalsIgnoreCase(name);
+            }
+        });
     }
 
     public void sendAllUpdate(Packet packet)
     {
-        sendAll(packet, networkComponent -> {
-            if (networkComponent instanceof ProxyServer) return true;
-
-            if (networkComponent instanceof MinecraftServer)
+        sendAll(packet, new ChannelFilter() {
+            @Override
+            public boolean accept(INetworkComponent networkComponent)
             {
-                if (((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.LOBBY) || ((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))
-                    return true;
+                if (networkComponent instanceof ProxyServer) return true;
 
-                ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(((MinecraftServer) networkComponent).getServiceId().getGroup());
-                if (serverGroup != null)
+                if (networkComponent instanceof MinecraftServer)
                 {
-                    if (serverGroup.getAdvancedServerConfig().isNotifyProxyUpdates() &&
-                            (packet instanceof PacketOutUpdateProxyInfo || packet instanceof PacketOutProxyAdd || packet instanceof PacketOutProxyRemove))
+                    if (((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.LOBBY) || ((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))
                         return true;
 
-                    if (serverGroup.getAdvancedServerConfig().isNotifyServerUpdates() &&
-                            (packet instanceof PacketOutUpdateServerInfo || packet instanceof PacketOutServerAdd || packet instanceof PacketOutServerRemove))
-                        return true;
+                    ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(((MinecraftServer) networkComponent).getServiceId().getGroup());
+                    if (serverGroup != null)
+                    {
+                        if (serverGroup.getAdvancedServerConfig().isNotifyProxyUpdates() &&
+                                (packet instanceof PacketOutUpdateProxyInfo || packet instanceof PacketOutProxyAdd || packet instanceof PacketOutProxyRemove))
+                            return true;
 
-                    return serverGroup.getAdvancedServerConfig().isNotifyPlayerUpdatesFromNoCurrentPlayer() &&
-                            (packet instanceof PacketOutUpdatePlayer || packet instanceof PacketOutLoginPlayer || packet instanceof PacketOutLogoutPlayer ||
-                                    packet instanceof PacketOutUpdateOfflinePlayer);
+                        if (serverGroup.getAdvancedServerConfig().isNotifyServerUpdates() &&
+                                (packet instanceof PacketOutUpdateServerInfo || packet instanceof PacketOutServerAdd || packet instanceof PacketOutServerRemove))
+                            return true;
 
+                        return serverGroup.getAdvancedServerConfig().isNotifyPlayerUpdatesFromNoCurrentPlayer() &&
+                                (packet instanceof PacketOutUpdatePlayer || packet instanceof PacketOutLoginPlayer || packet instanceof PacketOutLogoutPlayer ||
+                                        packet instanceof PacketOutUpdateOfflinePlayer);
+
+                    }
                 }
+                return false;
             }
-            return false;
         });
     }
 
@@ -441,26 +443,50 @@ public final class NetworkManager {
 
     public NetworkManager sendToProxy(Packet packet)
     {
-        sendAll(packet, networkComponent -> networkComponent instanceof ProxyServer);
+        sendAll(packet, new ChannelFilter() {
+            @Override
+            public boolean accept(INetworkComponent networkComponent)
+            {
+                return networkComponent instanceof ProxyServer;
+            }
+        });
         return this;
     }
 
     public NetworkManager sendWrappers(Packet packet)
     {
-        sendAll(packet, networkComponent -> networkComponent instanceof Wrapper);
+        sendAll(packet, new ChannelFilter() {
+            @Override
+            public boolean accept(INetworkComponent networkComponent)
+            {
+                return networkComponent instanceof Wrapper;
+            }
+        });
         return this;
     }
 
     public NetworkManager sendToLobbys(Packet packet)
     {
-        sendAll(packet, networkComponent -> networkComponent instanceof MinecraftServer && (((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.LOBBY)
-                || ((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY)));
+        sendAll(packet, new ChannelFilter() {
+            @Override
+            public boolean accept(INetworkComponent networkComponent)
+            {
+                return networkComponent instanceof MinecraftServer && (((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.LOBBY)
+                        || ((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY));
+            }
+        });
         return this;
     }
 
     public CloudPlayer getOnlinePlayer(UUID uniqueId)
     {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), cloudPlayer -> cloudPlayer.getUniqueId().equals(uniqueId));
+        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
+            @Override
+            public boolean isAccepted(CloudPlayer cloudPlayer)
+            {
+                return cloudPlayer.getUniqueId().equals(uniqueId);
+            }
+        });
     }
 
     public NetworkManager handleServerUpdate(ServerInfo serverInfo)
@@ -483,8 +509,20 @@ public final class NetworkManager {
             if (wrapper.getWrapperInfo() != null) wrappers.add(wrapper.getWrapperInfo());
         cloudNetwork.setWrappers(wrappers);
         cloudNetwork.setServerGroups(MapWrapper.transform(
-                CloudNet.getInstance().getServerGroups(), key -> key,
-                key -> key.toSimple()
+                CloudNet.getInstance().getServerGroups(), new Catcher<String, String>() {
+                    @Override
+                    public String doCatch(String key)
+                    {
+                        return key;
+                    }
+                },
+                new Catcher<SimpleServerGroup, ServerGroup>() {
+                    @Override
+                    public SimpleServerGroup doCatch(ServerGroup key)
+                    {
+                        return key.toSimple();
+                    }
+                }
         ));
         //cloudNetwork.setPermissionPool(permissionPool);
         cloudNetwork.setProxyGroups(CloudNet.getInstance().getProxyGroups());

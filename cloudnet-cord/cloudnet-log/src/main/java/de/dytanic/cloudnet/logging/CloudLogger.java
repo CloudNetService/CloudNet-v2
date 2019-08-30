@@ -6,6 +6,8 @@ package de.dytanic.cloudnet.logging;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
+import jline.console.ConsoleReader;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,21 +21,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import jline.console.ConsoleReader;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import java.util.logging.*;
 
 /**
  * Custom logger configured for CloudNet.
  */
-@Getter
 public class CloudLogger
         extends Logger {
 
@@ -44,9 +36,7 @@ public class CloudLogger
 
     private final List<ICloudLoggerHandler> handler = new LinkedList<>();
 
-    @Setter
     private boolean debugging = false;
-    @Setter
     private boolean showPrompt = !Boolean.getBoolean("cloudnet.logging.prompt.disabled");
 
     /**
@@ -94,6 +84,43 @@ public class CloudLogger
         this.reader.resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
     }
 
+    public void setDebugging(boolean debugging) {
+        this.debugging = debugging;
+    }
+
+    public void setShowPrompt(boolean showPrompt) {
+        this.showPrompt = showPrompt;
+    }
+
+    public LoggingFormatter getFormatter() {
+        return formatter;
+    }
+
+    public boolean isShowPrompt() {
+        return showPrompt;
+    }
+
+    public boolean isDebugging() {
+        return debugging;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public String getSeparator() {
+        return separator;
+    }
+
+    public ConsoleReader getReader() {
+        return reader;
+    }
+
+    public List<ICloudLoggerHandler> getHandler() {
+        return handler;
+    }
+
     /**
      * This posts a new debug message, if {@link #debugging} is true.
      *
@@ -138,9 +165,12 @@ public class CloudLogger
      * Output stream that sends the last message in the buffer to the log handlers
      * when flushed.
      */
-    @RequiredArgsConstructor
     private class LoggingOutputStream extends ByteArrayOutputStream {
         private final Level level;
+
+        public LoggingOutputStream(Level level) {
+            this.level = level;
+        }
 
         @Override
         public void flush() throws IOException

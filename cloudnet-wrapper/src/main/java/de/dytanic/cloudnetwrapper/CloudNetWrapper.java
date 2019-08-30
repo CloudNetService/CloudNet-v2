@@ -19,32 +19,13 @@ import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
+import de.dytanic.cloudnet.setup.spigot.SetupSpigotVersion;
 import de.dytanic.cloudnet.web.client.WebClient;
-import de.dytanic.cloudnetwrapper.command.CommandClear;
-import de.dytanic.cloudnetwrapper.command.CommandClearCache;
-import de.dytanic.cloudnetwrapper.command.CommandHelp;
-import de.dytanic.cloudnetwrapper.command.CommandReload;
-import de.dytanic.cloudnetwrapper.command.CommandStop;
-import de.dytanic.cloudnetwrapper.command.CommandVersion;
+import de.dytanic.cloudnetwrapper.command.*;
 import de.dytanic.cloudnetwrapper.handlers.IWrapperHandler;
 import de.dytanic.cloudnetwrapper.handlers.ReadConsoleLogHandler;
 import de.dytanic.cloudnetwrapper.handlers.StopTimeHandler;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInCopyDirectory;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInCopyServer;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInCreateTemplate;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInExecuteCommand;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInExecuteServerCommand;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInInstallUpdate;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInOnlineServer;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInScreen;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInStartCloudServer;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInStartProxy;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInStartServer;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInStopProxy;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInStopServer;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInTestResult;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInUpdateWrapperProperties;
-import de.dytanic.cloudnetwrapper.network.packet.in.PacketInWrapperInfo;
+import de.dytanic.cloudnetwrapper.network.packet.in.*;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutSetReadyWrapper;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutUpdateCPUUsage;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutUpdateWrapperInfo;
@@ -53,23 +34,24 @@ import de.dytanic.cloudnetwrapper.server.BungeeCord;
 import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
 import de.dytanic.cloudnetwrapper.server.process.ServerProcessQueue;
-import de.dytanic.cloudnet.setup.spigot.SetupSpigotVersion;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import de.dytanic.cloudnetwrapper.util.ShutdownOnCentral;
+import joptsimple.OptionSet;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import joptsimple.OptionSet;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Map;
 
-@Getter
 public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCentral {
 
     public static volatile boolean RUNNING = false;
 
-    @Getter
     private static CloudNetWrapper instance;
+
+    public static CloudNetWrapper getInstance() {
+        return instance;
+    }
 
     private final NetworkConnection networkConnection;
     private final CloudLogger cloudNetLogging;
@@ -79,13 +61,10 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
     private final WebClient webClient = new WebClient();
     private Auth auth;
     private OptionSet optionSet;
-    @Setter
     private ServerProcessQueue serverProcessQueue;
-    @Setter
     private SimpledUser simpledUser;
 
     //Sytem meta
-    @Setter
     private int maxMemory;
 
     private final java.util.Map<String, GameServer> servers = NetworkUtils.newConcurrentHashMap();
@@ -108,15 +87,19 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         this.wrapperConfig = cloudNetWrapperConfig;
         this.cloudNetLogging = cloudNetLogging;
         this.networkConnection = new NetworkConnection(new ConnectableAddress(
-                cloudNetWrapperConfig.getCloudnetHost(), cloudNetWrapperConfig.getCloudnetPort()), () -> {
-                    try
-                    {
-                        onShutdownCentral();
-                    } catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                });
+                cloudNetWrapperConfig.getCloudnetHost(), cloudNetWrapperConfig.getCloudnetPort()), new Runnable() {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    onShutdownCentral();
+                } catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         String key = NetworkUtils.readWrapperKey();
 
@@ -135,13 +118,101 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         this.optionSet = optionSet;
     }
 
+    public void setServerProcessQueue(ServerProcessQueue serverProcessQueue) {
+        this.serverProcessQueue = serverProcessQueue;
+    }
+
+    public void setSimpledUser(SimpledUser simpledUser) {
+        this.simpledUser = simpledUser;
+    }
+
+    public void setMaxMemory(int maxMemory) {
+        this.maxMemory = maxMemory;
+    }
+
+    public static boolean isRUNNING() {
+        return RUNNING;
+    }
+
+    public boolean isCanDeployed() {
+        return canDeployed;
+    }
+
+    public boolean isX_bnosxo() {
+        return x_bnosxo;
+    }
+
+    public SimpledUser getSimpledUser() {
+        return simpledUser;
+    }
+
+    public Auth getAuth() {
+        return auth;
+    }
+
+    public CloudLogger getCloudNetLogging() {
+        return cloudNetLogging;
+    }
+
+    public CloudNetWrapperConfig getWrapperConfig() {
+        return wrapperConfig;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public int getMaxMemory() {
+        return maxMemory;
+    }
+
+    public Map<String, BungeeCord> getProxys() {
+        return proxys;
+    }
+
+    public NetworkConnection getNetworkConnection() {
+        return networkConnection;
+    }
+
+    public Map<String, CloudGameServer> getCloudServers() {
+        return cloudServers;
+    }
+
+    public Map<String, GameServer> getServers() {
+        return servers;
+    }
+
+    public OptionSet getOptionSet() {
+        return optionSet;
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public ServerProcessQueue getServerProcessQueue() {
+        return serverProcessQueue;
+    }
+
+    public Map<String, ProxyGroup> getProxyGroups() {
+        return proxyGroups;
+    }
+
+    public Map<String, ServerGroup> getServerGroups() {
+        return serverGroups;
+    }
+
+    public WebClient getWebClient() {
+        return webClient;
+    }
+
     @Override
     public boolean bootstrap() throws Exception
     {
         if (!optionSet.has("disable-autoupdate")) checkForUpdates();
 
         if (!optionSet.has("disallow_bukkit_download") && !Files.exists(Paths.get("local/spigot.jar")))
-            new SetupSpigotVersion().accept(cloudNetLogging.getReader());
+            new SetupSpigotVersion().run(cloudNetLogging.getReader());
 
         Thread thread = new Thread(scheduler);
         thread.setPriority(Thread.MIN_PRIORITY);
@@ -199,12 +270,22 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
             scheduler.runTaskRepeatSync(iWrapperHandler.toExecutor(), 0, iWrapperHandler.getTicks());
             scheduler.runTaskRepeatSync(readConsoleLogWrapperHandler.toExecutor(), 0, readConsoleLogWrapperHandler.getTicks());
 
-            scheduler.runTaskRepeatAsync(() -> networkConnection.sendPacket(new PacketOutUpdateCPUUsage(getCpuUsage())), 0, 200);
+            scheduler.runTaskRepeatAsync(new Runnable() {
+                @Override
+                public void run()
+                {
+                    networkConnection.sendPacket(new PacketOutUpdateCPUUsage(getCpuUsage()));
+                }
+            }, 0, 200);
         }
 
-        cloudNetLogging.getHandler().add(input -> {
-            if (networkConnection.isConnected())
-                networkConnection.sendPacket(new PacketOutWrapperScreen(input));
+        cloudNetLogging.getHandler().add(new ICloudLoggerHandler() {
+            @Override
+            public void handleConsole(String input)
+            {
+                if (networkConnection.isConnected())
+                    networkConnection.sendPacket(new PacketOutWrapperScreen(input));
+            }
         });
 
         canDeployed = true;

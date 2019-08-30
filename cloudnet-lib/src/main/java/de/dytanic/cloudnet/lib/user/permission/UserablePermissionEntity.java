@@ -7,15 +7,14 @@ package de.dytanic.cloudnet.lib.user.permission;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.user.User;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 27.09.2017.
  */
-@Getter
 public class UserablePermissionEntity extends PermissionEntity {
 
     private User user;
@@ -24,6 +23,10 @@ public class UserablePermissionEntity extends PermissionEntity {
     {
         super(uniqueId, new HashMap<>(), "User | ", "", new ArrayList<>());
         this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public boolean hasPermission(String permission)

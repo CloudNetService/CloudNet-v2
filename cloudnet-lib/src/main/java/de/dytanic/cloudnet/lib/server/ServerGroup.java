@@ -8,18 +8,15 @@ import de.dytanic.cloudnet.lib.server.priority.PriorityConfig;
 import de.dytanic.cloudnet.lib.server.priority.PriorityService;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by Tareko on 21.05.2017.
  */
-@Getter
-@Setter
 public class ServerGroup
         implements Nameable {
 
@@ -78,6 +75,143 @@ public class ServerGroup
         );
 
         this.templates = new ArrayList<>(Collections.singletonList(new Template("default", TemplateResource.LOCAL, null, new String[]{}, new ArrayList<>())));
+    }
+
+    public int getMemory() {
+        return memory;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public Collection<String> getWrapper() {
+        return wrapper;
+    }
+
+    public int getPercentForNewServerAutomatically() {
+        return percentForNewServerAutomatically;
+    }
+
+    public int getJoinPower() {
+        return joinPower;
+    }
+
+    public AdvancedServerConfig getAdvancedServerConfig() {
+        return advancedServerConfig;
+    }
+
+    public WrappedMap getSettings() {
+        return settings;
+    }
+
+    public ServerGroupMode getGroupMode() {
+        return groupMode;
+    }
+
+    public Collection<Template> getTemplates() {
+        return templates;
+    }
+
+    public int getDynamicMemory() {
+        return dynamicMemory;
+    }
+
+    public int getMaxOnlineServers() {
+        return maxOnlineServers;
+    }
+
+    public int getMinOnlineServers() {
+        return minOnlineServers;
+    }
+
+    public PriorityService getPriorityService() {
+        return priorityService;
+    }
+
+    public ServerGroupType getServerType() {
+        return serverType;
+    }
+
+    public Template getGlobalTemplate() {
+        return globalTemplate;
+    }
+
+    public boolean isMaintenance() {
+        return maintenance;
+    }
+
+    public boolean isKickedForceFallback() {
+        return kickedForceFallback;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTemplates(Collection<Template> templates) {
+        this.templates = templates;
+    }
+
+    public void setAdvancedServerConfig(AdvancedServerConfig advancedServerConfig) {
+        this.advancedServerConfig = advancedServerConfig;
+    }
+
+    public void setDynamicMemory(int dynamicMemory) {
+        this.dynamicMemory = dynamicMemory;
+    }
+
+    public void setGlobalTemplate(Template globalTemplate) {
+        this.globalTemplate = globalTemplate;
+    }
+
+    public void setGroupMode(ServerGroupMode groupMode) {
+        this.groupMode = groupMode;
+    }
+
+    public void setJoinPower(int joinPower) {
+        this.joinPower = joinPower;
+    }
+
+    public void setKickedForceFallback(boolean kickedForceFallback) {
+        this.kickedForceFallback = kickedForceFallback;
+    }
+
+    public void setMaintenance(boolean maintenance) {
+        this.maintenance = maintenance;
+    }
+
+    public void setMaxOnlineServers(int maxOnlineServers) {
+        this.maxOnlineServers = maxOnlineServers;
+    }
+
+    public void setMemory(int memory) {
+        this.memory = memory;
+    }
+
+    public void setMinOnlineServers(int minOnlineServers) {
+        this.minOnlineServers = minOnlineServers;
+    }
+
+    public void setServerType(ServerGroupType serverType) {
+        this.serverType = serverType;
+    }
+
+    public void setPercentForNewServerAutomatically(int percentForNewServerAutomatically) {
+        this.percentForNewServerAutomatically = percentForNewServerAutomatically;
+    }
+
+    public void setWrapper(Collection<String> wrapper) {
+        this.wrapper = wrapper;
+    }
+
+    public void setPriorityService(PriorityService priorityService) {
+        this.priorityService = priorityService;
+    }
+
+    public void setSettings(WrappedMap settings) {
+        this.settings = settings;
     }
 
     public SimpleServerGroup toSimple()

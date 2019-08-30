@@ -1,33 +1,15 @@
 package de.dytanic.cloudnet.lib.utility.document;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.StringBufferInputStream;
+
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.*;
 
 /**
  * Created by Tareko on 21.05.2017.
@@ -38,14 +20,27 @@ public class Document
     public static Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
     protected static final JsonParser PARSER = new JsonParser();
 
-    @Getter
-    @Setter
     protected String name;
-    @Getter
-    @Setter
     private File file;
 
     protected JsonObject dataCatcher;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
 
     public Document(String name)
     {

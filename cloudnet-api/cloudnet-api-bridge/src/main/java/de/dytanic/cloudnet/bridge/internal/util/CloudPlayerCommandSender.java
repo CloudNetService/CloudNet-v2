@@ -1,23 +1,28 @@
 package de.dytanic.cloudnet.bridge.internal.util;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.event.PermissionCheckEvent;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * Created by Tareko on 10.01.2018.
  */
-@Getter
-@AllArgsConstructor
 public class CloudPlayerCommandSender implements CommandSender {
 
     private final CloudPlayer cloudPlayer;
+
+    public CloudPlayerCommandSender(CloudPlayer cloudPlayer) {
+        this.cloudPlayer = cloudPlayer;
+    }
+
+    public CloudPlayer getCloudPlayer() {
+        return cloudPlayer;
+    }
 
     @Override
     public String getName()

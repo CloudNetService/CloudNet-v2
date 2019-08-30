@@ -18,6 +18,7 @@ import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
+import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
@@ -29,7 +30,6 @@ import de.dytanic.cloudnetwrapper.server.process.ServerProcess;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import de.dytanic.cloudnetwrapper.util.MasterTemplateDeploy;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -43,10 +43,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.Queue;
 
-@Getter
 @EqualsAndHashCode(callSuper = false)
 public class GameServer extends AbstractScreenService implements ServerDispatcher {
 
@@ -83,6 +81,43 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
 		this.dir = Paths.get(path);
 	}
+
+    public ServerInfo getServerInfo() {
+        return serverInfo;
+    }
+
+    public ServerProcess getServerProcess() {
+        return serverProcess;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public ServerGroup getServerGroup() {
+        return serverGroup;
+    }
+
+    public long getStartupTimeStamp() {
+        return startupTimeStamp;
+    }
+
+    public ServerStage getServerStage() {
+        return serverStage;
+    }
+
+    @Override
+    public Process getInstance() {
+        return instance;
+    }
+
+    public Path getDir() {
+        return dir;
+    }
+
+    public String getCustom() {
+        return custom;
+    }
 
     /**
      *  Prepare the game server
@@ -401,9 +436,9 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 			}
 		}
 
-		Template x = CollectionWrapper.filter(serverGroup.getTemplates(), new Predicate<Template>() {
+		Template x = CollectionWrapper.filter(serverGroup.getTemplates(), new Acceptable<Template>() {
 			@Override
-			public boolean test(Template template) {
+			public boolean isAccepted(Template template) {
 				return template != null && serverProcess.getMeta().getTemplate().getName().equals(template.getName());
 			}
 		});

@@ -5,14 +5,13 @@
 package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
+
 import java.util.Collection;
 import java.util.HashSet;
-import lombok.Getter;
 
 /**
  * Abstract class to define a command with an executor and a name
  */
-@Getter
 public abstract class Command
         implements CommandExecutor, Nameable {
 
@@ -50,5 +49,26 @@ public abstract class Command
         this.commandArguments.add(commandArgument);
         //noinspection unchecked
         return (T) this;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public Collection<CommandArgument> getCommandArguments() {
+        return commandArguments;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public String[] getAliases() {
+        return aliases;
     }
 }

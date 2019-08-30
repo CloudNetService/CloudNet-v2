@@ -10,24 +10,17 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.zip.ZipConverter;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 08.10.2017.
  */
-@Getter
-@AllArgsConstructor
 public class MasterTemplateDeploy {
 
     private String dir;
@@ -43,6 +36,44 @@ public class MasterTemplateDeploy {
     private String group;
 
     private String customName;
+
+    public MasterTemplateDeploy(String dir, ConnectableAddress connectableAddress, SimpledUser simpledUser, boolean ssl, Template template, String group, String customName) {
+        this.dir = dir;
+        this.connectableAddress = connectableAddress;
+        this.simpledUser = simpledUser;
+        this.ssl = ssl;
+        this.template = template;
+        this.group = group;
+        this.customName = customName;
+    }
+
+    public String getDir() {
+        return dir;
+    }
+
+    public ConnectableAddress getConnectableAddress() {
+        return connectableAddress;
+    }
+
+    public SimpledUser getSimpledUser() {
+        return simpledUser;
+    }
+
+    public boolean isSsl() {
+        return ssl;
+    }
+
+    public Template getTemplate() {
+        return template;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public String getCustomName() {
+        return customName;
+    }
 
     public void deploy() throws Exception
     {

@@ -10,15 +10,14 @@ import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
+
 import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 04.10.2017.
  */
-@Getter
 public final class ServerLogManager implements Runnable {
 
     private final NetorHashMap<String, MultiValue<String, Long>, Queue<ScreenInfo>> screenInfos = new NetorHashMap<>();
@@ -99,5 +98,9 @@ public final class ServerLogManager implements Runnable {
 
                 screenInfos.remove(key);
             }
+    }
+
+    public NetorHashMap<String, MultiValue<String, Long>, Queue<ScreenInfo>> getScreenInfos() {
+        return screenInfos;
     }
 }

@@ -1,14 +1,10 @@
 package de.dytanic.cloudnet.lib.serverselectors.mob;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 22.07.2017.
  */
-@Getter
-@AllArgsConstructor
 public class MobItemLayout implements Cloneable {
 
     /**
@@ -21,6 +17,34 @@ public class MobItemLayout implements Cloneable {
     private int subId;
     private String display;
     private List<String> lore;
+
+    public MobItemLayout(int itemId, String itemName, int subId, String display, List<String> lore) {
+        this.itemId = itemId;
+        this.itemName = itemName;
+        this.subId = subId;
+        this.display = display;
+        this.lore = lore;
+    }
+
+    public int getSubId() {
+        return subId;
+    }
+
+    public int getItemId() {
+        return itemId;
+    }
+
+    public List<String> getLore() {
+        return lore;
+    }
+
+    public String getDisplay() {
+        return display;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
 
     @Override
     public MobItemLayout clone()

@@ -22,14 +22,12 @@ import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import de.dytanic.cloudnetwrapper.util.MasterTemplateDeploy;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import lombok.EqualsAndHashCode;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -40,18 +38,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
 
 /**
  * Created by Tareko on 17.10.2017.
  */
-@Getter
 @EqualsAndHashCode(callSuper = false)
 public class CloudGameServer extends AbstractScreenService implements ServerDispatcher {
 
@@ -70,6 +63,32 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
         this.cloudServerMeta = cloudServerMeta;
         this.path = CloudNetWrapper.getInstance().getWrapperConfig().getDevServicePath() + NetworkUtils.SLASH_STRING + cloudServerMeta.getServiceId().getServerId();
         this.dir = Paths.get(path);
+    }
+
+    public CloudServerMeta getCloudServerMeta() {
+        return cloudServerMeta;
+    }
+
+    public Path getDir() {
+        return dir;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public ServerInfo getServerInfo() {
+        return serverInfo;
+    }
+
+    @Override
+    public Process getInstance() {
+        return instance;
+    }
+
+    @Override
+    public Queue<String> getCachedLogMessages() {
+        return super.getCachedLogMessages();
     }
 
     @Override

@@ -19,48 +19,32 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.user.User;
+import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.Quad;
+import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutCopyServer;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutCreateTemplate;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutExecuteCommand;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutExecuteServerCommand;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutScreen;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutStartCloudServer;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutStartProxy;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutStartServer;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutStopProxy;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutStopServer;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateWrapperProperties;
-import de.dytanic.cloudnetcore.network.packet.out.PacketOutWrapperInfo;
+import de.dytanic.cloudnetcore.network.packet.out.*;
 import io.netty.channel.Channel;
+import net.md_5.bungee.config.Configuration;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import lombok.Getter;
-import lombok.Setter;
-import net.md_5.bungee.config.Configuration;
 
 /**
  * Created by Tareko on 26.05.2017.
  */
-@Getter
 public final class Wrapper
         implements INetworkComponent {
 
-    @Setter
     private Channel channel;
-    @Setter
     private WrapperInfo wrapperInfo;
 
     private WrapperMeta networkInfo;
 
-    @Setter
     private boolean ready;
-    @Setter
     private double cpuUsage = -1;
 
     private final java.util.Map<String, ProxyServer> proxys = NetworkUtils.newConcurrentHashMap();
@@ -70,7 +54,6 @@ public final class Wrapper
     // Group, ServiceId
     private final java.util.Map<String, Quad<Integer, Integer, ServiceId, Template>> waitingServices = NetworkUtils.newConcurrentHashMap();
 
-    @Setter
     private int maxMemory = 0;
 
     private String serverId;
@@ -79,6 +62,69 @@ public final class Wrapper
     {
         this.serverId = networkInfo.getId();
         this.networkInfo = networkInfo;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public int getMaxMemory() {
+        return maxMemory;
+    }
+
+    public double getCpuUsage() {
+        return cpuUsage;
+    }
+
+    public Map<String, CloudServer> getCloudServers() {
+        return cloudServers;
+    }
+
+    public Map<String, MinecraftServer> getServers() {
+        return servers;
+    }
+
+    public Map<String, ProxyServer> getProxys() {
+        return proxys;
+    }
+
+    public Map<String, Quad<Integer, Integer, ServiceId, Template>> getWaitingServices() {
+        return waitingServices;
+    }
+
+    public void setCpuUsage(double cpuUsage) {
+        this.cpuUsage = cpuUsage;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
+    }
+
+    @Override
+    public String getServerId() {
+        return serverId;
+    }
+
+    public WrapperInfo getWrapperInfo() {
+        return wrapperInfo;
+    }
+
+    public WrapperMeta getNetworkInfo() {
+        return networkInfo;
+    }
+
+    public void setMaxMemory(int maxMemory) {
+        this.maxMemory = maxMemory;
+    }
+
+    @Override
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    public void setWrapperInfo(WrapperInfo wrapperInfo) {
+        this.wrapperInfo = wrapperInfo;
     }
 
     @Override
@@ -110,7 +156,13 @@ public final class Wrapper
     {
         AtomicInteger integer = new AtomicInteger(getUsedMemory());
 
-        CollectionWrapper.iterator(this.waitingServices.values(), obj -> integer.addAndGet(obj.getSecond()));
+        CollectionWrapper.iterator(this.waitingServices.values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
+            @Override
+            public void run(Quad<Integer, Integer, ServiceId, Template> obj)
+            {
+                integer.addAndGet(obj.getSecond());
+            }
+        });
 
         return integer.get();
     }
@@ -179,7 +231,13 @@ public final class Wrapper
             }
 
         SimpledUser simpledUser = null;
-        User user = CollectionWrapper.filter(CloudNet.getInstance().getUsers(), value -> networkInfo.getUser().equals(value.getName()));
+        User user = CollectionWrapper.filter(CloudNet.getInstance().getUsers(), new Acceptable<User>() {
+            @Override
+            public boolean isAccepted(User value)
+            {
+                return networkInfo.getUser().equals(value.getName());
+            }
+        });
         if (user != null)
         {
             simpledUser = user.toSimple();

@@ -1,14 +1,10 @@
 package de.dytanic.cloudnet.lib.serverselectors.sign;
 
 import java.util.Collection;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 22.07.2017.
  */
-@Getter
-@AllArgsConstructor
 public class SignLayoutConfig {
 
     private boolean fullServerHide;
@@ -23,4 +19,36 @@ public class SignLayoutConfig {
 
     private SearchingAnimation searchingAnimation;
 
+    public SignLayoutConfig(boolean fullServerHide, boolean knockbackOnSmallDistance, double distance, double strength, Collection<SignGroupLayouts> groupLayouts, SearchingAnimation searchingAnimation) {
+        this.fullServerHide = fullServerHide;
+        this.knockbackOnSmallDistance = knockbackOnSmallDistance;
+        this.distance = distance;
+        this.strength = strength;
+        this.groupLayouts = groupLayouts;
+        this.searchingAnimation = searchingAnimation;
+    }
+
+    public Collection<SignGroupLayouts> getGroupLayouts() {
+        return groupLayouts;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public double getStrength() {
+        return strength;
+    }
+
+    public SearchingAnimation getSearchingAnimation() {
+        return searchingAnimation;
+    }
+
+    public boolean isFullServerHide() {
+        return fullServerHide;
+    }
+
+    public boolean isKnockbackOnSmallDistance() {
+        return knockbackOnSmallDistance;
+    }
 }

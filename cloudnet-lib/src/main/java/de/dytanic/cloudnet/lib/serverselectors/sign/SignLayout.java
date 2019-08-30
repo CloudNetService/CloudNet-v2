@@ -1,14 +1,10 @@
 package de.dytanic.cloudnet.lib.serverselectors.sign;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 26.05.2017.
  */
-@AllArgsConstructor
-@Getter
 public class SignLayout
         implements Nameable {
 
@@ -22,4 +18,32 @@ public class SignLayout
     private String blockName;
     private int subId;
 
+    public SignLayout(String name, String[] signLayout, int blockId, String blockName, int subId) {
+        this.name = name;
+        this.signLayout = signLayout;
+        this.blockId = blockId;
+        this.blockName = blockName;
+        this.subId = subId;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public int getBlockId() {
+        return blockId;
+    }
+
+    public int getSubId() {
+        return subId;
+    }
+
+    public String getBlockName() {
+        return blockName;
+    }
+
+    public String[] getSignLayout() {
+        return signLayout;
+    }
 }

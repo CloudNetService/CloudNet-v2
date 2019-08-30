@@ -9,17 +9,27 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import java.io.IOException;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
+import java.io.IOException;
+
 public class NetDispatcher extends SimpleChannelInboundHandler {
 
     private final NetworkConnection networkConnection;
 
     private boolean shutdownOnInactive;
+
+    public NetDispatcher(NetworkConnection networkConnection, boolean shutdownOnInactive) {
+        this.networkConnection = networkConnection;
+        this.shutdownOnInactive = shutdownOnInactive;
+    }
+
+    public NetworkConnection getNetworkConnection() {
+        return networkConnection;
+    }
+
+    public boolean isShutdownOnInactive() {
+        return shutdownOnInactive;
+    }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception
@@ -56,15 +66,25 @@ public class NetDispatcher extends SimpleChannelInboundHandler {
     {
         if (o instanceof Packet)
         {
-            TaskScheduler.runtimeScheduler().schedule(() -> {
-                networkConnection.getPacketManager().dispatchPacket(((Packet) o), networkConnection);
+            TaskScheduler.runtimeScheduler().schedule(new Runnable() {
+                @Override
+                public void run()
+                {
+                    networkConnection.getPacketManager().dispatchPacket(((Packet) o), networkConnection);
+                }
             });
         } else
         {
             if (o instanceof FileDeploy)
             {
                 FileDeploy deploy = ((FileDeploy) o);
-                TaskScheduler.runtimeScheduler().schedule(() -> deploy.toWrite());
+                TaskScheduler.runtimeScheduler().schedule(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        deploy.toWrite();
+                    }
+                });
             }
         }
     }

@@ -7,24 +7,23 @@ package de.dytanic.cloudnetcore.cloudflare;
 import de.dytanic.cloudnet.cloudflare.CloudFlareService;
 import de.dytanic.cloudnet.cloudflare.database.CloudFlareDatabase;
 import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
+import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnetcore.api.CoreModule;
 import de.dytanic.cloudnetcore.cloudflare.config.ConfigCloudFlare;
 import de.dytanic.cloudnetcore.cloudflare.listener.ProxyAddListener;
 import de.dytanic.cloudnetcore.cloudflare.listener.ProxyRemoveListener;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
-import lombok.Getter;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 20.10.2017.
  */
-@Getter
 public class CloudFlareModule extends CoreModule {
 
-    @Getter
     private static CloudFlareModule instance;
 
     private ConfigCloudFlare configCloudFlare;
@@ -32,6 +31,22 @@ public class CloudFlareModule extends CoreModule {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private CloudFlareDatabase cloudFlareDatabase;
+
+    public static CloudFlareModule getInstance() {
+        return instance;
+    }
+
+    public ConfigCloudFlare getConfigCloudFlare() {
+        return configCloudFlare;
+    }
+
+    public ExecutorService getExecutor() {
+        return executor;
+    }
+
+    public CloudFlareDatabase getCloudFlareDatabase() {
+        return cloudFlareDatabase;
+    }
 
     @Override
     public void onLoad()
@@ -48,7 +63,19 @@ public class CloudFlareModule extends CoreModule {
         {
 
             CloudFlareService cloudFlareAPI = new CloudFlareService(configCloudFlare.load());
-            cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), key -> key, key -> new SimpledWrapperInfo(key.getServerId(), key.getNetworkInfo().getHostName())), getCloud().getProxyGroups(), cloudFlareDatabase);
+            cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), new Catcher<String, String>() {
+                @Override
+                public String doCatch(String key)
+                {
+                    return key;
+                }
+            }, new Catcher<SimpledWrapperInfo, Wrapper>() {
+                @Override
+                public SimpledWrapperInfo doCatch(Wrapper key)
+                {
+                    return new SimpledWrapperInfo(key.getServerId(), key.getNetworkInfo().getHostName());
+                }
+            }), getCloud().getProxyGroups(), cloudFlareDatabase);
 
         } catch (Exception ex)
         {

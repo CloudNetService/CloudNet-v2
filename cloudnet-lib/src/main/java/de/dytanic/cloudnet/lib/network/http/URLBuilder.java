@@ -5,10 +5,9 @@
 package de.dytanic.cloudnet.lib.network.http;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import java.net.URLConnection;
-import lombok.Getter;
 
-@Getter
+import java.net.URLConnection;
+
 public class URLBuilder implements Cloneable {
 
     private StringBuilder urlString = new StringBuilder();
@@ -17,6 +16,14 @@ public class URLBuilder implements Cloneable {
     public URLBuilder(String http, String mainUrl)
     {
         this.urlString.append(http).append("://").append(mainUrl).append(NetworkUtils.SLASH_STRING);
+    }
+
+    public StringBuilder getParam() {
+        return param;
+    }
+
+    public StringBuilder getUrlString() {
+        return urlString;
     }
 
     public URLBuilder path(String path)

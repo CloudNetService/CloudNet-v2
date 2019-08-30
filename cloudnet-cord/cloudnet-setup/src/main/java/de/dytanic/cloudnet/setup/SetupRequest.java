@@ -5,17 +5,13 @@
 package de.dytanic.cloudnet.setup;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
-import java.util.function.Function;
-import lombok.AllArgsConstructor;
+import de.dytanic.cloudnet.lib.utility.Catcher;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.ToString;
 
 /**
  * Class that represents a request for setup data.
  */
-@Getter
-@AllArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class SetupRequest implements Nameable {
@@ -43,6 +39,34 @@ public class SetupRequest implements Nameable {
     /**
      * The validation function that determines whether the input is valid or not.
      */
-    private Function<String, Boolean> validater;
+    private Catcher<Boolean, String> validater;
 
+    public SetupRequest(String name, String question, String inValidMessage, SetupResponseType responseType, Catcher<Boolean, String> validater) {
+        this.name = name;
+        this.question = question;
+        this.inValidMessage = inValidMessage;
+        this.responseType = responseType;
+        this.validater = validater;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public Catcher<Boolean, String> getValidater() {
+        return validater;
+    }
+
+    public SetupResponseType getResponseType() {
+        return responseType;
+    }
+
+    public String getInValidMessage() {
+        return inValidMessage;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
 }

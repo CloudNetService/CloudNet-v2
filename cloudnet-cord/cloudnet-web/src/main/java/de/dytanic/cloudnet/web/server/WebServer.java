@@ -15,15 +15,14 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+
+import javax.net.ssl.SSLException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
-import javax.net.ssl.SSLException;
-import lombok.Getter;
 
 /**
  * A simple web server class
  */
-@Getter
 public class WebServer {
 
     /**
@@ -108,6 +107,34 @@ public class WebServer {
                         channel.pipeline().addLast(new HttpServerCodec(), new HttpObjectAggregator(Integer.MAX_VALUE), new WebServerHandler(WebServer.this));
                     }
                 });
+    }
+
+    public EventLoopGroup getAcceptorGroup() {
+        return acceptorGroup;
+    }
+
+    public EventLoopGroup getWorkerGroup() {
+        return workerGroup;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public ServerBootstrap getServerBootstrap() {
+        return serverBootstrap;
+    }
+
+    public SslContext getSslContext() {
+        return sslContext;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public WebServerProvider getWebServerProvider() {
+        return webServerProvider;
     }
 
     /**

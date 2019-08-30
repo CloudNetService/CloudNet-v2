@@ -5,14 +5,13 @@
 package de.dytanic.cloudnetcore.config;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 05.09.2017.
  */
-@Getter
 public abstract class ConfigAbstract {
 
     protected Path path;
@@ -24,5 +23,9 @@ public abstract class ConfigAbstract {
             defaults.saveAsConfig(path);
         }
         this.path = path;
+    }
+
+    public Path getPath() {
+        return path;
     }
 }

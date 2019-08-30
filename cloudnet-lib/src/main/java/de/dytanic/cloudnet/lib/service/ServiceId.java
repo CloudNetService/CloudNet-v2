@@ -2,12 +2,10 @@ package de.dytanic.cloudnet.lib.service;
 
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 18.07.2017.
  */
-@Getter
 @EqualsAndHashCode
 public final class ServiceId {
 
@@ -48,6 +46,26 @@ public final class ServiceId {
     public String getServerId()
     {
         return serverId;
+    }
+
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public String getWrapperId() {
+        return wrapperId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getGameId() {
+        return gameId;
     }
 
     @Override

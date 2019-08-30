@@ -11,6 +11,8 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.user.BasicUser;
 import de.dytanic.cloudnet.lib.user.User;
+import de.dytanic.cloudnet.lib.utility.Acceptable;
+import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -19,6 +21,12 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.network.components.WrapperMeta;
 import de.dytanic.cloudnetcore.util.defaults.BungeeGroup;
 import de.dytanic.cloudnetcore.util.defaults.LobbyGroup;
+import jline.console.ConsoleReader;
+import lombok.NonNull;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,27 +35,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import jline.console.ConsoleReader;
-import lombok.Getter;
-import lombok.NonNull;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
+import java.util.*;
 
 
 /**
  * Created by Tareko on 16.09.2017.
  */
-@Getter
 public class CloudConfig {
 
     private static final ConfigurationProvider CONFIGURATION_PROVIDER = ConfigurationProvider.getProvider(YamlConfiguration.class);
@@ -92,6 +85,82 @@ public class CloudConfig {
         defaultInitDoc(consoleReader);
         defaultInitUsers(consoleReader);
         load();
+    }
+
+    public Collection<ConnectableAddress> getAddresses() {
+        return addresses;
+    }
+
+    public Configuration getConfig() {
+        return config;
+    }
+
+    public static ConfigurationProvider getConfigurationProvider() {
+        return CONFIGURATION_PROVIDER;
+    }
+
+    public Document getServiceDocument() {
+        return serviceDocument;
+    }
+
+    public List<WrapperMeta> getWrappers() {
+        return wrappers;
+    }
+
+    public Document getUserDocument() {
+        return userDocument;
+    }
+
+    public List<String> getDisabledModules() {
+        return disabledModules;
+    }
+
+    public Path getConfigPath() {
+        return configPath;
+    }
+
+    public List<String> getCloudServerWrapperList() {
+        return cloudServerWrapperList;
+    }
+
+    public Path getServicePath() {
+        return servicePath;
+    }
+
+    public Path getUsersPath() {
+        return usersPath;
+    }
+
+    public Map<String, Object> getNetworkProperties() {
+        return networkProperties;
+    }
+
+    public String getFormatSplitter() {
+        return formatSplitter;
+    }
+
+    public String getWrapperKey() {
+        return wrapperKey;
+    }
+
+    public WebServerConfig getWebServerConfig() {
+        return webServerConfig;
+    }
+
+    public boolean isAutoUpdate() {
+        return autoUpdate;
+    }
+
+    public boolean isCloudDevServices() {
+        return cloudDevServices;
+    }
+
+    public boolean isCloudDynamicServices() {
+        return cloudDynamicServices;
+    }
+
+    public boolean isNotifyService() {
+        return notifyService;
     }
 
     private void defaultInit(ConsoleReader consoleReader) throws Exception
@@ -245,7 +314,13 @@ public class CloudConfig {
     {
         Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>() {
         }.getType());
-        WrapperMeta is = CollectionWrapper.filter(wrapperMetas, wrapperMeta_ -> wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId()));
+        WrapperMeta is = CollectionWrapper.filter(wrapperMetas, new Acceptable<WrapperMeta>() {
+            @Override
+            public boolean isAccepted(WrapperMeta wrapperMeta_)
+            {
+                return wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId());
+            }
+        });
         if (is != null) wrapperMetas.remove(is);
 
         wrapperMetas.add(wrapperMeta);
@@ -278,7 +353,13 @@ public class CloudConfig {
     {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
-        CollectionWrapper.checkAndRemove(groups, value -> value.getName().equals(serverGroup.getName()));
+        CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
+            @Override
+            public boolean isAccepted(ProxyGroup value)
+            {
+                return value.getName().equals(serverGroup.getName());
+            }
+        });
 
         groups.add(serverGroup);
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
@@ -293,7 +374,13 @@ public class CloudConfig {
     {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
-        CollectionWrapper.checkAndRemove(groups, value -> value.getName().equals(proxyGroup.getName()));
+        CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
+            @Override
+            public boolean isAccepted(ProxyGroup value)
+            {
+                return value.getName().equals(proxyGroup.getName());
+            }
+        });
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
     }
 
@@ -346,7 +433,13 @@ public class CloudConfig {
         Collection<ProxyGroup> collection = serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
 
-        return MapWrapper.collectionCatcherHashMap(collection, key -> key.getName());
+        return MapWrapper.collectionCatcherHashMap(collection, new Catcher<String, ProxyGroup>() {
+            @Override
+            public String doCatch(ProxyGroup key)
+            {
+                return key.getName();
+            }
+        });
     }
 
 }

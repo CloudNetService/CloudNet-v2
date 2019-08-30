@@ -4,11 +4,6 @@
 
 package de.dytanic.cloudnet.lib.proxylayout;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public class TabList {
 
     private boolean enabled;
@@ -17,4 +12,21 @@ public class TabList {
 
     private String footer;
 
+    public TabList(boolean enabled, String header, String footer) {
+        this.enabled = enabled;
+        this.header = header;
+        this.footer = footer;
+    }
+
+    public String getFooter() {
+        return footer;
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

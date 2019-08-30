@@ -10,14 +10,11 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import io.netty.channel.Channel;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by Tareko on 17.10.2017.
  */
 @EqualsAndHashCode
-@Getter
 public class CloudServer implements INetworkComponent {
 
     private ServiceId serviceId;
@@ -28,13 +25,10 @@ public class CloudServer implements INetworkComponent {
 
     private ServerGroupType serverGroupType;
 
-    @Setter
     private ServerInfo serverInfo;
 
-    @Setter
     private ServerInfo lastServerInfo;
 
-    @Setter
     private Channel channel;
 
     public CloudServer(Wrapper wrapper, ServerInfo serverInfo, CloudServerMeta cloudServerMeta)
@@ -45,6 +39,49 @@ public class CloudServer implements INetworkComponent {
         this.cloudServerMeta = cloudServerMeta;
         this.wrapper = wrapper;
         this.serverGroupType = cloudServerMeta.getServerGroupType();
+    }
+
+    public void setServerInfo(ServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
+
+    public void setLastServerInfo(ServerInfo lastServerInfo) {
+        this.lastServerInfo = lastServerInfo;
+    }
+
+    @Override
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    public ServerInfo getServerInfo() {
+        return serverInfo;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public CloudServerMeta getCloudServerMeta() {
+        return cloudServerMeta;
+    }
+
+    public ServerGroupType getServerGroupType() {
+        return serverGroupType;
+    }
+
+    public ServerInfo getLastServerInfo() {
+        return lastServerInfo;
+    }
+
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    @Override
+    public Wrapper getWrapper() {
+        return wrapper;
     }
 
     @Override

@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.setup.spigot;
 
 import jline.console.ConsoleReader;
-import lombok.Setter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +22,6 @@ import java.util.function.Consumer;
 public class SetupSpigotVersion
         implements Consumer<ConsoleReader> {
 
-    @Setter
     private Path target;
 
     private final Consumer<String> download = new Consumer<String>() {
@@ -47,6 +45,10 @@ public class SetupSpigotVersion
             }
         }
     };
+
+    public void setTarget(Path target) {
+        this.target = target;
+    }
 
     @Override
     public void accept(ConsoleReader reader)

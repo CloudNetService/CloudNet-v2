@@ -21,14 +21,13 @@ import de.dytanic.cloudnetcore.network.wrapper.WrapperSession;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+
 import java.io.IOException;
 import java.util.UUID;
-import lombok.Getter;
 
 /**
  * This is the SimpleChannelInboundHandler of netty handled for a networkComponent
  */
-@Getter
 public class CloudNetClient
         extends SimpleChannelInboundHandler {
 
@@ -66,6 +65,14 @@ public class CloudNetClient
         }
         CloudNet.getInstance().getEventManager().callEvent(new ChannelInitEvent(channel, networkComponent));
         init(cloudNetwork);
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public INetworkComponent getNetworkComponent() {
+        return networkComponent;
     }
 
     @Override
@@ -146,6 +153,12 @@ public class CloudNetClient
 
     public void init(CloudNetwork cloudNetwork)
     {
-        CloudNet.getInstance().getScheduler().runTaskAsync(() -> CloudNet.getInstance().getNetworkManager().sendAll(new PacketOutCloudNetwork(cloudNetwork)));
+        CloudNet.getInstance().getScheduler().runTaskAsync(new Runnable() {
+            @Override
+            public void run()
+            {
+                CloudNet.getInstance().getNetworkManager().sendAll(new PacketOutCloudNetwork(cloudNetwork));
+            }
+        });
     }
 }

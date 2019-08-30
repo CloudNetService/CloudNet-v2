@@ -4,11 +4,6 @@
 
 package de.dytanic.cloudnet.lib.utility;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public class Trio<F, S, T> {
 
     private F first;
@@ -17,4 +12,21 @@ public class Trio<F, S, T> {
 
     private T third;
 
+    public Trio(F first, S second, T third) {
+        this.first = first;
+        this.second = second;
+        this.third = third;
+    }
+
+    public T getThird() {
+        return third;
+    }
+
+    public S getSecond() {
+        return second;
+    }
+
+    public F getFirst() {
+        return first;
+    }
 }

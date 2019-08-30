@@ -10,13 +10,24 @@ import lombok.Getter;
 /**
  * Created by Tareko on 19.01.2018.
  */
-@Getter
-@AllArgsConstructor
 public class TaskEntryFuture<T> implements Future<T> {
 
     private TaskEntry<T> entry;
 
     protected volatile boolean waits;
+
+    public TaskEntryFuture(TaskEntry<T> entry, boolean waits) {
+        this.entry = entry;
+        this.waits = waits;
+    }
+
+    public TaskEntry<T> getEntry() {
+        return entry;
+    }
+
+    public boolean isWaits() {
+        return waits;
+    }
 
     @Override
     public boolean cancel(boolean pMayInterruptIfRunning)

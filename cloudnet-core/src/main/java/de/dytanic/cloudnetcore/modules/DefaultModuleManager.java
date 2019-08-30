@@ -5,7 +5,9 @@
 package de.dytanic.cloudnetcore.modules;
 
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
+import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
+
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,14 +16,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
-
-import lombok.Getter;
 
 /**
  * Created by Tareko on 22.10.2017.
  */
-@Getter
 public class DefaultModuleManager {
 
     private Collection<DefaultModule> modules = new CopyOnWriteArrayList<>();
@@ -36,9 +34,13 @@ public class DefaultModuleManager {
         }
 
         Collection<?> property = Collections.list(properties.propertyNames());
-        CollectionWrapper.iterator(property, (Consumer) obj -> {
-            String pro = obj.toString();
-            modules.add(new DefaultModule(pro, properties.getProperty(pro)));
+        CollectionWrapper.iterator(property, new Runnabled() {
+            @Override
+            public void run(Object obj)
+            {
+                String pro = obj.toString();
+                modules.add(new DefaultModule(pro, properties.getProperty(pro)));
+            }
         });
 
         Path path;
@@ -53,5 +55,9 @@ public class DefaultModuleManager {
                 Files.copy(inputStream, path);
             }
         }
+    }
+
+    public Collection<DefaultModule> getModules() {
+        return modules;
     }
 }
