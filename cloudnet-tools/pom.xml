@@ -43,6 +43,14 @@
             <artifactId>spigot-api</artifactId>
             <version>${dependency.spigot.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <!-- See https://github.com/CloudNetService/CloudNet/issues/141
+                     for the reason of this exclusion. -->
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

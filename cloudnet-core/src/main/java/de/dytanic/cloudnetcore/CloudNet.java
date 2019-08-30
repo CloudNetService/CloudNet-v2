@@ -47,7 +47,7 @@ import de.dytanic.cloudnetcore.network.packet.dbsync.*;
 import de.dytanic.cloudnetcore.network.packet.in.*;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
 import de.dytanic.cloudnetcore.serverlog.ServerLogManager;
-import de.dytanic.cloudnetcore.setup.LocalCloudWrapper;
+import de.dytanic.cloudnetcore.wrapper.local.LocalCloudWrapper;
 import de.dytanic.cloudnetcore.util.FileCopy;
 import de.dytanic.cloudnetcore.web.api.v1.*;
 import de.dytanic.cloudnetcore.web.log.WebsiteLog;
@@ -296,6 +296,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             if (!version.equals(CloudNet.class.getPackage().getImplementationVersion()))
             {
                 System.out.println("Preparing update...");
+                localCloudWrapper.installUpdate(webClient);
                 webClient.update(version);
                 shutdown();
 
@@ -393,7 +394,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
                 .registerCommand(new CommandCreate())
                 .registerCommand(new CommandVersion())
                 .registerCommand(new CommandInfo())
-                .registerCommand(new CommandDebug());
+                .registerCommand(new CommandDebug())
+                .registerCommand(new CommandUser())
+                .registerCommand(new CommandLocalWrapper());
     }
 
     private void initPacketHandlers()
