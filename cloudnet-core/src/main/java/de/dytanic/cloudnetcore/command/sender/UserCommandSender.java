@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.user.permission.UserablePermissionEntity;
-import lombok.Getter;
 
 import java.util.UUID;
 

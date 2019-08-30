@@ -5,8 +5,6 @@
 package de.dytanic.cloudnetcore.network.wrapper;
 
 import de.dytanic.cloudnetcore.network.components.WrapperMeta;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.UUID;
 

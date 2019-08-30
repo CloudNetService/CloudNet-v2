@@ -7,8 +7,6 @@ package de.dytanic.cloudnet.lib.proxylayout;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.Collection;
 import java.util.List;

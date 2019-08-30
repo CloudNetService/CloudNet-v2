@@ -9,7 +9,6 @@ import de.dytanic.cloudnet.web.server.util.QueryDecoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
-import lombok.Getter;
 
 /**
  * Abstract class that handles web requests for a given path.

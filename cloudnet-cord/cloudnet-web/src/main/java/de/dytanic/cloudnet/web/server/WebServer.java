@@ -15,7 +15,6 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
-import lombok.Getter;
 
 import javax.net.ssl.SSLException;
 import java.security.cert.CertificateException;

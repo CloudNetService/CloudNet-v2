@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.lib.network.http;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import lombok.Getter;
 
 import java.net.URLConnection;
 

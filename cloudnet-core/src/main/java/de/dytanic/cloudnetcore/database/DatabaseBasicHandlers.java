@@ -7,7 +7,6 @@ package de.dytanic.cloudnetcore.database;
 import de.dytanic.cloudnet.database.DatabaseImpl;
 import de.dytanic.cloudnet.database.DatabaseManager;
 import de.dytanic.cloudnet.lib.database.Database;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 24.07.2017.

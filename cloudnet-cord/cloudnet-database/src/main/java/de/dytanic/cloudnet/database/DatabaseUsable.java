@@ -5,8 +5,6 @@
 package de.dytanic.cloudnet.database;
 
 import de.dytanic.cloudnet.lib.database.Database;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Parent class for all databases used by CloudNet.

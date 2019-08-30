@@ -1,7 +1,6 @@
 package de.dytanic.cloudnet.lib.player;
 
 import com.google.gson.reflect.TypeToken;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 

@@ -1,8 +1,6 @@
 package de.dytanic.cloudnet.lib.server.info;
 
 import de.dytanic.cloudnet.lib.service.ServiceId;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 02.07.2017.

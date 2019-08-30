@@ -3,7 +3,6 @@ package de.dytanic.cloudnetwrapper.screen;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutSendScreenLine;
-import lombok.Getter;
 
 import java.util.Collections;
 import java.util.Queue;

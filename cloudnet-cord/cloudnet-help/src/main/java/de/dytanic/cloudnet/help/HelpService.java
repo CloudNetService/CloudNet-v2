@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.help;
 
 import de.dytanic.cloudnet.lib.map.Maps;
-import lombok.Getter;
 
 /**
  * Class to organize help information and print it in a pretty way

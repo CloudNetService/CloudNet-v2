@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.async.AsyncPosterAdapter;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.Getter;
 
 /**
  * Calls if a CustomChannelMessage was received from a INetworkComponent

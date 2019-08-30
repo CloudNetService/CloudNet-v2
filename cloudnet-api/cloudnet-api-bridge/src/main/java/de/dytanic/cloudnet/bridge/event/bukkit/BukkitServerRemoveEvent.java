@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.HandlerList;
 
 /**

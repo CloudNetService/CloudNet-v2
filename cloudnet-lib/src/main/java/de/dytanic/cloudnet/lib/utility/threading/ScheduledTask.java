@@ -1,7 +1,5 @@
 package de.dytanic.cloudnet.lib.utility.threading;
 
-import lombok.Getter;
-
 /**
  * Created by Tareko on 24.05.2017.
  */

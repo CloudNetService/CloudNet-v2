@@ -4,8 +4,6 @@
 
 package de.dytanic.cloudnet.logging;
 
-import lombok.Getter;
-
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;

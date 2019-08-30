@@ -10,8 +10,6 @@ import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Map;
 

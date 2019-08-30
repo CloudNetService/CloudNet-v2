@@ -5,9 +5,7 @@
 package de.dytanic.cloudnet.cloudflare;
 
 import de.dytanic.cloudnet.cloudflare.util.DNSRecord;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 /**
  * Container for CloudFlare responses.

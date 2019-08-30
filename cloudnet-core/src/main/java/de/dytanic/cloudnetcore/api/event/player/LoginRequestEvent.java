@@ -8,8 +8,6 @@ import de.dytanic.cloudnet.event.Cancelable;
 import de.dytanic.cloudnet.event.Event;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by Tareko on 27.07.2017.

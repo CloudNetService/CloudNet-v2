@@ -13,7 +13,6 @@ import de.dytanic.cloudnetcore.permissions.config.ConfigPermissions;
 import de.dytanic.cloudnetcore.permissions.listener.PlayerInitListener;
 import de.dytanic.cloudnetcore.permissions.listener.UpdateAllListener;
 import de.dytanic.cloudnetcore.permissions.network.packet.in.PacketInUpdatePermissionGroup;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 17.10.2017.

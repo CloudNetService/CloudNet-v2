@@ -14,8 +14,6 @@ import de.dytanic.cloudnetwrapper.server.BungeeCord;
 import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
 import de.dytanic.cloudnetwrapper.server.ServerStage;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;

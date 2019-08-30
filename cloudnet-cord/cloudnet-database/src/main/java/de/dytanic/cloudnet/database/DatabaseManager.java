@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.database;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
-import lombok.Getter;
 
 import java.io.File;
 import java.util.*;

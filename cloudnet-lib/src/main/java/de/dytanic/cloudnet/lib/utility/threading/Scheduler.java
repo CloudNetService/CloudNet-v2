@@ -1,7 +1,6 @@
 package de.dytanic.cloudnet.lib.utility.threading;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import lombok.Getter;
 
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;

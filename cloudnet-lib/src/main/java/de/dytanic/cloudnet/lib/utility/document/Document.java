@@ -2,8 +2,6 @@ package de.dytanic.cloudnet.lib.utility.document;
 
 import com.google.gson.*;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.*;
 import java.lang.reflect.Type;

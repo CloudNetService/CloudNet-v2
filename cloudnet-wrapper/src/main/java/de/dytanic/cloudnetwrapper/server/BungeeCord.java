@@ -27,7 +27,6 @@ import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 import java.io.File;
 import java.io.FileFilter;
