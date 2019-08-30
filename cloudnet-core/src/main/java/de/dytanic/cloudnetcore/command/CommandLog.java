@@ -66,6 +66,13 @@ public final class CommandLog extends Command {
     }
   }
 
+  /**
+   * Send the log to a random past site
+   * @param sender The sender of the command
+   * @param random A random string
+   * @param url The url of the paste site
+   * @param minecraftServer The minecraft server with the log inside
+   */
   private void sendPaste(CommandSender sender, String random, String url,
       MinecraftServer minecraftServer) {
     final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -102,6 +109,12 @@ public final class CommandLog extends Command {
     executorService.shutdown();
   }
 
+  /**
+   * Push the log to url
+   * @param url The url to push it
+   * @param builder The content of the log
+   * @return The finish url
+   */
   private String postTo(String url, StringBuilder builder) {
     try {
       URL pasteUrl = new URL(url);
