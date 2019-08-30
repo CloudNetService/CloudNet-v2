@@ -479,13 +479,13 @@ public final class CommandCloud extends Command implements TabExecutor {
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] args) {
         List<String> tabCompletes = ImmutableList.of();
         switch (args.length) {
-            case 1: {
+            case 0: {
                 tabCompletes = ImmutableList.of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
                         , "ustopGroup", "listProxys", "listOnline", "listServers", "log", "listGroups", "rl", "list"
                         , "maintenance", "copy", "version", "statistics", "debug");
                 break;
             }
-            case 2: {
+            case 1: {
                 switch (args[0].toLowerCase()) {
                     case "toggle": {
                         tabCompletes = ImmutableList.of("autoslot", "maintenance");
@@ -495,6 +495,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         tabCompletes = ImmutableList.of("add", "remove");
                         break;
                     }
+                    case "maintenance":
                     case "start":
                     case "stopgroup":
                     case "ustopgroup": {
@@ -509,11 +510,6 @@ public final class CommandCloud extends Command implements TabExecutor {
                         tabCompletes = new LinkedList<>(CloudProxy.getInstance().getCachedServers().keySet());
                         break;
                     }
-                    case "maintenance": {
-                        tabCompletes = new LinkedList<>(CloudAPI.getInstance().getServerGroupMap().keySet());
-                        break;
-                    }
-
                     case "cmds": {
                         tabCompletes = CloudAPI.getInstance().getServers().stream()
                                 .map(ServerInfo::getServiceId).map(ServiceId::getServerId).collect(Collectors.toList());
@@ -529,7 +525,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 break;
             }
-            case 3: {
+            case 2: {
                 if (args[0].toLowerCase().equals("whitelist")) {
                     tabCompletes = CloudAPI.getInstance().getOnlinePlayers()
                             .stream().map(CloudPlayer::getName).collect(Collectors.toList());
