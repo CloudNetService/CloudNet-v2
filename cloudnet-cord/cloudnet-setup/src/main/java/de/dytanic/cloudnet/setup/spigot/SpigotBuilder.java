@@ -1,4 +1,4 @@
-package de.dytanic.cloudnetwrapper.util;
+package de.dytanic.cloudnet.setup.spigot;
 
 import jline.console.ConsoleReader;
 import org.jsoup.Jsoup;
@@ -91,7 +91,11 @@ public final class SpigotBuilder {
     private static void buildSpigot(final String version) {
         File builder = new File("local/builder/spigot");
         File buildFolder = new File(builder, version);
-        buildFolder.mkdirs();
+        try {
+            Files.createDirectories(buildFolder.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         File buildTools = new File(buildFolder, "buildtools.jar");
         if (!buildTools.exists()) {
             runBuildTools(version, buildFolder, buildTools);
@@ -124,7 +128,7 @@ public final class SpigotBuilder {
     private static void runBuildTools(String version, File buildFolder, File buildTools) {
         try {
             long startTime = System.currentTimeMillis();
-            buildFolder.mkdirs();
+            Files.createDirectories(buildFolder.toPath());
             System.out.println("Downloading BuildTools.jar...");
             URLConnection connection = new URL(buildToolsUrl).openConnection();
             connection.setRequestProperty("User-Agent",
@@ -171,7 +175,7 @@ public final class SpigotBuilder {
                 File toFile = file.toFile();
                 toFile.setExecutable(true, false);
                 toFile.setWritable(true, false);
-                toFile.delete();
+                Files.deleteIfExists(file);
                 return FileVisitResult.CONTINUE;
             }
 
@@ -182,7 +186,7 @@ public final class SpigotBuilder {
                 File file = dir.toFile();
                 file.setExecutable(true, false);
                 file.setWritable(true, false);
-                file.delete();
+                Files.deleteIfExists(dir);
                 return FileVisitResult.CONTINUE;
             }
         });

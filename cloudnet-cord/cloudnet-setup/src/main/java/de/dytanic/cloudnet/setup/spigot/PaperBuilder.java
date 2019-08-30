@@ -1,8 +1,8 @@
-package de.dytanic.cloudnetwrapper.util;
+package de.dytanic.cloudnet.setup.spigot;
 
 import com.google.gson.Gson;
-import de.dytanic.cloudnetwrapper.models.PaperMCProject;
-import de.dytanic.cloudnetwrapper.models.PaperMCProjectVersion;
+import de.dytanic.cloudnet.setup.models.PaperMCProject;
+import de.dytanic.cloudnet.setup.models.PaperMCProjectVersion;
 import jline.console.ConsoleReader;
 
 import java.io.*;
@@ -89,7 +89,7 @@ public final class PaperBuilder {
         connection.connect();
         File builder = new File("local/builder/papermc");
         File buildFolder = new File(builder, version);
-        buildFolder.mkdirs();
+        Files.createDirectories(buildFolder.toPath());
         File paperclip = new File(buildFolder, "paperclip.jar");
         if (!paperclip.exists()) {
             runPaperClip(connection, buildFolder, paperclip);
@@ -109,7 +109,6 @@ public final class PaperBuilder {
             } else {
                 SpigotBuilder.deleteBuildFolder(buildFolder);
                 runPaperClip(connection, buildFolder, paperclip);
-                return;
             }
 
         }

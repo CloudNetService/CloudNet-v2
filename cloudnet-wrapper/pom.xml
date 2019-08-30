@@ -15,13 +15,6 @@
 
     <dependencies>
         <dependency>
-            <!-- jsoup HTML parser library @ https://jsoup.org/ -->
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.12.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-command</artifactId>
             <version>${project.version}</version>

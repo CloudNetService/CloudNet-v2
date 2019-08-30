@@ -5,8 +5,6 @@
 package de.dytanic.cloudnet.setup.spigot;
 
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-import de.dytanic.cloudnetwrapper.util.PaperBuilder;
-import de.dytanic.cloudnetwrapper.util.SpigotBuilder;
 import jline.console.ConsoleReader;
 import lombok.Setter;
 

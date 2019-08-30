@@ -1,4 +1,4 @@
-package de.dytanic.cloudnetwrapper.models;
+package de.dytanic.cloudnet.setup.models;
 
 public class PaperMCProject {
 
