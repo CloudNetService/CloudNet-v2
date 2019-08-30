@@ -145,7 +145,7 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         if (!optionSet.has("disable-autoupdate")) checkForUpdates();
 
         if (!optionSet.has("disallow_bukkit_download") && !Files.exists(Paths.get("local/spigot.jar")))
-            new SetupSpigotVersion().run(cloudNetLogging.getReader());
+            new SetupSpigotVersion().accept(cloudNetLogging.getReader());
 
         Thread thread = new Thread(scheduler);
         thread.setPriority(Thread.MIN_PRIORITY);

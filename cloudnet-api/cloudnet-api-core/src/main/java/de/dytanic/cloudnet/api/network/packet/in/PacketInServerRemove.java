@@ -11,7 +11,8 @@ import de.dytanic.cloudnet.api.network.packet.PacketInHandlerDefault;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 17.08.2017.
@@ -24,9 +25,9 @@ public class PacketInServerRemove extends PacketInHandlerDefault {
         }.getType());
         if (CloudAPI.getInstance() != null)
         {
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Consumer<NetworkHandler>() {
                 @Override
-                public void run(NetworkHandler obj)
+                public void accept(NetworkHandler obj)
                 {
                     obj.onServerRemove(serverInfo);
                 }

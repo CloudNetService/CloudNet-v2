@@ -4,11 +4,11 @@
 
 package de.dytanic.cloudnet.lib.utility;
 
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -55,14 +55,14 @@ public final class CollectionWrapper {
         return new CopyOnWriteArrayList<>(input.split(splitter));
     }
 
-    public static <E> void iterator(Collection<E> collection, Runnabled<E>... runnableds)
+    public static <E> void iterator(Collection<E> collection, Consumer<E>... consumers)
     {
-        for (E el : collection) for (Runnabled<E> runnabled : runnableds) runnabled.run(el);
+        for (E el : collection) for (Consumer<E> consumer : consumers) consumer.accept(el);
     }
 
-    public static <E> void iterator(E[] collection, Runnabled<E>... runnableds)
+    public static <E> void iterator(E[] collection, Consumer<E>... consumers)
     {
-        for (E el : collection) for (Runnabled<E> runnabled : runnableds) runnabled.run(el);
+        for (E el : collection) for (Consumer<E> consumer : consumers) consumer.accept(el);
     }
 
     public static <E, X, C> Collection<E> getCollection(java.util.Map<X, C> map, Function<C, E> catcher)
@@ -94,11 +94,11 @@ public final class CollectionWrapper {
         return new CopyOnWriteArrayList<>();
     }
 
-    public static <E> void iterator(E[] values, Runnabled<E> handled)
+    public static <E> void iterator(E[] values, Consumer<E> handled)
     {
         for (E value : values)
         {
-            handled.run(value);
+            handled.accept(value);
         }
     }
 

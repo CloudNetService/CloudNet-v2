@@ -12,7 +12,7 @@ import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -79,7 +80,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                         for (Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet())
                         {
                             sender.sendMessage(x.getKey() + ":");
-                            CollectionWrapper.iterator(x.getValue(), (Runnabled<String>) obj -> sender.sendMessage("- " + obj));
+                            CollectionWrapper.iterator(x.getValue(), (Consumer<String>) obj -> sender.sendMessage("- " + obj));
                         }
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                     } else
@@ -198,7 +199,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             String permission = args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING);
                             boolean value = !args[4].startsWith("-");
 
-                            Consumer<PermissionGroup> consumer = new Consumer<PermissionGroup>() {
+                            Consumer consumer = new Consumer<PermissionGroup>() {
 
                                 @Override
                                 public void accept(PermissionGroup permissionGroup)
@@ -231,7 +232,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     {
                         if (permissionPool.getGroups().containsKey(args[1]) || args[1].equals("*"))
                         {
-                            Consumer<PermissionGroup> consumer = new Consumer<PermissionGroup>() {
+                            Consumer consumer = new Consumer<PermissionGroup>() {
                                 @Override
                                 public void accept(PermissionGroup permissionGroup)
                                 {
@@ -259,7 +260,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     {
                         if (permissionPool.getGroups().containsKey(args[1]) || args[1].equals("*"))
                         {
-                            Consumer<PermissionGroup> consumer = new Consumer<PermissionGroup>() {
+                            Consumer consumer = new Consumer<PermissionGroup>() {
                                 @Override
                                 public void accept(PermissionGroup permissionGroup)
                                 {
@@ -290,7 +291,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     {
                         if (permissionPool.getGroups().containsKey(args[1]) || args[1].equals("*"))
                         {
-                            Consumer<PermissionGroup> consumer = new Consumer<PermissionGroup>() {
+                            Consumer consumer = new Consumer<PermissionGroup>() {
                                 @Override
                                 public void accept(PermissionGroup permissionGroup)
                                 {

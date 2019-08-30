@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet.setup.spigot;
 
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import jline.console.ConsoleReader;
 import lombok.Setter;
 
@@ -16,19 +15,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 25.05.2017.
  */
 public class SetupSpigotVersion
-        implements Runnabled<ConsoleReader> {
+        implements Consumer<ConsoleReader> {
 
     @Setter
     private Path target;
 
-    private final Runnabled<String> download = new Runnabled<String>() {
+    private final Consumer<String> download = new Consumer<String>() {
         @Override
-        public void run(String url)
+        public void accept(String url)
         {
             try
             {
@@ -49,7 +49,7 @@ public class SetupSpigotVersion
     };
 
     @Override
-    public void run(ConsoleReader reader)
+    public void accept(ConsoleReader reader)
     {
         System.out.println("No spigot.jar has been found!");
 
@@ -105,31 +105,31 @@ public class SetupSpigotVersion
                         switch (reader.readLine().toLowerCase())
                         {
                             case "1.7.10":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
+                                download.accept("https://cdn.getbukkit.org/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
                                 return;
                             case "1.8.8":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
+                                download.accept("https://cdn.getbukkit.org/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
                                 return;
                             case "1.9.4":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar");
+                                download.accept("https://cdn.getbukkit.org/spigot/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar");
                                 return;
                             case "1.10.2":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.10.2-R0.1-SNAPSHOT-latest.jar");
+                                download.accept("https://cdn.getbukkit.org/spigot/spigot-1.10.2-R0.1-SNAPSHOT-latest.jar");
                                 return;
                             case "1.11.2":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.11.2.jar");
+                                download.accept("https://cdn.getbukkit.org/spigot/spigot-1.11.2.jar");
                                 return;
                             case "1.12.2":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.12.2.jar");
+                                download.accept("https://cdn.getbukkit.org/spigot/spigot-1.12.2.jar");
                                 return;
                             case "1.13":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.jar");
+                                download.accept("https://cdn.getbukkit.org/spigot/spigot-1.13.jar");
                                 return;
                             case "1.13.1":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.1.jar");
+                                download.accept("https://cdn.getbukkit.org/spigot/spigot-1.13.1.jar");
                                 return;
                             case "1.13.2":
-                                download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.2.jar");
+                                download.accept("https://cdn.getbukkit.org/spigot/spigot-1.13.2.jar");
                                 return;
                             default:
                                 System.out.println("This version is not supported!");

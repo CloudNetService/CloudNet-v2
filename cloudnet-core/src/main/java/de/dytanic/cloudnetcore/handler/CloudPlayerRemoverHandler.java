@@ -3,12 +3,12 @@ package de.dytanic.cloudnetcore.handler;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 20.11.2017.
@@ -23,9 +23,9 @@ public class CloudPlayerRemoverHandler implements ICloudHandler {
 
         for (ProxyServer proxyServer : CloudNet.getInstance().getProxys().values())
         {
-            CollectionWrapper.iterator(proxyServer.getProxyInfo().getPlayers(), new Runnabled<MultiValue<UUID, String>>() {
+            CollectionWrapper.iterator(proxyServer.getProxyInfo().getPlayers(), new Consumer<MultiValue<UUID, String>>() {
                 @Override
-                public void run(MultiValue<UUID, String> obj)
+                public void accept(MultiValue<UUID, String> obj)
                 {
                     collection.add(obj.getFirst());
                 }

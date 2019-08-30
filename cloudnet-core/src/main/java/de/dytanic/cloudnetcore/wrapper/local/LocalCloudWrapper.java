@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.user.BasicUser;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnet.setup.spigot.SetupSpigotVersion;
 import de.dytanic.cloudnet.web.client.WebClient;
 import de.dytanic.cloudnetcore.CloudNet;
@@ -34,7 +33,7 @@ import java.util.function.Consumer;
 /**
  * Created by Tareko on 01.10.2017.
  */
-public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
+public class LocalCloudWrapper implements Consumer<OptionSet>, Closeable {
 
     private static final String WRAPPER_URL = "https://ci.cloudnetservice.eu/job/CloudNetService/job/CloudNet/job/master/lastSuccessfulBuild/artifact/cloudnet-wrapper/target/CloudNet-Wrapper.jar";
 
@@ -83,7 +82,7 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
     }
 
     @Override
-    public void run(OptionSet obj) {
+    public void accept(OptionSet obj) {
         if (obj.has("installWrapper")) {
             try {
                 if (!Files.exists(Paths.get("wrapper")))
@@ -115,7 +114,7 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
             }
             SetupSpigotVersion setup = new SetupSpigotVersion();
             setup.setTarget(path);
-            setup.run(CloudNet.getLogger().getReader());
+            setup.accept(CloudNet.getLogger().getReader());
         }
     }
 
@@ -283,7 +282,7 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
         this.consoleThread.start();
     }
 
-    private void readStream(InputStream inputStream, Consumer<String> consumer) {
+    private void readStream(InputStream inputStream, java.util.function.Consumer consumer) {
         try {
             int len;
             while (inputStream.available() > 0 && (len = inputStream.read(this.buffer)) != -1)
