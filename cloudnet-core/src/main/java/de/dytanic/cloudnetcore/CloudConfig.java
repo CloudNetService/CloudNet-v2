@@ -22,7 +22,6 @@ import de.dytanic.cloudnetcore.network.components.WrapperMeta;
 import de.dytanic.cloudnetcore.util.defaults.BungeeGroup;
 import de.dytanic.cloudnetcore.util.defaults.LobbyGroup;
 import jline.console.ConsoleReader;
-import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -42,7 +41,6 @@ import java.util.*;
 /**
  * Created by Tareko on 16.09.2017.
  */
-@Getter
 public class CloudConfig {
 
     private static final ConfigurationProvider CONFIGURATION_PROVIDER = ConfigurationProvider.getProvider(YamlConfiguration.class);
@@ -373,4 +371,79 @@ public class CloudConfig {
     }
 
 
+    public Path getConfigPath() {
+        return this.configPath;
+    }
+
+    public Path getServicePath() {
+        return this.servicePath;
+    }
+
+    public Path getUsersPath() {
+        return this.usersPath;
+    }
+
+    public Collection<ConnectableAddress> getAddresses() {
+        return this.addresses;
+    }
+
+    public boolean isAutoUpdate() {
+        return this.autoUpdate;
+    }
+
+    public boolean isNotifyService() {
+        return this.notifyService;
+    }
+
+    public boolean isCloudDynamicServices() {
+        return this.cloudDynamicServices;
+    }
+
+    public boolean isCloudDevServices() {
+        return this.cloudDevServices;
+    }
+
+    public String getFormatSplitter() {
+        return this.formatSplitter;
+    }
+
+    public String getWrapperKey() {
+        return this.wrapperKey;
+    }
+
+    public WebServerConfig getWebServerConfig() {
+        return this.webServerConfig;
+    }
+
+    public List<WrapperMeta> getWrappers() {
+        return this.wrappers;
+    }
+
+    public Configuration getConfig() {
+        return this.config;
+    }
+
+    public Document getServiceDocument() {
+        return this.serviceDocument;
+    }
+
+    public Document getUserDocument() {
+        return this.userDocument;
+    }
+
+    public List<String> getDisabledModules() {
+        return this.disabledModules;
+    }
+
+    public List<String> getCloudServerWrapperList() {
+        return this.cloudServerWrapperList;
+    }
+
+    public Map<String, Object> getNetworkProperties() {
+        return this.networkProperties;
+    }
+
+    public List<String> getHasteServer() {
+        return this.hasteServer;
+    }
 }
