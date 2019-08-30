@@ -4,7 +4,7 @@
 
 package de.dytanic.cloudnet.setup.spigot;
 
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+import de.dytanic.cloudnet.lib.utility.threading.Supplier;
 import jline.console.ConsoleReader;
 import lombok.Setter;
 
@@ -20,13 +20,12 @@ import java.nio.file.StandardCopyOption;
 /**
  * Created by Tareko on 25.05.2017.
  */
-public class SetupSpigotVersion
-		implements Runnabled<ConsoleReader> {
+public class SetupSpigotVersion implements Supplier<ConsoleReader>{
 
 	@Setter
 	private Path target;
 
-	private final Runnabled<String> download = new Runnabled<String>() {
+	private final Supplier<String> download = new Supplier<String>() {
 		@Override
 		public void run(String url) {
 			try {
@@ -89,7 +88,7 @@ public class SetupSpigotVersion
 		}
 		switch (answer) {
 			case "spigot":
-				System.out.println("Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\"]");
+				System.out.println("Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\", \"1.14\", \"1.14.1\", \"1.14.2\", \"1.14.3\", \"1.14.4\"]");
 				while (true) {
 					try {
 						switch (reader.readLine().toLowerCase()) {
@@ -119,6 +118,21 @@ public class SetupSpigotVersion
 								return;
 							case "1.13.2":
 								download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.2.jar");
+								return;
+							case "1.14":
+								download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.jar");
+								return;
+							case "1.14.1":
+								download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.1.jar");
+								return;
+							case "1.14.2":
+								download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.2.jar");
+								return;
+							case "1.14.3":
+								download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.3.jar");
+								return;
+							case "1.14.4":
+								download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.4.jar");
 								return;
 							default:
 								System.out.println("This version is not supported!");
