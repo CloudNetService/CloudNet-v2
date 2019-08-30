@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet.setup.spigot;
 
-import de.dytanic.cloudnet.lib.utility.threading.Supplier;
 import jline.console.ConsoleReader;
 import lombok.Setter;
 
@@ -16,18 +15,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Created by Tareko on 25.05.2017.
  */
-public class SetupSpigotVersion implements Supplier<ConsoleReader>{
+public class SetupSpigotVersion implements Consumer<ConsoleReader> {
 
 	@Setter
 	private Path target;
 
-	private final Supplier<String> download = new Supplier<String>() {
+	private final Consumer<String> download = new Consumer<String>() {
 		@Override
-		public void run(String url) {
+		public void accept(String url) {
 			try {
 				System.out.println("Downloading spigot.jar...");
 				URLConnection connection = new URL(url).openConnection();
@@ -48,7 +50,7 @@ public class SetupSpigotVersion implements Supplier<ConsoleReader>{
      * @param reader The console reader
      */
 	@Override
-	public void run(ConsoleReader reader) {
+	public void accept(ConsoleReader reader) {
 		System.out.println("No spigot.jar has been found!");
 
 		System.out.println("Choose a minecraft server version [\"paper\",\"spigot\", \"buildtools\"]");
@@ -93,46 +95,46 @@ public class SetupSpigotVersion implements Supplier<ConsoleReader>{
 					try {
 						switch (reader.readLine().toLowerCase()) {
 							case "1.7.10":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
 								return;
 							case "1.8.8":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
 								return;
 							case "1.9.4":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar");
 								return;
 							case "1.10.2":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.10.2-R0.1-SNAPSHOT-latest.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.10.2-R0.1-SNAPSHOT-latest.jar");
 								return;
 							case "1.11.2":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.11.2.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.11.2.jar");
 								return;
 							case "1.12.2":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.12.2.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.12.2.jar");
 								return;
 							case "1.13":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.13.jar");
 								return;
 							case "1.13.1":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.1.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.13.1.jar");
 								return;
 							case "1.13.2":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.13.2.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.13.2.jar");
 								return;
 							case "1.14":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.14.jar");
 								return;
 							case "1.14.1":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.1.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.14.1.jar");
 								return;
 							case "1.14.2":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.2.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.14.2.jar");
 								return;
 							case "1.14.3":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.3.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.14.3.jar");
 								return;
 							case "1.14.4":
-								download.run("https://cdn.getbukkit.org/spigot/spigot-1.14.4.jar");
+								download.accept("https://cdn.getbukkit.org/spigot/spigot-1.14.4.jar");
 								return;
 							default:
 								System.out.println("This version is not supported!");
