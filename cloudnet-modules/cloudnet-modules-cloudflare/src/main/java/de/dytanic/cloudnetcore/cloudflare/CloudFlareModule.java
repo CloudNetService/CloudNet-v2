@@ -7,7 +7,6 @@ package de.dytanic.cloudnetcore.cloudflare;
 import de.dytanic.cloudnet.cloudflare.CloudFlareService;
 import de.dytanic.cloudnet.cloudflare.database.CloudFlareDatabase;
 import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnetcore.api.CoreModule;
 import de.dytanic.cloudnetcore.cloudflare.config.ConfigCloudFlare;
@@ -18,6 +17,7 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * Created by Tareko on 20.10.2017.
@@ -63,15 +63,15 @@ public class CloudFlareModule extends CoreModule {
         {
 
             CloudFlareService cloudFlareAPI = new CloudFlareService(configCloudFlare.load());
-            cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), new Catcher<String, String>() {
+            cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), new Function<String, String>() {
                 @Override
-                public String doCatch(String key)
+                public String apply(String key)
                 {
                     return key;
                 }
-            }, new Catcher<SimpledWrapperInfo, Wrapper>() {
+            }, new Function<Wrapper,SimpledWrapperInfo>() {
                 @Override
-                public SimpledWrapperInfo doCatch(Wrapper key)
+                public SimpledWrapperInfo apply(Wrapper key)
                 {
                     return new SimpledWrapperInfo(key.getServerId(), key.getNetworkInfo().getHostName());
                 }

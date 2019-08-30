@@ -5,7 +5,6 @@
 package de.dytanic.cloudnetcore.modules;
 
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 
 import java.io.InputStream;
@@ -16,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 22.10.2017.
@@ -34,9 +34,9 @@ public class DefaultModuleManager {
         }
 
         Collection<?> property = Collections.list(properties.propertyNames());
-        CollectionWrapper.iterator(property, new Runnabled() {
+        CollectionWrapper.iterator(property, new Consumer() {
             @Override
-            public void run(Object obj)
+            public void accept(Object obj)
             {
                 String pro = obj.toString();
                 modules.add(new DefaultModule(pro, properties.getProperty(pro)));

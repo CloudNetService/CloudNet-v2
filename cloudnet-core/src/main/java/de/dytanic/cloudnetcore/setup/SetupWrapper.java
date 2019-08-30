@@ -5,13 +5,13 @@
 package de.dytanic.cloudnetcore.setup;
 
 import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.setup.*;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.WrapperMeta;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by Tareko on 21.10.2017.
@@ -44,16 +44,16 @@ public class SetupWrapper {
         });
 
         Consumer<SetupRequest> request = setup::request;
-        request.accept(new SetupRequest("address", "What's the IP address of the wrapper?", "Specified IP address is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+        request.accept(new SetupRequest("address", "What's the IP address of the wrapper?", "Specified IP address is invalid!", SetupResponseType.STRING, new Function<String,Boolean>() {
             @Override
-            public Boolean doCatch(String key)
+            public Boolean apply(String key)
             {
                 return key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1");
             }
         }));
-        request.accept(new SetupRequest("user", "What's the user of the wrapper?", "Specified name is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
+        request.accept(new SetupRequest("user", "What's the user of the wrapper?", "Specified name is invalid!", SetupResponseType.STRING, new Function<String,Boolean>() {
             @Override
-            public Boolean doCatch(String key)
+            public Boolean apply(String key)
             {
                 return CloudNet.getInstance().getUser(key) != null;
             }

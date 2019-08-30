@@ -22,8 +22,6 @@ import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnet.lib.service.wrapper.WrapperScreen;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -42,6 +40,8 @@ import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Created by Tareko on 19.07.2017.
@@ -392,9 +392,9 @@ public final class NetworkManager {
 
     public CloudPlayer getPlayer(String name)
     {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
+        return CollectionWrapper.filter(this.onlinePlayers.values(), new Predicate<CloudPlayer>() {
             @Override
-            public boolean isAccepted(CloudPlayer value)
+            public boolean test(CloudPlayer value)
             {
                 return value.getName().equalsIgnoreCase(name);
             }
@@ -480,9 +480,9 @@ public final class NetworkManager {
 
     public CloudPlayer getOnlinePlayer(UUID uniqueId)
     {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
+        return CollectionWrapper.filter(this.onlinePlayers.values(), new Predicate<CloudPlayer>() {
             @Override
-            public boolean isAccepted(CloudPlayer cloudPlayer)
+            public boolean test(CloudPlayer cloudPlayer)
             {
                 return cloudPlayer.getUniqueId().equals(uniqueId);
             }
@@ -509,16 +509,16 @@ public final class NetworkManager {
             if (wrapper.getWrapperInfo() != null) wrappers.add(wrapper.getWrapperInfo());
         cloudNetwork.setWrappers(wrappers);
         cloudNetwork.setServerGroups(MapWrapper.transform(
-                CloudNet.getInstance().getServerGroups(), new Catcher<String, String>() {
+                CloudNet.getInstance().getServerGroups(), new Function<String, String>() {
                     @Override
-                    public String doCatch(String key)
+                    public String apply(String key)
                     {
                         return key;
                     }
                 },
-                new Catcher<SimpleServerGroup, ServerGroup>() {
+                new Function<ServerGroup, SimpleServerGroup>() {
                     @Override
-                    public SimpleServerGroup doCatch(ServerGroup key)
+                    public SimpleServerGroup apply(ServerGroup key)
                     {
                         return key.toSimple();
                     }

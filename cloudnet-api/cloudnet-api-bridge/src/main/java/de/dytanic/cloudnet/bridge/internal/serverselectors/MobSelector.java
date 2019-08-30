@@ -40,6 +40,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Created by Tareko on 25.08.2017.
@@ -92,9 +94,9 @@ public final class MobSelector {
             @Override
             public void run()
             {
-                NetworkUtils.addAll(servers, MapWrapper.collectionCatcherHashMap(CloudAPI.getInstance().getServers(), new Catcher<String, ServerInfo>() {
+                NetworkUtils.addAll(servers, MapWrapper.collectionCatcherHashMap(CloudAPI.getInstance().getServers(), new Function<ServerInfo,String>() {
                     @Override
-                    public String doCatch(ServerInfo key)
+                    public String apply(ServerInfo key)
                     {
                         return key.getServiceId().getServerId();
                     }
@@ -174,9 +176,9 @@ public final class MobSelector {
     {
         Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
         return material == null ? null : ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId())
-                .lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), new Catcher<String, String>() {
+                .lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), new Function<String, String>() {
                     @Override
-                    public String doCatch(String key)
+                    public String apply(String key)
                     {
                         return ChatColor.translateAlternateColorCodes('&', key);
                     }
@@ -187,9 +189,9 @@ public final class MobSelector {
     {
         Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
         return material == null ? null :  ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId())
-                .lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), new Catcher<String, String>() {
+                .lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), new Function<String, String>() {
                     @Override
-                    public String doCatch(String key)
+                    public String apply(String key)
                     {
                         return initPatterns(ChatColor.translateAlternateColorCodes('&', key), serverInfo);
                     }
@@ -230,9 +232,9 @@ public final class MobSelector {
 
     private List<ServerInfo> getServers(String group)
     {
-        List<ServerInfo> groups = new ArrayList<>(CollectionWrapper.filterMany(this.servers.values(), new Acceptable<ServerInfo>() {
+        List<ServerInfo> groups = new ArrayList<>(CollectionWrapper.filterMany(this.servers.values(), new Predicate<ServerInfo>() {
             @Override
-            public boolean isAccepted(ServerInfo serverInfo)
+            public boolean test(ServerInfo serverInfo)
             {
                 return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
             }
@@ -272,9 +274,9 @@ public final class MobSelector {
 
     private Collection<ServerInfo> filter(String group)
     {
-        return CollectionWrapper.filterMany(servers.values(), new Acceptable<ServerInfo>() {
+        return CollectionWrapper.filterMany(servers.values(), new Predicate<ServerInfo>() {
             @Override
-            public boolean isAccepted(ServerInfo value)
+            public boolean test(ServerInfo value)
             {
                 return value.getServiceId().getGroup().equals(group);
             }
@@ -446,20 +448,14 @@ public final class MobSelector {
 
     public Collection<Inventory> inventories()
     {
-        return CollectionWrapper.getCollection(this.mobs, new Catcher<Inventory, MobImpl>() {
-            @Override
-            public Inventory doCatch(MobImpl key)
-            {
-                return key.getInventory();
-            }
-        });
+        return CollectionWrapper.getCollection(this.mobs, MobImpl::getInventory);
     }
 
     public MobImpl find(Inventory inventory)
     {
-        return CollectionWrapper.filter(this.mobs.values(), new Acceptable<MobImpl>() {
+        return CollectionWrapper.filter(this.mobs.values(), new Predicate<MobImpl>() {
             @Override
-            public boolean isAccepted(MobImpl value)
+            public boolean test(MobImpl value)
             {
                 return value.getInventory().equals(inventory);
             }
@@ -471,9 +467,9 @@ public final class MobSelector {
         @EventHandler
         public void handleRightClick(PlayerInteractEntityEvent e)
         {
-            MobImpl mobImpl = CollectionWrapper.filter(mobs.values(), new Acceptable<MobImpl>() {
+            MobImpl mobImpl = CollectionWrapper.filter(mobs.values(), new Predicate<MobImpl>() {
                 @Override
-                public boolean isAccepted(MobImpl value)
+                public boolean test(MobImpl value)
                 {
                     return value.getEntity().getUniqueId().equals(e.getRightClicked().getUniqueId());
                 }
@@ -507,9 +503,9 @@ public final class MobSelector {
         @EventHandler
         public void entityDamage(EntityDamageEvent e)
         {
-            MobImpl mob = CollectionWrapper.filter(mobs.values(), new Acceptable<MobImpl>() {
+            MobImpl mob = CollectionWrapper.filter(mobs.values(), new Predicate<MobImpl>() {
                 @Override
-                public boolean isAccepted(MobImpl value)
+                public boolean test(MobImpl value)
                 {
                     return e.getEntity().getUniqueId().equals(value.getEntity().getUniqueId());
                 }
@@ -548,15 +544,15 @@ public final class MobSelector {
         @EventHandler
         public void onSave(WorldSaveEvent e)
         {
-            Map<UUID, ServerMob> filteredMobs = MapWrapper.transform(MobSelector.this.mobs, new Catcher<UUID, UUID>() {
+            Map<UUID, ServerMob> filteredMobs = MapWrapper.transform(MobSelector.this.mobs, new Function<UUID, UUID>() {
                 @Override
-                public UUID doCatch(UUID key)
+                public UUID apply(UUID key)
                 {
                     return key;
                 }
-            }, new Catcher<ServerMob, MobImpl>() {
+            }, new Function<MobImpl,ServerMob>() {
                 @Override
-                public ServerMob doCatch(MobImpl key)
+                public ServerMob apply(MobImpl key)
                 {
                     return key.getMob();
                 }
@@ -569,15 +565,15 @@ public final class MobSelector {
                 @Override
                 public void run()
                 {
-                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Catcher<UUID, UUID>() {
+                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Function<UUID, UUID>() {
                         @Override
-                        public UUID doCatch(UUID key)
+                        public UUID apply(UUID key)
                         {
                             return key;
                         }
-                    }, new Catcher<MobImpl, ServerMob>() {
+                    }, new Function<ServerMob, MobImpl>() {
                         @Override
-                        public MobImpl doCatch(ServerMob key)
+                        public MobImpl apply(ServerMob key)
                         {
                             MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
                             Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));

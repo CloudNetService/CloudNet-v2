@@ -11,8 +11,6 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.user.BasicUser;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -36,6 +34,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 
 /**
@@ -314,9 +314,9 @@ public class CloudConfig {
     {
         Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>() {
         }.getType());
-        WrapperMeta is = CollectionWrapper.filter(wrapperMetas, new Acceptable<WrapperMeta>() {
+        WrapperMeta is = CollectionWrapper.filter(wrapperMetas, new Predicate<WrapperMeta>() {
             @Override
-            public boolean isAccepted(WrapperMeta wrapperMeta_)
+            public boolean test(WrapperMeta wrapperMeta_)
             {
                 return wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId());
             }
@@ -353,9 +353,9 @@ public class CloudConfig {
     {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
-        CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
+        CollectionWrapper.checkAndRemove(groups, new Predicate<ProxyGroup>() {
             @Override
-            public boolean isAccepted(ProxyGroup value)
+            public boolean test(ProxyGroup value)
             {
                 return value.getName().equals(serverGroup.getName());
             }
@@ -374,9 +374,9 @@ public class CloudConfig {
     {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
-        CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
+        CollectionWrapper.checkAndRemove(groups, new Predicate<ProxyGroup>() {
             @Override
-            public boolean isAccepted(ProxyGroup value)
+            public boolean test(ProxyGroup value)
             {
                 return value.getName().equals(proxyGroup.getName());
             }
@@ -433,9 +433,9 @@ public class CloudConfig {
         Collection<ProxyGroup> collection = serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
 
-        return MapWrapper.collectionCatcherHashMap(collection, new Catcher<String, ProxyGroup>() {
+        return MapWrapper.collectionCatcherHashMap(collection, new Function<ProxyGroup,String>() {
             @Override
-            public String doCatch(ProxyGroup key)
+            public String apply(ProxyGroup key)
             {
                 return key.getName();
             }
