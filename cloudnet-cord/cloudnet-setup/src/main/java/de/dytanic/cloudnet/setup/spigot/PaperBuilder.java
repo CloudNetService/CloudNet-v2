@@ -39,12 +39,9 @@ public final class PaperBuilder {
             System.out
                     .println("-----------------------------------------------------------------------------");
             System.out.println("PaperSpigot Version");
-            System.out.println();
             System.out
                     .println("-----------------------------------------------------------------------------");
-            for (String version : paperMCProject.getVersions()) {
-                System.out.printf("%s\n", version);
-            }
+            Arrays.asList(paperMCProject.getVersions()).forEach(System.out::println);
             System.out
                     .println("-----------------------------------------------------------------------------");
             String answer = null;
@@ -88,6 +85,7 @@ public final class PaperBuilder {
         connection = new URL(String.format(
                 apiProjectVersionDownload, version, paperMCProjectVersion.getBuilds().getLatest()))
                 .openConnection();
+	    connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
         connection.connect();
         File builder = new File("local/builder/papermc");
         File buildFolder = new File(builder, version);
