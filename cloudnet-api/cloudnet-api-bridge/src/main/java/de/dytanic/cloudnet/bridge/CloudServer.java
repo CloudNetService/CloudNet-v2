@@ -24,7 +24,6 @@ import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.Bukkit;
@@ -52,6 +51,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Cloud-Server represents
@@ -195,9 +195,9 @@ public class CloudServer implements ICloudService {
 
     public CloudPlayer getCachedPlayer(String name)
     {
-        return CollectionWrapper.filter(this.cloudPlayers.values(), new Acceptable<CloudPlayer>() {
+        return CollectionWrapper.filter(this.cloudPlayers.values(), new Predicate<CloudPlayer>() {
             @Override
-            public boolean isAccepted(CloudPlayer cloudPlayer)
+            public boolean test(CloudPlayer cloudPlayer)
             {
                 return cloudPlayer.getName().equalsIgnoreCase(name);
             }
