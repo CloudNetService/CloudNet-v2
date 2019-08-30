@@ -442,13 +442,12 @@ public final class CommandPermissions extends Command implements TabExecutor {
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender commandSender, String[] args) {
-        int length = args.length;
 		List<String> tabCompletes = ImmutableList.of();
-        commandSender.sendMessage("DEBUG: "+ Arrays.toString(args));
-        switch (length) {
+        switch (args.length) {
             ///cperms
             case 0: {
 	            tabCompletes = ImmutableList.of("user", "group", "create");
+	            break;
             }
             ///cperms USER/GROUP
             case 1: {
@@ -458,10 +457,12 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                 .keySet());
                         list.add("*");
 	                    tabCompletes = list;
+	                    break;
                     }
                     case "user": {
 	                    tabCompletes = CloudAPI.getInstance().getOnlinePlayers().stream().map(OfflinePlayer::getName)
                                 .collect(Collectors.toList());
+	                    break;
                     }
                 }
             }
@@ -471,9 +472,11 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     case "group": {
 	                    tabCompletes = ImmutableList.of("add", "remove", "setDisplay", "setJoinPower", "setSuffix", "setPrefix",
                                 "setTagId", "setDefault", "setColor");
+	                    break;
                     }
                     case "user": {
 	                    tabCompletes = ImmutableList.of("group", "add", "remove");
+	                    break;
                     }
                 }
             }
@@ -485,6 +488,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             case "add":
                             case "remove": {
 	                            tabCompletes = ImmutableList.of("permission");
+	                            break;
                             }
                         }
                     }
@@ -493,9 +497,11 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             case "add":
                             case "remove": {
 	                            tabCompletes = ImmutableList.of("permission");
+	                            break;
                             }
                             case "group": {
 	                            tabCompletes = ImmutableList.of("set", "add", "remove");
+	                            break;
                             }
                         }
                     }
@@ -508,14 +514,14 @@ public final class CommandPermissions extends Command implements TabExecutor {
 			                case "setcolor": {
 				                tabCompletes = ImmutableList.of("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a",
 						                "&b", "&c", "&c", "&d", "&d", "&e", "&f");
+				                break;
 			                }
 			                case "setdefault": {
 				                tabCompletes = ImmutableList.of("true", "false");
+				                break;
 			                }
 		                }
 	                }
-                    case "user": {
-                    }
                 }
             }
         }
