@@ -443,11 +443,11 @@ public final class CommandPermissions extends Command implements TabExecutor {
         commandSender.sendMessage("DEBUG: "+ Arrays.toString(strings));
         switch (strings.length) {
             ///cperms
-            case 0: {
+            case 1: {
                 return Arrays.asList("user", "group", "create");
             }
             ///cperms USER/GROUP
-            case 1: {
+            case 2: {
                 switch (strings[0].toLowerCase(Locale.ENGLISH)) {
                     case "group": {
                         ArrayList<String> list = new ArrayList<>(CloudAPI.getInstance().getPermissionPool().getGroups()
@@ -462,7 +462,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                 }
             }
             ///cperms USER/GROUP <GROUP/USER>
-            case 2: {
+            case 3: {
                 switch (strings[0].toLowerCase(Locale.ENGLISH)) {
                     case "group": {
                         return Arrays.asList("add", "remove", "setDisplay", "setJoinPower", "setSuffix", "setPrefix",
@@ -474,7 +474,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                 }
             }
             ///cperms USER/GROUP <GROUP/USER> <ADD/REMOVE>
-            case 3: {
+            case 4: {
                 switch (strings[0].toLowerCase(Locale.ENGLISH)) {
                     case "group": {
                         switch (strings[2].toLowerCase(Locale.ENGLISH)) {
@@ -497,7 +497,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     }
                 }
             }
-            case 4: {
+            case 5: {
                 switch (strings[0].toLowerCase(Locale.ENGLISH)) {
 	                case "group": {
 		                switch (strings[2].toLowerCase(Locale.ENGLISH)) {
