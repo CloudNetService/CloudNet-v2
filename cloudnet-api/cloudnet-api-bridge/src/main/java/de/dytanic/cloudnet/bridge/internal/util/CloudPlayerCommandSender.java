@@ -1,8 +1,6 @@
 package de.dytanic.cloudnet.bridge.internal.util;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.event.PermissionCheckEvent;

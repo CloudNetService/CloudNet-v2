@@ -5,8 +5,6 @@
 package de.dytanic.cloudnet.cloudflare.util;
 
 import com.google.gson.JsonObject;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * General container for storing a DNS record.

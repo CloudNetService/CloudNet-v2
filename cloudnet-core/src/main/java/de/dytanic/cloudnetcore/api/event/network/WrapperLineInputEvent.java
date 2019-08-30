@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.async.AsyncPosterAdapter;
 import de.dytanic.cloudnet.lib.service.wrapper.WrapperScreen;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 23.09.2017.

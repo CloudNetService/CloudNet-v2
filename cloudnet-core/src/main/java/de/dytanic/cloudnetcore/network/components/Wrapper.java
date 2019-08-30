@@ -26,8 +26,6 @@ import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.packet.out.*;
 import io.netty.channel.Channel;
-import lombok.Getter;
-import lombok.Setter;
 import net.md_5.bungee.config.Configuration;
 
 import java.util.ArrayList;

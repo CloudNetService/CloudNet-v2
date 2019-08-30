@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import lombok.AllArgsConstructor;
 
 /**
  * Calls if one server was removed from the network

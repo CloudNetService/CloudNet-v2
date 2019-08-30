@@ -5,8 +5,6 @@
 package de.dytanic.cloudnet.lib.server.template;
 
 import de.dytanic.cloudnet.lib.zip.ZipConverter;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;

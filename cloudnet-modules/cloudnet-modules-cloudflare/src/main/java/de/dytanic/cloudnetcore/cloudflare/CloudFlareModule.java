@@ -14,7 +14,6 @@ import de.dytanic.cloudnetcore.cloudflare.config.ConfigCloudFlare;
 import de.dytanic.cloudnetcore.cloudflare.listener.ProxyAddListener;
 import de.dytanic.cloudnetcore.cloudflare.listener.ProxyRemoveListener;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-import lombok.Getter;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

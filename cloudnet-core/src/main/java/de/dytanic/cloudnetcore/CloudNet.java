@@ -52,7 +52,6 @@ import de.dytanic.cloudnetcore.util.FileCopy;
 import de.dytanic.cloudnetcore.web.api.v1.*;
 import de.dytanic.cloudnetcore.web.log.WebsiteLog;
 import joptsimple.OptionSet;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.nio.file.Files;

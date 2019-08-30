@@ -40,7 +40,6 @@ import de.dytanic.cloudnetcore.network.components.util.ChannelFilter;
 import de.dytanic.cloudnetcore.network.packet.out.*;
 import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
-import lombok.Getter;
 
 import java.util.*;
 

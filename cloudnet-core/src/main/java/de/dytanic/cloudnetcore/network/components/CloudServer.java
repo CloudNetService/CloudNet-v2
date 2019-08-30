@@ -10,8 +10,6 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import io.netty.channel.Channel;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by Tareko on 17.10.2017.

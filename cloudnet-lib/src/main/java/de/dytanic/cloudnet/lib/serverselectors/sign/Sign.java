@@ -1,8 +1,6 @@
 package de.dytanic.cloudnet.lib.serverselectors.sign;
 
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.UUID;
 

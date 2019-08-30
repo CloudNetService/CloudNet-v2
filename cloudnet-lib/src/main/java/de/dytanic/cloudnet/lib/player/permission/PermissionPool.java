@@ -3,8 +3,6 @@ package de.dytanic.cloudnet.lib.player.permission;
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;

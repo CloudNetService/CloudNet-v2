@@ -6,7 +6,6 @@ package de.dytanic.cloudnetwrapper;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import jline.console.ConsoleReader;
-import lombok.Getter;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;

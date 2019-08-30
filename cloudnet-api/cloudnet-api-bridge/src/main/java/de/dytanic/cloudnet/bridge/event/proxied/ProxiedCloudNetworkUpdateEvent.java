@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.CloudNetwork;
-import lombok.AllArgsConstructor;
 
 /**
  * Called if the cloudnetwork objective was updated

@@ -1,8 +1,5 @@
 package de.dytanic.cloudnet.lib.serverselectors.mob;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Map;
 
 /**

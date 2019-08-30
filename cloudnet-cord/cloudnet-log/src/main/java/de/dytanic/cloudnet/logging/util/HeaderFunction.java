@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.logging.util;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import lombok.Getter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

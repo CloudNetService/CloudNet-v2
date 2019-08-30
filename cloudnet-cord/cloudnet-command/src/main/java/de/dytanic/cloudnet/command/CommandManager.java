@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import jline.console.completer.Completer;
-import lombok.Getter;
 
 import java.util.*;
 

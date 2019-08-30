@@ -5,8 +5,6 @@
 package de.dytanic.cloudnet.web.server.util;
 
 import de.dytanic.cloudnet.lib.map.WrappedMap;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Data class that holds information for a dynamic path like in Spring

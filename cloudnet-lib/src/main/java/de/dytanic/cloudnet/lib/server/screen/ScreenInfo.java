@@ -5,8 +5,6 @@
 package de.dytanic.cloudnet.lib.server.screen;
 
 import de.dytanic.cloudnet.lib.service.ServiceId;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 public class ScreenInfo {
 

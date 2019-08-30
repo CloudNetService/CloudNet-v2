@@ -2,8 +2,6 @@ package de.dytanic.cloudnet.lib.server;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
 import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.Map;
 

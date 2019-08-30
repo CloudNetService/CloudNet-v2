@@ -7,8 +7,6 @@ package de.dytanic.cloudnetcore.api.event.network;
 import de.dytanic.cloudnet.event.Cancelable;
 import de.dytanic.cloudnet.event.Event;
 import io.netty.channel.Channel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Calls if a channel is connected

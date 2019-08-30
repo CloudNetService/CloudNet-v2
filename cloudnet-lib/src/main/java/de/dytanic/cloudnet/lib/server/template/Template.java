@@ -1,9 +1,6 @@
 package de.dytanic.cloudnet.lib.server.template;
 
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Collection;

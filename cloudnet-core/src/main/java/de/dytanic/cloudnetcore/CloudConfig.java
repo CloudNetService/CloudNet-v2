@@ -22,7 +22,6 @@ import de.dytanic.cloudnetcore.network.components.WrapperMeta;
 import de.dytanic.cloudnetcore.util.defaults.BungeeGroup;
 import de.dytanic.cloudnetcore.util.defaults.LobbyGroup;
 import jline.console.ConsoleReader;
-import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;

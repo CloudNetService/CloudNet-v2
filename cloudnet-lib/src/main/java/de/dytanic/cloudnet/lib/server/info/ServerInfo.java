@@ -5,8 +5,6 @@ import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.ToString;
 
 import java.lang.reflect.Type;

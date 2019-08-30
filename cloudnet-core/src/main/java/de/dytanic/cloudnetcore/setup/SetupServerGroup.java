@@ -18,7 +18,6 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.setup.*;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;

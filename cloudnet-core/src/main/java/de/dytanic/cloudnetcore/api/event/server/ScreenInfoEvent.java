@@ -7,7 +7,6 @@ package de.dytanic.cloudnetcore.api.event.server;
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.async.AsyncPosterAdapter;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
-import lombok.Getter;
 
 import java.util.Collection;
 

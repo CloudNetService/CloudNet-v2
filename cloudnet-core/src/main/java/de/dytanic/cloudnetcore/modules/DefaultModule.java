@@ -5,8 +5,6 @@
 package de.dytanic.cloudnetcore.modules;
 
 import de.dytanic.cloudnetcore.CloudNet;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.io.InputStream;
 

@@ -1,9 +1,6 @@
 package de.dytanic.cloudnet.lib.server;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 /**

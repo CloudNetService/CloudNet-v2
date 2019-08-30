@@ -1,9 +1,6 @@
 package de.dytanic.cloudnet.lib.player.permission;
 
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Collection;
 import java.util.Comparator;

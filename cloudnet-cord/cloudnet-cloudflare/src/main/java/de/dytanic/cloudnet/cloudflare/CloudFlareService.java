@@ -20,7 +20,6 @@ import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.Getter;
 
 import java.io.*;
 import java.net.HttpURLConnection;

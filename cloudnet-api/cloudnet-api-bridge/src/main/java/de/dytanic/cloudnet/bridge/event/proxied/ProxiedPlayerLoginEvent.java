@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import lombok.AllArgsConstructor;
 
 /**
  * Calls if a player login into the network successfully

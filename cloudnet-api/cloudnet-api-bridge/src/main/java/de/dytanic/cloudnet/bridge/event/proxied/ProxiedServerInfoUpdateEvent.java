@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import lombok.AllArgsConstructor;
 
 /**
  * Called if the server info from one server was updated

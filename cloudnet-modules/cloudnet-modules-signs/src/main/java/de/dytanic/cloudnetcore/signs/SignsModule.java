@@ -17,7 +17,6 @@ import de.dytanic.cloudnetcore.signs.database.SignDatabase;
 import de.dytanic.cloudnetcore.signs.packet.in.PacketInAddSign;
 import de.dytanic.cloudnetcore.signs.packet.in.PacketInRemoveSign;
 import de.dytanic.cloudnetcore.signs.packet.out.PacketOutSignSelector;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 16.10.2017.

@@ -8,8 +8,6 @@ import de.dytanic.cloudnet.lib.server.priority.PriorityConfig;
 import de.dytanic.cloudnet.lib.server.priority.PriorityService;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

@@ -6,9 +6,7 @@ package de.dytanic.cloudnet.lib.user;
 
 import de.dytanic.cloudnet.lib.hash.DyHash;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Collection;

@@ -7,7 +7,6 @@ package de.dytanic.cloudnetcore.api.event.player;
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.async.AsyncPosterAdapter;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import lombok.Getter;
 
 /**
  * Calls if a Player was logged into the network
