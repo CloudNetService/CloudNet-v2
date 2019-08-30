@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.help.HelpService;
 import de.dytanic.cloudnet.help.ServiceDescription;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.SystemTimer;
-import de.dytanic.cloudnet.lib.utility.signal.OSSignalBlocker;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.util.HeaderFunction;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
@@ -67,9 +66,6 @@ public class CloudBootstrap {
             System.out.println(helpService.toString());
             return;
         }
-
-        if (optionSet.has("requestTerminationSignal"))
-            OSSignalBlocker.initSignalCancel();
 
         if (optionSet.has("systemTimer"))
         {
