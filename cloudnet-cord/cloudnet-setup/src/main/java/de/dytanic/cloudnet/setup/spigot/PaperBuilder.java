@@ -31,6 +31,7 @@ public final class PaperBuilder {
         try {
             System.out.println("Fetch Versions");
             URLConnection connection = new URL(apiProjectUrl).openConnection();
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
             connection.connect();
             PaperMCProject paperMCProject = gson
                     .fromJson(new InputStreamReader(connection.getInputStream()), PaperMCProject.class);
@@ -79,6 +80,7 @@ public final class PaperBuilder {
         System.out.println("Fetch Builds");
         URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version))
                 .openConnection();
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
         connection.connect();
         PaperMCProjectVersion paperMCProjectVersion = gson
                 .fromJson(new InputStreamReader(connection.getInputStream()), PaperMCProjectVersion.class);
