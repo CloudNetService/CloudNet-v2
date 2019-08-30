@@ -18,7 +18,6 @@ import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
@@ -44,6 +43,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)
@@ -400,9 +401,9 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 			}
 		}
 
-		Template x = CollectionWrapper.filter(serverGroup.getTemplates(), new Acceptable<Template>() {
+		Template x = CollectionWrapper.filter(serverGroup.getTemplates(), new Predicate<Template>() {
 			@Override
-			public boolean isAccepted(Template template) {
+			public boolean test(Template template) {
 				return template != null && serverProcess.getMeta().getTemplate().getName().equals(template.getName());
 			}
 		});
