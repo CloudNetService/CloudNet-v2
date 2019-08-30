@@ -19,12 +19,10 @@ import java.util.Map;
 /**
  * Created by Tareko on 20.08.2017.
  */
-@Getter
 public class ScreenProvider {
 
     private Map<String, EnabledScreen> screens = NetworkUtils.newConcurrentHashMap();
 
-    @Setter
     private ServiceId mainServiceId;
 
     public void handleEnableScreen(ServiceId serviceId, Wrapper wrapper)
@@ -51,5 +49,17 @@ public class ScreenProvider {
         {
             proxyServer.getWrapper().disableScreen(proxyServer.getProxyInfo());
         }
+    }
+
+    public void setMainServiceId(ServiceId mainServiceId) {
+        this.mainServiceId = mainServiceId;
+    }
+
+    public Map<String, EnabledScreen> getScreens() {
+        return screens;
+    }
+
+    public ServiceId getMainServiceId() {
+        return mainServiceId;
     }
 }

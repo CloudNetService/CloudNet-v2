@@ -4,13 +4,8 @@
 
 package de.dytanic.cloudnet.lib.serverselectors.sign;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Collection;
 
-@Getter
-@AllArgsConstructor
 public class SearchingAnimation {
 
     private int animations;
@@ -19,4 +14,21 @@ public class SearchingAnimation {
 
     private Collection<SignLayout> searchingLayouts;
 
+    public SearchingAnimation(int animations, int animationsPerSecond, Collection<SignLayout> searchingLayouts) {
+        this.animations = animations;
+        this.animationsPerSecond = animationsPerSecond;
+        this.searchingLayouts = searchingLayouts;
+    }
+
+    public Collection<SignLayout> getSearchingLayouts() {
+        return searchingLayouts;
+    }
+
+    public int getAnimations() {
+        return animations;
+    }
+
+    public int getAnimationsPerSecond() {
+        return animationsPerSecond;
+    }
 }

@@ -17,19 +17,36 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.FutureTask;
 
 /**
  * Implementation of {@link Database}.
  */
-@Getter
-@AllArgsConstructor
 public class DatabaseImpl
         implements Database {
 
     private final String name;
     private final java.util.Map<String, Document> documents;
     private final File backendDir;
+
+    public DatabaseImpl(String name, Map<String, Document> documents, File backendDir) {
+        this.name = name;
+        this.documents = documents;
+        this.backendDir = backendDir;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public File getBackendDir() {
+        return backendDir;
+    }
+
+    public Map<String, Document> getDocuments() {
+        return documents;
+    }
 
     @Override
     public Database loadDocuments()

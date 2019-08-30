@@ -11,12 +11,15 @@ import org.bukkit.event.HandlerList;
 /**
  * Calls if a server was removed from the network
  */
-@AllArgsConstructor
 public class BukkitServerRemoveEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
     private ServerInfo serverInfo;
+
+    public BukkitServerRemoveEvent(ServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
 
     public ServerInfo getServerInfo()
     {

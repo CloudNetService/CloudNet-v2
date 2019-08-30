@@ -10,10 +10,13 @@ import lombok.AllArgsConstructor;
 /**
  * Called if the cloudnetwork objective was updated
  */
-@AllArgsConstructor
 public class ProxiedCloudNetworkUpdateEvent extends ProxiedCloudEvent {
 
     private CloudNetwork cloudNetwork;
+
+    public ProxiedCloudNetworkUpdateEvent(CloudNetwork cloudNetwork) {
+        this.cloudNetwork = cloudNetwork;
+    }
 
     public CloudNetwork getCloudNetwork()
     {

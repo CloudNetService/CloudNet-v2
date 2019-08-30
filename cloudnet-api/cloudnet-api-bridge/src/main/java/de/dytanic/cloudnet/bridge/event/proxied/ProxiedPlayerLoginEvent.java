@@ -10,10 +10,13 @@ import lombok.AllArgsConstructor;
 /**
  * Calls if a player login into the network successfully
  */
-@AllArgsConstructor
 public class ProxiedPlayerLoginEvent extends ProxiedCloudEvent {
 
     private CloudPlayer cloudPlayer;
+
+    public ProxiedPlayerLoginEvent(CloudPlayer cloudPlayer) {
+        this.cloudPlayer = cloudPlayer;
+    }
 
     public CloudPlayer getCloudPlayer()
     {

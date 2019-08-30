@@ -14,7 +14,6 @@ import java.util.Collection;
 /**
  * Calls if a screen lines was received by wrapper
  */
-@Getter
 public class ScreenInfoEvent extends AsyncEvent<ScreenInfoEvent> {
 
     private Collection<ScreenInfo> screenInfos;
@@ -23,5 +22,9 @@ public class ScreenInfoEvent extends AsyncEvent<ScreenInfoEvent> {
     {
         super(new AsyncPosterAdapter<>());
         this.screenInfos = screenInfos;
+    }
+
+    public Collection<ScreenInfo> getScreenInfos() {
+        return screenInfos;
     }
 }

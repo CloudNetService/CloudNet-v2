@@ -16,13 +16,19 @@ import java.io.IOException;
 /**
  * Created by Tareko on 09.09.2017.
  */
-@NoArgsConstructor
-@AllArgsConstructor
 public class FileDeploy extends ProtocolStream {
 
     protected String dest;
 
     protected byte[] bytes;
+
+    public FileDeploy(String dest, byte[] bytes) {
+        this.dest = dest;
+        this.bytes = bytes;
+    }
+
+    public FileDeploy() {
+    }
 
     @Override
     public void write(ProtocolBuffer out) throws Exception

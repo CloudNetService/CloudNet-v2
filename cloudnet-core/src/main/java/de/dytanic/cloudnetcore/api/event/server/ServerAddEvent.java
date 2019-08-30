@@ -12,7 +12,6 @@ import lombok.Getter;
 /**
  * Created by Tareko on 17.08.2017.
  */
-@Getter
 public class ServerAddEvent extends AsyncEvent<ServerAddEvent> {
 
     private MinecraftServer minecraftServer;
@@ -21,5 +20,9 @@ public class ServerAddEvent extends AsyncEvent<ServerAddEvent> {
     {
         super(new AsyncPosterAdapter<>());
         this.minecraftServer = minecraftServer;
+    }
+
+    public MinecraftServer getMinecraftServer() {
+        return minecraftServer;
     }
 }

@@ -18,16 +18,24 @@ import lombok.Getter;
 /**
  * Created by Tareko on 17.10.2017.
  */
-@Getter
 public class PermissionModule extends CoreModule {
 
-    @Getter
     private static PermissionModule instance;
 
-    @Getter
+    public static PermissionModule getInstance() {
+        return instance;
+    }
+
     private ConfigPermissions configPermission;
-    @Getter
     private PermissionPool permissionPool;
+
+    public ConfigPermissions getConfigPermission() {
+        return configPermission;
+    }
+
+    public PermissionPool getPermissionPool() {
+        return permissionPool;
+    }
 
     @Override
     public void onLoad()

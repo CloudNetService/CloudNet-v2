@@ -1,8 +1,5 @@
 package de.dytanic.cloudnet.lib.scheduler;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -11,13 +8,24 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by Tareko on 19.01.2018.
  */
-@Getter
-@AllArgsConstructor
 public class TaskEntryFuture<T> implements Future<T> {
 
     private TaskEntry<T> entry;
 
     protected volatile boolean waits;
+
+    public TaskEntryFuture(TaskEntry<T> entry, boolean waits) {
+        this.entry = entry;
+        this.waits = waits;
+    }
+
+    public TaskEntry<T> getEntry() {
+        return entry;
+    }
+
+    public boolean isWaits() {
+        return waits;
+    }
 
     @Override
     public boolean cancel(boolean pMayInterruptIfRunning)

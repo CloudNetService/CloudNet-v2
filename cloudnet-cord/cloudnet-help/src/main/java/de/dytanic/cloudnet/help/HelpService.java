@@ -10,7 +10,6 @@ import lombok.Getter;
 /**
  * Class to organize help information and print it in a pretty way
  */
-@Getter
 public final class HelpService {
 
     private Maps.ArrayMap<String, ServiceDescription> descriptions = new Maps.ArrayMap<>();
@@ -38,4 +37,7 @@ public final class HelpService {
         System.out.println(toString());
     }
 
+    public Maps.ArrayMap<String, ServiceDescription> getDescriptions() {
+        return descriptions;
+    }
 }

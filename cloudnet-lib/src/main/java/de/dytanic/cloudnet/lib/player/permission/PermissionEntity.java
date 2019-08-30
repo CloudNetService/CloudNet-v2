@@ -13,9 +13,6 @@ import java.util.UUID;
 /**
  * Calls
  */
-@AllArgsConstructor
-@Getter
-@Setter
 public class PermissionEntity {
 
     protected UUID uniqueId;
@@ -24,10 +21,53 @@ public class PermissionEntity {
 
     protected String prefix;
 
-    @Setter
     protected String suffix;
 
     protected Collection<GroupEntityData> groups;
+
+    public PermissionEntity(UUID uniqueId, Map<String, Boolean> permissions, String prefix, String suffix, Collection<GroupEntityData> groups) {
+        this.uniqueId = uniqueId;
+        this.permissions = permissions;
+        this.prefix = prefix;
+        this.suffix = suffix;
+        this.groups = groups;
+    }
+
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+
+    public Collection<GroupEntityData> getGroups() {
+        return groups;
+    }
+
+    public Map<String, Boolean> getPermissions() {
+        return permissions;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setGroups(Collection<GroupEntityData> groups) {
+        this.groups = groups;
+    }
+
+    public void setPermissions(Map<String, Boolean> permissions) {
+        this.permissions = permissions;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    public void setUniqueId(UUID uniqueId) {
+        this.uniqueId = uniqueId;
+    }
 
     public boolean hasPermission(PermissionPool permissionPool, String permission, String group)
     {

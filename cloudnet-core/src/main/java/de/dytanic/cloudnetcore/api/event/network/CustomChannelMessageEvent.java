@@ -13,7 +13,6 @@ import lombok.Getter;
 /**
  * Calls if a CustomChannelMessage was received from a INetworkComponent
  */
-@Getter
 public class CustomChannelMessageEvent extends AsyncEvent<CustomChannelMessageEvent> {
 
     private String channel;
@@ -33,4 +32,19 @@ public class CustomChannelMessageEvent extends AsyncEvent<CustomChannelMessageEv
         this.packetSender = packetSender;
     }
 
+    public String getChannel() {
+        return channel;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public PacketSender getPacketSender() {
+        return packetSender;
+    }
 }

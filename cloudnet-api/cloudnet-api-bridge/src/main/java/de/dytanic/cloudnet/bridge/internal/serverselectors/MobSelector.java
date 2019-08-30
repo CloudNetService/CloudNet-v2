@@ -47,25 +47,44 @@ import java.util.*;
 /**
  * Created by Tareko on 25.08.2017.
  */
-@Getter
 public final class MobSelector {
 
-    @Getter
     private static MobSelector instance;
 
-    @Setter
     private Map<UUID, MobImpl> mobs;
 
-    @Setter
     private MobConfig mobConfig;
 
-    @Getter
     private Map<String, ServerInfo> servers = NetworkUtils.newConcurrentHashMap();
 
     public MobSelector(MobConfig mobConfig)
     {
         instance = this;
         this.mobConfig = mobConfig;
+    }
+
+    public static MobSelector getInstance() {
+        return instance;
+    }
+
+    public Map<UUID, MobImpl> getMobs() {
+        return mobs;
+    }
+
+    public MobConfig getMobConfig() {
+        return mobConfig;
+    }
+
+    public Map<String, ServerInfo> getServers() {
+        return servers;
+    }
+
+    public void setMobConfig(MobConfig mobConfig) {
+        this.mobConfig = mobConfig;
+    }
+
+    public void setMobs(Map<UUID, MobImpl> mobs) {
+        this.mobs = mobs;
     }
 
     public void init()
@@ -332,9 +351,6 @@ public final class MobSelector {
     }
 
     //MobImpl
-    @Getter
-    @Setter
-    @AllArgsConstructor
     public static class MobImpl {
 
         private UUID uniqueId;
@@ -348,6 +364,63 @@ public final class MobSelector {
         private Map<Integer, String> serverPosition;
 
         private Object displayMessage;
+
+        public MobImpl(UUID uniqueId, ServerMob mob, Entity entity, Inventory inventory, Map<Integer, String> serverPosition, Object displayMessage) {
+            this.uniqueId = uniqueId;
+            this.mob = mob;
+            this.entity = entity;
+            this.inventory = inventory;
+            this.serverPosition = serverPosition;
+            this.displayMessage = displayMessage;
+        }
+
+        public UUID getUniqueId() {
+            return uniqueId;
+        }
+
+        public Entity getEntity() {
+            return entity;
+        }
+
+        public Inventory getInventory() {
+            return inventory;
+        }
+
+        public Map<Integer, String> getServerPosition() {
+            return serverPosition;
+        }
+
+        public Object getDisplayMessage() {
+            return displayMessage;
+        }
+
+        public ServerMob getMob() {
+            return mob;
+        }
+
+        public void setUniqueId(UUID uniqueId) {
+            this.uniqueId = uniqueId;
+        }
+
+        public void setDisplayMessage(Object displayMessage) {
+            this.displayMessage = displayMessage;
+        }
+
+        public void setEntity(Entity entity) {
+            this.entity = entity;
+        }
+
+        public void setInventory(Inventory inventory) {
+            this.inventory = inventory;
+        }
+
+        public void setMob(ServerMob mob) {
+            this.mob = mob;
+        }
+
+        public void setServerPosition(Map<Integer, String> serverPosition) {
+            this.serverPosition = serverPosition;
+        }
     }
 
     private class NetworkHandlerAdapterImplx extends NetworkHandlerAdapter {

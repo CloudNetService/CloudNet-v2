@@ -16,7 +16,6 @@ import java.util.UUID;
 /**
  * Created by Tareko on 27.09.2017.
  */
-@Getter
 public class UserablePermissionEntity extends PermissionEntity {
 
     private User user;
@@ -25,6 +24,10 @@ public class UserablePermissionEntity extends PermissionEntity {
     {
         super(uniqueId, new HashMap<>(), "User | ", "", new ArrayList<>());
         this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public boolean hasPermission(String permission)

@@ -12,10 +12,15 @@ import lombok.Getter;
 /**
  * Created by Tareko on 25.10.2017.
  */
-@Getter
-@AllArgsConstructor
 public class CloudServerAddEvent extends Event {
 
     private CloudServer cloudServer;
 
+    public CloudServerAddEvent(CloudServer cloudServer) {
+        this.cloudServer = cloudServer;
+    }
+
+    public CloudServer getCloudServer() {
+        return cloudServer;
+    }
 }

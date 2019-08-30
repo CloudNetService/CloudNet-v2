@@ -17,7 +17,6 @@ import lombok.Getter;
 /**
  * Created by Tareko on 26.05.2017.
  */
-@Getter
 public final class CloudNetServer
         extends ChannelInitializer<Channel> implements AutoCloseable {
 
@@ -72,6 +71,18 @@ public final class CloudNetServer
         {
             ex.printStackTrace();
         }
+    }
+
+    public SslContext getSslContext() {
+        return sslContext;
+    }
+
+    public EventLoopGroup getWorkerGroup() {
+        return workerGroup;
+    }
+
+    public EventLoopGroup getBossGroup() {
+        return bossGroup;
     }
 
     @Override

@@ -4,8 +4,6 @@
 
 package de.dytanic.cloudnet.modules;
 
-import lombok.Getter;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -13,7 +11,6 @@ import java.net.URLClassLoader;
 /**
  * Class loader for {@link Module}s that assigns itself ti the module's class loader.
  */
-@Getter
 public class ModuleClassLoader extends URLClassLoader implements ModuleLoader {
 
     private ModuleConfig config;
@@ -31,6 +28,9 @@ public class ModuleClassLoader extends URLClassLoader implements ModuleLoader {
         this.config = config;
     }
 
+    public ModuleConfig getConfig() {
+        return config;
+    }
 
     public Module loadModule() throws Exception
     {

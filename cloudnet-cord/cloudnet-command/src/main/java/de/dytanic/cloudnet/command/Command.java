@@ -13,7 +13,6 @@ import java.util.HashSet;
 /**
  * Abstract class to define a command with an executor and a name
  */
-@Getter
 public abstract class Command
         implements CommandExecutor, Nameable {
 
@@ -51,5 +50,26 @@ public abstract class Command
         this.commandArguments.add(commandArgument);
         //noinspection unchecked
         return (T) this;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public Collection<CommandArgument> getCommandArguments() {
+        return commandArguments;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public String[] getAliases() {
+        return aliases;
     }
 }

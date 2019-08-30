@@ -29,7 +29,6 @@ import java.util.UUID;
 /**
  * This is the SimpleChannelInboundHandler of netty handled for a networkComponent
  */
-@Getter
 public class CloudNetClient
         extends SimpleChannelInboundHandler {
 
@@ -67,6 +66,14 @@ public class CloudNetClient
         }
         CloudNet.getInstance().getEventManager().callEvent(new ChannelInitEvent(channel, networkComponent));
         init(cloudNetwork);
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public INetworkComponent getNetworkComponent() {
+        return networkComponent;
     }
 
     @Override

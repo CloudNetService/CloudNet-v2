@@ -5,18 +5,20 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.HandlerList;
 
 /**
  * Calls if the proxyInfo from one proxy was updated
  */
-@AllArgsConstructor
 public class BukkitProxyInfoUpdateEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
     private ProxyInfo serverInfo;
+
+    public BukkitProxyInfoUpdateEvent(ProxyInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
 
     public ProxyInfo getProxyInfo()
     {

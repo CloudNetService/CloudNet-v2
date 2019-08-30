@@ -17,7 +17,6 @@ import java.util.function.Consumer;
 /**
  * Created by Tareko on 21.10.2017.
  */
-@Getter
 public class SetupWrapper {
 
     private String name;
@@ -63,4 +62,7 @@ public class SetupWrapper {
         setup.start(CloudNet.getLogger().getReader());
     }
 
+    public String getName() {
+        return name;
+    }
 }

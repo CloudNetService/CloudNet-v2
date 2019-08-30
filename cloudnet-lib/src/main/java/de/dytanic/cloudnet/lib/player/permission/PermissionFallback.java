@@ -1,16 +1,23 @@
 package de.dytanic.cloudnet.lib.player.permission;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Created by Tareko on 06.07.2017.
  */
-@Getter
-@AllArgsConstructor
 public class PermissionFallback {
 
     private boolean enabled;
     private String fallback;
 
+    public PermissionFallback(boolean enabled, String fallback) {
+        this.enabled = enabled;
+        this.fallback = fallback;
+    }
+
+    public String getFallback() {
+        return fallback;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

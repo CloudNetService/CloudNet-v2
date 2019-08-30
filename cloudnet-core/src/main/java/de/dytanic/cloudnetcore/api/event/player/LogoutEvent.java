@@ -12,10 +12,15 @@ import lombok.Getter;
 /**
  * Calls if a Player loguts from the proxy
  */
-@Getter
-@AllArgsConstructor
 public class LogoutEvent extends Event {
 
     private CloudPlayer playerWhereAmI;
 
+    public LogoutEvent(CloudPlayer playerWhereAmI) {
+        this.playerWhereAmI = playerWhereAmI;
+    }
+
+    public CloudPlayer getPlayerWhereAmI() {
+        return playerWhereAmI;
+    }
 }

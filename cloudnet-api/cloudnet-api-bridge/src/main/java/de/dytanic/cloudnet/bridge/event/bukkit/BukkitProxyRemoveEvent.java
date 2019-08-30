@@ -11,12 +11,15 @@ import org.bukkit.event.HandlerList;
 /**
  * Calls if a proxy server is removed from the network
  */
-@AllArgsConstructor
 public class BukkitProxyRemoveEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
     private ProxyInfo serverInfo;
+
+    public BukkitProxyRemoveEvent(ProxyInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
 
     public ProxyInfo getProxyInfo()
     {

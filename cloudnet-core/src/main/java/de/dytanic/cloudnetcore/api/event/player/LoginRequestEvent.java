@@ -14,14 +14,12 @@ import lombok.Setter;
 /**
  * Created by Tareko on 27.07.2017.
  */
-@Getter
 public class LoginRequestEvent extends Event implements Cancelable {
 
     private PlayerConnection cloudPlayerConnection;
 
     private ProxyServer proxyServer;
 
-    @Setter
     private boolean cancelled = false;
 
     public LoginRequestEvent(ProxyServer proxyServer, PlayerConnection cloudPlayerConnection)
@@ -29,5 +27,23 @@ public class LoginRequestEvent extends Event implements Cancelable {
         this.cloudPlayerConnection = cloudPlayerConnection;
         this.proxyServer = proxyServer;
 
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public ProxyServer getProxyServer() {
+        return proxyServer;
+    }
+
+    public PlayerConnection getCloudPlayerConnection() {
+        return cloudPlayerConnection;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
     }
 }

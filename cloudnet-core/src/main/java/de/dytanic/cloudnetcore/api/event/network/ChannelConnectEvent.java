@@ -13,13 +13,25 @@ import lombok.Getter;
 /**
  * Calls if a channel is connected
  */
-@Getter
-@AllArgsConstructor
 public class ChannelConnectEvent extends Event implements Cancelable {
 
     private boolean cancelled;
 
     private Channel channel;
+
+    public ChannelConnectEvent(boolean cancelled, Channel channel) {
+        this.cancelled = cancelled;
+        this.channel = channel;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
 
     @Override
     public void setCancelled(boolean cancel)

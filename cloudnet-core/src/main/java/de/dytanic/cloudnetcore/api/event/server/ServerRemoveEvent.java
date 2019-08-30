@@ -12,7 +12,6 @@ import lombok.Getter;
 /**
  * Calls if one server is removed and unwhitelisted from a wrapper
  */
-@Getter
 public class ServerRemoveEvent extends AsyncEvent<ServerRemoveEvent> {
 
     private MinecraftServer minecraftServer;
@@ -21,5 +20,9 @@ public class ServerRemoveEvent extends AsyncEvent<ServerRemoveEvent> {
     {
         super(new AsyncPosterAdapter<>());
         this.minecraftServer = minecraftServer;
+    }
+
+    public MinecraftServer getMinecraftServer() {
+        return minecraftServer;
     }
 }

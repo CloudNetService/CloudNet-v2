@@ -4,14 +4,9 @@
 
 package de.dytanic.cloudnetcore.network.components;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Created by Tareko on 24.07.2017.
  */
-@Getter
-@AllArgsConstructor
 public class WrapperMeta {
 
     private String id;
@@ -20,4 +15,21 @@ public class WrapperMeta {
 
     private String user;
 
+    public WrapperMeta(String id, String hostName, String user) {
+        this.id = id;
+        this.hostName = hostName;
+        this.user = user;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public String getUser() {
+        return user;
+    }
 }

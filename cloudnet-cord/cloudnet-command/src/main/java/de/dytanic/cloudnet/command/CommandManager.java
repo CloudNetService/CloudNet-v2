@@ -15,7 +15,6 @@ import java.util.*;
 /**
  * Class that manages commands for the interfaces of CloudNet.
  */
-@Getter
 public final class CommandManager
         implements Completer {
 
@@ -72,6 +71,10 @@ public final class CommandManager
     public Set<String> getCommands()
     {
         return commands.keySet();
+    }
+
+    public ConsoleCommandSender getConsoleSender() {
+        return consoleSender;
     }
 
     /**

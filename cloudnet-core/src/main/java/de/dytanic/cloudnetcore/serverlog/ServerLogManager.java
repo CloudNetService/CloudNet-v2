@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Created by Tareko on 04.10.2017.
  */
-@Getter
 public final class ServerLogManager implements Runnable {
 
     private final NetorHashMap<String, MultiValue<String, Long>, Queue<ScreenInfo>> screenInfos = new NetorHashMap<>();
@@ -100,5 +99,9 @@ public final class ServerLogManager implements Runnable {
 
                 screenInfos.remove(key);
             }
+    }
+
+    public NetorHashMap<String, MultiValue<String, Long>, Queue<ScreenInfo>> getScreenInfos() {
+        return screenInfos;
     }
 }

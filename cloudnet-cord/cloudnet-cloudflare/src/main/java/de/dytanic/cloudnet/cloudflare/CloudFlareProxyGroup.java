@@ -4,18 +4,14 @@
 
 package de.dytanic.cloudnet.cloudflare;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.ToString;
 
 /**
  * Container for a CloudFlare proxy group.
  */
-@Getter
 @ToString
 @EqualsAndHashCode
-@AllArgsConstructor
 public class CloudFlareProxyGroup {
 
     /**
@@ -28,4 +24,16 @@ public class CloudFlareProxyGroup {
      */
     private String sub;
 
+    public CloudFlareProxyGroup(String name, String sub) {
+        this.name = name;
+        this.sub = sub;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSub() {
+        return sub;
+    }
 }

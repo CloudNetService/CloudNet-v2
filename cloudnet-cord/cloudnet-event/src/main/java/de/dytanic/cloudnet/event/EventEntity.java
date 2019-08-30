@@ -4,14 +4,9 @@
 
 package de.dytanic.cloudnet.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Class that defines an entity that handles events of a defined type
  */
-@Getter
-@AllArgsConstructor
 public class EventEntity<E extends Event> {
 
     /**
@@ -26,4 +21,21 @@ public class EventEntity<E extends Event> {
      */
     private Class<? extends Event> eventClazz;
 
+    public EventEntity(IEventListener<E> eventListener, EventKey eventKey, Class<? extends Event> eventClazz) {
+        this.eventListener = eventListener;
+        this.eventKey = eventKey;
+        this.eventClazz = eventClazz;
+    }
+
+    public Class<? extends Event> getEventClazz() {
+        return eventClazz;
+    }
+
+    public EventKey getEventKey() {
+        return eventKey;
+    }
+
+    public IEventListener<E> getEventListener() {
+        return eventListener;
+    }
 }

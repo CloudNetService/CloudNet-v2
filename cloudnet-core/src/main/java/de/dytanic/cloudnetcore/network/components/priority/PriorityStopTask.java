@@ -16,7 +16,6 @@ import lombok.Setter;
 /**
  * Created by Tareko on 20.08.2017.
  */
-@Getter
 public final class PriorityStopTask implements Runnable {
 
     private String wrapper;
@@ -25,7 +24,6 @@ public final class PriorityStopTask implements Runnable {
 
     private int time;
 
-    @Setter
     private ScheduledTask scheduledTask;
 
     public PriorityStopTask(Wrapper wrapper, INetworkComponent iNetworkComponent, int time)
@@ -76,4 +74,23 @@ public final class PriorityStopTask implements Runnable {
         return CloudNet.getInstance().getWrappers().get(wrapper);
     }
 
+    public void setScheduledTask(ScheduledTask scheduledTask) {
+        this.scheduledTask = scheduledTask;
+    }
+
+    public INetworkComponent getiNetworkComponent() {
+        return iNetworkComponent;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public ScheduledTask getScheduledTask() {
+        return scheduledTask;
+    }
+
+    public String getWrapper() {
+        return wrapper;
+    }
 }

@@ -12,7 +12,6 @@ import lombok.Getter;
 /**
  * Calls if a channel of some INetworkComponent is connected
  */
-@Getter
 public class ChannelInitEvent extends Event {
 
     private Channel channel;
@@ -23,5 +22,13 @@ public class ChannelInitEvent extends Event {
     {
         this.channel = channel;
         this.iNetworkComponent = iNetworkComponent;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public INetworkComponent getINetworkComponent() {
+        return iNetworkComponent;
     }
 }

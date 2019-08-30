@@ -20,16 +20,34 @@ import lombok.Setter;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@Getter
 public class ServerProcessQueue implements Runnable {
 
-    @Setter
     private volatile boolean running = true;
 
     private final Queue<ServerProcess> servers = new ConcurrentLinkedQueue<>();
     private final Queue<ProxyProcessMeta> proxys = new ConcurrentLinkedQueue<>();
     private final Queue<CloudServerMeta> cloudServers = new ConcurrentLinkedQueue<>();
     private final int process_queue_size;
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    public Queue<ServerProcess> getServers() {
+        return servers;
+    }
+
+    public int getProcess_queue_size() {
+        return process_queue_size;
+    }
+
+    public Queue<ProxyProcessMeta> getProxys() {
+        return proxys;
+    }
+
+    public Queue<CloudServerMeta> getCloudServers() {
+        return cloudServers;
+    }
 
     public ServerProcessQueue(int process_queue_size)
     {

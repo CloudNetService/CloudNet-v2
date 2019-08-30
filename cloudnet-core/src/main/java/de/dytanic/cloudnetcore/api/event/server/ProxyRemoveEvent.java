@@ -12,7 +12,6 @@ import lombok.Getter;
 /**
  * Calls if a proxy server was removed from the network and whitelist
  */
-@Getter
 public class ProxyRemoveEvent extends AsyncEvent<ProxyRemoveEvent> {
 
     private ProxyServer proxyServer;
@@ -21,5 +20,9 @@ public class ProxyRemoveEvent extends AsyncEvent<ProxyRemoveEvent> {
     {
         super(new AsyncPosterAdapter<>());
         this.proxyServer = proxyServer;
+    }
+
+    public ProxyServer getProxyServer() {
+        return proxyServer;
     }
 }

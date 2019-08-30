@@ -2,6 +2,8 @@ package de.dytanic.cloudnet.lib.player;
 
 import com.google.gson.reflect.TypeToken;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
@@ -9,7 +11,8 @@ import java.sql.Timestamp;
 /**
  *
  */
-@Data
+@ToString
+@EqualsAndHashCode
 public class CloudPlayer extends OfflinePlayer {
 
     public static final Type TYPE = new TypeToken<CloudPlayer>() {
@@ -34,6 +37,46 @@ public class CloudPlayer extends OfflinePlayer {
         this.server = null;
         this.playerExecutor = new PlayerExecutor();
         this.loginTimeStamp = new Timestamp(System.currentTimeMillis());
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public String getProxy() {
+        return proxy;
+    }
+
+    public PlayerConnection getPlayerConnection() {
+        return playerConnection;
+    }
+
+    public Timestamp getLoginTimeStamp() {
+        return loginTimeStamp;
+    }
+
+    public PlayerExecutor getPlayerExecutor() {
+        return playerExecutor;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    public void setProxy(String proxy) {
+        this.proxy = proxy;
+    }
+
+    public void setPlayerConnection(PlayerConnection playerConnection) {
+        this.playerConnection = playerConnection;
+    }
+
+    public void setLoginTimeStamp(Timestamp loginTimeStamp) {
+        this.loginTimeStamp = loginTimeStamp;
+    }
+
+    public void setPlayerExecutor(PlayerExecutor playerExecutor) {
+        this.playerExecutor = playerExecutor;
     }
 
     public static OfflinePlayer newOfflinePlayer(OfflinePlayer cloudPlayer)
