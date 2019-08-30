@@ -67,6 +67,8 @@ public class CloudConfig {
 
     private Map<String, Object> networkProperties;
 
+    private List<String> hasteServer;
+
     public CloudConfig(ConsoleReader consoleReader) throws Exception
     {
 
@@ -118,6 +120,8 @@ public class CloudConfig {
         configuration.set("general.notify-service", true);
         configuration.set("general.disabled-modules", new ArrayList<>());
         configuration.set("general.cloudGameServer-wrapperList", Arrays.asList("Wrapper-1"));
+
+        configuration.set("general.haste.server", Arrays.asList("https://hastebin.com","https://hasteb.in","https://haste.llamacloud.io"));
 
         configuration.set("server.hostaddress", hostName);
         configuration.set("server.ports", Arrays.asList(1410));
@@ -367,5 +371,6 @@ public class CloudConfig {
             }
         });
     }
+
 
 }
