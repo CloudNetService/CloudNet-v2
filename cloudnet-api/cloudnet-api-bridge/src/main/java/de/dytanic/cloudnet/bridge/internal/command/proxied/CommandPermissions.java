@@ -511,11 +511,21 @@ public final class CommandPermissions extends Command implements TabExecutor {
 		                }
 	                }
                     case "user": {
+	                    if ("group".equals(strings[2].toLowerCase(Locale.ENGLISH))) {
+	                    	return new ArrayList<>(CloudAPI.getInstance().getPermissionPool().getGroups().keySet());
+	                    }
                     }
                 }
             }
+	        case 6: {
+		        if ("user".equals(strings[0].toLowerCase(Locale.ENGLISH))) {
+			        if ("group".equals(strings[2].toLowerCase(Locale.ENGLISH))) {
+				        return Collections.singletonList("lifetime");
+			        }
+		        }
+	        }
         }
-        return new ArrayList<>();
+        return Collections.singletonList("cperms");
 	}
 
 	private boolean permissionIsSet(Map<String, Boolean> permissions, String permission, boolean value) {
