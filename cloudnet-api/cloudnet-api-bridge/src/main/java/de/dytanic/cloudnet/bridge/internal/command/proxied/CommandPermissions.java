@@ -4,7 +4,9 @@
 
 package de.dytanic.cloudnet.bridge.internal.command.proxied;
 
+import com.google.common.collect.ImmutableList;
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.bridge.internal.util.StringUtil;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.DefaultPermissionGroup;
@@ -439,75 +441,76 @@ public final class CommandPermissions extends Command implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender commandSender, String[] strings) {
-        int length = strings.length;
-        commandSender.sendMessage("DEBUG: "+ Arrays.toString(strings));
+	public Iterable<String> onTabComplete(CommandSender commandSender, String[] args) {
+        int length = args.length;
+		List<String> tabCompletes = ImmutableList.of();
+        commandSender.sendMessage("DEBUG: "+ Arrays.toString(args));
         switch (length) {
             ///cperms
             case 0: {
-                return Arrays.asList("user", "group", "create");
+	            tabCompletes = ImmutableList.of("user", "group", "create");
             }
             ///cperms USER/GROUP
             case 1: {
-                switch (strings[0].toLowerCase(Locale.ENGLISH)) {
+                switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "group": {
                         ArrayList<String> list = new ArrayList<>(CloudAPI.getInstance().getPermissionPool().getGroups()
                                 .keySet());
                         list.add("*");
-                        return list;
+	                    tabCompletes = list;
                     }
                     case "user": {
-                        return CloudAPI.getInstance().getOnlinePlayers().stream().map(OfflinePlayer::getName)
+	                    tabCompletes = CloudAPI.getInstance().getOnlinePlayers().stream().map(OfflinePlayer::getName)
                                 .collect(Collectors.toList());
                     }
                 }
             }
             ///cperms USER/GROUP <GROUP/USER>
             case 2: {
-                switch (strings[0].toLowerCase(Locale.ENGLISH)) {
+                switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "group": {
-                        return Arrays.asList("add", "remove", "setDisplay", "setJoinPower", "setSuffix", "setPrefix",
+	                    tabCompletes = ImmutableList.of("add", "remove", "setDisplay", "setJoinPower", "setSuffix", "setPrefix",
                                 "setTagId", "setDefault", "setColor");
                     }
                     case "user": {
-                        return Arrays.asList("group", "add", "remove");
+	                    tabCompletes = ImmutableList.of("group", "add", "remove");
                     }
                 }
             }
             ///cperms USER/GROUP <GROUP/USER> <ADD/REMOVE>
             case 3: {
-                switch (strings[0].toLowerCase(Locale.ENGLISH)) {
+                switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "group": {
-                        switch (strings[2].toLowerCase(Locale.ENGLISH)) {
+                        switch (args[2].toLowerCase(Locale.ENGLISH)) {
                             case "add":
                             case "remove": {
-                                return Collections.singletonList("permission");
+	                            tabCompletes = ImmutableList.of("permission");
                             }
                         }
                     }
                     case "user": {
-                        switch (strings[2].toLowerCase(Locale.ENGLISH)) {
+                        switch (args[2].toLowerCase(Locale.ENGLISH)) {
                             case "add":
                             case "remove": {
-                                return Collections.singletonList("permission");
+	                            tabCompletes = ImmutableList.of("permission");
                             }
                             case "group": {
-                                return Arrays.asList("set", "add", "remove");
+	                            tabCompletes = ImmutableList.of("set", "add", "remove");
                             }
                         }
                     }
                 }
             }
             case 4: {
-                switch (strings[0].toLowerCase(Locale.ENGLISH)) {
+                switch (args[0].toLowerCase(Locale.ENGLISH)) {
 	                case "group": {
-		                switch (strings[2].toLowerCase(Locale.ENGLISH)) {
+		                switch (args[2].toLowerCase(Locale.ENGLISH)) {
 			                case "setcolor": {
-			                	return Arrays.asList("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a",
+				                tabCompletes = ImmutableList.of("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a",
 						                "&b", "&c", "&c", "&d", "&d", "&e", "&f");
 			                }
 			                case "setdefault": {
-			                	return Arrays.asList("true", "false");
+				                tabCompletes = ImmutableList.of("true", "false");
 			                }
 		                }
 	                }
@@ -516,7 +519,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                 }
             }
         }
-        return new ArrayList<>();
+		return new LinkedList<>(StringUtil.copyPartialMatches(args[args.length - 1], tabCompletes, new ArrayList<>(tabCompletes.size())));
 	}
 
 	private boolean permissionIsSet(Map<String, Boolean> permissions, String permission, boolean value) {
