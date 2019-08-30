@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.lib.user;
 
+import de.dytanic.cloudnet.lib.hash.DyHash;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
 import java.util.Collection;
 import java.util.Map;
@@ -44,4 +45,7 @@ public class User implements Nameable {
         return permissions.contains("*") || permissions.contains(permission);
     }
 
+    public void setPassword(String password) {
+        this.hashedPassword = DyHash.hashString(password);
+    }
 }

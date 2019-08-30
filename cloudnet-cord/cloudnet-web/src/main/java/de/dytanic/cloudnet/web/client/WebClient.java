@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
@@ -135,11 +136,18 @@ public class WebClient {
             try (InputStream inputStream = httpURLConnection.getInputStream())
             {
 
-                Files.copy(inputStream, (System.getProperty("os.name").toLowerCase().contains("windows") ?
+                boolean windows = System.getProperty("os.name").toLowerCase().contains("windows");
+                Path path = windows ?
                         Paths.get("CloudNet-" + (getEnvironment() ? "Master" : "Wrapper") + "-Update#" + version + "-" + NetworkUtils.RANDOM.nextLong() + ".jar")
                         :
                         Paths.get(WebClient.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())
-                ), StandardCopyOption.REPLACE_EXISTING);
+                        ;
+                Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+                if (windows) {
+                    System.out.println("You are using windows, please replace the file [" +
+                            Paths.get(WebClient.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getFileName()
+                            + "] with the new file [" + path + "]");
+                }
 
             } catch (URISyntaxException e)
             {
@@ -151,6 +159,30 @@ public class WebClient {
 
         } catch (IOException e)
         {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Update the local wrapper (only on the master)
+     */
+    public void updateLocalCloudWrapper(Path outputPath) {
+        try {
+            HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(DEFAULT_URL + "update/CloudNet-Wrapper.jar").openConnection();
+            httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            httpURLConnection.setUseCaches(false);
+            httpURLConnection.setConnectTimeout(1000);
+            httpURLConnection.connect();
+
+            System.out.println("Downloading update for local wrapper...");
+            try (InputStream inputStream = httpURLConnection.getInputStream()) {
+                Files.copy(inputStream, outputPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            httpURLConnection.disconnect();
+            System.out.println("Download complete!");
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

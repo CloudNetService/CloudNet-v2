@@ -129,7 +129,7 @@ import de.dytanic.cloudnetcore.network.packet.in.PacketInUpdateWrapperInfo;
 import de.dytanic.cloudnetcore.network.packet.in.PacketInWrapperScreen;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
 import de.dytanic.cloudnetcore.serverlog.ServerLogManager;
-import de.dytanic.cloudnetcore.setup.LocalCloudWrapper;
+import de.dytanic.cloudnetcore.wrapper.local.LocalCloudWrapper;
 import de.dytanic.cloudnetcore.util.FileCopy;
 import de.dytanic.cloudnetcore.web.api.v1.WebsiteAuthorization;
 import de.dytanic.cloudnetcore.web.api.v1.WebsiteDeployment;
@@ -195,6 +195,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     private final java.util.Map<String, Wrapper> wrappers = NetworkUtils.newConcurrentHashMap();
     private final java.util.Map<String, ServerGroup> serverGroups = NetworkUtils.newConcurrentHashMap();
     private final java.util.Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
+
+    private final LocalCloudWrapper localCloudWrapper = new LocalCloudWrapper();
 
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> objective, List<String> args) throws Exception
     {
@@ -311,7 +313,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         }
 
         eventManager.callEvent(new CloudInitEvent());
-        new LocalCloudWrapper().run(optionSet);
+        this.localCloudWrapper.run(optionSet);
 
         return true;
     }
@@ -390,6 +392,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             if (!version.equals(CloudNet.class.getPackage().getImplementationVersion()))
             {
                 System.out.println("Preparing update...");
+                localCloudWrapper.installUpdate(webClient);
                 webClient.update(version);
                 shutdown();
 
@@ -422,6 +425,12 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         for (CloudNetServer cloudNetServer : this.cloudServers)
             cloudNetServer.close();
+
+        try {
+            this.localCloudWrapper.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("\n    _  _     _______   _                       _          \n" +
                 "  _| || |_  |__   __| | |                     | |         \n" +
@@ -481,7 +490,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
                 .registerCommand(new CommandCreate())
                 .registerCommand(new CommandVersion())
                 .registerCommand(new CommandInfo())
-                .registerCommand(new CommandDebug());
+                .registerCommand(new CommandDebug())
+                .registerCommand(new CommandUser())
+                .registerCommand(new CommandLocalWrapper());
     }
 
     private void initPacketHandlers()

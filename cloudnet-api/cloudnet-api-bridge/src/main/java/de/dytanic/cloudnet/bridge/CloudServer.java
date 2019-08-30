@@ -10,20 +10,7 @@ import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.api.network.packet.out.PacketOutUpdateServerInfo;
 import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudNetworkUpdateEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCustomChannelMessageReceiveEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitOfflinePlayerUpdateEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitOnlineCountUpdateEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitPlayerDisconnectEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitPlayerLoginNetworkEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitPlayerUpdateEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitProxyAddEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitProxyInfoUpdateEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitProxyRemoveEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitServerAddEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitServerInfoUpdateEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitServerRemoveEvent;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitSubChannelMessageEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.*;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.NetworkUtils;
@@ -37,25 +24,9 @@ import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
+import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -66,6 +37,21 @@ import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 
 /**
  * Cloud-Server represents
@@ -209,9 +195,9 @@ public class CloudServer implements ICloudService {
 
     public CloudPlayer getCachedPlayer(String name)
     {
-        return CollectionWrapper.filter(this.cloudPlayers.values(), new Predicate<CloudPlayer>() {
+        return CollectionWrapper.filter(this.cloudPlayers.values(), new Acceptable<CloudPlayer>() {
             @Override
-            public boolean test(CloudPlayer cloudPlayer)
+            public boolean isAccepted(CloudPlayer cloudPlayer)
             {
                 return cloudPlayer.getName().equalsIgnoreCase(name);
             }
@@ -462,11 +448,9 @@ public class CloudServer implements ICloudService {
         if (CloudAPI.getInstance().getPermissionPool() == null || !CloudAPI.getInstance().getPermissionPool().isAvailable())
             return;
 
-        PermissionGroup playerPermissionGroup = playerPermissionGroupFunction != null ? playerPermissionGroupFunction.apply(player) : null;
-
-        if (playerPermissionGroup == null)
-            playerPermissionGroup = getCloudPlayers().get(player.getUniqueId())
-                    .getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
+        PermissionGroup playerPermissionGroup = playerPermissionGroupFunction != null
+                ? playerPermissionGroupFunction.apply(player)
+                : getCloudPlayers().get(player.getUniqueId()).getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
 
         initScoreboard(player);
 
@@ -497,57 +481,42 @@ public class CloudServer implements ICloudService {
     private void addTeamEntry(Player target, Player all, PermissionGroup permissionGroup)
     {
         String teamName = permissionGroup.getTagId() + permissionGroup.getName();
-        try
+        if (teamName.length() > 16)
         {
-            if (teamName.length() > 16)
-            {
-                teamName = shortenStringTo16Bytes(teamName);
-                CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
-                CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the name of the group in your perms.yml");
-                Bukkit.broadcast("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
-                Bukkit.broadcast("Please fix this issue by changing the name of the group in your perms.yml", "cloudnet.notify");
-            }
-        } catch (UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
+            teamName = teamName.substring(0, 16);
+            CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
+            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the name of the group in your perms.yml");
+            Bukkit.broadcast("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
+            Bukkit.broadcast("Please fix this issue by changing the name of the group in your perms.yml", "cloudnet.notify");
         }
         Team team = all.getScoreboard().getTeam(teamName);
         if (team == null)
             team = all.getScoreboard().registerNewTeam(teamName);
 
-        try
+        if (permissionGroup.getPrefix().length() > 16)
         {
-            if (permissionGroup.getPrefix().length() > 16)
-            {
-                permissionGroup.setPrefix(shortenStringTo16Bytes(permissionGroup.getPrefix()));
-                CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the prefix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
-                CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the prefix in your perms.yml");
-                Bukkit.broadcast("In order to prevent issues, the prefix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
-                Bukkit.broadcast("Please fix this issue by changing the prefix in your perms.yml", "cloudnet.notify");
-            }
-            if (permissionGroup.getSuffix().length() > 16)
-            {
-                permissionGroup.setSuffix(shortenStringTo16Bytes(permissionGroup.getSuffix()));
-                CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
-                CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the suffix in your perms.yml");
-                Bukkit.broadcast("In order to prevent issues, the suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
-                Bukkit.broadcast("Please fix this issue by changing the suffix in your perms.yml", "cloudnet.notify");
-            }
-        } catch (UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
+            permissionGroup.setPrefix(permissionGroup.getPrefix().substring(0, 16));
+            CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the prefix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
+            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the prefix in your perms.yml");
+            Bukkit.broadcast("In order to prevent issues, the prefix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
+            Bukkit.broadcast("Please fix this issue by changing the prefix in your perms.yml", "cloudnet.notify");
         }
-        try {
-            Optional<Method> setColor = Optional.of(team.getClass().getDeclaredMethod("setColor", ChatColor.class));
-            if (setColor.isPresent()) {
-                Method method = setColor.get();
-                method.setAccessible(true);
-                if(permissionGroup.getColor().length() != 0){
-                    method.invoke(team,ChatColor.getByChar(permissionGroup.getColor().replaceAll("&","").replaceAll("§","")));
-                }else{
-                    method.invoke(team,ChatColor.getByChar(ChatColor.getLastColors(permissionGroup.getPrefix().replace('&','§')).replaceAll("&","").replaceAll("§","")));
-                }
+        if (permissionGroup.getSuffix().length() > 16)
+        {
+            permissionGroup.setSuffix(permissionGroup.getSuffix().substring(0, 16));
+            CloudAPI.getInstance().dispatchConsoleMessage("In order to prevent issues, the suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
+            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the suffix in your perms.yml");
+            Bukkit.broadcast("In order to prevent issues, the suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!", "cloudnet.notify");
+            Bukkit.broadcast("Please fix this issue by changing the suffix in your perms.yml", "cloudnet.notify");
+        }
 
+        try {
+            Method setColor = team.getClass().getDeclaredMethod("setColor", ChatColor.class);
+            setColor.setAccessible(true);
+            if(permissionGroup.getColor().length() != 0) {
+                setColor.invoke(team, ChatColor.getByChar(permissionGroup.getColor().replaceAll("&","").replaceAll("§","")));
+            } else {
+                setColor.invoke(team, ChatColor.getByChar(ChatColor.getLastColors(permissionGroup.getPrefix().replace('&','§')).replaceAll("&","").replaceAll("§","")));
             }
         } catch (NoSuchMethodException ignored) {
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -563,10 +532,6 @@ public class CloudServer implements ICloudService {
         target.setDisplayName(ChatColor.translateAlternateColorCodes('&', permissionGroup.getDisplay() + target.getName()));
     }
 
-    private String shortenStringTo16Bytes(String input) throws UnsupportedEncodingException
-    {
-        return input.substring(0, 16);
-    }
 
     private void initScoreboard(Player all)
     {

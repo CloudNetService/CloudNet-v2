@@ -15,11 +15,13 @@ import de.dytanic.cloudnet.bridge.internal.command.proxied.defaults.CommandIp;
 import de.dytanic.cloudnet.bridge.internal.listener.proxied.ProxiedListener;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-import java.nio.file.Paths;
-import java.util.concurrent.TimeUnit;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
+
+import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 /**
  * Created by Tareko on 17.08.2017.
@@ -36,6 +38,7 @@ public class ProxiedBootstrap extends Plugin {
                 getProxy().stop("CloudNet-Stop!");
             }
         });
+        getLogger().setLevel(Level.INFO);
         CloudAPI.getInstance().setLogger(getLogger());
     }
 

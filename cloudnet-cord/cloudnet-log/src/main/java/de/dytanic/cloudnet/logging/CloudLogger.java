@@ -35,7 +35,7 @@ import lombok.Setter;
  */
 @Getter
 public class CloudLogger
-    extends Logger {
+        extends Logger {
 
     private final String separator = System.getProperty("line.separator");
     private final LoggingFormatter formatter = new LoggingFormatter();
@@ -46,6 +46,8 @@ public class CloudLogger
 
     @Setter
     private boolean debugging = false;
+    @Setter
+    private boolean showPrompt = !Boolean.getBoolean("cloudnet.logging.prompt.disabled");
 
     /**
      * Constructs a new cloud logger instance that handles logging messages from
@@ -87,6 +89,9 @@ public class CloudLogger
 
         System.setOut(new AsyncPrintStream(new LoggingOutputStream(Level.INFO)));
         System.setErr(new AsyncPrintStream(new LoggingOutputStream(Level.SEVERE)));
+
+        this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
+        this.reader.resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
     }
 
     /**
@@ -98,6 +103,17 @@ public class CloudLogger
     {
         if (debugging)
             log(Level.WARNING, "[DEBUG] " + message);
+    }
+
+    public String readLine(String prompt) {
+        try {
+            String line = this.reader.readLine(this.showPrompt ? prompt : null);
+            this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
+            return line;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -178,7 +194,7 @@ public class CloudLogger
     }
 
     private class LoggingFormatter
-        extends Formatter {
+            extends Formatter {
 
         private final DateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
@@ -194,13 +210,13 @@ public class CloudLogger
             }
 
             return ConsoleReader.RESET_LINE +
-                "[" +
-                format.format(record.getMillis()) +
-                "] " +
-                record.getLevel().getName() +
-                ": " +
-                formatMessage(record) +
-                "\n" + builder.toString();
+                    "[" +
+                    format.format(record.getMillis()) +
+                    "] " +
+                    record.getLevel().getName() +
+                    ": " +
+                    formatMessage(record) +
+                    "\n" + builder.toString();
         }
     }
 }

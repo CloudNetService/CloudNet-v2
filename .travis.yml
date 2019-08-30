@@ -1,10 +1,5 @@
 language: java
-jdk:
-  - oraclejdk8
+dist: bionic
 sudo: false
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
 notifications:
   email: false  

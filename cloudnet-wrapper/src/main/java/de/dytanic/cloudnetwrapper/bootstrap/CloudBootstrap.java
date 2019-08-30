@@ -107,11 +107,8 @@ public class CloudBootstrap {
             while (true)
                 try
                 {
-                    cloudNetLogging.getReader().setPrompt(NetworkUtils.EMPTY_STRING);
-                    cloudNetLogging.getReader().resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
-                    while ((commandLine = cloudNetLogging.getReader().readLine(user + "@" + cloudNetWrapper.getWrapperConfig().getWrapperId() + " $ ")) != null)
+                    while ((commandLine = cloudNetLogging.readLine(user + "@" + cloudNetWrapper.getWrapperConfig().getWrapperId() + " $ ")) != null)
                     {
-                        cloudNetLogging.getReader().setPrompt(NetworkUtils.EMPTY_STRING);
 
                         try
                         {

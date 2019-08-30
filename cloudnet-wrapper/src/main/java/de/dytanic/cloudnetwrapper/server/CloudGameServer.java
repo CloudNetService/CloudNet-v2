@@ -293,6 +293,15 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                 properties.load(inputStreamReader);
             }
 
+            if (properties.isEmpty() || !properties.contains("max-players")) {
+                properties.setProperty("max-players", "100");
+                FileUtility.insertData("files/server.properties", path + "/server.properties");
+                try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/server.properties")))) {
+                    properties.load(inputStreamReader);
+                }
+                System.err.println("Filled empty server.properties (or missing \"max-players\" entry) of server [" + this.cloudServerMeta.getServiceId() + "], please fix this error in the server.properties");
+            }
+
             Enumeration enumeration = this.cloudServerMeta.getServerProperties().keys();
             while (enumeration.hasMoreElements())
             {
@@ -306,7 +315,11 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
             //properties.setProperty("server-name", serverProcess.getMeta().getServiceId().getServerId());
 
             motd = properties.getProperty("motd");
-            maxPlayers = Integer.parseInt(properties.getProperty("max-players"));
+            try {
+                maxPlayers = Integer.parseInt(properties.getProperty("max-players"));
+            } catch (NumberFormatException e) {
+                maxPlayers = 100;
+            }
 
             try (OutputStream outputStream = Files.newOutputStream(Paths.get(path + "/server.properties")))
             {

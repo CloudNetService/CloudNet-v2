@@ -125,7 +125,7 @@ public class CloudNetWrapperConfig {
             long memory = ((NetworkUtils.systemMemory() / 1048576) - 2048);
             if (memory < 1024)
             {
-                System.out.println("WARINING: YOU CAN'T USE THE CLOUD NETWORK SOFTWARE WITH SUCH A SMALL MEMORY SIZE!");
+                System.out.println("WARNING: YOU CAN'T USE THE CLOUD NETWORK SOFTWARE WITH SUCH A SMALL MEMORY SIZE!");
             }
 
             Configuration configuration = new Configuration();
