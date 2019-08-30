@@ -27,7 +27,6 @@ import java.util.List;
 /**
  * Created by Tareko on 21.10.2017.
  */
-@Getter
 public class SetupServerGroup {
 
     private String name;
@@ -169,5 +168,9 @@ public class SetupServerGroup {
                     }
                 }));
         setup.start(CloudNet.getLogger().getReader());
+    }
+
+    public String getName() {
+        return name;
     }
 }

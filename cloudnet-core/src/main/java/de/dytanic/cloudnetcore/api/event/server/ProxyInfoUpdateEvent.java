@@ -13,7 +13,6 @@ import lombok.Getter;
 /**
  * Calls if a proxy updated it ProxyInfo
  */
-@Getter
 public class ProxyInfoUpdateEvent extends AsyncEvent<ProxyInfoUpdateEvent> {
 
     private ProxyInfo proxyInfo;
@@ -25,5 +24,13 @@ public class ProxyInfoUpdateEvent extends AsyncEvent<ProxyInfoUpdateEvent> {
         super(new AsyncPosterAdapter<>());
         this.proxyServer = proxyServer;
         this.proxyInfo = proxyInfo;
+    }
+
+    public ProxyInfo getProxyInfo() {
+        return proxyInfo;
+    }
+
+    public ProxyServer getProxyServer() {
+        return proxyServer;
     }
 }

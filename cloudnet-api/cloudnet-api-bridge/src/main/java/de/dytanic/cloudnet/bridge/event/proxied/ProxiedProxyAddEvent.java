@@ -10,10 +10,13 @@ import lombok.AllArgsConstructor;
 /**
  * Calls if a proxy server was add into the network
  */
-@AllArgsConstructor
 public class ProxiedProxyAddEvent extends ProxiedCloudEvent {
 
     private ProxyInfo proxyInfo;
+
+    public ProxiedProxyAddEvent(ProxyInfo proxyInfo) {
+        this.proxyInfo = proxyInfo;
+    }
 
     public ProxyInfo getProxyInfo()
     {

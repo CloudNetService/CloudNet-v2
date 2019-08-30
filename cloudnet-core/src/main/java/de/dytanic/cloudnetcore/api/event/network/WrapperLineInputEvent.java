@@ -13,7 +13,6 @@ import lombok.Getter;
 /**
  * Created by Tareko on 23.09.2017.
  */
-@Getter
 public class WrapperLineInputEvent extends AsyncEvent<WrapperLineInputEvent> {
 
     private WrapperScreen wrapperScreen;
@@ -25,5 +24,13 @@ public class WrapperLineInputEvent extends AsyncEvent<WrapperLineInputEvent> {
         super(new AsyncPosterAdapter<>());
         this.wrapper = wrapper;
         this.wrapperScreen = wrapperScreen;
+    }
+
+    public Wrapper getWrapper() {
+        return wrapper;
+    }
+
+    public WrapperScreen getWrapperScreen() {
+        return wrapperScreen;
     }
 }

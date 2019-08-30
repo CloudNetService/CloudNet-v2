@@ -13,7 +13,6 @@ import java.nio.file.Path;
 /**
  * Created by Tareko on 05.09.2017.
  */
-@Getter
 public abstract class ConfigAbstract {
 
     protected Path path;
@@ -25,5 +24,9 @@ public abstract class ConfigAbstract {
             defaults.saveAsConfig(path);
         }
         this.path = path;
+    }
+
+    public Path getPath() {
+        return path;
     }
 }

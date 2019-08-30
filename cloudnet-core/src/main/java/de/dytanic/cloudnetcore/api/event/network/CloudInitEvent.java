@@ -12,7 +12,6 @@ import lombok.Getter;
 /**
  * Calls if the CloudNet instance is successfully started but, the console is not online
  */
-@Getter
 public class CloudInitEvent extends AsyncEvent<CloudInitEvent> {
 
     private CloudNet cloudNet = CloudNet.getInstance();
@@ -20,5 +19,9 @@ public class CloudInitEvent extends AsyncEvent<CloudInitEvent> {
     public CloudInitEvent()
     {
         super(new AsyncPosterAdapter<>());
+    }
+
+    public CloudNet getCloudNet() {
+        return cloudNet;
     }
 }

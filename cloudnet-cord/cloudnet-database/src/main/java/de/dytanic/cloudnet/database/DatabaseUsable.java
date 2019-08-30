@@ -11,8 +11,6 @@ import lombok.Getter;
 /**
  * Parent class for all databases used by CloudNet.
  */
-@Getter
-@AllArgsConstructor
 public class DatabaseUsable {
 
     /**
@@ -20,4 +18,11 @@ public class DatabaseUsable {
      */
     protected Database database;
 
+    public DatabaseUsable(Database database) {
+        this.database = database;
+    }
+
+    public Database getDatabase() {
+        return database;
+    }
 }

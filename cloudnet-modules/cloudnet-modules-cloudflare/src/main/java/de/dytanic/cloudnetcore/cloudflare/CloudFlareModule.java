@@ -23,10 +23,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Tareko on 20.10.2017.
  */
-@Getter
 public class CloudFlareModule extends CoreModule {
 
-    @Getter
     private static CloudFlareModule instance;
 
     private ConfigCloudFlare configCloudFlare;
@@ -34,6 +32,22 @@ public class CloudFlareModule extends CoreModule {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private CloudFlareDatabase cloudFlareDatabase;
+
+    public static CloudFlareModule getInstance() {
+        return instance;
+    }
+
+    public ConfigCloudFlare getConfigCloudFlare() {
+        return configCloudFlare;
+    }
+
+    public ExecutorService getExecutor() {
+        return executor;
+    }
+
+    public CloudFlareDatabase getCloudFlareDatabase() {
+        return cloudFlareDatabase;
+    }
 
     @Override
     public void onLoad()

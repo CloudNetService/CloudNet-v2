@@ -21,15 +21,25 @@ import lombok.Getter;
 /**
  * Created by Tareko on 16.10.2017.
  */
-@Getter
 public class MobModule extends CoreModule implements IEventListener<UpdateAllEvent> {
 
     private ConfigMobs configMobs;
 
     private MobDatabase mobDatabase;
 
-    @Getter
     private static MobModule instance;
+
+    public static MobModule getInstance() {
+        return instance;
+    }
+
+    public ConfigMobs getConfigMobs() {
+        return configMobs;
+    }
+
+    public MobDatabase getMobDatabase() {
+        return mobDatabase;
+    }
 
     @Override
     public void onLoad()

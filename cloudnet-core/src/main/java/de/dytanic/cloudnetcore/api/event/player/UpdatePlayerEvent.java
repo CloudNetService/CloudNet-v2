@@ -12,7 +12,6 @@ import lombok.Getter;
 /**
  * Calls if a player is updated on cloudnet
  */
-@Getter
 public class UpdatePlayerEvent extends AsyncEvent<UpdatePlayerEvent> {
 
     private OfflinePlayer offlinePlayer;
@@ -21,5 +20,9 @@ public class UpdatePlayerEvent extends AsyncEvent<UpdatePlayerEvent> {
     {
         super(new AsyncPosterAdapter<>());
         this.offlinePlayer = offlinePlayer;
+    }
+
+    public OfflinePlayer getOfflinePlayer() {
+        return offlinePlayer;
     }
 }

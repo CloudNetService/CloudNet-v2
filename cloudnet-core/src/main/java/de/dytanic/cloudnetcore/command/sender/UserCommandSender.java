@@ -15,7 +15,6 @@ import java.util.UUID;
 /**
  * Created by Tareko on 27.09.2017.
  */
-@Getter
 public class UserCommandSender implements CommandSender {
 
     private User user;
@@ -24,6 +23,10 @@ public class UserCommandSender implements CommandSender {
     public UserCommandSender(User user)
     {
         this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     @Override

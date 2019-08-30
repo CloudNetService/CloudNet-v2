@@ -12,12 +12,22 @@ import lombok.Getter;
 /**
  * Calls if the NetworkManager.updateAll(); method is invoked
  */
-@Getter
-@AllArgsConstructor
 public class UpdateAllEvent extends Event {
 
     private NetworkManager networkManager;
 
     private boolean isOnlineCloudNetworkUpdate;
 
+    public UpdateAllEvent(NetworkManager networkManager, boolean isOnlineCloudNetworkUpdate) {
+        this.networkManager = networkManager;
+        this.isOnlineCloudNetworkUpdate = isOnlineCloudNetworkUpdate;
+    }
+
+    public NetworkManager getNetworkManager() {
+        return networkManager;
+    }
+
+    public boolean isOnlineCloudNetworkUpdate() {
+        return isOnlineCloudNetworkUpdate;
+    }
 }

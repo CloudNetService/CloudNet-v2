@@ -17,7 +17,6 @@ import lombok.Setter;
 /**
  * Created by Tareko on 26.05.2017.
  */
-@Getter
 public class ProxyServer
         implements INetworkComponent {
 
@@ -25,14 +24,10 @@ public class ProxyServer
     private Wrapper wrapper;
     private NetworkInfo networkInfo;
 
-    @Setter
     private long channelLostTime = 0L;
 
-    @Setter
     private Channel channel;
-    @Setter
     private ProxyInfo proxyInfo;
-    @Setter
     private ProxyInfo lastProxyInfo;
     private ProxyProcessMeta processMeta;
 
@@ -50,6 +45,57 @@ public class ProxyServer
 
         this.proxyInfo = proxyInfo;
         this.lastProxyInfo = proxyInfo;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return channel;
+    }
+
+    @Override
+    public Wrapper getWrapper() {
+        return wrapper;
+    }
+
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    public ProxyInfo getProxyInfo() {
+        return proxyInfo;
+    }
+
+    public long getChannelLostTime() {
+        return channelLostTime;
+    }
+
+    public NetworkInfo getNetworkInfo() {
+        return networkInfo;
+    }
+
+    public ProxyInfo getLastProxyInfo() {
+        return lastProxyInfo;
+    }
+
+    public ProxyProcessMeta getProcessMeta() {
+        return processMeta;
+    }
+
+    @Override
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    public void setProxyInfo(ProxyInfo proxyInfo) {
+        this.proxyInfo = proxyInfo;
+    }
+
+    public void setLastProxyInfo(ProxyInfo lastProxyInfo) {
+        this.lastProxyInfo = lastProxyInfo;
+    }
+
+    public void setChannelLostTime(long channelLostTime) {
+        this.channelLostTime = channelLostTime;
     }
 
     public void disconnect()

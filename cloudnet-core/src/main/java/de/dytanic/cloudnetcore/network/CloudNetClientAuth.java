@@ -20,14 +20,25 @@ import lombok.Getter;
 /**
  * Created by Tareko on 02.06.2017.
  */
-@Getter
-@AllArgsConstructor
 public class CloudNetClientAuth
         extends SimpleChannelInboundHandler<Packet>
         implements PacketSender {
 
     private Channel channel;
     private CloudNetServer cloudNetProxyServer;
+
+    public CloudNetClientAuth(Channel channel, CloudNetServer cloudNetProxyServer) {
+        this.channel = channel;
+        this.cloudNetProxyServer = cloudNetProxyServer;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public CloudNetServer getCloudNetProxyServer() {
+        return cloudNetProxyServer;
+    }
 
     @Override
     public String getName()

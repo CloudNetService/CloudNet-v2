@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Getter
 public class CloudNetWrapperConfig {
 
     private final Path path = Paths.get("config.yml");
@@ -208,4 +207,79 @@ public class CloudNetWrapperConfig {
         }
     }
 
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public int getMaxMemory() {
+        return maxMemory;
+    }
+
+    public int getCloudnetPort() {
+        return cloudnetPort;
+    }
+
+    public int getProcessQueueSize() {
+        return processQueueSize;
+    }
+
+    public int getStartPort() {
+        return startPort;
+    }
+
+    public Path getPath() {
+        return path;
+    }
+
+    public String getCloudnetHost() {
+        return cloudnetHost;
+    }
+
+    public String getDevServicePath() {
+        return devServicePath;
+    }
+
+    public String getInternalIP() {
+        return internalIP;
+    }
+
+    public String getProxy_config_host() {
+        return proxy_config_host;
+    }
+
+    public String getWrapperId() {
+        return wrapperId;
+    }
+
+    public double getPercentOfCPUForANewCloudServer() {
+        return percentOfCPUForANewCloudServer;
+    }
+
+    public double getPercentOfCPUForANewProxy() {
+        return percentOfCPUForANewProxy;
+    }
+
+    public double getPercentOfCPUForANewServer() {
+        return percentOfCPUForANewServer;
+    }
+
+    public int getWebPort() {
+        return webPort;
+    }
+
+    public boolean isAutoUpdate() {
+        return autoUpdate;
+    }
+
+    public boolean isMaintenance_copy() {
+        return maintenance_copy;
+    }
+
+    public boolean isSavingRecords() {
+        return savingRecords;
+    }
+
+    public boolean isViaVersion() {
+        return viaVersion;
+    }
 }

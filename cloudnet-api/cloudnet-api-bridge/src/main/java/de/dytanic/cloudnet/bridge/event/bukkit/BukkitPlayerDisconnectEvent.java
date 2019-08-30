@@ -5,18 +5,20 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.HandlerList;
 
 /**
  * Created by Tareko on 18.08.2017.
  */
-@AllArgsConstructor
 public class BukkitPlayerDisconnectEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
     private CloudPlayer cloudPlayer;
+
+    public BukkitPlayerDisconnectEvent(CloudPlayer cloudPlayer) {
+        this.cloudPlayer = cloudPlayer;
+    }
 
     public CloudPlayer getCloudPlayer()
     {

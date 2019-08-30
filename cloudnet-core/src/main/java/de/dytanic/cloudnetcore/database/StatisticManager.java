@@ -20,8 +20,11 @@ public class StatisticManager extends DatabaseUsable {
 
     private boolean statistic = true;
 
-    @Getter
     private static StatisticManager instance;
+
+    public static StatisticManager getInstance() {
+        return instance;
+    }
 
     public StatisticManager(Database database)
     {

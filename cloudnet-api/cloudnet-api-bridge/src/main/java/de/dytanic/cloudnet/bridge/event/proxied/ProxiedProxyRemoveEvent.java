@@ -10,10 +10,13 @@ import lombok.AllArgsConstructor;
 /**
  * Calls if a proxy server is removed from the network
  */
-@AllArgsConstructor
 public class ProxiedProxyRemoveEvent extends ProxiedCloudEvent {
 
     private ProxyInfo proxyInfo;
+
+    public ProxiedProxyRemoveEvent(ProxyInfo proxyInfo) {
+        this.proxyInfo = proxyInfo;
+    }
 
     public ProxyInfo getProxyInfo()
     {

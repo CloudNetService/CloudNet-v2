@@ -5,18 +5,20 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.HandlerList;
 
 /**
  * Calls if a server was updated
  */
-@AllArgsConstructor
 public class BukkitServerInfoUpdateEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
     private ServerInfo serverInfo;
+
+    public BukkitServerInfoUpdateEvent(ServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
 
     public ServerInfo getServerInfo()
     {

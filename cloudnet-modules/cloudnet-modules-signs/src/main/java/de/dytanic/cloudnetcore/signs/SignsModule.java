@@ -22,15 +22,25 @@ import lombok.Getter;
 /**
  * Created by Tareko on 16.10.2017.
  */
-@Getter
 public class SignsModule extends CoreModule implements IEventListener<UpdateAllEvent> {
 
     private ConfigSignLayout configSignLayout;
 
     private SignDatabase signDatabase;
 
-    @Getter
     private static SignsModule instance;
+
+    public static SignsModule getInstance() {
+        return instance;
+    }
+
+    public ConfigSignLayout getConfigSignLayout() {
+        return configSignLayout;
+    }
+
+    public SignDatabase getSignDatabase() {
+        return signDatabase;
+    }
 
     @Override
     public void onLoad()

@@ -4,12 +4,13 @@
 
 package de.dytanic.cloudnet.lib.player;
 
-import lombok.Getter;
-
-@Getter
 public class PlayerExecutor {
 
     protected boolean available = false;
+
+    public boolean isAvailable() {
+        return available;
+    }
 
     public void sendPlayer(CloudPlayer cloudPlayer, String server)
     {

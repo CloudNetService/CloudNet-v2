@@ -12,7 +12,6 @@ import lombok.Getter;
 /**
  * Calls if a proxy was whitelisted to from a wrapper and the proxy start successfully
  */
-@Getter
 public class ProxyAddEvent extends AsyncEvent<ProxyAddEvent> {
 
     private ProxyServer proxyServer;
@@ -21,5 +20,9 @@ public class ProxyAddEvent extends AsyncEvent<ProxyAddEvent> {
     {
         super(new AsyncPosterAdapter<>());
         this.proxyServer = proxyServer;
+    }
+
+    public ProxyServer getProxyServer() {
+        return proxyServer;
     }
 }

@@ -12,7 +12,6 @@ import lombok.Getter;
 /**
  * Created by Tareko on 24.07.2017.
  */
-@Getter
 public class DatabaseBasicHandlers {
 
     private StatisticManager statisticManager;
@@ -42,5 +41,29 @@ public class DatabaseBasicHandlers {
         nameToUUIDDatabase.handleUpdate(updateConfigurationDatabase);
 
         ((DatabaseImpl) config).save();
+    }
+
+    public StatisticManager getStatisticManager() {
+        return statisticManager;
+    }
+
+    public PlayerDatabase getPlayerDatabase() {
+        return playerDatabase;
+    }
+
+    public CommandDispatcherDatabase getCommandDispatcherDatabase() {
+        return commandDispatcherDatabase;
+    }
+
+    public NameToUUIDDatabase getNameToUUIDDatabase() {
+        return nameToUUIDDatabase;
+    }
+
+    public WrapperSessionDatabase getWrapperSessionDatabase() {
+        return wrapperSessionDatabase;
+    }
+
+    public UpdateConfigurationDatabase getUpdateConfigurationDatabase() {
+        return updateConfigurationDatabase;
     }
 }

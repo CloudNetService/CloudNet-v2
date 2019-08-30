@@ -10,10 +10,13 @@ import lombok.AllArgsConstructor;
 /**
  * Calls if a game server was add into the network
  */
-@AllArgsConstructor
 public class ProxiedServerAddEvent extends ProxiedCloudEvent {
 
     private ServerInfo serverInfo;
+
+    public ProxiedServerAddEvent(ServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
 
     public ServerInfo getServerInfo()
     {

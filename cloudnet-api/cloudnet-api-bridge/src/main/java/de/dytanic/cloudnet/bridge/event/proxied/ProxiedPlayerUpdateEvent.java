@@ -10,10 +10,13 @@ import lombok.AllArgsConstructor;
 /**
  * Calls if a online player was updated on network
  */
-@AllArgsConstructor
 public class ProxiedPlayerUpdateEvent extends ProxiedCloudEvent {
 
     private CloudPlayer cloudPlayer;
+
+    public ProxiedPlayerUpdateEvent(CloudPlayer cloudPlayer) {
+        this.cloudPlayer = cloudPlayer;
+    }
 
     public CloudPlayer getCloudPlayer()
     {

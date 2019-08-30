@@ -14,8 +14,6 @@ import lombok.ToString;
 /**
  * Class that represents a request for setup data.
  */
-@Getter
-@AllArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class SetupRequest implements Nameable {
@@ -45,4 +43,32 @@ public class SetupRequest implements Nameable {
      */
     private Catcher<Boolean, String> validater;
 
+    public SetupRequest(String name, String question, String inValidMessage, SetupResponseType responseType, Catcher<Boolean, String> validater) {
+        this.name = name;
+        this.question = question;
+        this.inValidMessage = inValidMessage;
+        this.responseType = responseType;
+        this.validater = validater;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public Catcher<Boolean, String> getValidater() {
+        return validater;
+    }
+
+    public SetupResponseType getResponseType() {
+        return responseType;
+    }
+
+    public String getInValidMessage() {
+        return inValidMessage;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
 }

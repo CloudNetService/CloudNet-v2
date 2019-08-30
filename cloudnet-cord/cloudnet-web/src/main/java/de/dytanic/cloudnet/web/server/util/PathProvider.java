@@ -11,8 +11,6 @@ import lombok.Getter;
 /**
  * Data class that holds information for a dynamic path like in Spring
  */
-@Getter
-@AllArgsConstructor
 public class PathProvider {
 
     /**
@@ -25,4 +23,16 @@ public class PathProvider {
      */
     private WrappedMap pathParameters;
 
+    public PathProvider(String path, WrappedMap pathParameters) {
+        this.path = path;
+        this.pathParameters = pathParameters;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public WrappedMap getPathParameters() {
+        return pathParameters;
+    }
 }

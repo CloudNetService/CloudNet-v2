@@ -27,7 +27,6 @@ import java.util.List;
 /**
  * Created by Tareko on 23.10.2017.
  */
-@Getter
 public class SetupProxyGroup {
 
     private String name;
@@ -134,5 +133,9 @@ public class SetupProxyGroup {
                     }
                 }));
         setup.start(CloudNet.getLogger().getReader());
+    }
+
+    public String getName() {
+        return name;
     }
 }

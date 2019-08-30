@@ -41,11 +41,8 @@ import java.util.*;
 /**
  * Created by Tareko on 21.08.2017.
  */
-@Getter
-@Setter
 public final class SignSelector implements Listener {
 
-    @Getter
     private static SignSelector instance;
 
     public SignSelector(Map<UUID, Sign> signs, SignLayoutConfig signLayoutConfig)
@@ -63,7 +60,41 @@ public final class SignSelector implements Listener {
 
     private Map<String, ServerInfo> servers = NetworkUtils.newConcurrentHashMap();
 
-    /*=============================*/ //Utils
+    public static SignSelector getInstance() {
+        return instance;
+    }
+
+    public Map<String, ServerInfo> getServers() {
+        return servers;
+    }
+
+    public Thread getWorker() {
+        return worker;
+    }
+
+    public Map<UUID, Sign> getSigns() {
+        return signs;
+    }
+
+    public SignLayoutConfig getSignLayoutConfig() {
+        return signLayoutConfig;
+    }
+
+    public void setServers(Map<String, ServerInfo> servers) {
+        this.servers = servers;
+    }
+
+    public void setSignLayoutConfig(SignLayoutConfig signLayoutConfig) {
+        this.signLayoutConfig = signLayoutConfig;
+    }
+
+    public void setSigns(Map<UUID, Sign> signs) {
+        this.signs = signs;
+    }
+
+    public void setWorker(Thread worker) {
+        this.worker = worker;
+    }
 
     @Deprecated
     public void start()

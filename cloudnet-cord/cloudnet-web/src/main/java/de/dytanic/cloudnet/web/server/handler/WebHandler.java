@@ -14,7 +14,6 @@ import lombok.Getter;
 /**
  * Abstract class that handles web requests for a given path.
  */
-@Getter
 public abstract class WebHandler implements Cloneable {
 
     protected final String path;
@@ -27,6 +26,10 @@ public abstract class WebHandler implements Cloneable {
     protected WebHandler(String path)
     {
         this.path = path;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     /**

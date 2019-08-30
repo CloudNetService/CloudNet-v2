@@ -11,10 +11,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class AbstractScreenService implements Screenable {
 
-    @Getter
     protected final Queue<String> cachedLogMessages = new ConcurrentLinkedQueue<>();
 
-    @Getter
     protected volatile boolean screenSystemEnabled;
 
     public void addCachedItem(String text)
@@ -45,5 +43,13 @@ public abstract class AbstractScreenService implements Screenable {
     private void sendScreenLine0(String text)
     {
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutSendScreenLine(Collections.singletonList(new ScreenInfo(getServiceId(), text))));
+    }
+
+    public Queue<String> getCachedLogMessages() {
+        return cachedLogMessages;
+    }
+
+    public boolean isScreenSystemEnabled() {
+        return screenSystemEnabled;
     }
 }

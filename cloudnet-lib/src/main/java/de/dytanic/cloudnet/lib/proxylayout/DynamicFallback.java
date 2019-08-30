@@ -16,13 +16,24 @@ import java.util.List;
 /**
  * Created by Tareko on 05.10.2017.
  */
-@Getter
-@AllArgsConstructor
 public class DynamicFallback {
 
     private String defaultFallback;
 
     private List<ServerFallback> fallbacks;
+
+    public DynamicFallback(String defaultFallback, List<ServerFallback> fallbacks) {
+        this.defaultFallback = defaultFallback;
+        this.fallbacks = fallbacks;
+    }
+
+    public List<ServerFallback> getFallbacks() {
+        return fallbacks;
+    }
+
+    public String getDefaultFallback() {
+        return defaultFallback;
+    }
 
     public ServerFallback getDefault()
     {

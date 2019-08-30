@@ -17,7 +17,6 @@ import java.util.*;
  * Saves all databases every 60 seconds and
  * clears the currently open databases every 6 minutes.
  */
-@Getter
 public class DatabaseManager {
 
     private final File dir;
@@ -50,6 +49,22 @@ public class DatabaseManager {
                 save().clear();
             }
         }, 0, 360000);
+    }
+
+    public File getDir() {
+        return dir;
+    }
+
+    public Map<String, Database> getDatabaseCollection() {
+        return databaseCollection;
+    }
+
+    public short getTick() {
+        return tick;
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
 
     /**

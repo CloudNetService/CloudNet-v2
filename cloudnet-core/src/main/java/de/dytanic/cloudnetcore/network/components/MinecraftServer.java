@@ -19,7 +19,6 @@ import lombok.Setter;
 /**
  * Created by Tareko on 26.05.2017.
  */
-@Getter
 public final class MinecraftServer
         implements INetworkComponent {
 
@@ -28,14 +27,10 @@ public final class MinecraftServer
     private Wrapper wrapper;
     private ServerGroupMode groupMode;
 
-    @Setter
     private long channelLostTime = 0L;
 
-    @Setter
     private ServerInfo serverInfo;
-    @Setter
     private ServerInfo lastServerInfo;
-    @Setter
     private Channel channel;
 
     public MinecraftServer(ServerProcessMeta processMeta, Wrapper wrapper, ServerGroup group, ServerInfo serverInfo)
@@ -47,6 +42,57 @@ public final class MinecraftServer
 
         this.serverInfo = serverInfo;
         this.lastServerInfo = serverInfo;
+    }
+
+    public void setChannelLostTime(long channelLostTime) {
+        this.channelLostTime = channelLostTime;
+    }
+
+    public void setServerInfo(ServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
+
+    public void setLastServerInfo(ServerInfo lastServerInfo) {
+        this.lastServerInfo = lastServerInfo;
+    }
+
+    @Override
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    @Override
+    public Wrapper getWrapper() {
+        return wrapper;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    public long getChannelLostTime() {
+        return channelLostTime;
+    }
+
+    public ServerInfo getLastServerInfo() {
+        return lastServerInfo;
+    }
+
+    public ServerInfo getServerInfo() {
+        return serverInfo;
+    }
+
+    public ServerGroupMode getGroupMode() {
+        return groupMode;
+    }
+
+    public ServerProcessMeta getProcessMeta() {
+        return processMeta;
     }
 
     public void disconnect()

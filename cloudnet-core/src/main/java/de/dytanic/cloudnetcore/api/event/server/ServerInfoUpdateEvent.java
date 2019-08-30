@@ -12,7 +12,6 @@ import lombok.Getter;
 /**
  * Calls if one server updates his serverInfo
  */
-@Getter
 public class ServerInfoUpdateEvent extends Event {
 
     private INetworkComponent minecraftServer;
@@ -24,4 +23,11 @@ public class ServerInfoUpdateEvent extends Event {
         this.minecraftServer = minecraftServer;
     }
 
+    public INetworkComponent getMinecraftServer() {
+        return minecraftServer;
+    }
+
+    public ServerInfo getServerInfo() {
+        return serverInfo;
+    }
 }

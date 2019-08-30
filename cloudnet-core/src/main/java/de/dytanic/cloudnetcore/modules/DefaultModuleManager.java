@@ -21,7 +21,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by Tareko on 22.10.2017.
  */
-@Getter
 public class DefaultModuleManager {
 
     private Collection<DefaultModule> modules = new CopyOnWriteArrayList<>();
@@ -57,5 +56,9 @@ public class DefaultModuleManager {
                 Files.copy(inputStream, path);
             }
         }
+    }
+
+    public Collection<DefaultModule> getModules() {
+        return modules;
     }
 }

@@ -14,10 +14,16 @@ public final class Scheduler
 
     private ConcurrentHashMap<Long, ScheduledTask> tasks = NetworkUtils.newConcurrentHashMap();
 
-    @Getter
     private final int ticks;
-    @Getter
     private final Random random = new Random();
+
+    public int getTicks() {
+        return ticks;
+    }
+
+    public Random getRandom() {
+        return random;
+    }
 
     public Scheduler(int ticks)
     {

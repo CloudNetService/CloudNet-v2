@@ -14,11 +14,17 @@ import java.util.Collection;
 /**
  * Created by Tareko on 10.01.2018.
  */
-@Getter
-@AllArgsConstructor
 public class CloudPlayerCommandSender implements CommandSender {
 
     private final CloudPlayer cloudPlayer;
+
+    public CloudPlayerCommandSender(CloudPlayer cloudPlayer) {
+        this.cloudPlayer = cloudPlayer;
+    }
+
+    public CloudPlayer getCloudPlayer() {
+        return cloudPlayer;
+    }
 
     @Override
     public String getName()
