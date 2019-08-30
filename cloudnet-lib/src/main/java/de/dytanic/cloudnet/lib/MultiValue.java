@@ -1,15 +1,11 @@
 package de.dytanic.cloudnet.lib;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
  * Created by Tareko on 26.07.2017.
  */
-@Data
-@AllArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class MultiValue<F, S> {
@@ -18,4 +14,24 @@ public class MultiValue<F, S> {
 
     private S second;
 
+    public MultiValue(F first, S second) {
+        this.first = first;
+        this.second = second;
+    }
+
+    public S getSecond() {
+        return second;
+    }
+
+    public F getFirst() {
+        return first;
+    }
+
+    public void setSecond(S second) {
+        this.second = second;
+    }
+
+    public void setFirst(F first) {
+        this.first = first;
+    }
 }

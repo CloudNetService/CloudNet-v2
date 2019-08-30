@@ -5,8 +5,6 @@
 package de.dytanic.cloudnet.lib.server.template;
 
 import de.dytanic.cloudnet.lib.zip.ZipConverter;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,13 +14,24 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-@Getter
-@AllArgsConstructor
 public class TemplateLoader {
 
     private String url;
 
     private String dest;
+
+    public TemplateLoader(String url, String dest) {
+        this.url = url;
+        this.dest = dest;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getDest() {
+        return dest;
+    }
 
     public TemplateLoader load()
     {

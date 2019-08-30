@@ -9,18 +9,27 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.io.IOException;
 
-@Getter
-@AllArgsConstructor
 public class NetDispatcher extends SimpleChannelInboundHandler {
 
     private final NetworkConnection networkConnection;
 
     private boolean shutdownOnInactive;
+
+    public NetDispatcher(NetworkConnection networkConnection, boolean shutdownOnInactive) {
+        this.networkConnection = networkConnection;
+        this.shutdownOnInactive = shutdownOnInactive;
+    }
+
+    public NetworkConnection getNetworkConnection() {
+        return networkConnection;
+    }
+
+    public boolean isShutdownOnInactive() {
+        return shutdownOnInactive;
+    }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception

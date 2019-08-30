@@ -4,15 +4,12 @@
 
 package de.dytanic.cloudnet.web.server.util;
 
-import lombok.Getter;
-
 import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
  * Utility class for decoding and storing query parameters using a weak hash map.
  */
-@Getter
 public class QueryDecoder {
 
     /**
@@ -36,5 +33,9 @@ public class QueryDecoder {
             String[] value = input.split("=");
             queryParams.put(value[0], value[1]);
         }
+    }
+
+    public Map<String, String> getQueryParams() {
+        return queryParams;
     }
 }

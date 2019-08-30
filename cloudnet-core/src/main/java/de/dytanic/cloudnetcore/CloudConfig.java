@@ -21,6 +21,13 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.network.components.WrapperMeta;
 import de.dytanic.cloudnetcore.util.defaults.BungeeGroup;
 import de.dytanic.cloudnetcore.util.defaults.LobbyGroup;
+import jline.console.ConsoleReader;
+import lombok.Getter;
+import lombok.NonNull;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,14 +37,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import jline.console.ConsoleReader;
-import lombok.Getter;
-import lombok.NonNull;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
 
 
 /**
@@ -67,7 +66,6 @@ public class CloudConfig {
     private List<String> disabledModules, cloudServerWrapperList;
 
     private Map<String, Object> networkProperties;
-    private List<String> hasteServer;
 
     public CloudConfig(ConsoleReader consoleReader) throws Exception
     {
@@ -118,7 +116,6 @@ public class CloudConfig {
         configuration.set("general.dynamicservices", false);
         configuration.set("general.server-name-splitter", "-");
         configuration.set("general.notify-service", true);
-        configuration.set("general.haste.server", Arrays.asList("https://hastebin.com","https://hasteb.in","https://haste.llamacloud.io"));
         configuration.set("general.disabled-modules", new ArrayList<>());
         configuration.set("general.cloudGameServer-wrapperList", Arrays.asList("Wrapper-1"));
 
@@ -195,7 +192,6 @@ public class CloudConfig {
 
             this.wrapperKey = NetworkUtils.readWrapperKey();
             this.autoUpdate = configuration.getBoolean("general.auto-update");
-            this.hasteServer = configuration.getStringList("general.haste.server");
             this.notifyService = configuration.getBoolean("general.notify-service");
             this.cloudDevServices = configuration.getBoolean("general.devservices");
             this.cloudDynamicServices = configuration.getBoolean("general.dynamicservices");
@@ -371,6 +367,5 @@ public class CloudConfig {
             }
         });
     }
-
 
 }

@@ -5,15 +5,17 @@
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import lombok.AllArgsConstructor;
 
 /**
  * Calls if a player logouts into
  */
-@AllArgsConstructor
 public class ProxiedPlayerLogoutEvent extends ProxiedCloudEvent {
 
     private CloudPlayer cloudPlayer;
+
+    public ProxiedPlayerLogoutEvent(CloudPlayer cloudPlayer) {
+        this.cloudPlayer = cloudPlayer;
+    }
 
     public CloudPlayer getCloudPlayer()
     {

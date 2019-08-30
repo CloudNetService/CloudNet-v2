@@ -4,18 +4,25 @@
 
 package de.dytanic.cloudnet.lib.network.protocol;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Created by Tareko on 09.09.2017.
  */
-@Getter
-@AllArgsConstructor
 public class ProtocolRequest {
 
     private int id;
 
     private Object element;
 
+    public ProtocolRequest(int id, Object element) {
+        this.id = id;
+        this.element = element;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Object getElement() {
+        return element;
+    }
 }

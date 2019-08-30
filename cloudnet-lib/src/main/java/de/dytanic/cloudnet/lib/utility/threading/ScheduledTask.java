@@ -1,11 +1,8 @@
 package de.dytanic.cloudnet.lib.utility.threading;
 
-import lombok.Getter;
-
 /**
  * Created by Tareko on 24.05.2017.
  */
-@Getter
 public class ScheduledTask
         implements Runnable {
 
@@ -28,6 +25,34 @@ public class ScheduledTask
 
         this.delayTime = this.delay;
         this.repeatTime = repeatDelay == 0 ? -1 : repeatDelay;
+    }
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public int getDelayTime() {
+        return delayTime;
+    }
+
+    public int getRepeatDelay() {
+        return repeatDelay;
+    }
+
+    public int getRepeatTime() {
+        return repeatTime;
+    }
+
+    public long getTaskId() {
+        return taskId;
+    }
+
+    public Runnable getRunnable() {
+        return runnable;
+    }
+
+    public boolean isInterrupted() {
+        return interrupted;
     }
 
     protected boolean isAsync()

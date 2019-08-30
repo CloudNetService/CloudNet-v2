@@ -4,8 +4,6 @@
 
 package de.dytanic.cloudnet.logging;
 
-import lombok.Getter;
-
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -16,7 +14,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Asynchronous print stream that takes print statements without blocking.
  */
-@Getter
 public class AsyncPrintStream extends PrintStream {
 
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
@@ -31,6 +28,14 @@ public class AsyncPrintStream extends PrintStream {
     public AsyncPrintStream(OutputStream out) throws UnsupportedEncodingException
     {
         super(out, true, StandardCharsets.UTF_8.name());
+    }
+
+    public Thread getWorker() {
+        return worker;
+    }
+
+    public BlockingQueue<Runnable> getQueue() {
+        return queue;
     }
 
     private void println0()

@@ -4,9 +4,6 @@
 
 package de.dytanic.cloudnet.modules;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +14,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Created by Tareko on 23.07.2017.
  */
-@Getter
 public class ModuleManager {
 
     private ModuleDetector moduleDetector = new ModuleDetector();
@@ -25,12 +21,31 @@ public class ModuleManager {
 
     private final Collection<Module> modules = new ConcurrentLinkedQueue<>();
 
-    @Setter
     private Collection<String> disabledModuleList = new ArrayList<>();
 
     public ModuleManager()
     {
         directory.mkdir();
+    }
+
+    public void setDisabledModuleList(Collection<String> disabledModuleList) {
+        this.disabledModuleList = disabledModuleList;
+    }
+
+    public Collection<Module> getModules() {
+        return modules;
+    }
+
+    public Collection<String> getDisabledModuleList() {
+        return disabledModuleList;
+    }
+
+    public File getDirectory() {
+        return directory;
+    }
+
+    public ModuleDetector getModuleDetector() {
+        return moduleDetector;
     }
 
     public Collection<ModuleConfig> detect() throws Exception

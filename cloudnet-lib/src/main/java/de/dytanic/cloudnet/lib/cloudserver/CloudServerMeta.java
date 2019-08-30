@@ -10,7 +10,6 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +18,6 @@ import java.util.Properties;
 /**
  * Created by Tareko on 17.10.2017.
  */
-@Getter
 public class CloudServerMeta {
 
     private ServiceId serviceId;
@@ -57,5 +55,49 @@ public class CloudServerMeta {
         this.serverProperties = properties;
         this.serverGroupType = serverGroupType;
         this.template = new Template(templateName, TemplateResource.MASTER, null, new String[0], new ArrayList<>());
+    }
+
+    public Template getTemplate() {
+        return template;
+    }
+
+    public int getMemory() {
+        return memory;
+    }
+
+    public Properties getServerProperties() {
+        return serverProperties;
+    }
+
+    public ServerConfig getServerConfig() {
+        return serverConfig;
+    }
+
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String[] getProcessParameters() {
+        return processParameters;
+    }
+
+    public ServerGroupType getServerGroupType() {
+        return serverGroupType;
+    }
+
+    public Collection<ServerInstallablePlugin> getPlugins() {
+        return plugins;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public boolean isPriorityStop() {
+        return priorityStop;
     }
 }

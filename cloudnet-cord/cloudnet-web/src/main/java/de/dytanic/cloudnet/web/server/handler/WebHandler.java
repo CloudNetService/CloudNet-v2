@@ -9,12 +9,10 @@ import de.dytanic.cloudnet.web.server.util.QueryDecoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
-import lombok.Getter;
 
 /**
  * Abstract class that handles web requests for a given path.
  */
-@Getter
 public abstract class WebHandler implements Cloneable {
 
     protected final String path;
@@ -27,6 +25,10 @@ public abstract class WebHandler implements Cloneable {
     protected WebHandler(String path)
     {
         this.path = path;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     /**

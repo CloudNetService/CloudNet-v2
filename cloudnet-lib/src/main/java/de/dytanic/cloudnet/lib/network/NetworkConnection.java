@@ -16,9 +16,6 @@ import io.netty.channel.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -26,10 +23,8 @@ import java.nio.file.Path;
 /**
  * Created by Tareko on 22.07.2017.
  */
-@Getter
 public final class NetworkConnection implements PacketSender {
 
-    @Setter(AccessLevel.PROTECTED)
     private Channel channel;
     private ConnectableAddress connectableAddress;
 
@@ -40,6 +35,38 @@ public final class NetworkConnection implements PacketSender {
 
     private Runnable task;
     private SslContext sslContext;
+
+    public PacketManager getPacketManager() {
+        return packetManager;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public SslContext getSslContext() {
+        return sslContext;
+    }
+
+    public ConnectableAddress getConnectableAddress() {
+        return connectableAddress;
+    }
+
+    public EventLoopGroup getEventLoopGroup() {
+        return eventLoopGroup;
+    }
+
+    public long getConnectionTrys() {
+        return connectionTrys;
+    }
+
+    public Runnable getTask() {
+        return task;
+    }
+
+    protected void setChannel(Channel channel) {
+        this.channel = channel;
+    }
 
     @Override
     public String getName()

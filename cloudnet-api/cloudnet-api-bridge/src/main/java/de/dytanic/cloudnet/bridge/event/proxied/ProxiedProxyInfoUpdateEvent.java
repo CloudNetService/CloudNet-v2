@@ -5,15 +5,17 @@
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
-import lombok.AllArgsConstructor;
 
 /**
  * Calls if a proxy server updates the proxyInfo
  */
-@AllArgsConstructor
 public class ProxiedProxyInfoUpdateEvent extends ProxiedCloudEvent {
 
     private ProxyInfo proxyInfo;
+
+    public ProxiedProxyInfoUpdateEvent(ProxyInfo proxyInfo) {
+        this.proxyInfo = proxyInfo;
+    }
 
     public ProxyInfo getProxyInfo()
     {

@@ -9,7 +9,6 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufProcessor;
 import io.netty.buffer.Unpooled;
 import io.netty.util.ByteProcessor;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by Tareko on 09.09.2017.
  */
-@Getter
 public final class ProtocolBuffer extends ByteBuf implements Cloneable {
 
     private ByteBuf byteBuf;
@@ -33,6 +31,10 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     public ProtocolBuffer(ByteBuf byteBuf)
     {
         this.byteBuf = byteBuf;
+    }
+
+    public ByteBuf getByteBuf() {
+        return byteBuf;
     }
 
     @Override

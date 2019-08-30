@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.setup.spigot;
 
 import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import jline.console.ConsoleReader;
-import lombok.Setter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +22,6 @@ import java.nio.file.StandardCopyOption;
 public class SetupSpigotVersion
         implements Runnabled<ConsoleReader> {
 
-    @Setter
     private Path target;
 
     private final Runnabled<String> download = new Runnabled<String>() {
@@ -47,6 +45,10 @@ public class SetupSpigotVersion
             }
         }
     };
+
+    public void setTarget(Path target) {
+        this.target = target;
+    }
 
     @Override
     public void run(ConsoleReader reader)
