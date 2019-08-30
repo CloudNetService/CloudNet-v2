@@ -245,13 +245,7 @@ public class CloudConfig {
     {
         Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>() {
         }.getType());
-        WrapperMeta is = CollectionWrapper.filter(wrapperMetas, new Predicate<WrapperMeta>() {
-            @Override
-            public boolean test(WrapperMeta wrapperMeta_)
-            {
-                return wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId());
-            }
-        });
+        WrapperMeta is = CollectionWrapper.filter(wrapperMetas, wrapperMeta_ -> wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId()));
         if (is != null) wrapperMetas.remove(is);
 
         wrapperMetas.add(wrapperMeta);
@@ -284,13 +278,7 @@ public class CloudConfig {
     {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
-        CollectionWrapper.checkAndRemove(groups, new Predicate<ProxyGroup>() {
-            @Override
-            public boolean test(ProxyGroup value)
-            {
-                return value.getName().equals(serverGroup.getName());
-            }
-        });
+        CollectionWrapper.checkAndRemove(groups, value -> value.getName().equals(serverGroup.getName()));
 
         groups.add(serverGroup);
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
@@ -305,13 +293,7 @@ public class CloudConfig {
     {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
-        CollectionWrapper.checkAndRemove(groups, new Predicate<ProxyGroup>() {
-            @Override
-            public boolean test(ProxyGroup value)
-            {
-                return value.getName().equals(proxyGroup.getName());
-            }
-        });
+        CollectionWrapper.checkAndRemove(groups, value -> value.getName().equals(proxyGroup.getName()));
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
     }
 
@@ -364,13 +346,7 @@ public class CloudConfig {
         Collection<ProxyGroup> collection = serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
         }.getType());
 
-        return MapWrapper.collectionCatcherHashMap(collection, new Function<ProxyGroup, String>() {
-            @Override
-            public String apply(ProxyGroup key)
-            {
-                return key.getName();
-            }
-        });
+        return MapWrapper.collectionCatcherHashMap(collection, key -> key.getName());
     }
 
 }

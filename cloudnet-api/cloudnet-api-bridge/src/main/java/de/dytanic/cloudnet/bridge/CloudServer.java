@@ -135,20 +135,16 @@ public class CloudServer implements ICloudService {
      */
     public void updateAsync()
     {
-        bukkitBootstrap.getServer().getScheduler().runTaskAsynchronously(bukkitBootstrap, new Runnable() {
-            @Override
-            public void run()
+        bukkitBootstrap.getServer().getScheduler().runTaskAsynchronously(bukkitBootstrap, () -> {
+            List<String> list = new CopyOnWriteArrayList<>();
+            for (Player all : Bukkit.getOnlinePlayers())
             {
-                List<String> list = new CopyOnWriteArrayList<>();
-                for (Player all : Bukkit.getOnlinePlayers())
-                {
-                    list.add(all.getName());
-                }
-
-                ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(), hostAdress,
-                        port, true, list, memory, motd, Bukkit.getOnlinePlayers().size(), maxPlayers, serverState, serverConfig, template);
-                CloudAPI.getInstance().update(serverInfo);
+                list.add(all.getName());
             }
+
+            ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(), hostAdress,
+                    port, true, list, memory, motd, Bukkit.getOnlinePlayers().size(), maxPlayers, serverState, serverConfig, template);
+            CloudAPI.getInstance().update(serverInfo);
         });
     }
 
@@ -165,13 +161,7 @@ public class CloudServer implements ICloudService {
             CloudAPI.getInstance().startGameServer(simpleServerGroup, template);
             setAllowAutoStart(false);
 
-            Bukkit.getScheduler().runTaskLater(bukkitBootstrap, new Runnable() {
-                @Override
-                public void run()
-                {
-                    setAllowAutoStart(true);
-                }
-            }, 6000);
+            Bukkit.getScheduler().runTaskLater(bukkitBootstrap, () -> setAllowAutoStart(true), 6000);
         }
 
         update();
@@ -195,13 +185,7 @@ public class CloudServer implements ICloudService {
 
     public CloudPlayer getCachedPlayer(String name)
     {
-        return CollectionWrapper.filter(this.cloudPlayers.values(), new Predicate<CloudPlayer>() {
-            @Override
-            public boolean test(CloudPlayer cloudPlayer)
-            {
-                return cloudPlayer.getName().equalsIgnoreCase(name);
-            }
-        });
+        return CollectionWrapper.filter(this.cloudPlayers.values(), cloudPlayer -> cloudPlayer.getName().equalsIgnoreCase(name));
     }
 
     @Override

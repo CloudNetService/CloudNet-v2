@@ -58,18 +58,14 @@ public final class CloudNetServer
             CloudNet.getLogger().debug("Using " + (Epoll.isAvailable() ? "Epoll native transport" : "NIO transport"));
             CloudNet.getLogger().debug("Try to bind to " + connectableAddress.getHostName() + ":" + connectableAddress.getPort() + "...");
 
-            ChannelFuture channelFuture = serverBootstrap.bind(connectableAddress.getHostName(), connectableAddress.getPort()).addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture channelFuture) throws Exception
+            ChannelFuture channelFuture = serverBootstrap.bind(connectableAddress.getHostName(), connectableAddress.getPort()).addListener((ChannelFutureListener) channelFuture1 -> {
+                if (channelFuture1.isSuccess())
                 {
-                    if (channelFuture.isSuccess())
-                    {
-                        System.out.println("CloudNet is listening @" + connectableAddress.getHostName() + ":" + connectableAddress.getPort());
-                        CloudNet.getInstance().getCloudServers().add(CloudNetServer.this);
+                    System.out.println("CloudNet is listening @" + connectableAddress.getHostName() + ":" + connectableAddress.getPort());
+                    CloudNet.getInstance().getCloudServers().add(CloudNetServer.this);
 
-                    } else
-                        System.out.println("Failed to bind @" + connectableAddress.getHostName() + ":" + connectableAddress.getPort());
-                }
+                } else
+                    System.out.println("Failed to bind @" + connectableAddress.getHostName() + ":" + connectableAddress.getPort());
             }).addListener(ChannelFutureListener.CLOSE_ON_FAILURE).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
 
             channelFuture.sync().channel().closeFuture();

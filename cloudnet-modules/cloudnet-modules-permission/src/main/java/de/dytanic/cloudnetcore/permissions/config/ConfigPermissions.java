@@ -85,13 +85,7 @@ public class ConfigPermissions {
                 Document document = Document.loadDocument(Paths.get("local/permissions.yml"));
                 Collection<PermissionGroup> groups = document.getObject("groups", new TypeToken<Collection<PermissionGroup>>() {
                 }.getType());
-                Map<String, PermissionGroup> maps = MapWrapper.collectionCatcherHashMap(groups, new Function<PermissionGroup, String>() {
-                    @Override
-                    public String apply(PermissionGroup key)
-                    {
-                        return key.getName();
-                    }
-                });
+                Map<String, PermissionGroup> maps = MapWrapper.collectionCatcherHashMap(groups, key -> key.getName());
 
                 configuration.set("enabled", document.getBoolean("enabled"));
 

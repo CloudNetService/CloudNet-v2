@@ -1,7 +1,7 @@
 package de.dytanic.cloudnet.lib.scheduler;
 
-import de.dytanic.cloudnet.lib.utility.threading.Callback;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 public class TaskEntry<T> {
 
@@ -9,7 +9,7 @@ public class TaskEntry<T> {
 
     protected volatile T value = null;
 
-    protected Callback<T> callback;
+    protected Consumer<T> consumer;
 
     protected long delayTimeOut, repeat, delay;
 
@@ -17,11 +17,11 @@ public class TaskEntry<T> {
 
     private final TaskEntryFuture<T> future;
 
-    public TaskEntry(Callable<T> task, Callback<T> complete, long delay, long repeat)
+    public TaskEntry(Callable<T> task, Consumer<T> complete, long delay, long repeat)
     {
 
         this.task = task;
-        this.callback = complete;
+        this.consumer = complete;
         this.delay = delay;
         this.delayTimeOut = System.currentTimeMillis() + delay;
         this.repeat = repeat;
@@ -39,8 +39,8 @@ public class TaskEntry<T> {
 
         value = val;
 
-        if (callback != null)
-            callback.call(val);
+        if (consumer != null)
+            consumer.accept(val);
 
         if (repeat != -1 && repeat != 0) repeat--;
 
@@ -61,9 +61,9 @@ public class TaskEntry<T> {
     }
 
 
-    public Callback<T> getCallback()
+    public Consumer<T> getConsumer()
     {
-        return callback;
+        return consumer;
     }
 
 

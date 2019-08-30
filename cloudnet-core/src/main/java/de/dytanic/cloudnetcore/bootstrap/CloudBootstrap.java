@@ -93,12 +93,8 @@ public final class CloudBootstrap {
         CloudLogger cloudNetLogging = new CloudLogger();
         if (optionSet.has("debug")) cloudNetLogging.setDebugging(true);
 
-        cloudNetLogging.getHandler().add(new ICloudLoggerHandler() {
-            @Override
-            public void handleConsole(String input)
-            {
-                if (!CloudNet.RUNNING) consolePreInit.add(input);
-            }
+        cloudNetLogging.getHandler().add(input -> {
+            if (!CloudNet.RUNNING) consolePreInit.add(input);
         });
 
         new HeaderFunction();

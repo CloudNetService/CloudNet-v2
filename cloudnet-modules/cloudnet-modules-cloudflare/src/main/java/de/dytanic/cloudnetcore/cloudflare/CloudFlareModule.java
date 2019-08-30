@@ -48,19 +48,7 @@ public class CloudFlareModule extends CoreModule {
         {
 
             CloudFlareService cloudFlareAPI = new CloudFlareService(configCloudFlare.load());
-            cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), new Function<String, String>() {
-                @Override
-                public String apply(String key)
-                {
-                    return key;
-                }
-            }, new Function<Wrapper, SimpledWrapperInfo>() {
-                @Override
-                public SimpledWrapperInfo apply(Wrapper key)
-                {
-                    return new SimpledWrapperInfo(key.getServerId(), key.getNetworkInfo().getHostName());
-                }
-            }), getCloud().getProxyGroups(), cloudFlareDatabase);
+            cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), key -> key, key -> new SimpledWrapperInfo(key.getServerId(), key.getNetworkInfo().getHostName())), getCloud().getProxyGroups(), cloudFlareDatabase);
 
         } catch (Exception ex)
         {

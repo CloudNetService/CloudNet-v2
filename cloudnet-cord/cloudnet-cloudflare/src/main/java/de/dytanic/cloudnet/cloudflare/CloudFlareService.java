@@ -189,13 +189,7 @@ public class CloudFlareService {
     {
         //if (!bungeeSRVRecords.containsKey(proxyServer.getServiceId().getServerId())) return;
 
-        Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(), new Predicate<MultiValue<PostResponse, String>>() {
-            @Override
-            public boolean test(MultiValue<PostResponse, String> postResponseStringMultiValue)
-            {
-                return postResponseStringMultiValue.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId());
-            }
-        });
+        Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(), postResponseStringMultiValue -> postResponseStringMultiValue.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId()));
 
         //MultiValue<PostResponse, String> postResponse = bungeeSRVRecords.get(proxyServer.getServiceId().getServerId());
             /*

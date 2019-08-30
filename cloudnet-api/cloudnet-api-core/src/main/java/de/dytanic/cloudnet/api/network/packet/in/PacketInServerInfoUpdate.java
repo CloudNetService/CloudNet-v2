@@ -26,13 +26,7 @@ public final class PacketInServerInfoUpdate extends PacketInHandlerDefault {
         }.getType());
         if (CloudAPI.getInstance() != null)
         {
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Consumer<NetworkHandler>() {
-                @Override
-                public void accept(NetworkHandler obj)
-                {
-                    obj.onServerInfoUpdate(serverInfo);
-                }
-            });
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(obj -> obj.onServerInfoUpdate(serverInfo));
         }
     }
 }

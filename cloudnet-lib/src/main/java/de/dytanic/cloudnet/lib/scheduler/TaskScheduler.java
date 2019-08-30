@@ -1,6 +1,5 @@
 package de.dytanic.cloudnet.lib.scheduler;
 
-import de.dytanic.cloudnet.lib.utility.threading.Callback;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +16,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -183,7 +183,7 @@ public class TaskScheduler {
 
     public TaskEntryFuture<Void> schedule(Runnable runnable)
     {
-        return schedule(runnable, (Callback<Void>) null);
+        return schedule(runnable, (Consumer<Void>) null);
     }
 
 
@@ -217,75 +217,75 @@ public class TaskScheduler {
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer)
     {
-        return schedule(runnable, callback, 0);
+        return schedule(runnable, consumer, 0);
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, LocalDate localDate, LocalTime localTime)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, LocalDate localDate, LocalTime localTime)
     {
-        return schedule(runnable, callback, localDate, localTime, 0);
+        return schedule(runnable, consumer, localDate, localTime, 0);
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, LocalDateTime localDateTime)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, LocalDateTime localDateTime)
     {
-        return schedule(runnable, callback, localDateTime, 0);
+        return schedule(runnable, consumer, localDateTime, 0);
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, LocalDateTime localDateTime, long repeats)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, LocalDateTime localDateTime, long repeats)
     {
-        return schedule(runnable, callback, localDateTime.atZone(ZoneId.systemDefault()), repeats);
+        return schedule(runnable, consumer, localDateTime.atZone(ZoneId.systemDefault()), repeats);
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, LocalDate localDate, LocalTime localTime, long repeats)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, LocalDate localDate, LocalTime localTime, long repeats)
     {
-        return schedule(runnable, callback, LocalDateTime.of(localDate, localTime), repeats);
+        return schedule(runnable, consumer, LocalDateTime.of(localDate, localTime), repeats);
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, ZonedDateTime zonedDateTime)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, ZonedDateTime zonedDateTime)
     {
-        return schedule(runnable, callback, zonedDateTime, 0);
+        return schedule(runnable, consumer, zonedDateTime, 0);
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, Instant instant)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, Instant instant)
     {
-        return schedule(runnable, callback, instant, 0);
+        return schedule(runnable, consumer, instant, 0);
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, Date timeout)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, Date timeout)
     {
-        return schedule(runnable, callback, timeout.getTime() - System.currentTimeMillis());
+        return schedule(runnable, consumer, timeout.getTime() - System.currentTimeMillis());
     }
 
 
     public TaskEntryFuture<Void> schedule(Runnable runnable, long delay)
     {
-        return schedule(runnable, (Callback<Void>) null, delay);
+        return schedule(runnable, (Consumer<Void>) null, delay);
     }
 
 
     public TaskEntryFuture<Void> schedule(Runnable runnable, long delay, TimeUnit timeUnit)
     {
-        return schedule(runnable, (Callback<Void>) null, timeUnit.toMillis(delay));
+        return schedule(runnable, (Consumer<Void>) null, timeUnit.toMillis(delay));
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, long delay)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, long delay)
     {
-        return schedule(runnable, callback, delay, 0);
+        return schedule(runnable, consumer, delay, 0);
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, long delay, TimeUnit timeUnit)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, long delay, TimeUnit timeUnit)
     {
-        return schedule(runnable, (Callback<Void>) null, timeUnit.toMillis(delay));
+        return schedule(runnable, (Consumer<Void>) null, timeUnit.toMillis(delay));
     }
 
 
@@ -295,15 +295,15 @@ public class TaskScheduler {
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, ZonedDateTime zonedDateTime, long repeats)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, ZonedDateTime zonedDateTime, long repeats)
     {
-        return schedule(runnable, callback, zonedDateTime.toInstant(), repeats);
+        return schedule(runnable, consumer, zonedDateTime.toInstant(), repeats);
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, Instant instant, long repeats)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, Instant instant, long repeats)
     {
-        return schedule(runnable, callback, instant.toEpochMilli() - System.currentTimeMillis(), repeats);
+        return schedule(runnable, consumer, instant.toEpochMilli() - System.currentTimeMillis(), repeats);
     }
 
 
@@ -319,21 +319,21 @@ public class TaskScheduler {
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, Date timeout, long repeats)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, Date timeout, long repeats)
     {
-        return schedule(runnable, callback, timeout.getTime() - System.currentTimeMillis(), repeats);
+        return schedule(runnable, consumer, timeout.getTime() - System.currentTimeMillis(), repeats);
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, long delay, long repeats)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, long delay, long repeats)
     {
-        return schedule(new VoidTaskEntry(runnable, callback, delay, repeats));
+        return schedule(new VoidTaskEntry(runnable, consumer, delay, repeats));
     }
 
 
-    public TaskEntryFuture<Void> schedule(Runnable runnable, Callback<Void> callback, long delay, TimeUnit timeUnit, long repeats)
+    public TaskEntryFuture<Void> schedule(Runnable runnable, Consumer<Void> consumer, long delay, TimeUnit timeUnit, long repeats)
     {
-        return schedule(runnable, callback, timeUnit.toMillis(delay), repeats);
+        return schedule(runnable, consumer, timeUnit.toMillis(delay), repeats);
     }
 
 
@@ -342,7 +342,7 @@ public class TaskScheduler {
 
     public <V> TaskEntryFuture<V> schedule(Callable<V> callable)
     {
-        return schedule(callable, (Callback<V>) null);
+        return schedule(callable, (Consumer<V>) null);
     }
 
 
@@ -382,81 +382,81 @@ public class TaskScheduler {
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer)
     {
-        return schedule(callable, callback, 0);
+        return schedule(callable, consumer, 0);
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, LocalDate localDate, LocalTime localTime)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, LocalDate localDate, LocalTime localTime)
     {
-        return schedule(callable, callback, localDate, localTime, 0);
+        return schedule(callable, consumer, localDate, localTime, 0);
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, LocalDateTime localDateTime)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, LocalDateTime localDateTime)
     {
-        return schedule(callable, callback, localDateTime, 0);
+        return schedule(callable, consumer, localDateTime, 0);
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, ZonedDateTime zonedDateTime)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, ZonedDateTime zonedDateTime)
     {
-        return schedule(callable, callback, zonedDateTime, 0);
+        return schedule(callable, consumer, zonedDateTime, 0);
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, Instant instant)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, Instant instant)
     {
-        return schedule(callable, callback, instant, 0);
+        return schedule(callable, consumer, instant, 0);
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, long delay)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, long delay)
     {
-        return schedule(callable, callback, delay, 0);
+        return schedule(callable, consumer, delay, 0);
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, long delay, TimeUnit timeUnit)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, long delay, TimeUnit timeUnit)
     {
-        return schedule(callable, callback, timeUnit.toMillis(delay));
+        return schedule(callable, consumer, timeUnit.toMillis(delay));
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, long delay, long repeats)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, long delay, long repeats)
     {
-        return schedule(new TaskEntry<>(callable, callback, delay, repeats));
+        return schedule(new TaskEntry<>(callable, consumer, delay, repeats));
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, long delay, TimeUnit timeUnit, long repeats)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, long delay, TimeUnit timeUnit, long repeats)
     {
-        return schedule(callable, callback, timeUnit.toMillis(delay), repeats);
+        return schedule(callable, consumer, timeUnit.toMillis(delay), repeats);
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, LocalDate localDate, LocalTime localTime, long repeats)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, LocalDate localDate, LocalTime localTime, long repeats)
     {
-        return schedule(callable, callback, LocalDateTime.of(localDate, localTime), repeats);
+        return schedule(callable, consumer, LocalDateTime.of(localDate, localTime), repeats);
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, LocalDateTime localDateTime, long repeats)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, LocalDateTime localDateTime, long repeats)
     {
-        return schedule(callable, callback, localDateTime.atZone(ZoneId.systemDefault()), 0);
+        return schedule(callable, consumer, localDateTime.atZone(ZoneId.systemDefault()), 0);
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, ZonedDateTime zonedDateTime, long repeats)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, ZonedDateTime zonedDateTime, long repeats)
     {
-        return schedule(callable, callback, zonedDateTime.toInstant(), 0);
+        return schedule(callable, consumer, zonedDateTime.toInstant(), 0);
     }
 
 
-    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Callback<V> callback, Instant instant, long repeats)
+    public <V> TaskEntryFuture<V> schedule(Callable<V> callable, Consumer<V> consumer, Instant instant, long repeats)
     {
-        return schedule(callable, callback, instant.toEpochMilli(), 0);
+        return schedule(callable, consumer, instant.toEpochMilli(), 0);
     }
 
 
@@ -712,25 +712,20 @@ public class TaskScheduler {
 
     private final class VoidTaskEntry extends TaskEntry<Void> {
 
-        public VoidTaskEntry(Callable<Void> pTask, Callback<Void> pComplete, long pDelay, long pRepeat)
+        public VoidTaskEntry(Callable<Void> pTask, Consumer<Void> pComplete, long pDelay, long pRepeat)
         {
             super(pTask, pComplete, pDelay, pRepeat);
         }
 
 
-        public VoidTaskEntry(Runnable ptask, Callback<Void> pComplete, long pDelay, long pRepeat)
+        public VoidTaskEntry(Runnable ptask, Consumer<Void> pComplete, long pDelay, long pRepeat)
         {
-            super(new Callable<Void>() {
+            super(() -> {
 
-                @Override
-                public Void call() throws Exception
-                {
+                if (ptask != null)
+                    ptask.run();
 
-                    if (ptask != null)
-                        ptask.run();
-
-                    return null;
-                }
+                return null;
             }, pComplete, pDelay, pRepeat);
         }
     }

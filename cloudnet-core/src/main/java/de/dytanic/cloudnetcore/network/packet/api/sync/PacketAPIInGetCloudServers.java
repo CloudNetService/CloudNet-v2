@@ -23,13 +23,7 @@ public class PacketAPIInGetCloudServers extends PacketAPIIO {
     @Override
     public void handleInput(Document data, PacketSender packetSender)
     {
-        Collection<ServerInfo> serverInfos = CollectionWrapper.transform(CloudNet.getInstance().getCloudGameServers().values(), new Function<CloudServer, ServerInfo>() {
-            @Override
-            public ServerInfo apply(CloudServer key)
-            {
-                return key.getServerInfo();
-            }
-        });
+        Collection<ServerInfo> serverInfos = CollectionWrapper.transform(CloudNet.getInstance().getCloudGameServers().values(), key -> key.getServerInfo());
         packetSender.sendPacket(getResult(new Document("serverInfos", serverInfos)));
     }
 

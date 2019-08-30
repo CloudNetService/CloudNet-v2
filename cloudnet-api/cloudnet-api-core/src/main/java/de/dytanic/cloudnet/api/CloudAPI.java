@@ -196,13 +196,7 @@ public final class CloudAPI implements MetaObj {
     public int getOnlineCount(String group)
     {
         AtomicInteger integer = new AtomicInteger(0);
-        CollectionWrapper.iterator(getServers(group), new Consumer<ServerInfo>() {
-            @Override
-            public void accept(ServerInfo obj)
-            {
-                integer.addAndGet(obj.getOnlineCount());
-            }
-        });
+        CollectionWrapper.iterator(getServers(group), obj -> integer.addAndGet(obj.getOnlineCount()));
         return integer.get();
     }
 
@@ -435,13 +429,7 @@ public final class CloudAPI implements MetaObj {
      */
     public WrapperInfo getWrapper(String wrapperId)
     {
-        return CollectionWrapper.filter(cloudNetwork.getWrappers(), new Predicate<WrapperInfo>() {
-            @Override
-            public boolean test(WrapperInfo value)
-            {
-                return value.getServerId().equalsIgnoreCase(wrapperId);
-            }
-        });
+        return CollectionWrapper.filter(cloudNetwork.getWrappers(), value -> value.getServerId().equalsIgnoreCase(wrapperId));
     }
 
     /**
@@ -1168,13 +1156,7 @@ public final class CloudAPI implements MetaObj {
     public Collection<ServerInfo> getCloudServers()
     {
         if (cloudService != null && cloudService.isProxyInstance())
-            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Predicate<ServerInfo>() {
-                @Override
-                public boolean test(ServerInfo serverInfo)
-                {
-                    return serverInfo.getServiceId().getGroup() == null;
-                }
-            });
+            return CollectionWrapper.filterMany(cloudService.getServers().values(), serverInfo -> serverInfo.getServiceId().getGroup() == null);
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetCloudServers(), networkConnection);
         return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {
@@ -1189,13 +1171,7 @@ public final class CloudAPI implements MetaObj {
     public Collection<ServerInfo> getServers(String group)
     {
         if (cloudService != null && cloudService.isProxyInstance())
-            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Predicate<ServerInfo>() {
-                @Override
-                public boolean test(ServerInfo serverInfo)
-                {
-                    return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
-                }
-            });
+            return CollectionWrapper.filterMany(cloudService.getServers().values(), serverInfo -> serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group));
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(group), networkConnection);
         return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {

@@ -24,13 +24,7 @@ public class PacketInLoginPlayer extends PacketInHandlerDefault {
         if (CloudAPI.getInstance() != null)
         {
             CloudPlayer cloudPlayer = data.getObject("player", CloudPlayer.TYPE);
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Consumer<NetworkHandler>() {
-                @Override
-                public void accept(NetworkHandler obj)
-                {
-                    obj.onPlayerLoginNetwork(cloudPlayer);
-                }
-            });
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(obj -> obj.onPlayerLoginNetwork(cloudPlayer));
         }
     }
 }

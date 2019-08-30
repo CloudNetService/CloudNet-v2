@@ -38,33 +38,19 @@ public class PacketInUpdateProxyGroup extends PacketInHandler {
         CloudNet.getInstance().getServerGroups().clear();
         CloudNet.getInstance().getProxyGroups().clear();
 
-        NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Predicate<ServerGroup>() {
-            @Override
-            public boolean test(ServerGroup value)
-            {
-                System.out.println("Loading server group: " + value.getName());
-                return true;
-            }
+        NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), value -> {
+            System.out.println("Loading server group: " + value.getName());
+            return true;
         });
 
-        NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Predicate<ProxyGroup>() {
-            @Override
-            public boolean test(ProxyGroup value)
-            {
-                System.out.println("Loading proxy group: " + value.getName());
-                return true;
-            }
+        NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), value -> {
+            System.out.println("Loading proxy group: " + value.getName());
+            return true;
         });
 
         CloudNet.getInstance().getNetworkManager().reload();
         CloudNet.getInstance().getNetworkManager().updateAll0();
-        CloudNet.getInstance().getWrappers().values().forEach(new Consumer<Wrapper>() {
-            @Override
-            public void accept(Wrapper wrapper)
-            {
-                wrapper.updateWrapper();
-            }
-        });
+        CloudNet.getInstance().getWrappers().values().forEach(wrapper -> wrapper.updateWrapper());
 
     }
 }

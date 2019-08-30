@@ -24,13 +24,7 @@ public class PacketInUpdatePlayer extends PacketInHandlerDefault {
         CloudPlayer cloudPlayer = data.getObject("player", CloudPlayer.TYPE);
         if (CloudAPI.getInstance() != null)
         {
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Consumer<NetworkHandler>() {
-                @Override
-                public void accept(NetworkHandler obj)
-                {
-                    obj.onPlayerUpdate(cloudPlayer);
-                }
-            });
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(obj -> obj.onPlayerUpdate(cloudPlayer));
         }
     }
 }

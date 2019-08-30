@@ -22,13 +22,7 @@ public class PacketInCustomSubChannelMessage extends PacketInHandlerDefault {
     {
         if (CloudAPI.getInstance() != null)
         {
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Consumer<NetworkHandler>() {
-                @Override
-                public void accept(NetworkHandler obj)
-                {
-                    obj.onCustomSubChannelMessageReceive(data.getString("channel"), data.getString("message"), data.getDocument("value"));
-                }
-            });
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(obj -> obj.onCustomSubChannelMessageReceive(data.getString("channel"), data.getString("message"), data.getDocument("value")));
         }
     }
 }

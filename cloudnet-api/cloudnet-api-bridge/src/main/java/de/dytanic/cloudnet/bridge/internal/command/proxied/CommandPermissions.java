@@ -199,20 +199,15 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             String permission = args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING);
                             boolean value = !args[4].startsWith("-");
 
-                            Consumer consumer = new Consumer<PermissionGroup>() {
-
-                                @Override
-                                public void accept(PermissionGroup permissionGroup)
+                            Consumer consumer = (Consumer<PermissionGroup>) permissionGroup -> {
+                                if (!permissionIsSet(permissionGroup.getPermissions(), permission, value))
                                 {
-                                    if (!permissionIsSet(permissionGroup.getPermissions(), permission, value))
-                                    {
-                                        permissionGroup.getPermissions().put(permission, value);
-                                        CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                                        sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\"");
-                                    } else
-                                    {
-                                        sender.sendMessage("The permission " + permission + " with the value " + String.valueOf(value).toLowerCase() + " is already set for the permission group " + permissionGroup.getName());
-                                    }
+                                    permissionGroup.getPermissions().put(permission, value);
+                                    CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+                                    sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\"");
+                                } else
+                                {
+                                    sender.sendMessage("The permission " + permission + " with the value " + String.valueOf(value).toLowerCase() + " is already set for the permission group " + permissionGroup.getName());
                                 }
                             };
 
@@ -232,14 +227,10 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     {
                         if (permissionPool.getGroups().containsKey(args[1]) || args[1].equals("*"))
                         {
-                            Consumer consumer = new Consumer<PermissionGroup>() {
-                                @Override
-                                public void accept(PermissionGroup permissionGroup)
-                                {
-                                    permissionGroup.getPermissions().remove(args[4]);
-                                    CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                                    sender.sendMessage("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\"");
-                                }
+                            Consumer consumer = (Consumer<PermissionGroup>) permissionGroup -> {
+                                permissionGroup.getPermissions().remove(args[4]);
+                                CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+                                sender.sendMessage("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\"");
                             };
 
                             if (args[1].equals("*"))
@@ -260,19 +251,15 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     {
                         if (permissionPool.getGroups().containsKey(args[1]) || args[1].equals("*"))
                         {
-                            Consumer consumer = new Consumer<PermissionGroup>() {
-                                @Override
-                                public void accept(PermissionGroup permissionGroup)
-                                {
-                                    if (!permissionGroup.getServerGroupPermissions().containsKey(args[5]))
-                                        permissionGroup.getServerGroupPermissions().put(args[5], new ArrayList<>());
+                            Consumer consumer = (Consumer<PermissionGroup>) permissionGroup -> {
+                                if (!permissionGroup.getServerGroupPermissions().containsKey(args[5]))
+                                    permissionGroup.getServerGroupPermissions().put(args[5], new ArrayList<>());
 
-                                    permissionGroup.getServerGroupPermissions().get(args[5]).add(args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING));
-                                    CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+                                permissionGroup.getServerGroupPermissions().get(args[5]).add(args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING));
+                                CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
 
-                                    sender.sendMessage("You added the permission " + args[4] + " for the permission group \""
-                                            + permissionGroup.getName() + "\" on server group " + args[5]);
-                                }
+                                sender.sendMessage("You added the permission " + args[4] + " for the permission group \""
+                                        + permissionGroup.getName() + "\" on server group " + args[5]);
                             };
 
                             if (args[1].equals("*"))
@@ -291,19 +278,15 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     {
                         if (permissionPool.getGroups().containsKey(args[1]) || args[1].equals("*"))
                         {
-                            Consumer consumer = new Consumer<PermissionGroup>() {
-                                @Override
-                                public void accept(PermissionGroup permissionGroup)
+                            Consumer consumer = (Consumer<PermissionGroup>) permissionGroup -> {
+                                if (!permissionGroup.getServerGroupPermissions().containsKey(args[5]))
                                 {
-                                    if (!permissionGroup.getServerGroupPermissions().containsKey(args[5]))
-                                    {
-                                        permissionGroup.getServerGroupPermissions().put(args[5], new ArrayList<>());
-                                    }
-
-                                    permissionGroup.getServerGroupPermissions().get(args[5]).remove(args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING));
-                                    CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                                    sender.sendMessage("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\" on server group " + args[5]);
+                                    permissionGroup.getServerGroupPermissions().put(args[5], new ArrayList<>());
                                 }
+
+                                permissionGroup.getServerGroupPermissions().get(args[5]).remove(args[4].replaceFirst("-", NetworkUtils.EMPTY_STRING));
+                                CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
+                                sender.sendMessage("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup.getName() + "\" on server group " + args[5]);
                             };
 
                             if (args[1].equals("*"))

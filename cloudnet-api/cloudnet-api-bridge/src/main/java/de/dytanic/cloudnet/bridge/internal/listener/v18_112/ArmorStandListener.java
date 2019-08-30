@@ -23,17 +23,13 @@ public final class ArmorStandListener implements Listener {
     @EventHandler
     public void handle(PlayerArmorStandManipulateEvent e)
     {
-        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Predicate<MobImpl>() {
-            @Override
-            public boolean test(MobSelector.MobImpl value)
+        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), value -> {
+            try
             {
-                try
-                {
-                    return e.getRightClicked().getUniqueId().equals(value.getDisplayMessage().getClass().getMethod("getUniqueId").invoke(value.getDisplayMessage()));
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1)
-                {
-                    return false;
-                }
+                return e.getRightClicked().getUniqueId().equals(value.getDisplayMessage().getClass().getMethod("getUniqueId").invoke(value.getDisplayMessage()));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1)
+            {
+                return false;
             }
         });
         if (mob != null)
@@ -45,13 +41,7 @@ public final class ArmorStandListener implements Listener {
     @EventHandler
     public void handle(ItemDespawnEvent e)
     {
-        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Predicate<MobSelector.MobImpl>() {
-            @Override
-            public boolean test(MobSelector.MobImpl value)
-            {
-                return ((Entity) value.getDisplayMessage()).getPassenger() != null && e.getEntity().getEntityId() == ((Entity) value.getDisplayMessage()).getPassenger().getEntityId();
-            }
-        });
+        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), value -> ((Entity) value.getDisplayMessage()).getPassenger() != null && e.getEntity().getEntityId() == ((Entity) value.getDisplayMessage()).getPassenger().getEntityId());
         if (mob != null)
         {
             e.setCancelled(true);

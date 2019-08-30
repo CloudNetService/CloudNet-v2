@@ -406,13 +406,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         {
             try
             {
-                for (File file : new File(path).listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname)
-                    {
-                        return pathname.getName().contains("proxy.log");
-                    }
-                }))
+                for (File file : new File(path).listFiles(pathname -> pathname.getName().contains("proxy.log")))
                     FileUtility.copyFileToDirectory(file, new File("local/records/" + proxyProcessMeta.getServiceId().toString()));
 
                 new Document("meta", proxyProcessMeta).saveAsConfig(Paths.get("local/records/metadata.json"));

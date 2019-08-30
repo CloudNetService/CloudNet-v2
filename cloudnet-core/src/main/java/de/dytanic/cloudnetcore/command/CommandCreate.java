@@ -200,28 +200,10 @@ public final class CommandCreate extends Command {
                             serverGroup.getTemplates().add(new Template(args[1], TemplateResource.LOCAL, null, new String[]{}, Arrays.asList()));
                             CloudNet.getInstance().getConfig().createGroup(serverGroup);
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Predicate<ServerGroup>() {
-                                @Override
-                                public boolean test(ServerGroup value)
-                                {
-                                    return true;
-                                }
-                            });
+                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), value -> true);
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Predicate<ProxyGroup>() {
-                                @Override
-                                public boolean test(ProxyGroup value)
-                                {
-                                    return true;
-                                }
-                            });
-                            CloudNet.getInstance().getWrappers().values().forEach(new Consumer<Wrapper>() {
-                                @Override
-                                public void accept(Wrapper wrapper)
-                                {
-                                    wrapper.updateWrapper();
-                                }
-                            });
+                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), value -> true);
+                            CloudNet.getInstance().getWrappers().values().forEach(wrapper -> wrapper.updateWrapper());
                             sender.sendMessage("The template was created and all wrappers were updated!");
                         }
                         if (args[3].equalsIgnoreCase("MASTER"))
@@ -230,28 +212,10 @@ public final class CommandCreate extends Command {
                             serverGroup.getTemplates().add(new Template(args[1], TemplateResource.MASTER, null, new String[]{}, Arrays.asList()));
                             CloudNet.getInstance().getConfig().createGroup(serverGroup);
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Predicate<ServerGroup>() {
-                                @Override
-                                public boolean test(ServerGroup value)
-                                {
-                                    return true;
-                                }
-                            });
+                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), value -> true);
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Predicate<ProxyGroup>() {
-                                @Override
-                                public boolean test(ProxyGroup value)
-                                {
-                                    return true;
-                                }
-                            });
-                            CloudNet.getInstance().getWrappers().values().forEach(new Consumer<Wrapper>() {
-                                @Override
-                                public void accept(Wrapper wrapper)
-                                {
-                                    wrapper.updateWrapper();
-                                }
-                            });
+                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), value -> true);
+                            CloudNet.getInstance().getWrappers().values().forEach(wrapper -> wrapper.updateWrapper());
                             sender.sendMessage("The template was created and all wrappers were updated!");
                         }
                     } else
@@ -271,28 +235,10 @@ public final class CommandCreate extends Command {
                             serverGroup.getTemplates().add(new Template(args[1], TemplateResource.URL, args[4], new String[]{("-Dtest=true")}, Arrays.asList()));
                             CloudNet.getInstance().getConfig().createGroup(serverGroup);
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), new Predicate<ServerGroup>() {
-                                @Override
-                                public boolean test(ServerGroup value)
-                                {
-                                    return true;
-                                }
-                            });
+                            NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), value -> true);
 
-                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), new Predicate<ProxyGroup>() {
-                                @Override
-                                public boolean test(ProxyGroup value)
-                                {
-                                    return true;
-                                }
-                            });
-                            CloudNet.getInstance().getWrappers().values().forEach(new Consumer<Wrapper>() {
-                                @Override
-                                public void accept(Wrapper wrapper)
-                                {
-                                    wrapper.updateWrapper();
-                                }
-                            });
+                            NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), value -> true);
+                            CloudNet.getInstance().getWrappers().values().forEach(wrapper -> wrapper.updateWrapper());
                             sender.sendMessage("The template was created and all wrappers were updated!");
                         }
                     } else

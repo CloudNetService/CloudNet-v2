@@ -34,13 +34,7 @@ public class PacketInSignSelector extends PacketInHandler {
         SignLayoutConfig signLayoutConfig = data.getObject("signLayoutConfig", new TypeToken<SignLayoutConfig>() {
         }.getType());
 
-        Map<UUID, Sign> values = MapWrapper.filter(signMap, new Predicate<Sign>() {
-            @Override
-            public boolean test(Sign value)
-            {
-                return value.getPosition().getGroup().equals(CloudAPI.getInstance().getGroup());
-            }
-        });
+        Map<UUID, Sign> values = MapWrapper.filter(signMap, value -> value.getPosition().getGroup().equals(CloudAPI.getInstance().getGroup()));
 
         Bukkit.getPluginManager().callEvent(new BukkitUpdateSignLayoutsEvent(signLayoutConfig));
 

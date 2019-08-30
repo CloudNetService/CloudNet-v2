@@ -75,13 +75,7 @@ public final class CommandPermissions extends Command {
                         for (Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet())
                         {
                             sender.sendMessage(x.getKey() + ":");
-                            CollectionWrapper.iterator(x.getValue(), new Consumer<String>() {
-                                @Override
-                                public void accept(String obj)
-                                {
-                                    sender.sendMessage("- " + obj);
-                                }
-                            });
+                            CollectionWrapper.iterator(x.getValue(), obj -> sender.sendMessage("- " + obj));
                         }
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                     } else

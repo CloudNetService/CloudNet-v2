@@ -24,22 +24,14 @@ public class PacketInWrapperInfo extends PacketInHandler {
         }.getType());
         CloudNetWrapper.getInstance().setSimpledUser(wrapperExternal.getUser());
         CloudNetWrapper.getInstance().getServerGroups().clear();
-        NetworkUtils.addAll(CloudNetWrapper.getInstance().getServerGroups(), wrapperExternal.getServerGroups(), new Predicate<ServerGroup>() {
-            @Override
-            public boolean test(ServerGroup value)
-            {
-                System.out.println("Importing server group [" + value.getName() + "] from CloudNet-Master");
-                return true;
-            }
+        NetworkUtils.addAll(CloudNetWrapper.getInstance().getServerGroups(), wrapperExternal.getServerGroups(), value -> {
+            System.out.println("Importing server group [" + value.getName() + "] from CloudNet-Master");
+            return true;
         });
         CloudNetWrapper.getInstance().getProxyGroups().clear();
-        NetworkUtils.addAll(CloudNetWrapper.getInstance().getProxyGroups(), wrapperExternal.getProxyGroups(), new Predicate<ProxyGroup>() {
-            @Override
-            public boolean test(ProxyGroup value)
-            {
-                System.out.println("Importing proxy group [" + value.getName() + "] from CloudNet-Master");
-                return true;
-            }
+        NetworkUtils.addAll(CloudNetWrapper.getInstance().getProxyGroups(), wrapperExternal.getProxyGroups(), value -> {
+            System.out.println("Importing proxy group [" + value.getName() + "] from CloudNet-Master");
+            return true;
         });
     }
 }

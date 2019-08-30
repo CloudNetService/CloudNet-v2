@@ -18,13 +18,7 @@ public final class PacketInUpdateOfflinePlayer extends PacketInHandlerDefault {
 
         if (CloudAPI.getInstance() != null)
         {
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Consumer<NetworkHandler>() {
-                @Override
-                public void accept(NetworkHandler obj)
-                {
-                    obj.onOfflinePlayerUpdate(offlinePlayer);
-                }
-            });
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(obj -> obj.onOfflinePlayerUpdate(offlinePlayer));
         }
     }
 }

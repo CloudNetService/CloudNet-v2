@@ -16,13 +16,7 @@ public class SimpleNameTagsListener implements Listener {
     @EventHandler
     public void handleJoin(PlayerJoinEvent e)
     {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(Bukkit.getPluginManager().getPlugin("SimpleNameTags"), new Runnable() {
-            @Override
-            public void run()
-            {
-                de.dytanic.cloudnet.bridge.CloudServer.getInstance().updateNameTags(e.getPlayer());
-            }
-        }, 3L);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(Bukkit.getPluginManager().getPlugin("SimpleNameTags"), () -> de.dytanic.cloudnet.bridge.CloudServer.getInstance().updateNameTags(e.getPlayer()), 3L);
     }
 
     @EventHandler

@@ -108,19 +108,15 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         this.wrapperConfig = cloudNetWrapperConfig;
         this.cloudNetLogging = cloudNetLogging;
         this.networkConnection = new NetworkConnection(new ConnectableAddress(
-                cloudNetWrapperConfig.getCloudnetHost(), cloudNetWrapperConfig.getCloudnetPort()), new Runnable() {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    onShutdownCentral();
-                } catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        });
+                cloudNetWrapperConfig.getCloudnetHost(), cloudNetWrapperConfig.getCloudnetPort()), () -> {
+                    try
+                    {
+                        onShutdownCentral();
+                    } catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                });
 
         String key = NetworkUtils.readWrapperKey();
 
@@ -203,22 +199,12 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
             scheduler.runTaskRepeatSync(iWrapperHandler.toExecutor(), 0, iWrapperHandler.getTicks());
             scheduler.runTaskRepeatSync(readConsoleLogWrapperHandler.toExecutor(), 0, readConsoleLogWrapperHandler.getTicks());
 
-            scheduler.runTaskRepeatAsync(new Runnable() {
-                @Override
-                public void run()
-                {
-                    networkConnection.sendPacket(new PacketOutUpdateCPUUsage(getCpuUsage()));
-                }
-            }, 0, 200);
+            scheduler.runTaskRepeatAsync(() -> networkConnection.sendPacket(new PacketOutUpdateCPUUsage(getCpuUsage())), 0, 200);
         }
 
-        cloudNetLogging.getHandler().add(new ICloudLoggerHandler() {
-            @Override
-            public void handleConsole(String input)
-            {
-                if (networkConnection.isConnected())
-                    networkConnection.sendPacket(new PacketOutWrapperScreen(input));
-            }
+        cloudNetLogging.getHandler().add(input -> {
+            if (networkConnection.isConnected())
+                networkConnection.sendPacket(new PacketOutWrapperScreen(input));
         });
 
         canDeployed = true;

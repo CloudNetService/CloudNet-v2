@@ -16,18 +16,6 @@ public class PacketOutUpdateProxyServerList extends Packet {
 
     public PacketOutUpdateProxyServerList(java.util.Map<String, ServerInfo> stringServerInfoMap)
     {
-        super(PacketRC.SERVER_HANDLE + 1, new Document("servers", MapWrapper.transform(stringServerInfoMap, new Function<String, String>() {
-            @Override
-            public String apply(String key)
-            {
-                return key;
-            }
-        }, new Function<ServerInfo, SimpleServerInfo>() {
-            @Override
-            public SimpleServerInfo apply(ServerInfo key)
-            {
-                return key.toSimple();
-            }
-        })));
+        super(PacketRC.SERVER_HANDLE + 1, new Document("servers", MapWrapper.transform(stringServerInfoMap, key -> key, key -> key.toSimple())));
     }
 }

@@ -85,28 +85,13 @@ public final class MobSelector {
     {
         CloudAPI.getInstance().getNetworkHandlerProvider().registerHandler(new NetworkHandlerAdapterImplx());
 
-        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-            @Override
-            public void run()
-            {
-                NetworkUtils.addAll(servers, MapWrapper.collectionCatcherHashMap(CloudAPI.getInstance().getServers(), new Function<ServerInfo, String>() {
-                    @Override
-                    public String apply(ServerInfo key)
-                    {
-                        return key.getServiceId().getServerId();
-                    }
-                }));
-                Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), new Runnable() {
-                    @Override
-                    public void run()
-                    {
-                        for (ServerInfo serverInfo : servers.values())
-                        {
-                            handleUpdate(serverInfo);
-                        }
-                    }
-                });
-            }
+        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
+            NetworkUtils.addAll(servers, MapWrapper.collectionCatcherHashMap(CloudAPI.getInstance().getServers(), key -> key.getServiceId().getServerId()));
+            Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), () -> {
+                for (ServerInfo serverInfo : servers.values()) {
+                    handleUpdate(serverInfo);
+                }
+            });
         });
 
         if (ReflectionUtil.forName("org.bukkit.entity.ArmorStand") != null)
@@ -171,26 +156,14 @@ public final class MobSelector {
     {
         Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
         return material == null ? null : ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId())
-                .lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), new Function<String, String>() {
-                    @Override
-                    public String apply(String key)
-                    {
-                        return ChatColor.translateAlternateColorCodes('&', key);
-                    }
-                }))).displayName(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay())).build();
+                .lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), key -> ChatColor.translateAlternateColorCodes('&', key)))).displayName(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay())).build();
     }
 
     private ItemStack transform(MobItemLayout mobItemLayout, ServerInfo serverInfo)
     {
         Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
         return material == null ? null :  ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId())
-                .lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), new Function<String, String>() {
-                    @Override
-                    public String apply(String key)
-                    {
-                        return initPatterns(ChatColor.translateAlternateColorCodes('&', key), serverInfo);
-                    }
-                }))).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
+                .lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), key -> initPatterns(ChatColor.translateAlternateColorCodes('&', key), serverInfo)))).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
     }
 
     private String initPatterns(String x, ServerInfo serverInfo)
@@ -227,13 +200,7 @@ public final class MobSelector {
 
     private List<ServerInfo> getServers(String group)
     {
-        List<ServerInfo> groups = new ArrayList<>(CollectionWrapper.filterMany(this.servers.values(), new Predicate<ServerInfo>() {
-            @Override
-            public boolean test(ServerInfo serverInfo)
-            {
-                return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
-            }
-        }));
+        List<ServerInfo> groups = new ArrayList<>(CollectionWrapper.filterMany(this.servers.values(), serverInfo -> serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group)));
 
         return groups;
     }
@@ -269,13 +236,7 @@ public final class MobSelector {
 
     private Collection<ServerInfo> filter(String group)
     {
-        return CollectionWrapper.filterMany(servers.values(), new Predicate<ServerInfo>() {
-            @Override
-            public boolean test(ServerInfo value)
-            {
-                return value.getServiceId().getGroup().equals(group);
-            }
-        });
+        return CollectionWrapper.filterMany(servers.values(), value -> value.getServiceId().getGroup().equals(group));
     }
 
     public void handleUpdate(ServerInfo serverInfo)
@@ -306,13 +267,9 @@ public final class MobSelector {
                         if ((mobConfig.getInventorySize() - 1) <= index.getValue()) break;
 
                         final int value = index.getValue();
-                        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-                            @Override
-                            public void run()
-                            {
-                                mob.getInventory().setItem(value, transform(mobConfig.getItemLayout(), server));
-                                mob.getServerPosition().put(value, server.getServiceId().getServerId());
-                            }
+                        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
+                            mob.getInventory().setItem(value, transform(mobConfig.getItemLayout(), server));
+                            mob.getServerPosition().put(value, server.getServiceId().getServerId());
                         });
                         index.setValue(index.getValue() + 1);
                     }
@@ -389,24 +346,12 @@ public final class MobSelector {
 
     public Collection<Inventory> inventories()
     {
-        return CollectionWrapper.getCollection(this.mobs, new Function<MobImpl, Inventory>() {
-            @Override
-            public Inventory apply(MobImpl key)
-            {
-                return key.getInventory();
-            }
-        });
+        return CollectionWrapper.getCollection(this.mobs, key -> key.getInventory());
     }
 
     public MobImpl find(Inventory inventory)
     {
-        return CollectionWrapper.filter(this.mobs.values(), new Predicate<MobImpl>() {
-            @Override
-            public boolean test(MobImpl value)
-            {
-                return value.getInventory().equals(inventory);
-            }
-        });
+        return CollectionWrapper.filter(this.mobs.values(), value -> value.getInventory().equals(inventory));
     }
 
     private class ListenrImpl implements Listener {
@@ -414,13 +359,7 @@ public final class MobSelector {
         @EventHandler
         public void handleRightClick(PlayerInteractEntityEvent e)
         {
-            MobImpl mobImpl = CollectionWrapper.filter(mobs.values(), new Predicate<MobImpl>() {
-                @Override
-                public boolean test(MobImpl value)
-                {
-                    return value.getEntity().getUniqueId().equals(e.getRightClicked().getUniqueId());
-                }
-            });
+            MobImpl mobImpl = CollectionWrapper.filter(mobs.values(), value -> value.getEntity().getUniqueId().equals(e.getRightClicked().getUniqueId()));
 
             if (mobImpl != null)
             {
@@ -450,13 +389,7 @@ public final class MobSelector {
         @EventHandler
         public void entityDamage(EntityDamageEvent e)
         {
-            MobImpl mob = CollectionWrapper.filter(mobs.values(), new Predicate<MobImpl>() {
-                @Override
-                public boolean test(MobImpl value)
-                {
-                    return e.getEntity().getUniqueId().equals(value.getEntity().getUniqueId());
-                }
-            });
+            MobImpl mob = CollectionWrapper.filter(mobs.values(), value -> e.getEntity().getUniqueId().equals(value.getEntity().getUniqueId()));
             if (mob != null)
             {
                 e.getEntity().setFireTicks(0);
@@ -491,81 +424,47 @@ public final class MobSelector {
         @EventHandler
         public void onSave(WorldSaveEvent e)
         {
-            Map<UUID, ServerMob> filteredMobs = MapWrapper.transform(MobSelector.this.mobs, new Function<UUID, UUID>() {
-                @Override
-                public UUID apply(UUID key)
-                {
-                    return key;
-                }
-            }, new Function<MobImpl, ServerMob>() {
-                @Override
-                public ServerMob apply(MobImpl key)
-                {
-                    return key.getMob();
-                }
-            });
+            Map<UUID, ServerMob> filteredMobs = MapWrapper.transform(MobSelector.this.mobs, key -> key, key -> key.getMob());
 
             MobSelector.getInstance().shutdown();
 
 
-            Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(), new Runnable() {
-                @Override
-                public void run()
-                {
-                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Function<UUID, UUID>() {
-                        @Override
-                        public UUID apply(UUID key)
-                        {
-                            return key;
-                        }
-                    }, new Function<ServerMob, MobImpl>() {
-                        @Override
-                        public MobImpl apply(ServerMob key)
-                        {
-                            MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
-                            Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
-                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);
+            Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(), () -> {
+                MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, key -> key, key -> {
+                    MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
+                    Entity entity = MobSelector.getInstance().toLocation(key.getPosition()).getWorld().spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()), EntityType.valueOf(key.getType()));
+                    Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()), entity, key);
 
-                            if (armorStand != null)
-                            {
-                                MobSelector.getInstance().updateCustom(key, armorStand);
-                                Entity armor = (Entity) armorStand;
-                                if (armor.getPassenger() == null && key.getItemId() != null)
-                                {
-                                    Material material = ItemStackBuilder.getMaterialIgnoreVersion(key.getItemName(), key.getItemId());
-                                    if(material != null) {
-                                        Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(material));
-                                        item.setPickupDelay(Integer.MAX_VALUE);
-                                        item.setTicksLived(Integer.MAX_VALUE);
-                                        armor.setPassenger(item);
-                                    }
-                                }
-                            }
-
-                            if (entity instanceof Villager)
-                            {
-                                ((Villager) entity).setProfession(Villager.Profession.FARMER);
-                            }
-
-                            MobSelector.getInstance().unstableEntity(entity);
-                            entity.setCustomNameVisible(true);
-                            entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay()));
-                            MobImpl mob = new MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
-                            Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
-                            return mob;
-                        }
-                    }));
-                    Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), new Runnable() {
-                        @Override
-                        public void run()
-                        {
-                            for (ServerInfo serverInfo : getServers().values())
-                            {
-                                MobSelector.getInstance().handleUpdate(serverInfo);
+                    if (armorStand != null) {
+                        MobSelector.getInstance().updateCustom(key, armorStand);
+                        Entity armor = (Entity) armorStand;
+                        if (armor.getPassenger() == null && key.getItemId() != null) {
+                            Material material = ItemStackBuilder.getMaterialIgnoreVersion(key.getItemName(), key.getItemId());
+                            if (material != null) {
+                                Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(), new ItemStack(material));
+                                item.setPickupDelay(Integer.MAX_VALUE);
+                                item.setTicksLived(Integer.MAX_VALUE);
+                                armor.setPassenger(item);
                             }
                         }
-                    });
-                }
+                    }
+
+                    if (entity instanceof Villager) {
+                        ((Villager) entity).setProfession(Villager.Profession.FARMER);
+                    }
+
+                    MobSelector.getInstance().unstableEntity(entity);
+                    entity.setCustomNameVisible(true);
+                    entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay()));
+                    MobImpl mob = new MobImpl(key.getUniqueId(), key, entity, MobSelector.getInstance().create(mobConfig, key), new HashMap<>(), armorStand);
+                    Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
+                    return mob;
+                }));
+                Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), () -> {
+                    for (ServerInfo serverInfo : getServers().values()) {
+                        MobSelector.getInstance().handleUpdate(serverInfo);
+                    }
+                });
             }, 40);
         }
     }

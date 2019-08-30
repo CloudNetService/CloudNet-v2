@@ -308,13 +308,7 @@ public class ProxiedListener implements Listener {
             CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutLogoutPlayer(null, e.getPlayer().getUniqueId()));
         }
         CloudProxy.getInstance().getCloudPlayers().remove(e.getPlayer().getUniqueId());
-        ProxyServer.getInstance().getScheduler().schedule(CloudProxy.getInstance().getPlugin(), new Runnable() {
-            @Override
-            public void run()
-            {
-                CloudProxy.getInstance().update();
-            }
-        }, 250, TimeUnit.MILLISECONDS);
+        ProxyServer.getInstance().getScheduler().schedule(CloudProxy.getInstance().getPlugin(), () -> CloudProxy.getInstance().update(), 250, TimeUnit.MILLISECONDS);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -389,16 +383,12 @@ public class ProxiedListener implements Listener {
     @EventHandler
     public void handleOnlineCountUpdate(ProxiedOnlineCountUpdateEvent e)
     {
-        ProxyServer.getInstance().getScheduler().runAsync(CloudProxy.getInstance().getPlugin(), new Runnable() {
-            @Override
-            public void run()
+        ProxyServer.getInstance().getScheduler().runAsync(CloudProxy.getInstance().getPlugin(), () -> {
+            if (CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance().getProxyGroup().getProxyConfig().isEnabled() &&
+                CloudProxy.getInstance().getProxyGroup().getProxyConfig().getTabList().isEnabled())
             {
-                if (CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance().getProxyGroup().getProxyConfig().isEnabled() &&
-                    CloudProxy.getInstance().getProxyGroup().getProxyConfig().getTabList().isEnabled())
-                {
-                    for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers())
-                        initTabHeaderFooter(proxiedPlayer);
-                }
+                for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers())
+                    initTabHeaderFooter(proxiedPlayer);
             }
         });
     }

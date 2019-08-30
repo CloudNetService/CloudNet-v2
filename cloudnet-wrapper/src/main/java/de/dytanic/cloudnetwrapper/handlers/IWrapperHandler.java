@@ -14,12 +14,6 @@ public interface IWrapperHandler extends Consumer<CloudNetWrapper> {
 
     default Runnable toExecutor()
     {
-        return new Runnable() {
-            @Override
-            public void run()
-            {
-                IWrapperHandler.this.accept(CloudNetWrapper.getInstance());
-            }
-        };
+        return () -> IWrapperHandler.this.accept(CloudNetWrapper.getInstance());
     }
 }

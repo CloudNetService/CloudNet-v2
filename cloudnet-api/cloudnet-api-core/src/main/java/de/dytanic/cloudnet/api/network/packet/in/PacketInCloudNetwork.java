@@ -26,13 +26,7 @@ public class PacketInCloudNetwork extends PacketInHandlerDefault {
         {
             CloudNetwork cloudNetwork = data.getObject("cloudnetwork", NetworkUtils.cloudnet().getType());
             CloudAPI.getInstance().setCloudNetwork(cloudNetwork);
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Consumer<NetworkHandler>() {
-                @Override
-                public void accept(NetworkHandler obj)
-                {
-                    obj.onCloudNetworkUpdate(cloudNetwork);
-                }
-            });
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(obj -> obj.onCloudNetworkUpdate(cloudNetwork));
         }
     }
 }
