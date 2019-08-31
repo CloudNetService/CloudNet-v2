@@ -12,6 +12,7 @@ import java.util.HashSet;
 /**
  * Abstract class to define a command with an executor and a name
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class Command
 		implements CommandExecutor, Nameable {
 

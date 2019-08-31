@@ -14,6 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Builder class for setup sequences.
  */
+@SuppressWarnings("deprecation")
 public class Setup implements ISetup {
 
 	private static final String CANCEL = "cancel";

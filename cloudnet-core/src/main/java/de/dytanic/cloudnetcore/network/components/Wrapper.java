@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by Tareko on 26.05.2017.
  */
+@SuppressWarnings({"UnusedReturnValue", "unchecked"})
 public final class Wrapper
 		implements INetworkComponent {
 
@@ -44,7 +45,6 @@ public final class Wrapper
 
 	private WrapperMeta networkInfo;
 
-	private boolean ready;
 	private double cpuUsage = -1;
 
 	private final java.util.Map<String, ProxyServer> proxys = NetworkUtils.newConcurrentHashMap();
@@ -97,7 +97,6 @@ public final class Wrapper
 	}
 
 	public void setReady(boolean ready) {
-		this.ready = ready;
 	}
 
 	@Override

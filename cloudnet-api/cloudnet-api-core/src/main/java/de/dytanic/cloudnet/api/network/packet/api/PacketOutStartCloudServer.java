@@ -20,31 +20,29 @@ import java.util.Properties;
  */
 public class PacketOutStartCloudServer extends Packet {
 
-    //TODO: Rework, append is deprecated
 	public PacketOutStartCloudServer(String serverName, ServerConfig serverConfig, int memory, boolean priorityStop, String[] processPreParameters, Collection<ServerInstallablePlugin> plugins,
 	                                 Properties properties, ServerGroupType serverGroupType) {
 		super(PacketRC.SERVER_HANDLE + 9, new Document
 				("serverName", serverName)
-				.append("serverConfig", serverConfig)
+				.append("serverConfig", Document.GSON.toJson(serverConfig))
 				.append("memory", memory)
 				.append("priorityStop", priorityStop)
-				.append("processPreParameters", processPreParameters)
-				.append("plugins", plugins)
-				.append("properties", properties)
-				.append("serverGroupType", serverGroupType));
+				.append("processPreParameters", Document.GSON.toJson(processPreParameters))
+				.append("plugins", Document.GSON.toJson(plugins))
+				.append("properties",Document.GSON.toJson( properties))
+				.append("serverGroupType",Document.GSON.toJson( serverGroupType)));
 	}
-    //TODO: Rework, append is deprecated
 	public PacketOutStartCloudServer(WrapperInfo wrapperInfo, String serverName, ServerConfig serverConfig, int memory, boolean priorityStop, String[] processPreParameters, Collection<ServerInstallablePlugin> plugins,
 	                                 Properties properties, ServerGroupType serverGroupType) {
 		super(PacketRC.SERVER_HANDLE + 9, new Document
 				("serverName", serverName)
-				.append("wrapperInfo", wrapperInfo)
-				.append("serverConfig", serverConfig)
+				.append("wrapperInfo", Document.GSON.toJson(wrapperInfo))
+				.append("serverConfig", Document.GSON.toJson(serverConfig))
 				.append("memory", memory)
 				.append("priorityStop", priorityStop)
-				.append("processPreParameters", processPreParameters)
-				.append("plugins", plugins)
-				.append("properties", properties)
-				.append("serverGroupType", serverGroupType));
+				.append("processPreParameters", Document.GSON.toJson(processPreParameters))
+				.append("plugins", Document.GSON.toJson(plugins))
+				.append("properties", Document.GSON.toJson(properties))
+				.append("serverGroupType", Document.GSON.toJson(serverGroupType)));
 	}
 }

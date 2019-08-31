@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.lib.network.protocol;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufProcessor;
 import io.netty.buffer.Unpooled;
 import io.netty.util.ByteProcessor;
 
@@ -24,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by Tareko on 09.09.2017.
  */
+@SuppressWarnings({"EqualsWithItself", "EqualsWhichDoesntCheckParameterClass", "UnusedReturnValue", "MethodDoesntCallSuperMethod"})
 public final class ProtocolBuffer extends ByteBuf implements Cloneable {
 
 	private ByteBuf byteBuf;

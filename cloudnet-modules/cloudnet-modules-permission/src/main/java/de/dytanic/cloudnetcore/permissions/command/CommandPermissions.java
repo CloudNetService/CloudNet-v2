@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Tareko on 20.08.2017.
  */
+@SuppressWarnings("unchecked")
 public final class CommandPermissions extends Command {
 
 	public CommandPermissions() {

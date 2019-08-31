@@ -12,7 +12,6 @@ import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
@@ -29,7 +28,7 @@ import java.util.function.Consumer;
 @SuppressWarnings("unchecked")
 public final class CommandPermissions extends Command implements TabExecutor {
 
-    List<TextComponent> components;
+    private List<TextComponent> components;
 
 	public CommandPermissions() {
 		super("cperms", "cloudnet.command.permissions", "permissions", "perms");

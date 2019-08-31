@@ -13,10 +13,13 @@ import de.dytanic.cloudnetcore.config.ILoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Tareko on 26.08.2017.
@@ -39,11 +42,14 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collecti
 	@Override
 	public Collection<CloudFlareConfig> load() {
 		File old = new File("local/cloudflare.json");
-
-		if (old.exists()) {
+        Type type = TypeToken.getParameterized(Collection.class, ConfigCloudFlare.class).getType();
+        if (old.exists()) {
 			CloudFlareConfig cloudFlareConfig = Document.loadDocument(old).getObject("cloudflare",
                     TypeToken.get(CloudFlareConfig.class).getType());
-			new Document().append("configurations", new CloudFlareConfig[]{cloudFlareConfig}).saveAsConfig(path);
+            List<CloudFlareConfig> configs = new ArrayList<>();
+            configs.add(cloudFlareConfig);
+
+			new Document().append("configurations", Document.GSON.toJson(configs,type)).saveAsConfig(path);
             try {
                 Files.deleteIfExists(old.toPath());
             } catch (IOException e) {
@@ -51,8 +57,7 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collecti
             }
         }
 
-        return Document.loadDocument(path).getObject("configurations",
-                TypeToken.getParameterized(Collection.class,ConfigCloudFlare.class).getType());
+        return Document.loadDocument(path).getObject("configurations",type);
 	}
 
 }
