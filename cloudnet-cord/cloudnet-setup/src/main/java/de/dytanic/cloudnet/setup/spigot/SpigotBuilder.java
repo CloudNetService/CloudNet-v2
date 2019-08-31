@@ -40,6 +40,7 @@ public final class SpigotBuilder {
         versions.forEach(System.out::println);
         System.out
                 .println("-----------------------------------------------------------------------------");
+        System.out.println("Please select a version to continue the install process");
         String answer = null;
         while (answer == null) {
             String name = null;
