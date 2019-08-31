@@ -8,6 +8,8 @@ import de.dytanic.cloudnet.event.Event;
 import de.dytanic.cloudnet.event.EventKey;
 import de.dytanic.cloudnet.event.IEventListener;
 
+import java.util.List;
+
 /**
  * Interface for event managers
  */
@@ -19,7 +21,7 @@ public interface IEventManager {
      * @param eventKey      the domain of the event listener
      * @param eventListener the actual event listener instance that will be called upon
      * @param <T>           the type of the events to have the event listener be called on
-     * @see #registerListeners(EventKey, IEventListener[])
+     * @see #registerListeners(EventKey, List)
      */
     <T extends Event> void registerListener(EventKey eventKey, IEventListener<T> eventListener);
 
@@ -31,7 +33,7 @@ public interface IEventManager {
      * @param <T>            the type of the events to have the event listeners be called on
      * @see #registerListener(EventKey, IEventListener)
      */
-    <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>... eventListeners);
+    <T extends Event> void registerListeners(EventKey eventKey, List<IEventListener<T>> eventListeners);
 
     /**
      * Removes all listener from a specific {@link EventKey} from this event manager.

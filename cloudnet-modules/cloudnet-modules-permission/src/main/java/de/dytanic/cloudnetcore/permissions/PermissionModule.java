@@ -4,9 +4,11 @@
 
 package de.dytanic.cloudnetcore.permissions;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
+import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.api.CoreModule;
 import de.dytanic.cloudnetcore.permissions.command.CommandPermissions;
 import de.dytanic.cloudnetcore.permissions.config.ConfigPermissions;
@@ -56,7 +58,8 @@ public class PermissionModule extends CoreModule {
         permissionPool.setAvailable(configPermission.isEnabled0());
         NetworkUtils.addAll(permissionPool.getGroups(), configPermission.loadAll0());
 
-        getCloud().getNetworkManager().getModuleProperties().append("permissionPool", permissionPool);
+        getCloud().getNetworkManager().getModuleProperties().append("permissionPool",
+                Document.GSON.toJson(permissionPool, TypeToken.get(PermissionPool.class).getType()));
 
         getCloud().getEventManager().registerListener(this, new PlayerInitListener());
         getCloud().getEventManager().registerListener(this, new UpdateAllListener());

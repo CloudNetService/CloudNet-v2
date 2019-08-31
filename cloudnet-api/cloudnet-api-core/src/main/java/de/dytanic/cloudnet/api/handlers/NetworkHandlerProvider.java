@@ -20,7 +20,7 @@ public class NetworkHandlerProvider {
     /**
      * Registerd a network Handler
      *
-     * @param networkHandler
+     * @param networkHandler The handler to register in the array
      */
     public void registerHandler(NetworkHandler networkHandler)
     {
@@ -30,7 +30,7 @@ public class NetworkHandlerProvider {
     /**
      * Iteration of all registed Handlers
      *
-     * @param handlerTask
+     * @param handlerTask The task to iterate
      */
     public void iterator(Runnabled<NetworkHandler> handlerTask)
     {

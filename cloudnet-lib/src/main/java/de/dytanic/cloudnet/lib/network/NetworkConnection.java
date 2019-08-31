@@ -85,12 +85,12 @@ public final class NetworkConnection implements PacketSender {
         this.task = task;
     }
 
-    public boolean tryConnect(boolean ssl, SimpleChannelInboundHandler<Packet> default_handler, Auth auth)
+    public boolean tryConnect(boolean ssl, NetDispatcher default_handler, Auth auth)
     {
         return tryConnect(ssl, default_handler, auth, null);
     }
 
-    public boolean tryConnect(boolean ssl, SimpleChannelInboundHandler<Packet> default_handler, Auth auth, Runnable cancelTask)
+    public boolean tryConnect(boolean ssl, NetDispatcher default_handler, Auth auth, Runnable cancelTask)
     {
         try
         {
