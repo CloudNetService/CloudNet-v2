@@ -2,8 +2,6 @@ package de.dytanic.cloudnet.lib.utility.document;
 
 import com.google.gson.*;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -22,14 +20,27 @@ public class Document
     public static Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
     protected static final JsonParser PARSER = new JsonParser();
 
-    @Getter
-    @Setter
     protected String name;
-    @Getter
-    @Setter
     private File file;
 
     protected JsonObject dataCatcher;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
 
     public Document(String name)
     {

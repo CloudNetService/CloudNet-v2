@@ -18,7 +18,6 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.setup.*;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +26,6 @@ import java.util.List;
 /**
  * Created by Tareko on 21.10.2017.
  */
-@Getter
 public class SetupServerGroup {
 
     private String name;
@@ -169,5 +167,9 @@ public class SetupServerGroup {
                     }
                 }));
         setup.start(CloudNet.getLogger().getReader());
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -19,6 +19,7 @@ import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
+import de.dytanic.cloudnet.setup.spigot.SetupSpigotVersion;
 import de.dytanic.cloudnet.web.client.WebClient;
 import de.dytanic.cloudnetwrapper.command.*;
 import de.dytanic.cloudnetwrapper.handlers.IWrapperHandler;
@@ -33,27 +34,24 @@ import de.dytanic.cloudnetwrapper.server.BungeeCord;
 import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
 import de.dytanic.cloudnetwrapper.server.process.ServerProcessQueue;
-import de.dytanic.cloudnet.setup.spigot.SetupSpigotVersion;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
-import de.dytanic.cloudnet.setup.spigot.PaperBuilder;
-import de.dytanic.cloudnetwrapper.util.ShutdownHook;
 import de.dytanic.cloudnetwrapper.util.ShutdownOnCentral;
-import de.dytanic.cloudnet.setup.spigot.SpigotBuilder;
 import joptsimple.OptionSet;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 
-@Getter
-public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
+public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCentral {
 
     public static volatile boolean RUNNING = false;
 
-    @Getter
     private static CloudNetWrapper instance;
+
+    public static CloudNetWrapper getInstance() {
+        return instance;
+    }
 
     private final NetworkConnection networkConnection;
     private final CloudLogger cloudNetLogging;
@@ -63,13 +61,10 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     private final WebClient webClient = new WebClient();
     private Auth auth;
     private OptionSet optionSet;
-    @Setter
     private ServerProcessQueue serverProcessQueue;
-    @Setter
     private SimpledUser simpledUser;
 
     //Sytem meta
-    @Setter
     private int maxMemory;
 
     private final java.util.Map<String, GameServer> servers = NetworkUtils.newConcurrentHashMap();
@@ -123,15 +118,101 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         this.optionSet = optionSet;
     }
 
+    public void setServerProcessQueue(ServerProcessQueue serverProcessQueue) {
+        this.serverProcessQueue = serverProcessQueue;
+    }
+
+    public void setSimpledUser(SimpledUser simpledUser) {
+        this.simpledUser = simpledUser;
+    }
+
+    public void setMaxMemory(int maxMemory) {
+        this.maxMemory = maxMemory;
+    }
+
+    public static boolean isRUNNING() {
+        return RUNNING;
+    }
+
+    public boolean isCanDeployed() {
+        return canDeployed;
+    }
+
+    public boolean isX_bnosxo() {
+        return x_bnosxo;
+    }
+
+    public SimpledUser getSimpledUser() {
+        return simpledUser;
+    }
+
+    public Auth getAuth() {
+        return auth;
+    }
+
+    public CloudLogger getCloudNetLogging() {
+        return cloudNetLogging;
+    }
+
+    public CloudNetWrapperConfig getWrapperConfig() {
+        return wrapperConfig;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public int getMaxMemory() {
+        return maxMemory;
+    }
+
+    public Map<String, BungeeCord> getProxys() {
+        return proxys;
+    }
+
+    public NetworkConnection getNetworkConnection() {
+        return networkConnection;
+    }
+
+    public Map<String, CloudGameServer> getCloudServers() {
+        return cloudServers;
+    }
+
+    public Map<String, GameServer> getServers() {
+        return servers;
+    }
+
+    public OptionSet getOptionSet() {
+        return optionSet;
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public ServerProcessQueue getServerProcessQueue() {
+        return serverProcessQueue;
+    }
+
+    public Map<String, ProxyGroup> getProxyGroups() {
+        return proxyGroups;
+    }
+
+    public Map<String, ServerGroup> getServerGroups() {
+        return serverGroups;
+    }
+
+    public WebClient getWebClient() {
+        return webClient;
+    }
+
     @Override
     public boolean bootstrap() throws Exception
     {
-
-        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHook(this)));
         if (!optionSet.has("disable-autoupdate")) checkForUpdates();
 
         if (!optionSet.has("disallow_bukkit_download") && !Files.exists(Paths.get("local/spigot.jar")))
-            new SetupSpigotVersion().accept(cloudNetLogging.getReader());
+            new SetupSpigotVersion().run(cloudNetLogging.getReader());
 
         Thread thread = new Thread(scheduler);
         thread.setPriority(Thread.MIN_PRIORITY);
@@ -209,6 +290,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
         canDeployed = true;
         RUNNING = true;
+        Runtime.getRuntime().addShutdownHook(new Thread(this));
 
         return true;
     }
@@ -247,9 +329,6 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     @Override
     public boolean shutdown()
     {
-
-        if(SpigotBuilder.getExec() != null) SpigotBuilder.getExec().destroyForcibly();
-        if(PaperBuilder.getExec() != null) PaperBuilder.getExec().destroyForcibly();
         if (!RUNNING) return false;
         System.out.println("Wrapper shutdown...");
         TaskScheduler.runtimeScheduler().shutdown();
@@ -283,18 +362,23 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
                 "                                                          \n" +
                 "                                                          ");
         RUNNING = false;
-        System.exit(0);
+        if (x_bnosxo)
+            System.exit(0);
         return true;
     }
 
+    private boolean x_bnosxo = true;
 
+    @Override
+    public void run()
+    {
+        x_bnosxo = false;
+        shutdown();
+    }
 
     @Override
     public void onShutdownCentral() throws Exception
     {
-
-        if(SpigotBuilder.getExec() != null) SpigotBuilder.getExec().destroyForcibly();
-        if(PaperBuilder.getExec() != null) PaperBuilder.getExec().destroyForcibly();
         canDeployed = false;
         if (serverProcessQueue != null)
         {

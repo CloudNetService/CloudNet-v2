@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.logging.util;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import lombok.Getter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +13,6 @@ import java.nio.charset.StandardCharsets;
  * Class that only displays a possible {@code HEADER.txt}, if present.
  */
 @Deprecated
-@Getter
 public class HeaderFunction {
 
     /**
@@ -46,5 +44,9 @@ public class HeaderFunction {
         {
             NetworkUtils.header();
         }
+    }
+
+    public boolean isExecuted() {
+        return executed;
     }
 }

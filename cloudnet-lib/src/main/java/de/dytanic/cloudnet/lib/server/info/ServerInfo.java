@@ -5,8 +5,6 @@ import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.ToString;
 
 import java.lang.reflect.Type;
@@ -15,8 +13,6 @@ import java.util.List;
 /**
  * Created by Tareko on 24.05.2017.
  */
-@Getter
-@AllArgsConstructor
 @ToString
 public class ServerInfo {
 
@@ -36,6 +32,69 @@ public class ServerInfo {
     private ServerState serverState;
     private ServerConfig serverConfig;
     private Template template;
+
+    public ServerInfo(ServiceId serviceId, String host, int port, boolean online, List<String> players, int memory, String motd, int onlineCount, int maxPlayers, ServerState serverState, ServerConfig serverConfig, Template template) {
+        this.serviceId = serviceId;
+        this.host = host;
+        this.port = port;
+        this.online = online;
+        this.players = players;
+        this.memory = memory;
+        this.motd = motd;
+        this.onlineCount = onlineCount;
+        this.maxPlayers = maxPlayers;
+        this.serverState = serverState;
+        this.serverConfig = serverConfig;
+        this.template = template;
+    }
+
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    public int getOnlineCount() {
+        return onlineCount;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public int getMemory() {
+        return memory;
+    }
+
+    public Template getTemplate() {
+        return template;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public List<String> getPlayers() {
+        return players;
+    }
+
+    public ServerConfig getServerConfig() {
+        return serverConfig;
+    }
+
+    public ServerState getServerState() {
+        return serverState;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getMotd() {
+        return motd;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
 
     public boolean isIngame()
     {

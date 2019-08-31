@@ -26,31 +26,25 @@ import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.packet.out.*;
 import io.netty.channel.Channel;
-import lombok.Getter;
-import lombok.Setter;
 import net.md_5.bungee.config.Configuration;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Tareko on 26.05.2017.
  */
-@Getter
 public final class Wrapper
         implements INetworkComponent {
 
-    @Setter
     private Channel channel;
-    @Setter
     private WrapperInfo wrapperInfo;
 
     private WrapperMeta networkInfo;
 
-    @Setter
     private boolean ready;
-    @Setter
     private double cpuUsage = -1;
 
     private final java.util.Map<String, ProxyServer> proxys = NetworkUtils.newConcurrentHashMap();
@@ -60,7 +54,6 @@ public final class Wrapper
     // Group, ServiceId
     private final java.util.Map<String, Quad<Integer, Integer, ServiceId, Template>> waitingServices = NetworkUtils.newConcurrentHashMap();
 
-    @Setter
     private int maxMemory = 0;
 
     private String serverId;
@@ -69,6 +62,69 @@ public final class Wrapper
     {
         this.serverId = networkInfo.getId();
         this.networkInfo = networkInfo;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public int getMaxMemory() {
+        return maxMemory;
+    }
+
+    public double getCpuUsage() {
+        return cpuUsage;
+    }
+
+    public Map<String, CloudServer> getCloudServers() {
+        return cloudServers;
+    }
+
+    public Map<String, MinecraftServer> getServers() {
+        return servers;
+    }
+
+    public Map<String, ProxyServer> getProxys() {
+        return proxys;
+    }
+
+    public Map<String, Quad<Integer, Integer, ServiceId, Template>> getWaitingServices() {
+        return waitingServices;
+    }
+
+    public void setCpuUsage(double cpuUsage) {
+        this.cpuUsage = cpuUsage;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
+    }
+
+    @Override
+    public String getServerId() {
+        return serverId;
+    }
+
+    public WrapperInfo getWrapperInfo() {
+        return wrapperInfo;
+    }
+
+    public WrapperMeta getNetworkInfo() {
+        return networkInfo;
+    }
+
+    public void setMaxMemory(int maxMemory) {
+        this.maxMemory = maxMemory;
+    }
+
+    @Override
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    public void setWrapperInfo(WrapperInfo wrapperInfo) {
+        this.wrapperInfo = wrapperInfo;
     }
 
     @Override

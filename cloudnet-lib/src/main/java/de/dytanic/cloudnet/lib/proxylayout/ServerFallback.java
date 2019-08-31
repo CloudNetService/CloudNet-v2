@@ -4,18 +4,25 @@
 
 package de.dytanic.cloudnet.lib.proxylayout;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Created by Tareko on 05.10.2017.
  */
-@Getter
-@AllArgsConstructor
 public class ServerFallback {
 
     private String group;
 
     private String permission;
 
+    public ServerFallback(String group, String permission) {
+        this.group = group;
+        this.permission = permission;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
 }

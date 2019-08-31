@@ -4,16 +4,11 @@
 
 package de.dytanic.cloudnet.modules;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.io.File;
 
 /**
  * Data class that stores information about a {@link Module}
  */
-@Getter
-@AllArgsConstructor
 public class ModuleConfig {
 
     /**
@@ -41,4 +36,31 @@ public class ModuleConfig {
      */
     private String main;
 
+    public ModuleConfig(File file, String name, String version, String author, String main) {
+        this.file = file;
+        this.name = name;
+        this.version = version;
+        this.author = author;
+        this.main = main;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getMain() {
+        return main;
+    }
 }

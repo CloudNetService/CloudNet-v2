@@ -19,7 +19,6 @@ import de.dytanic.cloudnet.setup.*;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.util.defaults.BasicProxyConfig;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.List;
 /**
  * Created by Tareko on 23.10.2017.
  */
-@Getter
 public class SetupProxyGroup {
 
     private String name;
@@ -134,5 +132,9 @@ public class SetupProxyGroup {
                     }
                 }));
         setup.start(CloudNet.getLogger().getReader());
+    }
+
+    public String getName() {
+        return name;
     }
 }

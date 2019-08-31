@@ -5,18 +5,20 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.HandlerList;
 
 /**
  * Updates a ServerMob
  */
-@AllArgsConstructor
 public class BukkitMobUpdateEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
     private ServerMob serverMob;
+
+    public BukkitMobUpdateEvent(ServerMob serverMob) {
+        this.serverMob = serverMob;
+    }
 
     public ServerMob getServerMob()
     {

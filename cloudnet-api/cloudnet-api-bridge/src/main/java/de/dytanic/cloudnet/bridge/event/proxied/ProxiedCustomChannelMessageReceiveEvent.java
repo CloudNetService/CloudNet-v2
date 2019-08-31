@@ -5,12 +5,10 @@
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.AllArgsConstructor;
 
 /**
  * Calls if a custom channel message was received
  */
-@AllArgsConstructor
 public class ProxiedCustomChannelMessageReceiveEvent extends ProxiedCloudEvent {
 
     private String channel;
@@ -18,6 +16,12 @@ public class ProxiedCustomChannelMessageReceiveEvent extends ProxiedCloudEvent {
     private String message;
 
     private Document document;
+
+    public ProxiedCustomChannelMessageReceiveEvent(String channel, String message, Document document) {
+        this.channel = channel;
+        this.message = message;
+        this.document = document;
+    }
 
     public String getChannel()
     {

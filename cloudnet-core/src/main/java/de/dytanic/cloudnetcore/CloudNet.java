@@ -52,7 +52,6 @@ import de.dytanic.cloudnetcore.util.FileCopy;
 import de.dytanic.cloudnetcore.web.api.v1.*;
 import de.dytanic.cloudnetcore.web.log.WebsiteLog;
 import joptsimple.OptionSet;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -63,12 +62,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Getter
 public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public static volatile boolean RUNNING = false;
 
-    @Getter
     private static CloudNet instance;
 
     private final CommandManager commandManager = new CommandManager();
@@ -114,6 +111,114 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         this.defaultModuleManager = new DefaultModuleManager();
 
         this.logger.getReader().addCompleter(commandManager);
+    }
+
+    public static CloudNet getInstance() {
+        return instance;
+    }
+
+    public NetworkManager getNetworkManager() {
+        return networkManager;
+    }
+
+    public WebClient getWebClient() {
+        return webClient;
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public Collection<CloudNetServer> getCloudServers() {
+        return cloudServers;
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public EventManager getEventManager() {
+        return eventManager;
+    }
+
+    public ModuleManager getModuleManager() {
+        return moduleManager;
+    }
+
+    public OptionSet getOptionSet() {
+        return optionSet;
+    }
+
+    public CloudConfig getConfig() {
+        return config;
+    }
+
+    public PacketManager getPacketManager() {
+        return packetManager;
+    }
+
+    public ScreenProvider getScreenProvider() {
+        return screenProvider;
+    }
+
+    public ServerLogManager getServerLogManager() {
+        return serverLogManager;
+    }
+
+    public Map<String, ServerGroup> getServerGroups() {
+        return serverGroups;
+    }
+
+    public Map<String, ProxyGroup> getProxyGroups() {
+        return proxyGroups;
+    }
+
+    public Collection<User> getUsers() {
+        return users;
+    }
+
+    public WebServer getWebServer() {
+        return webServer;
+    }
+
+    public DatabaseBasicHandlers getDbHandlers() {
+        return dbHandlers;
+    }
+
+    public DefaultModuleManager getDefaultModuleManager() {
+        return defaultModuleManager;
+    }
+
+    public List<String> getArguments() {
+        return arguments;
+    }
+
+    public List<String> getPreConsoleOutput() {
+        return preConsoleOutput;
+    }
+
+    public LocalCloudWrapper getLocalCloudWrapper() {
+        return localCloudWrapper;
+    }
+
+    public long getStartupTime() {
+        return startupTime;
+    }
+
+    public Map<String, Wrapper> getWrappers() {
+        return wrappers;
+    }
+
+    public static boolean isRUNNING() {
+        return RUNNING;
+    }
+
+    public boolean isDownTown() {
+        return downTown;
     }
 
     @Override
