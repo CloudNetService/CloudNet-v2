@@ -12,7 +12,7 @@ public interface PlayerChatExecutor {
         if (cloudPlayer != null)
             CloudAPI.getInstance().sendCustomSubProxyMessage("cloudnet_internal",
                     "sendMessage_basecomponent", new Document("baseComponent", baseComponent)
-                            .append("uniqueId", cloudPlayer.getUniqueId())
+                            .append("uniqueId", cloudPlayer.getUniqueId().toString())
                             .append("name", cloudPlayer.getName())
             );
     }
