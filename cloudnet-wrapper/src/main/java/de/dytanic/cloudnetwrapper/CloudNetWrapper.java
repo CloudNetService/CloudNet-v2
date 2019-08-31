@@ -118,6 +118,10 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         this.optionSet = optionSet;
     }
 
+    public static CloudNetWrapper getInstance() {
+        return CloudNetWrapper.instance;
+    }
+
     public void setServerProcessQueue(ServerProcessQueue serverProcessQueue) {
         this.serverProcessQueue = serverProcessQueue;
     }
@@ -423,4 +427,83 @@ public final class CloudNetWrapper implements Executable, Runnable, ShutdownOnCe
         return NetworkUtils.cpuUsage();
     }
 
+    public NetworkConnection getNetworkConnection() {
+        return this.networkConnection;
+    }
+
+    public CloudLogger getCloudNetLogging() {
+        return this.cloudNetLogging;
+    }
+
+    public CloudNetWrapperConfig getWrapperConfig() {
+        return this.wrapperConfig;
+    }
+
+    public Scheduler getScheduler() {
+        return this.scheduler;
+    }
+
+    public CommandManager getCommandManager() {
+        return this.commandManager;
+    }
+
+    public WebClient getWebClient() {
+        return this.webClient;
+    }
+
+    public Auth getAuth() {
+        return this.auth;
+    }
+
+    public OptionSet getOptionSet() {
+        return this.optionSet;
+    }
+
+    public ServerProcessQueue getServerProcessQueue() {
+        return this.serverProcessQueue;
+    }
+
+    public SimpledUser getSimpledUser() {
+        return this.simpledUser;
+    }
+
+    public int getMaxMemory() {
+        return this.maxMemory;
+    }
+
+    public Map<String, GameServer> getServers() {
+        return this.servers;
+    }
+
+    public Map<String, BungeeCord> getProxys() {
+        return this.proxys;
+    }
+
+    public Map<String, CloudGameServer> getCloudServers() {
+        return this.cloudServers;
+    }
+
+    public Map<String, ServerGroup> getServerGroups() {
+        return this.serverGroups;
+    }
+
+    public Map<String, ProxyGroup> getProxyGroups() {
+        return this.proxyGroups;
+    }
+
+    public boolean isCanDeployed() {
+        return this.canDeployed;
+    }
+
+    public void setServerProcessQueue(ServerProcessQueue serverProcessQueue) {
+        this.serverProcessQueue = serverProcessQueue;
+    }
+
+    public void setSimpledUser(SimpledUser simpledUser) {
+        this.simpledUser = simpledUser;
+    }
+
+    public void setMaxMemory(int maxMemory) {
+        this.maxMemory = maxMemory;
+    }
 }
