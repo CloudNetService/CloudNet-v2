@@ -30,19 +30,19 @@ public final class Auth {
     public Auth(ServiceId serverId) {
         this.type = AuthType.GAMESERVER_OR_BUNGEE;
         this.authData
-                .append("serviceId", serverId);
+                .append("serviceId", Document.GSON.toJson(serverId));
     }
 
     public Auth(User user) {
         this.type = AuthType.GAMESERVER_OR_BUNGEE;
         this.authData
-                .append("user", user);
+                .append("user", Document.GSON.toJson(user));
     }
 
     public Auth(ServiceId serverId, boolean external) {
         this.type = AuthType.GAMESERVER_OR_BUNGEE;
         this.authData
-                .append("serviceId", serverId);
+                .append("serviceId", Document.GSON.toJson(serverId));
         if (external) this.authData.append("external", "1805 4646");
     }
 
