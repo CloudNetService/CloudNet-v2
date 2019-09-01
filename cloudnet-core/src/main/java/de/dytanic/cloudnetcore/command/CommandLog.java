@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
+import de.dytanic.cloudnetcore.network.components.ProxyServer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +22,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 /**
@@ -40,31 +40,83 @@ public final class CommandLog extends Command {
 
 	@Override
 	public void onExecuteCommand(CommandSender sender, String[] args) {
-		switch (args.length) {
-			case 1: {
+		if (args.length == 1) {
+			if (CloudNet.getInstance().getServers().containsKey(args[0])) {
 				MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);
-				if (minecraftServer != null) {
-					String rndm = NetworkUtils.randomString(10);
-					CloudNet.getInstance().getServerLogManager().append(rndm, minecraftServer.getServerId());
-					List<String> hasteServer = CloudNet.getInstance().getConfig().getHasteServer().stream().filter(this::checkUrl)
-							.collect(Collectors.toList());
-					sendPaste(sender, rndm, hasteServer, minecraftServer);
-					String x = new StringBuilder("http://")
-							.append(CloudNet.getInstance().getConfig().getWebServerConfig().getAddress())
-							.append(":").append(CloudNet.getInstance().getConfig().getWebServerConfig().getPort())
-							.append("/cloudnet/log?server=").append(rndm).substring(0);
-					sender.sendMessage("You can see the log at: " + x);
+				String rndm = NetworkUtils.randomString(10);
+				CloudNet.getInstance().getServerLogManager().append(rndm, minecraftServer.getServerId());
+				List<String> hasteServer = CloudNet.getInstance().getConfig().getHasteServer().stream().filter(this::checkUrl)
+						.collect(Collectors.toList());
+				sendMinecraftServerPaste(sender, rndm, hasteServer, minecraftServer);
+				String x = new StringBuilder("http://")
+						.append(CloudNet.getInstance().getConfig().getWebServerConfig().getAddress())
+						.append(":").append(CloudNet.getInstance().getConfig().getWebServerConfig().getPort())
+						.append("/cloudnet/log?server=").append(rndm).substring(0);
+				sender.sendMessage("You can see the log at: " + x);
 
-					sender.sendMessage("The log is dynamic and will be deleted in 10 minutes");
-				} else {
-					sender.sendMessage("The server doesn't exist!");
+				sender.sendMessage("The log is dynamic and will be deleted in 10 minutes");
+			} else if (CloudNet.getInstance().getProxys().containsKey(args[0])) {
+				ProxyServer proxyServer = CloudNet.getInstance().getProxy(args[0]);
+				String rndm = NetworkUtils.randomString(10);
+				CloudNet.getInstance().getServerLogManager().append(rndm, proxyServer.getServerId());
+				List<String> hasteServer = CloudNet.getInstance().getConfig().getHasteServer().stream().filter(this::checkUrl)
+						.collect(Collectors.toList());
+				sendProxyServerPaste(sender, rndm, hasteServer, proxyServer);
+				String x = new StringBuilder("http://")
+						.append(CloudNet.getInstance().getConfig().getWebServerConfig().getAddress())
+						.append(":").append(CloudNet.getInstance().getConfig().getWebServerConfig().getPort())
+						.append("/cloudnet/log?server=").append(rndm).substring(0);
+				sender.sendMessage("You can see the log at: " + x);
+			} else {
+				sender.sendMessage("The server/proxy doesn't exist!");
+			}
+		} else {
+			sender.sendMessage("log <server/proxy> | Creates a web server log");
+		}
+	}
+
+	/**
+	 * Send the log to a random past site
+	 *
+	 * @param sender          The sender of the command
+	 * @param random          A random string
+	 * @param url             The url of the paste site
+	 * @param proxyServer The proxy server with the log inside
+	 */
+	private void sendProxyServerPaste(CommandSender sender, String random, List<String> url,
+	                                      ProxyServer proxyServer) {
+		CloudNet.getInstance().getScheduler().runTaskDelayAsync(() -> {
+			StringBuilder paste = new StringBuilder();
+			paste.append("----------------------------------------------------------------")
+					.append('\n');
+			paste.append(String.format("Time: %s", ZonedDateTime.now())).append('\n');
+			paste.append(String.format("Server: %s", proxyServer.getServerId())).append('\n');
+			paste.append(String.format("Java Version: %s", System.getProperty("java.version")))
+					.append('\n');
+			paste.append(String.format("User: %s", System.getProperty("user.name")))
+					.append('\n');
+			paste.append(String.format("OS: %s %s (%s)", System.getProperty("os.name"),
+					System.getProperty("os.arch"),
+					System.getProperty("os.version")))
+					.append('\n');
+			paste.append(String.format("Memory Used: %d Mb", (NetworkUtils.system().getTotalPhysicalMemorySize() -
+					NetworkUtils.system().getFreePhysicalMemorySize()) / 1024L)).append('\n');
+			paste.append(String.format("Memory Free: %d Mb", NetworkUtils.system().getFreePhysicalMemorySize() / 1024L)).append('\n');
+			paste.append(String.format("Memory Max: %d Mb", NetworkUtils.system().getTotalPhysicalMemorySize() / 1024L)).append('\n');
+			paste.append(String.format("CPU Cores: %d", NetworkUtils.system().getAvailableProcessors())).append('\n');
+			paste.append(String.format("CloudNet Version: %s # %s",
+					NetworkUtils.class.getPackage().getSpecificationVersion(),
+					NetworkUtils.class.getPackage().getImplementationVersion())).append('\n');
+
+			paste.append("----------------------------------------------------------------").append('\n');
+			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
+					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
+			for (String s : url) {
+				if(postTo(sender, s, paste)) {
+					break;
 				}
 			}
-			break;
-			default:
-				sender.sendMessage("log <server> | Creates a web server log");
-				break;
-		}
+		}, 3 * 50);
 	}
 
 	/**
@@ -75,8 +127,8 @@ public final class CommandLog extends Command {
 	 * @param url             The url of the paste site
 	 * @param minecraftServer The minecraft server with the log inside
 	 */
-	private void sendPaste(CommandSender sender, String random, List<String> url,
-	                       MinecraftServer minecraftServer) {
+	private void sendMinecraftServerPaste(CommandSender sender, String random, List<String> url,
+	                                      MinecraftServer minecraftServer) {
 		CloudNet.getInstance().getScheduler().runTaskDelayAsync(() -> {
 			StringBuilder paste = new StringBuilder();
 			paste.append("----------------------------------------------------------------")
@@ -104,7 +156,7 @@ public final class CommandLog extends Command {
 			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
 			for (String s : url) {
-				if(postTo(sender, s + "/documents", paste)) {
+				if(postTo(sender, s, paste)) {
 					break;
 				}
 			}
@@ -120,7 +172,7 @@ public final class CommandLog extends Command {
 	 */
 	private boolean postTo(CommandSender sender, String url, StringBuilder builder) {
 		try {
-			URL pasteUrl = new URL(url);
+			URL pasteUrl = new URL(url + "/documents");
 			HttpURLConnection connection = (HttpURLConnection) pasteUrl.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "text/plain");
@@ -165,7 +217,7 @@ public final class CommandLog extends Command {
 			con.setConnectTimeout(5000);
 			return con.getResponseCode() == HttpURLConnection.HTTP_OK;
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Log Command: Server \"" + url + "\" cannot been reached!");
 		} finally {
 			if (con != null) {
 				con.disconnect();
