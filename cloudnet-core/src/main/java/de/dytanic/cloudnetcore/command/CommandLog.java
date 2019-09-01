@@ -95,7 +95,7 @@ public final class CommandLog extends Command {
 	                                      ProxyServer proxyServer) {
 		CloudNet.getInstance().getScheduler().runTaskDelayAsync(() -> {
 			StringBuilder paste = new StringBuilder();
-			paste.append("LOG VERSION: " + version);
+			paste.append("LOG VERSION: " + version).append('\n');
 			paste.append("-----BEGIN SYSTEM INFO-----")
 					.append('\n');
 			paste.append(String.format("Time: %s", ZonedDateTime.now())).append('\n');
@@ -128,8 +128,10 @@ public final class CommandLog extends Command {
 			paste.append("-----BEGIN GROUP INFO-----").append('\n');
 			paste.append(g.toJson(CloudNet.getInstance().getProxyGroup(proxyServer.getProxyInfo().getServiceId().getGroup()), TypeToken.get(ProxyGroup.class).getType())).append('\n');
 			paste.append("-----END GROUP INFO-----").append('\n');
+			paste.append("-----BEGIN LOG INFO-----").append('\n');
 			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
+			paste.append("-----END LOG INFO-----").append('\n');
 			for (String s : url) {
 				if(postTo(sender, s, paste)) {
 					break;
@@ -150,7 +152,7 @@ public final class CommandLog extends Command {
 	                                      MinecraftServer minecraftServer) {
 		CloudNet.getInstance().getScheduler().runTaskDelayAsync(() -> {
 			StringBuilder paste = new StringBuilder();
-			paste.append("LOG VERSION: " + version);
+			paste.append("LOG VERSION: " + version).append('\n');
 			paste.append("-----BEGIN SYSTEM INFO-----")
 					.append('\n');
 			paste.append(String.format("Time: %s", ZonedDateTime.now())).append('\n');
@@ -183,9 +185,10 @@ public final class CommandLog extends Command {
 			paste.append("-----BEGIN GROUP INFO-----").append('\n');
 			paste.append(g.toJson(minecraftServer.getGroup(), TypeToken.get(ServerGroup.class).getType())).append('\n');
 			paste.append("-----END GROUP INFO-----").append('\n');
-
+			paste.append("-----BEGIN LOG INFO-----").append('\n');
 			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
+			paste.append("-----END LOG INFO-----").append('\n');
 			for (String s : url) {
 				if(postTo(sender, s, paste)) {
 					break;
