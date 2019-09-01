@@ -366,7 +366,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         switch (args.length) {
-            case 0: {
+            case 1: {
                 if (args[0].equalsIgnoreCase("createsign") ||
                         args[0].equalsIgnoreCase("removesigns") ||
                         args[0].equalsIgnoreCase("copyto")) {
@@ -384,18 +384,18 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                 }
 
             }
-            case 2: {
+            case 3: {
                 if (args[0].equalsIgnoreCase("createMob")) {
                     return ImmutableList.copyOf(CloudAPI.getInstance().getServerGroupMap().keySet());
                 }
             }
-            case 3: {
+            case 4: {
                 if (args[0].equalsIgnoreCase("createMob")) {
                     return ImmutableList.copyOf(Arrays.stream(Material.values())
                             .map(Enum::name).collect(Collectors.toList()));
                 }
             }
-            case 4: {
+            case 5: {
                 if (args[0].equalsIgnoreCase("createMob")) {
                     return ImmutableList.of("true","false");
                 }
