@@ -5,14 +5,10 @@
 package de.dytanic.cloudnet.cloudflare.util;
 
 import com.google.gson.JsonObject;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * General container for storing a DNS record.
  */
-@Getter
-@AllArgsConstructor
 public class DNSRecord {
 
     /**
@@ -45,4 +41,36 @@ public class DNSRecord {
      */
     private JsonObject data;
 
+    public DNSRecord(String type, String name, String content, int ttl, boolean proxied, JsonObject data) {
+        this.type = type;
+        this.name = name;
+        this.content = content;
+        this.ttl = ttl;
+        this.proxied = proxied;
+        this.data = data;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getTtl() {
+        return ttl;
+    }
+
+    public JsonObject getData() {
+        return data;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public boolean isProxied() {
+        return proxied;
+    }
 }

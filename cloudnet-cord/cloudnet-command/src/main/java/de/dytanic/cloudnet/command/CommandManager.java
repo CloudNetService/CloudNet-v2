@@ -8,14 +8,12 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import jline.console.completer.Completer;
-import lombok.Getter;
 
 import java.util.*;
 
 /**
  * Class that manages commands for the interfaces of CloudNet.
  */
-@Getter
 public final class CommandManager
         implements Completer {
 
@@ -72,6 +70,10 @@ public final class CommandManager
     public Set<String> getCommands()
     {
         return commands.keySet();
+    }
+
+    public ConsoleCommandSender getConsoleSender() {
+        return consoleSender;
     }
 
     /**

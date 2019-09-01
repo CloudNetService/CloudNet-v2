@@ -40,17 +40,12 @@ import de.dytanic.cloudnetcore.network.components.util.ChannelFilter;
 import de.dytanic.cloudnetcore.network.packet.out.*;
 import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
-import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Tareko on 19.07.2017.
  */
-@Getter
 public final class NetworkManager {
 
     private java.util.Map<UUID, CloudPlayer> waitingPlayers = NetworkUtils.newConcurrentHashMap();
@@ -58,6 +53,22 @@ public final class NetworkManager {
     private Document moduleProperties = new Document();
 
     private MessageConfig messageConfig;
+
+    public Map<UUID, CloudPlayer> getWaitingPlayers() {
+        return waitingPlayers;
+    }
+
+    public Map<UUID, CloudPlayer> getOnlinePlayers() {
+        return onlinePlayers;
+    }
+
+    public Document getModuleProperties() {
+        return moduleProperties;
+    }
+
+    public MessageConfig getMessageConfig() {
+        return messageConfig;
+    }
 
     public NetworkManager()
     {

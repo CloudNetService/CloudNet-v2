@@ -22,7 +22,6 @@ import de.dytanic.cloudnetcore.network.components.WrapperMeta;
 import de.dytanic.cloudnetcore.util.defaults.BungeeGroup;
 import de.dytanic.cloudnetcore.util.defaults.LobbyGroup;
 import jline.console.ConsoleReader;
-import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -42,7 +41,6 @@ import java.util.*;
 /**
  * Created by Tareko on 16.09.2017.
  */
-@Getter
 public class CloudConfig {
 
     private static final ConfigurationProvider CONFIGURATION_PROVIDER = ConfigurationProvider.getProvider(YamlConfiguration.class);
@@ -87,6 +85,82 @@ public class CloudConfig {
         defaultInitDoc(consoleReader);
         defaultInitUsers(consoleReader);
         load();
+    }
+
+    public Collection<ConnectableAddress> getAddresses() {
+        return addresses;
+    }
+
+    public Configuration getConfig() {
+        return config;
+    }
+
+    public static ConfigurationProvider getConfigurationProvider() {
+        return CONFIGURATION_PROVIDER;
+    }
+
+    public Document getServiceDocument() {
+        return serviceDocument;
+    }
+
+    public List<WrapperMeta> getWrappers() {
+        return wrappers;
+    }
+
+    public Document getUserDocument() {
+        return userDocument;
+    }
+
+    public List<String> getDisabledModules() {
+        return disabledModules;
+    }
+
+    public Path getConfigPath() {
+        return configPath;
+    }
+
+    public List<String> getCloudServerWrapperList() {
+        return cloudServerWrapperList;
+    }
+
+    public Path getServicePath() {
+        return servicePath;
+    }
+
+    public Path getUsersPath() {
+        return usersPath;
+    }
+
+    public Map<String, Object> getNetworkProperties() {
+        return networkProperties;
+    }
+
+    public String getFormatSplitter() {
+        return formatSplitter;
+    }
+
+    public String getWrapperKey() {
+        return wrapperKey;
+    }
+
+    public WebServerConfig getWebServerConfig() {
+        return webServerConfig;
+    }
+
+    public boolean isAutoUpdate() {
+        return autoUpdate;
+    }
+
+    public boolean isCloudDevServices() {
+        return cloudDevServices;
+    }
+
+    public boolean isCloudDynamicServices() {
+        return cloudDynamicServices;
+    }
+
+    public boolean isNotifyService() {
+        return notifyService;
     }
 
     private void defaultInit(ConsoleReader consoleReader) throws Exception

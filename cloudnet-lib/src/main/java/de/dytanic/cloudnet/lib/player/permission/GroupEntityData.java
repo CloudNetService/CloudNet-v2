@@ -1,17 +1,24 @@
 package de.dytanic.cloudnet.lib.player.permission;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Created by Tareko on 28.07.2017.
  */
-@Getter
-@AllArgsConstructor
 public class GroupEntityData {
 
     private String group;
 
     private long timeout;
 
+    public GroupEntityData(String group, long timeout) {
+        this.group = group;
+        this.timeout = timeout;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
 }

@@ -4,14 +4,9 @@
 
 package de.dytanic.cloudnet.lib.server.resource;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Created by Tareko on 02.09.2017.
  */
-@Getter
-@AllArgsConstructor
 public class ResourceMeta {
 
     private double cpuUsage; //%
@@ -20,4 +15,21 @@ public class ResourceMeta {
 
     private long maxHeapMemory; //KB
 
+    public ResourceMeta(double cpuUsage, long heapMemory, long maxHeapMemory) {
+        this.cpuUsage = cpuUsage;
+        this.heapMemory = heapMemory;
+        this.maxHeapMemory = maxHeapMemory;
+    }
+
+    public double getCpuUsage() {
+        return cpuUsage;
+    }
+
+    public long getHeapMemory() {
+        return heapMemory;
+    }
+
+    public long getMaxHeapMemory() {
+        return maxHeapMemory;
+    }
 }

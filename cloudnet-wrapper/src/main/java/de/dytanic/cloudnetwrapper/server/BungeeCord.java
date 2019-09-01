@@ -27,7 +27,6 @@ import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -39,8 +38,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.Queue;
 
-@Getter
 @EqualsAndHashCode(callSuper = false)
 public class BungeeCord extends AbstractScreenService implements ServerDispatcher {
 
@@ -63,6 +62,36 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
 
         this.path = (proxyGroup.getProxyGroupMode().equals(ProxyGroupMode.STATIC) ? "local/servers/" : "temp/") + proxyGroup.getName() + NetworkUtils.SLASH_STRING + (proxyGroup.getProxyGroupMode().equals(ProxyGroupMode.STATIC) ? proxyProcessMeta.getServiceId().getServerId() : proxyProcessMeta.getServiceId());
         this.dir = Paths.get(path);
+    }
+
+    public ProxyGroup getProxyGroup() {
+        return proxyGroup;
+    }
+
+    public ProxyInfo getProxyInfo() {
+        return proxyInfo;
+    }
+
+    @Override
+    public Queue<String> getCachedLogMessages() {
+        return super.getCachedLogMessages();
+    }
+
+    @Override
+    public Process getInstance() {
+        return instance;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public Path getDir() {
+        return dir;
+    }
+
+    public ProxyProcessMeta getProxyProcessMeta() {
+        return proxyProcessMeta;
     }
 
     @Override

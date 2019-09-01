@@ -3,7 +3,6 @@ package de.dytanic.cloudnetwrapper.screen;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutSendScreenLine;
-import lombok.Getter;
 
 import java.util.Collections;
 import java.util.Queue;
@@ -11,10 +10,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class AbstractScreenService implements Screenable {
 
-    @Getter
     protected final Queue<String> cachedLogMessages = new ConcurrentLinkedQueue<>();
 
-    @Getter
     protected volatile boolean screenSystemEnabled;
 
     public void addCachedItem(String text)
@@ -45,5 +42,13 @@ public abstract class AbstractScreenService implements Screenable {
     private void sendScreenLine0(String text)
     {
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutSendScreenLine(Collections.singletonList(new ScreenInfo(getServiceId(), text))));
+    }
+
+    public Queue<String> getCachedLogMessages() {
+        return cachedLogMessages;
+    }
+
+    public boolean isScreenSystemEnabled() {
+        return screenSystemEnabled;
     }
 }

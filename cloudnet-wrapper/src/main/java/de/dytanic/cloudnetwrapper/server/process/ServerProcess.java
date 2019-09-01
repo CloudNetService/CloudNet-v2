@@ -6,17 +6,27 @@ package de.dytanic.cloudnetwrapper.server.process;
 
 import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnetwrapper.server.ServerStage;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@AllArgsConstructor
 public class ServerProcess {
 
     private ServerProcessMeta meta;
 
-    @Setter
     private ServerStage serverStage;
 
+    public ServerProcess(ServerProcessMeta meta, ServerStage serverStage) {
+        this.meta = meta;
+        this.serverStage = serverStage;
+    }
+
+    public ServerProcessMeta getMeta() {
+        return meta;
+    }
+
+    public ServerStage getServerStage() {
+        return serverStage;
+    }
+
+    public void setServerStage(ServerStage serverStage) {
+        this.serverStage = serverStage;
+    }
 }
