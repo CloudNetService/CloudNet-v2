@@ -108,6 +108,9 @@ public final class CommandLog extends Command {
 			String s = "";
 			while (postTo(sender, s + "/documents", paste)) {
 				s = urls.pop();
+				if (postTo(sender,s,paste)) {
+					return;
+				}
 			}
 		}, 3 * 50);
 	}
