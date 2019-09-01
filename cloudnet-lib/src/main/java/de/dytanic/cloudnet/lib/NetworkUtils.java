@@ -98,6 +98,10 @@ public final class NetworkUtils {
     {
         return ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
     }
+    public static OperatingSystemMXBean system()
+    {
+        return ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean());
+    }
 
     public static TypeToken<CloudNetwork> cloudnet()
     {
