@@ -108,8 +108,8 @@ public final class CommandLog extends Command {
 					System.getProperty("os.arch"),
 					System.getProperty("os.version")))
 					.append('\n');
-			paste.append(String.format("Memory Used: %d Mb", (NetworkUtils.system().getTotalPhysicalMemorySize() -
-					(NetworkUtils.system().getFreePhysicalMemorySize()) / 1024L)/ 1024L)).append('\n');
+			paste.append(String.format("Memory Used: %d Mb", ((NetworkUtils.system().getTotalPhysicalMemorySize() -
+					NetworkUtils.system().getFreePhysicalMemorySize())/ 1024L )/ 1024L)).append('\n');
 			paste.append(String.format("Memory Free: %d Mb", (NetworkUtils.system().getFreePhysicalMemorySize() / 1024L) / 1024L)).append('\n');
 			paste.append(String.format("Memory Max: %d Mb", (NetworkUtils.system().getTotalPhysicalMemorySize() / 1024L) /1024L)).append('\n');
 			paste.append(String.format("CPU Cores: %d", NetworkUtils.system().getAvailableProcessors())).append('\n');
@@ -165,8 +165,8 @@ public final class CommandLog extends Command {
 					System.getProperty("os.arch"),
 					System.getProperty("os.version")))
 					.append('\n');
-			paste.append(String.format("Memory Used: %d Mb", (NetworkUtils.system().getTotalPhysicalMemorySize() -
-					(NetworkUtils.system().getFreePhysicalMemorySize()) / 1024L)/ 1024L)).append('\n');
+			paste.append(String.format("Memory Used: %d Mb", ((NetworkUtils.system().getTotalPhysicalMemorySize() -
+					NetworkUtils.system().getFreePhysicalMemorySize())/ 1024L )/ 1024L)).append('\n');
 			paste.append(String.format("Memory Free: %d Mb", (NetworkUtils.system().getFreePhysicalMemorySize() / 1024L) / 1024L)).append('\n');
 			paste.append(String.format("Memory Max: %d Mb", (NetworkUtils.system().getTotalPhysicalMemorySize() / 1024L) /1024L)).append('\n');
 			paste.append(String.format("CPU Cores: %d", NetworkUtils.system().getAvailableProcessors())).append('\n');
