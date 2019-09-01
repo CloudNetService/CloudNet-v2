@@ -365,6 +365,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+        commandSender.sendMessage(args);
+        commandSender.sendMessage("Length:" + args.length);
         switch (args.length) {
             case 1: {
                 if (args[0].equalsIgnoreCase("createsign") ||
