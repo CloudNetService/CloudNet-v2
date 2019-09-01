@@ -405,6 +405,6 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                 }
             }
         }
-        return new LinkedList<>(CloudAPI.getInstance().getServerGroupMap().keySet());
+        return ImmutableList.of();
     }
 }
