@@ -60,7 +60,7 @@ public final class PaperBuilder {
                     buildPaperVersion(answer);
                 } else if (Arrays.stream(paperMCProject.getVersions())
                         .noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
-                    System.out.println("Version does not exist!");
+                    System.out.println("This version does not exist!");
                 }
             }
         } catch (Exception e) {
