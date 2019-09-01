@@ -73,7 +73,7 @@ public final class SpigotBuilder {
                 if (rawName.contains("../")) {
                     continue;
                 }
-                if (!(rawName.contains("latest.json") | rawName.startsWith("1."))) {
+                if (!(rawName.contains("latest.json") || rawName.startsWith("1."))) {
                     continue;
                 }
                 array.add(rawName.replace(".json", ""));
