@@ -442,11 +442,9 @@ public final class CommandPermissions extends Command implements TabExecutor {
 	@Override
 	public Iterable<String> onTabComplete(CommandSender commandSender, String[] strings) {
         switch (strings.length) {
-            ///cperms
             case 1: {
                 return ImmutableList.of("user", "group", "create");
             }
-            ///cperms USER/GROUP
             case 2: {
                 switch (strings[0].toLowerCase(Locale.ENGLISH)) {
                     case "group": {
@@ -525,8 +523,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
 		        }
 	        }
 	        default: {
-	        	return ImmutableList.of("user", "group", "create").stream()
-				        .filter(s -> s.startsWith(strings[0])).collect(Collectors.toList());
+	        	return ImmutableList.of();
 	        }
         }
 	}

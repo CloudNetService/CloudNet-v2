@@ -478,9 +478,6 @@ public final class CommandCloud extends Command implements TabExecutor {
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] args) {
 
         switch (args.length) {
-            case 0: {
-                return ImmutableList.of("cloud");
-            }
             case 1: {
                 return ImmutableList.of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
                         , "ustopGroup", "listProxys", "listOnline", "listServers", "log", "listGroups", "rl", "list"
@@ -527,9 +524,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 break;
             }
             default: {
-                return ImmutableList.of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
-                        , "ustopGroup", "listProxys", "listOnline", "listServers", "log", "listGroups", "rl", "list"
-                        , "maintenance", "copy", "version", "statistics", "debug").stream().filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
+                return ImmutableList.of();
             }
         }
         return new LinkedList<>();
