@@ -115,7 +115,7 @@ public class CloudConfig {
 		configuration.set("general.cloudGameServer-wrapperList", Collections.singletonList("Wrapper-1"));
 
 		configuration.set("general.haste.server", Arrays.asList("https://hastebin.com", "https://hasteb.in",
-				"https://haste.llamacloud.io", "https://haste.dysn.ga"));
+				"https://haste.llamacloud.io", "https://paste.dsyn.ga"));
 
 		configuration.set("server.hostaddress", hostName);
 		configuration.set("server.ports", Collections.singletonList(1410));
@@ -199,7 +199,7 @@ public class CloudConfig {
 			}
 			if (!configuration.getSection("general").self.containsKey("haste")) {
 				configuration.set("general.haste.server", Arrays.asList("https://hastebin.com", "https://hasteb.in",
-						"https://haste.llamacloud.io", "https://haste.dysn.ga"));
+						"https://haste.llamacloud.io", "https://paste.dsyn.ga"));
 
 				try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
 					CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
