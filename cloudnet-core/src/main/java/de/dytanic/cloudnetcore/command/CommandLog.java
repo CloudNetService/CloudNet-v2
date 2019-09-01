@@ -103,11 +103,10 @@ public final class CommandLog extends Command {
 			paste.append("----------------------------------------------------------------").append('\n');
 			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
-			Stack<String> urls = new Stack();
-			urls.addAll(url);
-			String s = "";
-			while (postTo(sender, s + "/documents", paste)) {
-				s = urls.pop();
+			for (String s : url) {
+				if(postTo(sender, s + "/documents", paste)) {
+					break;
+				}
 			}
 		}, 3 * 50);
 	}
@@ -137,16 +136,16 @@ public final class CommandLog extends Command {
 			if (responseCode == 200) {
 				sender.sendMessage("You can see the log at: " + String.format(url + "/%s", object.get("key").getAsString()));
 				connection.disconnect();
-				return false;
+				return true;
 			} else {
 				connection.disconnect();
-				return true;
+				return false;
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return true;
+		return false;
 	}
 
 	/**
