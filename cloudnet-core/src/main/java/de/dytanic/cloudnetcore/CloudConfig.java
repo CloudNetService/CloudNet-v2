@@ -235,6 +235,21 @@ public class CloudConfig {
 		CloudNet.getInstance().getWrappers().put(wrapperMeta.getId(), new Wrapper(wrapperMeta));
 	}
 
+	public void deleteWrapper(WrapperMeta wrapperMeta) {
+		this.serviceDocument.append("wrapper", this.wrappers = this.deleteWrapper0(wrapperMeta)).saveAsConfig(this.servicePath);
+		CloudNet.getInstance().getWrappers().remove(wrapperMeta.getId());
+	}
+
+	private List<WrapperMeta> deleteWrapper0(WrapperMeta wrapperMeta) {
+		List<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>() {
+		}.getType());
+		WrapperMeta is = CollectionWrapper.filter(wrapperMetas, wrapperMeta_ -> wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId()));
+		if (is != null) {
+			wrapperMetas.remove(is);
+		}
+		return wrapperMetas;
+	}
+
 	public Collection<User> getUsers() {
 		if (this.userDocument == null) return null;
 		return userDocument.getObject("users", new TypeToken<Collection<User>>() {
