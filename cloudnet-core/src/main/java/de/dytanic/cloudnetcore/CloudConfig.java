@@ -197,7 +197,7 @@ public class CloudConfig {
 					CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
 				}
 			}
-			if (configuration.getStringList("general.haste.server") == null) {
+			if (!configuration.getSection("general").self.containsKey("haste")) {
 				configuration.set("general.haste.server", Arrays.asList("https://hastebin.com", "https://hasteb.in",
 						"https://haste.llamacloud.io", "https://haste.dysn.ga"));
 
