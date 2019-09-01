@@ -39,6 +39,7 @@
         <plugin.jar.version>3.1.2</plugin.jar.version>
         <plugin.resources.version>3.1.0</plugin.resources.version>
         <plugin.antrun.version>1.8</plugin.antrun.version>
+        <plugin.source.version>3.1.0</plugin.source.version>
     </properties>
 
     <developers>
@@ -102,6 +103,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>${plugin.source.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

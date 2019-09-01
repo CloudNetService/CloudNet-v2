@@ -123,7 +123,6 @@ public class CloudConfig {
 
 		configuration.set("cloudnet-statistics.enabled", true);
 		configuration.set("cloudnet-statistics.uuid", UUID.randomUUID().toString());
-
 		configuration.set("networkproperties.test", true);
 
 		try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
