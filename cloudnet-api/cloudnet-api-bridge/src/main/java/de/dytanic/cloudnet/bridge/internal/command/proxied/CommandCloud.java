@@ -426,7 +426,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 break;
             default:
-                BaseComponent[] components = Lists.newArrayList(NetworkUtils.SPACE_STRING,
+            	Lists.newArrayList(NetworkUtils.SPACE_STRING,
                         CloudAPI.getInstance().getPrefix() + "All command arguments",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud toggle autoslot",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud toggle maintenance",
@@ -459,8 +459,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         .stream()
                         .map(TextComponent::fromLegacyText)
                         .flatMap(Arrays::stream)
-                        .toArray(BaseComponent[]::new);
-                commandSender.sendMessage(components);
+                        .forEach(commandSender::sendMessage);
                 break;
         }
 
@@ -477,67 +476,58 @@ public final class CommandCloud extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] args) {
-        List<String> tabCompletes = ImmutableList.of();
+
         switch (args.length) {
             case 1: {
-                tabCompletes = ImmutableList.of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
+                return ImmutableList.of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
                         , "ustopGroup", "listProxys", "listOnline", "listServers", "log", "listGroups", "rl", "list"
                         , "maintenance", "copy", "version", "statistics", "debug");
-                break;
             }
             case 2: {
-                switch (args[0].toLowerCase()) {
+                switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "toggle": {
-                        tabCompletes = ImmutableList.of("autoslot", "maintenance");
-                        break;
+                        return ImmutableList.of("autoslot", "maintenance");
                     }
                     case "whitelist": {
-                        tabCompletes = ImmutableList.of("add", "remove");
-                        break;
+                        return ImmutableList.of("add", "remove");
                     }
+                    case "maintenance":
                     case "start":
                     case "stopgroup":
                     case "ustopgroup": {
-                        tabCompletes = getProxyAndServerGroups();
-                        break;
+                        return getProxyAndServerGroups();
                     }
                     case "stop": {
-                        tabCompletes = getProxiesAndServers();
-                        break;
+                        return getProxiesAndServers();
                     }
                     case "log": {
-                        tabCompletes = new LinkedList<>(CloudProxy.getInstance().getCachedServers().keySet());
-                        break;
+                        return ImmutableList.copyOf(CloudProxy.getInstance().getCachedServers().keySet());
                     }
-                    case "maintenance": {
-                        tabCompletes = new LinkedList<>(CloudAPI.getInstance().getServerGroupMap().keySet());
-                        break;
-                    }
-
                     case "cmds": {
-                        tabCompletes = CloudAPI.getInstance().getServers().stream()
+                        return CloudAPI.getInstance().getServers().stream()
                                 .map(ServerInfo::getServiceId).map(ServiceId::getServerId).collect(Collectors.toList());
-                        break;
                     }
                     case "cmdp": {
-                        tabCompletes = CloudAPI.getInstance().getProxys().stream()
+                        return CloudAPI.getInstance().getProxys().stream()
                                 .map(ProxyInfo::getServiceId)
                                 .map(ServiceId::getServerId).collect(Collectors.toList());
-                        break;
                     }
 
                 }
                 break;
             }
             case 3: {
-                if (args[0].toLowerCase().equals("whitelist")) {
-                    tabCompletes = CloudAPI.getInstance().getOnlinePlayers()
+                if (args[0].toLowerCase(Locale.ENGLISH).equals("whitelist")) {
+                    return CloudAPI.getInstance().getOnlinePlayers()
                             .stream().map(CloudPlayer::getName).collect(Collectors.toList());
                 }
                 break;
             }
+            default: {
+                return ImmutableList.of();
+            }
         }
-        return new LinkedList<>(StringUtil.copyPartialMatches(args[args.length - 1], tabCompletes, new ArrayList<>(tabCompletes.size())));
+        return new LinkedList<>();
     }
 
     private List<String> getProxyAndServerGroups() {
