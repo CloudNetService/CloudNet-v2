@@ -104,7 +104,7 @@ public final class SpigotBuilder {
             if (Objects.requireNonNull(
                     buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-"))).length > 0) {
                 System.out.println("Skipping build");
-                System.out.println("Copy spigot.jar");
+                System.out.println("Copying spigot.jar");
                 try {
                     Files.copy(new FileInputStream(Objects.requireNonNull(
                             buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
