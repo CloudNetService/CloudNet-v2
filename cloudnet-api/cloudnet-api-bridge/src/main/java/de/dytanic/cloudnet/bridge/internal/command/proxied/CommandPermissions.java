@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.bridge.internal.command.proxied;
 
+import com.google.common.collect.ImmutableList;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
@@ -443,7 +444,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
         switch (strings.length) {
             ///cperms
             case 1: {
-                return Arrays.asList("user", "group", "create");
+                return ImmutableList.of("user", "group", "create");
             }
             ///cperms USER/GROUP
             case 2: {
@@ -523,8 +524,11 @@ public final class CommandPermissions extends Command implements TabExecutor {
 			        }
 		        }
 	        }
+	        default: {
+	        	return ImmutableList.of("user", "group", "create").stream()
+				        .filter(s -> s.startsWith(strings[0])).collect(Collectors.toList());
+	        }
         }
-        return new ArrayList<>();
 	}
 
 	private boolean permissionIsSet(Map<String, Boolean> permissions, String permission, boolean value) {
