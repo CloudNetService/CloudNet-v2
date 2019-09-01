@@ -112,12 +112,12 @@ public class CloudConfig {
 		configuration.set("general.server-name-splitter", "-");
 		configuration.set("general.notify-service", true);
 		configuration.set("general.disabled-modules", new ArrayList<>());
-		configuration.set("general.cloudGameServer-wrapperList", Arrays.asList("Wrapper-1"));
+		configuration.set("general.cloudGameServer-wrapperList", Collections.singletonList("Wrapper-1"));
 
 		configuration.set("general.haste.server", Arrays.asList("https://hastebin.com", "https://hasteb.in", "https://haste.llamacloud.io"));
 
 		configuration.set("server.hostaddress", hostName);
-		configuration.set("server.ports", Arrays.asList(1410));
+		configuration.set("server.ports", Collections.singletonList(1410));
 		configuration.set("server.webservice.hostaddress", hostName);
 		configuration.set("server.webservice.port", 1420);
 
@@ -161,7 +161,7 @@ public class CloudConfig {
 		String password = NetworkUtils.randomString(32);
 		System.out.println("\"admin\" Password: " + password);
 		System.out.println(NetworkUtils.SPACE_STRING);
-		new Document().append("users", Collections.singletonList(new BasicUser("admin", password, Arrays.asList("*")))).saveAsConfig(usersPath);
+		new Document().append("users", Collections.singletonList(new BasicUser("admin", password, Collections.singletonList("*")))).saveAsConfig(usersPath);
 	}
 
 	public CloudConfig load() throws Exception {
@@ -199,7 +199,7 @@ public class CloudConfig {
 			}
 
 			if (!configuration.getSection("general").self.containsKey("cloudGameServer-wrapperList")) {
-				configuration.set("general.cloudGameServer-wrapperList", Arrays.asList("Wrapper-1"));
+				configuration.set("general.cloudGameServer-wrapperList", Collections.singletonList("Wrapper-1"));
 
 				try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
 					CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
