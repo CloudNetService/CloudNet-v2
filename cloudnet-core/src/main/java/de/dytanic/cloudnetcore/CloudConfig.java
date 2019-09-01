@@ -114,7 +114,8 @@ public class CloudConfig {
 		configuration.set("general.disabled-modules", new ArrayList<>());
 		configuration.set("general.cloudGameServer-wrapperList", Collections.singletonList("Wrapper-1"));
 
-		configuration.set("general.haste.server", Arrays.asList("https://hastebin.com", "https://hasteb.in", "https://haste.llamacloud.io"));
+		configuration.set("general.haste.server", Arrays.asList("https://hastebin.com", "https://hasteb.in",
+				"https://haste.llamacloud.io", "https://haste.dysn.ga"));
 
 		configuration.set("server.hostaddress", hostName);
 		configuration.set("server.ports", Collections.singletonList(1410));
@@ -196,6 +197,14 @@ public class CloudConfig {
 					CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
 				}
 			}
+			if (configuration.getStringList("general.haste.server") == null) {
+				configuration.set("general.haste.server", Arrays.asList("https://hastebin.com", "https://hasteb.in",
+						"https://haste.llamacloud.io", "https://haste.dysn.ga"));
+
+				try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+					CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
+				}
+			}
 
 			if (!configuration.getSection("general").self.containsKey("cloudGameServer-wrapperList")) {
 				configuration.set("general.cloudGameServer-wrapperList", Collections.singletonList("Wrapper-1"));
@@ -204,6 +213,8 @@ public class CloudConfig {
 					CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
 				}
 			}
+
+			this.hasteServer = configuration.getStringList("general.haste.server");
 
 			this.disabledModules = configuration.getStringList("general.disabled-modules");
 			this.cloudServerWrapperList = configuration.getStringList("general.cloudGameServer-wrapperList");
