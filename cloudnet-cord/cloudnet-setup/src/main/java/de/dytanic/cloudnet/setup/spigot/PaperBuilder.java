@@ -3,6 +3,7 @@ package de.dytanic.cloudnet.setup.spigot;
 import com.google.gson.Gson;
 import de.dytanic.cloudnet.setup.models.PaperMCProject;
 import de.dytanic.cloudnet.setup.models.PaperMCProjectVersion;
+import de.dytanic.cloudnet.setup.utils.StreamThread;
 import jline.console.ConsoleReader;
 
 import java.io.*;
@@ -13,6 +14,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 public final class PaperBuilder {
 
@@ -146,15 +148,13 @@ public final class PaperBuilder {
      * @throws IOException throws if readline null
      */
     static void printProcessOutputToConsole(Process exec) throws IOException {
-        while (exec.isAlive()) {
-            InputStream inputStream = exec.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            bufferedReader.lines().forEach(System.out::println);
-            InputStream errorStream = exec.getErrorStream();
-            InputStreamReader errorInputStreamReader = new InputStreamReader(errorStream);
-            BufferedReader errorBufferedReader = new BufferedReader(errorInputStreamReader);
-            errorBufferedReader.lines().forEach(System.err::println);
+        CountDownLatch count = new CountDownLatch(2);
+        try {
+            new Thread(new StreamThread(count,exec.getInputStream())).start();
+            new Thread(new StreamThread(count,exec.getErrorStream())).start();
+            count.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         System.out.println("Build finished!");
         System.out.println("Copying spigot.jar");
