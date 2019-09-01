@@ -479,17 +479,17 @@ public final class CommandCloud extends Command implements TabExecutor {
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] args) {
         switch (args.length) {
             case 0: {
-                return Arrays.asList("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
+                return ImmutableList.of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
                         , "ustopGroup", "listProxys", "listOnline", "listServers", "log", "listGroups", "rl", "list"
                         , "maintenance", "copy", "version", "statistics", "debug");
             }
             case 1: {
                 switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "toggle": {
-                        return Arrays.asList("autoslot", "maintenance");
+                        return ImmutableList.of("autoslot", "maintenance");
                     }
                     case "whitelist": {
-                        return Arrays.asList("add", "remove");
+                        return ImmutableList.of("add", "remove");
                     }
                     case "maintenance":
                     case "start":
@@ -501,7 +501,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         return getProxiesAndServers();
                     }
                     case "log": {
-                        return new LinkedList<>(CloudProxy.getInstance().getCachedServers().keySet());
+                        return ImmutableList.copyOf(CloudProxy.getInstance().getCachedServers().keySet());
                     }
                     case "cmds": {
                         return CloudAPI.getInstance().getServers().stream()
