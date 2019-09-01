@@ -10,6 +10,10 @@ import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.server.ProxyGroup;
+import de.dytanic.cloudnet.lib.server.ServerGroup;
+import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
+import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
@@ -118,8 +122,11 @@ public final class CommandLog extends Command {
 			paste.append(String.format("Server: %s", proxyServer.getServerId()));
 			paste.append("-----END CLOUDNET INFO-----").append('\n');
 			paste.append("-----BEGIN SERVER INFO-----").append('\n');
-			paste.append(g.toJson(proxyServer, TypeToken.get(ProxyServer.class).getType()));
+			paste.append(g.toJson(proxyServer.getProxyInfo(), TypeToken.get(ProxyInfo.class).getType()));
 			paste.append("-----END SERVER INFO-----").append('\n');
+			paste.append("-----BEGIN GROUP INFO-----").append('\n');
+			paste.append(g.toJson(CloudNet.getInstance().getProxyGroup(proxyServer.getProxyInfo().getServiceId().getGroup()), TypeToken.get(ProxyGroup.class).getType()));
+			paste.append("-----END GROUP INFO-----").append('\n');
 			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
 			for (String s : url) {
@@ -170,8 +177,11 @@ public final class CommandLog extends Command {
 			paste.append(String.format("Server: %s", minecraftServer.getServerId()));
 			paste.append("-----END CLOUDNET INFO-----").append('\n');
 			paste.append("-----BEGIN SERVER INFO-----").append('\n');
-			paste.append(g.toJson(minecraftServer, TypeToken.get(MinecraftServer.class).getType()));
+			paste.append(g.toJson(minecraftServer.getServerInfo(), TypeToken.get(ServerInfo.class).getType()));
 			paste.append("-----END SERVER INFO-----").append('\n');
+			paste.append("-----BEGIN GROUP INFO-----").append('\n');
+			paste.append(g.toJson(minecraftServer.getGroup(), TypeToken.get(ServerGroup.class).getType()));
+			paste.append("-----END GROUP INFO-----").append('\n');
 
 			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
