@@ -159,12 +159,17 @@ public final class CommandLog extends Command {
 		HttpURLConnection con = null;
 		try {
 			con = (HttpURLConnection) new URL(url).openConnection();
-			con.setConnectTimeout(5);
-			con.setReadTimeout(5);
 			con.setRequestMethod("HEAD");
+			con.connect();
+			con.setReadTimeout(5000);
+			con.setConnectTimeout(5000);
 			return con.getResponseCode() == HttpURLConnection.HTTP_OK;
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (con != null) {
+				con.disconnect();
+			}
 		}
 		return false;
 	}
