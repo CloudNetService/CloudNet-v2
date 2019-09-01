@@ -426,7 +426,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 break;
             default:
-                BaseComponent[] components = Lists.newArrayList(NetworkUtils.SPACE_STRING,
+            	Lists.newArrayList(NetworkUtils.SPACE_STRING,
                         CloudAPI.getInstance().getPrefix() + "All command arguments",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud toggle autoslot",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud toggle maintenance",
@@ -459,8 +459,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         .stream()
                         .map(TextComponent::fromLegacyText)
                         .flatMap(Arrays::stream)
-                        .toArray(BaseComponent[]::new);
-                commandSender.sendMessage(components);
+                        .forEach(commandSender::sendMessage);
                 break;
         }
 
@@ -478,12 +477,12 @@ public final class CommandCloud extends Command implements TabExecutor {
     @Override
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] args) {
         switch (args.length) {
-            case 0: {
+            case 1: {
                 return ImmutableList.of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
                         , "ustopGroup", "listProxys", "listOnline", "listServers", "log", "listGroups", "rl", "list"
                         , "maintenance", "copy", "version", "statistics", "debug");
             }
-            case 1: {
+            case 2: {
                 switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "toggle": {
                         return ImmutableList.of("autoslot", "maintenance");
@@ -516,7 +515,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 break;
             }
-            case 2: {
+            case 3: {
                 if (args[0].toLowerCase(Locale.ENGLISH).equals("whitelist")) {
                     return CloudAPI.getInstance().getOnlinePlayers()
                             .stream().map(CloudPlayer::getName).collect(Collectors.toList());
