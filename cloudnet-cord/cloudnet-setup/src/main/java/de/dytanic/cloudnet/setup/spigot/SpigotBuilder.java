@@ -29,7 +29,7 @@ public final class SpigotBuilder {
      * @param reader to read the answer
      */
     public static void start(final ConsoleReader reader) {
-        System.out.println("Fetch Spigot Versions");
+        System.out.println("Fetching Spigot versions");
         List<String> versions = loadVersions();
         System.out.println("Available Spigot versions:");
         System.out

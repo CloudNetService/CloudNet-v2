@@ -49,7 +49,7 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
 	public void accept(ConsoleReader reader) {
 		System.out.println("No spigot.jar has been found!");
 
-		System.out.println("Choose a minecraft server version [\"paper\",\"spigot\", \"buildtools\"]");
+		System.out.println("Choose a minecraft server version [\"paper\", \"spigot\", \"buildtools\"]");
 
 		String answer = null;
 

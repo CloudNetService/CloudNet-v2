@@ -35,7 +35,7 @@ public final class PaperBuilder {
             connection.connect();
             PaperMCProject paperMCProject = gson
                     .fromJson(new InputStreamReader(connection.getInputStream()), PaperMCProject.class);
-            System.out.println("Available PaperSpigot Versions");
+            System.out.println("Available Paper Versions:");
             System.out
                     .println("-----------------------------------------------------------------------------");
             System.out.println("PaperSpigot Version");
@@ -75,7 +75,7 @@ public final class PaperBuilder {
      * @throws Exception If a connection error or something
      */
     private static void buildPaperVersion(String version) throws Exception {
-        System.out.println("Fetch Builds");
+        System.out.println(String.format("Fetching build %s", version));
         URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version))
                 .openConnection();
         connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
@@ -99,7 +99,7 @@ public final class PaperBuilder {
                     buildFolder.listFiles(pathname -> pathname.getName().startsWith("paperclip"))).length
                     > 0) {
                 System.out.println("Skipping build");
-                System.out.println("Copy spigot.jar");
+                System.out.println("Copying spigot.jar");
                 try {
                     Files.copy(new FileInputStream(Objects.requireNonNull(
                             buildFolder.listFiles(pathname -> pathname.getName().startsWith("paper")))[0]),
@@ -126,7 +126,7 @@ public final class PaperBuilder {
      */
     private static void runPaperClip(URLConnection connection, File buildFolder, File paperclip)
             throws IOException {
-        System.out.println("Download PaperClip");
+        System.out.println("Downloading Paperclip");
         try (InputStream inputStream = connection.getInputStream()) {
             Files.copy(inputStream, Paths.get(paperclip.toURI()), StandardCopyOption.REPLACE_EXISTING);
         }
@@ -156,8 +156,8 @@ public final class PaperBuilder {
             BufferedReader errorBufferedReader = new BufferedReader(errorInputStreamReader);
             errorBufferedReader.lines().forEach(System.err::println);
         }
-        System.out.println("Build finish!");
-        System.out.println("Copy spigot.jar");
+        System.out.println("Build finished!");
+        System.out.println("Copying spigot.jar");
     }
 
     public static Process getExec() {
