@@ -135,7 +135,6 @@ public final class CommandLog extends Command {
 			JsonObject object = g.fromJson(new InputStreamReader(inputStream), JsonObject.class);
 			int responseCode = connection.getResponseCode();
 			if (responseCode == 200) {
-				connection.disconnect();
 				sender.sendMessage("You can see the log at: " + String.format(url + "/%s", object.get("key").getAsString()));
 				connection.disconnect();
 				return false;
