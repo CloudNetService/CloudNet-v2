@@ -477,63 +477,54 @@ public final class CommandCloud extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] args) {
-        List<String> tabCompletes = ImmutableList.of();
         switch (args.length) {
             case 0: {
-                tabCompletes = ImmutableList.of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
+                return Arrays.asList("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
                         , "ustopGroup", "listProxys", "listOnline", "listServers", "log", "listGroups", "rl", "list"
                         , "maintenance", "copy", "version", "statistics", "debug");
-                break;
             }
             case 1: {
-                switch (args[0].toLowerCase()) {
+                switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "toggle": {
-                        tabCompletes = ImmutableList.of("autoslot", "maintenance");
-                        break;
+                        return Arrays.asList("autoslot", "maintenance");
                     }
                     case "whitelist": {
-                        tabCompletes = ImmutableList.of("add", "remove");
-                        break;
+                        return Arrays.asList("add", "remove");
                     }
                     case "maintenance":
                     case "start":
                     case "stopgroup":
                     case "ustopgroup": {
-                        tabCompletes = getProxyAndServerGroups();
-                        break;
+                        return getProxyAndServerGroups();
                     }
                     case "stop": {
-                        tabCompletes = getProxiesAndServers();
-                        break;
+                        return getProxiesAndServers();
                     }
                     case "log": {
-                        tabCompletes = new LinkedList<>(CloudProxy.getInstance().getCachedServers().keySet());
-                        break;
+                        return new LinkedList<>(CloudProxy.getInstance().getCachedServers().keySet());
                     }
                     case "cmds": {
-                        tabCompletes = CloudAPI.getInstance().getServers().stream()
+                        return CloudAPI.getInstance().getServers().stream()
                                 .map(ServerInfo::getServiceId).map(ServiceId::getServerId).collect(Collectors.toList());
-                        break;
                     }
                     case "cmdp": {
-                        tabCompletes = CloudAPI.getInstance().getProxys().stream()
+                        return CloudAPI.getInstance().getProxys().stream()
                                 .map(ProxyInfo::getServiceId)
                                 .map(ServiceId::getServerId).collect(Collectors.toList());
-                        break;
                     }
 
                 }
                 break;
             }
             case 2: {
-                if (args[0].toLowerCase().equals("whitelist")) {
-                    tabCompletes = CloudAPI.getInstance().getOnlinePlayers()
+                if (args[0].toLowerCase(Locale.ENGLISH).equals("whitelist")) {
+                    return CloudAPI.getInstance().getOnlinePlayers()
                             .stream().map(CloudPlayer::getName).collect(Collectors.toList());
                 }
                 break;
             }
         }
-        return new LinkedList<>(StringUtil.copyPartialMatches(args[args.length - 1], tabCompletes, new ArrayList<>(tabCompletes.size())));
+        return new LinkedList<>();
     }
 
     private List<String> getProxyAndServerGroups() {
