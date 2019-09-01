@@ -366,10 +366,6 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         switch (args.length) {
-            case 0: {
-                return ImmutableList.of("createSign", "removeSign", "removeSigns", "copyTo", "createMob", "removeMob",
-                        "listsMobs", "moblist", "setDisplay", "setItem", "editMobLine", "debug");
-            }
             case 1: {
                 if (args[0].equalsIgnoreCase("createsign") ||
                         args[0].equalsIgnoreCase("removesigns") ||
@@ -405,6 +401,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                 }
             }
         }
-        return ImmutableList.of();
+        return ImmutableList.of("createSign", "removeSign", "removeSigns", "copyTo", "createMob", "removeMob",
+                "listsMobs", "moblist", "setDisplay", "setItem", "editMobLine", "debug");
     }
 }
