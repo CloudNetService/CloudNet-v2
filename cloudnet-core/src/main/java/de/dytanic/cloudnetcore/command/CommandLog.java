@@ -6,6 +6,7 @@ package de.dytanic.cloudnetcore.command;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
@@ -30,6 +31,8 @@ import java.util.stream.Collectors;
 public final class CommandLog extends Command {
 
 	private final Gson g = new Gson();
+
+	private final String version = "1";
 
 	public CommandLog() {
 		super("log", "cloudnet.command.log");
@@ -87,7 +90,8 @@ public final class CommandLog extends Command {
 	                                      ProxyServer proxyServer) {
 		CloudNet.getInstance().getScheduler().runTaskDelayAsync(() -> {
 			StringBuilder paste = new StringBuilder();
-			paste.append("----------------------------------------------------------------")
+			paste.append("LOG VERSION: " + version);
+			paste.append("-----BEGIN SYSTEM INFO-----")
 					.append('\n');
 			paste.append(String.format("Time: %s", ZonedDateTime.now())).append('\n');
 			paste.append(String.format("Server: %s", proxyServer.getServerId())).append('\n');
@@ -104,11 +108,18 @@ public final class CommandLog extends Command {
 			paste.append(String.format("Memory Free: %d Mb", NetworkUtils.system().getFreePhysicalMemorySize() / 1024L)).append('\n');
 			paste.append(String.format("Memory Max: %d Mb", NetworkUtils.system().getTotalPhysicalMemorySize() / 1024L)).append('\n');
 			paste.append(String.format("CPU Cores: %d", NetworkUtils.system().getAvailableProcessors())).append('\n');
+			paste.append("-----END SYSTEM INFO-----").append('\n');
+			paste.append("-----BEGIN CLOUDNET INFO-----").append('\n');
 			paste.append(String.format("CloudNet Version: %s # %s",
 					NetworkUtils.class.getPackage().getSpecificationVersion(),
 					NetworkUtils.class.getPackage().getImplementationVersion())).append('\n');
-
-			paste.append("----------------------------------------------------------------").append('\n');
+			paste.append(String.format("Backend: %s", CloudNet.getInstance().getProxyGroup(proxyServer.getProxyInfo().getServiceId().getGroup()).getTemplate().getBackend().name()));
+			paste.append(String.format("GroupMode: %s", CloudNet.getInstance().getProxyGroup(proxyServer.getProxyInfo().getServiceId().getGroup()).getProxyGroupMode().name()));
+			paste.append(String.format("Server: %s", proxyServer.getServerId()));
+			paste.append("-----END CLOUDNET INFO-----").append('\n');
+			paste.append("-----BEGIN SERVER INFO-----").append('\n');
+			paste.append(g.toJson(proxyServer, TypeToken.get(ProxyServer.class).getType()));
+			paste.append("-----END SERVER INFO-----").append('\n');
 			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
 			for (String s : url) {
@@ -131,7 +142,8 @@ public final class CommandLog extends Command {
 	                                      MinecraftServer minecraftServer) {
 		CloudNet.getInstance().getScheduler().runTaskDelayAsync(() -> {
 			StringBuilder paste = new StringBuilder();
-			paste.append("----------------------------------------------------------------")
+			paste.append("LOG VERSION: " + version);
+			paste.append("-----BEGIN SYSTEM INFO-----")
 					.append('\n');
 			paste.append(String.format("Time: %s", ZonedDateTime.now())).append('\n');
 			paste.append(String.format("Server: %s", minecraftServer.getServerId())).append('\n');
@@ -148,11 +160,19 @@ public final class CommandLog extends Command {
 			paste.append(String.format("Memory Free: %d Mb", NetworkUtils.system().getFreePhysicalMemorySize() / 1024L)).append('\n');
 			paste.append(String.format("Memory Max: %d Mb", NetworkUtils.system().getTotalPhysicalMemorySize() / 1024L)).append('\n');
 			paste.append(String.format("CPU Cores: %d", NetworkUtils.system().getAvailableProcessors())).append('\n');
+			paste.append("-----END SYSTEM INFO-----").append('\n');
+			paste.append("-----BEGIN CLOUDNET INFO-----").append('\n');
 			paste.append(String.format("CloudNet Version: %s # %s",
 					NetworkUtils.class.getPackage().getSpecificationVersion(),
 					NetworkUtils.class.getPackage().getImplementationVersion())).append('\n');
+			paste.append(String.format("Backend: %s", minecraftServer.getServerInfo().getTemplate().getBackend().name()));
+			paste.append(String.format("GroupMode: %s", minecraftServer.getGroup().getGroupMode().name()));
+			paste.append(String.format("Server: %s", minecraftServer.getServerId()));
+			paste.append("-----END CLOUDNET INFO-----").append('\n');
+			paste.append("-----BEGIN SERVER INFO-----").append('\n');
+			paste.append(g.toJson(minecraftServer, TypeToken.get(MinecraftServer.class).getType()));
+			paste.append("-----END SERVER INFO-----").append('\n');
 
-			paste.append("----------------------------------------------------------------").append('\n');
 			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
 			for (String s : url) {
