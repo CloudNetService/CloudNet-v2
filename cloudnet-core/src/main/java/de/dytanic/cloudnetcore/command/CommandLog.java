@@ -20,10 +20,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 /**
@@ -50,8 +47,7 @@ public final class CommandLog extends Command {
           CloudNet.getInstance().getServerLogManager().append(rndm, minecraftServer.getServerId());
           List<String> hasteServer = CloudNet.getInstance().getConfig().getHasteServer().stream().filter(this::checkUrl)
                   .collect(Collectors.toList());
-          Random r = new Random();
-          sendPaste(sender, rndm, hasteServer.get(r.nextInt(hasteServer.size())), minecraftServer);
+          sendPaste(sender, rndm, hasteServer, minecraftServer);
           String x = new StringBuilder("http://")
               .append(CloudNet.getInstance().getConfig().getWebServerConfig().getAddress())
               .append(":").append(CloudNet.getInstance().getConfig().getWebServerConfig().getPort())
@@ -77,8 +73,8 @@ public final class CommandLog extends Command {
    * @param url The url of the paste site
    * @param minecraftServer The minecraft server with the log inside
    */
-  private void sendPaste(CommandSender sender, String random, String url,
-      MinecraftServer minecraftServer) {
+  private void sendPaste(CommandSender sender, String random, List<String> url,
+                         MinecraftServer minecraftServer) {
     CloudNet.getInstance().getScheduler().runTaskDelayAsync(() -> {
       StringBuilder paste = new StringBuilder();
       paste.append("----------------------------------------------------------------")
@@ -105,9 +101,12 @@ public final class CommandLog extends Command {
       paste.append("----------------------------------------------------------------").append('\n');
       CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
               screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
-      String key = postTo(url + "/documents", paste);
-      sender.sendMessage(
-              "You can see the log at: " + String.format(url + "/%s", key));
+      Stack<String> urls = new Stack();
+      urls.addAll(url);
+      String s = "";
+      while (postTo(sender,s + "/documents", paste)){
+        s = urls.pop();
+      }
     }, 3*50);
   }
 
@@ -117,7 +116,7 @@ public final class CommandLog extends Command {
    * @param builder The content of the log
    * @return The finish url
    */
-  private String postTo(String url, StringBuilder builder) {
+  private boolean postTo(CommandSender sender, String url, StringBuilder builder) {
     try {
       URL pasteUrl = new URL(url);
       HttpURLConnection connection = (HttpURLConnection) pasteUrl.openConnection();
@@ -133,12 +132,19 @@ public final class CommandLog extends Command {
       InputStream inputStream = connection.getInputStream();
 
       JsonObject object = g.fromJson(new InputStreamReader(inputStream), JsonObject.class);
-      connection.disconnect();
-      return object.get("key").getAsString();
+      int responseCode = connection.getResponseCode();
+      if (responseCode == 200) {
+        connection.disconnect();
+        sender.sendMessage("You can see the log at: " + String.format(url + "/%s", object.get("key").getAsString()));
+        return false;
+      } else {
+        return true;
+      }
+
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return "KEY_NOT_FOUND";
+    return true;
   }
 
   /**
