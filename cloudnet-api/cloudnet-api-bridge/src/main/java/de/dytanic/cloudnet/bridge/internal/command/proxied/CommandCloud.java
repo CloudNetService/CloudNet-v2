@@ -476,7 +476,11 @@ public final class CommandCloud extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] args) {
+        commandSender.sendMessage(Arrays.toString(args));
         switch (args.length) {
+            case 0: {
+                return ImmutableList.of("cloud");
+            }
             case 1: {
                 return ImmutableList.of("toggle", "setMaxPlayers", "whitelist", "start", "startcs", "cmds", "cmdp", "stop", "stopGroup"
                         , "ustopGroup", "listProxys", "listOnline", "listServers", "log", "listGroups", "rl", "list"
