@@ -386,7 +386,6 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                     return ImmutableList.copyOf(Arrays.stream(EntityType.values())
                             .map(Enum::name).collect(Collectors.toList()));
                 }
-
             }
             case 4: {
                 if (args[0].equalsIgnoreCase("createMob")) {
