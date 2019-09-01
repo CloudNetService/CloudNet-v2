@@ -31,7 +31,7 @@ public final class SpigotBuilder {
     public static void start(final ConsoleReader reader) {
         System.out.println("Fetch Spigot Versions");
         List<String> versions = loadVersions();
-        System.out.println("Available Spigot Versions");
+        System.out.println("Available Spigot versions:");
         System.out
                 .println("-----------------------------------------------------------------------------");
         System.out.println("Spigot Version\n");
