@@ -5,6 +5,7 @@
 package de.dytanic.cloudnetcore.command;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.command.Command;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
  */
 public final class CommandLog extends Command {
 
-	private final Gson g = new Gson();
+	private final Gson g = new GsonBuilder().setPrettyPrinting().create();
 
 	private final String version = "1";
 
@@ -117,15 +118,15 @@ public final class CommandLog extends Command {
 			paste.append(String.format("CloudNet Version: %s # %s",
 					NetworkUtils.class.getPackage().getSpecificationVersion(),
 					NetworkUtils.class.getPackage().getImplementationVersion())).append('\n');
-			paste.append(String.format("Backend: %s", CloudNet.getInstance().getProxyGroup(proxyServer.getProxyInfo().getServiceId().getGroup()).getTemplate().getBackend().name()));
-			paste.append(String.format("GroupMode: %s", CloudNet.getInstance().getProxyGroup(proxyServer.getProxyInfo().getServiceId().getGroup()).getProxyGroupMode().name()));
-			paste.append(String.format("Server: %s", proxyServer.getServerId()));
+			paste.append(String.format("Backend: %s", CloudNet.getInstance().getProxyGroup(proxyServer.getProxyInfo().getServiceId().getGroup()).getTemplate().getBackend().name())).append('\n');
+			paste.append(String.format("GroupMode: %s", CloudNet.getInstance().getProxyGroup(proxyServer.getProxyInfo().getServiceId().getGroup()).getProxyGroupMode().name())).append('\n');
+			paste.append(String.format("Server: %s", proxyServer.getServerId())).append('\n');
 			paste.append("-----END CLOUDNET INFO-----").append('\n');
 			paste.append("-----BEGIN SERVER INFO-----").append('\n');
-			paste.append(g.toJson(proxyServer.getProxyInfo(), TypeToken.get(ProxyInfo.class).getType()));
+			paste.append(g.toJson(proxyServer.getProxyInfo(), TypeToken.get(ProxyInfo.class).getType())).append('\n');
 			paste.append("-----END SERVER INFO-----").append('\n');
 			paste.append("-----BEGIN GROUP INFO-----").append('\n');
-			paste.append(g.toJson(CloudNet.getInstance().getProxyGroup(proxyServer.getProxyInfo().getServiceId().getGroup()), TypeToken.get(ProxyGroup.class).getType()));
+			paste.append(g.toJson(CloudNet.getInstance().getProxyGroup(proxyServer.getProxyInfo().getServiceId().getGroup()), TypeToken.get(ProxyGroup.class).getType())).append('\n');
 			paste.append("-----END GROUP INFO-----").append('\n');
 			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
@@ -172,15 +173,15 @@ public final class CommandLog extends Command {
 			paste.append(String.format("CloudNet Version: %s # %s",
 					NetworkUtils.class.getPackage().getSpecificationVersion(),
 					NetworkUtils.class.getPackage().getImplementationVersion())).append('\n');
-			paste.append(String.format("Backend: %s", minecraftServer.getServerInfo().getTemplate().getBackend().name()));
-			paste.append(String.format("GroupMode: %s", minecraftServer.getGroup().getGroupMode().name()));
-			paste.append(String.format("Server: %s", minecraftServer.getServerId()));
+			paste.append(String.format("Backend: %s", minecraftServer.getServerInfo().getTemplate().getBackend().name())).append('\n');
+			paste.append(String.format("GroupMode: %s", minecraftServer.getGroup().getGroupMode().name())).append('\n');
+			paste.append(String.format("Server: %s", minecraftServer.getServerId())).append('\n');
 			paste.append("-----END CLOUDNET INFO-----").append('\n');
 			paste.append("-----BEGIN SERVER INFO-----").append('\n');
-			paste.append(g.toJson(minecraftServer.getServerInfo(), TypeToken.get(ServerInfo.class).getType()));
+			paste.append(g.toJson(minecraftServer.getServerInfo(), TypeToken.get(ServerInfo.class).getType())).append('\n');
 			paste.append("-----END SERVER INFO-----").append('\n');
 			paste.append("-----BEGIN GROUP INFO-----").append('\n');
-			paste.append(g.toJson(minecraftServer.getGroup(), TypeToken.get(ServerGroup.class).getType()));
+			paste.append(g.toJson(minecraftServer.getGroup(), TypeToken.get(ServerGroup.class).getType())).append('\n');
 			paste.append("-----END GROUP INFO-----").append('\n');
 
 			CloudNet.getInstance().getServerLogManager().getScreenInfos().getS(random).forEach(
