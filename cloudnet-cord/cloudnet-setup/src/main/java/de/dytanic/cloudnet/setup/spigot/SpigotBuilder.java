@@ -54,7 +54,7 @@ public final class SpigotBuilder {
                 answer = name;
                 buildSpigot(finalAnswer);
             } else if (versions.stream().noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
-                System.out.println("Version does not exist!");
+                System.out.println("This version does not exist!");
             }
         }
     }
