@@ -34,9 +34,6 @@ public final class SpigotBuilder {
         System.out.println("Available Spigot versions:");
         System.out
                 .println("-----------------------------------------------------------------------------");
-        System.out.println("Spigot Version\n");
-        System.out
-                .println("-----------------------------------------------------------------------------");
         versions.forEach(System.out::println);
         System.out
                 .println("-----------------------------------------------------------------------------");
