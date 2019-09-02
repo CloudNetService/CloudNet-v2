@@ -9,11 +9,11 @@ package de.dytanic.cloudnet.logging.handler;
  */
 public interface ICloudLoggerHandler {
 
-    /**
-     * Handle console messages
-     *
-     * @param input the string that should be handled
-     */
-    void handleConsole(String input);
+	/**
+	 * Handle console messages
+	 *
+	 * @param input the string that should be handled
+	 */
+	void handleConsole(String input);
 
 }

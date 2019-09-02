@@ -19,45 +19,40 @@ import java.util.Map;
  */
 public class ScreenProvider {
 
-    private Map<String, EnabledScreen> screens = NetworkUtils.newConcurrentHashMap();
+	private Map<String, EnabledScreen> screens = NetworkUtils.newConcurrentHashMap();
 
-    private ServiceId mainServiceId;
+	private ServiceId mainServiceId;
 
-    public void handleEnableScreen(ServiceId serviceId, Wrapper wrapper)
-    {
-        screens.put(serviceId.getServerId(), new EnabledScreen(serviceId, wrapper));
-    }
+	public void handleEnableScreen(ServiceId serviceId, Wrapper wrapper) {
+		screens.put(serviceId.getServerId(), new EnabledScreen(serviceId, wrapper));
+	}
 
-    public void handleDisableScreen(ServiceId serviceId)
-    {
-        screens.remove(serviceId.getServerId());
-    }
+	public void handleDisableScreen(ServiceId serviceId) {
+		screens.remove(serviceId.getServerId());
+	}
 
-    public void disableScreen(String server)
-    {
-        MinecraftServer minecraftServer = CloudNet.getInstance().getServer(server);
-        if (minecraftServer != null)
-        {
-            minecraftServer.getWrapper().disableScreen(minecraftServer.getServerInfo());
-            return;
-        }
+	public void disableScreen(String server) {
+		MinecraftServer minecraftServer = CloudNet.getInstance().getServer(server);
+		if (minecraftServer != null) {
+			minecraftServer.getWrapper().disableScreen(minecraftServer.getServerInfo());
+			return;
+		}
 
-        ProxyServer proxyServer = CloudNet.getInstance().getProxy(server);
-        if (proxyServer != null)
-        {
-            proxyServer.getWrapper().disableScreen(proxyServer.getProxyInfo());
-        }
-    }
+		ProxyServer proxyServer = CloudNet.getInstance().getProxy(server);
+		if (proxyServer != null) {
+			proxyServer.getWrapper().disableScreen(proxyServer.getProxyInfo());
+		}
+	}
 
-    public void setMainServiceId(ServiceId mainServiceId) {
-        this.mainServiceId = mainServiceId;
-    }
+	public Map<String, EnabledScreen> getScreens() {
+		return screens;
+	}
 
-    public Map<String, EnabledScreen> getScreens() {
-        return screens;
-    }
+	public ServiceId getMainServiceId() {
+		return mainServiceId;
+	}
 
-    public ServiceId getMainServiceId() {
-        return mainServiceId;
-    }
+	public void setMainServiceId(ServiceId mainServiceId) {
+		this.mainServiceId = mainServiceId;
+	}
 }

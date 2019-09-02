@@ -8,27 +8,27 @@ import java.util.Collection;
 
 public class SearchingAnimation {
 
-    private int animations;
+	private int animations;
 
-    private int animationsPerSecond;
+	private int animationsPerSecond;
 
-    private Collection<SignLayout> searchingLayouts;
+	private Collection<SignLayout> searchingLayouts;
 
-    public SearchingAnimation(int animations, int animationsPerSecond, Collection<SignLayout> searchingLayouts) {
-        this.animations = animations;
-        this.animationsPerSecond = animationsPerSecond;
-        this.searchingLayouts = searchingLayouts;
-    }
+	public SearchingAnimation(int animations, int animationsPerSecond, Collection<SignLayout> searchingLayouts) {
+		this.animations = animations;
+		this.animationsPerSecond = animationsPerSecond;
+		this.searchingLayouts = searchingLayouts;
+	}
 
-    public Collection<SignLayout> getSearchingLayouts() {
-        return searchingLayouts;
-    }
+	public Collection<SignLayout> getSearchingLayouts() {
+		return searchingLayouts;
+	}
 
-    public int getAnimations() {
-        return animations;
-    }
+	public int getAnimations() {
+		return animations;
+	}
 
-    public int getAnimationsPerSecond() {
-        return animationsPerSecond;
-    }
+	public int getAnimationsPerSecond() {
+		return animationsPerSecond;
+	}
 }

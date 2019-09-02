@@ -13,20 +13,20 @@ import java.util.UUID;
  */
 public class Result {
 
-    private UUID uniqueId;
+	private UUID uniqueId;
 
-    private Document result;
+	private Document result;
 
-    public Result(UUID uniqueId, Document result) {
-        this.uniqueId = uniqueId;
-        this.result = result;
-    }
+	public Result(UUID uniqueId, Document result) {
+		this.uniqueId = uniqueId;
+		this.result = result;
+	}
 
-    public UUID getUniqueId() {
-        return uniqueId;
-    }
+	public UUID getUniqueId() {
+		return uniqueId;
+	}
 
-    public Document getResult() {
-        return result;
-    }
+	public Document getResult() {
+		return result;
+	}
 }

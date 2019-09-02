@@ -17,91 +17,86 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class CloudServer implements INetworkComponent {
 
-    private ServiceId serviceId;
+	private ServiceId serviceId;
 
-    private CloudServerMeta cloudServerMeta;
+	private CloudServerMeta cloudServerMeta;
 
-    private Wrapper wrapper;
+	private Wrapper wrapper;
 
-    private ServerGroupType serverGroupType;
+	private ServerGroupType serverGroupType;
 
-    private ServerInfo serverInfo;
+	private ServerInfo serverInfo;
 
-    private ServerInfo lastServerInfo;
+	private ServerInfo lastServerInfo;
 
-    private Channel channel;
+	private Channel channel;
 
-    public CloudServer(Wrapper wrapper, ServerInfo serverInfo, CloudServerMeta cloudServerMeta)
-    {
-        this.serverInfo = serverInfo;
-        this.serviceId = cloudServerMeta.getServiceId();
-        this.lastServerInfo = serverInfo;
-        this.cloudServerMeta = cloudServerMeta;
-        this.wrapper = wrapper;
-        this.serverGroupType = cloudServerMeta.getServerGroupType();
-    }
+	public CloudServer(Wrapper wrapper, ServerInfo serverInfo, CloudServerMeta cloudServerMeta) {
+		this.serverInfo = serverInfo;
+		this.serviceId = cloudServerMeta.getServiceId();
+		this.lastServerInfo = serverInfo;
+		this.cloudServerMeta = cloudServerMeta;
+		this.wrapper = wrapper;
+		this.serverGroupType = cloudServerMeta.getServerGroupType();
+	}
 
-    public void setServerInfo(ServerInfo serverInfo) {
-        this.serverInfo = serverInfo;
-    }
+	public ServerInfo getServerInfo() {
+		return serverInfo;
+	}
 
-    public void setLastServerInfo(ServerInfo lastServerInfo) {
-        this.lastServerInfo = lastServerInfo;
-    }
+	public void setServerInfo(ServerInfo serverInfo) {
+		this.serverInfo = serverInfo;
+	}
 
-    @Override
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
+	@Override
+	public Channel getChannel() {
+		return channel;
+	}
 
-    public ServerInfo getServerInfo() {
-        return serverInfo;
-    }
+	@Override
+	public void setChannel(Channel channel) {
+		this.channel = channel;
+	}
 
-    @Override
-    public Channel getChannel() {
-        return channel;
-    }
+	public CloudServerMeta getCloudServerMeta() {
+		return cloudServerMeta;
+	}
 
-    public CloudServerMeta getCloudServerMeta() {
-        return cloudServerMeta;
-    }
+	public ServerGroupType getServerGroupType() {
+		return serverGroupType;
+	}
 
-    public ServerGroupType getServerGroupType() {
-        return serverGroupType;
-    }
+	public ServerInfo getLastServerInfo() {
+		return lastServerInfo;
+	}
 
-    public ServerInfo getLastServerInfo() {
-        return lastServerInfo;
-    }
+	public void setLastServerInfo(ServerInfo lastServerInfo) {
+		this.lastServerInfo = lastServerInfo;
+	}
 
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
+	public ServiceId getServiceId() {
+		return serviceId;
+	}
 
-    @Override
-    public Wrapper getWrapper() {
-        return wrapper;
-    }
+	@Override
+	public Wrapper getWrapper() {
+		return wrapper;
+	}
 
-    @Override
-    public String getName()
-    {
-        return getServerId();
-    }
+	@Override
+	public String getName() {
+		return getServerId();
+	}
 
-    @Override
-    public String getServerId()
-    {
-        return serviceId.getServerId();
-    }
+	@Override
+	public String getServerId() {
+		return serviceId.getServerId();
+	}
 
-    public void disconnect()
-    {
-        if (this.channel != null)
-        {
-            this.channel.close().syncUninterruptibly();
-        }
-    }
+	public void disconnect() {
+		if (this.channel != null) {
+			this.channel.close().syncUninterruptibly();
+		}
+	}
 
 }

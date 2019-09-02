@@ -16,77 +16,60 @@ import org.bukkit.entity.Wither;
  */
 public final class ReflectionUtil {
 
-    private ReflectionUtil()
-    {
-    }
+	private ReflectionUtil() {
+	}
 
-    public static Class<?> reflectCraftClazz(String suffix)
-    {
-        try
-        {
-            String version = org.bukkit.Bukkit.getServer().getClass().getPackage()
-                    .getName().split("\\.")[3];
-            return Class.forName("org.bukkit.craftbukkit." + version + suffix);
-        } catch (Exception ex)
-        {
-            try
-            {
-                return Class.forName("org.bukkit.craftbukkit." + suffix);
-            } catch (ClassNotFoundException e)
-            {
-            }
-        }
-        return null;
-    }
+	public static Class<?> reflectCraftClazz(String suffix) {
+		try {
+			String version = org.bukkit.Bukkit.getServer().getClass().getPackage()
+					.getName().split("\\.")[3];
+			return Class.forName("org.bukkit.craftbukkit." + version + suffix);
+		} catch (Exception ex) {
+			try {
+				return Class.forName("org.bukkit.craftbukkit." + suffix);
+			} catch (ClassNotFoundException e) {
+			}
+		}
+		return null;
+	}
 
-    public static Class<?> forName(String path)
-    {
-        try
-        {
-            return Class.forName(path);
-        } catch (ClassNotFoundException e)
-        {
-            return null;
-        }
-    }
+	public static Class<?> forName(String path) {
+		try {
+			return Class.forName(path);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
+	}
 
-    public static Class<?> reflectNMSClazz(String suffix)
-    {
-        try
-        {
-            String version = org.bukkit.Bukkit.getServer().getClass().getPackage()
-                    .getName().split("\\.")[3];
-            return Class.forName("net.minecraft.server." + version + suffix);
-        } catch (Exception ex)
-        {
-            try
-            {
-                return Class.forName("net.minecraft.server." + suffix);
-            } catch (ClassNotFoundException e)
-            {
-            }
-        }
-        return null;
-    }
+	public static Class<?> reflectNMSClazz(String suffix) {
+		try {
+			String version = org.bukkit.Bukkit.getServer().getClass().getPackage()
+					.getName().split("\\.")[3];
+			return Class.forName("net.minecraft.server." + version + suffix);
+		} catch (Exception ex) {
+			try {
+				return Class.forName("net.minecraft.server." + suffix);
+			} catch (ClassNotFoundException e) {
+			}
+		}
+		return null;
+	}
 
-    public static Object armorstandCreation(Location location, Entity entity, ServerMob serverMob)
-    {
-        try
-        {
-            Object armorstand = entity.getWorld().spawnEntity(entity.getLocation().clone().add(0,
-                    ((LivingEntity) entity).getEyeHeight() - (entity instanceof Wither ? 0.15 : 0.3), 0), EntityType.valueOf("ARMOR_STAND"));
+	public static Object armorstandCreation(Location location, Entity entity, ServerMob serverMob) {
+		try {
+			Object armorstand = entity.getWorld().spawnEntity(entity.getLocation().clone().add(0,
+					((LivingEntity) entity).getEyeHeight() - (entity instanceof Wither ? 0.15 : 0.3), 0), EntityType.valueOf("ARMOR_STAND"));
 
-            armorstand.getClass().getMethod("setVisible", boolean.class).invoke(armorstand, false);
-            armorstand.getClass().getMethod("setCustomNameVisible", boolean.class).invoke(armorstand, true);
-            armorstand.getClass().getMethod("setGravity", boolean.class).invoke(armorstand, false);
-            armorstand.getClass().getMethod("setBasePlate", boolean.class).invoke(armorstand, false);
-            armorstand.getClass().getMethod("setSmall", boolean.class).invoke(armorstand, true);
-            armorstand.getClass().getMethod("setCanPickupItems", boolean.class).invoke(armorstand, false);
-            return armorstand;
-        } catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-        return null;
-    }
+			armorstand.getClass().getMethod("setVisible", boolean.class).invoke(armorstand, false);
+			armorstand.getClass().getMethod("setCustomNameVisible", boolean.class).invoke(armorstand, true);
+			armorstand.getClass().getMethod("setGravity", boolean.class).invoke(armorstand, false);
+			armorstand.getClass().getMethod("setBasePlate", boolean.class).invoke(armorstand, false);
+			armorstand.getClass().getMethod("setSmall", boolean.class).invoke(armorstand, true);
+			armorstand.getClass().getMethod("setCanPickupItems", boolean.class).invoke(armorstand, false);
+			return armorstand;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
 }

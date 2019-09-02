@@ -9,27 +9,27 @@ package de.dytanic.cloudnet.lib.server.resource;
  */
 public class ResourceMeta {
 
-    private double cpuUsage; //%
+	private double cpuUsage; //%
 
-    private long heapMemory; //KB
+	private long heapMemory; //KB
 
-    private long maxHeapMemory; //KB
+	private long maxHeapMemory; //KB
 
-    public ResourceMeta(double cpuUsage, long heapMemory, long maxHeapMemory) {
-        this.cpuUsage = cpuUsage;
-        this.heapMemory = heapMemory;
-        this.maxHeapMemory = maxHeapMemory;
-    }
+	public ResourceMeta(double cpuUsage, long heapMemory, long maxHeapMemory) {
+		this.cpuUsage = cpuUsage;
+		this.heapMemory = heapMemory;
+		this.maxHeapMemory = maxHeapMemory;
+	}
 
-    public double getCpuUsage() {
-        return cpuUsage;
-    }
+	public double getCpuUsage() {
+		return cpuUsage;
+	}
 
-    public long getHeapMemory() {
-        return heapMemory;
-    }
+	public long getHeapMemory() {
+		return heapMemory;
+	}
 
-    public long getMaxHeapMemory() {
-        return maxHeapMemory;
-    }
+	public long getMaxHeapMemory() {
+		return maxHeapMemory;
+	}
 }

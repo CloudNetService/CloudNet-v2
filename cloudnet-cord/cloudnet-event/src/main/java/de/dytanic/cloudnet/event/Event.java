@@ -5,12 +5,12 @@ package de.dytanic.cloudnet.event;
  */
 public abstract class Event {
 
-    /**
-     * Whether this event will be called asynchronous
-     */
-    protected boolean asynchronous = false;
+	/**
+	 * Whether this event will be called asynchronous
+	 */
+	protected boolean asynchronous = false;
 
-    public boolean isAsynchronous() {
-        return asynchronous;
-    }
+	public boolean isAsynchronous() {
+		return asynchronous;
+	}
 }

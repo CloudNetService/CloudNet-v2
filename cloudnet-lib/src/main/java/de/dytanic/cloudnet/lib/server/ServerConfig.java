@@ -9,46 +9,46 @@ import lombok.ToString;
 @ToString
 public class ServerConfig {
 
-    private boolean hideServer;
+	private boolean hideServer;
 
-    private String extra;
+	private String extra;
 
-    private Document properties;
+	private Document properties;
 
-    private long startup;
+	private long startup;
 
-    public ServerConfig(boolean hideServer, String extra, Document properties, long startup) {
-        this.hideServer = hideServer;
-        this.extra = extra;
-        this.properties = properties;
-        this.startup = startup;
-    }
+	public ServerConfig(boolean hideServer, String extra, Document properties, long startup) {
+		this.hideServer = hideServer;
+		this.extra = extra;
+		this.properties = properties;
+		this.startup = startup;
+	}
 
-    public Document getProperties() {
-        return properties;
-    }
+	public Document getProperties() {
+		return properties;
+	}
 
-    public long getStartup() {
-        return startup;
-    }
+	public void setProperties(Document properties) {
+		this.properties = properties;
+	}
 
-    public String getExtra() {
-        return extra;
-    }
+	public long getStartup() {
+		return startup;
+	}
 
-    public boolean isHideServer() {
-        return hideServer;
-    }
+	public String getExtra() {
+		return extra;
+	}
 
-    public void setExtra(String extra) {
-        this.extra = extra;
-    }
+	public void setExtra(String extra) {
+		this.extra = extra;
+	}
 
-    public void setHideServer(boolean hideServer) {
-        this.hideServer = hideServer;
-    }
+	public boolean isHideServer() {
+		return hideServer;
+	}
 
-    public void setProperties(Document properties) {
-        this.properties = properties;
-    }
+	public void setHideServer(boolean hideServer) {
+		this.hideServer = hideServer;
+	}
 }

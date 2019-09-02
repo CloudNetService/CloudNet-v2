@@ -9,20 +9,20 @@ package de.dytanic.cloudnet.lib.proxylayout;
  */
 public class ServerFallback {
 
-    private String group;
+	private String group;
 
-    private String permission;
+	private String permission;
 
-    public ServerFallback(String group, String permission) {
-        this.group = group;
-        this.permission = permission;
-    }
+	public ServerFallback(String group, String permission) {
+		this.group = group;
+		this.permission = permission;
+	}
 
-    public String getGroup() {
-        return group;
-    }
+	public String getGroup() {
+		return group;
+	}
 
-    public String getPermission() {
-        return permission;
-    }
+	public String getPermission() {
+		return permission;
+	}
 }

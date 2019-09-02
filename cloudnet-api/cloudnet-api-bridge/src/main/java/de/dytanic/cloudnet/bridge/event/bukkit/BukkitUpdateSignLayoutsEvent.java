@@ -12,27 +12,24 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitUpdateSignLayoutsEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+	private static HandlerList handlerList = new HandlerList();
 
-    private SignLayoutConfig signLayoutConfig;
+	private SignLayoutConfig signLayoutConfig;
 
-    public BukkitUpdateSignLayoutsEvent(SignLayoutConfig signLayoutConfig) {
-        this.signLayoutConfig = signLayoutConfig;
-    }
+	public BukkitUpdateSignLayoutsEvent(SignLayoutConfig signLayoutConfig) {
+		this.signLayoutConfig = signLayoutConfig;
+	}
 
-    public SignLayoutConfig getSignLayoutConfig()
-    {
-        return signLayoutConfig;
-    }
+	public static HandlerList getHandlerList() {
+		return handlerList;
+	}
 
-    public static HandlerList getHandlerList()
-    {
-        return handlerList;
-    }
+	public SignLayoutConfig getSignLayoutConfig() {
+		return signLayoutConfig;
+	}
 
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlerList;
+	}
 }

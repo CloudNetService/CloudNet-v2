@@ -18,108 +18,101 @@ import io.netty.channel.Channel;
  * Created by Tareko on 26.05.2017.
  */
 public final class MinecraftServer
-        implements INetworkComponent {
+		implements INetworkComponent {
 
-    private ServiceId serviceId;
-    private ServerProcessMeta processMeta;
-    private Wrapper wrapper;
-    private ServerGroupMode groupMode;
+	private ServiceId serviceId;
+	private ServerProcessMeta processMeta;
+	private Wrapper wrapper;
+	private ServerGroupMode groupMode;
 
-    private long channelLostTime = 0L;
+	private long channelLostTime = 0L;
 
-    private ServerInfo serverInfo;
-    private ServerInfo lastServerInfo;
-    private Channel channel;
+	private ServerInfo serverInfo;
+	private ServerInfo lastServerInfo;
+	private Channel channel;
 
-    public MinecraftServer(ServerProcessMeta processMeta, Wrapper wrapper, ServerGroup group, ServerInfo serverInfo)
-    {
-        this.processMeta = processMeta;
-        this.serviceId = serverInfo.getServiceId();
-        this.wrapper = wrapper;
-        this.groupMode = group.getGroupMode();
+	public MinecraftServer(ServerProcessMeta processMeta, Wrapper wrapper, ServerGroup group, ServerInfo serverInfo) {
+		this.processMeta = processMeta;
+		this.serviceId = serverInfo.getServiceId();
+		this.wrapper = wrapper;
+		this.groupMode = group.getGroupMode();
 
-        this.serverInfo = serverInfo;
-        this.lastServerInfo = serverInfo;
-    }
+		this.serverInfo = serverInfo;
+		this.lastServerInfo = serverInfo;
+	}
 
-    public void setChannelLostTime(long channelLostTime) {
-        this.channelLostTime = channelLostTime;
-    }
+	@Override
+	public Wrapper getWrapper() {
+		return wrapper;
+	}
 
-    public void setServerInfo(ServerInfo serverInfo) {
-        this.serverInfo = serverInfo;
-    }
+	@Override
+	public Channel getChannel() {
+		return channel;
+	}
 
-    public void setLastServerInfo(ServerInfo lastServerInfo) {
-        this.lastServerInfo = lastServerInfo;
-    }
+	@Override
+	public void setChannel(Channel channel) {
+		this.channel = channel;
+	}
 
-    @Override
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
+	public ServiceId getServiceId() {
+		return serviceId;
+	}
 
-    @Override
-    public Wrapper getWrapper() {
-        return wrapper;
-    }
+	public long getChannelLostTime() {
+		return channelLostTime;
+	}
 
-    @Override
-    public Channel getChannel() {
-        return channel;
-    }
+	public void setChannelLostTime(long channelLostTime) {
+		this.channelLostTime = channelLostTime;
+	}
 
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
+	public ServerInfo getLastServerInfo() {
+		return lastServerInfo;
+	}
 
-    public long getChannelLostTime() {
-        return channelLostTime;
-    }
+	public void setLastServerInfo(ServerInfo lastServerInfo) {
+		this.lastServerInfo = lastServerInfo;
+	}
 
-    public ServerInfo getLastServerInfo() {
-        return lastServerInfo;
-    }
+	public ServerInfo getServerInfo() {
+		return serverInfo;
+	}
 
-    public ServerInfo getServerInfo() {
-        return serverInfo;
-    }
+	public void setServerInfo(ServerInfo serverInfo) {
+		this.serverInfo = serverInfo;
+	}
 
-    public ServerGroupMode getGroupMode() {
-        return groupMode;
-    }
+	public ServerGroupMode getGroupMode() {
+		return groupMode;
+	}
 
-    public ServerProcessMeta getProcessMeta() {
-        return processMeta;
-    }
+	public ServerProcessMeta getProcessMeta() {
+		return processMeta;
+	}
 
-    public void disconnect()
-    {
-        if (this.channel != null)
-        {
-            this.channel.close().syncUninterruptibly();
-        }
-    }
+	public void disconnect() {
+		if (this.channel != null) {
+			this.channel.close().syncUninterruptibly();
+		}
+	}
 
-    public void sendCustomMessage(String channel, String message, Document value)
-    {
-        this.sendPacket(new PacketOutCustomSubChannelMessage(channel, message, value));
-    }
+	public void sendCustomMessage(String channel, String message, Document value) {
+		this.sendPacket(new PacketOutCustomSubChannelMessage(channel, message, value));
+	}
 
-    public ServerGroup getGroup()
-    {
-        return CloudNet.getInstance().getServerGroup(serviceId.getGroup());
-    }
+	public ServerGroup getGroup() {
+		return CloudNet.getInstance().getServerGroup(serviceId.getGroup());
+	}
 
-    @Override
-    public String getServerId()
-    {
-        return serviceId.getServerId();
-    }
+	@Override
+	public String getServerId() {
+		return serviceId.getServerId();
+	}
 
-    @Override
-    public String getName()
-    {
-        return serviceId.getServerId();
-    }
+	@Override
+	public String getName() {
+		return serviceId.getServerId();
+	}
 }

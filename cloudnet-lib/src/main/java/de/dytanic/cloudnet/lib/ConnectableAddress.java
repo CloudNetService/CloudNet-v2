@@ -5,19 +5,19 @@ package de.dytanic.cloudnet.lib;
  */
 public class ConnectableAddress {
 
-    private String hostName;
-    private int port;
+	private String hostName;
+	private int port;
 
-    public ConnectableAddress(String hostName, int port) {
-        this.hostName = hostName;
-        this.port = port;
-    }
+	public ConnectableAddress(String hostName, int port) {
+		this.hostName = hostName;
+		this.port = port;
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public int getPort() {
+		return port;
+	}
 
-    public String getHostName() {
-        return hostName;
-    }
+	public String getHostName() {
+		return hostName;
+	}
 }

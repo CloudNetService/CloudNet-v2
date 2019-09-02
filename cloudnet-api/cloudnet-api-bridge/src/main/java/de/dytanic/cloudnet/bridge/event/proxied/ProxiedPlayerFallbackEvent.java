@@ -8,48 +8,48 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
  */
 public class ProxiedPlayerFallbackEvent extends ProxiedCloudEvent {
 
-    private ProxiedPlayer proxiedPlayer;
+	private ProxiedPlayer proxiedPlayer;
 
-    private CloudPlayer cloudPlayer;
+	private CloudPlayer cloudPlayer;
 
-    private FallbackType fallbackType;
+	private FallbackType fallbackType;
 
-    private String fallback;
+	private String fallback;
 
-    public ProxiedPlayerFallbackEvent(ProxiedPlayer proxiedPlayer, CloudPlayer cloudPlayer, FallbackType fallbackType, String fallback) {
-        this.proxiedPlayer = proxiedPlayer;
-        this.cloudPlayer = cloudPlayer;
-        this.fallbackType = fallbackType;
-        this.fallback = fallback;
-    }
+	public ProxiedPlayerFallbackEvent(ProxiedPlayer proxiedPlayer, CloudPlayer cloudPlayer, FallbackType fallbackType, String fallback) {
+		this.proxiedPlayer = proxiedPlayer;
+		this.cloudPlayer = cloudPlayer;
+		this.fallbackType = fallbackType;
+		this.fallback = fallback;
+	}
 
-    public String getFallback() {
-        return fallback;
-    }
+	public String getFallback() {
+		return fallback;
+	}
 
-    public CloudPlayer getCloudPlayer() {
-        return cloudPlayer;
-    }
+	public void setFallback(String fallback) {
+		this.fallback = fallback;
+	}
 
-    public FallbackType getFallbackType() {
-        return fallbackType;
-    }
+	public CloudPlayer getCloudPlayer() {
+		return cloudPlayer;
+	}
 
-    public ProxiedPlayer getProxiedPlayer() {
-        return proxiedPlayer;
-    }
+	public FallbackType getFallbackType() {
+		return fallbackType;
+	}
 
-    public void setFallback(String fallback) {
-        this.fallback = fallback;
-    }
+	public ProxiedPlayer getProxiedPlayer() {
+		return proxiedPlayer;
+	}
 
-    public enum FallbackType {
+	public enum FallbackType {
 
-        HUB_COMMAND,
-        SERVER_KICK,
-        SERVER_CONNECT,
-        CUSTOM
+		HUB_COMMAND,
+		SERVER_KICK,
+		SERVER_CONNECT,
+		CUSTOM
 
-    }
+	}
 
 }

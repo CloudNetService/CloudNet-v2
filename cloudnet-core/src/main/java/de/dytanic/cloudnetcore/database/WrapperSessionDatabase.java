@@ -14,15 +14,13 @@ import de.dytanic.cloudnetcore.network.wrapper.WrapperSession;
  */
 public class WrapperSessionDatabase extends DatabaseUsable {
 
-    public WrapperSessionDatabase(Database database)
-    {
-        super(database);
-    }
+	public WrapperSessionDatabase(Database database) {
+		super(database);
+	}
 
-    public void addSession(WrapperSession session)
-    {
-        DatabaseDocument databaseDocument = new DatabaseDocument(session.getUniqueId().toString());
-        databaseDocument.append("session", session);
-        databaseDocument.insert(database);
-    }
+	public void addSession(WrapperSession session) {
+		DatabaseDocument databaseDocument = new DatabaseDocument(session.getUniqueId().toString());
+		databaseDocument.append("session", session);
+		databaseDocument.insert(database);
+	}
 }

@@ -17,29 +17,25 @@ import java.util.UUID;
  */
 public class ConsoleCommandSender implements CommandSender {
 
-    private PermissionEntity permissionEntity = new PermissionEntity(UUID.randomUUID(), new HashMap<>(), "§cCloud §7| ", "§f", new LinkedList<>());
+	private PermissionEntity permissionEntity = new PermissionEntity(UUID.randomUUID(), new HashMap<>(), "§cCloud §7| ", "§f", new LinkedList<>());
 
-    @Override
-    public String getName()
-    {
-        return "CONSOLE";
-    }
+	@Override
+	public String getName() {
+		return "CONSOLE";
+	}
 
-    @Override
-    public void sendMessage(String... message)
-    {
-        Arrays.asList(message).forEach(System.out::println);
-    }
+	@Override
+	public void sendMessage(String... message) {
+		Arrays.asList(message).forEach(System.out::println);
+	}
 
-    @Override
-    public boolean hasPermission(String permission)
-    {
-        return true; // CONSOLE has all permissions
-    }
+	@Override
+	public boolean hasPermission(String permission) {
+		return true; // CONSOLE has all permissions
+	}
 
-    @Override
-    public PermissionEntity getPermissionEntity()
-    {
-        return permissionEntity;
-    }
+	@Override
+	public PermissionEntity getPermissionEntity() {
+		return permissionEntity;
+	}
 }

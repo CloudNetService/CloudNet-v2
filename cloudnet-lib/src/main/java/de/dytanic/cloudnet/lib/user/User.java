@@ -20,63 +20,61 @@ import java.util.UUID;
 @ToString
 public class User implements Nameable {
 
-    protected String name;
+	protected String name;
 
-    protected UUID uniqueId;
+	protected UUID uniqueId;
 
-    protected String apiToken;
+	protected String apiToken;
 
-    protected String hashedPassword;
+	protected String hashedPassword;
 
-    protected Collection<String> permissions;
+	protected Collection<String> permissions;
 
-    protected Map<String, Object> metaData;
+	protected Map<String, Object> metaData;
 
-    public User(String name, UUID uniqueId, String apiToken, String hashedPassword, Collection<String> permissions, Map<String, Object> metaData) {
-        this.name = name;
-        this.uniqueId = uniqueId;
-        this.apiToken = apiToken;
-        this.hashedPassword = hashedPassword;
-        this.permissions = permissions;
-        this.metaData = metaData;
-    }
+	public User(String name, UUID uniqueId, String apiToken, String hashedPassword, Collection<String> permissions, Map<String, Object> metaData) {
+		this.name = name;
+		this.uniqueId = uniqueId;
+		this.apiToken = apiToken;
+		this.hashedPassword = hashedPassword;
+		this.permissions = permissions;
+		this.metaData = metaData;
+	}
 
-    public String getApiToken() {
-        return apiToken;
-    }
+	public String getApiToken() {
+		return apiToken;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    public UUID getUniqueId() {
-        return uniqueId;
-    }
+	public UUID getUniqueId() {
+		return uniqueId;
+	}
 
-    public Collection<String> getPermissions() {
-        return permissions;
-    }
+	public Collection<String> getPermissions() {
+		return permissions;
+	}
 
-    public Map<String, Object> getMetaData() {
-        return metaData;
-    }
+	public Map<String, Object> getMetaData() {
+		return metaData;
+	}
 
-    public String getHashedPassword() {
-        return hashedPassword;
-    }
+	public String getHashedPassword() {
+		return hashedPassword;
+	}
 
-    public SimpledUser toSimple()
-    {
-        return new SimpledUser(name, apiToken);
-    }
+	public SimpledUser toSimple() {
+		return new SimpledUser(name, apiToken);
+	}
 
-    public boolean hasPermission(String permission)
-    {
-        return permissions.contains("*") || permissions.contains(permission);
-    }
+	public boolean hasPermission(String permission) {
+		return permissions.contains("*") || permissions.contains(permission);
+	}
 
-    public void setPassword(String password) {
-        this.hashedPassword = DyHash.hashString(password);
-    }
+	public void setPassword(String password) {
+		this.hashedPassword = DyHash.hashString(password);
+	}
 }

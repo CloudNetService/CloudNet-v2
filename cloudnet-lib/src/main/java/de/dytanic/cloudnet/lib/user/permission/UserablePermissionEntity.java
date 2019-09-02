@@ -17,27 +17,24 @@ import java.util.UUID;
  */
 public class UserablePermissionEntity extends PermissionEntity {
 
-    private User user;
+	private User user;
 
-    public UserablePermissionEntity(UUID uniqueId, User user)
-    {
-        super(uniqueId, new HashMap<>(), "User | ", "", new ArrayList<>());
-        this.user = user;
-    }
+	public UserablePermissionEntity(UUID uniqueId, User user) {
+		super(uniqueId, new HashMap<>(), "User | ", "", new ArrayList<>());
+		this.user = user;
+	}
 
-    public User getUser() {
-        return user;
-    }
+	public User getUser() {
+		return user;
+	}
 
-    public boolean hasPermission(String permission)
-    {
-        return user.getPermissions().contains(permission.toLowerCase()) || user.getPermissions().contains("*");
-    }
+	public boolean hasPermission(String permission) {
+		return user.getPermissions().contains(permission.toLowerCase()) || user.getPermissions().contains("*");
+	}
 
-    @Deprecated
-    @Override
-    public boolean hasPermission(PermissionPool permissionPool, String permission, String group)
-    {
-        throw new UnsupportedOperationException("User hasPermissio(String permission);");
-    }
+	@Deprecated
+	@Override
+	public boolean hasPermission(PermissionPool permissionPool, String permission, String group) {
+		throw new UnsupportedOperationException("User hasPermissio(String permission);");
+	}
 }

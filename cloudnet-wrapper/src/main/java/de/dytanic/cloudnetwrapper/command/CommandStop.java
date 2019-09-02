@@ -10,14 +10,12 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 
 public class CommandStop extends Command {
 
-    public CommandStop()
-    {
-        super("stop", "cloudnet.command.stop", "exit");
-    }
+	public CommandStop() {
+		super("stop", "cloudnet.command.stop", "exit");
+	}
 
-    @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
-        CloudNetWrapper.getInstance().shutdown();
-    }
+	@Override
+	public void onExecuteCommand(CommandSender sender, String[] args) {
+		CloudNetWrapper.getInstance().shutdown();
+	}
 }

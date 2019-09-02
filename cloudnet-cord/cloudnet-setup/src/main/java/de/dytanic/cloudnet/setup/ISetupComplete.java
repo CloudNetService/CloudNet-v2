@@ -13,11 +13,11 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 @Deprecated
 public interface ISetupComplete {
 
-    /**
-     * Method that is called after a setup sequence completed successfully.
-     *
-     * @param data the data that has been entered by the user.
-     */
-    void complete(Document data);
+	/**
+	 * Method that is called after a setup sequence completed successfully.
+	 *
+	 * @param data the data that has been entered by the user.
+	 */
+	void complete(Document data);
 
 }

@@ -9,6 +9,7 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
+
 import java.util.UUID;
 
 /**
@@ -16,15 +17,13 @@ import java.util.UUID;
  */
 public class PacketInLoginSuccess extends PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        UUID unique = data.getObject("uniqueId", UUID.class);
-        CloudPlayer cloudPlayer = CloudNet.getInstance().getNetworkManager().getWaitingPlayers().get(unique);
-        if (cloudPlayer != null)
-        {
-            CloudNet.getInstance().getNetworkManager().getWaitingPlayers().remove(unique);
-            CloudNet.getInstance().getNetworkManager().getOnlinePlayers().put(cloudPlayer.getUniqueId(), cloudPlayer);
-        }
-    }
+	@Override
+	public void handleInput(Document data, PacketSender packetSender) {
+		UUID unique = data.getObject("uniqueId", UUID.class);
+		CloudPlayer cloudPlayer = CloudNet.getInstance().getNetworkManager().getWaitingPlayers().get(unique);
+		if (cloudPlayer != null) {
+			CloudNet.getInstance().getNetworkManager().getWaitingPlayers().remove(unique);
+			CloudNet.getInstance().getNetworkManager().getOnlinePlayers().put(cloudPlayer.getUniqueId(), cloudPlayer);
+		}
+	}
 }

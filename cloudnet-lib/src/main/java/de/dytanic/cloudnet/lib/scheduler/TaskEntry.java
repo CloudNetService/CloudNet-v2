@@ -5,89 +5,74 @@ import java.util.function.Consumer;
 
 public class TaskEntry<T> {
 
-    protected volatile Callable<T> task;
+	private final TaskEntryFuture<T> future;
+	protected volatile Callable<T> task;
+	protected volatile T value = null;
+	protected Consumer<T> consumer;
+	protected long delayTimeOut, repeat, delay;
+	protected boolean completed = false;
 
-    protected volatile T value = null;
+	public TaskEntry(Callable<T> task, Consumer<T> complete, long delay, long repeat) {
 
-    protected Consumer<T> consumer;
-
-    protected long delayTimeOut, repeat, delay;
-
-    protected boolean completed = false;
-
-    private final TaskEntryFuture<T> future;
-
-    public TaskEntry(Callable<T> task, Consumer<T> complete, long delay, long repeat)
-    {
-
-        this.task = task;
-        this.consumer = complete;
-        this.delay = delay;
-        this.delayTimeOut = System.currentTimeMillis() + delay;
-        this.repeat = repeat;
-        this.future = new TaskEntryFuture<>(this, false);
-    }
+		this.task = task;
+		this.consumer = complete;
+		this.delay = delay;
+		this.delayTimeOut = System.currentTimeMillis() + delay;
+		this.repeat = repeat;
+		this.future = new TaskEntryFuture<>(this, false);
+	}
 
 
-    protected void invoke() throws Exception
-    {
+	protected void invoke() throws Exception {
 
-        if (task == null)
-            return;
+		if (task == null)
+			return;
 
-        T val = task.call();
+		T val = task.call();
 
-        value = val;
+		value = val;
 
-        if (consumer != null)
-            consumer.accept(val);
+		if (consumer != null)
+			consumer.accept(val);
 
-        if (repeat != -1 && repeat != 0) repeat--;
+		if (repeat != -1 && repeat != 0) repeat--;
 
-        if (repeat != 0)
-            this.delayTimeOut = System.currentTimeMillis() + delay;
-        else
-        {
-            completed = true;
+		if (repeat != 0)
+			this.delayTimeOut = System.currentTimeMillis() + delay;
+		else {
+			completed = true;
 
-            if (future.waits)
-            {
-                synchronized (future)
-                {
-                    future.notifyAll();
-                }
-            }
-        }
-    }
+			if (future.waits) {
+				synchronized (future) {
+					future.notifyAll();
+				}
+			}
+		}
+	}
 
 
-    public Consumer<T> getConsumer()
-    {
-        return consumer;
-    }
+	public Consumer<T> getConsumer() {
+		return consumer;
+	}
 
 
-    public long getDelayTimeOut()
-    {
-        return delayTimeOut;
-    }
+	public long getDelayTimeOut() {
+		return delayTimeOut;
+	}
 
 
-    public long getRepeat()
-    {
-        return repeat;
-    }
+	public long getRepeat() {
+		return repeat;
+	}
 
 
-    protected TaskEntryFuture<T> drop()
-    {
-        return future;
-    }
+	protected TaskEntryFuture<T> drop() {
+		return future;
+	}
 
 
-    public boolean isCompleted()
-    {
-        return completed;
-    }
+	public boolean isCompleted() {
+		return completed;
+	}
 
 }

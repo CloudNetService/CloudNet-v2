@@ -14,79 +14,68 @@ import java.util.Collection;
  */
 public class CloudPlayerCommandSender implements CommandSender {
 
-    private final CloudPlayer cloudPlayer;
+	private final CloudPlayer cloudPlayer;
 
-    public CloudPlayerCommandSender(CloudPlayer cloudPlayer) {
-        this.cloudPlayer = cloudPlayer;
-    }
+	public CloudPlayerCommandSender(CloudPlayer cloudPlayer) {
+		this.cloudPlayer = cloudPlayer;
+	}
 
-    public CloudPlayer getCloudPlayer() {
-        return cloudPlayer;
-    }
+	public CloudPlayer getCloudPlayer() {
+		return cloudPlayer;
+	}
 
-    @Override
-    public String getName()
-    {
-        return cloudPlayer.getName();
-    }
+	@Override
+	public String getName() {
+		return cloudPlayer.getName();
+	}
 
-    @Override
-    public void sendMessage(String s)
-    {
-        cloudPlayer.getPlayerExecutor().sendMessage(cloudPlayer, s);
-    }
+	@Override
+	public void sendMessage(String s) {
+		cloudPlayer.getPlayerExecutor().sendMessage(cloudPlayer, s);
+	}
 
-    @Override
-    public void sendMessages(String... strings)
-    {
-        for (String m : strings) sendMessage(m);
-    }
+	@Override
+	public void sendMessages(String... strings) {
+		for (String m : strings) sendMessage(m);
+	}
 
-    @Override
-    public void sendMessage(BaseComponent... baseComponents)
-    {
-        for (BaseComponent m : baseComponents) sendMessage(m);
-    }
+	@Override
+	public void sendMessage(BaseComponent... baseComponents) {
+		for (BaseComponent m : baseComponents) sendMessage(m);
+	}
 
-    @Override
-    public void sendMessage(BaseComponent baseComponent)
-    {
-        sendMessage(baseComponent.toLegacyText());
-    }
+	@Override
+	public void sendMessage(BaseComponent baseComponent) {
+		sendMessage(baseComponent.toLegacyText());
+	}
 
-    @Override
-    public Collection<String> getGroups()
-    {
-        return new ArrayList<>();
-    }
+	@Override
+	public Collection<String> getGroups() {
+		return new ArrayList<>();
+	}
 
-    @Override
-    public void addGroups(String... strings)
-    {
+	@Override
+	public void addGroups(String... strings) {
 
-    }
+	}
 
-    @Override
-    public void removeGroups(String... strings)
-    {
+	@Override
+	public void removeGroups(String... strings) {
 
-    }
+	}
 
-    @Override
-    public boolean hasPermission(String s)
-    {
-        return new PermissionCheckEvent(this, s, false).hasPermission();
-    }
+	@Override
+	public boolean hasPermission(String s) {
+		return new PermissionCheckEvent(this, s, false).hasPermission();
+	}
 
-    @Override
-    public void setPermission(String s, boolean b)
-    {
+	@Override
+	public void setPermission(String s, boolean b) {
 
-    }
+	}
 
-    @Override
-    public Collection<String> getPermissions()
-    {
-        return new ArrayDeque<>();
-    }
+	@Override
+	public Collection<String> getPermissions() {
+		return new ArrayDeque<>();
+	}
 }

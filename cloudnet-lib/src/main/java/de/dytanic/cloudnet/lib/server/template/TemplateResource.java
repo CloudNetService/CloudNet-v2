@@ -5,8 +5,8 @@ package de.dytanic.cloudnet.lib.server.template;
  */
 public enum TemplateResource {
 
-    LOCAL,
-    URL,
-    MASTER
+	LOCAL,
+	URL,
+	MASTER
 
 }

@@ -9,6 +9,6 @@ package de.dytanic.cloudnetcore.config;
  */
 public interface ILoader<E> {
 
-    E load();
+	E load();
 
 }

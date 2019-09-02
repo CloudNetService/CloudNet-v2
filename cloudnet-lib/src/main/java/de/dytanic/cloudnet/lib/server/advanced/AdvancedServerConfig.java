@@ -9,34 +9,34 @@ package de.dytanic.cloudnet.lib.server.advanced;
  */
 public class AdvancedServerConfig {
 
-    private boolean notifyPlayerUpdatesFromNoCurrentPlayer;
+	private boolean notifyPlayerUpdatesFromNoCurrentPlayer;
 
-    private boolean notifyProxyUpdates;
+	private boolean notifyProxyUpdates;
 
-    private boolean notifyServerUpdates;
+	private boolean notifyServerUpdates;
 
-    private boolean disableAutoSavingForWorlds;
+	private boolean disableAutoSavingForWorlds;
 
-    public AdvancedServerConfig(boolean notifyPlayerUpdatesFromNoCurrentPlayer, boolean notifyProxyUpdates, boolean notifyServerUpdates, boolean disableAutoSavingForWorlds) {
-        this.notifyPlayerUpdatesFromNoCurrentPlayer = notifyPlayerUpdatesFromNoCurrentPlayer;
-        this.notifyProxyUpdates = notifyProxyUpdates;
-        this.notifyServerUpdates = notifyServerUpdates;
-        this.disableAutoSavingForWorlds = disableAutoSavingForWorlds;
-    }
+	public AdvancedServerConfig(boolean notifyPlayerUpdatesFromNoCurrentPlayer, boolean notifyProxyUpdates, boolean notifyServerUpdates, boolean disableAutoSavingForWorlds) {
+		this.notifyPlayerUpdatesFromNoCurrentPlayer = notifyPlayerUpdatesFromNoCurrentPlayer;
+		this.notifyProxyUpdates = notifyProxyUpdates;
+		this.notifyServerUpdates = notifyServerUpdates;
+		this.disableAutoSavingForWorlds = disableAutoSavingForWorlds;
+	}
 
-    public boolean isDisableAutoSavingForWorlds() {
-        return disableAutoSavingForWorlds;
-    }
+	public boolean isDisableAutoSavingForWorlds() {
+		return disableAutoSavingForWorlds;
+	}
 
-    public boolean isNotifyPlayerUpdatesFromNoCurrentPlayer() {
-        return notifyPlayerUpdatesFromNoCurrentPlayer;
-    }
+	public boolean isNotifyPlayerUpdatesFromNoCurrentPlayer() {
+		return notifyPlayerUpdatesFromNoCurrentPlayer;
+	}
 
-    public boolean isNotifyProxyUpdates() {
-        return notifyProxyUpdates;
-    }
+	public boolean isNotifyProxyUpdates() {
+		return notifyProxyUpdates;
+	}
 
-    public boolean isNotifyServerUpdates() {
-        return notifyServerUpdates;
-    }
+	public boolean isNotifyServerUpdates() {
+		return notifyServerUpdates;
+	}
 }

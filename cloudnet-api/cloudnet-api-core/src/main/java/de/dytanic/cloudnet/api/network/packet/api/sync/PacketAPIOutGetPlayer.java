@@ -7,6 +7,7 @@ package de.dytanic.cloudnet.api.network.packet.api.sync;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+
 import java.util.UUID;
 
 /**
@@ -14,8 +15,7 @@ import java.util.UUID;
  */
 public class PacketAPIOutGetPlayer extends Packet {
 
-    public PacketAPIOutGetPlayer(UUID uniqueId)
-    {
-        super(PacketRC.API + 1, new Document("uniqueId", uniqueId));
-    }
+	public PacketAPIOutGetPlayer(UUID uniqueId) {
+		super(PacketRC.API + 1, new Document("uniqueId", uniqueId));
+	}
 }

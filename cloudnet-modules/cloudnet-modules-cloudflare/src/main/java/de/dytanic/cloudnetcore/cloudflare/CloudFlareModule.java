@@ -16,7 +16,6 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -24,79 +23,67 @@ import java.util.function.Function;
  */
 public class CloudFlareModule extends CoreModule {
 
-    private static CloudFlareModule instance;
+	private static CloudFlareModule instance;
+	private final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private ConfigCloudFlare configCloudFlare;
+	private CloudFlareDatabase cloudFlareDatabase;
 
-    private ConfigCloudFlare configCloudFlare;
+	public static CloudFlareModule getInstance() {
+		return instance;
+	}
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+	public ConfigCloudFlare getConfigCloudFlare() {
+		return configCloudFlare;
+	}
 
-    private CloudFlareDatabase cloudFlareDatabase;
+	public ExecutorService getExecutor() {
+		return executor;
+	}
 
-    public static CloudFlareModule getInstance() {
-        return instance;
-    }
+	public CloudFlareDatabase getCloudFlareDatabase() {
+		return cloudFlareDatabase;
+	}
 
-    public ConfigCloudFlare getConfigCloudFlare() {
-        return configCloudFlare;
-    }
+	@Override
+	public void onLoad() {
+		instance = this;
+	}
 
-    public ExecutorService getExecutor() {
-        return executor;
-    }
+	@Override
+	public void onBootstrap() {
+		configCloudFlare = new ConfigCloudFlare();
+		cloudFlareDatabase = new CloudFlareDatabase(getCloud().getDatabaseManager().getDatabase("cloudnet_internal_cfg"));
+		try {
 
-    public CloudFlareDatabase getCloudFlareDatabase() {
-        return cloudFlareDatabase;
-    }
+			CloudFlareService cloudFlareAPI = new CloudFlareService(configCloudFlare.load());
+			cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), new Function<String, String>() {
+				@Override
+				public String apply(String key) {
+					return key;
+				}
+			}, new Function<Wrapper, SimpledWrapperInfo>() {
+				@Override
+				public SimpledWrapperInfo apply(Wrapper key) {
+					return new SimpledWrapperInfo(key.getServerId(), key.getNetworkInfo().getHostName());
+				}
+			}), getCloud().getProxyGroups(), cloudFlareDatabase);
 
-    @Override
-    public void onLoad()
-    {
-        instance = this;
-    }
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
-    @Override
-    public void onBootstrap()
-    {
-        configCloudFlare = new ConfigCloudFlare();
-        cloudFlareDatabase = new CloudFlareDatabase(getCloud().getDatabaseManager().getDatabase("cloudnet_internal_cfg"));
-        try
-        {
+		getCloud().getEventManager().registerListener(this, new ProxyAddListener());
+		getCloud().getEventManager().registerListener(this, new ProxyRemoveListener());
+	}
 
-            CloudFlareService cloudFlareAPI = new CloudFlareService(configCloudFlare.load());
-            cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), new Function<String, String>() {
-                @Override
-                public String apply(String key)
-                {
-                    return key;
-                }
-            }, new Function<Wrapper,SimpledWrapperInfo>() {
-                @Override
-                public SimpledWrapperInfo apply(Wrapper key)
-                {
-                    return new SimpledWrapperInfo(key.getServerId(), key.getNetworkInfo().getHostName());
-                }
-            }), getCloud().getProxyGroups(), cloudFlareDatabase);
+	@Override
+	public void onShutdown() {
 
-        } catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
+		executor.shutdownNow();
 
-        getCloud().getEventManager().registerListener(this, new ProxyAddListener());
-        getCloud().getEventManager().registerListener(this, new ProxyRemoveListener());
-    }
-
-    @Override
-    public void onShutdown()
-    {
-
-        executor.shutdownNow();
-
-        try
-        {
-            CloudFlareService.getInstance().shutdown(cloudFlareDatabase);
-        } catch (Exception ignored)
-        {
-        }
-    }
+		try {
+			CloudFlareService.getInstance().shutdown(cloudFlareDatabase);
+		} catch (Exception ignored) {
+		}
+	}
 }

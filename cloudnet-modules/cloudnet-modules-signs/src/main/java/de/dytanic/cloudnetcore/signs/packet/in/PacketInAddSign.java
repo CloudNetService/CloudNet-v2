@@ -17,14 +17,13 @@ import de.dytanic.cloudnetcore.signs.SignsModule;
  */
 public class PacketInAddSign extends PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        Sign sign = data.getObject("sign", new TypeToken<Sign>() {
-        }.getType());
-        SignsModule.getInstance().getSignDatabase().appendSign(sign);
+	@Override
+	public void handleInput(Document data, PacketSender packetSender) {
+		Sign sign = data.getObject("sign", new TypeToken<Sign>() {
+		}.getType());
+		SignsModule.getInstance().getSignDatabase().appendSign(sign);
 
-        CloudNet.getInstance().getNetworkManager().reload();
-        CloudNet.getInstance().getNetworkManager().updateAll();
-    }
+		CloudNet.getInstance().getNetworkManager().reload();
+		CloudNet.getInstance().getNetworkManager().updateAll();
+	}
 }

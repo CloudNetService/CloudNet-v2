@@ -23,7 +23,7 @@ public final class ArmorStandListener implements Listener {
 		MobSelector.getInstance().getMobs().values().stream().filter(value -> {
 			try {
 				return e.getRightClicked().getUniqueId().equals(value.getDisplayMessage().getClass()
-                        .getMethod("getUniqueId").invoke(value.getDisplayMessage()));
+						.getMethod("getUniqueId").invoke(value.getDisplayMessage()));
 			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
 				return false;
 			}
@@ -32,9 +32,9 @@ public final class ArmorStandListener implements Listener {
 
 	@EventHandler
 	public void handle(ItemDespawnEvent e) {
-        MobSelector.getInstance().getMobs().values().stream().filter(value ->
-                ((Entity) value.getDisplayMessage()).getPassenger() != null && e.getEntity().getEntityId() == ((Entity)
-                        value.getDisplayMessage()).getPassenger().getEntityId()).findFirst().ifPresent(mob ->
-                e.setCancelled(true));
+		MobSelector.getInstance().getMobs().values().stream().filter(value ->
+				((Entity) value.getDisplayMessage()).getPassenger() != null && e.getEntity().getEntityId() == ((Entity)
+						value.getDisplayMessage()).getPassenger().getEntityId()).findFirst().ifPresent(mob ->
+				e.setCancelled(true));
 	}
 }

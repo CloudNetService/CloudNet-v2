@@ -12,20 +12,20 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
  */
 public class EnabledScreen {
 
-    private ServiceId serviceId;
+	private ServiceId serviceId;
 
-    private Wrapper wrapper;
+	private Wrapper wrapper;
 
-    public EnabledScreen(ServiceId serviceId, Wrapper wrapper) {
-        this.serviceId = serviceId;
-        this.wrapper = wrapper;
-    }
+	public EnabledScreen(ServiceId serviceId, Wrapper wrapper) {
+		this.serviceId = serviceId;
+		this.wrapper = wrapper;
+	}
 
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
+	public ServiceId getServiceId() {
+		return serviceId;
+	}
 
-    public Wrapper getWrapper() {
-        return wrapper;
-    }
+	public Wrapper getWrapper() {
+		return wrapper;
+	}
 }

@@ -5,13 +5,13 @@ package de.dytanic.cloudnet.lib;
  */
 public class Version {
 
-    private String version;
+	private String version;
 
-    public Version(String version) {
-        this.version = version;
-    }
+	public Version(String version) {
+		this.version = version;
+	}
 
-    public String getVersion() {
-        return version;
-    }
+	public String getVersion() {
+		return version;
+	}
 }

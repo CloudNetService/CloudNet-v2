@@ -11,18 +11,16 @@ import org.bukkit.plugin.ServicesManager;
  */
 public final class VaultInvoker {
 
-    private VaultInvoker()
-    {
-    }
+	private VaultInvoker() {
+	}
 
-    public static void invoke()
-    {
-        ServicesManager servicesManager = BukkitBootstrap.getPlugin(BukkitBootstrap.class).getServer().getServicesManager();
+	public static void invoke() {
+		ServicesManager servicesManager = BukkitBootstrap.getPlugin(BukkitBootstrap.class).getServer().getServicesManager();
 
-        Permission permission = new VaultPermissionImpl();
+		Permission permission = new VaultPermissionImpl();
 
-        servicesManager.register(Permission.class, permission, BukkitBootstrap.getPlugin(BukkitBootstrap.class), ServicePriority.Highest);
-        servicesManager.register(Chat.class, new VaultChatImpl(permission), BukkitBootstrap.getPlugin(BukkitBootstrap.class), ServicePriority.Highest);
-    }
+		servicesManager.register(Permission.class, permission, BukkitBootstrap.getPlugin(BukkitBootstrap.class), ServicePriority.Highest);
+		servicesManager.register(Chat.class, new VaultChatImpl(permission), BukkitBootstrap.getPlugin(BukkitBootstrap.class), ServicePriority.Highest);
+	}
 
 }

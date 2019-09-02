@@ -6,7 +6,7 @@ package de.dytanic.cloudnet.lib;
 
 public enum DefaultType {
 
-    BUKKIT,
-    BUNGEE_CORD
+	BUKKIT,
+	BUNGEE_CORD
 
 }

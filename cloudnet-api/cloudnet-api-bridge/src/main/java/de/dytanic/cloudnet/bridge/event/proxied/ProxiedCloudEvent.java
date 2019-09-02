@@ -13,24 +13,22 @@ import net.md_5.bungee.api.plugin.Event;
  */
 public abstract class ProxiedCloudEvent extends Event {
 
-    /**
-     * Returns the CloudAPI instance
-     *
-     * @return
-     */
-    public CloudAPI getCloud()
-    {
-        return CloudAPI.getInstance();
-    }
+	/**
+	 * Returns the CloudAPI instance
+	 *
+	 * @return
+	 */
+	public CloudAPI getCloud() {
+		return CloudAPI.getInstance();
+	}
 
-    /**
-     * Returns the CloudProxy instance
-     *
-     * @return
-     */
-    public CloudProxy getCloudProxy()
-    {
-        return CloudProxy.getInstance();
-    }
+	/**
+	 * Returns the CloudProxy instance
+	 *
+	 * @return
+	 */
+	public CloudProxy getCloudProxy() {
+		return CloudProxy.getInstance();
+	}
 
 }

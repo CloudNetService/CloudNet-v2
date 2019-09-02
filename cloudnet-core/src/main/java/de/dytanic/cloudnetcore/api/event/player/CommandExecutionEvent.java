@@ -13,16 +13,14 @@ import de.dytanic.cloudnet.lib.player.PlayerCommandExecution;
  */
 public class CommandExecutionEvent extends AsyncEvent<CommandExecutionEvent> {
 
-    private PlayerCommandExecution playerCommandExecution;
+	private PlayerCommandExecution playerCommandExecution;
 
-    public CommandExecutionEvent(PlayerCommandExecution playerCommandExecution)
-    {
-        super(new AsyncPosterAdapter<>());
-        this.playerCommandExecution = playerCommandExecution;
-    }
+	public CommandExecutionEvent(PlayerCommandExecution playerCommandExecution) {
+		super(new AsyncPosterAdapter<>());
+		this.playerCommandExecution = playerCommandExecution;
+	}
 
-    public PlayerCommandExecution getPlayerCommandExecution()
-    {
-        return playerCommandExecution;
-    }
+	public PlayerCommandExecution getPlayerCommandExecution() {
+		return playerCommandExecution;
+	}
 }

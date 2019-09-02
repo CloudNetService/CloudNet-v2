@@ -16,41 +16,36 @@ import java.util.UUID;
  */
 public class UserCommandSender implements CommandSender {
 
-    private User user;
-    private PermissionEntity permissionEntity;
+	private User user;
+	private PermissionEntity permissionEntity;
 
-    public UserCommandSender(User user)
-    {
-        this.user = user;
-    }
+	public UserCommandSender(User user) {
+		this.user = user;
+	}
 
-    public User getUser() {
-        return user;
-    }
+	public User getUser() {
+		return user;
+	}
 
-    @Override
-    public String getName()
-    {
-        return "";
-    }
+	@Override
+	public String getName() {
+		return "";
+	}
 
-    @Override
-    public PermissionEntity getPermissionEntity()
-    {
-        if (permissionEntity == null) permissionEntity = new UserablePermissionEntity(UUID.randomUUID(), user);
-        return permissionEntity;
-    }
+	@Override
+	public PermissionEntity getPermissionEntity() {
+		if (permissionEntity == null) permissionEntity = new UserablePermissionEntity(UUID.randomUUID(), user);
+		return permissionEntity;
+	}
 
-    @Override
-    public void sendMessage(String... message)
-    {
-        for (String m : message)
-            System.out.println(m);
-    }
+	@Override
+	public void sendMessage(String... message) {
+		for (String m : message)
+			System.out.println(m);
+	}
 
-    @Override
-    public boolean hasPermission(String permission)
-    {
-        return ((UserablePermissionEntity) getPermissionEntity()).hasPermission(permission);
-    }
+	@Override
+	public boolean hasPermission(String permission) {
+		return ((UserablePermissionEntity) getPermissionEntity()).hasPermission(permission);
+	}
 }

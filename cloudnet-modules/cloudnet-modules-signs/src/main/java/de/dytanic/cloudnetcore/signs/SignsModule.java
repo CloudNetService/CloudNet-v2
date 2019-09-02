@@ -23,68 +23,60 @@ import de.dytanic.cloudnetcore.signs.packet.out.PacketOutSignSelector;
  */
 public class SignsModule extends CoreModule implements IEventListener<UpdateAllEvent> {
 
-    private ConfigSignLayout configSignLayout;
+	private static SignsModule instance;
+	private ConfigSignLayout configSignLayout;
+	private SignDatabase signDatabase;
 
-    private SignDatabase signDatabase;
+	public static SignsModule getInstance() {
+		return instance;
+	}
 
-    private static SignsModule instance;
+	public ConfigSignLayout getConfigSignLayout() {
+		return configSignLayout;
+	}
 
-    public static SignsModule getInstance() {
-        return instance;
-    }
+	public SignDatabase getSignDatabase() {
+		return signDatabase;
+	}
 
-    public ConfigSignLayout getConfigSignLayout() {
-        return configSignLayout;
-    }
+	@Override
+	public void onLoad() {
+		instance = this;
+	}
 
-    public SignDatabase getSignDatabase() {
-        return signDatabase;
-    }
+	@Override
+	public void onBootstrap() {
+		configSignLayout = new ConfigSignLayout();
+		configSignLayout.loadLayout();
+		signDatabase = new SignDatabase(getCloud().getDatabaseManager().getDatabase("cloud_internal_cfg"));
 
-    @Override
-    public void onLoad()
-    {
-        instance = this;
-    }
+		if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 1).size() == 0) {
+			getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 1, PacketInAddSign.class);
+		}
+		if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 2).size() == 0) {
+			getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInRemoveSign.class);
+		}
 
-    @Override
-    public void onBootstrap()
-    {
-        configSignLayout = new ConfigSignLayout();
-        configSignLayout.loadLayout();
-        signDatabase = new SignDatabase(getCloud().getDatabaseManager().getDatabase("cloud_internal_cfg"));
+		getCloud().getEventManager().registerListener(this, this);
+		getCloud().getEventManager().registerListener(this, new ListenerImpl());
+	}
 
-        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 1).size() == 0)
-        {
-            getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 1, PacketInAddSign.class);
-        }
-        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 2).size() == 0)
-        {
-            getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInRemoveSign.class);
-        }
+	@Override
+	public void onCall(UpdateAllEvent event) {
+		if (event.isOnlineCloudNetworkUpdate())
+			event.getNetworkManager().sendToLobbys(new PacketOutSignSelector(signDatabase.loadAll(), configSignLayout.loadLayout()));
+	}
 
-        getCloud().getEventManager().registerListener(this, this);
-        getCloud().getEventManager().registerListener(this, new ListenerImpl());
-    }
+	private class ListenerImpl implements IEventListener<ChannelInitEvent> {
 
-    @Override
-    public void onCall(UpdateAllEvent event)
-    {
-        if (event.isOnlineCloudNetworkUpdate())
-            event.getNetworkManager().sendToLobbys(new PacketOutSignSelector(signDatabase.loadAll(), configSignLayout.loadLayout()));
-    }
+		@Override
+		public void onCall(ChannelInitEvent event) {
+			if (event.getINetworkComponent() instanceof Wrapper) return;
 
-    private class ListenerImpl implements IEventListener<ChannelInitEvent> {
-
-        @Override
-        public void onCall(ChannelInitEvent event)
-        {
-            if (event.getINetworkComponent() instanceof Wrapper) return;
-
-            if (event.getINetworkComponent() instanceof MinecraftServer &&
-                    (((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY) ||
-                            ((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY)))
-                event.getINetworkComponent().sendPacket(new PacketOutSignSelector(signDatabase.loadAll(), configSignLayout.loadLayout()));
-        }
-    }
+			if (event.getINetworkComponent() instanceof MinecraftServer &&
+					(((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY) ||
+							((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY)))
+				event.getINetworkComponent().sendPacket(new PacketOutSignSelector(signDatabase.loadAll(), configSignLayout.loadLayout()));
+		}
+	}
 }

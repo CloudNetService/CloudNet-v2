@@ -7,17 +7,15 @@ import de.dytanic.cloudnetcore.database.StatisticManager;
 
 public final class PacketAPIInGetStatistic extends PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        Packet packet = getResult(StatisticManager.getInstance().getStatistics());
-        packetSender.sendPacket(packet);
-    }
+	@Override
+	public void handleInput(Document data, PacketSender packetSender) {
+		Packet packet = getResult(StatisticManager.getInstance().getStatistics());
+		packetSender.sendPacket(packet);
+	}
 
-    @Override
-    protected Packet getResult(Document value)
-    {
-        return new Packet(packetUniqueId, -643, value);
-    }
+	@Override
+	protected Packet getResult(Document value) {
+		return new Packet(packetUniqueId, -643, value);
+	}
 
 }

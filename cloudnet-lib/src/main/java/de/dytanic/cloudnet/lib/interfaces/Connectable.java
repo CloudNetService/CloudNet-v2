@@ -5,6 +5,6 @@ package de.dytanic.cloudnet.lib.interfaces;
  */
 public interface Connectable {
 
-    boolean connect() throws Exception;
+	boolean connect() throws Exception;
 
 }

@@ -8,8 +8,8 @@ import de.dytanic.cloudnet.lib.service.ServiceId;
 
 public interface Screenable {
 
-    ServiceId getServiceId();
+	ServiceId getServiceId();
 
-    Process getInstance();
+	Process getInstance();
 
 }

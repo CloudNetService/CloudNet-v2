@@ -5,27 +5,27 @@ package de.dytanic.cloudnet.lib.server.priority;
  */
 public class PriorityService {
 
-    private int stopTimeInSeconds;
+	private int stopTimeInSeconds;
 
-    private PriorityConfig global;
+	private PriorityConfig global;
 
-    private PriorityConfig group;
+	private PriorityConfig group;
 
-    public PriorityService(int stopTimeInSeconds, PriorityConfig global, PriorityConfig group) {
-        this.stopTimeInSeconds = stopTimeInSeconds;
-        this.global = global;
-        this.group = group;
-    }
+	public PriorityService(int stopTimeInSeconds, PriorityConfig global, PriorityConfig group) {
+		this.stopTimeInSeconds = stopTimeInSeconds;
+		this.global = global;
+		this.group = group;
+	}
 
-    public int getStopTimeInSeconds() {
-        return stopTimeInSeconds;
-    }
+	public int getStopTimeInSeconds() {
+		return stopTimeInSeconds;
+	}
 
-    public PriorityConfig getGlobal() {
-        return global;
-    }
+	public PriorityConfig getGlobal() {
+		return global;
+	}
 
-    public PriorityConfig getGroup() {
-        return group;
-    }
+	public PriorityConfig getGroup() {
+		return group;
+	}
 }

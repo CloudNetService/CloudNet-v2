@@ -11,6 +11,6 @@ import de.dytanic.cloudnetcore.network.components.INetworkComponent;
  */
 public interface ChannelFilter {
 
-    boolean accept(INetworkComponent networkComponent);
+	boolean accept(INetworkComponent networkComponent);
 
 }

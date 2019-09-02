@@ -11,16 +11,16 @@ import de.dytanic.cloudnet.lib.database.Database;
  */
 public class DatabaseUsable {
 
-    /**
-     * The data store that this database uses
-     */
-    protected Database database;
+	/**
+	 * The data store that this database uses
+	 */
+	protected Database database;
 
-    public DatabaseUsable(Database database) {
-        this.database = database;
-    }
+	public DatabaseUsable(Database database) {
+		this.database = database;
+	}
 
-    public Database getDatabase() {
-        return database;
-    }
+	public Database getDatabase() {
+		return database;
+	}
 }

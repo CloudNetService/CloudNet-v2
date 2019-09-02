@@ -4,12 +4,11 @@ import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.interfaces.IEventManager;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
+import net.jodah.typetools.TypeResolver;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
-
-import net.jodah.typetools.TypeResolver;
 
 /**
  * Class that manages events

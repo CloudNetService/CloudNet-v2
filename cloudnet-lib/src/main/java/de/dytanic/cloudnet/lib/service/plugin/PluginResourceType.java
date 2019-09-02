@@ -9,8 +9,8 @@ package de.dytanic.cloudnet.lib.service.plugin;
  */
 public enum PluginResourceType {
 
-    MASTER,
-    LOCAL,
-    URL
+	MASTER,
+	LOCAL,
+	URL
 
 }

@@ -13,15 +13,14 @@ import de.dytanic.cloudnetcore.network.components.ProxyServer;
  */
 public class ProxyRemoveEvent extends AsyncEvent<ProxyRemoveEvent> {
 
-    private ProxyServer proxyServer;
+	private ProxyServer proxyServer;
 
-    public ProxyRemoveEvent(ProxyServer proxyServer)
-    {
-        super(new AsyncPosterAdapter<>());
-        this.proxyServer = proxyServer;
-    }
+	public ProxyRemoveEvent(ProxyServer proxyServer) {
+		super(new AsyncPosterAdapter<>());
+		this.proxyServer = proxyServer;
+	}
 
-    public ProxyServer getProxyServer() {
-        return proxyServer;
-    }
+	public ProxyServer getProxyServer() {
+		return proxyServer;
+	}
 }

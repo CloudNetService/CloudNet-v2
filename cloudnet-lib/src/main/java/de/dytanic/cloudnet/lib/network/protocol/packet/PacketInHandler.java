@@ -5,6 +5,7 @@
 package de.dytanic.cloudnet.lib.network.protocol.packet;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
+
 import java.util.UUID;
 
 /**
@@ -12,11 +13,10 @@ import java.util.UUID;
  */
 public abstract class PacketInHandler {
 
-    protected UUID packetUniqueId;
+	protected UUID packetUniqueId;
 
-    public PacketInHandler()
-    {
-    }
+	public PacketInHandler() {
+	}
 
-    public abstract void handleInput(Document data, PacketSender packetSender);
+	public abstract void handleInput(Document data, PacketSender packetSender);
 }

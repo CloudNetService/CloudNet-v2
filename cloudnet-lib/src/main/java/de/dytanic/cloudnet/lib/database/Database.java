@@ -1,6 +1,7 @@
 package de.dytanic.cloudnet.lib.database;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
+
 import java.util.Collection;
 import java.util.concurrent.FutureTask;
 
@@ -9,38 +10,37 @@ import java.util.concurrent.FutureTask;
  */
 public interface Database {
 
-    String UNIQUE_NAME_KEY = "_database_id_unique";
+	String UNIQUE_NAME_KEY = "_database_id_unique";
 
-    Database loadDocuments();
+	static DatabaseDocument createEmptyDocument(String name) {
+		return new DatabaseDocument(name);
+	}
 
-    Collection<Document> getDocs();
+	Database loadDocuments();
 
-    Document getDocument(String name);
+	Collection<Document> getDocs();
 
-    Database insert(Document... documents);
+	Document getDocument(String name);
 
-    Database delete(String name);
+	Database insert(Document... documents);
 
-    Database delete(Document document);
+	Database delete(String name);
 
-    Document load(String name);
+	Database delete(Document document);
 
-    boolean contains(Document document);
+	Document load(String name);
 
-    boolean contains(String name);
+	boolean contains(Document document);
 
-    int size();
+	boolean contains(String name);
 
-    boolean containsDoc(String name);
+	int size();
 
-    Database insertAsync(Document... documents);
+	boolean containsDoc(String name);
 
-    Database deleteAsync(String name);
+	Database insertAsync(Document... documents);
 
-    FutureTask<Document> getDocumentAsync(String name);
+	Database deleteAsync(String name);
 
-    static DatabaseDocument createEmptyDocument(String name)
-    {
-        return new DatabaseDocument(name);
-    }
+	FutureTask<Document> getDocumentAsync(String name);
 }

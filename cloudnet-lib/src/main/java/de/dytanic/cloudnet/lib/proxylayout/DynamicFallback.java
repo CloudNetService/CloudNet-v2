@@ -13,31 +13,29 @@ import java.util.stream.Collectors;
  */
 public class DynamicFallback {
 
-    private String defaultFallback;
+	private String defaultFallback;
 
-    private List<ServerFallback> fallbacks;
+	private List<ServerFallback> fallbacks;
 
-    public DynamicFallback(String defaultFallback, List<ServerFallback> fallbacks) {
-        this.defaultFallback = defaultFallback;
-        this.fallbacks = fallbacks;
-    }
+	public DynamicFallback(String defaultFallback, List<ServerFallback> fallbacks) {
+		this.defaultFallback = defaultFallback;
+		this.fallbacks = fallbacks;
+	}
 
-    public List<ServerFallback> getFallbacks() {
-        return fallbacks;
-    }
+	public List<ServerFallback> getFallbacks() {
+		return fallbacks;
+	}
 
-    public String getDefaultFallback() {
-        return defaultFallback;
-    }
+	public String getDefaultFallback() {
+		return defaultFallback;
+	}
 
-    public ServerFallback getDefault()
-    {
-        return fallbacks.stream().filter(serverFallback -> serverFallback.getGroup().equals(defaultFallback)).findFirst().orElse(null);
-    }
+	public ServerFallback getDefault() {
+		return fallbacks.stream().filter(serverFallback -> serverFallback.getGroup().equals(defaultFallback)).findFirst().orElse(null);
+	}
 
-    public Collection<String> getNamedFallbackes()
-    {
-        return this.fallbacks.stream().map(ServerFallback::getGroup).collect(Collectors.toList());
-    }
+	public Collection<String> getNamedFallbackes() {
+		return this.fallbacks.stream().map(ServerFallback::getGroup).collect(Collectors.toList());
+	}
 
 }

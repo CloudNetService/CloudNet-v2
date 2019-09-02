@@ -9,20 +9,20 @@ package de.dytanic.cloudnet.lib.user;
  */
 public class SimpledUser {
 
-    private String userName;
+	private String userName;
 
-    private String apiToken;
+	private String apiToken;
 
-    public SimpledUser(String userName, String apiToken) {
-        this.userName = userName;
-        this.apiToken = apiToken;
-    }
+	public SimpledUser(String userName, String apiToken) {
+		this.userName = userName;
+		this.apiToken = apiToken;
+	}
 
-    public String getApiToken() {
-        return apiToken;
-    }
+	public String getApiToken() {
+		return apiToken;
+	}
 
-    public String getUserName() {
-        return userName;
-    }
+	public String getUserName() {
+		return userName;
+	}
 }

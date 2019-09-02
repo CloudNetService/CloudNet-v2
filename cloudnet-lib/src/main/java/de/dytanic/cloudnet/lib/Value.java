@@ -10,17 +10,17 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class Value<E> {
 
-    private E value;
+	private E value;
 
-    public Value(E value) {
-        this.value = value;
-    }
+	public Value(E value) {
+		this.value = value;
+	}
 
-    public E getValue() {
-        return value;
-    }
+	public E getValue() {
+		return value;
+	}
 
-    public void setValue(E value) {
-        this.value = value;
-    }
+	public void setValue(E value) {
+		this.value = value;
+	}
 }

@@ -5,12 +5,12 @@ package de.dytanic.cloudnet.lib.service;
  */
 public enum ServiceType {
 
-    BUNGEECORD,
-    SPIGOT,
-    BUKKIT,
-    CAULDRON,
-    FORGE,
-    SPONGE,
-    CUSTOM;
+	BUNGEECORD,
+	SPIGOT,
+	BUKKIT,
+	CAULDRON,
+	FORGE,
+	SPONGE,
+	CUSTOM;
 
 }

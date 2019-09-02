@@ -20,38 +20,34 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class DefaultModuleManager {
 
-    private Collection<DefaultModule> modules = new CopyOnWriteArrayList<>();
+	private Collection<DefaultModule> modules = new CopyOnWriteArrayList<>();
 
-    public DefaultModuleManager() throws Exception
-    {
-        Properties properties = new Properties();
+	public DefaultModuleManager() throws Exception {
+		Properties properties = new Properties();
 
-        try (InputStream inputStream = CloudNet.class.getClassLoader().getResourceAsStream("modules/modules.properties"))
-        {
-            properties.load(inputStream);
-        }
+		try (InputStream inputStream = CloudNet.class.getClassLoader().getResourceAsStream("modules/modules.properties")) {
+			properties.load(inputStream);
+		}
 
-        Collection<?> property = Collections.list(properties.propertyNames());
-        property.forEach(obj -> {
-            String pro = obj.toString();
-            modules.add(new DefaultModule(pro, properties.getProperty(pro)));
-        });
+		Collection<?> property = Collections.list(properties.propertyNames());
+		property.forEach(obj -> {
+			String pro = obj.toString();
+			modules.add(new DefaultModule(pro, properties.getProperty(pro)));
+		});
 
-        Path path;
-        for (DefaultModule defaultModule : modules)
-        {
-            path = Paths.get("modules/" + defaultModule.getModuleName() + ".jar");
+		Path path;
+		for (DefaultModule defaultModule : modules) {
+			path = Paths.get("modules/" + defaultModule.getModuleName() + ".jar");
 
-            Files.deleteIfExists(path);
+			Files.deleteIfExists(path);
 
-            try (InputStream inputStream = defaultModule.stream())
-            {
-                Files.copy(inputStream, path);
-            }
-        }
-    }
+			try (InputStream inputStream = defaultModule.stream()) {
+				Files.copy(inputStream, path);
+			}
+		}
+	}
 
-    public Collection<DefaultModule> getModules() {
-        return modules;
-    }
+	public Collection<DefaultModule> getModules() {
+		return modules;
+	}
 }

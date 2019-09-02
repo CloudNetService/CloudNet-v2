@@ -12,90 +12,90 @@ import java.util.Properties;
  */
 public class ServerProcessMeta {
 
-    private ServiceId serviceId;
+	private ServiceId serviceId;
 
-    private int memory;
+	private int memory;
 
-    private boolean priorityStop;
+	private boolean priorityStop;
 
-    private String url;
+	private String url;
 
-    private String[] processParameters;
+	private String[] processParameters;
 
-    private boolean onlineMode;
+	private boolean onlineMode;
 
-    private Collection<ServerInstallablePlugin> downloadablePlugins;
+	private Collection<ServerInstallablePlugin> downloadablePlugins;
 
-    private ServerConfig serverConfig;
+	private ServerConfig serverConfig;
 
-    private String customServerDownload;
+	private String customServerDownload;
 
-    private int port;
+	private int port;
 
-    private Properties serverProperties;
+	private Properties serverProperties;
 
-    private Template template;
+	private Template template;
 
-    public ServerProcessMeta(ServiceId serviceId, int memory, boolean priorityStop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> downloadablePlugins, ServerConfig serverConfig, String customServerDownload, int port, Properties serverProperties, Template template) {
-        this.serviceId = serviceId;
-        this.memory = memory;
-        this.priorityStop = priorityStop;
-        this.url = url;
-        this.processParameters = processParameters;
-        this.onlineMode = onlineMode;
-        this.downloadablePlugins = downloadablePlugins;
-        this.serverConfig = serverConfig;
-        this.customServerDownload = customServerDownload;
-        this.port = port;
-        this.serverProperties = serverProperties;
-        this.template = template;
-    }
+	public ServerProcessMeta(ServiceId serviceId, int memory, boolean priorityStop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> downloadablePlugins, ServerConfig serverConfig, String customServerDownload, int port, Properties serverProperties, Template template) {
+		this.serviceId = serviceId;
+		this.memory = memory;
+		this.priorityStop = priorityStop;
+		this.url = url;
+		this.processParameters = processParameters;
+		this.onlineMode = onlineMode;
+		this.downloadablePlugins = downloadablePlugins;
+		this.serverConfig = serverConfig;
+		this.customServerDownload = customServerDownload;
+		this.port = port;
+		this.serverProperties = serverProperties;
+		this.template = template;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public String[] getProcessParameters() {
-        return processParameters;
-    }
+	public String[] getProcessParameters() {
+		return processParameters;
+	}
 
-    public Collection<ServerInstallablePlugin> getDownloadablePlugins() {
-        return downloadablePlugins;
-    }
+	public Collection<ServerInstallablePlugin> getDownloadablePlugins() {
+		return downloadablePlugins;
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public int getPort() {
+		return port;
+	}
 
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
+	public ServiceId getServiceId() {
+		return serviceId;
+	}
 
-    public int getMemory() {
-        return memory;
-    }
+	public int getMemory() {
+		return memory;
+	}
 
-    public Template getTemplate() {
-        return template;
-    }
+	public Template getTemplate() {
+		return template;
+	}
 
-    public ServerConfig getServerConfig() {
-        return serverConfig;
-    }
+	public ServerConfig getServerConfig() {
+		return serverConfig;
+	}
 
-    public Properties getServerProperties() {
-        return serverProperties;
-    }
+	public Properties getServerProperties() {
+		return serverProperties;
+	}
 
-    public String getCustomServerDownload() {
-        return customServerDownload;
-    }
+	public String getCustomServerDownload() {
+		return customServerDownload;
+	}
 
-    public boolean isOnlineMode() {
-        return onlineMode;
-    }
+	public boolean isOnlineMode() {
+		return onlineMode;
+	}
 
-    public boolean isPriorityStop() {
-        return priorityStop;
-    }
+	public boolean isPriorityStop() {
+		return priorityStop;
+	}
 }

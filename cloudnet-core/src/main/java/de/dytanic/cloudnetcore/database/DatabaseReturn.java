@@ -11,6 +11,6 @@ import de.dytanic.cloudnet.lib.database.Database;
  */
 public interface DatabaseReturn {
 
-    Database getDatabase();
+	Database getDatabase();
 
 }

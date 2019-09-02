@@ -18,25 +18,22 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
  */
 public class PacketInRemoveCloudServer extends PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (!(packetSender instanceof Wrapper)) return;
+	@Override
+	public void handleInput(Document data, PacketSender packetSender) {
+		if (!(packetSender instanceof Wrapper)) return;
 
-        Wrapper cn = (Wrapper) packetSender;
-        ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {
-        }.getType());
+		Wrapper cn = (Wrapper) packetSender;
+		ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {
+		}.getType());
 
-        if (cn.getServers().containsKey(serverInfo.getServiceId().getServerId()))
-        {
-            CloudServer minecraftServer = cn.getCloudServers().get(serverInfo.getServiceId().getServerId());
-            if (minecraftServer.getChannel() != null)
-            {
-                minecraftServer.getChannel().close().syncUninterruptibly();
-            }
+		if (cn.getServers().containsKey(serverInfo.getServiceId().getServerId())) {
+			CloudServer minecraftServer = cn.getCloudServers().get(serverInfo.getServiceId().getServerId());
+			if (minecraftServer.getChannel() != null) {
+				minecraftServer.getChannel().close().syncUninterruptibly();
+			}
 
-            cn.getCloudServers().remove(serverInfo.getServiceId().getServerId());
-            CloudNet.getInstance().getNetworkManager().handleServerRemove(minecraftServer);
-        }
-    }
+			cn.getCloudServers().remove(serverInfo.getServiceId().getServerId());
+			CloudNet.getInstance().getNetworkManager().handleServerRemove(minecraftServer);
+		}
+	}
 }

@@ -70,20 +70,20 @@ public final class MobSelector {
 		return mobs;
 	}
 
-	public MobConfig getMobConfig() {
-		return mobConfig;
+	public void setMobs(Map<UUID, MobImpl> mobs) {
+		this.mobs = mobs;
 	}
 
-	public Map<String, ServerInfo> getServers() {
-		return servers;
+	public MobConfig getMobConfig() {
+		return mobConfig;
 	}
 
 	public void setMobConfig(MobConfig mobConfig) {
 		this.mobConfig = mobConfig;
 	}
 
-	public void setMobs(Map<UUID, MobImpl> mobs) {
-		this.mobs = mobs;
+	public Map<String, ServerInfo> getServers() {
+		return servers;
 	}
 
 	public void init() {
@@ -164,7 +164,7 @@ public final class MobSelector {
 	private ItemStack transform(MobItemLayout mobItemLayout, ServerInfo serverInfo) {
 		Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
 		return material == null ? null : ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId())
-				.lore(new ArrayList<>(mobItemLayout.getLore().stream().map(key ->initPatterns(ChatColor.translateAlternateColorCodes('&', key), serverInfo)).collect(Collectors.toList()))).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
+				.lore(new ArrayList<>(mobItemLayout.getLore().stream().map(key -> initPatterns(ChatColor.translateAlternateColorCodes('&', key), serverInfo)).collect(Collectors.toList()))).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
 	}
 
 	private String initPatterns(String x, ServerInfo serverInfo) {
@@ -286,6 +286,14 @@ public final class MobSelector {
 		}
 	}
 
+	public Collection<Inventory> inventories() {
+		return this.mobs.values().stream().map(MobImpl::getInventory).collect(Collectors.toList());
+	}
+
+	public MobImpl find(Inventory inventory) {
+		return this.mobs.values().stream().filter(mob -> mob.getInventory().equals(inventory)).findFirst().orElse(null);
+	}
+
 	//MobImpl
 	public static class MobImpl {
 
@@ -314,48 +322,48 @@ public final class MobSelector {
 			return uniqueId;
 		}
 
-		public Entity getEntity() {
-			return entity;
-		}
-
-		public Inventory getInventory() {
-			return inventory;
-		}
-
-		public Map<Integer, String> getServerPosition() {
-			return serverPosition;
-		}
-
-		public Object getDisplayMessage() {
-			return displayMessage;
-		}
-
-		public ServerMob getMob() {
-			return mob;
-		}
-
 		public void setUniqueId(UUID uniqueId) {
 			this.uniqueId = uniqueId;
 		}
 
-		public void setDisplayMessage(Object displayMessage) {
-			this.displayMessage = displayMessage;
+		public Entity getEntity() {
+			return entity;
 		}
 
 		public void setEntity(Entity entity) {
 			this.entity = entity;
 		}
 
+		public Inventory getInventory() {
+			return inventory;
+		}
+
 		public void setInventory(Inventory inventory) {
 			this.inventory = inventory;
 		}
 
-		public void setMob(ServerMob mob) {
-			this.mob = mob;
+		public Map<Integer, String> getServerPosition() {
+			return serverPosition;
 		}
 
 		public void setServerPosition(Map<Integer, String> serverPosition) {
 			this.serverPosition = serverPosition;
+		}
+
+		public Object getDisplayMessage() {
+			return displayMessage;
+		}
+
+		public void setDisplayMessage(Object displayMessage) {
+			this.displayMessage = displayMessage;
+		}
+
+		public ServerMob getMob() {
+			return mob;
+		}
+
+		public void setMob(ServerMob mob) {
+			this.mob = mob;
 		}
 	}
 
@@ -378,14 +386,6 @@ public final class MobSelector {
 			servers.put(serverInfo.getServiceId().getServerId(), serverInfo);
 			handleUpdate(serverInfo);
 		}
-	}
-
-	public Collection<Inventory> inventories() {
-		return this.mobs.values().stream().map(MobImpl::getInventory).collect(Collectors.toList());
-	}
-
-	public MobImpl find(Inventory inventory) {
-		return this.mobs.values().stream().filter(mob -> mob.getInventory().equals(inventory)).findFirst().orElse(null);
 	}
 
 	private class ListenrImpl implements Listener {

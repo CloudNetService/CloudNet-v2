@@ -9,33 +9,33 @@ package de.dytanic.cloudnet.event;
  */
 public class EventEntity<E extends Event> {
 
-    /**
-     * The event listener that is called for events of the class {@link #eventClazz}
-     */
-    private IEventListener<E> eventListener;
+	/**
+	 * The event listener that is called for events of the class {@link #eventClazz}
+	 */
+	private IEventListener<E> eventListener;
 
-    private EventKey eventKey;
+	private EventKey eventKey;
 
-    /**
-     * Subclass of {@link Event} this entity should listen to.
-     */
-    private Class<? extends Event> eventClazz;
+	/**
+	 * Subclass of {@link Event} this entity should listen to.
+	 */
+	private Class<? extends Event> eventClazz;
 
-    public EventEntity(IEventListener<E> eventListener, EventKey eventKey, Class<? extends Event> eventClazz) {
-        this.eventListener = eventListener;
-        this.eventKey = eventKey;
-        this.eventClazz = eventClazz;
-    }
+	public EventEntity(IEventListener<E> eventListener, EventKey eventKey, Class<? extends Event> eventClazz) {
+		this.eventListener = eventListener;
+		this.eventKey = eventKey;
+		this.eventClazz = eventClazz;
+	}
 
-    public Class<? extends Event> getEventClazz() {
-        return eventClazz;
-    }
+	public Class<? extends Event> getEventClazz() {
+		return eventClazz;
+	}
 
-    public EventKey getEventKey() {
-        return eventKey;
-    }
+	public EventKey getEventKey() {
+		return eventKey;
+	}
 
-    public IEventListener<E> getEventListener() {
-        return eventListener;
-    }
+	public IEventListener<E> getEventListener() {
+		return eventListener;
+	}
 }

@@ -13,11 +13,11 @@ import jline.console.ConsoleReader;
  */
 public interface ISetup {
 
-    /**
-     * Starts the setup sequence.
-     *
-     * @param consoleReader the console to read user input from
-     */
-    void start(ConsoleReader consoleReader);
+	/**
+	 * Starts the setup sequence.
+	 *
+	 * @param consoleReader the console to read user input from
+	 */
+	void start(ConsoleReader consoleReader);
 
 }

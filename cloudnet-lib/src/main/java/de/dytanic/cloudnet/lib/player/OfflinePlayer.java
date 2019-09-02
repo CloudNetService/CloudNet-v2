@@ -15,88 +15,88 @@ import java.util.UUID;
 
 public class OfflinePlayer implements Nameable, Permissible {
 
-    public static final Type TYPE = new TypeToken<OfflinePlayer>() {
-    }.getType();
+	public static final Type TYPE = new TypeToken<OfflinePlayer>() {
+	}.getType();
 
-    protected UUID uniqueId;
+	protected UUID uniqueId;
 
-    protected String name;
+	protected String name;
 
-    protected Document metaData;
+	protected Document metaData;
 
-    protected Long lastLogin;
+	protected Long lastLogin;
 
-    protected Long firstLogin;
+	protected Long firstLogin;
 
-    protected PlayerConnection lastPlayerConnection;
+	protected PlayerConnection lastPlayerConnection;
 
-    protected PermissionEntity permissionEntity;
+	protected PermissionEntity permissionEntity;
 
-    public OfflinePlayer(UUID uniqueId, String name, Document metaData, Long lastLogin, Long firstLogin, PlayerConnection lastPlayerConnection, PermissionEntity permissionEntity) {
-        this.uniqueId = uniqueId;
-        this.name = name;
-        this.metaData = metaData;
-        this.lastLogin = lastLogin;
-        this.firstLogin = firstLogin;
-        this.lastPlayerConnection = lastPlayerConnection;
-        this.permissionEntity = permissionEntity;
-    }
+	public OfflinePlayer(UUID uniqueId, String name, Document metaData, Long lastLogin, Long firstLogin, PlayerConnection lastPlayerConnection, PermissionEntity permissionEntity) {
+		this.uniqueId = uniqueId;
+		this.name = name;
+		this.metaData = metaData;
+		this.lastLogin = lastLogin;
+		this.firstLogin = firstLogin;
+		this.lastPlayerConnection = lastPlayerConnection;
+		this.permissionEntity = permissionEntity;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    public UUID getUniqueId() {
-        return uniqueId;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public Document getMetaData() {
-        return metaData;
-    }
+	public UUID getUniqueId() {
+		return uniqueId;
+	}
 
-    public Long getFirstLogin() {
-        return firstLogin;
-    }
+	public void setUniqueId(UUID uniqueId) {
+		this.uniqueId = uniqueId;
+	}
 
-    public Long getLastLogin() {
-        return lastLogin;
-    }
+	public Document getMetaData() {
+		return metaData;
+	}
 
-    @Override
-    public PermissionEntity getPermissionEntity() {
-        return permissionEntity;
-    }
+	public void setMetaData(Document metaData) {
+		this.metaData = metaData;
+	}
 
-    public PlayerConnection getLastPlayerConnection() {
-        return lastPlayerConnection;
-    }
+	public Long getFirstLogin() {
+		return firstLogin;
+	}
 
-    public void setUniqueId(UUID uniqueId) {
-        this.uniqueId = uniqueId;
-    }
+	public void setFirstLogin(Long firstLogin) {
+		this.firstLogin = firstLogin;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public Long getLastLogin() {
+		return lastLogin;
+	}
 
-    public void setFirstLogin(Long firstLogin) {
-        this.firstLogin = firstLogin;
-    }
+	public void setLastLogin(Long lastLogin) {
+		this.lastLogin = lastLogin;
+	}
 
-    public void setLastLogin(Long lastLogin) {
-        this.lastLogin = lastLogin;
-    }
+	@Override
+	public PermissionEntity getPermissionEntity() {
+		return permissionEntity;
+	}
 
-    public void setLastPlayerConnection(PlayerConnection lastPlayerConnection) {
-        this.lastPlayerConnection = lastPlayerConnection;
-    }
+	public void setPermissionEntity(PermissionEntity permissionEntity) {
+		this.permissionEntity = permissionEntity;
+	}
 
-    public void setMetaData(Document metaData) {
-        this.metaData = metaData;
-    }
+	public PlayerConnection getLastPlayerConnection() {
+		return lastPlayerConnection;
+	}
 
-    public void setPermissionEntity(PermissionEntity permissionEntity) {
-        this.permissionEntity = permissionEntity;
-    }
+	public void setLastPlayerConnection(PlayerConnection lastPlayerConnection) {
+		this.lastPlayerConnection = lastPlayerConnection;
+	}
 }

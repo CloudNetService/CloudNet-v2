@@ -11,30 +11,27 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class ProxiedSubChannelMessageEvent extends ProxiedCloudEvent {
 
-    private String channel;
+	private String channel;
 
-    private String message;
+	private String message;
 
-    private Document document;
+	private Document document;
 
-    public ProxiedSubChannelMessageEvent(String channel, String message, Document document) {
-        this.channel = channel;
-        this.message = message;
-        this.document = document;
-    }
+	public ProxiedSubChannelMessageEvent(String channel, String message, Document document) {
+		this.channel = channel;
+		this.message = message;
+		this.document = document;
+	}
 
-    public String getChannel()
-    {
-        return channel;
-    }
+	public String getChannel() {
+		return channel;
+	}
 
-    public Document getDocument()
-    {
-        return document;
-    }
+	public Document getDocument() {
+		return document;
+	}
 
-    public String getMessage()
-    {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 }

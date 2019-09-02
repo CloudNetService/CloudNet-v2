@@ -11,27 +11,24 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitOnlineCountUpdateEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+	private static HandlerList handlerList = new HandlerList();
 
-    private int onlineCount;
+	private int onlineCount;
 
-    public BukkitOnlineCountUpdateEvent(int onlineCount)
-    {
-        this.onlineCount = onlineCount;
-    }
+	public BukkitOnlineCountUpdateEvent(int onlineCount) {
+		this.onlineCount = onlineCount;
+	}
 
-    public int getOnlineCount() {
-        return onlineCount;
-    }
+	public static HandlerList getHandlerList() {
+		return handlerList;
+	}
 
-    public static HandlerList getHandlerList()
-    {
-        return handlerList;
-    }
+	public int getOnlineCount() {
+		return onlineCount;
+	}
 
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlerList;
+	}
 }

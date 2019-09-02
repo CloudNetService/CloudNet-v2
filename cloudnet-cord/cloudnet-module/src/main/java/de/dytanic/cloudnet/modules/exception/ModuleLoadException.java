@@ -9,13 +9,12 @@ package de.dytanic.cloudnet.modules.exception;
  */
 public class ModuleLoadException extends RuntimeException {
 
-    /**
-     * Constructs a new runtime exception with a given message.
-     *
-     * @param message the message that details the exception
-     */
-    public ModuleLoadException(String message)
-    {
-        super(message);
-    }
+	/**
+	 * Constructs a new runtime exception with a given message.
+	 *
+	 * @param message the message that details the exception
+	 */
+	public ModuleLoadException(String message) {
+		super(message);
+	}
 }

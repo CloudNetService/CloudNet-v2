@@ -8,20 +8,20 @@ import de.dytanic.cloudnet.lib.service.ServiceId;
 
 public class ScreenInfo {
 
-    private ServiceId serviceId;
+	private ServiceId serviceId;
 
-    private String line;
+	private String line;
 
-    public ScreenInfo(ServiceId serviceId, String line) {
-        this.serviceId = serviceId;
-        this.line = line;
-    }
+	public ScreenInfo(ServiceId serviceId, String line) {
+		this.serviceId = serviceId;
+		this.line = line;
+	}
 
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
+	public ServiceId getServiceId() {
+		return serviceId;
+	}
 
-    public String getLine() {
-        return line;
-    }
+	public String getLine() {
+		return line;
+	}
 }

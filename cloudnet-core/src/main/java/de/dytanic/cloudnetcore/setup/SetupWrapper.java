@@ -18,50 +18,45 @@ import java.util.function.Function;
  */
 public class SetupWrapper {
 
-    private String name;
+	private String name;
 
-    public SetupWrapper(CommandSender commandSender, String name)
-    {
-        this.name = name;
+	public SetupWrapper(CommandSender commandSender, String name) {
+		this.name = name;
 
-        Setup setup = new Setup().setupCancel(new ISetupCancel() {
-            @Override
-            public void cancel()
-            {
-                System.out.println("Setup was cancelled");
-            }
-        }).setupComplete(new ISetupComplete() {
-            @Override
-            public void complete(Document data)
-            {
-                String host = data.getString("address");
-                String user = data.getString("user");
+		Setup setup = new Setup().setupCancel(new ISetupCancel() {
+			@Override
+			public void cancel() {
+				System.out.println("Setup was cancelled");
+			}
+		}).setupComplete(new ISetupComplete() {
+			@Override
+			public void complete(Document data) {
+				String host = data.getString("address");
+				String user = data.getString("user");
 
-                WrapperMeta wrapperMeta = new WrapperMeta(name, host, user);
-                CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
-                commandSender.sendMessage("Wrapper [" + wrapperMeta.getId() + "] was registered on CloudNet");
-            }
-        });
+				WrapperMeta wrapperMeta = new WrapperMeta(name, host, user);
+				CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
+				commandSender.sendMessage("Wrapper [" + wrapperMeta.getId() + "] was registered on CloudNet");
+			}
+		});
 
-        Consumer<SetupRequest> request = setup::request;
-        request.accept(new SetupRequest("address", "What's the IP address of the wrapper?", "Specified IP address is invalid!", SetupResponseType.STRING, new Function<String,Boolean>() {
-            @Override
-            public Boolean apply(String key)
-            {
-                return key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1");
-            }
-        }));
-        request.accept(new SetupRequest("user", "What's the user of the wrapper?", "Specified name is invalid!", SetupResponseType.STRING, new Function<String,Boolean>() {
-            @Override
-            public Boolean apply(String key)
-            {
-                return CloudNet.getInstance().getUser(key) != null;
-            }
-        }));
-        setup.start(CloudNet.getLogger().getReader());
-    }
+		Consumer<SetupRequest> request = setup::request;
+		request.accept(new SetupRequest("address", "What's the IP address of the wrapper?", "Specified IP address is invalid!", SetupResponseType.STRING, new Function<String, Boolean>() {
+			@Override
+			public Boolean apply(String key) {
+				return key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1");
+			}
+		}));
+		request.accept(new SetupRequest("user", "What's the user of the wrapper?", "Specified name is invalid!", SetupResponseType.STRING, new Function<String, Boolean>() {
+			@Override
+			public Boolean apply(String key) {
+				return CloudNet.getInstance().getUser(key) != null;
+			}
+		}));
+		setup.start(CloudNet.getLogger().getReader());
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 }

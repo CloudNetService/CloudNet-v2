@@ -14,15 +14,14 @@ import java.util.UUID;
  */
 public class LogoutEventUnique extends AsyncEvent<LogoutEventUnique> {
 
-    private UUID uniqueId;
+	private UUID uniqueId;
 
-    public LogoutEventUnique(UUID uniqueId)
-    {
-        super(new AsyncPosterAdapter<>());
-        this.uniqueId = uniqueId;
-    }
+	public LogoutEventUnique(UUID uniqueId) {
+		super(new AsyncPosterAdapter<>());
+		this.uniqueId = uniqueId;
+	}
 
-    public UUID getUniqueId() {
-        return uniqueId;
-    }
+	public UUID getUniqueId() {
+		return uniqueId;
+	}
 }

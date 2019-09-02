@@ -7,55 +7,55 @@ import java.util.UUID;
  */
 public class PlayerConnection {
 
-    private UUID uniqueId;
+	private UUID uniqueId;
 
-    private String name;
+	private String name;
 
-    private int version;
+	private int version;
 
-    private String host;
+	private String host;
 
-    private int port;
+	private int port;
 
-    private boolean onlineMode;
+	private boolean onlineMode;
 
-    private boolean legacy;
+	private boolean legacy;
 
-    public PlayerConnection(UUID uniqueId, String name, int version, String host, int port, boolean onlineMode, boolean legacy) {
-        this.uniqueId = uniqueId;
-        this.name = name;
-        this.version = version;
-        this.host = host;
-        this.port = port;
-        this.onlineMode = onlineMode;
-        this.legacy = legacy;
-    }
+	public PlayerConnection(UUID uniqueId, String name, int version, String host, int port, boolean onlineMode, boolean legacy) {
+		this.uniqueId = uniqueId;
+		this.name = name;
+		this.version = version;
+		this.host = host;
+		this.port = port;
+		this.onlineMode = onlineMode;
+		this.legacy = legacy;
+	}
 
-    public UUID getUniqueId() {
-        return uniqueId;
-    }
+	public UUID getUniqueId() {
+		return uniqueId;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public int getPort() {
+		return port;
+	}
 
-    public String getHost() {
-        return host;
-    }
+	public String getHost() {
+		return host;
+	}
 
-    public int getVersion() {
-        return version;
-    }
+	public int getVersion() {
+		return version;
+	}
 
-    public boolean isOnlineMode() {
-        return onlineMode;
-    }
+	public boolean isOnlineMode() {
+		return onlineMode;
+	}
 
-    public boolean isLegacy() {
-        return legacy;
-    }
+	public boolean isLegacy() {
+		return legacy;
+	}
 }

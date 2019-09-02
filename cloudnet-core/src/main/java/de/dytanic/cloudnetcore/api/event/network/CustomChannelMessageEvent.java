@@ -14,36 +14,35 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class CustomChannelMessageEvent extends AsyncEvent<CustomChannelMessageEvent> {
 
-    private String channel;
+	private String channel;
 
-    private String message;
+	private String message;
 
-    private Document document;
+	private Document document;
 
-    private PacketSender packetSender;
+	private PacketSender packetSender;
 
-    public CustomChannelMessageEvent(PacketSender packetSender, String channel, String message, Document document)
-    {
-        super(new AsyncPosterAdapter<>());
-        this.channel = channel;
-        this.message = message;
-        this.document = document;
-        this.packetSender = packetSender;
-    }
+	public CustomChannelMessageEvent(PacketSender packetSender, String channel, String message, Document document) {
+		super(new AsyncPosterAdapter<>());
+		this.channel = channel;
+		this.message = message;
+		this.document = document;
+		this.packetSender = packetSender;
+	}
 
-    public String getChannel() {
-        return channel;
-    }
+	public String getChannel() {
+		return channel;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public Document getDocument() {
-        return document;
-    }
+	public Document getDocument() {
+		return document;
+	}
 
-    public PacketSender getPacketSender() {
-        return packetSender;
-    }
+	public PacketSender getPacketSender() {
+		return packetSender;
+	}
 }

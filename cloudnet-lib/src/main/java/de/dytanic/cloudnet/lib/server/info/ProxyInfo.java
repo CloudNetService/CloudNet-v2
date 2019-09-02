@@ -13,56 +13,55 @@ import java.util.UUID;
 @ToString
 public class ProxyInfo {
 
-    private ServiceId serviceId;
+	private ServiceId serviceId;
 
-    private String host;
-    private int port;
-    private boolean online;
-    private List<MultiValue<UUID, String>> players;
-    private int memory;
-    private int onlineCount;
+	private String host;
+	private int port;
+	private boolean online;
+	private List<MultiValue<UUID, String>> players;
+	private int memory;
+	private int onlineCount;
 
-    public ProxyInfo(ServiceId serviceId, String host, int port, boolean online, List<MultiValue<UUID, String>> players, int memory, int onlineCount) {
-        this.serviceId = serviceId;
-        this.host = host;
-        this.port = port;
-        this.online = online;
-        this.players = players;
-        this.memory = memory;
-        this.onlineCount = onlineCount;
-    }
+	public ProxyInfo(ServiceId serviceId, String host, int port, boolean online, List<MultiValue<UUID, String>> players, int memory, int onlineCount) {
+		this.serviceId = serviceId;
+		this.host = host;
+		this.port = port;
+		this.online = online;
+		this.players = players;
+		this.memory = memory;
+		this.onlineCount = onlineCount;
+	}
 
-    public int getMemory() {
-        return memory;
-    }
+	public int getMemory() {
+		return memory;
+	}
 
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
+	public ServiceId getServiceId() {
+		return serviceId;
+	}
 
-    public String getHost() {
-        return host;
-    }
+	public String getHost() {
+		return host;
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public int getPort() {
+		return port;
+	}
 
-    public int getOnlineCount() {
-        return onlineCount;
-    }
+	public int getOnlineCount() {
+		return onlineCount;
+	}
 
-    public boolean isOnline() {
-        return online;
-    }
+	public boolean isOnline() {
+		return online;
+	}
 
-    public List<MultiValue<UUID, String>> getPlayers() {
-        return players;
-    }
+	public List<MultiValue<UUID, String>> getPlayers() {
+		return players;
+	}
 
-    public SimpleProxyInfo toSimple()
-    {
-        return new SimpleProxyInfo(serviceId, online, host, port, memory, onlineCount);
-    }
+	public SimpleProxyInfo toSimple() {
+		return new SimpleProxyInfo(serviceId, online, host, port, memory, onlineCount);
+	}
 
 }

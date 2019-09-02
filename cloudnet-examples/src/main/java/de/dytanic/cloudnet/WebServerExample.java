@@ -12,6 +12,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
+
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -19,15 +20,13 @@ import java.nio.charset.StandardCharsets;
  */
 public class WebServerExample extends MethodWebHandlerAdapter { //Extend a abstract WebHandler. The MethodWebHandler or WebHandle can also use
 
-    protected WebServerExample(CloudNet cloudNet)
-    {
-        super("/myRestAPI/{myCustomPattern}");
-        cloudNet.getWebServer().getWebServerProvider().registerHandler(this); //Registered the webhandler
-    }
+	protected WebServerExample(CloudNet cloudNet) {
+		super("/myRestAPI/{myCustomPattern}");
+		cloudNet.getWebServer().getWebServerProvider().registerHandler(this); //Registered the webhandler
+	}
 
-    @Override
-    public FullHttpResponse get(ChannelHandlerContext channelHandlerContext, QueryDecoder queryDecoder, PathProvider pathProvider, HttpRequest httpRequest) throws Exception
-    {
-        return newResponse(httpRequest.getProtocolVersion(), Unpooled.wrappedBuffer(pathProvider.getPathParameters().getString("myCustomPattern").getBytes(StandardCharsets.UTF_8)));
-    }
+	@Override
+	public FullHttpResponse get(ChannelHandlerContext channelHandlerContext, QueryDecoder queryDecoder, PathProvider pathProvider, HttpRequest httpRequest) throws Exception {
+		return newResponse(httpRequest.getProtocolVersion(), Unpooled.wrappedBuffer(pathProvider.getPathParameters().getString("myCustomPattern").getBytes(StandardCharsets.UTF_8)));
+	}
 }

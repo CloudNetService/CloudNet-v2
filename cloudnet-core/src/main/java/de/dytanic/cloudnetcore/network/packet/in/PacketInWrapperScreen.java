@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.lib.service.wrapper.WrapperScreen;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
+
 import java.lang.reflect.Type;
 
 /**
@@ -18,15 +19,14 @@ import java.lang.reflect.Type;
  */
 public class PacketInWrapperScreen extends PacketInHandler {
 
-    private static final Type TYPE = new TypeToken<WrapperScreen>() {
-    }.getType();
+	private static final Type TYPE = new TypeToken<WrapperScreen>() {
+	}.getType();
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (!(packetSender instanceof Wrapper)) return;
+	@Override
+	public void handleInput(Document data, PacketSender packetSender) {
+		if (!(packetSender instanceof Wrapper)) return;
 
-        CloudNet.getInstance().getNetworkManager().handleWrapperScreenInput(((Wrapper) packetSender), data.getObject("screen", TYPE));
+		CloudNet.getInstance().getNetworkManager().handleWrapperScreenInput(((Wrapper) packetSender), data.getObject("screen", TYPE));
 
-    }
+	}
 }

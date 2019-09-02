@@ -11,13 +11,13 @@ import net.md_5.bungee.api.plugin.Event;
  */
 public class ProxiedOnlineCountUpdateEvent extends Event {
 
-    private int onlineCount;
+	private int onlineCount;
 
-    public ProxiedOnlineCountUpdateEvent(int onlineCount) {
-        this.onlineCount = onlineCount;
-    }
+	public ProxiedOnlineCountUpdateEvent(int onlineCount) {
+		this.onlineCount = onlineCount;
+	}
 
-    public int getOnlineCount() {
-        return onlineCount;
-    }
+	public int getOnlineCount() {
+		return onlineCount;
+	}
 }

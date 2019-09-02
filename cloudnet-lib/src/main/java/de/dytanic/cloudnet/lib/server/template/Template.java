@@ -11,37 +11,37 @@ import java.util.Collection;
 @ToString
 public class Template {
 
-    private String name;
-    private TemplateResource backend;
-    private String url;
-    private String[] processPreParameters;
-    private Collection<ServerInstallablePlugin> installablePlugins;
+	private String name;
+	private TemplateResource backend;
+	private String url;
+	private String[] processPreParameters;
+	private Collection<ServerInstallablePlugin> installablePlugins;
 
-    public Template(String name, TemplateResource backend, String url, String[] processPreParameters, Collection<ServerInstallablePlugin> installablePlugins) {
-        this.name = name;
-        this.backend = backend;
-        this.url = url;
-        this.processPreParameters = processPreParameters;
-        this.installablePlugins = installablePlugins;
-    }
+	public Template(String name, TemplateResource backend, String url, String[] processPreParameters, Collection<ServerInstallablePlugin> installablePlugins) {
+		this.name = name;
+		this.backend = backend;
+		this.url = url;
+		this.processPreParameters = processPreParameters;
+		this.installablePlugins = installablePlugins;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Collection<ServerInstallablePlugin> getInstallablePlugins() {
-        return installablePlugins;
-    }
+	public Collection<ServerInstallablePlugin> getInstallablePlugins() {
+		return installablePlugins;
+	}
 
-    public String[] getProcessPreParameters() {
-        return processPreParameters;
-    }
+	public String[] getProcessPreParameters() {
+		return processPreParameters;
+	}
 
-    public TemplateResource getBackend() {
-        return backend;
-    }
+	public TemplateResource getBackend() {
+		return backend;
+	}
 }

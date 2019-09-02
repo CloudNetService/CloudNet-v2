@@ -11,14 +11,13 @@ import de.dytanic.cloudnet.lib.CloudNetwork;
  */
 public class ProxiedCloudNetworkUpdateEvent extends ProxiedCloudEvent {
 
-    private CloudNetwork cloudNetwork;
+	private CloudNetwork cloudNetwork;
 
-    public ProxiedCloudNetworkUpdateEvent(CloudNetwork cloudNetwork) {
-        this.cloudNetwork = cloudNetwork;
-    }
+	public ProxiedCloudNetworkUpdateEvent(CloudNetwork cloudNetwork) {
+		this.cloudNetwork = cloudNetwork;
+	}
 
-    public CloudNetwork getCloudNetwork()
-    {
-        return cloudNetwork;
-    }
+	public CloudNetwork getCloudNetwork() {
+		return cloudNetwork;
+	}
 }

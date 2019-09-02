@@ -86,13 +86,13 @@ public final class CommandLog extends Command {
 	/**
 	 * Send the log to a random past site
 	 *
-	 * @param sender          The sender of the command
-	 * @param random          A random string
-	 * @param url             The url of the paste site
+	 * @param sender      The sender of the command
+	 * @param random      A random string
+	 * @param url         The url of the paste site
 	 * @param proxyServer The proxy server with the log inside
 	 */
 	private void sendProxyServerPaste(CommandSender sender, String random, List<String> url,
-	                                      ProxyServer proxyServer) {
+	                                  ProxyServer proxyServer) {
 		CloudNet.getInstance().getScheduler().runTaskDelayAsync(() -> {
 			StringBuilder paste = new StringBuilder();
 			paste.append("LOG VERSION: " + version).append('\n');
@@ -109,9 +109,9 @@ public final class CommandLog extends Command {
 					System.getProperty("os.version")))
 					.append('\n');
 			paste.append(String.format("Memory Used: %d Mb", ((NetworkUtils.system().getTotalPhysicalMemorySize() -
-					NetworkUtils.system().getFreePhysicalMemorySize())/ 1024L )/ 1024L)).append('\n');
+					NetworkUtils.system().getFreePhysicalMemorySize()) / 1024L) / 1024L)).append('\n');
 			paste.append(String.format("Memory Free: %d Mb", (NetworkUtils.system().getFreePhysicalMemorySize() / 1024L) / 1024L)).append('\n');
-			paste.append(String.format("Memory Max: %d Mb", (NetworkUtils.system().getTotalPhysicalMemorySize() / 1024L) /1024L)).append('\n');
+			paste.append(String.format("Memory Max: %d Mb", (NetworkUtils.system().getTotalPhysicalMemorySize() / 1024L) / 1024L)).append('\n');
 			paste.append(String.format("CPU Cores: %d", NetworkUtils.system().getAvailableProcessors())).append('\n');
 			paste.append("-----END SYSTEM INFO-----").append('\n');
 			paste.append("-----BEGIN CLOUDNET INFO-----").append('\n');
@@ -133,7 +133,7 @@ public final class CommandLog extends Command {
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
 			paste.append("-----END LOG INFO-----").append('\n');
 			for (String s : url) {
-				if(postTo(sender, s, paste)) {
+				if (postTo(sender, s, paste)) {
 					break;
 				}
 			}
@@ -166,9 +166,9 @@ public final class CommandLog extends Command {
 					System.getProperty("os.version")))
 					.append('\n');
 			paste.append(String.format("Memory Used: %d Mb", ((NetworkUtils.system().getTotalPhysicalMemorySize() -
-					NetworkUtils.system().getFreePhysicalMemorySize())/ 1024L )/ 1024L)).append('\n');
+					NetworkUtils.system().getFreePhysicalMemorySize()) / 1024L) / 1024L)).append('\n');
 			paste.append(String.format("Memory Free: %d Mb", (NetworkUtils.system().getFreePhysicalMemorySize() / 1024L) / 1024L)).append('\n');
-			paste.append(String.format("Memory Max: %d Mb", (NetworkUtils.system().getTotalPhysicalMemorySize() / 1024L) /1024L)).append('\n');
+			paste.append(String.format("Memory Max: %d Mb", (NetworkUtils.system().getTotalPhysicalMemorySize() / 1024L) / 1024L)).append('\n');
 			paste.append(String.format("CPU Cores: %d", NetworkUtils.system().getAvailableProcessors())).append('\n');
 			paste.append("-----END SYSTEM INFO-----").append('\n');
 			paste.append("-----BEGIN CLOUDNET INFO-----").append('\n');
@@ -190,7 +190,7 @@ public final class CommandLog extends Command {
 					screenInfo -> paste.append(screenInfo.getLine()).append('\n'));
 			paste.append("-----END LOG INFO-----").append('\n');
 			for (String s : url) {
-				if(postTo(sender, s, paste)) {
+				if (postTo(sender, s, paste)) {
 					break;
 				}
 			}

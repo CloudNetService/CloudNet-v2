@@ -4,14 +4,14 @@ import java.util.Set;
 
 public abstract interface NetorMap<Key> {
 
-    public void clear();
+	public void clear();
 
-    public int size();
+	public int size();
 
-    public void remove(Key key);
+	public void remove(Key key);
 
-    public boolean contains(Key key);
+	public boolean contains(Key key);
 
-    public Set<Key> keySet();
+	public Set<Key> keySet();
 
 }

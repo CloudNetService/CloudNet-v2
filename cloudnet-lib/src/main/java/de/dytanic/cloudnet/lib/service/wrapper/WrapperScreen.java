@@ -9,20 +9,20 @@ package de.dytanic.cloudnet.lib.service.wrapper;
  */
 public class WrapperScreen {
 
-    private String wrapperId;
+	private String wrapperId;
 
-    private String consoleLine;
+	private String consoleLine;
 
-    public WrapperScreen(String wrapperId, String consoleLine) {
-        this.wrapperId = wrapperId;
-        this.consoleLine = consoleLine;
-    }
+	public WrapperScreen(String wrapperId, String consoleLine) {
+		this.wrapperId = wrapperId;
+		this.consoleLine = consoleLine;
+	}
 
-    public String getWrapperId() {
-        return wrapperId;
-    }
+	public String getWrapperId() {
+		return wrapperId;
+	}
 
-    public String getConsoleLine() {
-        return consoleLine;
-    }
+	public String getConsoleLine() {
+		return consoleLine;
+	}
 }

@@ -14,18 +14,16 @@ import java.nio.file.Path;
  */
 public abstract class ConfigAbstract {
 
-    protected Path path;
+	protected Path path;
 
-    public ConfigAbstract(Document defaults, Path path)
-    {
-        if (!Files.exists(path))
-        {
-            defaults.saveAsConfig(path);
-        }
-        this.path = path;
-    }
+	public ConfigAbstract(Document defaults, Path path) {
+		if (!Files.exists(path)) {
+			defaults.saveAsConfig(path);
+		}
+		this.path = path;
+	}
 
-    public Path getPath() {
-        return path;
-    }
+	public Path getPath() {
+		return path;
+	}
 }

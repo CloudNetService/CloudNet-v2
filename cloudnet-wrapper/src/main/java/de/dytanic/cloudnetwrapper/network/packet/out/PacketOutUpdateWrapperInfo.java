@@ -13,17 +13,16 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 
 public final class PacketOutUpdateWrapperInfo extends Packet {
 
-    public PacketOutUpdateWrapperInfo()
-    {
-        super(PacketRC.CN_WRAPPER + 8, new Document("wrapperInfo", new WrapperInfo(
-                CloudNetWrapper.getInstance().getWrapperConfig().getWrapperId(),
-                NetworkUtils.getHostName(),
-                NetworkUtils.class.getPackage().getImplementationVersion(),
-                CloudNetWrapper.RUNNING,
-                Runtime.getRuntime().availableProcessors(),
-                CloudNetWrapper.getInstance().getWrapperConfig().getStartPort(),
-                CloudNetWrapper.getInstance().getWrapperConfig().getProcessQueueSize(),
-                CloudNetWrapper.getInstance().getMaxMemory()
-        )));
-    }
+	public PacketOutUpdateWrapperInfo() {
+		super(PacketRC.CN_WRAPPER + 8, new Document("wrapperInfo", new WrapperInfo(
+				CloudNetWrapper.getInstance().getWrapperConfig().getWrapperId(),
+				NetworkUtils.getHostName(),
+				NetworkUtils.class.getPackage().getImplementationVersion(),
+				CloudNetWrapper.RUNNING,
+				Runtime.getRuntime().availableProcessors(),
+				CloudNetWrapper.getInstance().getWrapperConfig().getStartPort(),
+				CloudNetWrapper.getInstance().getWrapperConfig().getProcessQueueSize(),
+				CloudNetWrapper.getInstance().getMaxMemory()
+		)));
+	}
 }

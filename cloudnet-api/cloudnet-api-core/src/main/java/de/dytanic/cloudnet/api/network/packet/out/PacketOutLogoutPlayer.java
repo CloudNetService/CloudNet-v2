@@ -8,6 +8,7 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+
 import java.util.UUID;
 
 /**
@@ -15,8 +16,7 @@ import java.util.UUID;
  */
 public class PacketOutLogoutPlayer extends Packet {
 
-    public PacketOutLogoutPlayer(CloudPlayer cloudPlayer, UUID uniqueId)
-    {
-        super(PacketRC.PLAYER_HANDLE + 3, new Document("player", cloudPlayer).append("uniqueId", uniqueId));
-    }
+	public PacketOutLogoutPlayer(CloudPlayer cloudPlayer, UUID uniqueId) {
+		super(PacketRC.PLAYER_HANDLE + 3, new Document("player", cloudPlayer).append("uniqueId", uniqueId));
+	}
 }

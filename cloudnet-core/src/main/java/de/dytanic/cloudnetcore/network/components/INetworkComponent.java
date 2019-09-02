@@ -17,122 +17,101 @@ import io.netty.channel.ChannelFutureListener;
  */
 public interface INetworkComponent extends PacketSender, ChannelUser {
 
-    String getServerId();
+	String getServerId();
 
-    Wrapper getWrapper();
+	Wrapper getWrapper();
 
-    default void sendPacket(Packet packet)
-    {
-        CloudNet.getLogger().debug(
-                "Sending Packet " +
-                        packet.getClass().getSimpleName() +
-                        " (id=" + CloudNet.getInstance().getPacketManager().packetId(packet) +
-                        ";dataLength=" + CloudNet.getInstance().getPacketManager().packetData(packet).size() +
-                        ") to " + getServerId()
-        );
+	default void sendPacket(Packet packet) {
+		CloudNet.getLogger().debug(
+				"Sending Packet " +
+						packet.getClass().getSimpleName() +
+						" (id=" + CloudNet.getInstance().getPacketManager().packetId(packet) +
+						";dataLength=" + CloudNet.getInstance().getPacketManager().packetData(packet).size() +
+						") to " + getServerId()
+		);
 
-        if (getChannel() == null) return;
-        if (getChannel().eventLoop().inEventLoop())
-        {
-            try
-            {
-                getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-            } catch (Exception ignored)
-            {
-            }
-        } else
-        {
-            getChannel().eventLoop().execute(() -> {
-                try
-                {
-                    getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-                } catch (Exception ignored)
-                {
-                }
-            });
-        }
-    }
+		if (getChannel() == null) return;
+		if (getChannel().eventLoop().inEventLoop()) {
+			try {
+				getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+			} catch (Exception ignored) {
+			}
+		} else {
+			getChannel().eventLoop().execute(() -> {
+				try {
+					getChannel().writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+				} catch (Exception ignored) {
+				}
+			});
+		}
+	}
 
-    default void sendPacket(Packet... packets)
-    {
-        for (Packet packet : packets)
-        {
-            sendPacket(packet);
-        }
-    }
+	default void sendPacket(Packet... packets) {
+		for (Packet packet : packets) {
+			sendPacket(packet);
+		}
+	}
 
-    default void sendPacketSynchronized(Packet packet)
-    {
-        if (getChannel() == null) return;
-        CloudNet.getLogger().debug(
-                "Sending Packet " +
-                        packet.getClass().getSimpleName() +
-                        " (id=" + CloudNet.getInstance().getPacketManager().packetId(packet) +
-                        ";dataLength=" + CloudNet.getInstance().getPacketManager().packetData(packet).size() +
-                        ") to " + getServerId()
-        );
-        getChannel().writeAndFlush(packet).syncUninterruptibly();
-    }
+	default void sendPacketSynchronized(Packet packet) {
+		if (getChannel() == null) return;
+		CloudNet.getLogger().debug(
+				"Sending Packet " +
+						packet.getClass().getSimpleName() +
+						" (id=" + CloudNet.getInstance().getPacketManager().packetId(packet) +
+						";dataLength=" + CloudNet.getInstance().getPacketManager().packetData(packet).size() +
+						") to " + getServerId()
+		);
+		getChannel().writeAndFlush(packet).syncUninterruptibly();
+	}
 
-    @Override
-    default void send(Object object)
-    {
-        if (getChannel() == null) return;
+	@Override
+	default void send(Object object) {
+		if (getChannel() == null) return;
 
-        if (getChannel().eventLoop().inEventLoop())
-        {
-            getChannel().writeAndFlush(object);
-        } else
-        {
-            getChannel().eventLoop().execute(() -> getChannel().writeAndFlush(object));
-        }
-    }
+		if (getChannel().eventLoop().inEventLoop()) {
+			getChannel().writeAndFlush(object);
+		} else {
+			getChannel().eventLoop().execute(() -> getChannel().writeAndFlush(object));
+		}
+	}
 
-    @Override
-    default void sendSynchronized(Object object)
-    {
-        getChannel().writeAndFlush(object).syncUninterruptibly();
-    }
+	@Override
+	default void sendSynchronized(Object object) {
+		getChannel().writeAndFlush(object).syncUninterruptibly();
+	}
 
-    @Override
-    default void sendAsynchronized(Object object)
-    {
-        getChannel().writeAndFlush(object);
-    }
+	@Override
+	default void sendAsynchronized(Object object) {
+		getChannel().writeAndFlush(object);
+	}
 
-    @Override
-    default void send(IProtocol iProtocol, Object element)
-    {
-        send(new ProtocolRequest(iProtocol.getId(), element));
-    }
+	@Override
+	default void send(IProtocol iProtocol, Object element) {
+		send(new ProtocolRequest(iProtocol.getId(), element));
+	}
 
-    @Override
-    default void send(int id, Object element)
-    {
-        send(new ProtocolRequest(id, element));
-    }
+	@Override
+	default void send(int id, Object element) {
+		send(new ProtocolRequest(id, element));
+	}
 
-    @Override
-    default void sendAsynchronized(int id, Object element)
-    {
-        sendAsynchronized(new ProtocolRequest(id, element));
-    }
+	@Override
+	default void sendAsynchronized(int id, Object element) {
+		sendAsynchronized(new ProtocolRequest(id, element));
+	}
 
-    @Override
-    default void sendAsynchronized(IProtocol iProtocol, Object element)
-    {
-        sendAsynchronized(new ProtocolRequest(iProtocol.getId(), element));
-    }
+	@Override
+	default void sendAsynchronized(IProtocol iProtocol, Object element) {
+		sendAsynchronized(new ProtocolRequest(iProtocol.getId(), element));
+	}
 
-    @Override
-    default void sendSynchronized(int id, Object element)
-    {
-        sendSynchronized(new ProtocolRequest(id, element));
-    }
+	@Override
+	default void sendSynchronized(int id, Object element) {
+		sendSynchronized(new ProtocolRequest(id, element));
+	}
 
-    @Override
-    default void sendSynchronized(IProtocol iProtocol, Object element)
-    {
-        sendSynchronized(new ProtocolRequest(iProtocol.getId(), element));
-    }
+	@Override
+	default void sendSynchronized(IProtocol iProtocol, Object element) {
+		sendSynchronized(new ProtocolRequest(iProtocol.getId(), element));
+	}
 }

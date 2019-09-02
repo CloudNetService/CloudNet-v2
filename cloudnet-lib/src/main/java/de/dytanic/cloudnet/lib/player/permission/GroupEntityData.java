@@ -5,20 +5,20 @@ package de.dytanic.cloudnet.lib.player.permission;
  */
 public class GroupEntityData {
 
-    private String group;
+	private String group;
 
-    private long timeout;
+	private long timeout;
 
-    public GroupEntityData(String group, long timeout) {
-        this.group = group;
-        this.timeout = timeout;
-    }
+	public GroupEntityData(String group, long timeout) {
+		this.group = group;
+		this.timeout = timeout;
+	}
 
-    public String getGroup() {
-        return group;
-    }
+	public String getGroup() {
+		return group;
+	}
 
-    public long getTimeout() {
-        return timeout;
-    }
+	public long getTimeout() {
+		return timeout;
+	}
 }

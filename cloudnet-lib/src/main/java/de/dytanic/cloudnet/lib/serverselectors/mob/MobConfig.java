@@ -7,34 +7,34 @@ import java.util.Map;
  */
 public class MobConfig {
 
-    private int inventorySize;
+	private int inventorySize;
 
-    private int startPoint;
+	private int startPoint;
 
-    private MobItemLayout itemLayout;
+	private MobItemLayout itemLayout;
 
-    private Map<Integer, MobItemLayout> defaultItemInventory;
+	private Map<Integer, MobItemLayout> defaultItemInventory;
 
-    public MobConfig(int inventorySize, int startPoint, MobItemLayout itemLayout, Map<Integer, MobItemLayout> defaultItemInventory) {
-        this.inventorySize = inventorySize;
-        this.startPoint = startPoint;
-        this.itemLayout = itemLayout;
-        this.defaultItemInventory = defaultItemInventory;
-    }
+	public MobConfig(int inventorySize, int startPoint, MobItemLayout itemLayout, Map<Integer, MobItemLayout> defaultItemInventory) {
+		this.inventorySize = inventorySize;
+		this.startPoint = startPoint;
+		this.itemLayout = itemLayout;
+		this.defaultItemInventory = defaultItemInventory;
+	}
 
-    public int getInventorySize() {
-        return inventorySize;
-    }
+	public int getInventorySize() {
+		return inventorySize;
+	}
 
-    public int getStartPoint() {
-        return startPoint;
-    }
+	public int getStartPoint() {
+		return startPoint;
+	}
 
-    public Map<Integer, MobItemLayout> getDefaultItemInventory() {
-        return defaultItemInventory;
-    }
+	public Map<Integer, MobItemLayout> getDefaultItemInventory() {
+		return defaultItemInventory;
+	}
 
-    public MobItemLayout getItemLayout() {
-        return itemLayout;
-    }
+	public MobItemLayout getItemLayout() {
+		return itemLayout;
+	}
 }

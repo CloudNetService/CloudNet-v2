@@ -16,105 +16,100 @@ import io.netty.channel.Channel;
  * Created by Tareko on 26.05.2017.
  */
 public class ProxyServer
-        implements INetworkComponent {
+		implements INetworkComponent {
 
-    private ServiceId serviceId;
-    private Wrapper wrapper;
-    private NetworkInfo networkInfo;
+	private ServiceId serviceId;
+	private Wrapper wrapper;
+	private NetworkInfo networkInfo;
 
-    private long channelLostTime = 0L;
+	private long channelLostTime = 0L;
 
-    private Channel channel;
-    private ProxyInfo proxyInfo;
-    private ProxyInfo lastProxyInfo;
-    private ProxyProcessMeta processMeta;
+	private Channel channel;
+	private ProxyInfo proxyInfo;
+	private ProxyInfo lastProxyInfo;
+	private ProxyProcessMeta processMeta;
 
-    public ProxyServer(
-            ProxyProcessMeta processMeta,
-            Wrapper wrapper,
-            ProxyInfo proxyInfo
-    )
-    {
-        this.processMeta = processMeta;
-        this.wrapper = wrapper;
-        this.serviceId = proxyInfo.getServiceId();
+	public ProxyServer(
+			ProxyProcessMeta processMeta,
+			Wrapper wrapper,
+			ProxyInfo proxyInfo
+	) {
+		this.processMeta = processMeta;
+		this.wrapper = wrapper;
+		this.serviceId = proxyInfo.getServiceId();
 
-        this.networkInfo = new NetworkInfo(proxyInfo.getServiceId().getServerId(), proxyInfo.getHost(), proxyInfo.getPort());
+		this.networkInfo = new NetworkInfo(proxyInfo.getServiceId().getServerId(), proxyInfo.getHost(), proxyInfo.getPort());
 
-        this.proxyInfo = proxyInfo;
-        this.lastProxyInfo = proxyInfo;
-    }
+		this.proxyInfo = proxyInfo;
+		this.lastProxyInfo = proxyInfo;
+	}
 
-    @Override
-    public Channel getChannel() {
-        return channel;
-    }
+	@Override
+	public Channel getChannel() {
+		return channel;
+	}
 
-    @Override
-    public Wrapper getWrapper() {
-        return wrapper;
-    }
+	@Override
+	public void setChannel(Channel channel) {
+		this.channel = channel;
+	}
 
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
+	@Override
+	public Wrapper getWrapper() {
+		return wrapper;
+	}
 
-    public ProxyInfo getProxyInfo() {
-        return proxyInfo;
-    }
+	public ServiceId getServiceId() {
+		return serviceId;
+	}
 
-    public long getChannelLostTime() {
-        return channelLostTime;
-    }
+	public ProxyInfo getProxyInfo() {
+		return proxyInfo;
+	}
 
-    public NetworkInfo getNetworkInfo() {
-        return networkInfo;
-    }
+	public void setProxyInfo(ProxyInfo proxyInfo) {
+		this.proxyInfo = proxyInfo;
+	}
 
-    public ProxyInfo getLastProxyInfo() {
-        return lastProxyInfo;
-    }
+	public long getChannelLostTime() {
+		return channelLostTime;
+	}
 
-    public ProxyProcessMeta getProcessMeta() {
-        return processMeta;
-    }
+	public void setChannelLostTime(long channelLostTime) {
+		this.channelLostTime = channelLostTime;
+	}
 
-    @Override
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
+	public NetworkInfo getNetworkInfo() {
+		return networkInfo;
+	}
 
-    public void setProxyInfo(ProxyInfo proxyInfo) {
-        this.proxyInfo = proxyInfo;
-    }
+	public ProxyInfo getLastProxyInfo() {
+		return lastProxyInfo;
+	}
 
-    public void setLastProxyInfo(ProxyInfo lastProxyInfo) {
-        this.lastProxyInfo = lastProxyInfo;
-    }
+	public void setLastProxyInfo(ProxyInfo lastProxyInfo) {
+		this.lastProxyInfo = lastProxyInfo;
+	}
 
-    public void setChannelLostTime(long channelLostTime) {
-        this.channelLostTime = channelLostTime;
-    }
+	public ProxyProcessMeta getProcessMeta() {
+		return processMeta;
+	}
 
-    public void disconnect()
-    {
-        if (this.channel != null) this.channel.close().syncUninterruptibly();
-    }
+	public void disconnect() {
+		if (this.channel != null) this.channel.close().syncUninterruptibly();
+	}
 
-    public void sendCustomMessage(String channel, String message, Document value)
-    {
-        this.sendPacket(new PacketOutCustomChannelMessage(channel, message, value));
-    }
+	public void sendCustomMessage(String channel, String message, Document value) {
+		this.sendPacket(new PacketOutCustomChannelMessage(channel, message, value));
+	}
 
-    @Override
-    public String getName()
-    {
-        return serviceId.getServerId();
-    }
+	@Override
+	public String getName() {
+		return serviceId.getServerId();
+	}
 
-    @Override
-    public String getServerId()
-    {
-        return serviceId.getServerId();
-    }
+	@Override
+	public String getServerId() {
+		return serviceId.getServerId();
+	}
 }

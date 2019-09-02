@@ -5,9 +5,9 @@ package de.dytanic.cloudnet.lib.server;
  */
 public enum ServerGroupType {
 
-    CUSTOM,
-    GLOWSTONE,
-    CAULDRON,
-    BUKKIT;
+	CUSTOM,
+	GLOWSTONE,
+	CAULDRON,
+	BUKKIT;
 
 }

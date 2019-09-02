@@ -5,28 +5,25 @@ import org.bukkit.event.HandlerList;
 
 public class BukkitOfflinePlayerUpdateEvent extends BukkitCloudEvent {
 
-    private static final HandlerList handlerList = new HandlerList();
+	private static final HandlerList handlerList = new HandlerList();
 
-    private OfflinePlayer offlinePlayer;
+	private OfflinePlayer offlinePlayer;
 
-    public BukkitOfflinePlayerUpdateEvent(OfflinePlayer offlinePlayer)
-    {
-        this.offlinePlayer = offlinePlayer;
-    }
+	public BukkitOfflinePlayerUpdateEvent(OfflinePlayer offlinePlayer) {
+		this.offlinePlayer = offlinePlayer;
+	}
 
-    public OfflinePlayer getOfflinePlayer() {
-        return offlinePlayer;
-    }
+	public static HandlerList getHandlerList() {
+		return handlerList;
+	}
 
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
+	public OfflinePlayer getOfflinePlayer() {
+		return offlinePlayer;
+	}
 
-    public static HandlerList getHandlerList()
-    {
-        return handlerList;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlerList;
+	}
 
 }

@@ -9,14 +9,14 @@ package de.dytanic.cloudnet.cloudflare.util;
  */
 public enum DNSType {
 
-    A,
-    AAAA,
-    CNAME,
-    MX,
-    LOC,
-    SRV,
-    SPF,
-    TXT,
-    NS,
-    CAA
+	A,
+	AAAA,
+	CNAME,
+	MX,
+	LOC,
+	SRV,
+	SPF,
+	TXT,
+	NS,
+	CAA
 }

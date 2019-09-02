@@ -9,14 +9,12 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
  */
 public class CommandVersion extends Command {
 
-    public CommandVersion()
-    {
-        super("version", "cloudnet.command.version");
-    }
+	public CommandVersion() {
+		super("version", "cloudnet.command.version");
+	}
 
-    @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
-        sender.sendMessage("CloudNet " + NetworkUtils.class.getPackage().getSpecificationVersion() + " #" + NetworkUtils.class.getPackage().getImplementationVersion() + " by Dytanic");
-    }
+	@Override
+	public void onExecuteCommand(CommandSender sender, String[] args) {
+		sender.sendMessage("CloudNet " + NetworkUtils.class.getPackage().getSpecificationVersion() + " #" + NetworkUtils.class.getPackage().getImplementationVersion() + " by Dytanic");
+	}
 }

@@ -9,26 +9,26 @@ package de.dytanic.cloudnet.help;
  */
 public class ServiceDescription {
 
-    /**
-     * Brief usage description.
-     */
-    private String usage;
+	/**
+	 * Brief usage description.
+	 */
+	private String usage;
 
-    /**
-     * Detailed description.
-     */
-    private String description;
+	/**
+	 * Detailed description.
+	 */
+	private String description;
 
-    public ServiceDescription(String usage, String description) {
-        this.usage = usage;
-        this.description = description;
-    }
+	public ServiceDescription(String usage, String description) {
+		this.usage = usage;
+		this.description = description;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getUsage() {
-        return usage;
-    }
+	public String getUsage() {
+		return usage;
+	}
 }

@@ -13,127 +13,127 @@ import java.util.Map;
 @EqualsAndHashCode
 public class PermissionGroup {
 
-    protected String name;
-    protected String color;
-    protected String prefix;
-    protected String suffix;
-    protected String display;
-    protected int tagId;
-    protected int joinPower;
-    protected boolean defaultGroup;
-    protected Map<String, Boolean> permissions;
-    protected Map<String, List<String>> serverGroupPermissions;
-    protected Map<String, Object> options;
-    protected List<String> implementGroups;
+	protected String name;
+	protected String color;
+	protected String prefix;
+	protected String suffix;
+	protected String display;
+	protected int tagId;
+	protected int joinPower;
+	protected boolean defaultGroup;
+	protected Map<String, Boolean> permissions;
+	protected Map<String, List<String>> serverGroupPermissions;
+	protected Map<String, Object> options;
+	protected List<String> implementGroups;
 
-    public PermissionGroup(String name, String color, String prefix, String suffix, String display, int tagId, int joinPower, boolean defaultGroup, Map<String, Boolean> permissions, Map<String, List<String>> serverGroupPermissions, Map<String, Object> options, List<String> implementGroups) {
-        this.name = name;
-        this.color = color;
-        this.prefix = prefix;
-        this.suffix = suffix;
-        this.display = display;
-        this.tagId = tagId;
-        this.joinPower = joinPower;
-        this.defaultGroup = defaultGroup;
-        this.permissions = permissions;
-        this.serverGroupPermissions = serverGroupPermissions;
-        this.options = options;
-        this.implementGroups = implementGroups;
-    }
+	public PermissionGroup(String name, String color, String prefix, String suffix, String display, int tagId, int joinPower, boolean defaultGroup, Map<String, Boolean> permissions, Map<String, List<String>> serverGroupPermissions, Map<String, Object> options, List<String> implementGroups) {
+		this.name = name;
+		this.color = color;
+		this.prefix = prefix;
+		this.suffix = suffix;
+		this.display = display;
+		this.tagId = tagId;
+		this.joinPower = joinPower;
+		this.defaultGroup = defaultGroup;
+		this.permissions = permissions;
+		this.serverGroupPermissions = serverGroupPermissions;
+		this.options = options;
+		this.implementGroups = implementGroups;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getDisplay() {
-        return display;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public int getJoinPower() {
-        return joinPower;
-    }
+	public String getDisplay() {
+		return display;
+	}
 
-    public String getPrefix() {
-        return prefix;
-    }
+	public void setDisplay(String display) {
+		this.display = display;
+	}
 
-    public String getSuffix() {
-        return suffix;
-    }
+	public int getJoinPower() {
+		return joinPower;
+	}
 
-    public Map<String, Boolean> getPermissions() {
-        return permissions;
-    }
+	public void setJoinPower(int joinPower) {
+		this.joinPower = joinPower;
+	}
 
-    public int getTagId() {
-        return tagId;
-    }
+	public String getPrefix() {
+		return prefix;
+	}
 
-    public List<String> getImplementGroups() {
-        return implementGroups;
-    }
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
 
-    public Map<String, List<String>> getServerGroupPermissions() {
-        return serverGroupPermissions;
-    }
+	public String getSuffix() {
+		return suffix;
+	}
 
-    public Map<String, Object> getOptions() {
-        return options;
-    }
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
 
-    public String getColor() {
-        return color;
-    }
+	public Map<String, Boolean> getPermissions() {
+		return permissions;
+	}
 
-    public boolean isDefaultGroup() {
-        return defaultGroup;
-    }
+	public void setPermissions(Map<String, Boolean> permissions) {
+		this.permissions = permissions;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public int getTagId() {
+		return tagId;
+	}
 
-    public void setDisplay(String display) {
-        this.display = display;
-    }
+	public void setTagId(int tagId) {
+		this.tagId = tagId;
+	}
 
-    public void setJoinPower(int joinPower) {
-        this.joinPower = joinPower;
-    }
+	public List<String> getImplementGroups() {
+		return implementGroups;
+	}
 
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
+	public void setImplementGroups(List<String> implementGroups) {
+		this.implementGroups = implementGroups;
+	}
 
-    public void setPermissions(Map<String, Boolean> permissions) {
-        this.permissions = permissions;
-    }
+	public Map<String, List<String>> getServerGroupPermissions() {
+		return serverGroupPermissions;
+	}
 
-    public void setColor(String color) {
-        this.color = color;
-    }
+	public void setServerGroupPermissions(Map<String, List<String>> serverGroupPermissions) {
+		this.serverGroupPermissions = serverGroupPermissions;
+	}
 
-    public void setDefaultGroup(boolean defaultGroup) {
-        this.defaultGroup = defaultGroup;
-    }
+	public Map<String, Object> getOptions() {
+		return options;
+	}
 
-    public void setImplementGroups(List<String> implementGroups) {
-        this.implementGroups = implementGroups;
-    }
+	public void setOptions(Map<String, Object> options) {
+		this.options = options;
+	}
 
-    public void setOptions(Map<String, Object> options) {
-        this.options = options;
-    }
+	public String getColor() {
+		return color;
+	}
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
+	public void setColor(String color) {
+		this.color = color;
+	}
 
-    public void setServerGroupPermissions(Map<String, List<String>> serverGroupPermissions) {
-        this.serverGroupPermissions = serverGroupPermissions;
-    }
+	public boolean isDefaultGroup() {
+		return defaultGroup;
+	}
 
-    public void setTagId(int tagId) {
-        this.tagId = tagId;
-    }
+	public void setDefaultGroup(boolean defaultGroup) {
+		this.defaultGroup = defaultGroup;
+	}
 }

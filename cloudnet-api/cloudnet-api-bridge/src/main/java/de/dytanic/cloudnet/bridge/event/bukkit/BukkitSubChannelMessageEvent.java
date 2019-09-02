@@ -12,43 +12,38 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitSubChannelMessageEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+	private static HandlerList handlerList = new HandlerList();
 
-    private String channel;
+	private String channel;
 
-    private String message;
+	private String message;
 
-    private Document document;
+	private Document document;
 
-    public static HandlerList getHandlerList()
-    {
-        return handlerList;
-    }
+	public BukkitSubChannelMessageEvent(String channel, String message, Document document) {
+		this.channel = channel;
+		this.message = message;
+		this.document = document;
+	}
 
-    public BukkitSubChannelMessageEvent(String channel, String message, Document document) {
-        this.channel = channel;
-        this.message = message;
-        this.document = document;
-    }
+	public static HandlerList getHandlerList() {
+		return handlerList;
+	}
 
-    public String getMessage()
-    {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public Document getDocument()
-    {
-        return document;
-    }
+	public Document getDocument() {
+		return document;
+	}
 
-    public String getChannel()
-    {
-        return channel;
-    }
+	public String getChannel() {
+		return channel;
+	}
 
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlerList;
+	}
 }

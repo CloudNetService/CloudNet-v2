@@ -13,20 +13,20 @@ import io.netty.channel.Channel;
  */
 public class WrapperChannelInitEvent extends Event {
 
-    private Wrapper wrapper;
+	private Wrapper wrapper;
 
-    private Channel channel;
+	private Channel channel;
 
-    public WrapperChannelInitEvent(Wrapper wrapper, Channel channel) {
-        this.wrapper = wrapper;
-        this.channel = channel;
-    }
+	public WrapperChannelInitEvent(Wrapper wrapper, Channel channel) {
+		this.wrapper = wrapper;
+		this.channel = channel;
+	}
 
-    public Channel getChannel() {
-        return channel;
-    }
+	public Channel getChannel() {
+		return channel;
+	}
 
-    public Wrapper getWrapper() {
-        return wrapper;
-    }
+	public Wrapper getWrapper() {
+		return wrapper;
+	}
 }

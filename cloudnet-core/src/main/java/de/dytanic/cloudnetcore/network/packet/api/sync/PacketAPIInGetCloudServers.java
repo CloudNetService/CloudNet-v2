@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.CloudServer;
+
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -19,16 +20,15 @@ import java.util.stream.Collectors;
  */
 public class PacketAPIInGetCloudServers extends PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        Collection<ServerInfo> serverInfos = CloudNet.getInstance().getCloudGameServers().values().stream().map(CloudServer::getServerInfo).collect(Collectors.toList());;
-        packetSender.sendPacket(getResult(new Document("serverInfos", serverInfos)));
-    }
+	@Override
+	public void handleInput(Document data, PacketSender packetSender) {
+		Collection<ServerInfo> serverInfos = CloudNet.getInstance().getCloudGameServers().values().stream().map(CloudServer::getServerInfo).collect(Collectors.toList());
+		;
+		packetSender.sendPacket(getResult(new Document("serverInfos", serverInfos)));
+	}
 
-    @Override
-    protected Packet getResult(Document value)
-    {
-        return new Packet(packetUniqueId, PacketRC.API, value);
-    }
+	@Override
+	protected Packet getResult(Document value) {
+		return new Packet(packetUniqueId, PacketRC.API, value);
+	}
 }

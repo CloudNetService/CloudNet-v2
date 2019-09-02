@@ -13,9 +13,8 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutStopProxy extends Packet {
 
-    public PacketOutStopProxy(String serverId)
-    {
-        super(PacketRC.SERVER_HANDLE + 7, new Document("serverId", serverId));
-    }
+	public PacketOutStopProxy(String serverId) {
+		super(PacketRC.SERVER_HANDLE + 7, new Document("serverId", serverId));
+	}
 
 }

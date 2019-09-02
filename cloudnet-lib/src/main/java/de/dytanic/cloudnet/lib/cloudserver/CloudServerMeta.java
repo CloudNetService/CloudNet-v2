@@ -20,84 +20,83 @@ import java.util.Properties;
  */
 public class CloudServerMeta {
 
-    private ServiceId serviceId;
+	private ServiceId serviceId;
 
-    private int memory;
+	private int memory;
 
-    private boolean priorityStop;
+	private boolean priorityStop;
 
-    private String[] processParameters;
+	private String[] processParameters;
 
-    private Collection<ServerInstallablePlugin> plugins;
+	private Collection<ServerInstallablePlugin> plugins;
 
-    private ServerConfig serverConfig;
+	private ServerConfig serverConfig;
 
-    private int port;
+	private int port;
 
-    private String templateName;
+	private String templateName;
 
-    private Properties serverProperties;
+	private Properties serverProperties;
 
-    private ServerGroupType serverGroupType;
+	private ServerGroupType serverGroupType;
 
-    private Template template;
+	private Template template;
 
-    public CloudServerMeta(ServiceId serviceId, int memory, boolean priorityStop, String[] processParameters, Collection<ServerInstallablePlugin> plugins, ServerConfig serverConfig, int port, String templateName, Properties properties, ServerGroupType serverGroupType)
-    {
-        this.serviceId = serviceId;
-        this.memory = memory;
-        this.priorityStop = priorityStop;
-        this.processParameters = processParameters;
-        this.plugins = plugins;
-        this.serverConfig = serverConfig;
-        this.port = port;
-        this.templateName = templateName;
-        this.serverProperties = properties;
-        this.serverGroupType = serverGroupType;
-        this.template = new Template(templateName, TemplateResource.MASTER, null, new String[0], new ArrayList<>());
-    }
+	public CloudServerMeta(ServiceId serviceId, int memory, boolean priorityStop, String[] processParameters, Collection<ServerInstallablePlugin> plugins, ServerConfig serverConfig, int port, String templateName, Properties properties, ServerGroupType serverGroupType) {
+		this.serviceId = serviceId;
+		this.memory = memory;
+		this.priorityStop = priorityStop;
+		this.processParameters = processParameters;
+		this.plugins = plugins;
+		this.serverConfig = serverConfig;
+		this.port = port;
+		this.templateName = templateName;
+		this.serverProperties = properties;
+		this.serverGroupType = serverGroupType;
+		this.template = new Template(templateName, TemplateResource.MASTER, null, new String[0], new ArrayList<>());
+	}
 
-    public Template getTemplate() {
-        return template;
-    }
+	public Template getTemplate() {
+		return template;
+	}
 
-    public int getMemory() {
-        return memory;
-    }
+	public int getMemory() {
+		return memory;
+	}
 
-    public Properties getServerProperties() {
-        return serverProperties;
-    }
+	public Properties getServerProperties() {
+		return serverProperties;
+	}
 
-    public ServerConfig getServerConfig() {
-        return serverConfig;
-    }
+	public ServerConfig getServerConfig() {
+		return serverConfig;
+	}
 
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
+	public ServiceId getServiceId() {
+		return serviceId;
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public int getPort() {
+		return port;
+	}
 
-    public String[] getProcessParameters() {
-        return processParameters;
-    }
+	public String[] getProcessParameters() {
+		return processParameters;
+	}
 
-    public ServerGroupType getServerGroupType() {
-        return serverGroupType;
-    }
+	public ServerGroupType getServerGroupType() {
+		return serverGroupType;
+	}
 
-    public Collection<ServerInstallablePlugin> getPlugins() {
-        return plugins;
-    }
+	public Collection<ServerInstallablePlugin> getPlugins() {
+		return plugins;
+	}
 
-    public String getTemplateName() {
-        return templateName;
-    }
+	public String getTemplateName() {
+		return templateName;
+	}
 
-    public boolean isPriorityStop() {
-        return priorityStop;
-    }
+	public boolean isPriorityStop() {
+		return priorityStop;
+	}
 }

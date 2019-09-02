@@ -10,10 +10,9 @@ import java.util.function.Consumer;
 
 public interface IWrapperHandler extends Consumer<CloudNetWrapper> {
 
-    int getTicks();
+	int getTicks();
 
-    default Runnable toExecutor()
-    {
-        return () -> IWrapperHandler.this.accept(CloudNetWrapper.getInstance());
-    }
+	default Runnable toExecutor() {
+		return () -> IWrapperHandler.this.accept(CloudNetWrapper.getInstance());
+	}
 }

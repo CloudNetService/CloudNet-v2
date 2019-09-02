@@ -12,27 +12,24 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitPlayerLoginNetworkEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+	private static HandlerList handlerList = new HandlerList();
 
-    private CloudPlayer cloudPlayer;
+	private CloudPlayer cloudPlayer;
 
-    public BukkitPlayerLoginNetworkEvent(CloudPlayer cloudPlayer) {
-        this.cloudPlayer = cloudPlayer;
-    }
+	public BukkitPlayerLoginNetworkEvent(CloudPlayer cloudPlayer) {
+		this.cloudPlayer = cloudPlayer;
+	}
 
-    public CloudPlayer getCloudPlayer()
-    {
-        return cloudPlayer;
-    }
+	public static HandlerList getHandlerList() {
+		return handlerList;
+	}
 
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
+	public CloudPlayer getCloudPlayer() {
+		return cloudPlayer;
+	}
 
-    public static HandlerList getHandlerList()
-    {
-        return handlerList;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlerList;
+	}
 }

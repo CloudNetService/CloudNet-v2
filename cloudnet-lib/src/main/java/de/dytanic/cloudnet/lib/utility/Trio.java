@@ -6,27 +6,27 @@ package de.dytanic.cloudnet.lib.utility;
 
 public class Trio<F, S, T> {
 
-    private F first;
+	private F first;
 
-    private S second;
+	private S second;
 
-    private T third;
+	private T third;
 
-    public Trio(F first, S second, T third) {
-        this.first = first;
-        this.second = second;
-        this.third = third;
-    }
+	public Trio(F first, S second, T third) {
+		this.first = first;
+		this.second = second;
+		this.third = third;
+	}
 
-    public T getThird() {
-        return third;
-    }
+	public T getThird() {
+		return third;
+	}
 
-    public S getSecond() {
-        return second;
-    }
+	public S getSecond() {
+		return second;
+	}
 
-    public F getFirst() {
-        return first;
-    }
+	public F getFirst() {
+		return first;
+	}
 }

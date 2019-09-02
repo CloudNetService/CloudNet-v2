@@ -9,48 +9,41 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
-import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
-import de.dytanic.cloudnetcore.network.components.Wrapper;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Created by Tareko on 21.08.2017.
  */
 public class PacketInUpdateProxyGroup extends PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        ProxyGroup proxyGroup = data.getObject("group", new TypeToken<ProxyGroup>() {
-        }.getType());
-        CloudNet.getInstance().getConfig().createGroup(proxyGroup);
+	@Override
+	public void handleInput(Document data, PacketSender packetSender) {
+		ProxyGroup proxyGroup = data.getObject("group", new TypeToken<ProxyGroup>() {
+		}.getType());
+		CloudNet.getInstance().getConfig().createGroup(proxyGroup);
 
-        try
-        {
-            CloudNet.getInstance().getConfig().load();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        CloudNet.getInstance().getServerGroups().clear();
-        CloudNet.getInstance().getProxyGroups().clear();
+		try {
+			CloudNet.getInstance().getConfig().load();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		CloudNet.getInstance().getServerGroups().clear();
+		CloudNet.getInstance().getProxyGroups().clear();
 
-        NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), value -> {
-            System.out.println("Loading server group: " + value.getName());
-            return true;
-        });
+		NetworkUtils.addAll(CloudNet.getInstance().getServerGroups(), CloudNet.getInstance().getConfig().getServerGroups(), value -> {
+			System.out.println("Loading server group: " + value.getName());
+			return true;
+		});
 
-        NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), value -> {
-            System.out.println("Loading proxy group: " + value.getName());
-            return true;
-        });
+		NetworkUtils.addAll(CloudNet.getInstance().getProxyGroups(), CloudNet.getInstance().getConfig().getProxyGroups(), value -> {
+			System.out.println("Loading proxy group: " + value.getName());
+			return true;
+		});
 
-        CloudNet.getInstance().getNetworkManager().reload();
-        CloudNet.getInstance().getNetworkManager().updateAll0();
-        CloudNet.getInstance().getWrappers().values().forEach(wrapper -> wrapper.updateWrapper());
+		CloudNet.getInstance().getNetworkManager().reload();
+		CloudNet.getInstance().getNetworkManager().updateAll0();
+		CloudNet.getInstance().getWrappers().values().forEach(wrapper -> wrapper.updateWrapper());
 
-    }
+	}
 }

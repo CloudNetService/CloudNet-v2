@@ -11,13 +11,12 @@ import de.dytanic.cloudnetcore.CloudNet;
  */
 public interface ICloudHandler extends Runnable {
 
-    void onHandle(CloudNet cloudNet);
+	void onHandle(CloudNet cloudNet);
 
-    default void run()
-    {
-        onHandle(CloudNet.getInstance());
-    }
+	default void run() {
+		onHandle(CloudNet.getInstance());
+	}
 
-    int getTicks();
+	int getTicks();
 
 }

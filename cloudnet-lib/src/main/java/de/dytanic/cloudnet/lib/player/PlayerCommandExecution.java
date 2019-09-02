@@ -5,20 +5,20 @@ package de.dytanic.cloudnet.lib.player;
  */
 public class PlayerCommandExecution {
 
-    private String name;
+	private String name;
 
-    private String commandLine;
+	private String commandLine;
 
-    public PlayerCommandExecution(String name, String commandLine) {
-        this.name = name;
-        this.commandLine = commandLine;
-    }
+	public PlayerCommandExecution(String name, String commandLine) {
+		this.name = name;
+		this.commandLine = commandLine;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getCommandLine() {
-        return commandLine;
-    }
+	public String getCommandLine() {
+		return commandLine;
+	}
 }

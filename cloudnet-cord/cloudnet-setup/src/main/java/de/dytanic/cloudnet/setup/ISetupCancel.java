@@ -12,8 +12,8 @@ package de.dytanic.cloudnet.setup;
  */
 @Deprecated
 public interface ISetupCancel {
-    /**
-     * Method to call when a setup sequence is cancelled.
-     */
-    void cancel();
+	/**
+	 * Method to call when a setup sequence is cancelled.
+	 */
+	void cancel();
 }

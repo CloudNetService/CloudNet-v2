@@ -10,24 +10,20 @@ import de.dytanic.cloudnetcore.CloudNet;
 
 public final class CommandDebug extends Command {
 
-    public CommandDebug()
-    {
-        super("debug", "cloudnet.command.debug");
+	public CommandDebug() {
+		super("debug", "cloudnet.command.debug");
 
-        description = "Toggles the cloudnet debug mode";
+		description = "Toggles the cloudnet debug mode";
 
-    }
+	}
 
-    @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
-        CloudNet.getLogger().setDebugging(!CloudNet.getLogger().isDebugging());
-        if (CloudNet.getLogger().isDebugging())
-        {
-            sender.sendMessage("debugging was enabled");
-        } else
-        {
-            sender.sendMessage("debugging was disabled");
-        }
-    }
+	@Override
+	public void onExecuteCommand(CommandSender sender, String[] args) {
+		CloudNet.getLogger().setDebugging(!CloudNet.getLogger().isDebugging());
+		if (CloudNet.getLogger().isDebugging()) {
+			sender.sendMessage("debugging was enabled");
+		} else {
+			sender.sendMessage("debugging was disabled");
+		}
+	}
 }

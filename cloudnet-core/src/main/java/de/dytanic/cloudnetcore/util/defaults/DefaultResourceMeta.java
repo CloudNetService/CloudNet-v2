@@ -11,8 +11,7 @@ import de.dytanic.cloudnet.lib.server.resource.ResourceMeta;
  */
 public class DefaultResourceMeta extends ResourceMeta {
 
-    public DefaultResourceMeta()
-    {
-        super(0, 0, 0);
-    }
+	public DefaultResourceMeta() {
+		super(0, 0, 0);
+	}
 }

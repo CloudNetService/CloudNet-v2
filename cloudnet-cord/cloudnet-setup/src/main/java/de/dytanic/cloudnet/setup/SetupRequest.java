@@ -17,57 +17,57 @@ import java.util.function.Function;
 @ToString
 public class SetupRequest implements Nameable {
 
-    /**
-     * Name of this setup request.
-     */
-    private String name;
+	/**
+	 * Name of this setup request.
+	 */
+	private String name;
 
-    /**
-     * Question that is displayed to the user.
-     */
-    private String question;
+	/**
+	 * Question that is displayed to the user.
+	 */
+	private String question;
 
-    /**
-     * Message that is shown when the input was invalid.
-     */
-    private String inValidMessage;
+	/**
+	 * Message that is shown when the input was invalid.
+	 */
+	private String inValidMessage;
 
-    /**
-     * The type of response that is required from the user.
-     */
-    private SetupResponseType responseType;
+	/**
+	 * The type of response that is required from the user.
+	 */
+	private SetupResponseType responseType;
 
-    /**
-     * The validation function that determines whether the input is valid or not.
-     */
-    private Function<String,Boolean> validater;
+	/**
+	 * The validation function that determines whether the input is valid or not.
+	 */
+	private Function<String, Boolean> validater;
 
-    public SetupRequest(String name, String question, String inValidMessage, SetupResponseType responseType, Function<String,Boolean> validater) {
-        this.name = name;
-        this.question = question;
-        this.inValidMessage = inValidMessage;
-        this.responseType = responseType;
-        this.validater = validater;
-    }
+	public SetupRequest(String name, String question, String inValidMessage, SetupResponseType responseType, Function<String, Boolean> validater) {
+		this.name = name;
+		this.question = question;
+		this.inValidMessage = inValidMessage;
+		this.responseType = responseType;
+		this.validater = validater;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    public Function<String,Boolean> getValidater() {
-        return validater;
-    }
+	public Function<String, Boolean> getValidater() {
+		return validater;
+	}
 
-    public SetupResponseType getResponseType() {
-        return responseType;
-    }
+	public SetupResponseType getResponseType() {
+		return responseType;
+	}
 
-    public String getInValidMessage() {
-        return inValidMessage;
-    }
+	public String getInValidMessage() {
+		return inValidMessage;
+	}
 
-    public String getQuestion() {
-        return question;
-    }
+	public String getQuestion() {
+		return question;
+	}
 }

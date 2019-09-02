@@ -5,8 +5,8 @@ package de.dytanic.cloudnet.lib.server;
  */
 public enum ServerState {
 
-    LOBBY,
-    INGAME,
-    OFFLINE
+	LOBBY,
+	INGAME,
+	OFFLINE
 
 }

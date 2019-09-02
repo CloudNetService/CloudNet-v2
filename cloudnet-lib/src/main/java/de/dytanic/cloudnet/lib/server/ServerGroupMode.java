@@ -5,9 +5,9 @@ package de.dytanic.cloudnet.lib.server;
  */
 public enum ServerGroupMode {
 
-    LOBBY,
-    STATIC,
-    DYNAMIC,
-    STATIC_LOBBY
+	LOBBY,
+	STATIC,
+	DYNAMIC,
+	STATIC_LOBBY
 
 }

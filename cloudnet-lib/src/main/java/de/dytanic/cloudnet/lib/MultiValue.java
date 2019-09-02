@@ -10,28 +10,28 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class MultiValue<F, S> {
 
-    private F first;
+	private F first;
 
-    private S second;
+	private S second;
 
-    public MultiValue(F first, S second) {
-        this.first = first;
-        this.second = second;
-    }
+	public MultiValue(F first, S second) {
+		this.first = first;
+		this.second = second;
+	}
 
-    public S getSecond() {
-        return second;
-    }
+	public S getSecond() {
+		return second;
+	}
 
-    public F getFirst() {
-        return first;
-    }
+	public void setSecond(S second) {
+		this.second = second;
+	}
 
-    public void setSecond(S second) {
-        this.second = second;
-    }
+	public F getFirst() {
+		return first;
+	}
 
-    public void setFirst(F first) {
-        this.first = first;
-    }
+	public void setFirst(F first) {
+		this.first = first;
+	}
 }

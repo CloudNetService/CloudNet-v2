@@ -11,12 +11,12 @@ import java.util.Collection;
  */
 public interface IProtocol {
 
-    int getId();
+	int getId();
 
-    Collection<Class<?>> getAvailableClasses();
+	Collection<Class<?>> getAvailableClasses();
 
-    ProtocolStream createElement(Object element) throws Exception;
+	ProtocolStream createElement(Object element) throws Exception;
 
-    ProtocolStream createEmptyElement();
+	ProtocolStream createEmptyElement();
 
 }

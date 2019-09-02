@@ -14,22 +14,21 @@ import de.dytanic.cloudnetcore.network.components.ProxyServer;
  */
 public class ProxyInfoUpdateEvent extends AsyncEvent<ProxyInfoUpdateEvent> {
 
-    private ProxyInfo proxyInfo;
+	private ProxyInfo proxyInfo;
 
-    private ProxyServer proxyServer;
+	private ProxyServer proxyServer;
 
-    public ProxyInfoUpdateEvent(ProxyServer proxyServer, ProxyInfo proxyInfo)
-    {
-        super(new AsyncPosterAdapter<>());
-        this.proxyServer = proxyServer;
-        this.proxyInfo = proxyInfo;
-    }
+	public ProxyInfoUpdateEvent(ProxyServer proxyServer, ProxyInfo proxyInfo) {
+		super(new AsyncPosterAdapter<>());
+		this.proxyServer = proxyServer;
+		this.proxyInfo = proxyInfo;
+	}
 
-    public ProxyInfo getProxyInfo() {
-        return proxyInfo;
-    }
+	public ProxyInfo getProxyInfo() {
+		return proxyInfo;
+	}
 
-    public ProxyServer getProxyServer() {
-        return proxyServer;
-    }
+	public ProxyServer getProxyServer() {
+		return proxyServer;
+	}
 }

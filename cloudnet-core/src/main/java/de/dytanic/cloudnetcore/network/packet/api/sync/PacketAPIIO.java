@@ -13,6 +13,6 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public abstract class PacketAPIIO extends PacketInHandler {
 
-    protected abstract Packet getResult(Document value);
+	protected abstract Packet getResult(Document value);
 
 }

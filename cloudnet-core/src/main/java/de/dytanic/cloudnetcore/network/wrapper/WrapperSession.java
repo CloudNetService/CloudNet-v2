@@ -13,27 +13,27 @@ import java.util.UUID;
  */
 public class WrapperSession {
 
-    private UUID uniqueId;
+	private UUID uniqueId;
 
-    private WrapperMeta wrapperMeta;
+	private WrapperMeta wrapperMeta;
 
-    private long connected;
+	private long connected;
 
-    public WrapperSession(UUID uniqueId, WrapperMeta wrapperMeta, long connected) {
-        this.uniqueId = uniqueId;
-        this.wrapperMeta = wrapperMeta;
-        this.connected = connected;
-    }
+	public WrapperSession(UUID uniqueId, WrapperMeta wrapperMeta, long connected) {
+		this.uniqueId = uniqueId;
+		this.wrapperMeta = wrapperMeta;
+		this.connected = connected;
+	}
 
-    public long getConnected() {
-        return connected;
-    }
+	public long getConnected() {
+		return connected;
+	}
 
-    public UUID getUniqueId() {
-        return uniqueId;
-    }
+	public UUID getUniqueId() {
+		return uniqueId;
+	}
 
-    public WrapperMeta getWrapperMeta() {
-        return wrapperMeta;
-    }
+	public WrapperMeta getWrapperMeta() {
+		return wrapperMeta;
+	}
 }

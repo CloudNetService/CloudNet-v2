@@ -13,25 +13,24 @@ import java.io.InputStream;
  */
 public final class DefaultModule {
 
-    private String moduleName;
+	private String moduleName;
 
-    private String moduleVersion;
+	private String moduleVersion;
 
-    public DefaultModule(String moduleName, String moduleVersion) {
-        this.moduleName = moduleName;
-        this.moduleVersion = moduleVersion;
-    }
+	public DefaultModule(String moduleName, String moduleVersion) {
+		this.moduleName = moduleName;
+		this.moduleVersion = moduleVersion;
+	}
 
-    protected InputStream stream()
-    {
-        return CloudNet.class.getClassLoader().getResourceAsStream("modules/" + moduleName + ".jar");
-    }
+	protected InputStream stream() {
+		return CloudNet.class.getClassLoader().getResourceAsStream("modules/" + moduleName + ".jar");
+	}
 
-    public String getModuleName() {
-        return moduleName;
-    }
+	public String getModuleName() {
+		return moduleName;
+	}
 
-    public String getModuleVersion() {
-        return moduleVersion;
-    }
+	public String getModuleVersion() {
+		return moduleVersion;
+	}
 }

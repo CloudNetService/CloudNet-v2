@@ -9,21 +9,21 @@ import java.util.Collection;
  */
 public class SignGroupLayouts implements Nameable {
 
-    private String name;
+	private String name;
 
-    private Collection<SignLayout> layouts;
+	private Collection<SignLayout> layouts;
 
-    public SignGroupLayouts(String name, Collection<SignLayout> layouts) {
-        this.name = name;
-        this.layouts = layouts;
-    }
+	public SignGroupLayouts(String name, Collection<SignLayout> layouts) {
+		this.name = name;
+		this.layouts = layouts;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    public Collection<SignLayout> getLayouts() {
-        return layouts;
-    }
+	public Collection<SignLayout> getLayouts() {
+		return layouts;
+	}
 }

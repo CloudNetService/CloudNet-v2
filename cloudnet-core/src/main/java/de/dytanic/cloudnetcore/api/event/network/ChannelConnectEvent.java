@@ -13,27 +13,26 @@ import io.netty.channel.Channel;
  */
 public class ChannelConnectEvent extends Event implements Cancelable {
 
-    private boolean cancelled;
+	private boolean cancelled;
 
-    private Channel channel;
+	private Channel channel;
 
-    public ChannelConnectEvent(boolean cancelled, Channel channel) {
-        this.cancelled = cancelled;
-        this.channel = channel;
-    }
+	public ChannelConnectEvent(boolean cancelled, Channel channel) {
+		this.cancelled = cancelled;
+		this.channel = channel;
+	}
 
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
+	@Override
+	public boolean isCancelled() {
+		return cancelled;
+	}
 
-    public Channel getChannel() {
-        return channel;
-    }
+	@Override
+	public void setCancelled(boolean cancel) {
+		this.cancelled = cancel;
+	}
 
-    @Override
-    public void setCancelled(boolean cancel)
-    {
-        this.cancelled = cancel;
-    }
+	public Channel getChannel() {
+		return channel;
+	}
 }

@@ -15,15 +15,14 @@ import java.util.Collection;
  */
 public class ScreenInfoEvent extends AsyncEvent<ScreenInfoEvent> {
 
-    private Collection<ScreenInfo> screenInfos;
+	private Collection<ScreenInfo> screenInfos;
 
-    public ScreenInfoEvent(Collection<ScreenInfo> screenInfos)
-    {
-        super(new AsyncPosterAdapter<>());
-        this.screenInfos = screenInfos;
-    }
+	public ScreenInfoEvent(Collection<ScreenInfo> screenInfos) {
+		super(new AsyncPosterAdapter<>());
+		this.screenInfos = screenInfos;
+	}
 
-    public Collection<ScreenInfo> getScreenInfos() {
-        return screenInfos;
-    }
+	public Collection<ScreenInfo> getScreenInfos() {
+		return screenInfos;
+	}
 }

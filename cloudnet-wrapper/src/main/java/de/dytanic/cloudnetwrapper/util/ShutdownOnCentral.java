@@ -9,6 +9,6 @@ package de.dytanic.cloudnetwrapper.util;
  */
 public interface ShutdownOnCentral {
 
-    void onShutdownCentral() throws Exception;
+	void onShutdownCentral() throws Exception;
 
 }

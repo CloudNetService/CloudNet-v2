@@ -9,149 +9,149 @@ import java.util.List;
 
 public class ProxyConfig {
 
-    private boolean enabled;
+	private boolean enabled;
 
-    private boolean maintenance;
+	private boolean maintenance;
 
-    private List<Motd> motdsLayouts;
+	private List<Motd> motdsLayouts;
 
-    private Motd maintenanceMotdLayout;
+	private Motd maintenanceMotdLayout;
 
-    private String maintenaceProtocol;
+	private String maintenaceProtocol;
 
-    private int maxPlayers;
+	private int maxPlayers;
 
-    private boolean fastConnect;
+	private boolean fastConnect;
 
-    private Boolean customPayloadFixer;
+	private Boolean customPayloadFixer;
 
-    private AutoSlot autoSlot;
+	private AutoSlot autoSlot;
 
-    private TabList tabList;
+	private TabList tabList;
 
-    private String[] playerInfo;
+	private String[] playerInfo;
 
-    private Collection<String> whitelist;
+	private Collection<String> whitelist;
 
-    private DynamicFallback dynamicFallback;
+	private DynamicFallback dynamicFallback;
 
-    public ProxyConfig(boolean enabled, boolean maintenance, List<Motd> motdsLayouts, Motd maintenanceMotdLayout, String maintenaceProtocol, int maxPlayers, boolean fastConnect, Boolean customPayloadFixer, AutoSlot autoSlot, TabList tabList, String[] playerInfo, Collection<String> whitelist, DynamicFallback dynamicFallback) {
-        this.enabled = enabled;
-        this.maintenance = maintenance;
-        this.motdsLayouts = motdsLayouts;
-        this.maintenanceMotdLayout = maintenanceMotdLayout;
-        this.maintenaceProtocol = maintenaceProtocol;
-        this.maxPlayers = maxPlayers;
-        this.fastConnect = fastConnect;
-        this.customPayloadFixer = customPayloadFixer;
-        this.autoSlot = autoSlot;
-        this.tabList = tabList;
-        this.playerInfo = playerInfo;
-        this.whitelist = whitelist;
-        this.dynamicFallback = dynamicFallback;
-    }
+	public ProxyConfig(boolean enabled, boolean maintenance, List<Motd> motdsLayouts, Motd maintenanceMotdLayout, String maintenaceProtocol, int maxPlayers, boolean fastConnect, Boolean customPayloadFixer, AutoSlot autoSlot, TabList tabList, String[] playerInfo, Collection<String> whitelist, DynamicFallback dynamicFallback) {
+		this.enabled = enabled;
+		this.maintenance = maintenance;
+		this.motdsLayouts = motdsLayouts;
+		this.maintenanceMotdLayout = maintenanceMotdLayout;
+		this.maintenaceProtocol = maintenaceProtocol;
+		this.maxPlayers = maxPlayers;
+		this.fastConnect = fastConnect;
+		this.customPayloadFixer = customPayloadFixer;
+		this.autoSlot = autoSlot;
+		this.tabList = tabList;
+		this.playerInfo = playerInfo;
+		this.whitelist = whitelist;
+		this.dynamicFallback = dynamicFallback;
+	}
 
-    public int getMaxPlayers() {
-        return maxPlayers;
-    }
+	public int getMaxPlayers() {
+		return maxPlayers;
+	}
 
-    public AutoSlot getAutoSlot() {
-        return autoSlot;
-    }
+	public void setMaxPlayers(int maxPlayers) {
+		this.maxPlayers = maxPlayers;
+	}
 
-    public Boolean getCustomPayloadFixer() {
-        return customPayloadFixer;
-    }
+	public AutoSlot getAutoSlot() {
+		return autoSlot;
+	}
 
-    public Collection<String> getWhitelist() {
-        return whitelist;
-    }
+	public void setAutoSlot(AutoSlot autoSlot) {
+		this.autoSlot = autoSlot;
+	}
 
-    public DynamicFallback getDynamicFallback() {
-        return dynamicFallback;
-    }
+	public Boolean getCustomPayloadFixer() {
+		return customPayloadFixer;
+	}
 
-    public List<Motd> getMotdsLayouts() {
-        return motdsLayouts;
-    }
+	public void setCustomPayloadFixer(Boolean customPayloadFixer) {
+		this.customPayloadFixer = customPayloadFixer;
+	}
 
-    public Motd getMaintenanceMotdLayout() {
-        return maintenanceMotdLayout;
-    }
+	public Collection<String> getWhitelist() {
+		return whitelist;
+	}
 
-    public String getMaintenaceProtocol() {
-        return maintenaceProtocol;
-    }
+	public void setWhitelist(Collection<String> whitelist) {
+		this.whitelist = whitelist;
+	}
 
-    public String[] getPlayerInfo() {
-        return playerInfo;
-    }
+	public DynamicFallback getDynamicFallback() {
+		return dynamicFallback;
+	}
 
-    public TabList getTabList() {
-        return tabList;
-    }
+	public void setDynamicFallback(DynamicFallback dynamicFallback) {
+		this.dynamicFallback = dynamicFallback;
+	}
 
-    public boolean isMaintenance() {
-        return maintenance;
-    }
+	public List<Motd> getMotdsLayouts() {
+		return motdsLayouts;
+	}
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+	public void setMotdsLayouts(List<Motd> motdsLayouts) {
+		this.motdsLayouts = motdsLayouts;
+	}
 
-    public boolean isFastConnect() {
-        return fastConnect;
-    }
+	public Motd getMaintenanceMotdLayout() {
+		return maintenanceMotdLayout;
+	}
 
-    public void setMaintenance(boolean maintenance) {
-        this.maintenance = maintenance;
-    }
+	public void setMaintenanceMotdLayout(Motd maintenanceMotdLayout) {
+		this.maintenanceMotdLayout = maintenanceMotdLayout;
+	}
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+	public String getMaintenaceProtocol() {
+		return maintenaceProtocol;
+	}
 
-    public void setAutoSlot(AutoSlot autoSlot) {
-        this.autoSlot = autoSlot;
-    }
+	public void setMaintenaceProtocol(String maintenaceProtocol) {
+		this.maintenaceProtocol = maintenaceProtocol;
+	}
 
-    public void setCustomPayloadFixer(Boolean customPayloadFixer) {
-        this.customPayloadFixer = customPayloadFixer;
-    }
+	public String[] getPlayerInfo() {
+		return playerInfo;
+	}
 
-    public void setDynamicFallback(DynamicFallback dynamicFallback) {
-        this.dynamicFallback = dynamicFallback;
-    }
+	public void setPlayerInfo(String[] playerInfo) {
+		this.playerInfo = playerInfo;
+	}
 
-    public void setFastConnect(boolean fastConnect) {
-        this.fastConnect = fastConnect;
-    }
+	public TabList getTabList() {
+		return tabList;
+	}
 
-    public void setMaintenaceProtocol(String maintenaceProtocol) {
-        this.maintenaceProtocol = maintenaceProtocol;
-    }
+	public void setTabList(TabList tabList) {
+		this.tabList = tabList;
+	}
 
-    public void setMaintenanceMotdLayout(Motd maintenanceMotdLayout) {
-        this.maintenanceMotdLayout = maintenanceMotdLayout;
-    }
+	public boolean isMaintenance() {
+		return maintenance;
+	}
 
-    public void setMaxPlayers(int maxPlayers) {
-        this.maxPlayers = maxPlayers;
-    }
+	public void setMaintenance(boolean maintenance) {
+		this.maintenance = maintenance;
+	}
 
-    public void setMotdsLayouts(List<Motd> motdsLayouts) {
-        this.motdsLayouts = motdsLayouts;
-    }
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    public void setPlayerInfo(String[] playerInfo) {
-        this.playerInfo = playerInfo;
-    }
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
-    public void setTabList(TabList tabList) {
-        this.tabList = tabList;
-    }
+	public boolean isFastConnect() {
+		return fastConnect;
+	}
 
-    public void setWhitelist(Collection<String> whitelist) {
-        this.whitelist = whitelist;
-    }
+	public void setFastConnect(boolean fastConnect) {
+		this.fastConnect = fastConnect;
+	}
 }

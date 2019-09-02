@@ -9,35 +9,35 @@ package de.dytanic.cloudnetcore.util;
  */
 public class CustomServerConfig {
 
-    private String serverId;
+	private String serverId;
 
-    private int memory;
+	private int memory;
 
-    private String group, wrapper;
+	private String group, wrapper;
 
-    private boolean onlineMode;
+	private boolean onlineMode;
 
-    public CustomServerConfig(String serverId, int memory, String group, String wrapper, boolean onlineMode) {
-        this.serverId = serverId;
-        this.memory = memory;
-        this.group = group;
-        this.wrapper = wrapper;
-        this.onlineMode = onlineMode;
-    }
+	public CustomServerConfig(String serverId, int memory, String group, String wrapper, boolean onlineMode) {
+		this.serverId = serverId;
+		this.memory = memory;
+		this.group = group;
+		this.wrapper = wrapper;
+		this.onlineMode = onlineMode;
+	}
 
-    public int getMemory() {
-        return memory;
-    }
+	public int getMemory() {
+		return memory;
+	}
 
-    public String getServerId() {
-        return serverId;
-    }
+	public String getServerId() {
+		return serverId;
+	}
 
-    public String getWrapper() {
-        return wrapper;
-    }
+	public String getWrapper() {
+		return wrapper;
+	}
 
-    public String getGroup() {
-        return group;
-    }
+	public String getGroup() {
+		return group;
+	}
 }

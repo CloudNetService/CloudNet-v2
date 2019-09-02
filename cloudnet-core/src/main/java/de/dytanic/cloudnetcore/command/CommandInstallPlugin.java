@@ -15,33 +15,28 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
  */
 public final class CommandInstallPlugin extends Command {
 
-    public CommandInstallPlugin()
-    {
-        super("installplugin", "cloudnet.command.installplugin");
+	public CommandInstallPlugin() {
+		super("installplugin", "cloudnet.command.installplugin");
 
-        description = "Installs plugin for one server";
+		description = "Installs plugin for one server";
 
-    }
+	}
 
-    @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
-        switch (args.length)
-        {
-            case 3:
-                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);
-                if (minecraftServer != null && minecraftServer.getChannel() != null)
-                {
-                    minecraftServer.sendCustomMessage("cloudnet_internal", "install_plugin", new Document("name", args[1]).append("url", args[2]));
-                    sender.sendMessage("Plugin will install on " + args[0] + "...");
-                } else
-                {
-                    sender.sendMessage("Server doesn't exist");
-                }
-                break;
-            default:
-                sender.sendMessage("installplugin <server> <name> <url>");
-                break;
-        }
-    }
+	@Override
+	public void onExecuteCommand(CommandSender sender, String[] args) {
+		switch (args.length) {
+			case 3:
+				MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);
+				if (minecraftServer != null && minecraftServer.getChannel() != null) {
+					minecraftServer.sendCustomMessage("cloudnet_internal", "install_plugin", new Document("name", args[1]).append("url", args[2]));
+					sender.sendMessage("Plugin will install on " + args[0] + "...");
+				} else {
+					sender.sendMessage("Server doesn't exist");
+				}
+				break;
+			default:
+				sender.sendMessage("installplugin <server> <name> <url>");
+				break;
+		}
+	}
 }

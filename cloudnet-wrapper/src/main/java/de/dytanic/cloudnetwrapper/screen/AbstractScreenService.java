@@ -10,45 +10,41 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class AbstractScreenService implements Screenable {
 
-    protected final Queue<String> cachedLogMessages = new ConcurrentLinkedQueue<>();
+	protected final Queue<String> cachedLogMessages = new ConcurrentLinkedQueue<>();
 
-    protected volatile boolean screenSystemEnabled;
+	protected volatile boolean screenSystemEnabled;
 
-    public void addCachedItem(String text)
-    {
-        if (text == null) return;
+	public void addCachedItem(String text) {
+		if (text == null) return;
 
-        while (cachedLogMessages.size() >= 64)
-            cachedLogMessages.poll();
+		while (cachedLogMessages.size() >= 64)
+			cachedLogMessages.poll();
 
-        cachedLogMessages.offer(text);
+		cachedLogMessages.offer(text);
 
-        if (this.screenSystemEnabled) this.sendScreenLine0(text);
-    }
+		if (this.screenSystemEnabled) this.sendScreenLine0(text);
+	}
 
-    public void enableScreenSystem()
-    {
-        for (String text : this.cachedLogMessages)
-            this.sendScreenLine0(text);
+	public void enableScreenSystem() {
+		for (String text : this.cachedLogMessages)
+			this.sendScreenLine0(text);
 
-        this.screenSystemEnabled = true;
-    }
+		this.screenSystemEnabled = true;
+	}
 
-    public void disableScreenSystem()
-    {
-        this.screenSystemEnabled = false;
-    }
+	public void disableScreenSystem() {
+		this.screenSystemEnabled = false;
+	}
 
-    private void sendScreenLine0(String text)
-    {
-        CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutSendScreenLine(Collections.singletonList(new ScreenInfo(getServiceId(), text))));
-    }
+	private void sendScreenLine0(String text) {
+		CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutSendScreenLine(Collections.singletonList(new ScreenInfo(getServiceId(), text))));
+	}
 
-    public Queue<String> getCachedLogMessages() {
-        return cachedLogMessages;
-    }
+	public Queue<String> getCachedLogMessages() {
+		return cachedLogMessages;
+	}
 
-    public boolean isScreenSystemEnabled() {
-        return screenSystemEnabled;
-    }
+	public boolean isScreenSystemEnabled() {
+		return screenSystemEnabled;
+	}
 }

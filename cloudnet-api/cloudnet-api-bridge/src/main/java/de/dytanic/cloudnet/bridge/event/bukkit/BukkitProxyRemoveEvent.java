@@ -12,28 +12,25 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitProxyRemoveEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+	private static HandlerList handlerList = new HandlerList();
 
-    private ProxyInfo serverInfo;
+	private ProxyInfo serverInfo;
 
-    public BukkitProxyRemoveEvent(ProxyInfo serverInfo) {
-        this.serverInfo = serverInfo;
-    }
+	public BukkitProxyRemoveEvent(ProxyInfo serverInfo) {
+		this.serverInfo = serverInfo;
+	}
 
-    public ProxyInfo getProxyInfo()
-    {
-        return serverInfo;
-    }
+	public static HandlerList getHandlerList() {
+		return handlerList;
+	}
 
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
+	public ProxyInfo getProxyInfo() {
+		return serverInfo;
+	}
 
-    public static HandlerList getHandlerList()
-    {
-        return handlerList;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlerList;
+	}
 
 }

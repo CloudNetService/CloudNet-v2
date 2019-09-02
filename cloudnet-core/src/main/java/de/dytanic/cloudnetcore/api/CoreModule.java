@@ -15,38 +15,34 @@ import de.dytanic.cloudnetcore.CloudNet;
  */
 public class CoreModule extends Module<CloudNet> {
 
-    /**
-     * Registered a IEventListener objective to a Event Class
-     *
-     * @param eventListener
-     * @param <T>
-     */
-    public <T extends Event> void registerListener(IEventListener<T> eventListener)
-    {
-        CloudNet.getInstance().getEventManager().registerListener(this, eventListener);
-    }
+	/**
+	 * Registered a IEventListener objective to a Event Class
+	 *
+	 * @param eventListener
+	 * @param <T>
+	 */
+	public <T extends Event> void registerListener(IEventListener<T> eventListener) {
+		CloudNet.getInstance().getEventManager().registerListener(this, eventListener);
+	}
 
-    /**
-     *
-     */
-    public void appendModuleProperty(String key, Object value)
-    {
-        CloudNet.getInstance().getNetworkManager().getModuleProperties().append(key, value);
-    }
+	/**
+	 *
+	 */
+	public void appendModuleProperty(String key, Object value) {
+		CloudNet.getInstance().getNetworkManager().getModuleProperties().append(key, value);
+	}
 
-    /**
-     * Registered a command
-     *
-     * @param command
-     */
-    public void registerCommand(Command command)
-    {
-        CloudNet.getInstance().getCommandManager().registerCommand(command);
-    }
+	/**
+	 * Registered a command
+	 *
+	 * @param command
+	 */
+	public void registerCommand(Command command) {
+		CloudNet.getInstance().getCommandManager().registerCommand(command);
+	}
 
-    @Override
-    public CloudNet getCloud()
-    {
-        return CloudNet.getInstance();
-    }
+	@Override
+	public CloudNet getCloud() {
+		return CloudNet.getInstance();
+	}
 }

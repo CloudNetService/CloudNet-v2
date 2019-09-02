@@ -19,76 +19,76 @@ import java.util.Map;
 @EqualsAndHashCode
 public class CloudNetwork {
 
-    private int registeredPlayerCount = 0;
-    private int onlineCount = 0;
-    private java.util.Map<String, SimpleServerGroup> serverGroups = new HashMap<>();
-    private java.util.Map<String, ProxyGroup> proxyGroups = new HashMap<>();
-    private java.util.Collection<WrapperInfo> wrappers = new LinkedList<>();
-    private Document messages = new Document();
-    private Document modules = new Document();
-    private int webPort = 1420;
+	private int registeredPlayerCount = 0;
+	private int onlineCount = 0;
+	private java.util.Map<String, SimpleServerGroup> serverGroups = new HashMap<>();
+	private java.util.Map<String, ProxyGroup> proxyGroups = new HashMap<>();
+	private java.util.Collection<WrapperInfo> wrappers = new LinkedList<>();
+	private Document messages = new Document();
+	private Document modules = new Document();
+	private int webPort = 1420;
 
-    public int getOnlineCount() {
-        return onlineCount;
-    }
+	public int getOnlineCount() {
+		return onlineCount;
+	}
 
-    public Map<String, ProxyGroup> getProxyGroups() {
-        return proxyGroups;
-    }
+	public void setOnlineCount(int onlineCount) {
+		this.onlineCount = onlineCount;
+	}
 
-    public int getWebPort() {
-        return webPort;
-    }
+	public Map<String, ProxyGroup> getProxyGroups() {
+		return proxyGroups;
+	}
 
-    public Collection<WrapperInfo> getWrappers() {
-        return wrappers;
-    }
+	public void setProxyGroups(Map<String, ProxyGroup> proxyGroups) {
+		this.proxyGroups = proxyGroups;
+	}
 
-    public Document getMessages() {
-        return messages;
-    }
+	public int getWebPort() {
+		return webPort;
+	}
 
-    public Document getModules() {
-        return modules;
-    }
+	public void setWebPort(int webPort) {
+		this.webPort = webPort;
+	}
 
-    public int getRegisteredPlayerCount() {
-        return registeredPlayerCount;
-    }
+	public Collection<WrapperInfo> getWrappers() {
+		return wrappers;
+	}
 
-    public Map<String, SimpleServerGroup> getServerGroups() {
-        return serverGroups;
-    }
+	public void setWrappers(Collection<WrapperInfo> wrappers) {
+		this.wrappers = wrappers;
+	}
 
-    public void setMessages(Document messages) {
-        this.messages = messages;
-    }
+	public Document getMessages() {
+		return messages;
+	}
 
-    public void setModules(Document modules) {
-        this.modules = modules;
-    }
+	public void setMessages(Document messages) {
+		this.messages = messages;
+	}
 
-    public void setOnlineCount(int onlineCount) {
-        this.onlineCount = onlineCount;
-    }
+	public Document getModules() {
+		return modules;
+	}
 
-    public void setProxyGroups(Map<String, ProxyGroup> proxyGroups) {
-        this.proxyGroups = proxyGroups;
-    }
+	public void setModules(Document modules) {
+		this.modules = modules;
+	}
 
-    public void setRegisteredPlayerCount(int registeredPlayerCount) {
-        this.registeredPlayerCount = registeredPlayerCount;
-    }
+	public int getRegisteredPlayerCount() {
+		return registeredPlayerCount;
+	}
 
-    public void setServerGroups(Map<String, SimpleServerGroup> serverGroups) {
-        this.serverGroups = serverGroups;
-    }
+	public void setRegisteredPlayerCount(int registeredPlayerCount) {
+		this.registeredPlayerCount = registeredPlayerCount;
+	}
 
-    public void setWebPort(int webPort) {
-        this.webPort = webPort;
-    }
+	public Map<String, SimpleServerGroup> getServerGroups() {
+		return serverGroups;
+	}
 
-    public void setWrappers(Collection<WrapperInfo> wrappers) {
-        this.wrappers = wrappers;
-    }
+	public void setServerGroups(Map<String, SimpleServerGroup> serverGroups) {
+		this.serverGroups = serverGroups;
+	}
 }

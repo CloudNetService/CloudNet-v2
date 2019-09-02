@@ -11,20 +11,20 @@ import java.util.UUID;
  */
 public class DevService {
 
-    private UUID uniqueId;
+	private UUID uniqueId;
 
-    private boolean enabled;
+	private boolean enabled;
 
-    public DevService(UUID uniqueId, boolean enabled) {
-        this.uniqueId = uniqueId;
-        this.enabled = enabled;
-    }
+	public DevService(UUID uniqueId, boolean enabled) {
+		this.uniqueId = uniqueId;
+		this.enabled = enabled;
+	}
 
-    public UUID getUniqueId() {
-        return uniqueId;
-    }
+	public UUID getUniqueId() {
+		return uniqueId;
+	}
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+	public boolean isEnabled() {
+		return enabled;
+	}
 }

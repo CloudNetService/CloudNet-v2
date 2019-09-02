@@ -15,27 +15,24 @@ import java.util.UUID;
  */
 public class BukkitSignListUpdateEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+	private static HandlerList handlerList = new HandlerList();
 
-    private Map<UUID, Sign> signList;
+	private Map<UUID, Sign> signList;
 
-    public BukkitSignListUpdateEvent(Map<UUID, Sign> signList) {
-        this.signList = signList;
-    }
+	public BukkitSignListUpdateEvent(Map<UUID, Sign> signList) {
+		this.signList = signList;
+	}
 
-    public Map<UUID, Sign> getSignList()
-    {
-        return signList;
-    }
+	public static HandlerList getHandlerList() {
+		return handlerList;
+	}
 
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
+	public Map<UUID, Sign> getSignList() {
+		return signList;
+	}
 
-    public static HandlerList getHandlerList()
-    {
-        return handlerList;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlerList;
+	}
 }

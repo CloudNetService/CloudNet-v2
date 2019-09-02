@@ -6,6 +6,7 @@ package de.dytanic.cloudnet.api.database;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -15,20 +16,17 @@ import java.util.Map;
  */
 public class DatabaseManager {
 
-    private Map<String, Database> databaseMap = NetworkUtils.newConcurrentHashMap();
+	private Map<String, Database> databaseMap = NetworkUtils.newConcurrentHashMap();
 
-    public DatabaseManager()
-    {
+	public DatabaseManager() {
 
-    }
+	}
 
-    public Collection<Database> getCachedDatabases()
-    {
-        return databaseMap.values();
-    }
+	public Collection<Database> getCachedDatabases() {
+		return databaseMap.values();
+	}
 
-    public Database getDatabase(String name)
-    {
-        return new DatabaseImpl(name);
-    }
+	public Database getDatabase(String name) {
+		return new DatabaseImpl(name);
+	}
 }

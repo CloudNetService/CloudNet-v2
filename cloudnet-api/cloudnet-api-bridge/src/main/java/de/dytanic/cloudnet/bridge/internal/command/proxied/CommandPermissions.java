@@ -12,16 +12,15 @@ import de.dytanic.cloudnet.lib.player.permission.DefaultPermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.TabExecutor;
 
 /**
  * Created by Tareko on 23.08.2017.
@@ -439,91 +438,91 @@ public final class CommandPermissions extends Command implements TabExecutor {
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender commandSender, String[] strings) {
-        switch (strings.length) {
-            case 1: {
-                return ImmutableList.of("user", "group", "create");
-            }
-            case 2: {
-                switch (strings[0].toLowerCase(Locale.ENGLISH)) {
-                    case "group": {
-                        ArrayList<String> list = new ArrayList<>(CloudAPI.getInstance().getPermissionPool().getGroups()
-                                .keySet());
-                        list.add("*");
-                        return list;
-                    }
-                    case "user": {
-                        return CloudAPI.getInstance().getOnlinePlayers().stream().map(OfflinePlayer::getName)
-                                .collect(Collectors.toList());
-                    }
-                }
-            }
-            ///cperms USER/GROUP <GROUP/USER>
-            case 3: {
-                switch (strings[0].toLowerCase(Locale.ENGLISH)) {
-                    case "group": {
-                        return Arrays.asList("add", "remove", "setDisplay", "setJoinPower", "setSuffix", "setPrefix",
-                                "setTagId", "setDefault", "setColor");
-                    }
-                    case "user": {
-                        return Arrays.asList("group", "add", "remove");
-                    }
-                }
-            }
-            ///cperms USER/GROUP <GROUP/USER> <ADD/REMOVE>
-            case 4: {
-                switch (strings[0].toLowerCase(Locale.ENGLISH)) {
-                    case "group": {
-                        switch (strings[2].toLowerCase(Locale.ENGLISH)) {
-                            case "add":
-                            case "remove": {
-                                return Collections.singletonList("permission");
-                            }
-                        }
-                    }
-                    case "user": {
-                        switch (strings[2].toLowerCase(Locale.ENGLISH)) {
-                            case "add":
-                            case "remove": {
-                                return Collections.singletonList("permission");
-                            }
-                            case "group": {
-                                return Arrays.asList("set", "add", "remove");
-                            }
-                        }
-                    }
-                }
-            }
-            case 5: {
-                switch (strings[0].toLowerCase(Locale.ENGLISH)) {
-	                case "group": {
-		                switch (strings[2].toLowerCase(Locale.ENGLISH)) {
-			                case "setcolor": {
-			                	return Arrays.asList("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a",
-						                "&b", "&c", "&c", "&d", "&d", "&e", "&f");
-			                }
-			                case "setdefault": {
-			                	return Arrays.asList("true", "false");
-			                }
-		                }
-	                }
-                    case "user": {
-	                    if ("group".equals(strings[2].toLowerCase(Locale.ENGLISH))) {
-	                    	return new ArrayList<>(CloudAPI.getInstance().getPermissionPool().getGroups().keySet());
-	                    }
-                    }
-                }
-            }
-	        case 6: {
-		        if ("user".equals(strings[0].toLowerCase(Locale.ENGLISH))) {
-			        if ("group".equals(strings[2].toLowerCase(Locale.ENGLISH))) {
-				        return Collections.singletonList("lifetime");
-			        }
-		        }
-	        }
-	        default: {
-	        	return ImmutableList.of();
-	        }
-        }
+		switch (strings.length) {
+			case 1: {
+				return ImmutableList.of("user", "group", "create");
+			}
+			case 2: {
+				switch (strings[0].toLowerCase(Locale.ENGLISH)) {
+					case "group": {
+						ArrayList<String> list = new ArrayList<>(CloudAPI.getInstance().getPermissionPool().getGroups()
+								.keySet());
+						list.add("*");
+						return list;
+					}
+					case "user": {
+						return CloudAPI.getInstance().getOnlinePlayers().stream().map(OfflinePlayer::getName)
+								.collect(Collectors.toList());
+					}
+				}
+			}
+			///cperms USER/GROUP <GROUP/USER>
+			case 3: {
+				switch (strings[0].toLowerCase(Locale.ENGLISH)) {
+					case "group": {
+						return Arrays.asList("add", "remove", "setDisplay", "setJoinPower", "setSuffix", "setPrefix",
+								"setTagId", "setDefault", "setColor");
+					}
+					case "user": {
+						return Arrays.asList("group", "add", "remove");
+					}
+				}
+			}
+			///cperms USER/GROUP <GROUP/USER> <ADD/REMOVE>
+			case 4: {
+				switch (strings[0].toLowerCase(Locale.ENGLISH)) {
+					case "group": {
+						switch (strings[2].toLowerCase(Locale.ENGLISH)) {
+							case "add":
+							case "remove": {
+								return Collections.singletonList("permission");
+							}
+						}
+					}
+					case "user": {
+						switch (strings[2].toLowerCase(Locale.ENGLISH)) {
+							case "add":
+							case "remove": {
+								return Collections.singletonList("permission");
+							}
+							case "group": {
+								return Arrays.asList("set", "add", "remove");
+							}
+						}
+					}
+				}
+			}
+			case 5: {
+				switch (strings[0].toLowerCase(Locale.ENGLISH)) {
+					case "group": {
+						switch (strings[2].toLowerCase(Locale.ENGLISH)) {
+							case "setcolor": {
+								return Arrays.asList("&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a",
+										"&b", "&c", "&c", "&d", "&d", "&e", "&f");
+							}
+							case "setdefault": {
+								return Arrays.asList("true", "false");
+							}
+						}
+					}
+					case "user": {
+						if ("group".equals(strings[2].toLowerCase(Locale.ENGLISH))) {
+							return new ArrayList<>(CloudAPI.getInstance().getPermissionPool().getGroups().keySet());
+						}
+					}
+				}
+			}
+			case 6: {
+				if ("user".equals(strings[0].toLowerCase(Locale.ENGLISH))) {
+					if ("group".equals(strings[2].toLowerCase(Locale.ENGLISH))) {
+						return Collections.singletonList("lifetime");
+					}
+				}
+			}
+			default: {
+				return ImmutableList.of();
+			}
+		}
 	}
 
 	private boolean permissionIsSet(Map<String, Boolean> permissions, String permission, boolean value) {

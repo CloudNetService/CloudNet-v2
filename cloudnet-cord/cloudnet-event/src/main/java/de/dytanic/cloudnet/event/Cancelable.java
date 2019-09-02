@@ -5,19 +5,19 @@ package de.dytanic.cloudnet.event;
  */
 public interface Cancelable {
 
-    /**
-     * Returns whether this event is canceled.
-     *
-     * @return whether this event is canceled
-     */
-    boolean isCancelled();
+	/**
+	 * Returns whether this event is canceled.
+	 *
+	 * @return whether this event is canceled
+	 */
+	boolean isCancelled();
 
-    /**
-     * Sets the current event to be canceled.
-     * It is up to the event handler to honor this.
-     *
-     * @param cancel whether this event is canceled
-     */
-    void setCancelled(boolean cancel);
+	/**
+	 * Sets the current event to be canceled.
+	 * It is up to the event handler to honor this.
+	 *
+	 * @param cancel whether this event is canceled
+	 */
+	void setCancelled(boolean cancel);
 
 }

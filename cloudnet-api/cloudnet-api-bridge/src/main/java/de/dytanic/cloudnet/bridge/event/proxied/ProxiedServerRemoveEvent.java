@@ -11,14 +11,13 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
  */
 public class ProxiedServerRemoveEvent extends ProxiedCloudEvent {
 
-    private ServerInfo serverInfo;
+	private ServerInfo serverInfo;
 
-    public ProxiedServerRemoveEvent(ServerInfo serverInfo) {
-        this.serverInfo = serverInfo;
-    }
+	public ProxiedServerRemoveEvent(ServerInfo serverInfo) {
+		this.serverInfo = serverInfo;
+	}
 
-    public ServerInfo getServerInfo()
-    {
-        return serverInfo;
-    }
+	public ServerInfo getServerInfo() {
+		return serverInfo;
+	}
 }

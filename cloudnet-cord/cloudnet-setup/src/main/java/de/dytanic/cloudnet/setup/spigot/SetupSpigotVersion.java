@@ -41,10 +41,11 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
 		}
 	};
 
-    /**
-     * A method to choose on start the spigot version
-     * @param reader The console reader
-     */
+	/**
+	 * A method to choose on start the spigot version
+	 *
+	 * @param reader The console reader
+	 */
 	@Override
 	public void accept(ConsoleReader reader) {
 		System.out.println("No spigot.jar has been found!");
@@ -149,7 +150,7 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
 		}
 	}
 
-    public void setTarget(Path target) {
-        this.target = target;
-    }
+	public void setTarget(Path target) {
+		this.target = target;
+	}
 }

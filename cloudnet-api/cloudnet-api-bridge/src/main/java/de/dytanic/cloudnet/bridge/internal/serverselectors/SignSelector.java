@@ -41,6 +41,10 @@ import java.util.stream.Collectors;
 public final class SignSelector implements Listener {
 
 	private static SignSelector instance;
+	private Map<UUID, Sign> signs;
+	private volatile SignLayoutConfig signLayoutConfig;
+	private Thread worker;
+	private Map<String, ServerInfo> servers = NetworkUtils.newConcurrentHashMap();
 
 	public SignSelector(Map<UUID, Sign> signs, SignLayoutConfig signLayoutConfig) {
 		instance = this;
@@ -50,12 +54,6 @@ public final class SignSelector implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, CloudServer.getInstance().getPlugin());
 	}
 
-	private Map<UUID, Sign> signs;
-	private volatile SignLayoutConfig signLayoutConfig;
-	private Thread worker;
-
-	private Map<String, ServerInfo> servers = NetworkUtils.newConcurrentHashMap();
-
 	public static SignSelector getInstance() {
 		return instance;
 	}
@@ -64,32 +62,32 @@ public final class SignSelector implements Listener {
 		return servers;
 	}
 
+	public void setServers(Map<String, ServerInfo> servers) {
+		this.servers = servers;
+	}
+
 	public Thread getWorker() {
 		return worker;
+	}
+
+	public void setWorker(Thread worker) {
+		this.worker = worker;
 	}
 
 	public Map<UUID, Sign> getSigns() {
 		return signs;
 	}
 
-	public SignLayoutConfig getSignLayoutConfig() {
-		return signLayoutConfig;
-	}
-
-	public void setServers(Map<String, ServerInfo> servers) {
-		this.servers = servers;
-	}
-
-	public void setSignLayoutConfig(SignLayoutConfig signLayoutConfig) {
-		this.signLayoutConfig = signLayoutConfig;
-	}
-
 	public void setSigns(Map<UUID, Sign> signs) {
 		this.signs = signs;
 	}
 
-	public void setWorker(Thread worker) {
-		this.worker = worker;
+	public SignLayoutConfig getSignLayoutConfig() {
+		return signLayoutConfig;
+	}
+
+	public void setSignLayoutConfig(SignLayoutConfig signLayoutConfig) {
+		this.signLayoutConfig = signLayoutConfig;
 	}
 
 	@Deprecated
@@ -179,9 +177,9 @@ public final class SignSelector implements Listener {
 	}
 
 	public Sign filter(ServerInfo serverInfo) {
-        return signs.values().stream().filter(value -> value.getServerInfo() != null &&
-                value.getServerInfo().getServiceId().getServerId().equals(serverInfo.getServiceId().getServerId())).
-                findFirst().orElse(null);
+		return signs.values().stream().filter(value -> value.getServerInfo() != null &&
+				value.getServerInfo().getServiceId().getServerId().equals(serverInfo.getServiceId().getServerId())).
+				findFirst().orElse(null);
 	}
 
 	public SignLayout getLayout(String group, String name) {
@@ -189,7 +187,7 @@ public final class SignSelector implements Listener {
 		if (signGroupLayouts == null) {
 			signGroupLayouts = getGroupLayout("default");
 		}
-        return signGroupLayouts.getLayouts().stream().filter(value -> value.getName().equals(name)).findFirst().orElse(null);
+		return signGroupLayouts.getLayouts().stream().filter(value -> value.getName().equals(name)).findFirst().orElse(null);
 	}
 
 	public boolean isMaintenance(String group) {
@@ -201,7 +199,7 @@ public final class SignSelector implements Listener {
 	}
 
 	public SignGroupLayouts getGroupLayout(String group) {
-        return signLayoutConfig.getGroupLayouts().stream().filter(value -> value.getName().equals(group)).findFirst().orElse(null);
+		return signLayoutConfig.getGroupLayouts().stream().filter(value -> value.getName().equals(group)).findFirst().orElse(null);
 	}
 
 	public SignLayout getSearchingLayout(int id) {
@@ -212,7 +210,176 @@ public final class SignSelector implements Listener {
 	}
 
 	public Sign getSignByPosition(Location location) {
-        return signs.values().stream().filter(value -> value.getPosition().equals(toPosition(location))).findFirst().orElse(null);
+		return signs.values().stream().filter(value -> value.getPosition().equals(toPosition(location))).findFirst().orElse(null);
+	}
+
+	public boolean exists(Sign sign) {
+		try {
+			if (Bukkit.getWorld(sign.getPosition().getWorld()) != null) {
+				Location location = toLocation(sign.getPosition());
+				return location.getBlock().getState() instanceof org.bukkit.block.Sign;
+			} else {
+				return false;
+			}
+		} catch (Throwable ex) {
+			return false;
+		}
+	}
+
+	public void changeBlock(Location location, String blockName, int blockId, int subId) {
+		Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
+			Material material = ItemStackBuilder.getMaterialIgnoreVersion(blockName, blockId);
+			BlockState signBlockState = location.getBlock().getState();
+
+			if (material != null && subId != -1 && signBlockState instanceof org.bukkit.block.Sign) {
+				MaterialData materialData = signBlockState.getData();
+
+				if (materialData instanceof org.bukkit.material.Sign) { // this will return false in newer 1.14 spigot versions, even if it's a sign
+					org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) materialData;
+					if (materialSign.isWallSign()) {
+						Block backBlock = location.getBlock().getRelative(materialSign.getAttachedFace());
+						BlockState blockState = backBlock.getState();
+						blockState.setType(material);
+						blockState.setData(new MaterialData(material, (byte) subId));
+						blockState.update(true);
+					}
+				}
+			}
+		});
+	}
+
+	public void sendUpdate(Player player, Location location, String[] layout) {
+		if (player.getLocation().distance(location) < 32)
+			player.sendSignChange(location, layout);
+	}
+
+	public void sendUpdateSynchronized(Location location, String[] layout) {
+		org.bukkit.block.Sign sign = (org.bukkit.block.Sign) location.getBlock().getState();
+		sign.setLine(0, layout[0]);
+		sign.setLine(1, layout[1]);
+		sign.setLine(2, layout[2]);
+		sign.setLine(3, layout[3]);
+		sign.update();
+	}
+
+	public void sendUpdateSynchronizedTask(Location location, String[] layout) {
+		Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
+			@Override
+			public void run() {
+				org.bukkit.block.Sign sign = (org.bukkit.block.Sign) location.getBlock().getState();
+				sign.setLine(0, layout[0]);
+				sign.setLine(1, layout[1]);
+				sign.setLine(2, layout[2]);
+				sign.setLine(3, layout[3]);
+				sign.update();
+			}
+		});
+	}
+
+	public boolean containsPosition(Location location) {
+		Position position = toPosition(location);
+		for (Sign sign : signs.values()) {
+			if (sign.getPosition().equals(position)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Sign getSign(ServerInfo serverInfo) {
+		return signs.values().stream().filter(value -> value.getServerInfo() != null && value.getServerInfo()
+				.getServiceId().getServerId().equals(serverInfo.getServiceId().getServerId())).findFirst()
+				.orElse(null);
+	}
+
+	public void updateArray(String[] value, ServerInfo serverInfo) {
+		short i = 0;
+		for (String x : value) {
+			value[i] = ChatColor.translateAlternateColorCodes('&', x
+					.replace("%server%", serverInfo.getServiceId().getServerId() + NetworkUtils.EMPTY_STRING)
+					.replace("%id%", serverInfo.getServiceId().getId() + NetworkUtils.EMPTY_STRING)
+					.replace("%host%", serverInfo.getHost())
+					.replace("%port%", serverInfo.getPort() + NetworkUtils.EMPTY_STRING)
+					.replace("%memory%", serverInfo.getMemory() + "MB")
+					.replace("%online_players%", serverInfo.getOnlineCount() + NetworkUtils.EMPTY_STRING)
+					.replace("%max_players%", serverInfo.getMaxPlayers() + NetworkUtils.EMPTY_STRING)
+					.replace("%motd%", ChatColor.translateAlternateColorCodes('&', serverInfo.getMotd()))
+					.replace("%state%", serverInfo.getServerState().name() + NetworkUtils.EMPTY_STRING)
+					.replace("%wrapper%", serverInfo.getServiceId().getWrapperId() + NetworkUtils.EMPTY_STRING)
+					.replace("%extra%", serverInfo.getServerConfig().getExtra())
+					.replace("%template%", serverInfo.getTemplate().getName())
+					.replace("%group%", serverInfo.getServiceId().getGroup()));
+			i++;
+		}
+	}
+
+	public String[] updateOfflineAndMaintenance(String[] value, Sign sign) {
+		for (short i = 0; i < value.length; i++) {
+			value[i] = ChatColor.translateAlternateColorCodes('&',
+					value[i].replace("%group%", sign.getTargetGroup()).replace("%from%", sign.getPosition().getGroup()));
+		}
+		return value;
+	}
+
+	public boolean containsGroup(String group) {
+		for (SignGroupLayouts signLayouts : signLayoutConfig.getGroupLayouts()) {
+			if (signLayouts.getName().equalsIgnoreCase(group)) return true;
+		}
+		return false;
+	}
+
+	public void handleUpdate(Sign sign, ServerInfo serverInfo) {
+		if (!exists(sign)) return;
+		Location location = toLocation(sign.getPosition());
+		SignLayout searchLayer = getSearchingLayout(((ThreadImpl) worker).animationTick);
+		if (isMaintenance(sign.getTargetGroup())) {
+			SignLayout _signLayout = getLayout(sign.getTargetGroup(), "maintenance");
+			String[] layout = updateOfflineAndMaintenance(_signLayout.getSignLayout().clone(), sign);
+			sign.setServerInfo(serverInfo);
+			updateArray(layout, serverInfo);
+			for (Player all : Bukkit.getOnlinePlayers())
+				sendUpdate(all, location, layout);
+			sendUpdateSynchronizedTask(toLocation(sign.getPosition()), layout);
+			changeBlock(location, _signLayout.getBlockName(), _signLayout.getBlockId(), _signLayout.getSubId());
+			return;
+		}
+
+		if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame()) {
+			if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer()) {
+				sign.setServerInfo(null);
+				String[] layout = updateOfflineAndMaintenance(searchLayer.getSignLayout().clone(), sign);
+				layout = updateOfflineAndMaintenance(layout, sign);
+				for (Player all : Bukkit.getOnlinePlayers())
+					sendUpdate(all, location, layout);
+				sendUpdateSynchronizedTask(location, layout);
+				return;
+			}
+			String[] layout;
+			SignLayout signLayout;
+			if (serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) {
+				signLayout = getLayout(sign.getTargetGroup(), "full");
+				layout = signLayout.getSignLayout().clone();
+			} else if (serverInfo.getOnlineCount() == 0) {
+				signLayout = getLayout(sign.getTargetGroup(), "empty");
+				layout = signLayout.getSignLayout().clone();
+			} else {
+				signLayout = getLayout(sign.getTargetGroup(), "online");
+				layout = signLayout.getSignLayout().clone();
+			}
+
+			sign.setServerInfo(serverInfo);
+			updateArray(layout, serverInfo);
+			for (Player all : Bukkit.getOnlinePlayers())
+				sendUpdate(all, location, layout);
+			sendUpdateSynchronizedTask(location, layout);
+			changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
+		} else {
+			sign.setServerInfo(null);
+			String[] layout = updateOfflineAndMaintenance(searchLayer.getSignLayout().clone(), sign);
+			for (Player all : Bukkit.getOnlinePlayers())
+				sendUpdate(all, location, layout);
+			sendUpdateSynchronizedTask(location, layout);
+		}
 	}
 
 	private class ThreadImpl extends Thread {
@@ -385,175 +552,6 @@ public final class SignSelector implements Listener {
 					e.printStackTrace();
 				}
 			}
-		}
-	}
-
-	public boolean exists(Sign sign) {
-		try {
-			if (Bukkit.getWorld(sign.getPosition().getWorld()) != null) {
-				Location location = toLocation(sign.getPosition());
-				return location.getBlock().getState() instanceof org.bukkit.block.Sign;
-			} else {
-				return false;
-			}
-		} catch (Throwable ex) {
-			return false;
-		}
-	}
-
-	public void changeBlock(Location location, String blockName, int blockId, int subId) {
-		Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
-			Material material = ItemStackBuilder.getMaterialIgnoreVersion(blockName, blockId);
-			BlockState signBlockState = location.getBlock().getState();
-
-			if (material != null && subId != -1 && signBlockState instanceof org.bukkit.block.Sign) {
-				MaterialData materialData = signBlockState.getData();
-
-				if (materialData instanceof org.bukkit.material.Sign) { // this will return false in newer 1.14 spigot versions, even if it's a sign
-					org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) materialData;
-					if (materialSign.isWallSign()) {
-						Block backBlock = location.getBlock().getRelative(materialSign.getAttachedFace());
-						BlockState blockState = backBlock.getState();
-						blockState.setType(material);
-						blockState.setData(new MaterialData(material, (byte) subId));
-						blockState.update(true);
-					}
-				}
-			}
-		});
-	}
-
-	public void sendUpdate(Player player, Location location, String[] layout) {
-		if (player.getLocation().distance(location) < 32)
-			player.sendSignChange(location, layout);
-	}
-
-	public void sendUpdateSynchronized(Location location, String[] layout) {
-		org.bukkit.block.Sign sign = (org.bukkit.block.Sign) location.getBlock().getState();
-		sign.setLine(0, layout[0]);
-		sign.setLine(1, layout[1]);
-		sign.setLine(2, layout[2]);
-		sign.setLine(3, layout[3]);
-		sign.update();
-	}
-
-	public void sendUpdateSynchronizedTask(Location location, String[] layout) {
-		Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-			@Override
-			public void run() {
-				org.bukkit.block.Sign sign = (org.bukkit.block.Sign) location.getBlock().getState();
-				sign.setLine(0, layout[0]);
-				sign.setLine(1, layout[1]);
-				sign.setLine(2, layout[2]);
-				sign.setLine(3, layout[3]);
-				sign.update();
-			}
-		});
-	}
-
-	public boolean containsPosition(Location location) {
-		Position position = toPosition(location);
-		for (Sign sign : signs.values()) {
-			if (sign.getPosition().equals(position)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public Sign getSign(ServerInfo serverInfo) {
-        return signs.values().stream().filter(value -> value.getServerInfo() != null && value.getServerInfo()
-                .getServiceId().getServerId().equals(serverInfo.getServiceId().getServerId())).findFirst()
-                .orElse(null);
-	}
-
-	public void updateArray(String[] value, ServerInfo serverInfo) {
-		short i = 0;
-		for (String x : value) {
-			value[i] = ChatColor.translateAlternateColorCodes('&', x
-					.replace("%server%", serverInfo.getServiceId().getServerId() + NetworkUtils.EMPTY_STRING)
-					.replace("%id%", serverInfo.getServiceId().getId() + NetworkUtils.EMPTY_STRING)
-					.replace("%host%", serverInfo.getHost())
-					.replace("%port%", serverInfo.getPort() + NetworkUtils.EMPTY_STRING)
-					.replace("%memory%", serverInfo.getMemory() + "MB")
-					.replace("%online_players%", serverInfo.getOnlineCount() + NetworkUtils.EMPTY_STRING)
-					.replace("%max_players%", serverInfo.getMaxPlayers() + NetworkUtils.EMPTY_STRING)
-					.replace("%motd%", ChatColor.translateAlternateColorCodes('&', serverInfo.getMotd()))
-					.replace("%state%", serverInfo.getServerState().name() + NetworkUtils.EMPTY_STRING)
-					.replace("%wrapper%", serverInfo.getServiceId().getWrapperId() + NetworkUtils.EMPTY_STRING)
-					.replace("%extra%", serverInfo.getServerConfig().getExtra())
-					.replace("%template%", serverInfo.getTemplate().getName())
-					.replace("%group%", serverInfo.getServiceId().getGroup()));
-			i++;
-		}
-	}
-
-	public String[] updateOfflineAndMaintenance(String[] value, Sign sign) {
-		for (short i = 0; i < value.length; i++) {
-			value[i] = ChatColor.translateAlternateColorCodes('&',
-					value[i].replace("%group%", sign.getTargetGroup()).replace("%from%", sign.getPosition().getGroup()));
-		}
-		return value;
-	}
-
-	public boolean containsGroup(String group) {
-		for (SignGroupLayouts signLayouts : signLayoutConfig.getGroupLayouts()) {
-			if (signLayouts.getName().equalsIgnoreCase(group)) return true;
-		}
-		return false;
-	}
-
-	public void handleUpdate(Sign sign, ServerInfo serverInfo) {
-		if (!exists(sign)) return;
-		Location location = toLocation(sign.getPosition());
-		SignLayout searchLayer = getSearchingLayout(((ThreadImpl) worker).animationTick);
-		if (isMaintenance(sign.getTargetGroup())) {
-			SignLayout _signLayout = getLayout(sign.getTargetGroup(), "maintenance");
-			String[] layout = updateOfflineAndMaintenance(_signLayout.getSignLayout().clone(), sign);
-			sign.setServerInfo(serverInfo);
-			updateArray(layout, serverInfo);
-			for (Player all : Bukkit.getOnlinePlayers())
-				sendUpdate(all, location, layout);
-			sendUpdateSynchronizedTask(toLocation(sign.getPosition()), layout);
-			changeBlock(location, _signLayout.getBlockName(), _signLayout.getBlockId(), _signLayout.getSubId());
-			return;
-		}
-
-		if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame()) {
-			if ((signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) || serverInfo.getServerConfig().isHideServer()) {
-				sign.setServerInfo(null);
-				String[] layout = updateOfflineAndMaintenance(searchLayer.getSignLayout().clone(), sign);
-				layout = updateOfflineAndMaintenance(layout, sign);
-				for (Player all : Bukkit.getOnlinePlayers())
-					sendUpdate(all, location, layout);
-				sendUpdateSynchronizedTask(location, layout);
-				return;
-			}
-			String[] layout;
-			SignLayout signLayout;
-			if (serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) {
-				signLayout = getLayout(sign.getTargetGroup(), "full");
-				layout = signLayout.getSignLayout().clone();
-			} else if (serverInfo.getOnlineCount() == 0) {
-				signLayout = getLayout(sign.getTargetGroup(), "empty");
-				layout = signLayout.getSignLayout().clone();
-			} else {
-				signLayout = getLayout(sign.getTargetGroup(), "online");
-				layout = signLayout.getSignLayout().clone();
-			}
-
-			sign.setServerInfo(serverInfo);
-			updateArray(layout, serverInfo);
-			for (Player all : Bukkit.getOnlinePlayers())
-				sendUpdate(all, location, layout);
-			sendUpdateSynchronizedTask(location, layout);
-			changeBlock(location, signLayout.getBlockName(), signLayout.getBlockId(), signLayout.getSubId());
-		} else {
-			sign.setServerInfo(null);
-			String[] layout = updateOfflineAndMaintenance(searchLayer.getSignLayout().clone(), sign);
-			for (Player all : Bukkit.getOnlinePlayers())
-				sendUpdate(all, location, layout);
-			sendUpdateSynchronizedTask(location, layout);
 		}
 	}
 

@@ -5,61 +5,51 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class NetorHashMap<Key, VF, VS> implements NetorMap<Key> {
 
-    private ConcurrentHashMap<Key, NetorSet<VF, VS>> values = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<Key, NetorSet<VF, VS>> values = new ConcurrentHashMap<>();
 
-    @Override
-    public void clear()
-    {
-        values.clear();
-    }
+	@Override
+	public void clear() {
+		values.clear();
+	}
 
-    @Override
-    public int size()
-    {
-        return values.size();
-    }
+	@Override
+	public int size() {
+		return values.size();
+	}
 
-    public void add(Key key, VF valueF, VS valueS)
-    {
-        values.put(key, new NetorSet<>(valueF, valueS));
-    }
+	public void add(Key key, VF valueF, VS valueS) {
+		values.put(key, new NetorSet<>(valueF, valueS));
+	}
 
-    @Override
-    public void remove(Key key)
-    {
-        values.remove(key);
-    }
+	@Override
+	public void remove(Key key) {
+		values.remove(key);
+	}
 
-    @Override
-    public Set<Key> keySet()
-    {
-        return values.keySet();
-    }
+	@Override
+	public Set<Key> keySet() {
+		return values.keySet();
+	}
 
-    @Override
-    public boolean contains(Key key)
-    {
-        return values.containsKey(key) ? true : false;
-    }
+	@Override
+	public boolean contains(Key key) {
+		return values.containsKey(key) ? true : false;
+	}
 
-    public VF getF(Key key)
-    {
-        return values.get(key).getFirstValue();
-    }
+	public VF getF(Key key) {
+		return values.get(key).getFirstValue();
+	}
 
-    public VS getS(Key key)
-    {
-        return values.get(key).getSecondValue();
-    }
+	public VS getS(Key key) {
+		return values.get(key).getSecondValue();
+	}
 
-    public void updateF(Key key, VF value)
-    {
-        values.get(key).updateFirst(value);
-    }
+	public void updateF(Key key, VF value) {
+		values.get(key).updateFirst(value);
+	}
 
-    public void updateS(Key key, VS value)
-    {
-        values.get(key).updateSecond(value);
-    }
+	public void updateS(Key key, VS value) {
+		values.get(key).updateSecond(value);
+	}
 
 }

@@ -14,26 +14,26 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class CloudFlareProxyGroup {
 
-    /**
-     * Name of the BungeeCord group
-     */
-    private String name;
+	/**
+	 * Name of the BungeeCord group
+	 */
+	private String name;
 
-    /**
-     * Name of the sub-domain
-     */
-    private String sub;
+	/**
+	 * Name of the sub-domain
+	 */
+	private String sub;
 
-    public CloudFlareProxyGroup(String name, String sub) {
-        this.name = name;
-        this.sub = sub;
-    }
+	public CloudFlareProxyGroup(String name, String sub) {
+		this.name = name;
+		this.sub = sub;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getSub() {
-        return sub;
-    }
+	public String getSub() {
+		return sub;
+	}
 }

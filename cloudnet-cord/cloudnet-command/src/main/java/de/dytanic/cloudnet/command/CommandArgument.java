@@ -9,32 +9,32 @@ package de.dytanic.cloudnet.command;
  */
 public abstract class CommandArgument {
 
-    /**
-     * The name of the argument to process
-     */
-    private String name;
+	/**
+	 * The name of the argument to process
+	 */
+	private String name;
 
-    /**
-     * Method to execute before an argument is processed.
-     *
-     * @param command     the command that is executed after all arguments are processed
-     * @param commandLine the complete command line for this command
-     */
-    public abstract void preExecute(Command command, String commandLine);
+	public CommandArgument(String name) {
+		this.name = name;
+	}
 
-    /**
-     * Method to execute after a command is executed.
-     *
-     * @param command     the command that was executed before all arguments are processed
-     * @param commandLine the complete command line for this command
-     */
-    public abstract void postExecute(Command command, String commandLine);
+	/**
+	 * Method to execute before an argument is processed.
+	 *
+	 * @param command     the command that is executed after all arguments are processed
+	 * @param commandLine the complete command line for this command
+	 */
+	public abstract void preExecute(Command command, String commandLine);
 
-    public CommandArgument(String name) {
-        this.name = name;
-    }
+	/**
+	 * Method to execute after a command is executed.
+	 *
+	 * @param command     the command that was executed before all arguments are processed
+	 * @param commandLine the complete command line for this command
+	 */
+	public abstract void postExecute(Command command, String commandLine);
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 }

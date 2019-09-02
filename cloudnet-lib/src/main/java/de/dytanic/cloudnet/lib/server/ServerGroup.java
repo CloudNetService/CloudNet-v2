@@ -18,204 +18,202 @@ import java.util.Collections;
  * Created by Tareko on 21.05.2017.
  */
 public class ServerGroup
-        implements Nameable {
+		implements Nameable {
 
-    public static final Type TYPE = new TypeToken<ServerGroup>() {
-    }.getType();
+	public static final Type TYPE = new TypeToken<ServerGroup>() {
+	}.getType();
 
-    protected String name;
-    protected Collection<String> wrapper;
+	protected String name;
+	protected Collection<String> wrapper;
 
-    protected boolean kickedForceFallback;
-    protected ServerGroupType serverType;
-    protected ServerGroupMode groupMode;
-    protected Template globalTemplate;
-    protected Collection<Template> templates;
+	protected boolean kickedForceFallback;
+	protected ServerGroupType serverType;
+	protected ServerGroupMode groupMode;
+	protected Template globalTemplate;
+	protected Collection<Template> templates;
 
-    protected int memory;
-    protected int dynamicMemory;
-    protected int joinPower;
-    protected boolean maintenance;
-    protected int minOnlineServers;
-    protected int maxOnlineServers;
-    protected AdvancedServerConfig advancedServerConfig;
+	protected int memory;
+	protected int dynamicMemory;
+	protected int joinPower;
+	protected boolean maintenance;
+	protected int minOnlineServers;
+	protected int maxOnlineServers;
+	protected AdvancedServerConfig advancedServerConfig;
 
-    protected int percentForNewServerAutomatically;
-    protected PriorityService priorityService;
+	protected int percentForNewServerAutomatically;
+	protected PriorityService priorityService;
 
-    protected WrappedMap settings;
+	protected WrappedMap settings;
 
-    public ServerGroup(String name, Collection<String> wrapper, boolean kickedForceFallback, int memory, int dynamicMemory, int joinPower, boolean maintenance, int startup,
-                       int priority, int groupPriority, int priorityStopTime, int onlineCountForPriority, int priorityForGroupOnlineCount, int percentForNewServerAutomatically,
-                       ServerGroupType serverType, ServerGroupMode groupMode, Collection<Template> templates, AdvancedServerConfig advancedServerConfig)
-    {
-        this.name = name;
-        this.kickedForceFallback = kickedForceFallback;
-        this.wrapper = wrapper;
-        this.memory = memory;
-        this.dynamicMemory = dynamicMemory;
-        this.joinPower = joinPower;
-        this.maintenance = maintenance;
-        this.minOnlineServers = startup;
-        this.maxOnlineServers = -1;
-        this.serverType = serverType;
-        this.groupMode = groupMode;
-        this.advancedServerConfig = advancedServerConfig;
-        this.globalTemplate = new Template("globaltemplate", TemplateResource.LOCAL, null, new String[]{}, new ArrayList<>());
-        this.templates = templates;
+	public ServerGroup(String name, Collection<String> wrapper, boolean kickedForceFallback, int memory, int dynamicMemory, int joinPower, boolean maintenance, int startup,
+	                   int priority, int groupPriority, int priorityStopTime, int onlineCountForPriority, int priorityForGroupOnlineCount, int percentForNewServerAutomatically,
+	                   ServerGroupType serverType, ServerGroupMode groupMode, Collection<Template> templates, AdvancedServerConfig advancedServerConfig) {
+		this.name = name;
+		this.kickedForceFallback = kickedForceFallback;
+		this.wrapper = wrapper;
+		this.memory = memory;
+		this.dynamicMemory = dynamicMemory;
+		this.joinPower = joinPower;
+		this.maintenance = maintenance;
+		this.minOnlineServers = startup;
+		this.maxOnlineServers = -1;
+		this.serverType = serverType;
+		this.groupMode = groupMode;
+		this.advancedServerConfig = advancedServerConfig;
+		this.globalTemplate = new Template("globaltemplate", TemplateResource.LOCAL, null, new String[]{}, new ArrayList<>());
+		this.templates = templates;
 
-        this.settings = new WrappedMap();
+		this.settings = new WrappedMap();
 
-        this.percentForNewServerAutomatically = percentForNewServerAutomatically;
+		this.percentForNewServerAutomatically = percentForNewServerAutomatically;
 
-        this.priorityService = new PriorityService(
-                priorityStopTime,
-                new PriorityConfig(priority, onlineCountForPriority),
-                new PriorityConfig(groupPriority, priorityForGroupOnlineCount)
-        );
+		this.priorityService = new PriorityService(
+				priorityStopTime,
+				new PriorityConfig(priority, onlineCountForPriority),
+				new PriorityConfig(groupPriority, priorityForGroupOnlineCount)
+		);
 
-        this.templates = new ArrayList<>(Collections.singletonList(new Template("default", TemplateResource.LOCAL, null, new String[]{}, new ArrayList<>())));
-    }
+		this.templates = new ArrayList<>(Collections.singletonList(new Template("default", TemplateResource.LOCAL, null, new String[]{}, new ArrayList<>())));
+	}
 
-    public int getMemory() {
-        return memory;
-    }
+	public int getMemory() {
+		return memory;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	public void setMemory(int memory) {
+		this.memory = memory;
+	}
 
-    public Collection<String> getWrapper() {
-        return wrapper;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    public int getPercentForNewServerAutomatically() {
-        return percentForNewServerAutomatically;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public int getJoinPower() {
-        return joinPower;
-    }
+	public Collection<String> getWrapper() {
+		return wrapper;
+	}
 
-    public AdvancedServerConfig getAdvancedServerConfig() {
-        return advancedServerConfig;
-    }
+	public void setWrapper(Collection<String> wrapper) {
+		this.wrapper = wrapper;
+	}
 
-    public WrappedMap getSettings() {
-        return settings;
-    }
+	public int getPercentForNewServerAutomatically() {
+		return percentForNewServerAutomatically;
+	}
 
-    public ServerGroupMode getGroupMode() {
-        return groupMode;
-    }
+	public void setPercentForNewServerAutomatically(int percentForNewServerAutomatically) {
+		this.percentForNewServerAutomatically = percentForNewServerAutomatically;
+	}
 
-    public Collection<Template> getTemplates() {
-        return templates;
-    }
+	public int getJoinPower() {
+		return joinPower;
+	}
 
-    public int getDynamicMemory() {
-        return dynamicMemory;
-    }
+	public void setJoinPower(int joinPower) {
+		this.joinPower = joinPower;
+	}
 
-    public int getMaxOnlineServers() {
-        return maxOnlineServers;
-    }
+	public AdvancedServerConfig getAdvancedServerConfig() {
+		return advancedServerConfig;
+	}
 
-    public int getMinOnlineServers() {
-        return minOnlineServers;
-    }
+	public void setAdvancedServerConfig(AdvancedServerConfig advancedServerConfig) {
+		this.advancedServerConfig = advancedServerConfig;
+	}
 
-    public PriorityService getPriorityService() {
-        return priorityService;
-    }
+	public WrappedMap getSettings() {
+		return settings;
+	}
 
-    public ServerGroupType getServerType() {
-        return serverType;
-    }
+	public void setSettings(WrappedMap settings) {
+		this.settings = settings;
+	}
 
-    public Template getGlobalTemplate() {
-        return globalTemplate;
-    }
+	public ServerGroupMode getGroupMode() {
+		return groupMode;
+	}
 
-    public boolean isMaintenance() {
-        return maintenance;
-    }
+	public void setGroupMode(ServerGroupMode groupMode) {
+		this.groupMode = groupMode;
+	}
 
-    public boolean isKickedForceFallback() {
-        return kickedForceFallback;
-    }
+	public Collection<Template> getTemplates() {
+		return templates;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setTemplates(Collection<Template> templates) {
+		this.templates = templates;
+	}
 
-    public void setTemplates(Collection<Template> templates) {
-        this.templates = templates;
-    }
+	public int getDynamicMemory() {
+		return dynamicMemory;
+	}
 
-    public void setAdvancedServerConfig(AdvancedServerConfig advancedServerConfig) {
-        this.advancedServerConfig = advancedServerConfig;
-    }
+	public void setDynamicMemory(int dynamicMemory) {
+		this.dynamicMemory = dynamicMemory;
+	}
 
-    public void setDynamicMemory(int dynamicMemory) {
-        this.dynamicMemory = dynamicMemory;
-    }
+	public int getMaxOnlineServers() {
+		return maxOnlineServers;
+	}
 
-    public void setGlobalTemplate(Template globalTemplate) {
-        this.globalTemplate = globalTemplate;
-    }
+	public void setMaxOnlineServers(int maxOnlineServers) {
+		this.maxOnlineServers = maxOnlineServers;
+	}
 
-    public void setGroupMode(ServerGroupMode groupMode) {
-        this.groupMode = groupMode;
-    }
+	public int getMinOnlineServers() {
+		return minOnlineServers;
+	}
 
-    public void setJoinPower(int joinPower) {
-        this.joinPower = joinPower;
-    }
+	public void setMinOnlineServers(int minOnlineServers) {
+		this.minOnlineServers = minOnlineServers;
+	}
 
-    public void setKickedForceFallback(boolean kickedForceFallback) {
-        this.kickedForceFallback = kickedForceFallback;
-    }
+	public PriorityService getPriorityService() {
+		return priorityService;
+	}
 
-    public void setMaintenance(boolean maintenance) {
-        this.maintenance = maintenance;
-    }
+	public void setPriorityService(PriorityService priorityService) {
+		this.priorityService = priorityService;
+	}
 
-    public void setMaxOnlineServers(int maxOnlineServers) {
-        this.maxOnlineServers = maxOnlineServers;
-    }
+	public ServerGroupType getServerType() {
+		return serverType;
+	}
 
-    public void setMemory(int memory) {
-        this.memory = memory;
-    }
+	public void setServerType(ServerGroupType serverType) {
+		this.serverType = serverType;
+	}
 
-    public void setMinOnlineServers(int minOnlineServers) {
-        this.minOnlineServers = minOnlineServers;
-    }
+	public Template getGlobalTemplate() {
+		return globalTemplate;
+	}
 
-    public void setServerType(ServerGroupType serverType) {
-        this.serverType = serverType;
-    }
+	public void setGlobalTemplate(Template globalTemplate) {
+		this.globalTemplate = globalTemplate;
+	}
 
-    public void setPercentForNewServerAutomatically(int percentForNewServerAutomatically) {
-        this.percentForNewServerAutomatically = percentForNewServerAutomatically;
-    }
+	public boolean isMaintenance() {
+		return maintenance;
+	}
 
-    public void setWrapper(Collection<String> wrapper) {
-        this.wrapper = wrapper;
-    }
+	public void setMaintenance(boolean maintenance) {
+		this.maintenance = maintenance;
+	}
 
-    public void setPriorityService(PriorityService priorityService) {
-        this.priorityService = priorityService;
-    }
+	public boolean isKickedForceFallback() {
+		return kickedForceFallback;
+	}
 
-    public void setSettings(WrappedMap settings) {
-        this.settings = settings;
-    }
+	public void setKickedForceFallback(boolean kickedForceFallback) {
+		this.kickedForceFallback = kickedForceFallback;
+	}
 
-    public SimpleServerGroup toSimple()
-    {
-        return new SimpleServerGroup(name, kickedForceFallback, joinPower, memory, groupMode, maintenance, percentForNewServerAutomatically, settings, advancedServerConfig);
-    }
+	public SimpleServerGroup toSimple() {
+		return new SimpleServerGroup(name, kickedForceFallback, joinPower, memory, groupMode, maintenance, percentForNewServerAutomatically, settings, advancedServerConfig);
+	}
 }

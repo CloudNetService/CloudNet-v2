@@ -6,27 +6,27 @@ package de.dytanic.cloudnet.lib.service.plugin;
 
 public class ServerInstallablePlugin {
 
-    private String name;
+	private String name;
 
-    private PluginResourceType pluginResourceType;
+	private PluginResourceType pluginResourceType;
 
-    private String url;
+	private String url;
 
-    public ServerInstallablePlugin(String name, PluginResourceType pluginResourceType, String url) {
-        this.name = name;
-        this.pluginResourceType = pluginResourceType;
-        this.url = url;
-    }
+	public ServerInstallablePlugin(String name, PluginResourceType pluginResourceType, String url) {
+		this.name = name;
+		this.pluginResourceType = pluginResourceType;
+		this.url = url;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public PluginResourceType getPluginResourceType() {
-        return pluginResourceType;
-    }
+	public PluginResourceType getPluginResourceType() {
+		return pluginResourceType;
+	}
 }

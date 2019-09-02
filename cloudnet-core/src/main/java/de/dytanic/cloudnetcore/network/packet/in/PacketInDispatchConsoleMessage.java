@@ -10,9 +10,8 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 
 public class PacketInDispatchConsoleMessage extends PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        System.out.println(data.getString("output"));
-    }
+	@Override
+	public void handleInput(Document data, PacketSender packetSender) {
+		System.out.println(data.getString("output"));
+	}
 }

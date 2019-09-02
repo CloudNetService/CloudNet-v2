@@ -13,21 +13,20 @@ import io.netty.channel.Channel;
  */
 public class ChannelInitEvent extends Event {
 
-    private Channel channel;
+	private Channel channel;
 
-    private INetworkComponent iNetworkComponent;
+	private INetworkComponent iNetworkComponent;
 
-    public ChannelInitEvent(Channel channel, INetworkComponent iNetworkComponent)
-    {
-        this.channel = channel;
-        this.iNetworkComponent = iNetworkComponent;
-    }
+	public ChannelInitEvent(Channel channel, INetworkComponent iNetworkComponent) {
+		this.channel = channel;
+		this.iNetworkComponent = iNetworkComponent;
+	}
 
-    public Channel getChannel() {
-        return channel;
-    }
+	public Channel getChannel() {
+		return channel;
+	}
 
-    public INetworkComponent getINetworkComponent() {
-        return iNetworkComponent;
-    }
+	public INetworkComponent getINetworkComponent() {
+		return iNetworkComponent;
+	}
 }

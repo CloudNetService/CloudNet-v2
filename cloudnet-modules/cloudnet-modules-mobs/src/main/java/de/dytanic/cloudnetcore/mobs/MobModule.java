@@ -22,69 +22,60 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
  */
 public class MobModule extends CoreModule implements IEventListener<UpdateAllEvent> {
 
-    private ConfigMobs configMobs;
+	private static MobModule instance;
+	private ConfigMobs configMobs;
+	private MobDatabase mobDatabase;
 
-    private MobDatabase mobDatabase;
+	public static MobModule getInstance() {
+		return instance;
+	}
 
-    private static MobModule instance;
+	public ConfigMobs getConfigMobs() {
+		return configMobs;
+	}
 
-    public static MobModule getInstance() {
-        return instance;
-    }
+	public MobDatabase getMobDatabase() {
+		return mobDatabase;
+	}
 
-    public ConfigMobs getConfigMobs() {
-        return configMobs;
-    }
+	@Override
+	public void onLoad() {
+		instance = this;
+	}
 
-    public MobDatabase getMobDatabase() {
-        return mobDatabase;
-    }
+	@Override
+	public void onBootstrap() {
+		configMobs = new ConfigMobs();
+		mobDatabase = new MobDatabase(getCloud().getDatabaseManager().getDatabase("cloud_internal_cfg"));
 
-    @Override
-    public void onLoad()
-    {
-        instance = this;
-    }
+		if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 3).size() == 0) {
+			getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 3, PacketInAddMob.class);
+		}
+		if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 4).size() == 0) {
+			getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 4, PacketInRemoveMob.class);
+		}
 
-    @Override
-    public void onBootstrap()
-    {
-        configMobs = new ConfigMobs();
-        mobDatabase = new MobDatabase(getCloud().getDatabaseManager().getDatabase("cloud_internal_cfg"));
+		getCloud().getEventManager().registerListener(this, this);
+		getCloud().getEventManager().registerListener(this, new ListenerImpl());
+	}
 
-        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 3).size() == 0)
-        {
-            getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 3, PacketInAddMob.class);
-        }
-        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 4).size() == 0)
-        {
-            getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 4, PacketInRemoveMob.class);
-        }
+	@Override
+	public void onCall(UpdateAllEvent event) {
+		if (event.isOnlineCloudNetworkUpdate())
+			getCloud().getNetworkManager().sendToLobbys(new PacketOutMobSelector(configMobs.load(), mobDatabase.loadAll()));
+	}
 
-        getCloud().getEventManager().registerListener(this, this);
-        getCloud().getEventManager().registerListener(this, new ListenerImpl());
-    }
+	private class ListenerImpl implements IEventListener<ChannelInitEvent> {
 
-    @Override
-    public void onCall(UpdateAllEvent event)
-    {
-        if (event.isOnlineCloudNetworkUpdate())
-            getCloud().getNetworkManager().sendToLobbys(new PacketOutMobSelector(configMobs.load(), mobDatabase.loadAll()));
-    }
+		@Override
+		public void onCall(ChannelInitEvent event) {
+			if (event.getINetworkComponent() instanceof MinecraftServer) {
+				MinecraftServer minecraftServer = (MinecraftServer) event.getINetworkComponent();
 
-    private class ListenerImpl implements IEventListener<ChannelInitEvent> {
-
-        @Override
-        public void onCall(ChannelInitEvent event)
-        {
-            if (event.getINetworkComponent() instanceof MinecraftServer)
-            {
-                MinecraftServer minecraftServer = (MinecraftServer) event.getINetworkComponent();
-
-                if (minecraftServer.getGroupMode().equals(ServerGroupMode.LOBBY) || minecraftServer.getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))
-                    minecraftServer.sendPacket(new PacketOutMobSelector(configMobs.load(), mobDatabase.loadAll()));
-            }
-        }
-    }
+				if (minecraftServer.getGroupMode().equals(ServerGroupMode.LOBBY) || minecraftServer.getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))
+					minecraftServer.sendPacket(new PacketOutMobSelector(configMobs.load(), mobDatabase.loadAll()));
+			}
+		}
+	}
 
 }

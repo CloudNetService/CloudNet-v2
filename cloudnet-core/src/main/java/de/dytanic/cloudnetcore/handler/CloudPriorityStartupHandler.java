@@ -8,6 +8,7 @@ import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
+
 import java.util.Collection;
 
 /**
@@ -15,35 +16,30 @@ import java.util.Collection;
  */
 public class CloudPriorityStartupHandler implements ICloudHandler {
 
-    @Override
-    public void onHandle(CloudNet cloudNet)
-    {
-        double onlineCount = CloudNet.getInstance().getNetworkManager().newCloudNetwork().getOnlineCount();
-        for (ServerGroup group : CloudNet.getInstance().getServerGroups().values())
-        {
-            if (group.getPriorityService().getGlobal().getOnlineServers() == 0 || group.getPriorityService().getGlobal().getOnlineCount() == 0 || group.getGroupMode() == ServerGroupMode.STATIC
-                    || group.isMaintenance()) continue;
+	@Override
+	public void onHandle(CloudNet cloudNet) {
+		double onlineCount = CloudNet.getInstance().getNetworkManager().newCloudNetwork().getOnlineCount();
+		for (ServerGroup group : CloudNet.getInstance().getServerGroups().values()) {
+			if (group.getPriorityService().getGlobal().getOnlineServers() == 0 || group.getPriorityService().getGlobal().getOnlineCount() == 0 || group.getGroupMode() == ServerGroupMode.STATIC
+					|| group.isMaintenance()) continue;
 
-            double priority = (group.getPriorityService().getGlobal().getOnlineServers() / ((double) group.getPriorityService().getGlobal().getOnlineCount())) * (onlineCount == 0 ? 1.0D : (onlineCount));
-            Collection<String> servers = CloudNet.getInstance().getServersAndWaitings(group.getName());
+			double priority = (group.getPriorityService().getGlobal().getOnlineServers() / ((double) group.getPriorityService().getGlobal().getOnlineCount())) * (onlineCount == 0 ? 1.0D : (onlineCount));
+			Collection<String> servers = CloudNet.getInstance().getServersAndWaitings(group.getName());
 
-            if (servers.size() == 0 && servers.size() < (priority <= 1 ? 1 : priority))
-            {
-                CloudNet.getInstance().startGameServer(group);
-                continue;
-            }
+			if (servers.size() == 0 && servers.size() < (priority <= 1 ? 1 : priority)) {
+				CloudNet.getInstance().startGameServer(group);
+				continue;
+			}
 
-            if (servers.size() < (priority <= 1 ? 1 : priority))
-            {
-                CloudNet.getInstance().startGameServer(group, new Document(), true);
-            }
+			if (servers.size() < (priority <= 1 ? 1 : priority)) {
+				CloudNet.getInstance().startGameServer(group, new Document(), true);
+			}
 
-        }
-    }
+		}
+	}
 
-    @Override
-    public int getTicks()
-    {
-        return 50;
-    }
+	@Override
+	public int getTicks() {
+		return 50;
+	}
 }

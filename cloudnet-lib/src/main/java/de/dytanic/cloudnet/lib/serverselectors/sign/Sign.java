@@ -9,36 +9,35 @@ import java.util.UUID;
  */
 public class Sign {
 
-    private UUID uniqueId;
-    private String targetGroup;
-    private Position position;
+	private UUID uniqueId;
+	private String targetGroup;
+	private Position position;
 
-    private volatile ServerInfo serverInfo;
+	private volatile ServerInfo serverInfo;
 
-    public Sign(String targetGroup, Position signPosition)
-    {
-        this.uniqueId = UUID.randomUUID();
-        this.targetGroup = targetGroup;
-        this.position = signPosition;
-    }
+	public Sign(String targetGroup, Position signPosition) {
+		this.uniqueId = UUID.randomUUID();
+		this.targetGroup = targetGroup;
+		this.position = signPosition;
+	}
 
-    public void setServerInfo(ServerInfo serverInfo) {
-        this.serverInfo = serverInfo;
-    }
+	public ServerInfo getServerInfo() {
+		return serverInfo;
+	}
 
-    public ServerInfo getServerInfo() {
-        return serverInfo;
-    }
+	public void setServerInfo(ServerInfo serverInfo) {
+		this.serverInfo = serverInfo;
+	}
 
-    public UUID getUniqueId() {
-        return uniqueId;
-    }
+	public UUID getUniqueId() {
+		return uniqueId;
+	}
 
-    public Position getPosition() {
-        return position;
-    }
+	public Position getPosition() {
+		return position;
+	}
 
-    public String getTargetGroup() {
-        return targetGroup;
-    }
+	public String getTargetGroup() {
+		return targetGroup;
+	}
 }

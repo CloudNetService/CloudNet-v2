@@ -11,55 +11,55 @@ import java.util.Collection;
  */
 public class ProxyProcessMeta {
 
-    private ServiceId serviceId;
+	private ServiceId serviceId;
 
-    private int memory;
+	private int memory;
 
-    private int port;
+	private int port;
 
-    private String[] processParameters;
+	private String[] processParameters;
 
-    private String url;
+	private String url;
 
-    private Collection<ServerInstallablePlugin> downloadablePlugins;
+	private Collection<ServerInstallablePlugin> downloadablePlugins;
 
-    private Document properties;
+	private Document properties;
 
-    public ProxyProcessMeta(ServiceId serviceId, int memory, int port, String[] processParameters, String url, Collection<ServerInstallablePlugin> downloadablePlugins, Document properties) {
-        this.serviceId = serviceId;
-        this.memory = memory;
-        this.port = port;
-        this.processParameters = processParameters;
-        this.url = url;
-        this.downloadablePlugins = downloadablePlugins;
-        this.properties = properties;
-    }
+	public ProxyProcessMeta(ServiceId serviceId, int memory, int port, String[] processParameters, String url, Collection<ServerInstallablePlugin> downloadablePlugins, Document properties) {
+		this.serviceId = serviceId;
+		this.memory = memory;
+		this.port = port;
+		this.processParameters = processParameters;
+		this.url = url;
+		this.downloadablePlugins = downloadablePlugins;
+		this.properties = properties;
+	}
 
-    public int getMemory() {
-        return memory;
-    }
+	public int getMemory() {
+		return memory;
+	}
 
-    public Document getProperties() {
-        return properties;
-    }
+	public Document getProperties() {
+		return properties;
+	}
 
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
+	public ServiceId getServiceId() {
+		return serviceId;
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public int getPort() {
+		return port;
+	}
 
-    public Collection<ServerInstallablePlugin> getDownloadablePlugins() {
-        return downloadablePlugins;
-    }
+	public Collection<ServerInstallablePlugin> getDownloadablePlugins() {
+		return downloadablePlugins;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public String[] getProcessParameters() {
-        return processParameters;
-    }
+	public String[] getProcessParameters() {
+		return processParameters;
+	}
 }

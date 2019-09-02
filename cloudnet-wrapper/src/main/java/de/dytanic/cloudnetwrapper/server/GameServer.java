@@ -79,48 +79,49 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 		this.dir = Paths.get(path);
 	}
 
-    public ServerInfo getServerInfo() {
-        return serverInfo;
-    }
+	public ServerInfo getServerInfo() {
+		return serverInfo;
+	}
 
-    public ServerProcess getServerProcess() {
-        return serverProcess;
-    }
+	public ServerProcess getServerProcess() {
+		return serverProcess;
+	}
 
-    public String getPath() {
-        return path;
-    }
+	public String getPath() {
+		return path;
+	}
 
-    public ServerGroup getServerGroup() {
-        return serverGroup;
-    }
+	public ServerGroup getServerGroup() {
+		return serverGroup;
+	}
 
-    public long getStartupTimeStamp() {
-        return startupTimeStamp;
-    }
+	public long getStartupTimeStamp() {
+		return startupTimeStamp;
+	}
 
-    public ServerStage getServerStage() {
-        return serverStage;
-    }
+	public ServerStage getServerStage() {
+		return serverStage;
+	}
 
-    @Override
-    public Process getInstance() {
-        return instance;
-    }
+	@Override
+	public Process getInstance() {
+		return instance;
+	}
 
-    public Path getDir() {
-        return dir;
-    }
+	public Path getDir() {
+		return dir;
+	}
 
-    public String getCustom() {
-        return custom;
-    }
+	public String getCustom() {
+		return custom;
+	}
 
-    /**
-     *  Prepare the game server
-     * @return Return true if the preparing successful, else return false
-     * @throws Exception Throws false if something wrong
-     */
+	/**
+	 * Prepare the game server
+	 *
+	 * @return Return true if the preparing successful, else return false
+	 * @throws Exception Throws false if something wrong
+	 */
 	@Override
 	public boolean bootstrap() throws Exception {
 		serverProcess.setServerStage(ServerStage.DOWNLOAD);
@@ -350,9 +351,9 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 		return true;
 	}
 
-    /**
-     * Restart the game server
-     */
+	/**
+	 * Restart the game server
+	 */
 	public void restart() {
 
 		kill();
@@ -366,10 +367,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 		}
 	}
 
-    /**
-     * Shutdown the game server
-     * @return Return true if successful, else false
-     */
+	/**
+	 * Shutdown the game server
+	 *
+	 * @return Return true if successful, else false
+	 */
 	@Override
 	public boolean shutdown() {
 
@@ -410,17 +412,18 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 		return true;
 	}
 
-    /**
-     * Copy the template to the temporary folder
-     */
+	/**
+	 * Copy the template to the temporary folder
+	 */
 	public void copy() {
 		copy(null);
 	}
 
-    /**
-     * Copy the template to the temporary folder
-     * @param template The template with information's
-     */
+	/**
+	 * Copy the template to the temporary folder
+	 *
+	 * @param template The template with information's
+	 */
 	public void copy(Template template) {
 
 		if (template == null) template = this.serverProcess.getMeta().getTemplate();
@@ -474,9 +477,9 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 		return "[" + serverProcess.getMeta().getServiceId().getServerId() + "/port=" + serverProcess.getMeta().getPort() + "/memory=" + serverProcess.getMeta().getMemory() + "]";
 	}
 
-    /**
-     * Kill the process.
-     */
+	/**
+	 * Kill the process.
+	 */
 	public void kill() {
 		if (instance.isAlive()) {
 			executeCommand("stop");
@@ -486,10 +489,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 		instance.destroyForcibly();
 	}
 
-    /**
-     * Copy folder
-     * @param name The name of the folder.
-     */
+	/**
+	 * Copy folder
+	 *
+	 * @param name The name of the folder.
+	 */
 	public void copyDirectory(String name) {
 		File file = new File(path, name);
 
@@ -501,10 +505,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 		}
 	}
 
-    /**
-     * Start the java process
-     * @throws Exception
-     */
+	/**
+	 * Start the java process
+	 *
+	 * @throws Exception
+	 */
 	private void startProcess() throws Exception {
 		StringBuilder commandBuilder = new StringBuilder();
 		commandBuilder.append("java ");
@@ -535,11 +540,12 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 		this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, new File(path));
 	}
 
-    /**
-     * Download the template from master.
-     * @return return true if success the download, else  return false.
-     * @throws Exception throws if something wrong.
-     */
+	/**
+	 * Download the template from master.
+	 *
+	 * @return return true if success the download, else  return false.
+	 * @throws Exception throws if something wrong.
+	 */
 	private boolean templateDownloader() throws Exception {
 		Files.createDirectories(dir);
 
@@ -600,11 +606,12 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 		return true;
 	}
 
-    /**
-     * Download the template from url.
-     * @param template The information about the template.
-     * @throws IOException Throws is something wrong.
-     */
+	/**
+	 * Download the template from url.
+	 *
+	 * @param template The information about the template.
+	 * @throws IOException Throws is something wrong.
+	 */
 	private void downloadURL(Template template) throws IOException {
 		String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
 		if (!Files.exists(Paths.get(groupTemplates))) {
@@ -617,11 +624,12 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 		FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
 	}
 
-    /**
-     * Download the template from template information's.
-     * @param template The template with the information's.
-     * @throws IOException Throws is something wrong
-     */
+	/**
+	 * Download the template from template information's.
+	 *
+	 * @param template The template with the information's.
+	 * @throws IOException Throws is something wrong
+	 */
 	private void downloadTemplate(Template template) throws IOException {
 		String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
 		if (!Files.exists(Paths.get(groupTemplates))) {
