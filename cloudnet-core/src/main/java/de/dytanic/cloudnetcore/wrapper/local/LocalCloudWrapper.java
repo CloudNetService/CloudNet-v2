@@ -115,7 +115,7 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
             }
             SetupSpigotVersion setup = new SetupSpigotVersion();
             setup.setTarget(path);
-            setup.run(CloudNet.getLogger().getReader());
+            setup.accept(CloudNet.getLogger().getReader());
         }
     }
 
