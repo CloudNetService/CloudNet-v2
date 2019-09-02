@@ -39,11 +39,6 @@ pipeline {
         sh 'mvn package javadoc:aggregate-jar'
       }
     }
-    stage('Install') {
-      steps {
-        sh 'mvn install'
-      }
-    }
     stage('Release ZIP') {
       steps {
         sh '''mkdir -p temp;
