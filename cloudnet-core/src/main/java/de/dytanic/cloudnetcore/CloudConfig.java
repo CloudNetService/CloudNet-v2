@@ -11,7 +11,6 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.user.BasicUser;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.web.server.util.WebServerConfig;
@@ -34,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
 
 
 /**
@@ -332,12 +332,7 @@ public class CloudConfig {
 		Collection<ProxyGroup> collection = serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
 		}.getType());
 
-		return MapWrapper.collectionCatcherHashMap(collection, new Catcher<String, ProxyGroup>() {
-			@Override
-			public String doCatch(ProxyGroup key) {
-				return key.getName();
-			}
-		});
+		return MapWrapper.collectionCatcherHashMap(collection, ProxyGroup::getName);
 	}
 
 
