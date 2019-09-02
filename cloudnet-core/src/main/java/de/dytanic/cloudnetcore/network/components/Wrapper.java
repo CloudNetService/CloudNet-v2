@@ -231,13 +231,8 @@ public final class Wrapper
             }
 
         SimpledUser simpledUser = null;
-        User user = CollectionWrapper.filter(CloudNet.getInstance().getUsers(), new Predicate<User>() {
-            @Override
-            public boolean test(User value)
-            {
-                return networkInfo.getUser().equals(value.getName());
-            }
-        });
+
+        User user = CloudNet.getInstance().getUsers().stream().filter(value -> networkInfo.getUser().equals(value.getName())).findFirst().orElse(null);
         if (user != null)
         {
             simpledUser = user.toSimple();

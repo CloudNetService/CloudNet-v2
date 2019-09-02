@@ -628,13 +628,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public boolean authorization(String name, String token)
     {
-        User user = CollectionWrapper.filter(users, new Predicate<User>() {
-            @Override
-            public boolean test(User value)
-            {
-                return value.getName().equalsIgnoreCase(name);
-            }
-        });
+
+        User user = users.stream().filter(value -> value.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
         if (user != null)
         {
             if (user.getApiToken().equals(token)) return true;
@@ -644,13 +639,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public boolean authorizationPassword(String name, String password)
     {
-        User user = CollectionWrapper.filter(users, new Predicate<User>() {
-            @Override
-            public boolean test(User value)
-            {
-                return value.getName().equalsIgnoreCase(name);
-            }
-        });
+        User user = users.stream().filter(value -> value.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
         if (user != null)
         {
             if (user.getHashedPassword().equals(DyHash.hashString(password))) return true;
@@ -670,28 +659,18 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public User getUser(String name)
     {
-        return CollectionWrapper.filter(users, new Predicate<User>() {
-            @Override
-            public boolean test(User value)
-            {
-                return name.toLowerCase().equals(value.getName().toLowerCase());
-            }
-        });
+        return users.stream().filter(value -> name.toLowerCase().equals(value.getName().toLowerCase())).findFirst().orElse(null);
     }
 
     public int getGlobalUsedMemoryAndWaitings()
     {
         AtomicInteger atomicInteger = new AtomicInteger(0);
-        CollectionWrapper.iterator(CloudNet.getInstance().getWrappers().values(), new Consumer<Wrapper>() {
-            @Override
-            public void accept(Wrapper obj)
-            {
-                atomicInteger.addAndGet(obj.getUsedMemory());
+        CloudNet.getInstance().getWrappers().values().forEach( obj -> {
+            atomicInteger.addAndGet(obj.getUsedMemory());
 
-                for (Quad<Integer, Integer, ServiceId, Template> serviceIdTrio : obj.getWaitingServices().values())
-                {
-                    atomicInteger.addAndGet(serviceIdTrio.getSecond());
-                }
+            for (Quad<Integer, Integer, ServiceId, Template> serviceIdTrio : obj.getWaitingServices().values())
+            {
+                atomicInteger.addAndGet(serviceIdTrio.getSecond());
             }
         });
         return atomicInteger.get();
@@ -800,26 +779,14 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public long globalMaxMemory()
     {
         AtomicInteger atomicInteger = new AtomicInteger();
-        CollectionWrapper.iterator(getWrappers().values(), new Consumer<Wrapper>() {
-            @Override
-            public void accept(Wrapper obj)
-            {
-                atomicInteger.addAndGet(obj.getMaxMemory());
-            }
-        });
+        getWrappers().values().forEach(obj -> atomicInteger.addAndGet(obj.getMaxMemory()));
         return atomicInteger.get();
     }
 
     public long globalUsedMemory()
     {
         AtomicInteger atomicInteger = new AtomicInteger(0);
-        CollectionWrapper.iterator(getServers().values(), new Consumer<MinecraftServer>() {
-            @Override
-            public void accept(MinecraftServer obj)
-            {
-                atomicInteger.addAndGet(obj.getProcessMeta().getMemory());
-            }
-        });
+        getServers().values().forEach(obj -> atomicInteger.addAndGet(obj.getProcessMeta().getMemory()));
         CollectionWrapper.iterator(getProxys().values(), new Consumer<ProxyServer>() {
             @Override
             public void accept(ProxyServer obj)
@@ -994,13 +961,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public CloudServer getCloudGameServer(String serverId)
     {
-        return CollectionWrapper.filter(getCloudGameServers().values(), new Predicate<CloudServer>() {
-            @Override
-            public boolean test(CloudServer cloudServer)
-            {
-                return cloudServer.getServerId().equalsIgnoreCase(serverId);
-            }
-        });
+        return getCloudGameServers().values().stream().filter(cloudServer -> cloudServer.getServerId().equalsIgnoreCase(serverId)).findFirst().orElse(null);
     }
 
     public Map<String, CloudServer> getCloudGameServers()
@@ -1944,7 +1905,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             startport = (startport + NetworkUtils.RANDOM.nextInt(20) + 1);
         }
 
-        List<Template> templates = CollectionWrapper.transform(serverGroup.getTemplates());
+        List<Template> templates = new CopyOnWriteArrayList<>(serverGroup.getTemplates());
         if (templates.size() == 0) return;
 
         ServerProcessMeta serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, serverId), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
@@ -2386,7 +2347,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             startport = (startport + NetworkUtils.RANDOM.nextInt(20) + 1);
         }
 
-        List<Template> templates = CollectionWrapper.transform(serverGroup.getTemplates());
+        List<Template> templates = new CopyOnWriteArrayList<>(serverGroup.getTemplates());
         if (templates.size() == 0) return;
 
         ServerProcessMeta serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);
@@ -2474,7 +2435,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             startport = (startport + NetworkUtils.RANDOM.nextInt(20) + 1);
         }
 
-        List<Template> templates = CollectionWrapper.transform(serverGroup.getTemplates());
+        List<Template> templates = new CopyOnWriteArrayList<>(serverGroup.getTemplates());
         if (templates.size() == 0) return;
 
         ServerProcessMeta serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, serverId), memory, prioritystop, url, processParameters, onlineMode, plugins, config, customServerName, startport, serverProperties, template);

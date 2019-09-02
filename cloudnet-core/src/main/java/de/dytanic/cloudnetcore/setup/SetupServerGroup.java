@@ -21,6 +21,7 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
 /**
@@ -46,7 +47,7 @@ public class SetupServerGroup {
                     @Override
                     public void complete(Document data)
                     {
-                        java.util.List<String> wrappers = (List<String>) CollectionWrapper.toCollection(data.getString("wrapper"), ",");
+                        java.util.List<String> wrappers = (List<String>)new CopyOnWriteArrayList<>(data.getString("wrapper").split(","));
                         if (wrappers.size() == 0) return;
                         for (short i = 0; i < wrappers.size(); i++)
                         {
@@ -154,7 +155,7 @@ public class SetupServerGroup {
                     @Override
                     public Boolean apply(String key)
                     {
-                        java.util.List<String> wrappers = (List<String>) CollectionWrapper.toCollection(key, ",");
+                        java.util.List<String> wrappers = (List<String>) new CopyOnWriteArrayList<>(key.split(","));
                         if (wrappers.size() == 0) return false;
                         for (short i = 0; i < wrappers.size(); i++)
                         {

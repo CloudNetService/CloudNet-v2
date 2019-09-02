@@ -436,12 +436,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 			}
 		}
 
-		Template x = CollectionWrapper.filter(serverGroup.getTemplates(), new Predicate<Template>() {
-			@Override
-			public boolean test(Template template) {
-				return template != null && serverProcess.getMeta().getTemplate().getName().equals(template.getName());
-			}
-		});
+		Template x = serverGroup.getTemplates().stream().filter(template1 -> serverProcess.getMeta().getTemplate().getName().equals(template1.getName())).findFirst().orElse(null);
 		if (custom != null) {
 			MasterTemplateDeploy masterTemplateDeploy = new MasterTemplateDeploy(path, new ConnectableAddress(
 					CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),

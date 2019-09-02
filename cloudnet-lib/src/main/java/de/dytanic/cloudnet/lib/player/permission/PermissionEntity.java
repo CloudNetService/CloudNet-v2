@@ -112,7 +112,7 @@ public class PermissionEntity {
 
     public boolean isInGroup(String group)
     {
-        return CollectionWrapper.filter(this.groups, value -> value.getGroup().equals(group)) != null;
+        return this.groups.stream().anyMatch(value -> value.getGroup().equals(group));
     }
 
     public void setPrefix(String prefix)

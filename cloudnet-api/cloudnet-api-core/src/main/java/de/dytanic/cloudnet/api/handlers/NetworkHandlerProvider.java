@@ -34,7 +34,7 @@ public class NetworkHandlerProvider {
      */
     public void iterator(Consumer<NetworkHandler> handlerTask)
     {
-        CollectionWrapper.iterator(handlers, handlerTask);
+        handlers.forEach(handlerTask::accept);
     }
 
     public void clear()

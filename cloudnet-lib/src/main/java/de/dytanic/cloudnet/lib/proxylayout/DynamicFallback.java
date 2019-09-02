@@ -35,13 +35,7 @@ public class DynamicFallback {
 
     public ServerFallback getDefault()
     {
-        return CollectionWrapper.filter(fallbacks, new Predicate<ServerFallback>() {
-            @Override
-            public boolean test(ServerFallback serverFallback)
-            {
-                return serverFallback.getGroup().equals(defaultFallback);
-            }
-        });
+        return fallbacks.stream().filter(serverFallback -> serverFallback.getGroup().equals(defaultFallback)).findFirst().orElse(null);
     }
 
     public Collection<String> getNamedFallbackes()

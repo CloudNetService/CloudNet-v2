@@ -85,7 +85,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                 );
 
                 if (key.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback()))
-                    CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), obj -> obj.getServerPriority().add(key.getServiceId().getServerId()));
+                    ProxyServer.getInstance().getConfig().getListeners().forEach(obj -> obj.getServerPriority().add(key.getServiceId().getServerId()));
                 return key.getServiceId().getServerId();
             }));
 
@@ -300,7 +300,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                     ProxyServer.getInstance().constructServerInfo(serverInfo.getServiceId().getServerId(), new InetSocketAddress(serverInfo.getHost(), serverInfo.getPort()), "CloudNet2 Game-Server", false)
             );
             if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback()))
-                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), obj -> obj.getServerPriority().add(serverInfo.getServiceId().getServerId()));
+                ProxyServer.getInstance().getConfig().getListeners().forEach(obj -> obj.getServerPriority().add(serverInfo.getServiceId().getServerId()));
             cachedServers.put(serverInfo.getServiceId().getServerId(), serverInfo);
 
             if (CloudAPI.getInstance().getModuleProperties().contains("notifyService") && CloudAPI.getInstance().getModuleProperties().getBoolean("notifyService"))
@@ -336,7 +336,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
             cachedServers.remove(serverInfo.getServiceId().getServerId());
 
             if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback()))
-                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), obj -> obj.getServerPriority().remove(serverInfo.getServiceId().getServerId()));
+                ProxyServer.getInstance().getConfig().getListeners().forEach(obj -> obj.getServerPriority().remove(serverInfo.getServiceId().getServerId()));
 
             if (CloudAPI.getInstance().getModuleProperties().contains("notifyService") && CloudAPI.getInstance().getModuleProperties().getBoolean("notifyService"))
                 for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers())

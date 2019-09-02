@@ -196,7 +196,7 @@ public final class CloudAPI implements MetaObj {
     public int getOnlineCount(String group)
     {
         AtomicInteger integer = new AtomicInteger(0);
-        CollectionWrapper.iterator(getServers(group), obj -> integer.addAndGet(obj.getOnlineCount()));
+        getServers(group).forEach(obj -> integer.addAndGet(obj.getOnlineCount()));
         return integer.get();
     }
 
@@ -429,7 +429,8 @@ public final class CloudAPI implements MetaObj {
      */
     public WrapperInfo getWrapper(String wrapperId)
     {
-        return CollectionWrapper.filter(cloudNetwork.getWrappers(), value -> value.getServerId().equalsIgnoreCase(wrapperId));
+        return cloudNetwork.getWrappers().stream().filter(value -> value.getServerId().equalsIgnoreCase(wrapperId))
+                .findFirst().orElse(null);
     }
 
     /**

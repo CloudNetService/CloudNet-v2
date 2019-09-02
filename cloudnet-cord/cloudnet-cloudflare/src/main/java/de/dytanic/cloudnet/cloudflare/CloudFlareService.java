@@ -138,7 +138,7 @@ public class CloudFlareService {
      */
     public CloudFlareProxyGroup cloudFlareProxyGroup(CloudFlareConfig cloudFlareConfig, String group)
     {
-        return CollectionWrapper.filter(cloudFlareConfig.getGroups(), value -> value.getName().equals(group));
+        return cloudFlareConfig.getGroups().stream().filter(value -> value.getName().equals(group)).findFirst().orElse(null);
     }
 
     /**

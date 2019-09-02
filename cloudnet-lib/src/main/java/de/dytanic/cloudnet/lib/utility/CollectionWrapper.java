@@ -36,25 +36,6 @@ public final class CollectionWrapper {
         return collection;
     }
 
-    public static <E> E filter(Collection<E> elements, Predicate<E> acceptable)
-    {
-        for (E element : elements)
-        {
-            if (acceptable.test(element)) return element;
-        }
-        return null;
-    }
-
-    public static <E> CopyOnWriteArrayList<E> transform(Collection<E> defaults)
-    {
-        return new CopyOnWriteArrayList<>(defaults);
-    }
-
-    public static Collection<String> toCollection(String input, String splitter)
-    {
-        return new CopyOnWriteArrayList<>(input.split(splitter));
-    }
-
     public static <E> void iterator(Collection<E> collection, Consumer<E>... consumers)
     {
         for (E el : collection) for (Consumer<E> consumer : consumers) consumer.accept(el);

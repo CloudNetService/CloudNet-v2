@@ -45,7 +45,7 @@ public class ProxiedBootstrap extends Plugin {
         getProxy().registerChannel("cloudnet:main");
         CloudAPI.getInstance().bootstrap();
 
-        CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), obj -> obj.getServerPriority().clear());
+        ProxyServer.getInstance().getConfig().getListeners().forEach(obj -> obj.getServerPriority().clear());
 
         getProxy().getPluginManager().registerListener(this, new ProxiedListener());
 

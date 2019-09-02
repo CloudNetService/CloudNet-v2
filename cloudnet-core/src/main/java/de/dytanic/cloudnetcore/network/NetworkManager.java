@@ -392,13 +392,7 @@ public final class NetworkManager {
 
     public CloudPlayer getPlayer(String name)
     {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), new Predicate<CloudPlayer>() {
-            @Override
-            public boolean test(CloudPlayer value)
-            {
-                return value.getName().equalsIgnoreCase(name);
-            }
-        });
+        return this.onlinePlayers.values().stream().filter(value -> value.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     public void sendAllUpdate(Packet packet)
@@ -480,13 +474,7 @@ public final class NetworkManager {
 
     public CloudPlayer getOnlinePlayer(UUID uniqueId)
     {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), new Predicate<CloudPlayer>() {
-            @Override
-            public boolean test(CloudPlayer cloudPlayer)
-            {
-                return cloudPlayer.getUniqueId().equals(uniqueId);
-            }
-        });
+        return this.onlinePlayers.values().stream().filter(cloudPlayer -> cloudPlayer.getUniqueId().equals(uniqueId)).findFirst().orElse(null);
     }
 
     public NetworkManager handleServerUpdate(ServerInfo serverInfo)

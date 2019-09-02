@@ -233,13 +233,8 @@ public class CloudConfig {
 	public void createWrapper(WrapperMeta wrapperMeta) {
 		Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>() {
 		}.getType());
-		WrapperMeta is = CollectionWrapper.filter(wrapperMetas, new Acceptable<WrapperMeta>() {
-			@Override
-			public boolean isAccepted(WrapperMeta wrapperMeta_) {
-				return wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId());
-			}
-		});
-		if (is != null) wrapperMetas.remove(is);
+
+		wrapperMetas.stream().filter(value -> value.getId().equalsIgnoreCase(wrapperMeta.getId())).findFirst().ifPresent(wrapperMetas::remove);
 
 		wrapperMetas.add(wrapperMeta);
 		this.serviceDocument.append("wrapper", wrapperMetas).saveAsConfig(servicePath);
@@ -254,10 +249,8 @@ public class CloudConfig {
 	private List<WrapperMeta> deleteWrapper0(WrapperMeta wrapperMeta) {
 		List<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>() {
 		}.getType());
-		WrapperMeta is = CollectionWrapper.filter(wrapperMetas, wrapperMeta_ -> wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId()));
-		if (is != null) {
-			wrapperMetas.remove(is);
-		}
+
+		wrapperMetas.stream().filter(value -> value.getId().equalsIgnoreCase(wrapperMeta.getId())).findFirst().ifPresent(wrapperMetas::remove);
 		return wrapperMetas;
 	}
 

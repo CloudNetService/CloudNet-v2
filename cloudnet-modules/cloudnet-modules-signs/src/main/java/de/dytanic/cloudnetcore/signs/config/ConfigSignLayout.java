@@ -116,14 +116,11 @@ public class ConfigSignLayout {
 
         for (SignGroupLayouts groupLayouts : signLayoutConfig.getGroupLayouts())
         {
-
+            SignLayout signLayout = groupLayouts.getLayouts().stream().filter(signLayout1 -> signLayout1.getName().equalsIgnoreCase("empty")).findFirst().orElse(null);
+            if (signLayout == null)
             {
-                SignLayout signLayout = CollectionWrapper.filter(groupLayouts.getLayouts(), signLayout1 -> signLayout1.getName().equalsIgnoreCase("empty"));
-                if (signLayout == null)
-                {
-                    groupLayouts.getLayouts().add(new SignLayout("empty", new String[]{"%server%", "&6%state%", "%online_players%/%max_players%", "%motd%"}, 159, "BROWN_TERRACOTTA", 1));
-                    injectable = true;
-                }
+                groupLayouts.getLayouts().add(new SignLayout("empty", new String[]{"%server%", "&6%state%", "%online_players%/%max_players%", "%motd%"}, 159, "BROWN_TERRACOTTA", 1));
+                injectable = true;
             }
         }
 
