@@ -17,7 +17,6 @@ public final class StreamThread implements Runnable {
 	@Override
 	public void run() {
 		try {
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			byte[] buffer = new byte[1024];
 			int length = 0;
 			while ((length = inputStream.read(buffer)) != -1) {
