@@ -28,10 +28,10 @@ public final class StreamThread implements Runnable {
 		} finally {
 			try {
 				inputStream.close();
-				this.countDownLatch.countDown();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		this.countDownLatch.countDown();
 	}
 }
