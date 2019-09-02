@@ -29,12 +29,6 @@ pipeline {
         junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
       }
     }
-    stage('Spotbugs') {
-      steps {
-        sh 'mvn spotbugs:spotbugs'
-        scanForIssues tool: spotBugs(reportEncoding: 'UTF-8', useRankAsPriority: true)
-      }
-    }
     stage('Package') {
       steps {
         sh 'mvn package'
