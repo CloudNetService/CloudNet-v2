@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutUpdateServerGroup extends Packet {
 
-    public PacketOutUpdateServerGroup(ServerGroup serverGroup)
-    {
+    public PacketOutUpdateServerGroup(ServerGroup serverGroup) {
         super(PacketRC.CN_CORE + 2, new Document("group", serverGroup));
     }
 }

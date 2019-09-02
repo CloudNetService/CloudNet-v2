@@ -9,21 +9,21 @@ public final class UpdateConfigurationDatabase extends DatabaseUsable {
 
     private static final String NAME = "update_configurations";
 
-    public UpdateConfigurationDatabase(Database database)
-    {
+    public UpdateConfigurationDatabase(Database database) {
         super(database);
 
-        if (database.getDocument(NAME) == null) database.insert(new DatabaseDocument(NAME));
+        if (database.getDocument(NAME) == null) {
+            database.insert(new DatabaseDocument(NAME));
+        }
     }
 
-    public void set(Document document)
-    {
-        if (document.contains(Database.UNIQUE_NAME_KEY) && document.getString(Database.UNIQUE_NAME_KEY).equals(NAME))
+    public void set(Document document) {
+        if (document.contains(Database.UNIQUE_NAME_KEY) && document.getString(Database.UNIQUE_NAME_KEY).equals(NAME)) {
             database.insert(document);
+        }
     }
 
-    public Document get()
-    {
+    public Document get() {
         return database.getDocument(NAME);
     }
 

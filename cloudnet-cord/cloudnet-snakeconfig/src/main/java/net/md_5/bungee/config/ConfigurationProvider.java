@@ -8,13 +8,11 @@ public abstract class ConfigurationProvider {
 
     private static final Map<Class<? extends ConfigurationProvider>, ConfigurationProvider> providers = new HashMap<>();
 
-    static
-    {
+    static {
         providers.put(YamlConfiguration.class, new YamlConfiguration());
     }
 
-    public static ConfigurationProvider getProvider(Class<? extends ConfigurationProvider> provider)
-    {
+    public static ConfigurationProvider getProvider(Class<? extends ConfigurationProvider> provider) {
         return providers.get(provider);
     }
 

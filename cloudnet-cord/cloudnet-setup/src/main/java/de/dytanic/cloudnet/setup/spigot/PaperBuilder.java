@@ -33,19 +33,16 @@ public final class PaperBuilder {
         try {
             System.out.println("Fetch Versions");
             URLConnection connection = new URL(apiProjectUrl).openConnection();
-            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            connection.setRequestProperty("User-Agent",
+                                          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
             connection.connect();
-            PaperMCProject paperMCProject = gson
-                    .fromJson(new InputStreamReader(connection.getInputStream()), PaperMCProject.class);
+            PaperMCProject paperMCProject = gson.fromJson(new InputStreamReader(connection.getInputStream()), PaperMCProject.class);
             System.out.println("Available Paper Versions:");
-            System.out
-                    .println("-----------------------------------------------------------------------------");
+            System.out.println("-----------------------------------------------------------------------------");
             System.out.println("PaperSpigot Version");
-            System.out
-                    .println("-----------------------------------------------------------------------------");
+            System.out.println("-----------------------------------------------------------------------------");
             Arrays.asList(paperMCProject.getVersions()).forEach(System.out::println);
-            System.out
-                    .println("-----------------------------------------------------------------------------");
+            System.out.println("-----------------------------------------------------------------------------");
             System.out.println("Please select a version to continue the install process");
             String answer = null;
             while (answer == null) {
@@ -56,12 +53,10 @@ public final class PaperBuilder {
                     e.printStackTrace();
                 }
                 String finalAnswer = name;
-                if (Arrays.stream(paperMCProject.getVersions())
-                        .anyMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
+                if (Arrays.stream(paperMCProject.getVersions()).anyMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
                     answer = name;
                     buildPaperVersion(answer);
-                } else if (Arrays.stream(paperMCProject.getVersions())
-                        .noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
+                } else if (Arrays.stream(paperMCProject.getVersions()).noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
                     System.out.println("This version does not exist!");
                 }
             }
@@ -74,21 +69,23 @@ public final class PaperBuilder {
      * Build or copy the paper spigot
      *
      * @param version the version of the paper jar
+     *
      * @throws Exception If a connection error or something
      */
     private static void buildPaperVersion(String version) throws Exception {
         System.out.println(String.format("Fetching build %s", version));
-        URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version))
-                .openConnection();
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+        URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version)).openConnection();
+        connection.setRequestProperty("User-Agent",
+                                      "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
         connection.connect();
-        PaperMCProjectVersion paperMCProjectVersion = gson
-                .fromJson(new InputStreamReader(connection.getInputStream()), PaperMCProjectVersion.class);
+        PaperMCProjectVersion paperMCProjectVersion = gson.fromJson(new InputStreamReader(connection.getInputStream()),
+                                                                    PaperMCProjectVersion.class);
 
-        connection = new URL(String.format(
-                apiProjectVersionDownload, version, paperMCProjectVersion.getBuilds().getLatest()))
-                .openConnection();
-	    connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+        connection = new URL(String.format(apiProjectVersionDownload,
+                                           version,
+                                           paperMCProjectVersion.getBuilds().getLatest())).openConnection();
+        connection.setRequestProperty("User-Agent",
+                                      "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
         connection.connect();
         File builder = new File("local/builder/papermc");
         File buildFolder = new File(builder, version);
@@ -98,14 +95,13 @@ public final class PaperBuilder {
             runPaperClip(connection, buildFolder, paperclip);
         } else {
             File[] paperclips = buildFolder.listFiles(pathname -> pathname.getName().startsWith("paper"));
-            if (Objects.requireNonNull(
-                    paperclips).length
-                    > 0) {
+            if (Objects.requireNonNull(paperclips).length > 0) {
                 System.out.println("Skipping build");
                 System.out.println("Copying spigot.jar");
                 try {
                     Files.copy(new FileInputStream(Objects.requireNonNull(paperclips)[0]),
-                            Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+                               Paths.get("local/spigot.jar"),
+                               StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -124,34 +120,35 @@ public final class PaperBuilder {
      * @param connection  the connection of the jar
      * @param buildFolder the build folder of the jar
      * @param paperclip   the jar file path
+     *
      * @throws IOException Throws if input stream null
      */
-    private static void runPaperClip(URLConnection connection, File buildFolder, File paperclip)
-            throws IOException {
+    private static void runPaperClip(URLConnection connection, File buildFolder, File paperclip) throws IOException {
         System.out.println("Downloading Paperclip");
         try (InputStream inputStream = connection.getInputStream()) {
             Files.copy(inputStream, Paths.get(paperclip.toURI()), StandardCopyOption.REPLACE_EXISTING);
         }
-        exec = Runtime.getRuntime()
-                .exec("java -jar paperclip.jar", null, buildFolder);
+        exec = Runtime.getRuntime().exec("java -jar paperclip.jar", null, buildFolder);
         printProcessOutputToConsole(exec);
 
-        Files.copy(new FileInputStream(Objects.requireNonNull(
-                buildFolder.listFiles(pathname -> pathname.getName().startsWith("paperclip")))[0]),
-                Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(new FileInputStream(Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName()
+                                                                                                        .startsWith("paperclip")))[0]),
+                   Paths.get("local/spigot.jar"),
+                   StandardCopyOption.REPLACE_EXISTING);
     }
 
     /**
      * Print the process output to wrapper console
      *
      * @param exec the running process
+     *
      * @throws IOException throws if readline null
      */
     static void printProcessOutputToConsole(Process exec) throws IOException {
         CountDownLatch count = new CountDownLatch(2);
         try {
-            new Thread(new StreamThread(count,exec.getInputStream())).start();
-            new Thread(new StreamThread(count,exec.getErrorStream())).start();
+            new Thread(new StreamThread(count, exec.getInputStream())).start();
+            new Thread(new StreamThread(count, exec.getErrorStream())).start();
             count.await();
         } catch (InterruptedException e) {
             e.printStackTrace();

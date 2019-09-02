@@ -29,22 +29,20 @@ import java.util.logging.Level;
 public class ProxiedBootstrap extends Plugin {
 
     @Override
-    public void onLoad()
-    {
-        new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"), Paths.get("CLOUD/config.json"), ConfigTypeLoader.INTERNAL), new Runnable() {
-            @Override
-            public void run()
-            {
-                getProxy().stop("CloudNet-Stop!");
-            }
-        });
+    public void onLoad() {
+        new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"), Paths.get("CLOUD/config.json"), ConfigTypeLoader.INTERNAL),
+                     new Runnable() {
+                         @Override
+                         public void run() {
+                             getProxy().stop("CloudNet-Stop!");
+                         }
+                     });
         getLogger().setLevel(Level.INFO);
         CloudAPI.getInstance().setLogger(getLogger());
     }
 
     @Override
-    public void onEnable()
-    {
+    public void onEnable() {
 
         DocumentRegistry.fire();
 
@@ -53,8 +51,7 @@ public class ProxiedBootstrap extends Plugin {
 
         CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {
             @Override
-            public void run(ListenerInfo obj)
-            {
+            public void run(ListenerInfo obj) {
                 obj.getServerPriority().clear();
             }
         });
@@ -72,13 +69,15 @@ public class ProxiedBootstrap extends Plugin {
 
         getProxy().getScheduler().schedule(this, new Runnable() {
             @Override
-            public void run()
-            {
-                if (CloudAPI.getInstance().getPermissionPool() != null && CloudAPI.getInstance().getPermissionPool().isAvailable())
+            public void run() {
+                if (CloudAPI.getInstance().getPermissionPool() != null && CloudAPI.getInstance().getPermissionPool().isAvailable()) {
                     getProxy().getPluginManager().registerCommand(ProxiedBootstrap.this, new CommandPermissions());
+                }
 
-                if (CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance().getProxyGroup().getProxyConfig().getCustomPayloadFixer())
-                {
+                if (CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance()
+                                                                                  .getProxyGroup()
+                                                                                  .getProxyConfig()
+                                                                                  .getCustomPayloadFixer()) {
                     getProxy().registerChannel("MC|BSign");
                     getProxy().registerChannel("MC|BEdit");
                 }
@@ -87,17 +86,16 @@ public class ProxiedBootstrap extends Plugin {
 
         getProxy().getScheduler().schedule(this, new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 CloudProxy.getInstance().update();
             }
         }, 0, 1, TimeUnit.SECONDS);
     }
 
     @Override
-    public void onDisable()
-    {
-        if (CloudAPI.getInstance() != null)
+    public void onDisable() {
+        if (CloudAPI.getInstance() != null) {
             CloudAPI.getInstance().shutdown();
+        }
     }
 }

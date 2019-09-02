@@ -5,16 +5,15 @@ import de.dytanic.cloudnet.lib.interfaces.Nameable;
 /**
  * Created by Tareko on 26.05.2017.
  */
-public class SignLayout
-        implements Nameable {
+public class SignLayout implements Nameable {
 
-    private String name;
-    private String[] signLayout;
     /**
      * blockIds are not supported in all versions, use {@link SignLayout#blockName} instead
      */
     @Deprecated
     int blockId;
+    private String name;
+    private String[] signLayout;
     private String blockName;
     private int subId;
 

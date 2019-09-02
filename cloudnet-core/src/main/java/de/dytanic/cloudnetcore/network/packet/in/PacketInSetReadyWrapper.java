@@ -12,9 +12,10 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 public class PacketInSetReadyWrapper extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (!(packetSender instanceof Wrapper)) return;
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (!(packetSender instanceof Wrapper)) {
+            return;
+        }
 
         boolean ready = data.getBoolean("ready");
         ((Wrapper) packetSender).setReady(ready);

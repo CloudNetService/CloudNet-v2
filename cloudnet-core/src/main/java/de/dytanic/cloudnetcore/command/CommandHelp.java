@@ -20,18 +20,17 @@ import java.util.List;
  */
 public class CommandHelp extends Command {
 
-    public CommandHelp()
-    {
+    public CommandHelp() {
         super("help", "cloudnet.command.help");
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
         List<String> messages = new ArrayList<>(CloudNet.getInstance().getCommandManager().getCommands().size() + 9);
 
-        for (String command : CloudNet.getInstance().getCommandManager().getCommands())
+        for (String command : CloudNet.getInstance().getCommandManager().getCommands()) {
             messages.add(command + " | " + CloudNet.getInstance().getCommandManager().getCommand(command).getDescription());
+        }
 
         messages.add(NetworkUtils.SPACE_STRING);
         messages.add("Server groups:");
@@ -39,8 +38,11 @@ public class CommandHelp extends Command {
         messages.add("Proxy groups:");
         messages.add(Arrays.toString(CloudNet.getInstance().getProxyGroups().keySet().toArray(new String[0])));
         messages.add(NetworkUtils.SPACE_STRING);
-        messages.add("The Cloud uses " + (ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1048576L) +
-                NetworkUtils.SLASH_STRING + (ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() / 1048576L) + "MB");
+        messages.add("The Cloud uses " + (ManagementFactory.getMemoryMXBean()
+                                                           .getHeapMemoryUsage()
+                                                           .getUsed() / 1048576L) + NetworkUtils.SLASH_STRING + (ManagementFactory.getMemoryMXBean()
+                                                                                                                                  .getHeapMemoryUsage()
+                                                                                                                                  .getMax() / 1048576L) + "MB");
         messages.add("CPU on this instance " + new DecimalFormat("##.##").format(NetworkUtils.internalCpuUsage()) + "/100 %");
         messages.add(NetworkUtils.SPACE_STRING);
 

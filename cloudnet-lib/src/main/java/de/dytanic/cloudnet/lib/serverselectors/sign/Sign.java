@@ -15,19 +15,18 @@ public class Sign {
 
     private volatile ServerInfo serverInfo;
 
-    public Sign(String targetGroup, Position signPosition)
-    {
+    public Sign(String targetGroup, Position signPosition) {
         this.uniqueId = UUID.randomUUID();
         this.targetGroup = targetGroup;
         this.position = signPosition;
     }
 
-    public void setServerInfo(ServerInfo serverInfo) {
-        this.serverInfo = serverInfo;
-    }
-
     public ServerInfo getServerInfo() {
         return serverInfo;
+    }
+
+    public void setServerInfo(ServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
     }
 
     public UUID getUniqueId() {

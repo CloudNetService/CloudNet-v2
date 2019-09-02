@@ -9,23 +9,18 @@ import de.dytanic.cloudnet.lib.map.WrappedMap;
 import de.dytanic.cloudnet.lib.proxylayout.ProxyConfig;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.version.ProxyVersion;
-import lombok.ToString;
 
 import java.util.Collection;
 
 /**
  * Created by Tareko on 18.07.2017.
  */
-@ToString
-public class ProxyGroup
-        implements Nameable {
+public class ProxyGroup implements Nameable {
 
     protected String name;
     protected Collection<String> wrapper;
-
     protected Template template;
     protected ProxyVersion proxyVersion;
-
     protected int startPort;
     protected int startup;
     protected int memory;
@@ -33,7 +28,16 @@ public class ProxyGroup
     protected ProxyGroupMode proxyGroupMode;
     protected WrappedMap settings;
 
-    public ProxyGroup(String name, Collection<String> wrapper, Template template, ProxyVersion proxyVersion, int startPort, int startup, int memory, ProxyConfig proxyConfig, ProxyGroupMode proxyGroupMode, WrappedMap settings) {
+    public ProxyGroup(String name,
+                      Collection<String> wrapper,
+                      Template template,
+                      ProxyVersion proxyVersion,
+                      int startPort,
+                      int startup,
+                      int memory,
+                      ProxyConfig proxyConfig,
+                      ProxyGroupMode proxyGroupMode,
+                      WrappedMap settings) {
         this.name = name;
         this.wrapper = wrapper;
         this.template = template;
@@ -44,6 +48,11 @@ public class ProxyGroup
         this.proxyConfig = proxyConfig;
         this.proxyGroupMode = proxyGroupMode;
         this.settings = settings;
+    }
+
+    @Override
+    public String toString() {
+        return "ProxyGroup{" + "name='" + name + '\'' + ", wrapper=" + wrapper + ", template=" + template + ", proxyVersion=" + proxyVersion + ", startPort=" + startPort + ", startup=" + startup + ", memory=" + memory + ", proxyConfig=" + proxyConfig + ", proxyGroupMode=" + proxyGroupMode + ", settings=" + settings + '}';
     }
 
     @Override

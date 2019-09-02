@@ -15,8 +15,7 @@ public class ServerAddEvent extends AsyncEvent<ServerAddEvent> {
 
     private MinecraftServer minecraftServer;
 
-    public ServerAddEvent(MinecraftServer minecraftServer)
-    {
+    public ServerAddEvent(MinecraftServer minecraftServer) {
         super(new AsyncPosterAdapter<>());
         this.minecraftServer = minecraftServer;
     }

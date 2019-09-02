@@ -20,19 +20,16 @@ public class BukkitUpdateSignLayoutsEvent extends BukkitCloudEvent {
         this.signLayoutConfig = signLayoutConfig;
     }
 
-    public SignLayoutConfig getSignLayoutConfig()
-    {
-        return signLayoutConfig;
-    }
-
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 
+    public SignLayoutConfig getSignLayoutConfig() {
+        return signLayoutConfig;
+    }
+
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

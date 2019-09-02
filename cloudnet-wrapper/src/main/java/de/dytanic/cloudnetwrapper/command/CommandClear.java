@@ -15,19 +15,15 @@ import java.io.IOException;
  */
 public class CommandClear extends Command {
 
-    public CommandClear()
-    {
+    public CommandClear() {
         super("clear", "cloudnet.command.clear");
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
-        try
-        {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
+        try {
             CloudNetWrapper.getInstance().getCloudNetLogging().getReader().clearScreen();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
         }
     }
 }

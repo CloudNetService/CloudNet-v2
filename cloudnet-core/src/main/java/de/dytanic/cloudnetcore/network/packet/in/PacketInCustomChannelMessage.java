@@ -15,8 +15,10 @@ import de.dytanic.cloudnetcore.CloudNet;
 public class PacketInCustomChannelMessage extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        CloudNet.getInstance().getNetworkManager().handleCustomChannelMessage(data.getString("channel"), data.getString("message"), data.getDocument("value"), packetSender);
+    public void handleInput(Document data, PacketSender packetSender) {
+        CloudNet.getInstance().getNetworkManager().handleCustomChannelMessage(data.getString("channel"),
+                                                                              data.getString("message"),
+                                                                              data.getDocument("value"),
+                                                                              packetSender);
     }
 }

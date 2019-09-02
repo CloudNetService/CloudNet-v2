@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutAddMob extends Packet {
 
-    public PacketOutAddMob(ServerMob mob)
-    {
+    public PacketOutAddMob(ServerMob mob) {
         super(PacketRC.SERVER_SELECTORS + 3, new Document("mob", mob));
     }
 }

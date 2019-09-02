@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutStopServer extends Packet {
 
-    public PacketOutStopServer(String serverId)
-    {
+    public PacketOutStopServer(String serverId) {
         super(PacketRC.SERVER_HANDLE + 5, new Document("serverId", serverId));
     }
 }

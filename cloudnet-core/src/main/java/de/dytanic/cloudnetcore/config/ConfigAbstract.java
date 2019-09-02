@@ -16,10 +16,8 @@ public abstract class ConfigAbstract {
 
     protected Path path;
 
-    public ConfigAbstract(Document defaults, Path path)
-    {
-        if (!Files.exists(path))
-        {
+    public ConfigAbstract(Document defaults, Path path) {
+        if (!Files.exists(path)) {
             defaults.saveAsConfig(path);
         }
         this.path = path;

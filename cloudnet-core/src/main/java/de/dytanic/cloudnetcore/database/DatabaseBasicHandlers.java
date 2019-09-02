@@ -25,8 +25,7 @@ public class DatabaseBasicHandlers {
 
     private UpdateConfigurationDatabase updateConfigurationDatabase;
 
-    public DatabaseBasicHandlers(DatabaseManager databaseManager)
-    {
+    public DatabaseBasicHandlers(DatabaseManager databaseManager) {
         Database config = databaseManager.getDatabase("cloud_internal_cfg");
 
         playerDatabase = new PlayerDatabase(databaseManager.getDatabase("cloudnet_internal_players"));

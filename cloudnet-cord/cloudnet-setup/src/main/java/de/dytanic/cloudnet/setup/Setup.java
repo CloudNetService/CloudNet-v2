@@ -40,70 +40,58 @@ public class Setup implements ISetup {
     private ISetupCancel setupCancel = null;
 
     @Override
-    public void start(ConsoleReader consoleReader)
-    {
+    public void start(ConsoleReader consoleReader) {
         SetupRequest setupRequest = null;
-        while (!requests.isEmpty())
-        {
-            if (setupRequest == null)
-            {
+        while (!requests.isEmpty()) {
+            if (setupRequest == null) {
                 setupRequest = requests.poll();
             }
             System.out.print(setupRequest.getQuestion() + " | " + setupRequest.getResponseType().toString());
 
             String input;
-            try
-            {
+            try {
                 input = consoleReader.readLine();
-            } catch (Exception ex)
-            {
-                System.out.println("Error while reading input: "
-                        + ex.getLocalizedMessage());
+            } catch (Exception ex) {
+                System.out.println("Error while reading input: " + ex.getLocalizedMessage());
                 continue;
             }
 
-            if (input.equalsIgnoreCase(CANCEL))
-            {
-                if (setupCancel != null) setupCancel.cancel();
+            if (input.equalsIgnoreCase(CANCEL)) {
+                if (setupCancel != null) {
+                    setupCancel.cancel();
+                }
                 return;
             }
 
-            if (!input.isEmpty() && !input.equals(NetworkUtils.SPACE_STRING))
-            {
-                switch (setupRequest.getResponseType())
-                {
+            if (!input.isEmpty() && !input.equals(NetworkUtils.SPACE_STRING)) {
+                switch (setupRequest.getResponseType()) {
                     case NUMBER:
-                        if (!NetworkUtils.checkIsNumber(input))
-                        {
+                        if (!NetworkUtils.checkIsNumber(input)) {
                             System.out.println(setupRequest.getInValidMessage());
                             continue;
                         }
-                        if (setupRequest.getValidater() != null)
-                        {
-                            if (setupRequest.getValidater().doCatch(input))
-                            {
+                        if (setupRequest.getValidater() != null) {
+                            if (setupRequest.getValidater().doCatch(input)) {
                                 document.append(setupRequest.getName(), Integer.parseInt(input));
                                 setupRequest = null;
-                            } else
-                            {
+                            } else {
                                 System.out.println(setupRequest.getInValidMessage());
                                 continue;
                             }
-                        } else
-                        {
+                        } else {
                             document.append(setupRequest.getName(), Integer.parseInt(input));
                             setupRequest = null;
                         }
                         break;
                     case BOOL:
-                        if (input.equalsIgnoreCase("yes") || (setupRequest.getValidater() != null && setupRequest.getValidater().doCatch(input)))
-                        {
+                        if (input.equalsIgnoreCase("yes") || (setupRequest.getValidater() != null && setupRequest.getValidater().doCatch(
+                            input))) {
                             document.append(setupRequest.getName(), true);
                             setupRequest = null;
                             continue;
                         }
-                        if (input.equalsIgnoreCase("no") || (setupRequest.getValidater() != null && setupRequest.getValidater().doCatch(input)))
-                        {
+                        if (input.equalsIgnoreCase("no") || (setupRequest.getValidater() != null && setupRequest.getValidater().doCatch(
+                            input))) {
                             document.append(setupRequest.getName(), false);
                             setupRequest = null;
                             continue;
@@ -112,32 +100,29 @@ public class Setup implements ISetup {
                         System.out.println(setupRequest.getInValidMessage());
                         break;
                     case STRING:
-                        if (setupRequest.getValidater() != null)
-                        {
-                            if (setupRequest.getValidater().doCatch(input))
-                            {
+                        if (setupRequest.getValidater() != null) {
+                            if (setupRequest.getValidater().doCatch(input)) {
                                 document.append(setupRequest.getName(), input);
                                 setupRequest = null;
-                            } else
-                            {
+                            } else {
                                 System.out.println(setupRequest.getInValidMessage());
                                 continue;
                             }
-                        } else
-                        {
+                        } else {
                             document.append(setupRequest.getName(), input);
                             setupRequest = null;
                         }
                         break;
                 }
-            } else
-            {
+            } else {
                 System.out.println(setupRequest.getInValidMessage());
             }
 
         }
 
-        if (setupComplete != null) setupComplete.complete(document);
+        if (setupComplete != null) {
+            setupComplete.complete(document);
+        }
 
     }
 
@@ -145,10 +130,10 @@ public class Setup implements ISetup {
      * Add a setup request to this setup sequence.
      *
      * @param setupRequest the setup request to be added
+     *
      * @return this setup instance
      */
-    public Setup request(SetupRequest setupRequest)
-    {
+    public Setup request(SetupRequest setupRequest) {
         requests.offer(setupRequest);
         return this;
     }
@@ -159,10 +144,10 @@ public class Setup implements ISetup {
      *
      * @param iSetupComplete the function that will be called, when the setup
      *                       sequence completes successfully.
+     *
      * @return this setup instance
      */
-    public Setup setupComplete(ISetupComplete iSetupComplete)
-    {
+    public Setup setupComplete(ISetupComplete iSetupComplete) {
         this.setupComplete = iSetupComplete;
         return this;
     }
@@ -172,10 +157,10 @@ public class Setup implements ISetup {
      *
      * @param iSetupCancel the function that will be called, if this setup
      *                     sequence is cancelled.
+     *
      * @return this setup instance
      */
-    public Setup setupCancel(ISetupCancel iSetupCancel)
-    {
+    public Setup setupCancel(ISetupCancel iSetupCancel) {
         this.setupCancel = iSetupCancel;
         return this;
     }

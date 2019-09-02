@@ -13,21 +13,17 @@ import java.util.Base64;
  */
 public final class DyHash {
 
-    private DyHash()
-    {
+    private DyHash() {
     }
 
-    public static String hashString(String encode)
-    {
-        try
-        {
+    public static String hashString(String encode) {
+        try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             messageDigest.update(encode.getBytes(StandardCharsets.UTF_8));
 
             String string = new String(Base64.getMimeEncoder().encode(messageDigest.digest()), StandardCharsets.UTF_8);
             return string;
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 

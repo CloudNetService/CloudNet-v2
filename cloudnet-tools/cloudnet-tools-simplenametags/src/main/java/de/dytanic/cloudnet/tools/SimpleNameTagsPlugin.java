@@ -13,14 +13,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SimpleNameTagsPlugin extends JavaPlugin {
 
     @Override
-    public void onEnable()
-    {
-        getServer().getPluginManager().registerEvents(new SimpleNameTagsListener(), this);
+    public void onDisable() {
+
     }
 
     @Override
-    public void onDisable()
-    {
-
+    public void onEnable() {
+        getServer().getPluginManager().registerEvents(new SimpleNameTagsListener(), this);
     }
 }

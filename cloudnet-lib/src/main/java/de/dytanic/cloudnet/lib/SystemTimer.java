@@ -11,23 +11,21 @@ import java.lang.management.ManagementFactory;
  */
 public class SystemTimer extends Thread {
 
-    public SystemTimer()
-    {
+    public SystemTimer() {
         setDaemon(true);
         start();
     }
 
     @Override
-    public void run()
-    {
-        while (!isInterrupted())
-        {
-            System.out.println("Memory [\"" + (ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1024) + "KB\"] | CPU Programm [\"" + NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.internalCpuUsage()) + "\"] | CPU System [\"" + NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.cpuUsage()) + "\"]");
-            try
-            {
+    public void run() {
+        while (!isInterrupted()) {
+            System.out.println("Memory [\"" + (ManagementFactory.getMemoryMXBean()
+                                                                .getHeapMemoryUsage()
+                                                                .getUsed() / 1024) + "KB\"] | CPU Programm [\"" + NetworkUtils.DECIMAL_FORMAT
+                .format(NetworkUtils.internalCpuUsage()) + "\"] | CPU System [\"" + NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.cpuUsage()) + "\"]");
+            try {
                 Thread.sleep(1000);
-            } catch (InterruptedException ex)
-            {
+            } catch (InterruptedException ex) {
             }
         }
     }

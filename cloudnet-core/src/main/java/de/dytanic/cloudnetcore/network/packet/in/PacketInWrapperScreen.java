@@ -19,13 +19,13 @@ import java.lang.reflect.Type;
  */
 public class PacketInWrapperScreen extends PacketInHandler {
 
-    private static final Type TYPE = new TypeToken<WrapperScreen>() {
-    }.getType();
+    private static final Type TYPE = new TypeToken<WrapperScreen>() {}.getType();
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (!(packetSender instanceof Wrapper)) return;
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (!(packetSender instanceof Wrapper)) {
+            return;
+        }
 
         CloudNet.getInstance().getNetworkManager().handleWrapperScreenInput(((Wrapper) packetSender), data.getObject("screen", TYPE));
 

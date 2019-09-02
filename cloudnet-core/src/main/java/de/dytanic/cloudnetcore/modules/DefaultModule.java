@@ -22,8 +22,7 @@ public final class DefaultModule {
         this.moduleVersion = moduleVersion;
     }
 
-    protected InputStream stream()
-    {
+    protected InputStream stream() {
         return CloudNet.class.getClassLoader().getResourceAsStream("modules/" + moduleName + ".jar");
     }
 

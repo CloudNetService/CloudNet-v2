@@ -25,7 +25,13 @@ public class ProxyProcessMeta {
 
     private Document properties;
 
-    public ProxyProcessMeta(ServiceId serviceId, int memory, int port, String[] processParameters, String url, Collection<ServerInstallablePlugin> downloadablePlugins, Document properties) {
+    public ProxyProcessMeta(ServiceId serviceId,
+                            int memory,
+                            int port,
+                            String[] processParameters,
+                            String url,
+                            Collection<ServerInstallablePlugin> downloadablePlugins,
+                            Document properties) {
         this.serviceId = serviceId;
         this.memory = memory;
         this.port = port;

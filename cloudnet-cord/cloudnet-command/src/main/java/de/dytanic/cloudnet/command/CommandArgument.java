@@ -14,6 +14,10 @@ public abstract class CommandArgument {
      */
     private String name;
 
+    public CommandArgument(String name) {
+        this.name = name;
+    }
+
     /**
      * Method to execute before an argument is processed.
      *
@@ -29,10 +33,6 @@ public abstract class CommandArgument {
      * @param commandLine the complete command line for this command
      */
     public abstract void postExecute(Command command, String commandLine);
-
-    public CommandArgument(String name) {
-        this.name = name;
-    }
 
     public String getName() {
         return name;

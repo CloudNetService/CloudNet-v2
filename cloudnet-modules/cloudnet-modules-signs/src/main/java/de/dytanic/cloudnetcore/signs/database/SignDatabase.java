@@ -20,19 +20,16 @@ import java.util.UUID;
  */
 public class SignDatabase extends DatabaseUsable {
 
-    public SignDatabase(Database database)
-    {
+    public SignDatabase(Database database) {
         super(database);
 
         Document document = database.getDocument("signs");
-        if (document == null)
-        {
+        if (document == null) {
             database.insert(new DatabaseDocument("signs").append("signs", new Document()));
         }
     }
 
-    public SignDatabase appendSign(Sign sign)
-    {
+    public SignDatabase appendSign(Sign sign) {
         Document x = database.getDocument("signs");
         Document document = x.getDocument("signs");
         document.append(sign.getUniqueId().toString(), sign);
@@ -40,8 +37,7 @@ public class SignDatabase extends DatabaseUsable {
         return this;
     }
 
-    public SignDatabase removeSign(UUID uniqueId)
-    {
+    public SignDatabase removeSign(UUID uniqueId) {
         Document x = database.getDocument("signs");
         Document document = x.getDocument("signs");
         document.remove(uniqueId.toString());
@@ -49,15 +45,12 @@ public class SignDatabase extends DatabaseUsable {
         return this;
     }
 
-    public java.util.Map<UUID, Sign> loadAll()
-    {
+    public java.util.Map<UUID, Sign> loadAll() {
         Document x = database.getDocument("signs");
         Document document = x.getDocument("signs");
-        Type typeToken = new TypeToken<Sign>() {
-        }.getType();
+        Type typeToken = new TypeToken<Sign>() {}.getType();
         java.util.Map<UUID, Sign> signs = new LinkedHashMap<>();
-        for (String key : document.keys())
-        {
+        for (String key : document.keys()) {
             signs.put(UUID.fromString(key), document.getObject(key, typeToken));
         }
         return signs;

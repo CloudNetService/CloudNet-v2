@@ -16,14 +16,16 @@ import java.util.Arrays;
 
 public class BungeeGroup extends ProxyGroup {
 
-    public BungeeGroup()
-    {
-        super("Bungee", Arrays.asList("Wrapper-1"), new Template(
-                "default",
-                TemplateResource.LOCAL,
-                null,
-                new String[]{},
-                new ArrayList<>()
-        ), ProxyVersion.BUNGEECORD, 25565, 1, 128, new BasicProxyConfig(), ProxyGroupMode.DYNAMIC, new WrappedMap());
+    public BungeeGroup() {
+        super("Bungee",
+              Arrays.asList("Wrapper-1"),
+              new Template("default", TemplateResource.LOCAL, null, new String[] {}, new ArrayList<>()),
+              ProxyVersion.BUNGEECORD,
+              25565,
+              1,
+              128,
+              new BasicProxyConfig(),
+              ProxyGroupMode.DYNAMIC,
+              new WrappedMap());
     }
 }

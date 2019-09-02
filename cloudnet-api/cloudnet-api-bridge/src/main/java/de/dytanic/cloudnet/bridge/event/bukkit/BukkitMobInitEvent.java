@@ -20,19 +20,16 @@ public class BukkitMobInitEvent extends BukkitCloudEvent {
         this.mob = mob;
     }
 
-    public MobSelector.MobImpl getMob()
-    {
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
+
+    public MobSelector.MobImpl getMob() {
         return mob;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
-
-    public static HandlerList getHandlerList()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

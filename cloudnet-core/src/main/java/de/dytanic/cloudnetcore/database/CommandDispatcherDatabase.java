@@ -11,28 +11,26 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 
 public class CommandDispatcherDatabase extends DatabaseUsable {
 
-    public CommandDispatcherDatabase(Database database)
-    {
+    public CommandDispatcherDatabase(Database database) {
         super(database);
-        if (!database.containsDoc("dispatch_commands")) database.insert(new DatabaseDocument("dispatch_commands"));
+        if (!database.containsDoc("dispatch_commands")) {
+            database.insert(new DatabaseDocument("dispatch_commands"));
+        }
     }
 
-    public void appendCommand(String dispatcher, String commandLine)
-    {
+    public void appendCommand(String dispatcher, String commandLine) {
         Document document = database.getDocument("dispatch_commands");
         document.append(dispatcher, commandLine);
         database.insert(document);
     }
 
-    public void deleteDispatch(String dispatch)
-    {
+    public void deleteDispatch(String dispatch) {
         Document document = database.getDocument("dispatch_commands");
         document.remove(dispatch);
         database.insert(document);
     }
 
-    public String findDispatcher(String dispatch)
-    {
+    public String findDispatcher(String dispatch) {
         Document document = database.getDocument("dispatch_commands");
         return document.getString(dispatch);
     }

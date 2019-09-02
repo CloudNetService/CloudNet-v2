@@ -17,8 +17,7 @@ public class ProxiedServerAddEvent extends ProxiedCloudEvent {
         this.serverInfo = serverInfo;
     }
 
-    public ServerInfo getServerInfo()
-    {
+    public ServerInfo getServerInfo() {
         return serverInfo;
     }
 }

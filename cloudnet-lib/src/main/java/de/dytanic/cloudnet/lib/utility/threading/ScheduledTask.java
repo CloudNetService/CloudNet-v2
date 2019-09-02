@@ -3,8 +3,7 @@ package de.dytanic.cloudnet.lib.utility.threading;
 /**
  * Created by Tareko on 24.05.2017.
  */
-public class ScheduledTask
-        implements Runnable {
+public class ScheduledTask implements Runnable {
 
     protected long taskId;
     protected Runnable runnable;
@@ -15,8 +14,7 @@ public class ScheduledTask
     protected int delayTime;
     protected int repeatTime;
 
-    public ScheduledTask(long taskId, Runnable runnable, int delay, int repeatDelay)
-    {
+    public ScheduledTask(long taskId, Runnable runnable, int delay, int repeatDelay) {
         this.taskId = taskId;
         this.runnable = runnable;
         this.delay = delay != -1 && delay != 0 ? delay : 0;
@@ -55,37 +53,31 @@ public class ScheduledTask
         return interrupted;
     }
 
-    protected boolean isAsync()
-    {
+    protected boolean isAsync() {
         return false;
     }
 
     @Override
-    public void run()
-    {
-        if (interrupted) return;
+    public void run() {
+        if (interrupted) {
+            return;
+        }
 
-        if (delay != 0 && delayTime != 0)
-        {
+        if (delay != 0 && delayTime != 0) {
             delayTime--;
             return;
         }
 
-        if (repeatTime > 0)
-        {
+        if (repeatTime > 0) {
             repeatTime--;
-        } else
-        {
-            try
-            {
+        } else {
+            try {
                 runnable.run();
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
-            if (repeatTime == -1)
-            {
+            if (repeatTime == -1) {
                 cancel();
                 return;
             }
@@ -94,8 +86,7 @@ public class ScheduledTask
 
     }
 
-    public void cancel()
-    {
+    public void cancel() {
         this.interrupted = true;
     }
 }

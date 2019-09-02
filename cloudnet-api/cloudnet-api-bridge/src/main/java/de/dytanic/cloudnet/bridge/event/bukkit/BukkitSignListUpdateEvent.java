@@ -23,19 +23,16 @@ public class BukkitSignListUpdateEvent extends BukkitCloudEvent {
         this.signList = signList;
     }
 
-    public Map<UUID, Sign> getSignList()
-    {
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
+
+    public Map<UUID, Sign> getSignList() {
         return signList;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
-
-    public static HandlerList getHandlerList()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

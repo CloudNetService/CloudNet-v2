@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketDBOutExistsDocument extends Packet {
 
-    public PacketDBOutExistsDocument(String name, String db)
-    {
+    public PacketDBOutExistsDocument(String name, String db) {
         super(PacketRC.DB + 4, new Document("name", name).append("db", db));
     }
 }

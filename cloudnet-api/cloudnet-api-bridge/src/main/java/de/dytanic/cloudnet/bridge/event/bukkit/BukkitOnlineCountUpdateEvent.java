@@ -15,23 +15,20 @@ public class BukkitOnlineCountUpdateEvent extends BukkitCloudEvent {
 
     private int onlineCount;
 
-    public BukkitOnlineCountUpdateEvent(int onlineCount)
-    {
+    public BukkitOnlineCountUpdateEvent(int onlineCount) {
         this.onlineCount = onlineCount;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlerList;
     }
 
     public int getOnlineCount() {
         return onlineCount;
     }
 
-    public static HandlerList getHandlerList()
-    {
-        return handlerList;
-    }
-
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

@@ -17,7 +17,10 @@ public class AdvancedServerConfig {
 
     private boolean disableAutoSavingForWorlds;
 
-    public AdvancedServerConfig(boolean notifyPlayerUpdatesFromNoCurrentPlayer, boolean notifyProxyUpdates, boolean notifyServerUpdates, boolean disableAutoSavingForWorlds) {
+    public AdvancedServerConfig(boolean notifyPlayerUpdatesFromNoCurrentPlayer,
+                                boolean notifyProxyUpdates,
+                                boolean notifyServerUpdates,
+                                boolean disableAutoSavingForWorlds) {
         this.notifyPlayerUpdatesFromNoCurrentPlayer = notifyPlayerUpdatesFromNoCurrentPlayer;
         this.notifyProxyUpdates = notifyProxyUpdates;
         this.notifyServerUpdates = notifyServerUpdates;

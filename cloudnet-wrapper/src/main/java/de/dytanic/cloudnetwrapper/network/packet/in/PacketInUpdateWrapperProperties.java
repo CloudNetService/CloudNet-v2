@@ -17,10 +17,8 @@ import net.md_5.bungee.config.Configuration;
 public class PacketInUpdateWrapperProperties extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        Configuration configuration = data.getObject("configuration", new TypeToken<Configuration>() {
-        }.getType());
+    public void handleInput(Document data, PacketSender packetSender) {
+        Configuration configuration = data.getObject("configuration", new TypeToken<Configuration>() {}.getType());
         CloudNetWrapper.getInstance().getWrapperConfig().getConfiguration().self.putAll(configuration.self);
         CloudNetWrapper.getInstance().getWrapperConfig().save();
         CloudNetWrapper.getInstance().getWrapperConfig().load();

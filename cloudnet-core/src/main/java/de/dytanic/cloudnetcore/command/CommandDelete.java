@@ -57,9 +57,12 @@ public final class CommandDelete extends Command {
                 } else if (args[0].equalsIgnoreCase("wrapper")) {
                     if (CloudNet.getInstance().getWrappers().containsKey(args[1])) {
                         Wrapper wrapper = CloudNet.getInstance().getWrappers().get(args[1]);
-                        CloudNet.getInstance().getConfig().getWrappers()
+                        CloudNet.getInstance()
+                                .getConfig()
+                                .getWrappers()
                                 .stream()
-                                .filter(wrapperMeta -> wrapperMeta.getId().equals(wrapper.getName()))
+                                .filter(wrapperMeta -> wrapperMeta.getId()
+                                                                  .equals(wrapper.getName()))
                                 .findFirst()
                                 .ifPresent(CloudNet.getInstance().getConfig()::deleteWrapper);
                         sender.sendMessage("The wrapper was successfully deleted");
@@ -75,10 +78,8 @@ public final class CommandDelete extends Command {
                         if (CloudNet.getInstance().getServerGroups().containsKey(args[2])) {
                             ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(args[2]);
                             if (serverGroup.getTemplates().stream().anyMatch(template -> template.getName().equalsIgnoreCase(name))) {
-                                serverGroup.getTemplates().stream()
-                                        .filter(template -> template.getName().equalsIgnoreCase(name))
-                                        .collect(Collectors.toList())
-                                        .forEach(serverGroup.getTemplates()::remove);
+                                serverGroup.getTemplates().stream().filter(template -> template.getName().equalsIgnoreCase(name)).collect(
+                                    Collectors.toList()).forEach(serverGroup.getTemplates()::remove);
                                 CloudNet.getInstance().getConfig().createGroup(serverGroup);
                                 CloudNet.getInstance().getNetworkManager().updateAll();
                                 sender.sendMessage("The template was successfully deleted");
@@ -92,12 +93,10 @@ public final class CommandDelete extends Command {
                 }
                 break;
             default:
-                sender.sendMessage(
-                        "delete serverGroup <name>",
-                        "delete proxyGroup <name>",
-                        "delete wrapper <name>",
-                        "delete template serverGroup <group> <template>"
-                );
+                sender.sendMessage("delete serverGroup <name>",
+                                   "delete proxyGroup <name>",
+                                   "delete wrapper <name>",
+                                   "delete template serverGroup <group> <template>");
                 break;
         }
     }

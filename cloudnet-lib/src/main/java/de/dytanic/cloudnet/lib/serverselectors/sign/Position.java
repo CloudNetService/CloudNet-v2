@@ -44,17 +44,15 @@ public class Position {
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
 
-        if (!(obj instanceof Position)) return false;
+        if (!(obj instanceof Position)) {
+            return false;
+        }
         Position signPosition = (Position) obj;
 
-        if (signPosition.x == x
-                && signPosition.y == y &&
-                signPosition.z == z && signPosition.world.equals(world) &&
-                signPosition.group.equals(group))
-        {
+        if (signPosition.x == x && signPosition.y == y && signPosition.z == z && signPosition.world.equals(world) && signPosition.group.equals(
+            group)) {
             return true;
         }
 

@@ -20,19 +20,16 @@ public class BukkitPlayerLoginNetworkEvent extends BukkitCloudEvent {
         this.cloudPlayer = cloudPlayer;
     }
 
-    public CloudPlayer getCloudPlayer()
-    {
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
+
+    public CloudPlayer getCloudPlayer() {
         return cloudPlayer;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
-
-    public static HandlerList getHandlerList()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

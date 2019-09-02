@@ -9,8 +9,7 @@ import java.util.Set;
 /**
  * Created by Tareko on 21.05.2017.
  */
-public interface DocumentAbstract
-        extends Nameable {
+public interface DocumentAbstract extends Nameable {
 
     <T extends DocumentAbstract> T append(String key, String value);
 

@@ -15,8 +15,7 @@ import java.util.UUID;
  */
 public class PacketAPIOutGetPlayer extends Packet {
 
-    public PacketAPIOutGetPlayer(UUID uniqueId)
-    {
+    public PacketAPIOutGetPlayer(UUID uniqueId) {
         super(PacketRC.API + 1, new Document("uniqueId", uniqueId));
     }
 }

@@ -19,7 +19,12 @@ public class SignLayoutConfig {
 
     private SearchingAnimation searchingAnimation;
 
-    public SignLayoutConfig(boolean fullServerHide, boolean knockbackOnSmallDistance, double distance, double strength, Collection<SignGroupLayouts> groupLayouts, SearchingAnimation searchingAnimation) {
+    public SignLayoutConfig(boolean fullServerHide,
+                            boolean knockbackOnSmallDistance,
+                            double distance,
+                            double strength,
+                            Collection<SignGroupLayouts> groupLayouts,
+                            SearchingAnimation searchingAnimation) {
         this.fullServerHide = fullServerHide;
         this.knockbackOnSmallDistance = knockbackOnSmallDistance;
         this.distance = distance;

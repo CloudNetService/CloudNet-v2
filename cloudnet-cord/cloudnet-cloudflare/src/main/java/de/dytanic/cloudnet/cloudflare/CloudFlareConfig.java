@@ -41,7 +41,12 @@ public class CloudFlareConfig {
      */
     private Collection<CloudFlareProxyGroup> groups;
 
-    public CloudFlareConfig(boolean enabled, String email, String token, String domainName, String zoneId, Collection<CloudFlareProxyGroup> groups) {
+    public CloudFlareConfig(boolean enabled,
+                            String email,
+                            String token,
+                            String domainName,
+                            String zoneId,
+                            Collection<CloudFlareProxyGroup> groups) {
         this.enabled = enabled;
         this.email = email;
         this.token = token;

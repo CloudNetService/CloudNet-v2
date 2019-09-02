@@ -15,8 +15,7 @@ public class CloudInitEvent extends AsyncEvent<CloudInitEvent> {
 
     private CloudNet cloudNet = CloudNet.getInstance();
 
-    public CloudInitEvent()
-    {
+    public CloudInitEvent() {
         super(new AsyncPosterAdapter<>());
     }
 
