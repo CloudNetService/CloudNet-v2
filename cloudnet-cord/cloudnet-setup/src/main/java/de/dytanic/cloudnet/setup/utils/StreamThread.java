@@ -23,7 +23,6 @@ public final class StreamThread implements Runnable {
 			while ((length = inputStream.read(buffer)) != -1) {
 				System.out.print(new String(buffer, 0, length, StandardCharsets.UTF_8));
 			}
-			this.countDownLatch.countDown();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
