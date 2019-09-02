@@ -13,27 +13,21 @@ import java.util.Map;
 
 public final class MapWrapper {
 
-    private MapWrapper()
-    {
+    private MapWrapper() {
     }
 
-    public static <K, V> Map<K, V> collectionCatcherHashMap(Collection<V> key, Catcher<K, V> catcher)
-    {
+    public static <K, V> Map<K, V> collectionCatcherHashMap(Collection<V> key, Catcher<K, V> catcher) {
         HashMap<K, V> kvHashMap = new HashMap<>();
-        for (V value : key)
-        {
+        for (V value : key) {
             kvHashMap.put(catcher.doCatch(value), value);
         }
         return kvHashMap;
     }
 
-    public static <K, V> Map<K, V> filter(Map<K, V> map, Acceptable<V> acceptable)
-    {
+    public static <K, V> Map<K, V> filter(Map<K, V> map, Acceptable<V> acceptable) {
         Map<K, V> filter = NetworkUtils.newConcurrentHashMap();
-        for (Map.Entry<K, V> value : map.entrySet())
-        {
-            if (acceptable.isAccepted(value.getValue()))
-            {
+        for (Map.Entry<K, V> value : map.entrySet()) {
+            if (acceptable.isAccepted(value.getValue())) {
                 filter.put(value.getKey(), value.getValue());
             }
         }
@@ -41,21 +35,17 @@ public final class MapWrapper {
     }
 
     @SafeVarargs
-    public static <K, V> Map<K, V> valueableHashMap(Return<K, V>... returns)
-    {
+    public static <K, V> Map<K, V> valueableHashMap(Return<K, V>... returns) {
         HashMap<K, V> map = new HashMap<>();
-        for (Return<K, V> kvReturn : returns)
-        {
+        for (Return<K, V> kvReturn : returns) {
             map.put(kvReturn.getFirst(), kvReturn.getSecond());
         }
         return map;
     }
 
-    public static <K, V, NK, VK> Map<NK, VK> transform(Map<K, V> values, Catcher<NK, K> keyCatcher, Catcher<VK, V> valueCatcher)
-    {
+    public static <K, V, NK, VK> Map<NK, VK> transform(Map<K, V> values, Catcher<NK, K> keyCatcher, Catcher<VK, V> valueCatcher) {
         Map<NK, VK> nkvkMap = new HashMap<>();
-        for (Map.Entry<K, V> entry : values.entrySet())
-        {
+        for (Map.Entry<K, V> entry : values.entrySet()) {
             nkvkMap.put(keyCatcher.doCatch(entry.getKey()), valueCatcher.doCatch(entry.getValue()));
         }
         return nkvkMap;

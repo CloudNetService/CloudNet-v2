@@ -21,48 +21,38 @@ import java.util.Collection;
 public class FileProtocol implements IProtocol {
 
     @Override
-    public int getId()
-    {
+    public int getId() {
         return 2;
     }
 
     @Override
-    public Collection<Class<?>> getAvailableClasses()
-    {
+    public Collection<Class<?>> getAvailableClasses() {
         return Arrays.asList(File.class, Path.class, FileDeploy.class);
     }
 
     @Override
-    public ProtocolStream createElement(Object element)
-    {
-        if (element.getClass().equals(File.class))
-        {
-            try
-            {
+    public ProtocolStream createElement(Object element) {
+        if (element.getClass().equals(File.class)) {
+            try {
                 byte[] input = Files.readAllBytes(Paths.get(((File) element).getPath()));
                 String dest = ((File) element).getPath();
                 return new FileDeploy(dest, input);
-            } catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        if (element.getClass().equals(Path.class))
-        {
-            try
-            {
+        if (element.getClass().equals(Path.class)) {
+            try {
                 byte[] input = Files.readAllBytes((Path) element);
                 String dest = ((Path) element).toUri().toString();
                 return new FileDeploy(dest, input);
-            } catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        if (element instanceof FileDeploy)
-        {
+        if (element instanceof FileDeploy) {
             return (FileDeploy) element;
         }
 
@@ -70,8 +60,7 @@ public class FileProtocol implements IProtocol {
     }
 
     @Override
-    public ProtocolStream createEmptyElement()
-    {
+    public ProtocolStream createEmptyElement() {
         return new FileDeploy();
     }
 }

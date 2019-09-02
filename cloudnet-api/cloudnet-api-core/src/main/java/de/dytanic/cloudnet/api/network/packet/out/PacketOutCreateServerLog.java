@@ -13,8 +13,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutCreateServerLog extends Packet {
 
-    public PacketOutCreateServerLog(String randomString, String serverId)
-    {
+    public PacketOutCreateServerLog(String randomString, String serverId) {
         super(PacketRC.CN_INTERNAL_CHANNELS + 1, new Document("random", randomString).append("serverId", serverId));
     }
 }

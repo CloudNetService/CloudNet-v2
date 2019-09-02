@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.lib.network.protocol.file;
 
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolBuffer;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolStream;
-import lombok.NoArgsConstructor;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,40 +29,33 @@ public class FileDeploy extends ProtocolStream {
     }
 
     @Override
-    public void write(ProtocolBuffer out) throws Exception
-    {
+    public void write(ProtocolBuffer out) throws Exception {
         out.writeString(dest);
         out.writeVarInt(bytes.length);
         out.writeBytes(bytes);
     }
 
     @Override
-    public void read(ProtocolBuffer in) throws Exception
-    {
-        if (in.readableBytes() != 0)
-        {
+    public void read(ProtocolBuffer in) throws Exception {
+        if (in.readableBytes() != 0) {
             this.dest = in.readString();
             this.bytes = in.readBytes(in.readVarInt()).array();
             toWrite();
         }
     }
 
-    public void toWrite()
-    {
-        try
-        {
+    public void toWrite() {
+        try {
             File file = new File(dest);
             file.getParentFile().mkdirs();
             file.createNewFile();
 
-            try (FileOutputStream fileOutputStream = new FileOutputStream(file))
-            {
+            try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
                 fileOutputStream.write(bytes);
                 fileOutputStream.flush();
             }
 
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

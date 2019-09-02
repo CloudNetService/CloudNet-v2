@@ -15,8 +15,7 @@ public class ServerRemoveEvent extends AsyncEvent<ServerRemoveEvent> {
 
     private MinecraftServer minecraftServer;
 
-    public ServerRemoveEvent(MinecraftServer minecraftServer)
-    {
+    public ServerRemoveEvent(MinecraftServer minecraftServer) {
         super(new AsyncPosterAdapter<>());
         this.minecraftServer = minecraftServer;
     }

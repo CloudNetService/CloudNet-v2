@@ -18,20 +18,22 @@ import java.util.Collection;
 
 public final class PacketInSendScreenLine extends PacketInHandler {
 
-    private static final Type TYPE = new TypeToken<Collection<ScreenInfo>>() {
-    }.getType();
+    private static final Type TYPE = new TypeToken<Collection<ScreenInfo>>() {}.getType();
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         Collection<ScreenInfo> screenInfos = data.getObject("screenInfo", TYPE);
         CloudNet.getInstance().getEventManager().callEvent(new ScreenInfoEvent(screenInfos));
 
-        for (ScreenInfo screenInfo : screenInfos)
-        {
-            if (CloudNet.getInstance().getScreenProvider().getMainServiceId() != null &&
-                    screenInfo.getServiceId().getServerId().equalsIgnoreCase(CloudNet.getInstance().getScreenProvider().getMainServiceId().getServerId()))
+        for (ScreenInfo screenInfo : screenInfos) {
+            if (CloudNet.getInstance().getScreenProvider().getMainServiceId() != null && screenInfo.getServiceId()
+                                                                                                   .getServerId()
+                                                                                                   .equalsIgnoreCase(CloudNet.getInstance()
+                                                                                                                             .getScreenProvider()
+                                                                                                                             .getMainServiceId()
+                                                                                                                             .getServerId())) {
                 System.out.println("[" + screenInfo.getServiceId().getServerId() + "] " + screenInfo.getLine());
+            }
         }
 
         CloudNet.getInstance().getNetworkManager().handleScreen(((INetworkComponent) packetSender), screenInfos);

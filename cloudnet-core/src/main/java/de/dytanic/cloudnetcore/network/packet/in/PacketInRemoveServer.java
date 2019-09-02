@@ -16,22 +16,22 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 /**
  * Created by Tareko on 20.07.2017.
  */
-public class PacketInRemoveServer
-        extends PacketInHandler {
+public class PacketInRemoveServer extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (!(packetSender instanceof Wrapper)) return;
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (!(packetSender instanceof Wrapper)) {
+            return;
+        }
 
         Wrapper cn = (Wrapper) packetSender;
-        ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {
-        }.getType());
+        ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {}.getType());
 
-        if (cn.getServers().containsKey(serverInfo.getServiceId().getServerId()))
-        {
+        if (cn.getServers().containsKey(serverInfo.getServiceId().getServerId())) {
             MinecraftServer minecraftServer = cn.getServers().get(serverInfo.getServiceId().getServerId());
-            if (minecraftServer.getChannel() != null) minecraftServer.getChannel().close();
+            if (minecraftServer.getChannel() != null) {
+                minecraftServer.getChannel().close();
+            }
 
             cn.getServers().remove(serverInfo.getServiceId().getServerId());
             CloudNet.getInstance().getNetworkManager().handleServerRemove(minecraftServer);

@@ -11,14 +11,12 @@ import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutUpdateWrapperInfo;
 
 public final class CommandReload extends Command {
 
-    public CommandReload()
-    {
+    public CommandReload() {
         super("reload", "cloudnet.command.reload", "rl");
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
         CloudNetWrapper.getInstance().getWrapperConfig().load();
         CloudNetWrapper.getInstance().setMaxMemory(CloudNetWrapper.getInstance().getWrapperConfig().getMaxMemory());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutUpdateWrapperInfo());

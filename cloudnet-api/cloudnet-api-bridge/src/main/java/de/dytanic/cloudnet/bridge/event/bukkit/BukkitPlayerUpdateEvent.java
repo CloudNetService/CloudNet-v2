@@ -13,26 +13,22 @@ import org.bukkit.event.HandlerList;
 public class BukkitPlayerUpdateEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
-
-    public static HandlerList getHandlerList()
-    {
-        return handlerList;
-    }
-
     private CloudPlayer cloudPlayer;
 
     public BukkitPlayerUpdateEvent(CloudPlayer cloudPlayer) {
         this.cloudPlayer = cloudPlayer;
     }
 
-    public CloudPlayer getCloudPlayer()
-    {
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
+
+    public CloudPlayer getCloudPlayer() {
         return cloudPlayer;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

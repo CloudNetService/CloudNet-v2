@@ -36,7 +36,18 @@ public class ServerProcessMeta {
 
     private Template template;
 
-    public ServerProcessMeta(ServiceId serviceId, int memory, boolean priorityStop, String url, String[] processParameters, boolean onlineMode, Collection<ServerInstallablePlugin> downloadablePlugins, ServerConfig serverConfig, String customServerDownload, int port, Properties serverProperties, Template template) {
+    public ServerProcessMeta(ServiceId serviceId,
+                             int memory,
+                             boolean priorityStop,
+                             String url,
+                             String[] processParameters,
+                             boolean onlineMode,
+                             Collection<ServerInstallablePlugin> downloadablePlugins,
+                             ServerConfig serverConfig,
+                             String customServerDownload,
+                             int port,
+                             Properties serverProperties,
+                             Template template) {
         this.serviceId = serviceId;
         this.memory = memory;
         this.priorityStop = priorityStop;

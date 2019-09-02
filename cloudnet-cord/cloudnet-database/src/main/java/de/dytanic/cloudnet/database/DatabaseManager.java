@@ -27,8 +27,7 @@ public class DatabaseManager {
     /**
      * Constructs a new database manager.
      */
-    public DatabaseManager()
-    {
+    public DatabaseManager() {
         dir = new File("database");
         //noinspection ResultOfMethodCallIgnored
         dir.mkdir();
@@ -36,18 +35,44 @@ public class DatabaseManager {
         timer = new Timer(true);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run()
-            {
+            public void run() {
                 save();
             }
         }, 0, 60000);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run()
-            {
+            public void run() {
                 save().clear();
             }
         }, 0, 360000);
+    }
+
+    /**
+     * Saves the currently opened documents in the loaded databases.
+     *
+     * @return this manager for chaining
+     *
+     * @see DatabaseImpl#save()
+     */
+    public DatabaseManager save() {
+        for (Database database : databaseCollection.values()) {
+            ((DatabaseImpl) database).save();
+        }
+        return this;
+    }
+
+    /**
+     * Clears the currently opened documents of the loaded databases.
+     *
+     * @return this manager for chaining
+     *
+     * @see DatabaseImpl#clear()
+     */
+    public DatabaseManager clear() {
+        for (Database database : databaseCollection.values()) {
+            ((DatabaseImpl) database).clear();
+        }
+        return this;
     }
 
     public File getDir() {
@@ -71,8 +96,7 @@ public class DatabaseManager {
      *
      * @return a list of database names
      */
-    public List<String> getDatabases()
-    {
+    public List<String> getDatabases() {
         String[] databases = dir.list();
         return databases == null ? new ArrayList<>() : Arrays.asList(databases);
     }
@@ -82,20 +106,18 @@ public class DatabaseManager {
      * If the database does not exist, it will be created.
      *
      * @param name the name of the database
+     *
      * @return the database for the given {@code name}
      */
-    public Database getDatabase(String name)
-    {
+    public Database getDatabase(String name) {
         Database database;
 
-        if (databaseCollection.containsKey(name))
-        {
+        if (databaseCollection.containsKey(name)) {
             return databaseCollection.get(name);
         }
 
         File file = new File("database/" + name);
-        if (!file.exists())
-        {
+        if (!file.exists()) {
             //noinspection ResultOfMethodCallIgnored
             file.mkdir();
         }
@@ -104,36 +126,6 @@ public class DatabaseManager {
         this.databaseCollection.put(name, database);
 
         return database;
-    }
-
-    /**
-     * Saves the currently opened documents in the loaded databases.
-     *
-     * @return this manager for chaining
-     * @see DatabaseImpl#save()
-     */
-    public DatabaseManager save()
-    {
-        for (Database database : databaseCollection.values())
-        {
-            ((DatabaseImpl) database).save();
-        }
-        return this;
-    }
-
-    /**
-     * Clears the currently opened documents of the loaded databases.
-     *
-     * @return this manager for chaining
-     * @see DatabaseImpl#clear()
-     */
-    public DatabaseManager clear()
-    {
-        for (Database database : databaseCollection.values())
-        {
-            ((DatabaseImpl) database).clear();
-        }
-        return this;
     }
 
 }

@@ -14,8 +14,7 @@ import net.md_5.bungee.config.Configuration;
  */
 public class PacketOutUpdateWrapperProperties extends Packet {
 
-    public PacketOutUpdateWrapperProperties(Configuration properties)
-    {
+    public PacketOutUpdateWrapperProperties(Configuration properties) {
         super(PacketRC.CN_CORE + 12, new Document("properties", properties));
     }
 }

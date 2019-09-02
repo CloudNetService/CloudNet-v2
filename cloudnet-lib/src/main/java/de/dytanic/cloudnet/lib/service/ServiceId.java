@@ -22,8 +22,7 @@ public final class ServiceId {
 
     private String gameId;
 
-    public ServiceId(String group, int id, UUID uniqueId, String wrapperId)
-    {
+    public ServiceId(String group, int id, UUID uniqueId, String wrapperId) {
         this.group = group;
         this.id = id;
         this.uniqueId = uniqueId;
@@ -33,8 +32,7 @@ public final class ServiceId {
         this.gameId = uniqueId.toString().split("-")[0];
     }
 
-    public ServiceId(String group, int id, UUID uniqueId, String wrapperId, String serverId)
-    {
+    public ServiceId(String group, int id, UUID uniqueId, String wrapperId, String serverId) {
         this.group = group;
         this.id = id;
         this.uniqueId = uniqueId;
@@ -44,8 +42,7 @@ public final class ServiceId {
         this.gameId = uniqueId.toString().split("-")[0];
     }
 
-    public String getServerId()
-    {
+    public String getServerId() {
         return serverId;
     }
 

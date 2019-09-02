@@ -15,8 +15,7 @@ import de.dytanic.cloudnetcore.CloudNet;
 public class PacketInCreateServerLog extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         CloudNet.getInstance().getServerLogManager().append(data.getString("random"), data.getString("serverId"));
     }
 

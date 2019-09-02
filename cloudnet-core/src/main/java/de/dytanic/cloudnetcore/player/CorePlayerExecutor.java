@@ -17,23 +17,30 @@ public class CorePlayerExecutor extends PlayerExecutor {
     public static final PlayerExecutor INSTANCE = new CorePlayerExecutor();
 
     @Override
-    public void sendMessage(CloudPlayer cloudPlayer, String message)
-    {
-        CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "sendMessage",
-                new Document("message", message).append("name", cloudPlayer.getName()).append("uniqueId", cloudPlayer.getUniqueId()));
+    public void sendPlayer(CloudPlayer cloudPlayer, String server) {
+        CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "sendPlayer", new Document("uniqueId",
+                                                                                                                    cloudPlayer.getUniqueId())
+            .append("name", cloudPlayer.getName())
+            .append("server", server));
     }
 
     @Override
-    public void sendPlayer(CloudPlayer cloudPlayer, String server)
-    {
-        CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "sendPlayer",
-                new Document("uniqueId", cloudPlayer.getUniqueId()).append("name", cloudPlayer.getName()).append("server", server));
+    public void kickPlayer(CloudPlayer cloudPlayer, String reason) {
+        CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "kickPlayer", new Document("uniqueId",
+                                                                                                                    cloudPlayer.getUniqueId())
+            .append("name", cloudPlayer.getName())
+            .append("reason", reason));
     }
 
     @Override
-    public void kickPlayer(CloudPlayer cloudPlayer, String reason)
-    {
-        CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "kickPlayer",
-                new Document("uniqueId", cloudPlayer.getUniqueId()).append("name", cloudPlayer.getName()).append("reason", reason));
+    public void sendMessage(CloudPlayer cloudPlayer, String message) {
+        CloudNet.getInstance().getNetworkManager().sendProxyMessage("cloudnet_internal", "sendMessage", new Document("message",
+                                                                                                                     message).append("name",
+                                                                                                                                     cloudPlayer
+                                                                                                                                         .getName())
+                                                                                                                             .append(
+                                                                                                                                 "uniqueId",
+                                                                                                                                 cloudPlayer
+                                                                                                                                     .getUniqueId()));
     }
 }

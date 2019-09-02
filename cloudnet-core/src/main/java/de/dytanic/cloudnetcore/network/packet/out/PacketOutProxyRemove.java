@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public final class PacketOutProxyRemove extends Packet {
 
-    public PacketOutProxyRemove(ProxyInfo proxyInfo)
-    {
+    public PacketOutProxyRemove(ProxyInfo proxyInfo) {
         super(PacketRC.SERVER_HANDLE + 7, new Document("proxyInfo", proxyInfo));
     }
 }

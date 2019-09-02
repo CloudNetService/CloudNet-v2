@@ -26,29 +26,24 @@ public class BukkitCustomChannelMessageReceiveEvent extends BukkitCloudEvent {
         this.document = document;
     }
 
-    public String getMessage()
-    {
-        return message;
-    }
-
-    public Document getDocument()
-    {
-        return document;
-    }
-
-    public String getChannel()
-    {
-        return channel;
-    }
-
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

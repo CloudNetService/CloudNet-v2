@@ -36,15 +36,12 @@ public class CloudConfigLoader {
         return pathConnectionJson;
     }
 
-    public Document loadConfig()
-    {
+    public Document loadConfig() {
         return Document.loadDocument(pathConfigJson);
     }
 
-    public ConnectableAddress loadConnnection()
-    {
-        return Document.loadDocument(pathConnectionJson).getObject("connection", new TypeToken<ConnectableAddress>() {
-        }.getType());
+    public ConnectableAddress loadConnnection() {
+        return Document.loadDocument(pathConnectionJson).getObject("connection", new TypeToken<ConnectableAddress>() {}.getType());
     }
 
 }

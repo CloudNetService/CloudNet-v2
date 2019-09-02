@@ -28,6 +28,10 @@ public class ServerConfig {
         return properties;
     }
 
+    public void setProperties(Document properties) {
+        this.properties = properties;
+    }
+
     public long getStartup() {
         return startup;
     }
@@ -36,19 +40,15 @@ public class ServerConfig {
         return extra;
     }
 
-    public boolean isHideServer() {
-        return hideServer;
-    }
-
     public void setExtra(String extra) {
         this.extra = extra;
     }
 
-    public void setHideServer(boolean hideServer) {
-        this.hideServer = hideServer;
+    public boolean isHideServer() {
+        return hideServer;
     }
 
-    public void setProperties(Document properties) {
-        this.properties = properties;
+    public void setHideServer(boolean hideServer) {
+        this.hideServer = hideServer;
     }
 }

@@ -17,8 +17,7 @@ public class ScreenInfoEvent extends AsyncEvent<ScreenInfoEvent> {
 
     private Collection<ScreenInfo> screenInfos;
 
-    public ScreenInfoEvent(Collection<ScreenInfo> screenInfos)
-    {
+    public ScreenInfoEvent(Collection<ScreenInfo> screenInfos) {
         super(new AsyncPosterAdapter<>());
         this.screenInfos = screenInfos;
     }

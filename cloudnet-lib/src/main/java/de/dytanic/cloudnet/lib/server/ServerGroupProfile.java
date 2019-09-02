@@ -6,8 +6,7 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 /**
  * Created by Tareko on 03.07.2017.
  */
-public class ServerGroupProfile
-        implements Nameable {
+public class ServerGroupProfile implements Nameable {
 
     private String name;
 

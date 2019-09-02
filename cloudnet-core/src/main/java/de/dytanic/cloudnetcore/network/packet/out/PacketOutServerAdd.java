@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutServerAdd extends Packet {
 
-    public PacketOutServerAdd(ServerInfo add)
-    {
+    public PacketOutServerAdd(ServerInfo add) {
         super(PacketRC.SERVER_HANDLE + 2, new Document().append("serverInfo", add));
     }
 }

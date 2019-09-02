@@ -17,7 +17,14 @@ public class WrapperInfo {
     private int process_queue_size;
     private int memory;
 
-    public WrapperInfo(String serverId, String hostName, String version, boolean ready, int availableProcessors, int startPort, int process_queue_size, int memory) {
+    public WrapperInfo(String serverId,
+                       String hostName,
+                       String version,
+                       boolean ready,
+                       int availableProcessors,
+                       int startPort,
+                       int process_queue_size,
+                       int memory) {
         this.serverId = serverId;
         this.hostName = hostName;
         this.version = version;

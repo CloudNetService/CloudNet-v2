@@ -32,7 +32,12 @@ public class User implements Nameable {
 
     protected Map<String, Object> metaData;
 
-    public User(String name, UUID uniqueId, String apiToken, String hashedPassword, Collection<String> permissions, Map<String, Object> metaData) {
+    public User(String name,
+                UUID uniqueId,
+                String apiToken,
+                String hashedPassword,
+                Collection<String> permissions,
+                Map<String, Object> metaData) {
         this.name = name;
         this.uniqueId = uniqueId;
         this.apiToken = apiToken;
@@ -66,13 +71,11 @@ public class User implements Nameable {
         return hashedPassword;
     }
 
-    public SimpledUser toSimple()
-    {
+    public SimpledUser toSimple() {
         return new SimpledUser(name, apiToken);
     }
 
-    public boolean hasPermission(String permission)
-    {
+    public boolean hasPermission(String permission) {
         return permissions.contains("*") || permissions.contains(permission);
     }
 

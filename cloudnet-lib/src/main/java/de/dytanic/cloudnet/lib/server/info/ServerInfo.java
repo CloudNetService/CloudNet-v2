@@ -16,8 +16,7 @@ import java.util.List;
 @ToString
 public class ServerInfo {
 
-    public static final Type TYPE = new TypeToken<ServerInfo>() {
-    }.getType();
+    public static final Type TYPE = new TypeToken<ServerInfo>() {}.getType();
 
     private ServiceId serviceId;
 
@@ -33,7 +32,18 @@ public class ServerInfo {
     private ServerConfig serverConfig;
     private Template template;
 
-    public ServerInfo(ServiceId serviceId, String host, int port, boolean online, List<String> players, int memory, String motd, int onlineCount, int maxPlayers, ServerState serverState, ServerConfig serverConfig, Template template) {
+    public ServerInfo(ServiceId serviceId,
+                      String host,
+                      int port,
+                      boolean online,
+                      List<String> players,
+                      int memory,
+                      String motd,
+                      int onlineCount,
+                      int maxPlayers,
+                      ServerState serverState,
+                      ServerConfig serverConfig,
+                      Template template) {
         this.serviceId = serviceId;
         this.host = host;
         this.port = port;
@@ -96,18 +106,20 @@ public class ServerInfo {
         return online;
     }
 
-    public boolean isIngame()
-    {
+    public boolean isIngame() {
 
-        if (serverState == null) serverState = ServerState.LOBBY;
+        if (serverState == null) {
+            serverState = ServerState.LOBBY;
+        }
 
-        if (motd == null) motd = "null";
+        if (motd == null) {
+            motd = "null";
+        }
 
         return serverState == ServerState.INGAME || (motd.equalsIgnoreCase("INGAME") || motd.equalsIgnoreCase("RUNNING"));
     }
 
-    public SimpleServerInfo toSimple()
-    {
+    public SimpleServerInfo toSimple() {
         return new SimpleServerInfo(serviceId, host, port, onlineCount, maxPlayers);
     }
 

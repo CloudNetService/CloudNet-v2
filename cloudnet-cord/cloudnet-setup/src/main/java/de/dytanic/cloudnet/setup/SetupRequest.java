@@ -41,7 +41,11 @@ public class SetupRequest implements Nameable {
      */
     private Catcher<Boolean, String> validater;
 
-    public SetupRequest(String name, String question, String inValidMessage, SetupResponseType responseType, Catcher<Boolean, String> validater) {
+    public SetupRequest(String name,
+                        String question,
+                        String inValidMessage,
+                        SetupResponseType responseType,
+                        Catcher<Boolean, String> validater) {
         this.name = name;
         this.question = question;
         this.inValidMessage = inValidMessage;

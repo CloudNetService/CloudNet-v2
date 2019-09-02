@@ -23,11 +23,9 @@ import de.dytanic.cloudnetcore.signs.packet.out.PacketOutSignSelector;
  */
 public class SignsModule extends CoreModule implements IEventListener<UpdateAllEvent> {
 
-    private ConfigSignLayout configSignLayout;
-
-    private SignDatabase signDatabase;
-
     private static SignsModule instance;
+    private ConfigSignLayout configSignLayout;
+    private SignDatabase signDatabase;
 
     public static SignsModule getInstance() {
         return instance;
@@ -42,24 +40,20 @@ public class SignsModule extends CoreModule implements IEventListener<UpdateAllE
     }
 
     @Override
-    public void onLoad()
-    {
+    public void onLoad() {
         instance = this;
     }
 
     @Override
-    public void onBootstrap()
-    {
+    public void onBootstrap() {
         configSignLayout = new ConfigSignLayout();
         configSignLayout.loadLayout();
         signDatabase = new SignDatabase(getCloud().getDatabaseManager().getDatabase("cloud_internal_cfg"));
 
-        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 1).size() == 0)
-        {
+        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 1).size() == 0) {
             getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 1, PacketInAddSign.class);
         }
-        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 2).size() == 0)
-        {
+        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 2).size() == 0) {
             getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInRemoveSign.class);
         }
 
@@ -68,23 +62,26 @@ public class SignsModule extends CoreModule implements IEventListener<UpdateAllE
     }
 
     @Override
-    public void onCall(UpdateAllEvent event)
-    {
-        if (event.isOnlineCloudNetworkUpdate())
+    public void onCall(UpdateAllEvent event) {
+        if (event.isOnlineCloudNetworkUpdate()) {
             event.getNetworkManager().sendToLobbys(new PacketOutSignSelector(signDatabase.loadAll(), configSignLayout.loadLayout()));
+        }
     }
 
     private class ListenerImpl implements IEventListener<ChannelInitEvent> {
 
         @Override
-        public void onCall(ChannelInitEvent event)
-        {
-            if (event.getINetworkComponent() instanceof Wrapper) return;
+        public void onCall(ChannelInitEvent event) {
+            if (event.getINetworkComponent() instanceof Wrapper) {
+                return;
+            }
 
-            if (event.getINetworkComponent() instanceof MinecraftServer &&
-                    (((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.LOBBY) ||
-                            ((MinecraftServer) event.getINetworkComponent()).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY)))
+            if (event.getINetworkComponent() instanceof MinecraftServer && (((MinecraftServer) event.getINetworkComponent()).getGroupMode()
+                                                                                                                            .equals(
+                                                                                                                                ServerGroupMode.LOBBY) || ((MinecraftServer) event
+                .getINetworkComponent()).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))) {
                 event.getINetworkComponent().sendPacket(new PacketOutSignSelector(signDatabase.loadAll(), configSignLayout.loadLayout()));
+            }
         }
     }
 }

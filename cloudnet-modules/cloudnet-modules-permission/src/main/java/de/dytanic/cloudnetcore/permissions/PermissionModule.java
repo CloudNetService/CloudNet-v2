@@ -20,13 +20,12 @@ import de.dytanic.cloudnetcore.permissions.network.packet.in.PacketInUpdatePermi
 public class PermissionModule extends CoreModule {
 
     private static PermissionModule instance;
+    private ConfigPermissions configPermission;
+    private PermissionPool permissionPool;
 
     public static PermissionModule getInstance() {
         return instance;
     }
-
-    private ConfigPermissions configPermission;
-    private PermissionPool permissionPool;
 
     public ConfigPermissions getConfigPermission() {
         return configPermission;
@@ -37,19 +36,15 @@ public class PermissionModule extends CoreModule {
     }
 
     @Override
-    public void onLoad()
-    {
+    public void onLoad() {
         instance = this;
     }
 
     @Override
-    public void onBootstrap()
-    {
-        try
-        {
+    public void onBootstrap() {
+        try {
             configPermission = new ConfigPermissions();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         permissionPool = new PermissionPool();

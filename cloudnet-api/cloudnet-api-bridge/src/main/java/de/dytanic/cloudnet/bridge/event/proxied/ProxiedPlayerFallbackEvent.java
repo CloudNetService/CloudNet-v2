@@ -27,6 +27,10 @@ public class ProxiedPlayerFallbackEvent extends ProxiedCloudEvent {
         return fallback;
     }
 
+    public void setFallback(String fallback) {
+        this.fallback = fallback;
+    }
+
     public CloudPlayer getCloudPlayer() {
         return cloudPlayer;
     }
@@ -37,10 +41,6 @@ public class ProxiedPlayerFallbackEvent extends ProxiedCloudEvent {
 
     public ProxiedPlayer getProxiedPlayer() {
         return proxiedPlayer;
-    }
-
-    public void setFallback(String fallback) {
-        this.fallback = fallback;
     }
 
     public enum FallbackType {

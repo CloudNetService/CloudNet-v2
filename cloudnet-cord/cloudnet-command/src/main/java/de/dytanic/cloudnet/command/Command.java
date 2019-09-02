@@ -12,8 +12,7 @@ import java.util.HashSet;
 /**
  * Abstract class to define a command with an executor and a name
  */
-public abstract class Command
-        implements CommandExecutor, Nameable {
+public abstract class Command implements CommandExecutor, Nameable {
 
     protected String name;
     protected String permission;
@@ -30,8 +29,7 @@ public abstract class Command
      * @param permission the permission a user has to have
      * @param aliases    other names of this command
      */
-    protected Command(String name, String permission, String... aliases)
-    {
+    protected Command(String name, String permission, String... aliases) {
         this.name = name;
         this.permission = permission;
         this.aliases = aliases;
@@ -42,10 +40,10 @@ public abstract class Command
      *
      * @param commandArgument the argument to append
      * @param <T>             a subclass of {@link Command}
+     *
      * @return the command for chaining
      */
-    protected <T extends Command> T appendArgument(CommandArgument commandArgument)
-    {
+    protected <T extends Command> T appendArgument(CommandArgument commandArgument) {
         this.commandArguments.add(commandArgument);
         //noinspection unchecked
         return (T) this;

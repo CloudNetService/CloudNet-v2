@@ -20,16 +20,10 @@ public class LoginRequestEvent extends Event implements Cancelable {
 
     private boolean cancelled = false;
 
-    public LoginRequestEvent(ProxyServer proxyServer, PlayerConnection cloudPlayerConnection)
-    {
+    public LoginRequestEvent(ProxyServer proxyServer, PlayerConnection cloudPlayerConnection) {
         this.cloudPlayerConnection = cloudPlayerConnection;
         this.proxyServer = proxyServer;
 
-    }
-
-    @Override
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
     }
 
     public ProxyServer getProxyServer() {
@@ -43,5 +37,10 @@ public class LoginRequestEvent extends Event implements Cancelable {
     @Override
     public boolean isCancelled() {
         return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

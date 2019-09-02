@@ -15,8 +15,7 @@ public class WrapperChannelDisconnectEvent extends AsyncEvent<WrapperChannelDisc
 
     private Wrapper wrapper;
 
-    public WrapperChannelDisconnectEvent(Wrapper wrapper)
-    {
+    public WrapperChannelDisconnectEvent(Wrapper wrapper) {
         super(new AsyncPosterAdapter<>());
         this.wrapper = wrapper;
     }

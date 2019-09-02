@@ -17,8 +17,7 @@ public class ProxiedPlayerLoginEvent extends ProxiedCloudEvent {
         this.cloudPlayer = cloudPlayer;
     }
 
-    public CloudPlayer getCloudPlayer()
-    {
+    public CloudPlayer getCloudPlayer() {
         return cloudPlayer;
     }
 }

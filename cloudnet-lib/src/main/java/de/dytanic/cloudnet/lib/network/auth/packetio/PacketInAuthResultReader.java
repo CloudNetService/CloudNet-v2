@@ -11,8 +11,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 public abstract class PacketInAuthResultReader extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         AuthLoginResult authLoginResult = data.getObject("result", AuthLoginResult.class);
         handleResult(authLoginResult);
     }

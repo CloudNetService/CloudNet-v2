@@ -65,39 +65,37 @@ public class MasterTemplateLoader {
         return dest;
     }
 
-    public MasterTemplateLoader load()
-    {
-        try
-        {
+    public MasterTemplateLoader load() {
+        try {
             HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
             urlConnection.setRequestProperty("-Xcloudnet-token", simpledUser.getApiToken());
             urlConnection.setRequestProperty("-Xmessage", customName != null ? "custom" : "template");
-            urlConnection.setRequestProperty("-Xvalue", customName != null ? customName : new Document("template", template.getName()).append("group", group).convertToJsonString());
+            urlConnection.setRequestProperty("-Xvalue", customName != null ? customName : new Document("template",
+                                                                                                       template.getName()).append("group",
+                                                                                                                                  group)
+                                                                                                                          .convertToJsonString());
             urlConnection.setUseCaches(false);
             urlConnection.connect();
 
-            if (urlConnection.getHeaderField("-Xresponse") == null)
+            if (urlConnection.getHeaderField("-Xresponse") == null) {
                 Files.copy(urlConnection.getInputStream(), Paths.get(dest));
+            }
 
             urlConnection.disconnect();
 
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public MasterTemplateLoader unZip(String dest)
-    {
-        try
-        {
+    public MasterTemplateLoader unZip(String dest) {
+        try {
             ZipConverter.extract(Paths.get(this.dest), Paths.get(dest));
             new File(this.dest).delete();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;

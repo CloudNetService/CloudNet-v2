@@ -17,14 +17,13 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 public final class PacketInAddProxy extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (!(packetSender instanceof Wrapper)) return;
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (!(packetSender instanceof Wrapper)) {
+            return;
+        }
         Wrapper cn = ((Wrapper) packetSender);
-        ProxyInfo nullServerInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>() {
-        }.getType());
-        ProxyProcessMeta proxyProcessMeta = data.getObject("proxyProcess", new TypeToken<ProxyProcessMeta>() {
-        }.getType());
+        ProxyInfo nullServerInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>() {}.getType());
+        ProxyProcessMeta proxyProcessMeta = data.getObject("proxyProcess", new TypeToken<ProxyProcessMeta>() {}.getType());
         ProxyServer minecraftServer = new ProxyServer(proxyProcessMeta, cn, nullServerInfo);
         cn.getProxys().put(proxyProcessMeta.getServiceId().getServerId(), minecraftServer);
         cn.getWaitingServices().remove(minecraftServer.getServerId());

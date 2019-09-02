@@ -23,12 +23,12 @@ public class MultiValue<F, S> {
         return second;
     }
 
-    public F getFirst() {
-        return first;
-    }
-
     public void setSecond(S second) {
         this.second = second;
+    }
+
+    public F getFirst() {
+        return first;
     }
 
     public void setFirst(F first) {

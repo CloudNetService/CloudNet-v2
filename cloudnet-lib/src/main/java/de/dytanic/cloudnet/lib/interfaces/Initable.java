@@ -6,8 +6,7 @@ package de.dytanic.cloudnet.lib.interfaces;
 
 public interface Initable extends Runnable {
 
-    default void run()
-    {
+    default void run() {
         init();
     }
 

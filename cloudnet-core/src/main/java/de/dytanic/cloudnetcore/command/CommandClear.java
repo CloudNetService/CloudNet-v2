@@ -12,8 +12,7 @@ import java.io.IOException;
 
 public final class CommandClear extends Command {
 
-    public CommandClear()
-    {
+    public CommandClear() {
         super("clear", "cloudnet.command.clear");
 
         description = "Clears the console";
@@ -21,13 +20,10 @@ public final class CommandClear extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
-        try
-        {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
+        try {
             CloudNet.getInstance().getLogger().getReader().clearScreen();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
         }
     }
 }

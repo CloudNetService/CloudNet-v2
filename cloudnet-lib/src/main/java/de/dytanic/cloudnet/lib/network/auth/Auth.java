@@ -22,35 +22,30 @@ public final class Auth {
 
     public Auth(String servicekey, String cn_id) {
         this.type = AuthType.CLOUD_NET;
-        this.authData
-                .append("key", servicekey)
-                .append("id", cn_id);
+        this.authData.append("key", servicekey).append("id", cn_id);
     }
 
     public Auth(ServiceId serverId) {
         this.type = AuthType.GAMESERVER_OR_BUNGEE;
-        this.authData
-                .append("serviceId", serverId);
+        this.authData.append("serviceId", serverId);
     }
 
     public Auth(User user) {
         this.type = AuthType.GAMESERVER_OR_BUNGEE;
-        this.authData
-                .append("user", user);
+        this.authData.append("user", user);
     }
 
     public Auth(ServiceId serverId, boolean external) {
         this.type = AuthType.GAMESERVER_OR_BUNGEE;
-        this.authData
-                .append("serviceId", serverId);
-        if (external) this.authData.append("external", "1805 4646");
+        this.authData.append("serviceId", serverId);
+        if (external) {
+            this.authData.append("external", "1805 4646");
+        }
     }
 
     public Auth(String adminKey) {
         this.type = AuthType.USER_AUTH;
-        this.authData
-                .append("name", new Random().nextLong() + NetworkUtils.EMPTY_STRING)
-                .append("adminkey", adminKey);
+        this.authData.append("name", new Random().nextLong() + NetworkUtils.EMPTY_STRING).append("adminkey", adminKey);
     }
 
     public AuthType getType() {

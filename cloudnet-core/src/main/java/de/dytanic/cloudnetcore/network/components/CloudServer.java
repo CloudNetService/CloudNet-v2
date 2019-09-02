@@ -31,8 +31,7 @@ public class CloudServer implements INetworkComponent {
 
     private Channel channel;
 
-    public CloudServer(Wrapper wrapper, ServerInfo serverInfo, CloudServerMeta cloudServerMeta)
-    {
+    public CloudServer(Wrapper wrapper, ServerInfo serverInfo, CloudServerMeta cloudServerMeta) {
         this.serverInfo = serverInfo;
         this.serviceId = cloudServerMeta.getServiceId();
         this.lastServerInfo = serverInfo;
@@ -41,26 +40,22 @@ public class CloudServer implements INetworkComponent {
         this.serverGroupType = cloudServerMeta.getServerGroupType();
     }
 
-    public void setServerInfo(ServerInfo serverInfo) {
-        this.serverInfo = serverInfo;
-    }
-
-    public void setLastServerInfo(ServerInfo lastServerInfo) {
-        this.lastServerInfo = lastServerInfo;
-    }
-
-    @Override
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
-
     public ServerInfo getServerInfo() {
         return serverInfo;
+    }
+
+    public void setServerInfo(ServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
     }
 
     @Override
     public Channel getChannel() {
         return channel;
+    }
+
+    @Override
+    public void setChannel(Channel channel) {
+        this.channel = channel;
     }
 
     public CloudServerMeta getCloudServerMeta() {
@@ -75,8 +70,17 @@ public class CloudServer implements INetworkComponent {
         return lastServerInfo;
     }
 
+    public void setLastServerInfo(ServerInfo lastServerInfo) {
+        this.lastServerInfo = lastServerInfo;
+    }
+
     public ServiceId getServiceId() {
         return serviceId;
+    }
+
+    @Override
+    public String getName() {
+        return getServerId();
     }
 
     @Override
@@ -85,21 +89,12 @@ public class CloudServer implements INetworkComponent {
     }
 
     @Override
-    public String getName()
-    {
-        return getServerId();
-    }
-
-    @Override
-    public String getServerId()
-    {
+    public String getServerId() {
         return serviceId.getServerId();
     }
 
-    public void disconnect()
-    {
-        if (this.channel != null)
-        {
+    public void disconnect() {
+        if (this.channel != null) {
             this.channel.close().syncUninterruptibly();
         }
     }

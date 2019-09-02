@@ -20,19 +20,16 @@ public class BukkitProxyRemoveEvent extends BukkitCloudEvent {
         this.serverInfo = serverInfo;
     }
 
-    public ProxyInfo getProxyInfo()
-    {
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
+
+    public ProxyInfo getProxyInfo() {
         return serverInfo;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
-
-    public static HandlerList getHandlerList()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 

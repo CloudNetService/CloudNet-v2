@@ -14,8 +14,7 @@ import java.sql.Timestamp;
 @EqualsAndHashCode
 public class CloudPlayer extends OfflinePlayer {
 
-    public static final Type TYPE = new TypeToken<CloudPlayer>() {
-    }.getType();
+    public static final Type TYPE = new TypeToken<CloudPlayer>() {}.getType();
 
     private PlayerConnection playerConnection;
 
@@ -27,9 +26,14 @@ public class CloudPlayer extends OfflinePlayer {
 
     private PlayerExecutor playerExecutor;
 
-    public CloudPlayer(OfflinePlayer player, PlayerConnection onlineConnection, String proxy)
-    {
-        super(player.getUniqueId(), player.getName(), player.getMetaData(), player.getLastLogin(), player.getFirstLogin(), player.getLastPlayerConnection(), player.getPermissionEntity());
+    public CloudPlayer(OfflinePlayer player, PlayerConnection onlineConnection, String proxy) {
+        super(player.getUniqueId(),
+              player.getName(),
+              player.getMetaData(),
+              player.getLastLogin(),
+              player.getFirstLogin(),
+              player.getLastPlayerConnection(),
+              player.getPermissionEntity());
 
         this.playerConnection = onlineConnection;
         this.proxy = proxy;
@@ -38,48 +42,53 @@ public class CloudPlayer extends OfflinePlayer {
         this.loginTimeStamp = new Timestamp(System.currentTimeMillis());
     }
 
+    public static OfflinePlayer newOfflinePlayer(OfflinePlayer cloudPlayer) {
+        return new OfflinePlayer(cloudPlayer.getUniqueId(),
+                                 cloudPlayer.getName(),
+                                 cloudPlayer.getMetaData(),
+                                 cloudPlayer.getLastLogin(),
+                                 cloudPlayer.getFirstLogin(),
+                                 cloudPlayer.getLastPlayerConnection(),
+                                 cloudPlayer.getPermissionEntity());
+    }
+
     public String getServer() {
         return server;
-    }
-
-    public String getProxy() {
-        return proxy;
-    }
-
-    public PlayerConnection getPlayerConnection() {
-        return playerConnection;
-    }
-
-    public Timestamp getLoginTimeStamp() {
-        return loginTimeStamp;
-    }
-
-    public PlayerExecutor getPlayerExecutor() {
-        return playerExecutor;
     }
 
     public void setServer(String server) {
         this.server = server;
     }
 
+    public String getProxy() {
+        return proxy;
+    }
+
     public void setProxy(String proxy) {
         this.proxy = proxy;
+    }
+
+    public PlayerConnection getPlayerConnection() {
+        return playerConnection;
     }
 
     public void setPlayerConnection(PlayerConnection playerConnection) {
         this.playerConnection = playerConnection;
     }
 
+    public Timestamp getLoginTimeStamp() {
+        return loginTimeStamp;
+    }
+
     public void setLoginTimeStamp(Timestamp loginTimeStamp) {
         this.loginTimeStamp = loginTimeStamp;
     }
 
-    public void setPlayerExecutor(PlayerExecutor playerExecutor) {
-        this.playerExecutor = playerExecutor;
+    public PlayerExecutor getPlayerExecutor() {
+        return playerExecutor;
     }
 
-    public static OfflinePlayer newOfflinePlayer(OfflinePlayer cloudPlayer)
-    {
-        return new OfflinePlayer(cloudPlayer.getUniqueId(), cloudPlayer.getName(), cloudPlayer.getMetaData(), cloudPlayer.getLastLogin(), cloudPlayer.getFirstLogin(), cloudPlayer.getLastPlayerConnection(), cloudPlayer.getPermissionEntity());
+    public void setPlayerExecutor(PlayerExecutor playerExecutor) {
+        this.playerExecutor = playerExecutor;
     }
 }

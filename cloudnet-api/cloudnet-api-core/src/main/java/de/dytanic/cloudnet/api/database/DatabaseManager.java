@@ -18,18 +18,15 @@ public class DatabaseManager {
 
     private Map<String, Database> databaseMap = NetworkUtils.newConcurrentHashMap();
 
-    public DatabaseManager()
-    {
+    public DatabaseManager() {
 
     }
 
-    public Collection<Database> getCachedDatabases()
-    {
+    public Collection<Database> getCachedDatabases() {
         return databaseMap.values();
     }
 
-    public Database getDatabase(String name)
-    {
+    public Database getDatabase(String name) {
         return new DatabaseImpl(name);
     }
 }

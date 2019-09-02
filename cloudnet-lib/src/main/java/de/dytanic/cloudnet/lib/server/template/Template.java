@@ -17,7 +17,11 @@ public class Template {
     private String[] processPreParameters;
     private Collection<ServerInstallablePlugin> installablePlugins;
 
-    public Template(String name, TemplateResource backend, String url, String[] processPreParameters, Collection<ServerInstallablePlugin> installablePlugins) {
+    public Template(String name,
+                    TemplateResource backend,
+                    String url,
+                    String[] processPreParameters,
+                    Collection<ServerInstallablePlugin> installablePlugins) {
         this.name = name;
         this.backend = backend;
         this.url = url;

@@ -17,14 +17,12 @@ public class ModuleInternalLoader implements ModuleLoader {
      *
      * @param moduleConfig the configuration to load the module from
      */
-    public ModuleInternalLoader(ModuleConfig moduleConfig)
-    {
+    public ModuleInternalLoader(ModuleConfig moduleConfig) {
         this.moduleConfig = moduleConfig;
     }
 
     @Override
-    public Module loadModule() throws Exception
-    {
+    public Module loadModule() throws Exception {
         Module module = (Module) getClass().getClassLoader().loadClass(this.moduleConfig.getMain()).getConstructor().newInstance();
         module.setModuleConfig(moduleConfig);
         module.setClassLoader(null);

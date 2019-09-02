@@ -20,7 +20,10 @@ public class WrapperExternal {
 
     private java.util.Map<String, ProxyGroup> proxyGroups;
 
-    public WrapperExternal(CloudNetwork cloudNetwork, SimpledUser user, Map<String, ServerGroup> serverGroups, Map<String, ProxyGroup> proxyGroups) {
+    public WrapperExternal(CloudNetwork cloudNetwork,
+                           SimpledUser user,
+                           Map<String, ServerGroup> serverGroups,
+                           Map<String, ProxyGroup> proxyGroups) {
         this.cloudNetwork = cloudNetwork;
         this.user = user;
         this.serverGroups = serverGroups;

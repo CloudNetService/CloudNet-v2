@@ -17,8 +17,7 @@ import java.util.Collection;
  * Created by Tareko on 18.07.2017.
  */
 @ToString
-public class ProxyGroup
-        implements Nameable {
+public class ProxyGroup implements Nameable {
 
     protected String name;
     protected Collection<String> wrapper;
@@ -33,7 +32,16 @@ public class ProxyGroup
     protected ProxyGroupMode proxyGroupMode;
     protected WrappedMap settings;
 
-    public ProxyGroup(String name, Collection<String> wrapper, Template template, ProxyVersion proxyVersion, int startPort, int startup, int memory, ProxyConfig proxyConfig, ProxyGroupMode proxyGroupMode, WrappedMap settings) {
+    public ProxyGroup(String name,
+                      Collection<String> wrapper,
+                      Template template,
+                      ProxyVersion proxyVersion,
+                      int startPort,
+                      int startup,
+                      int memory,
+                      ProxyConfig proxyConfig,
+                      ProxyGroupMode proxyGroupMode,
+                      WrappedMap settings) {
         this.name = name;
         this.wrapper = wrapper;
         this.template = template;

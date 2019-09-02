@@ -19,17 +19,15 @@ import java.lang.reflect.Type;
  */
 public class PacketInUpdateProxyInfo extends PacketInHandler {
 
-    private static final Type type = new TypeToken<ProxyInfo>() {
-    }.getType();
+    private static final Type type = new TypeToken<ProxyInfo>() {}.getType();
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (packetSender instanceof ProxyServer)
-        {
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (packetSender instanceof ProxyServer) {
             ((ProxyServer) packetSender).setLastProxyInfo(((ProxyServer) packetSender).getProxyInfo());
             ((ProxyServer) packetSender).setProxyInfo(data.getObject("proxyInfo", type));
-            CloudNet.getInstance().getNetworkManager().handleProxyInfoUpdate(((ProxyServer) packetSender), data.getObject("proxyInfo", type));
+            CloudNet.getInstance().getNetworkManager().handleProxyInfoUpdate(((ProxyServer) packetSender),
+                                                                             data.getObject("proxyInfo", type));
         }
     }
 }

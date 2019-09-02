@@ -22,7 +22,13 @@ public class ProxyInfo {
     private int memory;
     private int onlineCount;
 
-    public ProxyInfo(ServiceId serviceId, String host, int port, boolean online, List<MultiValue<UUID, String>> players, int memory, int onlineCount) {
+    public ProxyInfo(ServiceId serviceId,
+                     String host,
+                     int port,
+                     boolean online,
+                     List<MultiValue<UUID, String>> players,
+                     int memory,
+                     int onlineCount) {
         this.serviceId = serviceId;
         this.host = host;
         this.port = port;
@@ -60,8 +66,7 @@ public class ProxyInfo {
         return players;
     }
 
-    public SimpleProxyInfo toSimple()
-    {
+    public SimpleProxyInfo toSimple() {
         return new SimpleProxyInfo(serviceId, online, host, port, memory, onlineCount);
     }
 

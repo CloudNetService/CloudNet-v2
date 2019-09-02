@@ -11,8 +11,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 
 public final class PacketOutStopProxy extends Packet {
 
-    public PacketOutStopProxy(ProxyInfo proxyInfo)
-    {
+    public PacketOutStopProxy(ProxyInfo proxyInfo) {
         super(PacketRC.CN_CORE + 2, new Document("proxyInfo", proxyInfo));
     }
 }

@@ -18,17 +18,22 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by Tareko on 15.10.2017.
  */
-public class WebServerExample extends MethodWebHandlerAdapter { //Extend a abstract WebHandler. The MethodWebHandler or WebHandle can also use
+public class WebServerExample
+    extends MethodWebHandlerAdapter { //Extend a abstract WebHandler. The MethodWebHandler or WebHandle can also use
 
-    protected WebServerExample(CloudNet cloudNet)
-    {
+    protected WebServerExample(CloudNet cloudNet) {
         super("/myRestAPI/{myCustomPattern}");
         cloudNet.getWebServer().getWebServerProvider().registerHandler(this); //Registered the webhandler
     }
 
     @Override
-    public FullHttpResponse get(ChannelHandlerContext channelHandlerContext, QueryDecoder queryDecoder, PathProvider pathProvider, HttpRequest httpRequest) throws Exception
-    {
-        return newResponse(httpRequest.getProtocolVersion(), Unpooled.wrappedBuffer(pathProvider.getPathParameters().getString("myCustomPattern").getBytes(StandardCharsets.UTF_8)));
+    public FullHttpResponse get(ChannelHandlerContext channelHandlerContext,
+                                QueryDecoder queryDecoder,
+                                PathProvider pathProvider,
+                                HttpRequest httpRequest) throws Exception {
+        return newResponse(httpRequest.getProtocolVersion(),
+                           Unpooled.wrappedBuffer(pathProvider.getPathParameters()
+                                                              .getString("myCustomPattern")
+                                                              .getBytes(StandardCharsets.UTF_8)));
     }
 }

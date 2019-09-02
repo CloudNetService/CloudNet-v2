@@ -14,33 +14,35 @@ import java.util.Map;
  */
 public class PermissionPool {
 
-    public static final Type TYPE = new TypeToken<PermissionPool>() {
-    }.getType();
+    public static final Type TYPE = new TypeToken<PermissionPool>() {}.getType();
 
     private boolean available = true;
 
     private java.util.Map<String, PermissionGroup> groups = new HashMap<>();
 
-    public PermissionGroup getDefaultGroup()
-    {
-        for (PermissionGroup group : groups.values())
-        {
-            if (group.isDefaultGroup())
-            {
+    public PermissionEntity getNewPermissionEntity(PlayerConnection playerWhereAmI) {
+        return new PermissionEntity(playerWhereAmI.getUniqueId(),
+                                    new HashMap<>(),
+                                    null,
+                                    null,
+                                    Arrays.asList(new GroupEntityData(getDefaultGroup().getName(), 0L)));
+    }
+
+    public PermissionGroup getDefaultGroup() {
+        for (PermissionGroup group : groups.values()) {
+            if (group.isDefaultGroup()) {
                 return group;
             }
         }
         return null;
     }
 
-    public PermissionEntity getNewPermissionEntity(PlayerConnection playerWhereAmI)
-    {
-        return new PermissionEntity(playerWhereAmI.getUniqueId(), new HashMap<>(), null, null, Arrays.asList(new GroupEntityData(getDefaultGroup().getName(), 0L)));
-    }
-
-    public PermissionEntity getNewPermissionEntity(OfflinePlayer playerWhereAmI)
-    {
-        return new PermissionEntity(playerWhereAmI.getUniqueId(), new HashMap<>(), null, null, Arrays.asList(new GroupEntityData(getDefaultGroup().getName(), 0L)));
+    public PermissionEntity getNewPermissionEntity(OfflinePlayer playerWhereAmI) {
+        return new PermissionEntity(playerWhereAmI.getUniqueId(),
+                                    new HashMap<>(),
+                                    null,
+                                    null,
+                                    Arrays.asList(new GroupEntityData(getDefaultGroup().getName(), 0L)));
     }
 
     public Map<String, PermissionGroup> getGroups() {

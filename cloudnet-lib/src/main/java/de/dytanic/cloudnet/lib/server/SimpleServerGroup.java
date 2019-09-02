@@ -8,8 +8,7 @@ import java.util.Map;
 /**
  * Created by Tareko on 01.06.2017.
  */
-public class SimpleServerGroup
-        implements Nameable {
+public class SimpleServerGroup implements Nameable {
 
     private String name;
 
@@ -29,7 +28,15 @@ public class SimpleServerGroup
 
     private AdvancedServerConfig advancedServerConfig;
 
-    public SimpleServerGroup(String name, boolean kickedForceFallback, int joinPower, int memory, ServerGroupMode mode, boolean maintenance, int percentForNewServerAutomatically, Map<String, Object> settings, AdvancedServerConfig advancedServerConfig) {
+    public SimpleServerGroup(String name,
+                             boolean kickedForceFallback,
+                             int joinPower,
+                             int memory,
+                             ServerGroupMode mode,
+                             boolean maintenance,
+                             int percentForNewServerAutomatically,
+                             Map<String, Object> settings,
+                             AdvancedServerConfig advancedServerConfig) {
         this.name = name;
         this.kickedForceFallback = kickedForceFallback;
         this.joinPower = joinPower;

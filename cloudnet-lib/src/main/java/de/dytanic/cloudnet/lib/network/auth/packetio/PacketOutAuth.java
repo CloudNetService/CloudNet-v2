@@ -10,8 +10,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutAuth extends Packet {
 
-    public PacketOutAuth(Auth auth)
-    {
+    public PacketOutAuth(Auth auth) {
         super(PacketRC.INTERNAL - 1, new Document().append("auth", auth));
     }
 }

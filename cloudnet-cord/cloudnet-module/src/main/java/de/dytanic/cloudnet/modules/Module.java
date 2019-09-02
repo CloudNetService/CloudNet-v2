@@ -62,22 +62,19 @@ public abstract class Module<E> extends EventKey {
     /**
      * Method that is called when the module is loaded.
      */
-    public void onLoad()
-    {
+    public void onLoad() {
     }
 
     /**
      * Method that is called when the module is enabled.
      */
-    public void onBootstrap()
-    {
+    public void onBootstrap() {
     }
 
     /**
      * Method that is called when the plugin is about to be shut down.
      */
-    public void onShutdown()
-    {
+    public void onShutdown() {
     }
 
     /**
@@ -86,31 +83,8 @@ public abstract class Module<E> extends EventKey {
      * @return the name of the module if a module configuration is present,
      * {@code some_plugin-} + a random long value otherwise.
      */
-    public String getName()
-    {
+    public String getName() {
         return moduleConfig != null ? moduleConfig.getName() : "some_plugin-" + NetworkUtils.RANDOM.nextLong();
-    }
-
-    /**
-     * Returns the directory where the data of this module is stored.
-     * Creates the directory, if needed.
-     *
-     * @return the directory for storing module data
-     */
-    public File getDataFolder()
-    {
-        if (dataFolder == null)
-        {
-            dataFolder = new File("modules", moduleConfig.getName());
-            try
-            {
-                Files.createDirectories(dataFolder.toPath());
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        return dataFolder;
     }
 
     /**
@@ -118,8 +92,7 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the name as specified in the module configuration
      */
-    public String getPluginName()
-    {
+    public String getPluginName() {
         return moduleConfig.getName();
     }
 
@@ -128,8 +101,7 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the version as specified in the module configuration
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return moduleConfig.getVersion();
     }
 
@@ -138,39 +110,21 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the author as specified in the module configuration
      */
-    public String getAuthor()
-    {
+    public String getAuthor() {
         return moduleConfig.getAuthor();
-    }
-
-    /**
-     * Returns the currently loaded configuration; loads it,
-     * if it isn't loaded already.
-     *
-     * @return the currently active configuration
-     */
-    public Configuration getConfig()
-    {
-        if (configuration == null)
-        {
-            loadConfiguration();
-        }
-        return configuration;
     }
 
     /**
      * Creates a new utility file holding the information in the given document.
      *
      * @param document the document that holds the utility information
+     *
      * @return the module
      */
-    public Module<E> createUtils(Document document)
-    {
-        if (utilFile == null)
-        {
+    public Module<E> createUtils(Document document) {
+        if (utilFile == null) {
             utilFile = new File("modules/" + moduleConfig.getName() + "/utils.json");
-            if (!utilFile.exists())
-            {
+            if (!utilFile.exists()) {
                 document.saveAsConfig(utilFile);
             }
         }
@@ -182,13 +136,10 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the document containing utility information
      */
-    public Document getUtils()
-    {
-        if (utilFile == null)
-        {
+    public Document getUtils() {
+        if (utilFile == null) {
             utilFile = new File("modules/" + moduleConfig.getName() + "/utils.json");
-            if (!utilFile.exists())
-            {
+            if (!utilFile.exists()) {
                 new Document().saveAsConfig(utilFile);
             }
         }
@@ -199,12 +150,11 @@ public abstract class Module<E> extends EventKey {
      * Save the utility information.
      *
      * @param document the document containing the utility information
+     *
      * @return the module
      */
-    public Module<E> saveUtils(Document document)
-    {
-        if (utilFile == null)
-        {
+    public Module<E> saveUtils(Document document) {
+        if (utilFile == null) {
             utilFile = new File("modules/" + moduleConfig.getName() + "/utils.json");
         }
         document.saveAsConfig(utilFile);
@@ -216,16 +166,68 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the module
      */
-    public Module<E> saveConfig()
-    {
-        try
-        {
+    public Module<E> saveConfig() {
+        try {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(getConfig(), configFile);
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
+    }
+
+    /**
+     * Returns the currently loaded configuration; loads it,
+     * if it isn't loaded already.
+     *
+     * @return the currently active configuration
+     */
+    public Configuration getConfig() {
+        if (configuration == null) {
+            loadConfiguration();
+        }
+        return configuration;
+    }
+
+    private void loadConfiguration() {
+        getDataFolder().mkdir();
+        if (configFile == null) {
+            configFile = new File("modules/" + moduleConfig.getName() + "/config.yml");
+            if (!configFile.exists()) {
+                try {
+                    configFile.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        try {
+            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns the directory where the data of this module is stored.
+     * Creates the directory, if needed.
+     *
+     * @return the directory for storing module data
+     */
+    public File getDataFolder() {
+        if (dataFolder == null) {
+            dataFolder = new File("modules", moduleConfig.getName());
+            try {
+                Files.createDirectories(dataFolder.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return dataFolder;
+    }
+
+    public void setDataFolder(File dataFolder) {
+        this.dataFolder = dataFolder;
     }
 
     /**
@@ -233,89 +235,57 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the module
      */
-    public Module<E> loadConfig()
-    {
+    public Module<E> loadConfig() {
         loadConfiguration();
         return this;
-    }
-
-    private void loadConfiguration()
-    {
-        getDataFolder().mkdir();
-        if (configFile == null)
-        {
-            configFile = new File("modules/" + moduleConfig.getName() + "/config.yml");
-            if (!configFile.exists())
-            {
-                try
-                {
-                    configFile.createNewFile();
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        try
-        {
-            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     public Configuration getConfiguration() {
         return configuration;
     }
 
-    public File getConfigFile() {
-        return configFile;
-    }
-
-    public File getUtilFile() {
-        return utilFile;
-    }
-
-    public ModuleClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-    public ModuleConfig getModuleConfig() {
-        return moduleConfig;
-    }
-
-    public ModuleLoader getModuleLoader() {
-        return moduleLoader;
-    }
-
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }
 
-    public void setClassLoader(ModuleClassLoader classLoader) {
-        this.classLoader = classLoader;
+    public File getConfigFile() {
+        return configFile;
     }
 
     public void setConfigFile(File configFile) {
         this.configFile = configFile;
     }
 
-    public void setDataFolder(File dataFolder) {
-        this.dataFolder = dataFolder;
+    public File getUtilFile() {
+        return utilFile;
+    }
+
+    public void setUtilFile(File utilFile) {
+        this.utilFile = utilFile;
+    }
+
+    public ModuleClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void setClassLoader(ModuleClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public ModuleConfig getModuleConfig() {
+        return moduleConfig;
     }
 
     public void setModuleConfig(ModuleConfig moduleConfig) {
         this.moduleConfig = moduleConfig;
     }
 
-    public void setModuleLoader(ModuleLoader moduleLoader) {
-        this.moduleLoader = moduleLoader;
+    public ModuleLoader getModuleLoader() {
+        return moduleLoader;
     }
 
-    public void setUtilFile(File utilFile) {
-        this.utilFile = utilFile;
+    public void setModuleLoader(ModuleLoader moduleLoader) {
+        this.moduleLoader = moduleLoader;
     }
 
     /**

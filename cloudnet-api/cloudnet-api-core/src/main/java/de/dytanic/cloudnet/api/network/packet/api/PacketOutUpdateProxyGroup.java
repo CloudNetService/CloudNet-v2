@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutUpdateProxyGroup extends Packet {
 
-    public PacketOutUpdateProxyGroup(ProxyGroup proxyGroup)
-    {
+    public PacketOutUpdateProxyGroup(ProxyGroup proxyGroup) {
         super(PacketRC.CN_CORE + 3, new Document("group", proxyGroup));
     }
 }

@@ -32,63 +32,63 @@ public class CloudNetwork {
         return onlineCount;
     }
 
-    public Map<String, ProxyGroup> getProxyGroups() {
-        return proxyGroups;
-    }
-
-    public int getWebPort() {
-        return webPort;
-    }
-
-    public Collection<WrapperInfo> getWrappers() {
-        return wrappers;
-    }
-
-    public Document getMessages() {
-        return messages;
-    }
-
-    public Document getModules() {
-        return modules;
-    }
-
-    public int getRegisteredPlayerCount() {
-        return registeredPlayerCount;
-    }
-
-    public Map<String, SimpleServerGroup> getServerGroups() {
-        return serverGroups;
-    }
-
-    public void setMessages(Document messages) {
-        this.messages = messages;
-    }
-
-    public void setModules(Document modules) {
-        this.modules = modules;
-    }
-
     public void setOnlineCount(int onlineCount) {
         this.onlineCount = onlineCount;
+    }
+
+    public Map<String, ProxyGroup> getProxyGroups() {
+        return proxyGroups;
     }
 
     public void setProxyGroups(Map<String, ProxyGroup> proxyGroups) {
         this.proxyGroups = proxyGroups;
     }
 
-    public void setRegisteredPlayerCount(int registeredPlayerCount) {
-        this.registeredPlayerCount = registeredPlayerCount;
-    }
-
-    public void setServerGroups(Map<String, SimpleServerGroup> serverGroups) {
-        this.serverGroups = serverGroups;
+    public int getWebPort() {
+        return webPort;
     }
 
     public void setWebPort(int webPort) {
         this.webPort = webPort;
     }
 
+    public Collection<WrapperInfo> getWrappers() {
+        return wrappers;
+    }
+
     public void setWrappers(Collection<WrapperInfo> wrappers) {
         this.wrappers = wrappers;
+    }
+
+    public Document getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Document messages) {
+        this.messages = messages;
+    }
+
+    public Document getModules() {
+        return modules;
+    }
+
+    public void setModules(Document modules) {
+        this.modules = modules;
+    }
+
+    public int getRegisteredPlayerCount() {
+        return registeredPlayerCount;
+    }
+
+    public void setRegisteredPlayerCount(int registeredPlayerCount) {
+        this.registeredPlayerCount = registeredPlayerCount;
+    }
+
+    public Map<String, SimpleServerGroup> getServerGroups() {
+        return serverGroups;
+    }
+
+    public void setServerGroups(Map<String, SimpleServerGroup> serverGroups) {
+        this.serverGroups = serverGroups;
     }
 }

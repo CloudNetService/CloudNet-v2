@@ -15,8 +15,7 @@ import java.util.UUID;
 
 public class OfflinePlayer implements Nameable, Permissible {
 
-    public static final Type TYPE = new TypeToken<OfflinePlayer>() {
-    }.getType();
+    public static final Type TYPE = new TypeToken<OfflinePlayer>() {}.getType();
 
     protected UUID uniqueId;
 
@@ -32,7 +31,13 @@ public class OfflinePlayer implements Nameable, Permissible {
 
     protected PermissionEntity permissionEntity;
 
-    public OfflinePlayer(UUID uniqueId, String name, Document metaData, Long lastLogin, Long firstLogin, PlayerConnection lastPlayerConnection, PermissionEntity permissionEntity) {
+    public OfflinePlayer(UUID uniqueId,
+                         String name,
+                         Document metaData,
+                         Long lastLogin,
+                         Long firstLogin,
+                         PlayerConnection lastPlayerConnection,
+                         PermissionEntity permissionEntity) {
         this.uniqueId = uniqueId;
         this.name = name;
         this.metaData = metaData;
@@ -47,20 +52,40 @@ public class OfflinePlayer implements Nameable, Permissible {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public UUID getUniqueId() {
         return uniqueId;
+    }
+
+    public void setUniqueId(UUID uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     public Document getMetaData() {
         return metaData;
     }
 
+    public void setMetaData(Document metaData) {
+        this.metaData = metaData;
+    }
+
     public Long getFirstLogin() {
         return firstLogin;
     }
 
+    public void setFirstLogin(Long firstLogin) {
+        this.firstLogin = firstLogin;
+    }
+
     public Long getLastLogin() {
         return lastLogin;
+    }
+
+    public void setLastLogin(Long lastLogin) {
+        this.lastLogin = lastLogin;
     }
 
     @Override
@@ -68,35 +93,15 @@ public class OfflinePlayer implements Nameable, Permissible {
         return permissionEntity;
     }
 
+    public void setPermissionEntity(PermissionEntity permissionEntity) {
+        this.permissionEntity = permissionEntity;
+    }
+
     public PlayerConnection getLastPlayerConnection() {
         return lastPlayerConnection;
     }
 
-    public void setUniqueId(UUID uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setFirstLogin(Long firstLogin) {
-        this.firstLogin = firstLogin;
-    }
-
-    public void setLastLogin(Long lastLogin) {
-        this.lastLogin = lastLogin;
-    }
-
     public void setLastPlayerConnection(PlayerConnection lastPlayerConnection) {
         this.lastPlayerConnection = lastPlayerConnection;
-    }
-
-    public void setMetaData(Document metaData) {
-        this.metaData = metaData;
-    }
-
-    public void setPermissionEntity(PermissionEntity permissionEntity) {
-        this.permissionEntity = permissionEntity;
     }
 }
