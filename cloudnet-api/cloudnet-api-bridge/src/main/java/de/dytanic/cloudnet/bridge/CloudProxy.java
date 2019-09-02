@@ -41,10 +41,7 @@ import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -275,7 +272,8 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
     public CloudPlayer getCachedPlayer(String name)
     {
-        return CollectionWrapper.filter(this.cloudPlayers.values(), cloudPlayer -> cloudPlayer.getName().equalsIgnoreCase(name));
+        Optional<CloudPlayer> first = this.cloudPlayers.values().stream().filter(cloudPlayer -> cloudPlayer.getName().equalsIgnoreCase(name)).findFirst();
+        return first.orElse(null);
     }
 
     @Override
