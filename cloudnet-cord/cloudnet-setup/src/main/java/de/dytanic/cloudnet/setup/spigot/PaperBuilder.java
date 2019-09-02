@@ -97,14 +97,14 @@ public final class PaperBuilder {
         if (!paperclip.exists()) {
             runPaperClip(connection, buildFolder, paperclip);
         } else {
+            File[] paperclips = buildFolder.listFiles(pathname -> pathname.getName().startsWith("paper"));
             if (Objects.requireNonNull(
-                    buildFolder.listFiles(pathname -> pathname.getName().startsWith("paperclip"))).length
+                    paperclips).length
                     > 0) {
                 System.out.println("Skipping build");
                 System.out.println("Copying spigot.jar");
                 try {
-                    Files.copy(new FileInputStream(Objects.requireNonNull(
-                            buildFolder.listFiles(pathname -> pathname.getName().startsWith("paper")))[0]),
+                    Files.copy(new FileInputStream(Objects.requireNonNull(paperclips)[0]),
                             Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     e.printStackTrace();
