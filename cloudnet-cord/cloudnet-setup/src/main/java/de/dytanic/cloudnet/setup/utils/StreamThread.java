@@ -20,7 +20,7 @@ public final class StreamThread implements Runnable {
 			byte[] buffer = new byte[1024];
 			int length = 0;
 			while ((length = inputStream.read(buffer)) != -1) {
-				System.out.println(new String(buffer, 0 ,length, StandardCharsets.UTF_8));
+				System.out.print(new String(buffer, 0 ,length, StandardCharsets.UTF_8));
 			}
 			this.countDownLatch.countDown();
 		}catch (IOException e){
