@@ -458,7 +458,6 @@ public final class CommandCloud extends Command implements TabExecutor {
                         NetworkUtils.SPACE_STRING)
                         .stream()
                         .map(TextComponent::fromLegacyText)
-                        .flatMap(Arrays::stream)
                         .forEach(commandSender::sendMessage);
                 break;
         }
