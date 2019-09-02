@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.bridge.internal.command.bukkit;
 
+import com.google.common.collect.ImmutableList;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.SignSelector;
@@ -33,6 +34,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 23.08.2017.
@@ -363,6 +365,45 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
-        return new LinkedList<>(CloudAPI.getInstance().getServerGroupMap().keySet());
+        switch (args.length) {
+            case 1: {
+                return ImmutableList.of("createSign", "removeSign", "removeSigns", "copyTo", "createMob", "removeMob",
+                        "listsMobs", "moblist", "setDisplay", "setItem", "editMobLine", "debug");
+            }
+            case 2: {
+                if (args[0].equalsIgnoreCase("createsign") ||
+                        args[0].equalsIgnoreCase("removesigns") ||
+                        args[0].equalsIgnoreCase("copyto")) {
+                    return ImmutableList.copyOf(CloudAPI.getInstance().getServerGroupMap().keySet());
+                } else if (args[0].equalsIgnoreCase("removeMob") ||
+                        args[0].equalsIgnoreCase("setDisplay") ||
+                        args[0].equalsIgnoreCase("setItem") ||
+                        args[0].equalsIgnoreCase("editMobLine")
+                ) {
+                    return ImmutableList.copyOf(MobSelector.getInstance().getMobs().values().stream()
+                            .map(mob -> mob.getMob().getName()).collect(Collectors.toList()));
+                } else if (args[0].equalsIgnoreCase("createMob")) {
+                    return ImmutableList.copyOf(Arrays.stream(EntityType.values())
+                            .map(Enum::name).collect(Collectors.toList()));
+                }
+            }
+            case 4: {
+                if (args[0].equalsIgnoreCase("createMob")) {
+                    return ImmutableList.copyOf(CloudAPI.getInstance().getServerGroupMap().keySet());
+                }
+            }
+            case 5: {
+                if (args[0].equalsIgnoreCase("createMob")) {
+                    return ImmutableList.copyOf(Arrays.stream(Material.values())
+                            .map(Enum::name).collect(Collectors.toList()));
+                }
+            }
+            case 6: {
+                if (args[0].equalsIgnoreCase("createMob")) {
+                    return ImmutableList.of("true","false");
+                }
+            }
+        }
+        return ImmutableList.of();
     }
 }

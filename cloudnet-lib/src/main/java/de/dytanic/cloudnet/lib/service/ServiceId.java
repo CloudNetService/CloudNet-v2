@@ -69,9 +69,8 @@ public final class ServiceId {
     }
 
     @Override
-    public String toString()
-    {
-        return group + "-" + id + "#" + uniqueId.toString();
+    public String toString() {
+        return this.serverId + "#" + this.uniqueId.toString();
     }
 
 }
