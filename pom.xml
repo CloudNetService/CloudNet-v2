@@ -40,6 +40,7 @@
         <plugin.resources.version>3.1.0</plugin.resources.version>
         <plugin.antrun.version>1.8</plugin.antrun.version>
         <plugin.source.version>3.1.0</plugin.source.version>
+        <plugin.spotbugs.version>3.1.12</plugin.spotbugs.version>
     </properties>
 
     <developers>
@@ -112,6 +113,15 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${plugin.spotbugs.version}</version>
+                <configuration>
+                    <xmlOutput>true</xmlOutput>
+                    <failOnError>false</failOnError>
+                </configuration>
             </plugin>
         </plugins>
     </build>
