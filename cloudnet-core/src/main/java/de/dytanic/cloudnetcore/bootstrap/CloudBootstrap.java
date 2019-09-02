@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.help.HelpService;
 import de.dytanic.cloudnet.help.ServiceDescription;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.SystemTimer;
-import de.dytanic.cloudnet.lib.utility.signal.OSSignalBlocker;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import de.dytanic.cloudnet.logging.util.HeaderFunction;
@@ -79,9 +78,6 @@ public final class CloudBootstrap {
             return;
         }
 
-        if (optionSet.has("requestTerminationSignal"))
-            OSSignalBlocker.initSignalCancel();
-
         if (optionSet.has("systemTimer"))
             new SystemTimer();
 
@@ -120,12 +116,8 @@ public final class CloudBootstrap {
             {
                 while (true)
                 {
-                    cloudNetLogging.getReader().setPrompt(NetworkUtils.EMPTY_STRING);
-                    cloudNetLogging.getReader().resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
-                    while ((commandLine = cloudNetLogging.getReader().readLine(user + "@Master $ ")) != null && CloudNet.RUNNING)
+                    while ((commandLine = cloudNetLogging.readLine(user + "@Master $ ")) != null && CloudNet.RUNNING)
                     {
-                        cloudNetLogging.getReader().setPrompt(NetworkUtils.EMPTY_STRING);
-
                         String dispatcher = cloudNetCore.getDbHandlers().getCommandDispatcherDatabase().findDispatcher(commandLine);
                         if (dispatcher != null)
                         {

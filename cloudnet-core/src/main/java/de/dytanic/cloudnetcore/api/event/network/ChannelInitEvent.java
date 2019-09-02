@@ -7,12 +7,10 @@ package de.dytanic.cloudnetcore.api.event.network;
 import de.dytanic.cloudnet.event.Event;
 import de.dytanic.cloudnetcore.network.components.INetworkComponent;
 import io.netty.channel.Channel;
-import lombok.Getter;
 
 /**
  * Calls if a channel of some INetworkComponent is connected
  */
-@Getter
 public class ChannelInitEvent extends Event {
 
     private Channel channel;
@@ -23,5 +21,13 @@ public class ChannelInitEvent extends Event {
     {
         this.channel = channel;
         this.iNetworkComponent = iNetworkComponent;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public INetworkComponent getINetworkComponent() {
+        return iNetworkComponent;
     }
 }

@@ -47,12 +47,11 @@ import de.dytanic.cloudnetcore.network.packet.dbsync.*;
 import de.dytanic.cloudnetcore.network.packet.in.*;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
 import de.dytanic.cloudnetcore.serverlog.ServerLogManager;
-import de.dytanic.cloudnetcore.setup.LocalCloudWrapper;
+import de.dytanic.cloudnetcore.wrapper.local.LocalCloudWrapper;
 import de.dytanic.cloudnetcore.util.FileCopy;
 import de.dytanic.cloudnetcore.web.api.v1.*;
 import de.dytanic.cloudnetcore.web.log.WebsiteLog;
 import joptsimple.OptionSet;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -63,12 +62,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Getter
 public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public static volatile boolean RUNNING = false;
 
-    @Getter
     private static CloudNet instance;
 
     private final CommandManager commandManager = new CommandManager();
@@ -100,6 +97,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     private final java.util.Map<String, ServerGroup> serverGroups = NetworkUtils.newConcurrentHashMap();
     private final java.util.Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
 
+    private final LocalCloudWrapper localCloudWrapper = new LocalCloudWrapper();
+
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> objective, List<String> args) throws Exception
     {
         if (instance == null) instance = this;
@@ -112,6 +111,114 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         this.defaultModuleManager = new DefaultModuleManager();
 
         this.logger.getReader().addCompleter(commandManager);
+    }
+
+    public static CloudNet getInstance() {
+        return instance;
+    }
+
+    public NetworkManager getNetworkManager() {
+        return networkManager;
+    }
+
+    public WebClient getWebClient() {
+        return webClient;
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public Collection<CloudNetServer> getCloudServers() {
+        return cloudServers;
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public EventManager getEventManager() {
+        return eventManager;
+    }
+
+    public ModuleManager getModuleManager() {
+        return moduleManager;
+    }
+
+    public OptionSet getOptionSet() {
+        return optionSet;
+    }
+
+    public CloudConfig getConfig() {
+        return config;
+    }
+
+    public PacketManager getPacketManager() {
+        return packetManager;
+    }
+
+    public ScreenProvider getScreenProvider() {
+        return screenProvider;
+    }
+
+    public ServerLogManager getServerLogManager() {
+        return serverLogManager;
+    }
+
+    public Map<String, ServerGroup> getServerGroups() {
+        return serverGroups;
+    }
+
+    public Map<String, ProxyGroup> getProxyGroups() {
+        return proxyGroups;
+    }
+
+    public Collection<User> getUsers() {
+        return users;
+    }
+
+    public WebServer getWebServer() {
+        return webServer;
+    }
+
+    public DatabaseBasicHandlers getDbHandlers() {
+        return dbHandlers;
+    }
+
+    public DefaultModuleManager getDefaultModuleManager() {
+        return defaultModuleManager;
+    }
+
+    public List<String> getArguments() {
+        return arguments;
+    }
+
+    public List<String> getPreConsoleOutput() {
+        return preConsoleOutput;
+    }
+
+    public LocalCloudWrapper getLocalCloudWrapper() {
+        return localCloudWrapper;
+    }
+
+    public long getStartupTime() {
+        return startupTime;
+    }
+
+    public Map<String, Wrapper> getWrappers() {
+        return wrappers;
+    }
+
+    public static boolean isRUNNING() {
+        return RUNNING;
+    }
+
+    public boolean isDownTown() {
+        return downTown;
     }
 
     @Override
@@ -215,7 +322,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         }
 
         eventManager.callEvent(new CloudInitEvent());
-        new LocalCloudWrapper().run(optionSet);
+        this.localCloudWrapper.run(optionSet);
 
         return true;
     }
@@ -294,6 +401,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             if (!version.equals(CloudNet.class.getPackage().getImplementationVersion()))
             {
                 System.out.println("Preparing update...");
+                localCloudWrapper.installUpdate(webClient);
                 webClient.update(version);
                 shutdown();
 
@@ -326,6 +434,12 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         for (CloudNetServer cloudNetServer : this.cloudServers)
             cloudNetServer.close();
+
+        try {
+            this.localCloudWrapper.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("\n    _  _     _______   _                       _          \n" +
                 "  _| || |_  |__   __| | |                     | |         \n" +
@@ -385,7 +499,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
                 .registerCommand(new CommandCreate())
                 .registerCommand(new CommandVersion())
                 .registerCommand(new CommandInfo())
-                .registerCommand(new CommandDebug());
+                .registerCommand(new CommandDebug())
+                .registerCommand(new CommandUser())
+                .registerCommand(new CommandLocalWrapper());
     }
 
     private void initPacketHandlers()

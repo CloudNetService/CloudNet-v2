@@ -5,18 +5,20 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.HandlerList;
 
 /**
  * Calls if a player logins to the network successfully
  */
-@AllArgsConstructor
 public class BukkitPlayerLoginNetworkEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
     private CloudPlayer cloudPlayer;
+
+    public BukkitPlayerLoginNetworkEvent(CloudPlayer cloudPlayer) {
+        this.cloudPlayer = cloudPlayer;
+    }
 
     public CloudPlayer getCloudPlayer()
     {

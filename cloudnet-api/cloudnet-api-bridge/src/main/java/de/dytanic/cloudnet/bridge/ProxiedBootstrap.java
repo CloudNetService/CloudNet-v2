@@ -21,6 +21,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 /**
  * Created by Tareko on 17.08.2017.
@@ -37,6 +38,7 @@ public class ProxiedBootstrap extends Plugin {
                 getProxy().stop("CloudNet-Stop!");
             }
         });
+        getLogger().setLevel(Level.INFO);
         CloudAPI.getInstance().setLogger(getLogger());
     }
 

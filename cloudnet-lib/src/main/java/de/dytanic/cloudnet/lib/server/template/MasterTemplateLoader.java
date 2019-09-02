@@ -7,8 +7,6 @@ package de.dytanic.cloudnet.lib.server.template;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.zip.ZipConverter;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +18,6 @@ import java.nio.file.Paths;
 /**
  * Created by Tareko on 24.09.2017.
  */
-@Getter
-@AllArgsConstructor
 public class MasterTemplateLoader {
 
     private String url;
@@ -35,6 +31,39 @@ public class MasterTemplateLoader {
     private String group;
 
     private String customName;
+
+    public MasterTemplateLoader(String url, String dest, SimpledUser simpledUser, Template template, String group, String customName) {
+        this.url = url;
+        this.dest = dest;
+        this.simpledUser = simpledUser;
+        this.template = template;
+        this.group = group;
+        this.customName = customName;
+    }
+
+    public Template getTemplate() {
+        return template;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public SimpledUser getSimpledUser() {
+        return simpledUser;
+    }
+
+    public String getCustomName() {
+        return customName;
+    }
+
+    public String getDest() {
+        return dest;
+    }
 
     public MasterTemplateLoader load()
     {

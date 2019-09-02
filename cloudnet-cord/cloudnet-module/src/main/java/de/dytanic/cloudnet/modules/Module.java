@@ -7,7 +7,8 @@ package de.dytanic.cloudnet.modules;
 import de.dytanic.cloudnet.event.EventKey;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -19,7 +20,8 @@ import java.nio.file.Files;
 /**
  * Data class for modules
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public abstract class Module<E> extends EventKey {
 
     /**
@@ -262,6 +264,58 @@ public abstract class Module<E> extends EventKey {
         {
             e.printStackTrace();
         }
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public File getConfigFile() {
+        return configFile;
+    }
+
+    public File getUtilFile() {
+        return utilFile;
+    }
+
+    public ModuleClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public ModuleConfig getModuleConfig() {
+        return moduleConfig;
+    }
+
+    public ModuleLoader getModuleLoader() {
+        return moduleLoader;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public void setClassLoader(ModuleClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public void setConfigFile(File configFile) {
+        this.configFile = configFile;
+    }
+
+    public void setDataFolder(File dataFolder) {
+        this.dataFolder = dataFolder;
+    }
+
+    public void setModuleConfig(ModuleConfig moduleConfig) {
+        this.moduleConfig = moduleConfig;
+    }
+
+    public void setModuleLoader(ModuleLoader moduleLoader) {
+        this.moduleLoader = moduleLoader;
+    }
+
+    public void setUtilFile(File utilFile) {
+        this.utilFile = utilFile;
     }
 
     /**

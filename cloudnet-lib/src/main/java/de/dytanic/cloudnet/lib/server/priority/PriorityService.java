@@ -1,13 +1,8 @@
 package de.dytanic.cloudnet.lib.server.priority;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Created by Tareko on 18.07.2017.
  */
-@Getter
-@AllArgsConstructor
 public class PriorityService {
 
     private int stopTimeInSeconds;
@@ -16,4 +11,21 @@ public class PriorityService {
 
     private PriorityConfig group;
 
+    public PriorityService(int stopTimeInSeconds, PriorityConfig global, PriorityConfig group) {
+        this.stopTimeInSeconds = stopTimeInSeconds;
+        this.global = global;
+        this.group = group;
+    }
+
+    public int getStopTimeInSeconds() {
+        return stopTimeInSeconds;
+    }
+
+    public PriorityConfig getGlobal() {
+        return global;
+    }
+
+    public PriorityConfig getGroup() {
+        return group;
+    }
 }

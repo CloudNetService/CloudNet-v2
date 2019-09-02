@@ -5,15 +5,11 @@
 package de.dytanic.cloudnet.cloudflare;
 
 import de.dytanic.cloudnet.cloudflare.util.DNSRecord;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 /**
  * Container for CloudFlare responses.
  */
-@Getter
-@AllArgsConstructor
 @EqualsAndHashCode
 public class PostResponse {
 
@@ -32,4 +28,21 @@ public class PostResponse {
      */
     private String id;
 
+    public PostResponse(CloudFlareConfig cloudFlareConfig, DNSRecord dnsRecord, String id) {
+        this.cloudFlareConfig = cloudFlareConfig;
+        this.dnsRecord = dnsRecord;
+        this.id = id;
+    }
+
+    public CloudFlareConfig getCloudFlareConfig() {
+        return cloudFlareConfig;
+    }
+
+    public DNSRecord getDnsRecord() {
+        return dnsRecord;
+    }
+
+    public String getId() {
+        return id;
+    }
 }

@@ -7,9 +7,6 @@ package de.dytanic.cloudnet.logging;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import jline.console.ConsoleReader;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,9 +26,8 @@ import java.util.logging.*;
 /**
  * Custom logger configured for CloudNet.
  */
-@Getter
 public class CloudLogger
-    extends Logger {
+        extends Logger {
 
     private final String separator = System.getProperty("line.separator");
     private final LoggingFormatter formatter = new LoggingFormatter();
@@ -40,8 +36,8 @@ public class CloudLogger
 
     private final List<ICloudLoggerHandler> handler = new LinkedList<>();
 
-    @Setter
     private boolean debugging = false;
+    private boolean showPrompt = !Boolean.getBoolean("cloudnet.logging.prompt.disabled");
 
     /**
      * Constructs a new cloud logger instance that handles logging messages from
@@ -83,6 +79,46 @@ public class CloudLogger
 
         System.setOut(new AsyncPrintStream(new LoggingOutputStream(Level.INFO)));
         System.setErr(new AsyncPrintStream(new LoggingOutputStream(Level.SEVERE)));
+
+        this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
+        this.reader.resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
+    }
+
+    public void setDebugging(boolean debugging) {
+        this.debugging = debugging;
+    }
+
+    public void setShowPrompt(boolean showPrompt) {
+        this.showPrompt = showPrompt;
+    }
+
+    public LoggingFormatter getFormatter() {
+        return formatter;
+    }
+
+    public boolean isShowPrompt() {
+        return showPrompt;
+    }
+
+    public boolean isDebugging() {
+        return debugging;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public String getSeparator() {
+        return separator;
+    }
+
+    public ConsoleReader getReader() {
+        return reader;
+    }
+
+    public List<ICloudLoggerHandler> getHandler() {
+        return handler;
     }
 
     /**
@@ -94,6 +130,17 @@ public class CloudLogger
     {
         if (debugging)
             log(Level.WARNING, "[DEBUG] " + message);
+    }
+
+    public String readLine(String prompt) {
+        try {
+            String line = this.reader.readLine(this.showPrompt ? prompt : null);
+            this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
+            return line;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -118,9 +165,12 @@ public class CloudLogger
      * Output stream that sends the last message in the buffer to the log handlers
      * when flushed.
      */
-    @RequiredArgsConstructor
     private class LoggingOutputStream extends ByteArrayOutputStream {
         private final Level level;
+
+        public LoggingOutputStream(Level level) {
+            this.level = level;
+        }
 
         @Override
         public void flush() throws IOException
@@ -174,7 +224,7 @@ public class CloudLogger
     }
 
     private class LoggingFormatter
-        extends Formatter {
+            extends Formatter {
 
         private final DateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
@@ -190,13 +240,13 @@ public class CloudLogger
             }
 
             return ConsoleReader.RESET_LINE +
-                "[" +
-                format.format(record.getMillis()) +
-                "] " +
-                record.getLevel().getName() +
-                ": " +
-                formatMessage(record) +
-                "\n" + builder.toString();
+                    "[" +
+                    format.format(record.getMillis()) +
+                    "] " +
+                    record.getLevel().getName() +
+                    ": " +
+                    formatMessage(record) +
+                    "\n" + builder.toString();
         }
     }
 }

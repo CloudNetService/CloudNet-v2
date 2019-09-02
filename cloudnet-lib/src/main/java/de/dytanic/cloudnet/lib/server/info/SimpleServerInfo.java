@@ -5,11 +5,7 @@
 package de.dytanic.cloudnet.lib.server.info;
 
 import de.dytanic.cloudnet.lib.service.ServiceId;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
 public class SimpleServerInfo {
 
     private ServiceId serviceId;
@@ -22,4 +18,31 @@ public class SimpleServerInfo {
 
     private int maxPlayers;
 
+    public SimpleServerInfo(ServiceId serviceId, String hostAddress, int port, int onlineCount, int maxPlayers) {
+        this.serviceId = serviceId;
+        this.hostAddress = hostAddress;
+        this.port = port;
+        this.onlineCount = onlineCount;
+        this.maxPlayers = maxPlayers;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    public int getOnlineCount() {
+        return onlineCount;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public String getHostAddress() {
+        return hostAddress;
+    }
 }

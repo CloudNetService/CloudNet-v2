@@ -9,7 +9,6 @@ import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 21.08.2017.
@@ -20,8 +19,11 @@ public class StatisticManager extends DatabaseUsable {
 
     private boolean statistic = true;
 
-    @Getter
     private static StatisticManager instance;
+
+    public static StatisticManager getInstance() {
+        return instance;
+    }
 
     public StatisticManager(Database database)
     {

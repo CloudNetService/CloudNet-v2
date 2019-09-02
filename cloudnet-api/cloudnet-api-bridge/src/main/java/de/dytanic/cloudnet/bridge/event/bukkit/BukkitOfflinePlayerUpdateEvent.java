@@ -1,10 +1,8 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
-import lombok.Getter;
 import org.bukkit.event.HandlerList;
 
-@Getter
 public class BukkitOfflinePlayerUpdateEvent extends BukkitCloudEvent {
 
     private static final HandlerList handlerList = new HandlerList();
@@ -14,6 +12,10 @@ public class BukkitOfflinePlayerUpdateEvent extends BukkitCloudEvent {
     public BukkitOfflinePlayerUpdateEvent(OfflinePlayer offlinePlayer)
     {
         this.offlinePlayer = offlinePlayer;
+    }
+
+    public OfflinePlayer getOfflinePlayer() {
+        return offlinePlayer;
     }
 
     @Override

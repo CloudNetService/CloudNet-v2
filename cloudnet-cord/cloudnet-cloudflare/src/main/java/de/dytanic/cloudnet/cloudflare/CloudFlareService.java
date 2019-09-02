@@ -20,7 +20,6 @@ import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.Getter;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -33,11 +32,9 @@ import java.util.Map;
 /**
  * CloudFlare Service supports the api.cloudflare.com API for dynamic DNS records for BungeeCord Server.
  */
-@Getter
 public class CloudFlareService {
 
     private static final String PREFIX_URL = "https://api.cloudflare.com/client/v4/";
-    @Getter
     private static CloudFlareService instance;
     private final String prefix = "[CLOUDFLARE] | ";
     private Collection<CloudFlareConfig> cloudFlareConfigs;
@@ -57,6 +54,26 @@ public class CloudFlareService {
         instance = this;
 
         this.cloudFlareConfigs = cloudFlareConfigs;
+    }
+
+    public static CloudFlareService getInstance() {
+        return instance;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public Collection<CloudFlareConfig> getCloudFlareConfigs() {
+        return cloudFlareConfigs;
+    }
+
+    public Map<String, MultiValue<PostResponse, String>> getBungeeSRVRecords() {
+        return bungeeSRVRecords;
+    }
+
+    public Map<String, MultiValue<PostResponse, String>> getIpARecords() {
+        return ipARecords;
     }
 
     @Deprecated
