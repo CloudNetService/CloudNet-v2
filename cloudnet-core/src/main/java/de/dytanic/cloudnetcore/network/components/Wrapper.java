@@ -19,7 +19,6 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.Quad;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.packet.out.*;
@@ -30,8 +29,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Created by Tareko on 26.05.2017.
@@ -155,13 +152,8 @@ public final class Wrapper
     public int getUsedMemoryAndWaitings()
     {
         AtomicInteger integer = new AtomicInteger(getUsedMemory());
-
-        CollectionWrapper.iterator(this.waitingServices.values(), new Consumer<Quad<Integer, Integer, ServiceId, Template>>() {
-            @Override
-            public void accept(Quad<Integer, Integer, ServiceId, Template> obj)
-            {
-                integer.addAndGet(obj.getSecond());
-            }
+        this.waitingServices.values().forEach(obj -> {
+            integer.addAndGet(obj.getSecond());
         });
 
         return integer.get();

@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.bridge.internal.listener.v18_112;
 
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -7,14 +7,11 @@ package de.dytanic.cloudnetcore.command;
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.CloudServer;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-
-import java.util.function.Consumer;
 
 public final class CommandShutdown extends Command {
 
@@ -53,7 +50,7 @@ public final class CommandShutdown extends Command {
                     if (CloudNet.getInstance().getServerGroups().containsKey(args[1]))
                     {
                         System.out.println("All servers of the server group " + args[1] + " will be stopped...");
-                        CollectionWrapper.iterator(CloudNet.getInstance().getServers(args[1]), obj -> {
+                        CloudNet.getInstance().getServers(args[1]).forEach(obj -> {
                             obj.getWrapper().stopServer(obj);
                             NetworkUtils.sleepUninterruptedly(1000);
                         });
@@ -62,7 +59,7 @@ public final class CommandShutdown extends Command {
                     if (CloudNet.getInstance().getProxyGroups().containsKey(args[1]))
                     {
                         System.out.println("All proxies of the proxy group " + args[1] + " will be stopped");
-                        CollectionWrapper.iterator(CloudNet.getInstance().getProxys(args[1]), obj -> {
+                        CloudNet.getInstance().getProxys(args[1]).forEach(obj -> {
                             obj.getWrapper().stopProxy(obj);
                             NetworkUtils.sleepUninterruptedly(1000);
                         });

@@ -17,7 +17,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.io.*;
@@ -26,7 +25,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 /**
@@ -203,13 +202,7 @@ public class CloudFlareService {
     {
         //if (!bungeeSRVRecords.containsKey(proxyServer.getServiceId().getServerId())) return;
 
-        Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(), new Predicate<MultiValue<PostResponse, String>>() {
-            @Override
-            public boolean test(MultiValue<PostResponse, String> postResponseStringMultiValue)
-            {
-                return postResponseStringMultiValue.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId());
-            }
-        });
+        Collection<MultiValue<PostResponse, String>> postResponses = bungeeSRVRecords.values().stream().filter( postResponseStringMultiValue -> postResponseStringMultiValue.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId())).collect(Collectors.toList());
 
         //MultiValue<PostResponse, String> postResponse = bungeeSRVRecords.get(proxyServer.getServiceId().getServerId());
             /*

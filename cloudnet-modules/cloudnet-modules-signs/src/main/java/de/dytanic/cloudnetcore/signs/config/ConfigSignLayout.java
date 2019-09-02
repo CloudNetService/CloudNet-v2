@@ -9,13 +9,11 @@ import de.dytanic.cloudnet.lib.serverselectors.sign.SearchingAnimation;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignGroupLayouts;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayout;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.function.Predicate;
 
 /**
  * Created by Tareko on 22.07.2017.

@@ -1,7 +1,5 @@
 package de.dytanic.cloudnet.lib.player.permission;
 
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;

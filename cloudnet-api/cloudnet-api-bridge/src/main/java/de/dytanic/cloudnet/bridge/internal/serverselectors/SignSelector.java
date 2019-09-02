@@ -14,7 +14,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.sign.*;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -33,7 +32,7 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 /**
@@ -148,12 +147,7 @@ public final class SignSelector implements Listener {
 	}
 
 	private Collection<ServerInfo> getServers(String group) {
-		return CollectionWrapper.filterMany(servers.values(), new Predicate<ServerInfo>() {
-			@Override
-			public boolean test(ServerInfo value) {
-				return value.getServiceId().getGroup().equals(group);
-			}
-		});
+		return servers.values().stream().filter(value -> value.getServiceId().getGroup().equals(group)).collect(Collectors.toList());
 	}
 
 	public Collection<String> freeServers(String group) {

@@ -13,7 +13,6 @@ import de.dytanic.cloudnet.lib.user.BasicUser;
 import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.web.server.util.WebServerConfig;
@@ -275,12 +274,7 @@ public class CloudConfig {
 	public void createGroup(@NonNull ProxyGroup serverGroup) {
 		Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
 		}.getType());
-		CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
-			@Override
-			public boolean isAccepted(ProxyGroup value) {
-				return value.getName().equals(serverGroup.getName());
-			}
-		});
+		groups.stream().filter(value -> value.getName().equals(serverGroup.getName())).forEach(groups::remove);
 
 		groups.add(serverGroup);
 		this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
@@ -293,12 +287,7 @@ public class CloudConfig {
 	public void deleteGroup(ProxyGroup proxyGroup) {
 		Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {
 		}.getType());
-		CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
-			@Override
-			public boolean isAccepted(ProxyGroup value) {
-				return value.getName().equals(proxyGroup.getName());
-			}
-		});
+		groups.stream().filter(value -> value.getName().equals(proxyGroup.getName())).forEach(groups::remove);
 		this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
 	}
 

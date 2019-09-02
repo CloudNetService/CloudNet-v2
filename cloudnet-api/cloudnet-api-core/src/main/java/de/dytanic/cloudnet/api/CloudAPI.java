@@ -75,15 +75,13 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public final class CloudAPI implements MetaObj {
 
@@ -1157,7 +1155,7 @@ public final class CloudAPI implements MetaObj {
     public Collection<ServerInfo> getCloudServers()
     {
         if (cloudService != null && cloudService.isProxyInstance())
-            return CollectionWrapper.filterMany(cloudService.getServers().values(), serverInfo -> serverInfo.getServiceId().getGroup() == null);
+            return cloudService.getServers().values().stream().filter(serverInfo -> serverInfo.getServiceId().getGroup() == null).collect(Collectors.toList());
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetCloudServers(), networkConnection);
         return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {
@@ -1172,7 +1170,7 @@ public final class CloudAPI implements MetaObj {
     public Collection<ServerInfo> getServers(String group)
     {
         if (cloudService != null && cloudService.isProxyInstance())
-            return CollectionWrapper.filterMany(cloudService.getServers().values(), serverInfo -> serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group));
+            return cloudService.getServers().values().stream().filter(serverInfo -> serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group)).collect(Collectors.toList());
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(group), networkConnection);
         return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {

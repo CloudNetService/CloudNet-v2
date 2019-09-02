@@ -21,7 +21,6 @@ import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobItemLayout;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobPosition;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.Return;
 import org.bukkit.Bukkit;
@@ -43,7 +42,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 25.08.2017.
@@ -159,23 +158,13 @@ public final class MobSelector {
 	private ItemStack transform(MobItemLayout mobItemLayout) {
 		Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
 		return material == null ? null : ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId())
-				.lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), new Function<String, String>() {
-					@Override
-					public String apply(String key) {
-						return ChatColor.translateAlternateColorCodes('&', key);
-					}
-				}))).displayName(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay())).build();
+				.lore(new ArrayList<>(mobItemLayout.getLore().stream().map(key -> ChatColor.translateAlternateColorCodes('&', key)).collect(Collectors.toList()))).displayName(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay())).build();
 	}
 
 	private ItemStack transform(MobItemLayout mobItemLayout, ServerInfo serverInfo) {
 		Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
 		return material == null ? null : ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId())
-				.lore(new ArrayList<>(CollectionWrapper.transform(mobItemLayout.getLore(), new Function<String, String>() {
-					@Override
-					public String apply(String key) {
-						return initPatterns(ChatColor.translateAlternateColorCodes('&', key), serverInfo);
-					}
-				}))).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
+				.lore(new ArrayList<>(mobItemLayout.getLore().stream().map(key ->initPatterns(ChatColor.translateAlternateColorCodes('&', key), serverInfo)).collect(Collectors.toList()))).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
 	}
 
 	private String initPatterns(String x, ServerInfo serverInfo) {
@@ -207,14 +196,10 @@ public final class MobSelector {
 	}
 
 	private List<ServerInfo> getServers(String group) {
-		List<ServerInfo> groups = new ArrayList<>(CollectionWrapper.filterMany(this.servers.values(), new Predicate<ServerInfo>() {
-			@Override
-			public boolean test(ServerInfo serverInfo) {
-				return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
-			}
-		}));
 
-		return groups;
+		return this.servers.values().stream().filter(serverInfo -> {
+			return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
+		}).collect(Collectors.toList());
 	}
 
 	@Deprecated
@@ -242,12 +227,7 @@ public final class MobSelector {
 	}
 
 	private Collection<ServerInfo> filter(String group) {
-		return CollectionWrapper.filterMany(servers.values(), new Predicate<ServerInfo>() {
-			@Override
-			public boolean test(ServerInfo value) {
-				return value.getServiceId().getGroup().equals(group);
-			}
-		});
+		return servers.values().stream().filter(value -> value.getServiceId().getGroup().equals(group)).collect(Collectors.toList());
 	}
 
 	public void handleUpdate(ServerInfo serverInfo) {
@@ -401,7 +381,7 @@ public final class MobSelector {
 	}
 
 	public Collection<Inventory> inventories() {
-		return CollectionWrapper.getCollection(this.mobs, MobImpl::getInventory);
+		return this.mobs.values().stream().map(MobImpl::getInventory).collect(Collectors.toList());
 	}
 
 	public MobImpl find(Inventory inventory) {

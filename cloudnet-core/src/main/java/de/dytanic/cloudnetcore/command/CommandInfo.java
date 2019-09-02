@@ -4,14 +4,12 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import java.util.Arrays;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 19.01.2018.
@@ -120,7 +118,7 @@ public final class CommandInfo extends Command {
                                 "MinOnlineServers: " + group.getMinOnlineServers(),
                                 "MaxOnlineServers: " + group.getMaxOnlineServers(),
                                 "Wrappers: " + Arrays.toString(group.getWrapper().toArray(new String[0])),
-                                "Templates: " + Arrays.toString(CollectionWrapper.transform(group.getTemplates(), key -> key.getName() + ":" + key.getBackend().name()).toArray()),
+                                "Templates: " + Arrays.toString(group.getTemplates().stream().map(key -> key.getName() + ":" + key.getBackend().name()).collect(Collectors.toList()).toArray(new String[0])),
                                 NetworkUtils.SPACE_STRING
                         );
                     }

@@ -4,8 +4,6 @@
 
 package de.dytanic.cloudnet.api.handlers;
 
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;

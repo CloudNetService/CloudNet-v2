@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.Value;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
 import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 22.05.2017.
@@ -109,13 +107,16 @@ public final class PacketManager {
         }
 
         Collection<PacketInHandler> handlers = buildHandlers(incoming.id);
-        CollectionWrapper.iterator(handlers, handler -> {
-            if (incoming.uniqueId != null) handler.packetUniqueId = incoming.uniqueId;
-            if (handler != null)
-            {
-                handler.handleInput(incoming.data, packetSender);
-            }
-        });
+        if (handlers != null) {
+            handlers.forEach(handler -> {
+                if (incoming.uniqueId != null) handler.packetUniqueId = incoming.uniqueId;
+                if (handler != null)
+                {
+                    handler.handleInput(incoming.data, packetSender);
+                }
+            });
+        }
+
         return true;
     }
 

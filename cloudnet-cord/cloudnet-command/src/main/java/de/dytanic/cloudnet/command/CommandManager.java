@@ -5,13 +5,14 @@
 package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import jline.console.completer.Completer;
 
 /**
@@ -188,8 +189,7 @@ public final class CommandManager
             {
                 String[] args = buffer.split(" ");
                 String testString = args[args.length - 1];
-
-                responses.addAll(CollectionWrapper.filterMany(((TabCompletable) command).onTab(input.length - 1, input[input.length - 1]), s -> s != null && (testString.isEmpty() || s.toLowerCase().contains(testString.toLowerCase()))));
+                responses.addAll(((TabCompletable) command).onTab(input.length - 1, input[input.length - 1]).stream().filter(s -> s != null && (testString.isEmpty() || s.toLowerCase().contains(testString.toLowerCase()))).collect(Collectors.toList()));
             }
         }
 
