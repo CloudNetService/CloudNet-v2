@@ -158,7 +158,7 @@ public class WebServer {
      * @throws InterruptedException thrown when the synchronous call is interrupted.
      */
     public void bind() throws InterruptedException {
-        System.out.println("Bind WebServer at [" + address + ":" + port + "]");
+        System.out.println("Bind WebServer at [" + address + ':' + port + ']');
         serverBootstrap.bind(address, port).sync().channel().closeFuture();
     }
 }

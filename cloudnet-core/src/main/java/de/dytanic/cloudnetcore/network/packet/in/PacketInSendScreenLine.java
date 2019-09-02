@@ -32,7 +32,7 @@ public final class PacketInSendScreenLine extends PacketInHandler {
                                                                                                                              .getScreenProvider()
                                                                                                                              .getMainServiceId()
                                                                                                                              .getServerId())) {
-                System.out.println("[" + screenInfo.getServiceId().getServerId() + "] " + screenInfo.getLine());
+                System.out.println('[' + screenInfo.getServiceId().getServerId() + "] " + screenInfo.getLine());
             }
         }
 

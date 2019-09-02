@@ -22,7 +22,6 @@ import de.dytanic.cloudnetcore.network.components.WrapperMeta;
 import de.dytanic.cloudnetcore.util.defaults.BungeeGroup;
 import de.dytanic.cloudnetcore.util.defaults.LobbyGroup;
 import jline.console.ConsoleReader;
-import lombok.NonNull;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -287,7 +286,7 @@ public class CloudConfig {
         return this;
     }
 
-    public void createGroup(@NonNull ProxyGroup serverGroup) {
+    public void createGroup(ProxyGroup serverGroup) {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {}.getType());
         CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
             @Override
@@ -346,7 +345,7 @@ public class CloudConfig {
                             groups.put(serverGroup.getName(), serverGroup);
                         } catch (Throwable ex) {
                             ex.printStackTrace();
-                            System.out.println("Cannot load servergroup file [" + file.getName() + "]");
+                            System.out.println("Cannot load servergroup file [" + file.getName() + ']');
                         }
                     }
                 }
@@ -356,7 +355,7 @@ public class CloudConfig {
         return groups;
     }
 
-    public void createGroup(@NonNull ServerGroup serverGroup) {
+    public void createGroup(ServerGroup serverGroup) {
 
         new Document("group", serverGroup).saveAsConfig(Paths.get("groups/" + serverGroup.getName() + ".json"));
 

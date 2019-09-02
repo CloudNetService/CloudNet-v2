@@ -110,7 +110,7 @@ public final class CommandManager implements Completer {
     public boolean dispatchCommand(CommandSender sender, String command) {
         String[] a = command.split(" ");
         if (this.commands.containsKey(a[0].toLowerCase())) {
-            String b = command.replace((command.contains(" ") ? command.split(" ")[0] + " " : command), NetworkUtils.EMPTY_STRING);
+            String b = command.replace((command.contains(" ") ? command.split(" ")[0] + ' ' : command), NetworkUtils.EMPTY_STRING);
             try {
                 for (String argument : a) {
                     for (CommandArgument commandArgument : this.commands.get(a[0].toLowerCase()).getCommandArguments()) {

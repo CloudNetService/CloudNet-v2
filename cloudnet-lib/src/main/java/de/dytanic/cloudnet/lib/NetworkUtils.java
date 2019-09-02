@@ -191,7 +191,7 @@ public final class NetworkUtils {
             try {
                 Files.createFile(path);
                 try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
-                    outputStreamWriter.write(stringBuilder.substring(0) + "\n");
+                    outputStreamWriter.write(stringBuilder.substring(0) + '\n');
                     outputStreamWriter.flush();
                 }
             } catch (IOException e) {
@@ -238,7 +238,7 @@ public final class NetworkUtils {
     public static void header() {
         System.out.println(NetworkUtils.SPACE_STRING);
         System.out.println("██████ █      ██████ █   █ █████ ██    █ █████ █████ [" + NetworkUtils.class.getPackage()
-                                                                                                        .getImplementationVersion() + "]");
+                                                                                                        .getImplementationVersion() + ']');
         System.out.println("█R     █E     █Z   █ █S  █ █Y  █ █M█   █ █       █");
         System.out.println("█      █      █    █ █   █ █   █ █  █  █ ████    █");
         System.out.println("█D     █Y     █T   █ █A  █ █N  █ █   █I█ █C      █");
@@ -250,7 +250,7 @@ public final class NetworkUtils {
         System.out.println();
         System.out.println("«» The Cloud Network Environment Technology 2");
         System.out.println("«» Support https://discord.gg/5NUhKuR      [" + NetworkUtils.class.getPackage()
-                                                                                              .getSpecificationVersion() + "]");
+                                                                                              .getSpecificationVersion() + ']');
         System.out.println("«» Java " + System.getProperty("java.version") + " @" + System.getProperty("user.name") + NetworkUtils.SPACE_STRING + System
             .getProperty("os.name") + NetworkUtils.SPACE_STRING);
         System.out.println(NetworkUtils.SPACE_STRING);

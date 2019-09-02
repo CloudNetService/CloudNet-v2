@@ -9,7 +9,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolBuffer;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolStream;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.NonNull;
 
 import java.lang.reflect.Type;
 import java.util.UUID;
@@ -33,17 +32,17 @@ public class Packet extends ProtocolStream {
         this.data = new Document();
     }
 
-    public Packet(@NonNull Document data) {
+    public Packet(Document data) {
         this.data = data;
         this.id = 0;
     }
 
-    public Packet(int id, @NonNull Document data) {
+    public Packet(int id, Document data) {
         this.id = id;
         this.data = data;
     }
 
-    public Packet(UUID uniqueId, int id, @NonNull Document data) {
+    public Packet(UUID uniqueId, int id, Document data) {
         this.uniqueId = uniqueId;
         this.id = id;
         this.data = data;

@@ -207,7 +207,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         networkConnection.getPacketManager().registerHandler(PacketRC.TEST + 1, PacketInTestResult.class);
 
         System.out.println("Trying to connect " + networkConnection.getConnectableAddress()
-                                                                   .getHostName() + ":" + networkConnection.getConnectableAddress()
+                                                                   .getHostName() + ':' + networkConnection.getConnectableAddress()
                                                                                                            .getPort());
         while (networkConnection.getConnectionTrys() < 5 && networkConnection.getChannel() == null) {
             networkConnection.tryConnect(optionSet.has("ssl"), new NetDispatcher(networkConnection, false), auth);

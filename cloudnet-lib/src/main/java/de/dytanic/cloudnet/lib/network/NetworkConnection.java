@@ -113,7 +113,7 @@ public final class NetworkConnection implements PacketSender {
             return true;
         } catch (Exception ex) {
             connectionTrys++;
-            System.out.println("Failed to connect... [" + connectionTrys + "]");
+            System.out.println("Failed to connect... [" + connectionTrys + ']');
             System.out.println("Error: " + ex.getMessage());
 
             if (this.channel != null) {

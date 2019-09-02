@@ -521,7 +521,7 @@ public final class CloudAPI implements MetaObj {
         networkConnection.sendPacket(new PacketOutCreateServerLog(rnd, serverId));
         ConnectableAddress connectableAddress = cloudConfigLoader.loadConnnection();
         return new StringBuilder(config.getBoolean("ssl") ? "https://" : "http://").append(connectableAddress.getHostName())
-                                                                                   .append(":")
+                                                                                   .append(':')
                                                                                    .append(cloudNetwork.getWebPort())
                                                                                    .append("/cloudnet/log?server=")
                                                                                    .append(rnd)

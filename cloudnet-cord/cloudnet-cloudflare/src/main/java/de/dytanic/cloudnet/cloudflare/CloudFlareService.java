@@ -89,7 +89,7 @@ public class CloudFlareService {
                         if (!cloudFlareDatabase.contains(cloudFlareConfig, wrapper)) {
                             String host = wrapperInfoMap.get(wrapper).getHostName();
                             DNSRecord dnsRecord = new DefaultDNSRecord(DNSType.A,
-                                                                       wrapper + "." + cloudFlareConfig.getDomainName(),
+                                                                       wrapper + '.' + cloudFlareConfig.getDomainName(),
                                                                        host,
                                                                        new Document().obj());
                             if (!ipARecords.containsKey(wrapper)) {
@@ -169,7 +169,7 @@ public class CloudFlareService {
             try (InputStream inputStream = httpPost.getResponseCode() < 400 ? httpPost.getInputStream() : httpPost.getErrorStream()) {
                 JsonObject jsonObject = toJsonInput(inputStream);
                 if (jsonObject.get("success").getAsBoolean()) {
-                    System.out.println(prefix + "DNSRecord [" + dnsRecord.getName() + "/" + dnsRecord.getType() + "] was created");
+                    System.out.println(prefix + "DNSRecord [" + dnsRecord.getName() + '/' + dnsRecord.getType() + "] was created");
                 } else {
                     throw new CloudFlareDNSRecordException("Failed to create DNSRecord \n " + jsonObject.toString());
                 }
@@ -235,8 +235,8 @@ public class CloudFlareService {
                     SRVRecord srvRecord;
                     if (cloudFlareProxyGroup.getSub().startsWith("@")) {
                         srvRecord = new SRVRecord("_minecraft._tcp." + cloudFlareConfig.getDomainName(),
-                                                  "SRV 1 1 " + proxyServer.getPort() + " " + proxyServer.getServiceId()
-                                                                                                        .getWrapperId() + "." + cloudFlareConfig
+                                                  "SRV 1 1 " + proxyServer.getPort() + ' ' + proxyServer.getServiceId()
+                                                                                                        .getWrapperId() + '.' + cloudFlareConfig
                                                       .getDomainName(),
                                                   "_minecraft",
                                                   "_tcp",
@@ -244,11 +244,11 @@ public class CloudFlareService {
                                                   1,
                                                   1,
                                                   proxyServer.getPort(),
-                                                  proxyServer.getServiceId().getWrapperId() + "." + cloudFlareConfig.getDomainName());
+                                                  proxyServer.getServiceId().getWrapperId() + '.' + cloudFlareConfig.getDomainName());
                     } else {
                         srvRecord = new SRVRecord("_minecraft._tcp." + cloudFlareConfig.getDomainName(),
-                                                  "SRV 1 1 " + proxyServer.getPort() + " " + proxyServer.getServiceId()
-                                                                                                        .getWrapperId() + "." + cloudFlareConfig
+                                                  "SRV 1 1 " + proxyServer.getPort() + ' ' + proxyServer.getServiceId()
+                                                                                                        .getWrapperId() + '.' + cloudFlareConfig
                                                       .getDomainName(),
                                                   "_minecraft",
                                                   "_tcp",
@@ -256,7 +256,7 @@ public class CloudFlareService {
                                                   1,
                                                   1,
                                                   proxyServer.getPort(),
-                                                  proxyServer.getServiceId().getWrapperId() + "." + cloudFlareConfig.getDomainName());
+                                                  proxyServer.getServiceId().getWrapperId() + '.' + cloudFlareConfig.getDomainName());
                     }
                     PostResponse postResponse = this.createRecord(cloudFlareConfig, srvRecord);
                     cloudFlareDatabase.add(postResponse);

@@ -6,7 +6,6 @@ import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
-import lombok.val;
 import net.milkbowl.vault.permission.Permission;
 
 import java.util.Optional;
@@ -33,9 +32,9 @@ public class VaultPermissionImpl extends Permission {
 
     @Override
     public boolean playerHas(String world, String player, String permission) {
-        val offlinePlayer = getPlayer(player);
+        OfflinePlayer offlinePlayer = getPlayer(player);
         PermissionEntity permissionEntity = offlinePlayer.getPermissionEntity();
-        val hasPermission = permissionEntity.hasPermission(CloudAPI.getInstance().getPermissionPool(), permission, null);
+        boolean hasPermission = permissionEntity.hasPermission(CloudAPI.getInstance().getPermissionPool(), permission, null);
         CloudAPI.getInstance().getLogger().finest(player + " hasPermission \"" + permission + "\": " + hasPermission);
         return hasPermission;
     }

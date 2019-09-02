@@ -82,14 +82,14 @@ public class MasterTemplateDeploy {
     }
 
     public void deploy() throws Exception {
-        System.out.println("Trying to setup the new template... [" + template.getName() + "]");
+        System.out.println("Trying to setup the new template... [" + template.getName() + ']');
         Path dir = Paths.get("local/cache/" + NetworkUtils.randomString(10));
         try {
             FileUtility.copyFilesInDirectory(new File(this.dir), dir.toFile());
             new File(dir.toString() + "/plugins/CloudNetAPI.jar").delete();
         } catch (Exception ex) {
         }
-        HttpURLConnection urlConnection = (HttpURLConnection) new URL((ssl ? "https" : "http") + "://" + connectableAddress.getHostName() + ":" + connectableAddress
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL((ssl ? "https" : "http") + "://" + connectableAddress.getHostName() + ':' + connectableAddress
             .getPort() + "/cloudnet/api/v1/deployment").openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
@@ -101,7 +101,7 @@ public class MasterTemplateDeploy {
         urlConnection.setUseCaches(false);
         urlConnection.setDoOutput(true);
         urlConnection.connect();
-        System.out.println("Connected and deployed template... [" + template.getName() + "]");
+        System.out.println("Connected and deployed template... [" + template.getName() + ']');
 
         try (OutputStream outputStream = urlConnection.getOutputStream()) {
             outputStream.write(ZipConverter.convert(new Path[] {dir}));
@@ -116,7 +116,7 @@ public class MasterTemplateDeploy {
                 ;
             }
         }
-        System.out.println("Successfully deploy template [" + template.getName() + "]");
+        System.out.println("Successfully deploy template [" + template.getName() + ']');
         urlConnection.disconnect();
         try {
             FileUtility.deleteDirectory(dir.toFile());

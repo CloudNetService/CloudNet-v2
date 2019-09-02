@@ -476,7 +476,7 @@ public class TaskScheduler {
         private long liveTimeStamp = System.currentTimeMillis();
 
         Worker() {
-            super(threadGroup, threadGroup.getName() + "#" + threadId.addAndGet(1));
+            super(threadGroup, threadGroup.getName() + '#' + threadId.addAndGet(1));
             setDaemon(true);
         }
 
@@ -526,7 +526,7 @@ public class TaskScheduler {
                 try {
                     taskEntry.invoke();
                 } catch (Exception e) {
-                    logger.log(Level.SEVERE, "Error on handling Task on Thread [" + getName() + "]", e);
+                    logger.log(Level.SEVERE, "Error on handling Task on Thread [" + getName() + ']', e);
                 }
 
                 if (checkEntry()) {

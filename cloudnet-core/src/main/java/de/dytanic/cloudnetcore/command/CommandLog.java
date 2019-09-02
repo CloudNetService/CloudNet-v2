@@ -57,7 +57,7 @@ public final class CommandLog extends Command {
                     Collectors.toList());
                 sendMinecraftServerPaste(sender, rndm, hasteServer, minecraftServer);
                 String x = new StringBuilder("http://").append(CloudNet.getInstance().getConfig().getWebServerConfig().getAddress()).append(
-                    ":").append(CloudNet.getInstance().getConfig().getWebServerConfig().getPort()).append("/cloudnet/log?server=").append(
+                    ':').append(CloudNet.getInstance().getConfig().getWebServerConfig().getPort()).append("/cloudnet/log?server=").append(
                     rndm).substring(0);
                 sender.sendMessage("You can see the log at: " + x);
 
@@ -70,7 +70,7 @@ public final class CommandLog extends Command {
                     Collectors.toList());
                 sendProxyServerPaste(sender, rndm, hasteServer, proxyServer);
                 String x = new StringBuilder("http://").append(CloudNet.getInstance().getConfig().getWebServerConfig().getAddress()).append(
-                    ":").append(CloudNet.getInstance().getConfig().getWebServerConfig().getPort()).append("/cloudnet/log?server=").append(
+                    ':').append(CloudNet.getInstance().getConfig().getWebServerConfig().getPort()).append("/cloudnet/log?server=").append(
                     rndm).substring(0);
                 sender.sendMessage("You can see the log at: " + x);
             } else {

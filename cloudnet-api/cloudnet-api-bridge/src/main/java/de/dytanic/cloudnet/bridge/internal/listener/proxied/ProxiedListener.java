@@ -62,13 +62,13 @@ public class ProxiedListener implements Listener {
 
             if (!proxyConfig.isMaintenance()) {
                 Motd motd = proxyConfig.getMotdsLayouts().get(NetworkUtils.RANDOM.nextInt(proxyConfig.getMotdsLayouts().size()));
-                serverPing.setDescription(ChatColor.translateAlternateColorCodes('&', motd.getFirstLine() + "\n" + motd.getSecondLine())
+                serverPing.setDescription(ChatColor.translateAlternateColorCodes('&', motd.getFirstLine() + '\n' + motd.getSecondLine())
                                                    .replace("%proxy%", CloudAPI.getInstance().getServerId())
                                                    .replace("%version%", CloudProxy.class.getPackage().getImplementationVersion()));
             } else {
                 serverPing.setDescription(ChatColor.translateAlternateColorCodes('&',
                                                                                  proxyConfig.getMaintenanceMotdLayout()
-                                                                                            .getFirstLine() + "\n" + proxyConfig.getMaintenanceMotdLayout()
+                                                                                            .getFirstLine() + '\n' + proxyConfig.getMaintenanceMotdLayout()
                                                                                                                                 .getSecondLine())
                                                    .replace("%proxy%", CloudAPI.getInstance().getServerId())
                                                    .replace("%version%", CloudProxy.class.getPackage().getImplementationVersion()));

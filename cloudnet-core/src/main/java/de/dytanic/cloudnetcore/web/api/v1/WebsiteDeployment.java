@@ -127,7 +127,7 @@ public class WebsiteDeployment extends MethodWebHandlerAdapter {
                     extractEntry(zipFile, zipEntry, "local/servers/" + payload);
                 }
                 file.delete();
-                System.out.println("Custom server deployed \"" + payload + "\"");
+                System.out.println("Custom server deployed \"" + payload + '"');
             }
             break;
         }

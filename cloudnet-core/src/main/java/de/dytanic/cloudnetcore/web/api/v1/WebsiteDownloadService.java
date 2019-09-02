@@ -81,7 +81,7 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                     fullHttpResponse.content().writeBytes(value);
                 } else {
                     fullHttpResponse.headers().set("Content-Type", "application/json");
-                    dataDocument.append("reason", Arrays.asList("cannot find file \"" + httpRequest.headers().get("-Xvalue") + "\""));
+                    dataDocument.append("reason", Arrays.asList("cannot find file \"" + httpRequest.headers().get("-Xvalue") + '"'));
                     fullHttpResponse.content().writeBytes(dataDocument.toBytesAsUTF_8());
                 }
             }
@@ -111,7 +111,7 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                     fullHttpResponse.content().writeBytes(value);
                 } else {
                     fullHttpResponse.headers().set("Content-Type", "application/json");
-                    dataDocument.append("reason", Arrays.asList("cannot find file \"" + httpRequest.headers().get("-Xvalue") + "\""));
+                    dataDocument.append("reason", Arrays.asList("cannot find file \"" + httpRequest.headers().get("-Xvalue") + '"'));
                     fullHttpResponse.content().writeBytes(dataDocument.toBytesAsUTF_8());
                 }
             }

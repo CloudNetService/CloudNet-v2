@@ -4,21 +4,13 @@ import de.dytanic.cloudnet.lib.network.WrapperInfo;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Tareko on 19.07.2017.
  */
-@ToString
-@EqualsAndHashCode
 public class CloudNetwork {
-
     private int registeredPlayerCount = 0;
     private int onlineCount = 0;
     private java.util.Map<String, SimpleServerGroup> serverGroups = new HashMap<>();
@@ -27,6 +19,41 @@ public class CloudNetwork {
     private Document messages = new Document();
     private Document modules = new Document();
     private int webPort = 1420;
+
+    @Override
+    public int hashCode() {
+        int result = registeredPlayerCount;
+        result = 31 * result + onlineCount;
+        result = 31 * result + (serverGroups != null ? serverGroups.hashCode() : 0);
+        result = 31 * result + (proxyGroups != null ? proxyGroups.hashCode() : 0);
+        result = 31 * result + (wrappers != null ? wrappers.hashCode() : 0);
+        result = 31 * result + (messages != null ? messages.hashCode() : 0);
+        result = 31 * result + (modules != null ? modules.hashCode() : 0);
+        result = 31 * result + webPort;
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CloudNetwork)) {
+            return false;
+        }
+        final CloudNetwork that = (CloudNetwork) o;
+        return registeredPlayerCount == that.registeredPlayerCount && onlineCount == that.onlineCount && webPort == that.webPort && Objects.equals(
+            serverGroups,
+            that.serverGroups) && Objects.equals(proxyGroups, that.proxyGroups) && Objects.equals(wrappers,
+                                                                                                  that.wrappers) && Objects.equals(messages,
+                                                                                                                                   that.messages) && Objects
+            .equals(modules, that.modules);
+    }
+
+    @Override
+    public String toString() {
+        return "CloudNetwork{" + "registeredPlayerCount=" + registeredPlayerCount + ", onlineCount=" + onlineCount + ", serverGroups=" + serverGroups + ", proxyGroups=" + proxyGroups + ", wrappers=" + wrappers + ", messages=" + messages + ", modules=" + modules + ", webPort=" + webPort + '}';
+    }
 
     public int getOnlineCount() {
         return onlineCount;

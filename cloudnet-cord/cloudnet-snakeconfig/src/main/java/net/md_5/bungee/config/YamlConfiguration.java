@@ -1,7 +1,5 @@
 package net.md_5.bungee.config;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -14,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class YamlConfiguration extends ConfigurationProvider {
 
     private final ThreadLocal<Yaml> yaml = new ThreadLocal<Yaml>() {
@@ -37,6 +34,9 @@ public class YamlConfiguration extends ConfigurationProvider {
             return new Yaml(new Constructor(), representer, options);
         }
     };
+
+    YamlConfiguration() {
+    }
 
     @Override
     public void save(Configuration config, File file) throws IOException {

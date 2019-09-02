@@ -2,7 +2,6 @@ package de.dytanic.cloudnet.lib.server.info;
 
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.service.ServiceId;
-import lombok.ToString;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,7 +9,6 @@ import java.util.UUID;
 /**
  * Created by Tareko on 25.05.2017.
  */
-@ToString
 public class ProxyInfo {
 
     private ServiceId serviceId;
@@ -40,6 +38,11 @@ public class ProxyInfo {
 
     public int getMemory() {
         return memory;
+    }
+
+    @Override
+    public String toString() {
+        return "ProxyInfo{" + "serviceId=" + serviceId + ", host='" + host + '\'' + ", port=" + port + ", online=" + online + ", players=" + players + ", memory=" + memory + ", onlineCount=" + onlineCount + '}';
     }
 
     public ServiceId getServiceId() {

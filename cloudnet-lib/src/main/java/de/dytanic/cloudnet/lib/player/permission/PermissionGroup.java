@@ -1,16 +1,12 @@
 package de.dytanic.cloudnet.lib.player.permission;
 
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Tareko on 01.06.2017.
  */
-@ToString
-@EqualsAndHashCode
 public class PermissionGroup {
 
     protected String name;
@@ -25,7 +21,6 @@ public class PermissionGroup {
     protected Map<String, List<String>> serverGroupPermissions;
     protected Map<String, Object> options;
     protected List<String> implementGroups;
-
     public PermissionGroup(String name,
                            String color,
                            String prefix,
@@ -50,6 +45,47 @@ public class PermissionGroup {
         this.serverGroupPermissions = serverGroupPermissions;
         this.options = options;
         this.implementGroups = implementGroups;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (color != null ? color.hashCode() : 0);
+        result = 31 * result + (prefix != null ? prefix.hashCode() : 0);
+        result = 31 * result + (suffix != null ? suffix.hashCode() : 0);
+        result = 31 * result + (display != null ? display.hashCode() : 0);
+        result = 31 * result + tagId;
+        result = 31 * result + joinPower;
+        result = 31 * result + (defaultGroup ? 1 : 0);
+        result = 31 * result + (permissions != null ? permissions.hashCode() : 0);
+        result = 31 * result + (serverGroupPermissions != null ? serverGroupPermissions.hashCode() : 0);
+        result = 31 * result + (options != null ? options.hashCode() : 0);
+        result = 31 * result + (implementGroups != null ? implementGroups.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PermissionGroup)) {
+            return false;
+        }
+        final PermissionGroup that = (PermissionGroup) o;
+        return tagId == that.tagId && joinPower == that.joinPower && defaultGroup == that.defaultGroup && Objects.equals(name,
+                                                                                                                         that.name) && Objects
+            .equals(color, that.color) && Objects.equals(prefix, that.prefix) && Objects.equals(suffix, that.suffix) && Objects.equals(
+            display,
+            that.display) && Objects.equals(permissions, that.permissions) && Objects.equals(serverGroupPermissions,
+                                                                                             that.serverGroupPermissions) && Objects.equals(
+            options,
+            that.options) && Objects.equals(implementGroups, that.implementGroups);
+    }
+
+    @Override
+    public String toString() {
+        return "PermissionGroup{" + "name='" + name + '\'' + ", color='" + color + '\'' + ", prefix='" + prefix + '\'' + ", suffix='" + suffix + '\'' + ", display='" + display + '\'' + ", tagId=" + tagId + ", joinPower=" + joinPower + ", defaultGroup=" + defaultGroup + ", permissions=" + permissions + ", serverGroupPermissions=" + serverGroupPermissions + ", options=" + options + ", implementGroups=" + implementGroups + '}';
     }
 
     public String getName() {

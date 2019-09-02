@@ -131,7 +131,7 @@ public class WebClient {
             try (InputStream inputStream = httpURLConnection.getInputStream()) {
 
                 boolean windows = System.getProperty("os.name").toLowerCase().contains("windows");
-                Path path = windows ? Paths.get("CloudNet-" + (getEnvironment() ? "Master" : "Wrapper") + "-Update#" + version + "-" + NetworkUtils.RANDOM
+                Path path = windows ? Paths.get("CloudNet-" + (getEnvironment() ? "Master" : "Wrapper") + "-Update#" + version + '-' + NetworkUtils.RANDOM
                     .nextLong() + ".jar") : Paths.get(WebClient.class.getProtectionDomain()
                                                                      .getCodeSource()
                                                                      .getLocation()
@@ -144,7 +144,7 @@ public class WebClient {
                                                                                                                      .getLocation()
                                                                                                                      .toURI()
                                                                                                                      .getPath())
-                                                                                                 .getFileName() + "] with the new file [" + path + "]");
+                                                                                                 .getFileName() + "] with the new file [" + path + ']');
                 }
 
             } catch (URISyntaxException e) {

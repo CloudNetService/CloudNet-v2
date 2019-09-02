@@ -85,7 +85,7 @@ public class CloudBootstrap {
 
         if (optionSet.has("version") || optionSet.has("v")) {
             System.out.println("CloudNet-Wrapper RezSyM Version " + CloudBootstrap.class.getPackage()
-                                                                                        .getImplementationVersion() + "-" + CloudBootstrap.class
+                                                                                        .getImplementationVersion() + '-' + CloudBootstrap.class
                 .getPackage()
                 .getSpecificationVersion());
             return;
@@ -120,7 +120,7 @@ public class CloudBootstrap {
 
             while (true) {
                 try {
-                    while ((commandLine = cloudNetLogging.readLine(user + "@" + cloudNetWrapper.getWrapperConfig()
+                    while ((commandLine = cloudNetLogging.readLine(user + '@' + cloudNetWrapper.getWrapperConfig()
                                                                                                .getWrapperId() + " $ ")) != null) {
 
                         try {

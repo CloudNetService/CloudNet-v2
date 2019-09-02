@@ -49,7 +49,7 @@ public final class CommandCreate extends Command {
                                                                                                                                  .endsWith(
                                                                                                                                      " ") ? builder
                                                                                                         .length() - 1 : builder.length())));
-                sender.sendMessage("A dispatcher was created \"" + args[1] + "\": \"" + builder.substring(0) + "\"");
+                sender.sendMessage("A dispatcher was created \"" + args[1] + "\": \"" + builder.substring(0) + '"');
                 return;
             }
         }

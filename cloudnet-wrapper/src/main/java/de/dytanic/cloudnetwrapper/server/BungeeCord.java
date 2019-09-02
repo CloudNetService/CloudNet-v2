@@ -26,7 +26,6 @@ import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutRemoveProxy;
 import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
-import lombok.EqualsAndHashCode;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -38,9 +37,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Queue;
 
-@EqualsAndHashCode(callSuper = false)
 public class BungeeCord extends AbstractScreenService implements ServerDispatcher {
 
     private ProxyProcessMeta proxyProcessMeta;
@@ -137,7 +136,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                                                                .append(CloudNetWrapper.getInstance()
                                                                                                       .getWrapperConfig()
                                                                                                       .getCloudnetHost())
-                                                                               .append(":")
+                                                                               .append(':')
                                                                                .append(CloudNetWrapper.getInstance()
                                                                                                       .getWrapperConfig()
                                                                                                       .getWebPort())
@@ -212,7 +211,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                                                                                .append(CloudNetWrapper.getInstance()
                                                                                                                       .getWrapperConfig()
                                                                                                                       .getCloudnetHost())
-                                                                                               .append(":")
+                                                                                               .append(':')
                                                                                                .append(CloudNetWrapper.getInstance()
                                                                                                                       .getWrapperConfig()
                                                                                                                       .getWebPort())
@@ -285,7 +284,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                                                                            .append(CloudNetWrapper.getInstance()
                                                                                                                   .getWrapperConfig()
                                                                                                                   .getCloudnetHost())
-                                                                                           .append(":")
+                                                                                           .append(':')
                                                                                            .append(CloudNetWrapper.getInstance()
                                                                                                                   .getWrapperConfig()
                                                                                                                   .getWebPort())
@@ -342,9 +341,9 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         FileUtility.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
         FileUtility.rewriteFileUtils(new File(path + "/config.yml"),
-                                     "\"" + CloudNetWrapper.getInstance()
-                                                           .getWrapperConfig()
-                                                           .getProxy_config_host() + ":" + this.proxyProcessMeta.getPort() + "\"");
+                                     '"' + CloudNetWrapper.getInstance()
+                                                          .getWrapperConfig()
+                                                          .getProxy_config_host() + ':' + this.proxyProcessMeta.getPort() + '"');
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isViaVersion()) {
             if (!Files.exists(Paths.get("local/ViaVersion-Proxied.jar"))) {
@@ -382,7 +381,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                       .append("host",
                               CloudNetWrapper.getInstance()
                                              .getWrapperConfig()
-                                             .getProxy_config_host() + ":" + this.proxyProcessMeta.getPort())
+                                             .getProxy_config_host() + ':' + this.proxyProcessMeta.getPort())
                       .append("proxyInfo", proxyInfo)
                       .append("ssl", CloudNetWrapper.getInstance().getOptionSet().has("ssl"))
                       .append("memory", proxyProcessMeta.getMemory())
@@ -480,8 +479,33 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
     }
 
     @Override
+    public int hashCode() {
+        int result = proxyProcessMeta != null ? proxyProcessMeta.hashCode() : 0;
+        result = 31 * result + (proxyGroup != null ? proxyGroup.hashCode() : 0);
+        result = 31 * result + (instance != null ? instance.hashCode() : 0);
+        result = 31 * result + (dir != null ? dir.hashCode() : 0);
+        result = 31 * result + (path != null ? path.hashCode() : 0);
+        result = 31 * result + (proxyInfo != null ? proxyInfo.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BungeeCord)) {
+            return false;
+        }
+        final BungeeCord that = (BungeeCord) o;
+        return Objects.equals(proxyProcessMeta, that.proxyProcessMeta) && Objects.equals(proxyGroup, that.proxyGroup) && Objects.equals(
+            instance,
+            that.instance) && Objects.equals(dir, that.dir) && Objects.equals(path, that.path) && Objects.equals(proxyInfo, that.proxyInfo);
+    }
+
+    @Override
     public String toString() {
-        return "[" + proxyProcessMeta.getServiceId()
-                                     .getServerId() + "/port=" + proxyProcessMeta.getPort() + "/memory=" + proxyProcessMeta.getMemory() + "]";
+        return '[' + proxyProcessMeta.getServiceId()
+                                     .getServerId() + "/port=" + proxyProcessMeta.getPort() + "/memory=" + proxyProcessMeta.getMemory() + ']';
     }
 }

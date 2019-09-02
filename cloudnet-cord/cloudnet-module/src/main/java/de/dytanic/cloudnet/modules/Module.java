@@ -7,8 +7,6 @@ package de.dytanic.cloudnet.modules;
 import de.dytanic.cloudnet.event.EventKey;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -16,48 +14,74 @@ import net.md_5.bungee.config.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Objects;
 
 /**
  * Data class for modules
  */
-@EqualsAndHashCode
-@ToString
 public abstract class Module<E> extends EventKey {
-
     /**
      * The folder where the data of this module is saved in.
      */
     private File dataFolder;
-
     /**
      * The configuration file of this module.
      */
     private File configFile;
-
     /**
      * The utility file of this module.
      */
     private File utilFile;
-
     /**
      * The configuration of this module's file.
      */
     private ModuleConfig moduleConfig;
-
     /*
      * The class loader that is assigned to this module.
      */
     private ModuleClassLoader classLoader;
-
     /**
      * The configuration for this module.
      */
     private Configuration configuration;
-
     /**
      * The loader that was used to load this module.
      */
     private ModuleLoader moduleLoader;
+
+    @Override
+    public int hashCode() {
+        int result = dataFolder != null ? dataFolder.hashCode() : 0;
+        result = 31 * result + (configFile != null ? configFile.hashCode() : 0);
+        result = 31 * result + (utilFile != null ? utilFile.hashCode() : 0);
+        result = 31 * result + (moduleConfig != null ? moduleConfig.hashCode() : 0);
+        result = 31 * result + (classLoader != null ? classLoader.hashCode() : 0);
+        result = 31 * result + (configuration != null ? configuration.hashCode() : 0);
+        result = 31 * result + (moduleLoader != null ? moduleLoader.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Module)) {
+            return false;
+        }
+        final Module<?> module = (Module<?>) o;
+        return Objects.equals(dataFolder, module.dataFolder) && Objects.equals(configFile, module.configFile) && Objects.equals(utilFile,
+                                                                                                                                module.utilFile) && Objects
+            .equals(moduleConfig, module.moduleConfig) && Objects.equals(classLoader, module.classLoader) && Objects.equals(configuration,
+                                                                                                                            module.configuration) && Objects
+            .equals(moduleLoader, module.moduleLoader);
+    }
+
+    @Override
+    public String toString() {
+        return "Module{" + "dataFolder=" + dataFolder + ", configFile=" + configFile + ", utilFile=" + utilFile + ", moduleConfig=" + moduleConfig + ", classLoader=" + classLoader + ", configuration=" + configuration + ", moduleLoader=" + moduleLoader + "} " + super
+            .toString();
+    }
 
     /**
      * Method that is called when the module is loaded.

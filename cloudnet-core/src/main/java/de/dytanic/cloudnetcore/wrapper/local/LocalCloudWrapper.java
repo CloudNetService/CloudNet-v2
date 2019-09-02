@@ -314,7 +314,7 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
     }
 
     public void executeCommand(String command) throws IOException {
-        this.process.getOutputStream().write((command + "\n").getBytes(StandardCharsets.UTF_8));
+        this.process.getOutputStream().write((command + '\n').getBytes(StandardCharsets.UTF_8));
         this.process.getOutputStream().flush();
     }
 

@@ -226,12 +226,12 @@ public class CloudLogger extends Logger {
             if (record.getThrown() != null) {
                 StringWriter writer = new StringWriter();
                 record.getThrown().printStackTrace(new PrintWriter(writer));
-                builder.append(writer).append("\n");
+                builder.append(writer).append('\n');
             }
 
             return ConsoleReader.RESET_LINE + "[" + format.format(record.getMillis()) + "] " + record.getLevel()
                                                                                                      .getName() + ": " + formatMessage(
-                record) + "\n" + builder.toString();
+                record) + '\n' + builder.toString();
         }
     }
 }

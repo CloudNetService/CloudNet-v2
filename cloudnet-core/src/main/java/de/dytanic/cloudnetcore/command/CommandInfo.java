@@ -124,7 +124,7 @@ public final class CommandInfo extends Command {
                                                                                                        new Catcher<String, Template>() {
                                                                                                            @Override
                                                                                                            public String doCatch(Template key) {
-                                                                                                               return key.getName() + ":" + key
+                                                                                                               return key.getName() + ':' + key
                                                                                                                    .getBackend()
                                                                                                                    .name();
                                                                                                            }

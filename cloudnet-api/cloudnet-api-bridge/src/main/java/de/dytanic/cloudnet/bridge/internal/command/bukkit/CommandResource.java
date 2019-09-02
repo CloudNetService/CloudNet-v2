@@ -34,7 +34,7 @@ public final class CommandResource extends Command {
 
         sender.sendMessage(CloudAPI.getInstance().getPrefix() + NetworkUtils.SPACE_STRING);
         sender.sendMessage(CloudAPI.getInstance().getPrefix() + "§7Server: §b" + CloudAPI.getInstance()
-                                                                                         .getServerId() + ":" + CloudAPI.getInstance()
+                                                                                         .getServerId() + ':' + CloudAPI.getInstance()
                                                                                                                         .getUniqueId());
         sender.sendMessage(CloudAPI.getInstance().getPrefix() + "§7State§8: §b" + CloudServer.getInstance().getServerState());
         sender.sendMessage(CloudAPI.getInstance().getPrefix() + "§7Template: §b" + CloudServer.getInstance().getTemplate().getName());

@@ -56,14 +56,14 @@ public final class FileCopy {
         boolean value = false;
         while ((input = reader.readLine()) != null) {
             if (value) {
-                liste.add("  host: " + host + "\n");
+                liste.add("  host: " + host + '\n');
                 value = false;
             } else {
                 if (input.startsWith("  query_enabled")) {
-                    liste.add(input + "\n");
+                    liste.add(input + '\n');
                     value = true;
                 } else {
-                    liste.add(input + "\n");
+                    liste.add(input + '\n');
                 }
             }
         }

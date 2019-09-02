@@ -93,7 +93,7 @@ public class ServerProcessQueue implements Runnable {
                     if ((memory + serverProcess.getMeta().getMemory()) < CloudNetWrapper.getInstance().getMaxMemory()) {
                         GameServer gameServer = null;
                         try {
-                            System.out.println("Fetching entry [" + serverProcess.getMeta().getServiceId() + "]");
+                            System.out.println("Fetching entry [" + serverProcess.getMeta().getServiceId() + ']');
                             gameServer = new GameServer(serverProcess,
                                                         ServerStage.SETUP,
                                                         CloudNetWrapper.getInstance()
@@ -141,7 +141,7 @@ public class ServerProcessQueue implements Runnable {
                                                                               .get(serverProcess.getServiceId().getGroup()));
 
                         try {
-                            System.out.println("Fetching entry [" + gameServer.getServiceId() + "]");
+                            System.out.println("Fetching entry [" + gameServer.getServiceId() + ']');
                             if (!gameServer.bootstrap()) {
                                 this.proxys.add(serverProcess);
                             }

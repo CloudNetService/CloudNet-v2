@@ -39,7 +39,7 @@ public class CloudNetClient extends SimpleChannelInboundHandler {
         this.channel = channel;
 
         System.out.println("Channel connected [" + channel.remoteAddress()
-                                                          .toString() + "/serverId=" + networkComponent.getServerId() + "]");
+                                                          .toString() + "/serverId=" + networkComponent.getServerId() + ']');
 
         if (networkComponent instanceof Wrapper) {
             StatisticManager.getInstance().wrapperConnections();
@@ -87,7 +87,7 @@ public class CloudNetClient extends SimpleChannelInboundHandler {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if ((!channel.isActive() || !channel.isOpen() || !channel.isWritable())) {
             System.out.println("Channel disconnected [" + channel.remoteAddress()
-                                                                 .toString() + "/serverId=" + networkComponent.getServerId() + "]");
+                                                                 .toString() + "/serverId=" + networkComponent.getServerId() + ']');
             ctx.close().syncUninterruptibly();
             if (networkComponent instanceof MinecraftServer) {
                 ((MinecraftServer) networkComponent).setChannelLostTime(System.currentTimeMillis());

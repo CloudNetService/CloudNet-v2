@@ -5,7 +5,6 @@ import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
-import lombok.ToString;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -13,13 +12,9 @@ import java.util.List;
 /**
  * Created by Tareko on 24.05.2017.
  */
-@ToString
 public class ServerInfo {
-
     public static final Type TYPE = new TypeToken<ServerInfo>() {}.getType();
-
     private ServiceId serviceId;
-
     private String host;
     private int port;
     private boolean online;
@@ -31,7 +26,6 @@ public class ServerInfo {
     private ServerState serverState;
     private ServerConfig serverConfig;
     private Template template;
-
     public ServerInfo(ServiceId serviceId,
                       String host,
                       int port,
@@ -56,6 +50,11 @@ public class ServerInfo {
         this.serverState = serverState;
         this.serverConfig = serverConfig;
         this.template = template;
+    }
+
+    @Override
+    public String toString() {
+        return "ServerInfo{" + "serviceId=" + serviceId + ", host='" + host + '\'' + ", port=" + port + ", online=" + online + ", players=" + players + ", memory=" + memory + ", motd='" + motd + '\'' + ", onlineCount=" + onlineCount + ", maxPlayers=" + maxPlayers + ", serverState=" + serverState + ", serverConfig=" + serverConfig + ", template=" + template + '}';
     }
 
     public ServiceId getServiceId() {

@@ -60,7 +60,7 @@ public final class CommandList extends Command {
         }
 
         for (CloudPlayer cloudPlayer : CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values()) {
-            sender.sendMessage("* " + cloudPlayer.getUniqueId() + "#" + cloudPlayer.getName() + " - " + cloudPlayer.getProxy() + ":" + cloudPlayer
+            sender.sendMessage("* " + cloudPlayer.getUniqueId() + '#' + cloudPlayer.getName() + " - " + cloudPlayer.getProxy() + ':' + cloudPlayer
                 .getServer());
         }
 

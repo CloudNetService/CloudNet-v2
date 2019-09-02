@@ -517,7 +517,7 @@ public final class PermissionProvider {
             StringBuilder stringBuilder = new StringBuilder();
             for (GroupEntityData groupEntityData : offlinePlayer.getPermissionEntity().getGroups()) {
                 stringBuilder.append(groupEntityData.getGroup())
-                             .append("@")
+                             .append('@')
                              .append(groupEntityData.getTimeout() == 0 || groupEntityData.getTimeout() == -1 ? "LIFETIME" : simpleDateFormat
                                  .format(groupEntityData.getTimeout()))
                              .append(Character.LINE_SEPARATOR);

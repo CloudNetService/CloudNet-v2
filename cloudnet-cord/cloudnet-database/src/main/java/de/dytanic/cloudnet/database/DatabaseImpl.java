@@ -91,7 +91,7 @@ public class DatabaseImpl implements Database {
         for (Document document : documents) {
             if (document.contains(UNIQUE_NAME_KEY)) {
                 this.documents.put(document.getString(UNIQUE_NAME_KEY), document);
-                Path path = Paths.get("database/" + this.name + "/" + document.getString(UNIQUE_NAME_KEY));
+                Path path = Paths.get("database/" + this.name + '/' + document.getString(UNIQUE_NAME_KEY));
                 if (!Files.exists(path)) {
                     try {
                         Files.createFile(path);

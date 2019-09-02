@@ -31,7 +31,7 @@ pipeline {
     }
     stage('Spotbugs') {
       steps {
-        sh 'mvn spotbugs:check'
+        sh 'mvn spotbugs:spotbugs'
         scanForIssues tool: spotBugs(reportEncoding: 'UTF-8', useRankAsPriority: true)
       }
     }

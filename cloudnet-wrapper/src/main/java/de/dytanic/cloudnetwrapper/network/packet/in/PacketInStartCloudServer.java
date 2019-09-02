@@ -21,7 +21,7 @@ public class PacketInStartCloudServer extends PacketInHandler {
         CloudServerMeta cloudServerMeta = data.getObject("cloudServerMeta", new TypeToken<CloudServerMeta>() {}.getType());
 
         if (!data.contains("async")) {
-            System.out.println("Cloud game server process is now in queue [" + cloudServerMeta.getServiceId() + "]");
+            System.out.println("Cloud game server process is now in queue [" + cloudServerMeta.getServiceId() + ']');
             CloudNetWrapper.getInstance().getServerProcessQueue().putProcess(cloudServerMeta);
         } else {
             CloudNetWrapper.getInstance().getServerProcessQueue().patchAsync(cloudServerMeta);

@@ -18,7 +18,7 @@ public final class PacketInStartProxy extends PacketInHandler {
         ProxyProcessMeta proxyProcessMeta = data.getObject("proxyProcess", new TypeToken<ProxyProcessMeta>() {}.getType());
 
         if (!data.contains("async")) {
-            System.out.println("Proxy process is now in queue [" + proxyProcessMeta.getServiceId() + "]");
+            System.out.println("Proxy process is now in queue [" + proxyProcessMeta.getServiceId() + ']');
             CloudNetWrapper.getInstance().getServerProcessQueue().putProcess(proxyProcessMeta);
         } else {
             CloudNetWrapper.getInstance().getServerProcessQueue().patchAsync(proxyProcessMeta);

@@ -1,20 +1,15 @@
 package de.dytanic.cloudnet.lib.server;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.ToString;
 
 /**
  * Created by Tareko on 25.07.2017.
  */
-@ToString
 public class ServerConfig {
 
     private boolean hideServer;
-
     private String extra;
-
     private Document properties;
-
     private long startup;
 
     public ServerConfig(boolean hideServer, String extra, Document properties, long startup) {
@@ -22,6 +17,11 @@ public class ServerConfig {
         this.extra = extra;
         this.properties = properties;
         this.startup = startup;
+    }
+
+    @Override
+    public String toString() {
+        return "ServerConfig{" + "hideServer=" + hideServer + ", extra='" + extra + '\'' + ", properties=" + properties + ", startup=" + startup + '}';
     }
 
     public Document getProperties() {

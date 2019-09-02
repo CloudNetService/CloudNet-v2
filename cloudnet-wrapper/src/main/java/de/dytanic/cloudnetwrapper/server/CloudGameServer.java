@@ -22,7 +22,6 @@ import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 import de.dytanic.cloudnetwrapper.util.MasterTemplateDeploy;
-import lombok.EqualsAndHashCode;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -35,27 +34,19 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.Queue;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
  * Created by Tareko on 17.10.2017.
  */
-@EqualsAndHashCode(callSuper = false)
 public class CloudGameServer extends AbstractScreenService implements ServerDispatcher {
 
     private CloudServerMeta cloudServerMeta;
-
     private Path dir;
-
     private String path;
-
     private ServerInfo serverInfo;
-
     private Process instance;
 
     public CloudGameServer(CloudServerMeta cloudServerMeta) {
@@ -64,6 +55,36 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                                    .getWrapperConfig()
                                    .getDevServicePath() + NetworkUtils.SLASH_STRING + cloudServerMeta.getServiceId().getServerId();
         this.dir = Paths.get(path);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = cloudServerMeta != null ? cloudServerMeta.hashCode() : 0;
+        result = 31 * result + (dir != null ? dir.hashCode() : 0);
+        result = 31 * result + (path != null ? path.hashCode() : 0);
+        result = 31 * result + (serverInfo != null ? serverInfo.hashCode() : 0);
+        result = 31 * result + (instance != null ? instance.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CloudGameServer)) {
+            return false;
+        }
+        final CloudGameServer that = (CloudGameServer) o;
+        return Objects.equals(cloudServerMeta, that.cloudServerMeta) && Objects.equals(dir, that.dir) && Objects.equals(path,
+                                                                                                                        that.path) && Objects
+            .equals(serverInfo, that.serverInfo) && Objects.equals(instance, that.instance);
+    }
+
+    @Override
+    public String toString() {
+        return '[' + cloudServerMeta.getServiceId()
+                                    .getServerId() + "/port=" + cloudServerMeta.getPort() + "/memory=" + cloudServerMeta.getMemory() + ']';
     }
 
     public CloudServerMeta getCloudServerMeta() {
@@ -117,7 +138,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                                                                                .append(CloudNetWrapper.getInstance()
                                                                                                       .getWrapperConfig()
                                                                                                       .getCloudnetHost())
-                                                                               .append(":")
+                                                                               .append(':')
                                                                                .append(CloudNetWrapper.getInstance()
                                                                                                       .getWrapperConfig()
                                                                                                       .getWebPort())
@@ -156,7 +177,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                                                                            .append(CloudNetWrapper.getInstance()
                                                                                                   .getWrapperConfig()
                                                                                                   .getCloudnetHost())
-                                                                           .append(":")
+                                                                           .append(':')
                                                                            .append(CloudNetWrapper.getInstance()
                                                                                                   .getWrapperConfig()
                                                                                                   .getWebPort())
@@ -519,12 +540,6 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                 }
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        return "[" + cloudServerMeta.getServiceId()
-                                    .getServerId() + "/port=" + cloudServerMeta.getPort() + "/memory=" + cloudServerMeta.getMemory() + "]";
     }
 
 }

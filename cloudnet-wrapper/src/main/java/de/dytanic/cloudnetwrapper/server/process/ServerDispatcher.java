@@ -24,7 +24,7 @@ public interface ServerDispatcher extends Executable, Screenable {
         }
 
         try {
-            getInstance().getOutputStream().write((consoleCommand + "\n").getBytes());
+            getInstance().getOutputStream().write((consoleCommand + '\n').getBytes());
             getInstance().getOutputStream().flush();
         } catch (Exception ex) {
         }

@@ -37,7 +37,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
             try {
                 for (Template template : serverGroup.getTemplates()) {
                     if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()))) {
-                        System.out.println("Creating GroupTemplate for " + serverGroup.getName() + " " + template.getName() + "...");
+                        System.out.println("Creating GroupTemplate for " + serverGroup.getName() + ' ' + template.getName() + "...");
                         Files.createDirectories(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + ""));
                     }
 
@@ -52,7 +52,7 @@ public final class PacketInCreateTemplate extends PacketInHandler {
                 }
                 Template template = serverGroup.getGlobalTemplate();
                 if (!Files.exists(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()))) {
-                    System.out.println("Creating GroupTemplate for " + serverGroup.getName() + " " + template.getName() + "...");
+                    System.out.println("Creating GroupTemplate for " + serverGroup.getName() + ' ' + template.getName() + "...");
                     Files.createDirectories(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + ""));
                 }
 

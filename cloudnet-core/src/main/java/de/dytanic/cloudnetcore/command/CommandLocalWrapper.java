@@ -37,7 +37,7 @@ public class CommandLocalWrapper extends Command {
                 return;
             }
 
-            sender.sendMessage("Local wrapper " + wrapper.getName() + ":",
+            sender.sendMessage("Local wrapper " + wrapper.getName() + ':',
                                "Info: CPU Usage: " + NetworkUtils.DECIMAL_FORMAT.format(wrapper.getCpuUsage()) + "/100% | Memory: " + wrapper
                                    .getUsedMemory() + NetworkUtils.SLASH_STRING + wrapper.getMaxMemory() + "MB",
                                " ");
