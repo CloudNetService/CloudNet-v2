@@ -48,7 +48,6 @@ public class CloudNetClient extends SimpleChannelInboundHandler {
             CloudNet.getInstance().getDbHandlers().getWrapperSessionDatabase().addSession(new WrapperSession(UUID.randomUUID(),
                                                                                                              ((Wrapper) networkComponent).getNetworkInfo(),
                                                                                                              System.currentTimeMillis()));
-            ((Wrapper) networkComponent).updateWrapper();
         }
 
         CloudNetwork cloudNetwork = CloudNet.getInstance().getNetworkManager().newCloudNetwork();
