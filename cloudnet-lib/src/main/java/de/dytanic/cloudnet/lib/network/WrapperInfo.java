@@ -63,4 +63,8 @@ public class WrapperInfo {
     public String getVersion() {
         return version;
     }
+
+    public boolean isReady() {
+        return ready;
+    }
 }
