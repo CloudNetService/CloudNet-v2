@@ -274,7 +274,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         }
 
         if (serverGroup.getGroupMode().equals(ServerGroupMode.STATIC) || serverGroup.getGroupMode().equals(ServerGroupMode.STATIC_LOBBY)) {
-            if (!Files.exists(dir) & !templateDownloader()) {
+            if (!Files.exists(dir) && !templateDownloader()) {
                 return false;
             }
         } else if (!templateDownloader()) {
