@@ -68,8 +68,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
         if (this.config == null || this.config.isOutdated()) {
             try (InputStream inputStream = Files.newInputStream(Paths.get("wrapper/config.yml"))) {
                 this.config = new LocalWrapperConfig(ConfigurationProvider.getProvider(YamlConfiguration.class).load(inputStream));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
         }
         return this.config != null ? this.config.getConfiguration() : null;
@@ -84,16 +84,16 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
                 try {
                     this.stop();
                     runningBeforeUpdate = true;
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
             }
             webClient.updateLocalCloudWrapper(path);
             if (runningBeforeUpdate) {
                 try {
                     this.startProcess();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
             }
         }
@@ -112,8 +112,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
                 this.setupWrapperKey();
                 this.setupSpigot(obj);
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
 
             this.startup();
@@ -134,8 +134,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
                 urlConnection.connect();
                 Files.copy(urlConnection.getInputStream(), path);
                 System.out.println("Download completed!");
-            } catch (Exception ex) {
-                System.err.println("Error on setting up wrapper: " + ex.getMessage());
+            } catch (Exception exception) {
+                System.err.println("Error on setting up wrapper: " + exception.getMessage());
                 return;
             }
         }
@@ -196,8 +196,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
 
             try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
         }
     }
@@ -205,8 +205,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
     private void setupWrapperKey() {
         try {
             Files.copy(Paths.get("WRAPPER_KEY.cnd"), Paths.get("wrapper/WRAPPER_KEY.cnd"), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -215,8 +215,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
         if (!obj.has("disallow_bukkit_download") && !Files.exists(path)) {
             try {
                 Files.createDirectories(path.getParent());
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
             SetupSpigotVersion setup = new SetupSpigotVersion();
             setup.setTarget(path);
@@ -234,9 +234,9 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
             this.startProcess();
 
             System.out.println("Successfully started the local wrapper!");
-        } catch (IOException e) {
+        } catch (IOException exception) {
             System.err.println("Failed to start the local wrapper!");
-            e.printStackTrace();
+            exception.printStackTrace();
         }
     }
 
@@ -255,9 +255,9 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
     private void initConsoleThread() {
         this.executorService.execute(() -> {
             InputStream inputStream = this.process.getInputStream();
-            this.readStream(inputStream, s -> {
+            this.readStream(inputStream, line -> {
                 if (this.showConsoleOutput) {
-                    System.out.println("LocalWrapper | " + s);
+                    System.out.println("LocalWrapper | " + line);
                 }
             });
             if (!this.shutdown) {
@@ -272,9 +272,9 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
         });
         this.executorService.execute(() -> {
             InputStream inputStream = this.process.getErrorStream();
-            this.readStream(inputStream, s -> {
+            this.readStream(inputStream, line -> {
                 if (this.showConsoleOutput) {
-                    System.err.println("LocalWrapper | " + s);
+                    System.err.println("LocalWrapper | " + line);
                 }
             });
         });
@@ -288,8 +288,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
                     consumer.accept(line);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -310,8 +310,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
                 this.process.destroy();
             }
             System.out.println("Successfully stopped the local wrapper!");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException exception) {
+            exception.printStackTrace();
         }
     }
 
