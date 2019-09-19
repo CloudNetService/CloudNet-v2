@@ -16,18 +16,19 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 public final class PacketInRemoveProxy extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (!(packetSender instanceof Wrapper)) return;
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (!(packetSender instanceof Wrapper)) {
+            return;
+        }
 
         Wrapper cn = (Wrapper) packetSender;
-        ProxyInfo proxyInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>() {
-        }.getType());
+        ProxyInfo proxyInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>() {}.getType());
 
-        if (cn.getProxys().containsKey(proxyInfo.getServiceId().getServerId()))
-        {
+        if (cn.getProxys().containsKey(proxyInfo.getServiceId().getServerId())) {
             ProxyServer minecraftServer = cn.getProxys().get(proxyInfo.getServiceId().getServerId());
-            if (minecraftServer.getChannel() != null) minecraftServer.getChannel().close();
+            if (minecraftServer.getChannel() != null) {
+                minecraftServer.getChannel().close();
+            }
 
             cn.getProxys().remove(proxyInfo.getServiceId().getServerId());
             CloudNet.getInstance().getNetworkManager().handleProxyRemove(minecraftServer);

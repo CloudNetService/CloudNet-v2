@@ -10,8 +10,7 @@ import de.dytanic.cloudnet.lib.player.permission.Permissible;
 /**
  * Interface for denoting classes that can dispatch commands.
  */
-public interface CommandSender
-        extends Nameable, Permissible {
+public interface CommandSender extends Nameable, Permissible {
 
     /**
      * Send messages to this command sender.
@@ -24,6 +23,7 @@ public interface CommandSender
      * Query this command sender for its permissions.
      *
      * @param permission the permission in question
+     *
      * @return {@code true} when this command sender has the queried permission,
      * {@code false} otherwise.
      */

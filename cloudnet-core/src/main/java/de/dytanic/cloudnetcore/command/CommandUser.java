@@ -46,15 +46,13 @@ public class CommandUser extends Command {
             }
             CloudNet.getInstance().getUsers().remove(user);
             CloudNet.getInstance().getConfig().save(CloudNet.getInstance().getUsers());
-            sender.sendMessage("Successfully deleted the user \"" + user.getName() + "\"");
+            sender.sendMessage("Successfully deleted the user \"" + user.getName() + '"');
         } else if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
             sender.sendMessage("Users:");
             for (User user : CloudNet.getInstance().getUsers()) {
-                sender.sendMessage(
-                        " - " + user.getName() + "/" + user.getUniqueId() + ":",
-                        "  API-Token: " + user.getApiToken(),
-                        "  Permissions: "
-                );
+                sender.sendMessage(" - " + user.getName() + '/' + user.getUniqueId() + ':',
+                                   "  API-Token: " + user.getApiToken(),
+                                   "  Permissions: ");
                 for (String permission : user.getPermissions()) {
                     sender.sendMessage("   - " + permission);
                 }
@@ -70,28 +68,26 @@ public class CommandUser extends Command {
 
             if (args[1].equalsIgnoreCase("add")) {
                 if (user.getPermissions().contains(permission)) {
-                    sender.sendMessage("The user \"" + user.getName() + "\" already has the permission \"" + permission + "\"");
+                    sender.sendMessage("The user \"" + user.getName() + "\" already has the permission \"" + permission + '"');
                     return;
                 }
                 user.getPermissions().add(permission);
             } else if (args[1].equalsIgnoreCase("remove")) {
                 if (!user.getPermissions().contains(permission)) {
-                    sender.sendMessage("The user \"" + user.getName() + "\" does not have the permission \"" + permission + "\"");
+                    sender.sendMessage("The user \"" + user.getName() + "\" does not have the permission \"" + permission + '"');
                     return;
                 }
                 user.getPermissions().remove(permission);
             }
             CloudNet.getInstance().getConfig().save(CloudNet.getInstance().getUsers());
-            sender.sendMessage("Successfully edited the permissions of the user \"" + user.getName() + "\"");
+            sender.sendMessage("Successfully edited the permissions of the user \"" + user.getName() + '"');
         } else {
-            sender.sendMessage(
-                    "user create <name> <password>",
-                    "user delete <name>",
-                    "user changePassword <name> <newPassword>",
-                    "user permission add <name> <permission>",
-                    "user permission remove <name> <permission>",
-                    "user list"
-            );
+            sender.sendMessage("user create <name> <password>",
+                               "user delete <name>",
+                               "user changePassword <name> <newPassword>",
+                               "user permission add <name> <permission>",
+                               "user permission remove <name> <permission>",
+                               "user list");
         }
     }
 }

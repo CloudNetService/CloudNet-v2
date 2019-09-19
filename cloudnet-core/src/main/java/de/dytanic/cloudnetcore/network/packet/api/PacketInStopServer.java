@@ -17,18 +17,15 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 public class PacketInStopServer extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         String serverId = data.getString("serverId");
         MinecraftServer minecraftServer = CloudNet.getInstance().getServer(serverId);
-        if (minecraftServer != null)
-        {
+        if (minecraftServer != null) {
             minecraftServer.getWrapper().stopServer(minecraftServer);
             return;
         }
         CloudServer cloudServer = CloudNet.getInstance().getCloudGameServer(serverId);
-        if (cloudServer != null)
-        {
+        if (cloudServer != null) {
             cloudServer.getWrapper().stopServer(cloudServer);
         }
     }

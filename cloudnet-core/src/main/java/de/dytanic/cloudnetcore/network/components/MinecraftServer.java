@@ -13,33 +13,24 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutCustomSubChannelMessage;
 import io.netty.channel.Channel;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by Tareko on 26.05.2017.
  */
-@Getter
-public final class MinecraftServer
-        implements INetworkComponent {
+public final class MinecraftServer implements INetworkComponent {
 
     private ServiceId serviceId;
     private ServerProcessMeta processMeta;
     private Wrapper wrapper;
     private ServerGroupMode groupMode;
 
-    @Setter
     private long channelLostTime = 0L;
 
-    @Setter
     private ServerInfo serverInfo;
-    @Setter
     private ServerInfo lastServerInfo;
-    @Setter
     private Channel channel;
 
-    public MinecraftServer(ServerProcessMeta processMeta, Wrapper wrapper, ServerGroup group, ServerInfo serverInfo)
-    {
+    public MinecraftServer(ServerProcessMeta processMeta, Wrapper wrapper, ServerGroup group, ServerInfo serverInfo) {
         this.processMeta = processMeta;
         this.serviceId = serverInfo.getServiceId();
         this.wrapper = wrapper;
@@ -49,33 +40,78 @@ public final class MinecraftServer
         this.lastServerInfo = serverInfo;
     }
 
-    public void disconnect()
-    {
-        if (this.channel != null)
-        {
+    @Override
+    public Channel getChannel() {
+        return channel;
+    }
+
+    @Override
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    public long getChannelLostTime() {
+        return channelLostTime;
+    }
+
+    public void setChannelLostTime(long channelLostTime) {
+        this.channelLostTime = channelLostTime;
+    }
+
+    public ServerInfo getLastServerInfo() {
+        return lastServerInfo;
+    }
+
+    public void setLastServerInfo(ServerInfo lastServerInfo) {
+        this.lastServerInfo = lastServerInfo;
+    }
+
+    public ServerInfo getServerInfo() {
+        return serverInfo;
+    }
+
+    public void setServerInfo(ServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
+
+    public ServerGroupMode getGroupMode() {
+        return groupMode;
+    }
+
+    public ServerProcessMeta getProcessMeta() {
+        return processMeta;
+    }
+
+    public void disconnect() {
+        if (this.channel != null) {
             this.channel.close().syncUninterruptibly();
         }
     }
 
-    public void sendCustomMessage(String channel, String message, Document value)
-    {
+    public void sendCustomMessage(String channel, String message, Document value) {
         this.sendPacket(new PacketOutCustomSubChannelMessage(channel, message, value));
     }
 
-    public ServerGroup getGroup()
-    {
+    public ServerGroup getGroup() {
         return CloudNet.getInstance().getServerGroup(serviceId.getGroup());
     }
 
     @Override
-    public String getServerId()
-    {
+    public Wrapper getWrapper() {
+        return wrapper;
+    }
+
+    @Override
+    public String getServerId() {
         return serviceId.getServerId();
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return serviceId.getServerId();
     }
 }

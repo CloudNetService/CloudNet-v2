@@ -14,13 +14,11 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketDBOutDeleteDocument extends Packet {
 
-    public PacketDBOutDeleteDocument(String name, String db)
-    {
-        super(PacketRC.DB + 3, new Document("name", name).append("db", db));
+    public PacketDBOutDeleteDocument(Document document, String db) {
+        this(document.getString(Database.UNIQUE_NAME_KEY), db);
     }
 
-    public PacketDBOutDeleteDocument(Document document, String db)
-    {
-        this(document.getString(Database.UNIQUE_NAME_KEY), db);
+    public PacketDBOutDeleteDocument(String name, String db) {
+        super(PacketRC.DB + 3, new Document("name", name).append("db", db));
     }
 }

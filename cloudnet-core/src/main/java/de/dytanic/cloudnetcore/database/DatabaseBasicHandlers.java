@@ -7,12 +7,10 @@ package de.dytanic.cloudnetcore.database;
 import de.dytanic.cloudnet.database.DatabaseImpl;
 import de.dytanic.cloudnet.database.DatabaseManager;
 import de.dytanic.cloudnet.lib.database.Database;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 24.07.2017.
  */
-@Getter
 public class DatabaseBasicHandlers {
 
     private StatisticManager statisticManager;
@@ -27,8 +25,7 @@ public class DatabaseBasicHandlers {
 
     private UpdateConfigurationDatabase updateConfigurationDatabase;
 
-    public DatabaseBasicHandlers(DatabaseManager databaseManager)
-    {
+    public DatabaseBasicHandlers(DatabaseManager databaseManager) {
         Database config = databaseManager.getDatabase("cloud_internal_cfg");
 
         playerDatabase = new PlayerDatabase(databaseManager.getDatabase("cloudnet_internal_players"));
@@ -42,5 +39,29 @@ public class DatabaseBasicHandlers {
         nameToUUIDDatabase.handleUpdate(updateConfigurationDatabase);
 
         ((DatabaseImpl) config).save();
+    }
+
+    public StatisticManager getStatisticManager() {
+        return statisticManager;
+    }
+
+    public PlayerDatabase getPlayerDatabase() {
+        return playerDatabase;
+    }
+
+    public CommandDispatcherDatabase getCommandDispatcherDatabase() {
+        return commandDispatcherDatabase;
+    }
+
+    public NameToUUIDDatabase getNameToUUIDDatabase() {
+        return nameToUUIDDatabase;
+    }
+
+    public WrapperSessionDatabase getWrapperSessionDatabase() {
+        return wrapperSessionDatabase;
+    }
+
+    public UpdateConfigurationDatabase getUpdateConfigurationDatabase() {
+        return updateConfigurationDatabase;
     }
 }

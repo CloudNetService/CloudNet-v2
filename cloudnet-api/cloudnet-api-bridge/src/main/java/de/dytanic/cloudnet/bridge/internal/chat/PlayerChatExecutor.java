@@ -7,19 +7,19 @@ import net.md_5.bungee.api.chat.BaseComponent;
 
 public interface PlayerChatExecutor {
 
-    default void sendMessage(CloudPlayer cloudPlayer, BaseComponent baseComponent)
-    {
-        if (cloudPlayer != null)
-            CloudAPI.getInstance().sendCustomSubProxyMessage("cloudnet_internal",
-                    "sendMessage_basecomponent", new Document("baseComponent", baseComponent)
-                            .append("uniqueId", cloudPlayer.getUniqueId())
-                            .append("name", cloudPlayer.getName())
-            );
+    default void sendMessage(CloudPlayer cloudPlayer, BaseComponent... baseComponents) {
+        for (final BaseComponent baseComponent : baseComponents) {
+            sendMessage(cloudPlayer, baseComponent);
+        }
     }
 
-    default void sendMessage(CloudPlayer cloudPlayer, BaseComponent... baseComponents)
-    {
-        for (int i = 0; i < baseComponents.length; sendMessage(cloudPlayer, baseComponents[i++])) ;
+    default void sendMessage(CloudPlayer cloudPlayer, BaseComponent baseComponent) {
+        if (cloudPlayer != null) {
+            final Document messageValue = new Document("baseComponent", baseComponent).append("uniqueId", cloudPlayer.getUniqueId()).append(
+                "name",
+                cloudPlayer.getName());
+            CloudAPI.getInstance().sendCustomSubProxyMessage("cloudnet_internal", "sendMessage_basecomponent", messageValue);
+        }
     }
 
 }

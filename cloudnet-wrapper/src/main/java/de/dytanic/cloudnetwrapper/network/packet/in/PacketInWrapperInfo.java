@@ -18,25 +18,23 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 public class PacketInWrapperInfo extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        WrapperExternal wrapperExternal = data.getObject("wrapper", new TypeToken<WrapperExternal>() {
-        }.getType());
+    public void handleInput(Document data, PacketSender packetSender) {
+        WrapperExternal wrapperExternal = data.getObject("wrapper", new TypeToken<WrapperExternal>() {}.getType());
         CloudNetWrapper.getInstance().setSimpledUser(wrapperExternal.getUser());
         CloudNetWrapper.getInstance().getServerGroups().clear();
-        NetworkUtils.addAll(CloudNetWrapper.getInstance().getServerGroups(), wrapperExternal.getServerGroups(), new Acceptable<ServerGroup>() {
-            @Override
-            public boolean isAccepted(ServerGroup value)
-            {
-                System.out.println("Importing server group [" + value.getName() + "] from CloudNet-Master");
-                return true;
-            }
-        });
+        NetworkUtils.addAll(CloudNetWrapper.getInstance().getServerGroups(),
+                            wrapperExternal.getServerGroups(),
+                            new Acceptable<ServerGroup>() {
+                                @Override
+                                public boolean isAccepted(ServerGroup value) {
+                                    System.out.println("Importing server group [" + value.getName() + "] from CloudNet-Master");
+                                    return true;
+                                }
+                            });
         CloudNetWrapper.getInstance().getProxyGroups().clear();
         NetworkUtils.addAll(CloudNetWrapper.getInstance().getProxyGroups(), wrapperExternal.getProxyGroups(), new Acceptable<ProxyGroup>() {
             @Override
-            public boolean isAccepted(ProxyGroup value)
-            {
+            public boolean isAccepted(ProxyGroup value) {
                 System.out.println("Importing proxy group [" + value.getName() + "] from CloudNet-Master");
                 return true;
             }

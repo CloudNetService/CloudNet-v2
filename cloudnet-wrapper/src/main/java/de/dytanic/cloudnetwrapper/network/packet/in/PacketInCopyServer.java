@@ -19,31 +19,23 @@ import de.dytanic.cloudnetwrapper.server.GameServer;
 public class PacketInCopyServer extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {
-        }.getType());
+    public void handleInput(Document data, PacketSender packetSender) {
+        ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {}.getType());
 
         GameServer gameServer = CloudNetWrapper.getInstance().getServers().get(serverInfo.getServiceId().getServerId());
-        if (gameServer != null)
-        {
-            if (!data.contains("template"))
-            {
+        if (gameServer != null) {
+            if (!data.contains("template")) {
                 CloudNetWrapper.getInstance().getScheduler().runTaskAsync(new Runnable() {
                     @Override
-                    public void run()
-                    {
+                    public void run() {
                         gameServer.copy();
                     }
                 });
-            } else
-            {
+            } else {
                 CloudNetWrapper.getInstance().getScheduler().runTaskAsync(new Runnable() {
                     @Override
-                    public void run()
-                    {
-                        gameServer.copy(data.getObject("template", new TypeToken<Template>() {
-                        }.getType()));
+                    public void run() {
+                        gameServer.copy(data.getObject("template", new TypeToken<Template>() {}.getType()));
                     }
                 });
             }

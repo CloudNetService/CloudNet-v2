@@ -15,8 +15,7 @@ import de.dytanic.cloudnetcore.CloudNet;
  */
 public final class CommandModules extends Command {
 
-    public CommandModules()
-    {
+    public CommandModules() {
         super("modules", "cloudnet.command.modules", "m");
 
         description = "Lists all modules, versions and authors";
@@ -24,12 +23,11 @@ public final class CommandModules extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args)
-    {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
         sender.sendMessage("Running modules:", NetworkUtils.SPACE_STRING);
-        for (Module module : CloudNet.getInstance().getModuleManager().getModules())
-        {
-            sender.sendMessage(module.getName() + " " + module.getModuleConfig().getVersion() + " by " + module.getModuleConfig().getAuthor() + NetworkUtils.EMPTY_STRING);
+        for (Module module : CloudNet.getInstance().getModuleManager().getModules()) {
+            sender.sendMessage(module.getName() + ' ' + module.getModuleConfig().getVersion() + " by " + module.getModuleConfig()
+                                                                                                               .getAuthor() + NetworkUtils.EMPTY_STRING);
         }
     }
 }

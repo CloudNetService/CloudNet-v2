@@ -13,36 +13,38 @@ import de.dytanic.cloudnetcore.permissions.config.ConfigPermissions;
 import de.dytanic.cloudnetcore.permissions.listener.PlayerInitListener;
 import de.dytanic.cloudnetcore.permissions.listener.UpdateAllListener;
 import de.dytanic.cloudnetcore.permissions.network.packet.in.PacketInUpdatePermissionGroup;
-import lombok.Getter;
 
 /**
  * Created by Tareko on 17.10.2017.
  */
-@Getter
 public class PermissionModule extends CoreModule {
 
-    @Getter
     private static PermissionModule instance;
-
-    @Getter
     private ConfigPermissions configPermission;
-    @Getter
     private PermissionPool permissionPool;
 
+    public static PermissionModule getInstance() {
+        return instance;
+    }
+
+    public ConfigPermissions getConfigPermission() {
+        return configPermission;
+    }
+
+    public PermissionPool getPermissionPool() {
+        return permissionPool;
+    }
+
     @Override
-    public void onLoad()
-    {
+    public void onLoad() {
         instance = this;
     }
 
     @Override
-    public void onBootstrap()
-    {
-        try
-        {
+    public void onBootstrap() {
+        try {
             configPermission = new ConfigPermissions();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         permissionPool = new PermissionPool();

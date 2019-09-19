@@ -7,13 +7,9 @@ package de.dytanic.cloudnet.api.config;
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.nio.file.Path;
 
-@Getter
-@AllArgsConstructor
 public class CloudConfigLoader {
 
     private Path pathConnectionJson;
@@ -22,15 +18,30 @@ public class CloudConfigLoader {
 
     private ConfigTypeLoader type;
 
-    public Document loadConfig()
-    {
+    public CloudConfigLoader(Path pathConnectionJson, Path pathConfigJson, ConfigTypeLoader type) {
+        this.pathConnectionJson = pathConnectionJson;
+        this.pathConfigJson = pathConfigJson;
+        this.type = type;
+    }
+
+    public ConfigTypeLoader getType() {
+        return type;
+    }
+
+    public Path getPathConfigJson() {
+        return pathConfigJson;
+    }
+
+    public Path getPathConnectionJson() {
+        return pathConnectionJson;
+    }
+
+    public Document loadConfig() {
         return Document.loadDocument(pathConfigJson);
     }
 
-    public ConnectableAddress loadConnnection()
-    {
-        return Document.loadDocument(pathConnectionJson).getObject("connection", new TypeToken<ConnectableAddress>() {
-        }.getType());
+    public ConnectableAddress loadConnnection() {
+        return Document.loadDocument(pathConnectionJson).getObject("connection", new TypeToken<ConnectableAddress>() {}.getType());
     }
 
 }

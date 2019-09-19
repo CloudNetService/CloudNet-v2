@@ -4,31 +4,27 @@
 
 package de.dytanic.cloudnet.lib.player;
 
-import lombok.Getter;
-
-@Getter
 public class PlayerExecutor {
 
     protected boolean available = false;
 
-    public void sendPlayer(CloudPlayer cloudPlayer, String server)
-    {
+    public boolean isAvailable() {
+        return available;
     }
 
-    public void kickPlayer(CloudPlayer cloudPlayer, String reason)
-    {
+    public void sendPlayer(CloudPlayer cloudPlayer, String server) {
     }
 
-    public void sendMessage(CloudPlayer cloudPlayer, String message)
-    {
+    public void kickPlayer(CloudPlayer cloudPlayer, String reason) {
     }
 
-    public void sendActionbar(CloudPlayer cloudPlayer, String message)
-    {
+    public void sendMessage(CloudPlayer cloudPlayer, String message) {
     }
 
-    public void sendTitle(CloudPlayer cloudPlayer, String title, String subTitle, int fadeIn, int stay, int fadeOut)
-    {
+    public void sendActionbar(CloudPlayer cloudPlayer, String message) {
+    }
+
+    public void sendTitle(CloudPlayer cloudPlayer, String title, String subTitle, int fadeIn, int stay, int fadeOut) {
     }
 
 }

@@ -19,22 +19,18 @@ import java.util.UUID;
 public class PacketAPIInGetPlayer extends PacketAPIIO {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        UUID uniqueId = data.getObject("uniqueId", new TypeToken<UUID>() {
-        }.getType());
-        if (uniqueId != null && CloudNet.getInstance().getNetworkManager().getOnlinePlayers().containsKey(uniqueId))
-        {
-            packetSender.sendPacket(getResult(new Document("player", CloudNet.getInstance().getNetworkManager().getOnlinePlayers().get(uniqueId))));
-        } else
-        {
+    public void handleInput(Document data, PacketSender packetSender) {
+        UUID uniqueId = data.getObject("uniqueId", new TypeToken<UUID>() {}.getType());
+        if (uniqueId != null && CloudNet.getInstance().getNetworkManager().getOnlinePlayers().containsKey(uniqueId)) {
+            packetSender.sendPacket(getResult(new Document("player",
+                                                           CloudNet.getInstance().getNetworkManager().getOnlinePlayers().get(uniqueId))));
+        } else {
             packetSender.sendPacket(getResult(new Document()));
         }
     }
 
     @Override
-    protected Packet getResult(Document value)
-    {
+    protected Packet getResult(Document value) {
         return new Packet(packetUniqueId, PacketRC.PLAYER_HANDLE, value);
     }
 }

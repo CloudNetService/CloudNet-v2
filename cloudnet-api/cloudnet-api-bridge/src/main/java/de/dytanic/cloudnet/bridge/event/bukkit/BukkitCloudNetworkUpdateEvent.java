@@ -5,32 +5,31 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.CloudNetwork;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.HandlerList;
 
 /**
  * Calls if the cloudnetwork objective was updated
  */
-@AllArgsConstructor
 public class BukkitCloudNetworkUpdateEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
     private CloudNetwork cloudNetwork;
 
-    public CloudNetwork getCloudNetwork()
-    {
-        return cloudNetwork;
+    public BukkitCloudNetworkUpdateEvent(CloudNetwork cloudNetwork) {
+        this.cloudNetwork = cloudNetwork;
     }
 
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 
+    public CloudNetwork getCloudNetwork() {
+        return cloudNetwork;
+    }
+
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

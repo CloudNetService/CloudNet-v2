@@ -8,12 +8,10 @@ import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.async.AsyncPosterAdapter;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.Getter;
 
 /**
  * Calls if a CustomChannelMessage was received from a INetworkComponent
  */
-@Getter
 public class CustomChannelMessageEvent extends AsyncEvent<CustomChannelMessageEvent> {
 
     private String channel;
@@ -24,8 +22,7 @@ public class CustomChannelMessageEvent extends AsyncEvent<CustomChannelMessageEv
 
     private PacketSender packetSender;
 
-    public CustomChannelMessageEvent(PacketSender packetSender, String channel, String message, Document document)
-    {
+    public CustomChannelMessageEvent(PacketSender packetSender, String channel, String message, Document document) {
         super(new AsyncPosterAdapter<>());
         this.channel = channel;
         this.message = message;
@@ -33,4 +30,19 @@ public class CustomChannelMessageEvent extends AsyncEvent<CustomChannelMessageEv
         this.packetSender = packetSender;
     }
 
+    public String getChannel() {
+        return channel;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public PacketSender getPacketSender() {
+        return packetSender;
+    }
 }

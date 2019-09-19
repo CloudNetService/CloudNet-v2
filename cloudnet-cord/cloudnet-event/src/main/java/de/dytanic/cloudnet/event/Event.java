@@ -1,11 +1,8 @@
 package de.dytanic.cloudnet.event;
 
-import lombok.Getter;
-
 /**
  * Abstract class for events of all kinds.
  */
-@Getter
 public abstract class Event {
 
     /**
@@ -13,4 +10,7 @@ public abstract class Event {
      */
     protected boolean asynchronous = false;
 
+    public boolean isAsynchronous() {
+        return asynchronous;
+    }
 }

@@ -4,14 +4,9 @@
 
 package de.dytanic.cloudnet.web.server.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Configuration class for the web server
  */
-@Getter
-@AllArgsConstructor
 public class WebServerConfig {
 
     /**
@@ -29,4 +24,21 @@ public class WebServerConfig {
      */
     private int port;
 
+    public WebServerConfig(boolean enabled, String address, int port) {
+        this.enabled = enabled;
+        this.address = address;
+        this.port = port;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

@@ -19,16 +19,12 @@ import java.util.UUID;
 public class PacketAPIInNameUUID extends PacketAPIIO {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (data.contains("uniqueId"))
-        {
-            UUID uniqueId = data.getObject("uniqueId", new TypeToken<UUID>() {
-            }.getType());
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (data.contains("uniqueId")) {
+            UUID uniqueId = data.getObject("uniqueId", new TypeToken<UUID>() {}.getType());
             String name = CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().get(uniqueId);
             packetSender.sendPacket(getResult(new Document("name", name)));
-        } else
-        {
+        } else {
             String name = data.getString("name");
             UUID uniqueId = CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().get(name);
             packetSender.sendPacket(getResult(new Document("uniqueId", uniqueId)));
@@ -36,8 +32,7 @@ public class PacketAPIInNameUUID extends PacketAPIIO {
     }
 
     @Override
-    protected Packet getResult(Document value)
-    {
+    protected Packet getResult(Document value) {
         return new Packet(packetUniqueId, PacketRC.PLAYER_HANDLE, value);
     }
 }

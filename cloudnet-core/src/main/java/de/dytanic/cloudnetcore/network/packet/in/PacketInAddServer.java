@@ -20,29 +20,32 @@ import de.dytanic.cloudnetcore.network.components.priority.PriorityStopTask;
 /**
  * Created by Tareko on 20.07.2017.
  */
-public class PacketInAddServer
-        extends PacketInHandler {
+public class PacketInAddServer extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (!(packetSender instanceof Wrapper)) return;
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (!(packetSender instanceof Wrapper)) {
+            return;
+        }
         Wrapper cn = ((Wrapper) packetSender);
-        ServerInfo nullServerInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {
-        }.getType());
-        ServerProcessMeta serverProcessMeta = data.getObject("serverProcess", new TypeToken<ServerProcessMeta>() {
-        }.getType());
-        MinecraftServer minecraftServer = new MinecraftServer(serverProcessMeta, cn, CloudNet.getInstance().getServerGroups().get(nullServerInfo.getServiceId().getGroup()), nullServerInfo);
+        ServerInfo nullServerInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {}.getType());
+        ServerProcessMeta serverProcessMeta = data.getObject("serverProcess", new TypeToken<ServerProcessMeta>() {}.getType());
+        MinecraftServer minecraftServer = new MinecraftServer(serverProcessMeta,
+                                                              cn,
+                                                              CloudNet.getInstance()
+                                                                      .getServerGroups()
+                                                                      .get(nullServerInfo.getServiceId().getGroup()),
+                                                              nullServerInfo);
         cn.getServers().put(nullServerInfo.getServiceId().getServerId(), minecraftServer);
         cn.getWaitingServices().remove(minecraftServer.getServerId());
 
         {
-            if (serverProcessMeta.isPriorityStop())
-            {
+            if (serverProcessMeta.isPriorityStop()) {
                 ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(serverProcessMeta.getServiceId().getGroup());
-                if (serverGroup != null)
-                {
-                    PriorityStopTask priorityStopTask = new PriorityStopTask(cn, minecraftServer, serverGroup.getPriorityService().getStopTimeInSeconds());
+                if (serverGroup != null) {
+                    PriorityStopTask priorityStopTask = new PriorityStopTask(cn,
+                                                                             minecraftServer,
+                                                                             serverGroup.getPriorityService().getStopTimeInSeconds());
                     ScheduledTask scheduledTask = CloudNet.getInstance().getScheduler().runTaskRepeatSync(priorityStopTask, 0, 50);
                     priorityStopTask.setScheduledTask(scheduledTask);
                 }

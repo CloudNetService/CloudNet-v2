@@ -14,8 +14,8 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutServerDispatchCommand extends Packet {
 
-    public PacketOutServerDispatchCommand(DefaultType defaultType, String serverId, String commandLine)
-    {
-        super(PacketRC.CN_CORE + 5, new Document("defaultType", defaultType).append("serverId", serverId).append("commandLine", commandLine));
+    public PacketOutServerDispatchCommand(DefaultType defaultType, String serverId, String commandLine) {
+        super(PacketRC.CN_CORE + 5, new Document("defaultType", defaultType).append("serverId", serverId)
+                                                                            .append("commandLine", commandLine));
     }
 }

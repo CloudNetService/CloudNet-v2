@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
-import lombok.Getter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,9 +12,7 @@ import java.util.HashSet;
 /**
  * Abstract class to define a command with an executor and a name
  */
-@Getter
-public abstract class Command
-        implements CommandExecutor, Nameable {
+public abstract class Command implements CommandExecutor, Nameable {
 
     protected String name;
     protected String permission;
@@ -32,8 +29,7 @@ public abstract class Command
      * @param permission the permission a user has to have
      * @param aliases    other names of this command
      */
-    protected Command(String name, String permission, String... aliases)
-    {
+    protected Command(String name, String permission, String... aliases) {
         this.name = name;
         this.permission = permission;
         this.aliases = aliases;
@@ -44,12 +40,33 @@ public abstract class Command
      *
      * @param commandArgument the argument to append
      * @param <T>             a subclass of {@link Command}
+     *
      * @return the command for chaining
      */
-    protected <T extends Command> T appendArgument(CommandArgument commandArgument)
-    {
+    protected <T extends Command> T appendArgument(CommandArgument commandArgument) {
         this.commandArguments.add(commandArgument);
         //noinspection unchecked
         return (T) this;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public Collection<CommandArgument> getCommandArguments() {
+        return commandArguments;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public String[] getAliases() {
+        return aliases;
     }
 }

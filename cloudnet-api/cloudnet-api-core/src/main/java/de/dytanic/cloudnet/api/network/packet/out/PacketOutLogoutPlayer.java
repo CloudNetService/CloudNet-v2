@@ -16,8 +16,7 @@ import java.util.UUID;
  */
 public class PacketOutLogoutPlayer extends Packet {
 
-    public PacketOutLogoutPlayer(CloudPlayer cloudPlayer, UUID uniqueId)
-    {
+    public PacketOutLogoutPlayer(CloudPlayer cloudPlayer, UUID uniqueId) {
         super(PacketRC.PLAYER_HANDLE + 3, new Document("player", cloudPlayer).append("uniqueId", uniqueId));
     }
 }

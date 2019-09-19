@@ -7,8 +7,6 @@ package de.dytanic.cloudnet.lib.proxylayout;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,31 +14,38 @@ import java.util.List;
 /**
  * Created by Tareko on 05.10.2017.
  */
-@Getter
-@AllArgsConstructor
 public class DynamicFallback {
 
     private String defaultFallback;
 
     private List<ServerFallback> fallbacks;
 
-    public ServerFallback getDefault()
-    {
+    public DynamicFallback(String defaultFallback, List<ServerFallback> fallbacks) {
+        this.defaultFallback = defaultFallback;
+        this.fallbacks = fallbacks;
+    }
+
+    public List<ServerFallback> getFallbacks() {
+        return fallbacks;
+    }
+
+    public String getDefaultFallback() {
+        return defaultFallback;
+    }
+
+    public ServerFallback getDefault() {
         return CollectionWrapper.filter(fallbacks, new Acceptable<ServerFallback>() {
             @Override
-            public boolean isAccepted(ServerFallback serverFallback)
-            {
+            public boolean isAccepted(ServerFallback serverFallback) {
                 return serverFallback.getGroup().equals(defaultFallback);
             }
         });
     }
 
-    public Collection<String> getNamedFallbackes()
-    {
+    public Collection<String> getNamedFallbackes() {
         return CollectionWrapper.transform(this.fallbacks, new Catcher<String, ServerFallback>() {
             @Override
-            public String doCatch(ServerFallback key)
-            {
+            public String doCatch(ServerFallback key) {
                 return key.getGroup();
             }
         });

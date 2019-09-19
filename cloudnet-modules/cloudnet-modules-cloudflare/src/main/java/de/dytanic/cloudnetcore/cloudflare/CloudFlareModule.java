@@ -14,58 +14,61 @@ import de.dytanic.cloudnetcore.cloudflare.config.ConfigCloudFlare;
 import de.dytanic.cloudnetcore.cloudflare.listener.ProxyAddListener;
 import de.dytanic.cloudnetcore.cloudflare.listener.ProxyRemoveListener;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
-import lombok.Getter;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 20.10.2017.
  */
-@Getter
 public class CloudFlareModule extends CoreModule {
 
-    @Getter
     private static CloudFlareModule instance;
-
-    private ConfigCloudFlare configCloudFlare;
-
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
+    private ConfigCloudFlare configCloudFlare;
     private CloudFlareDatabase cloudFlareDatabase;
 
+    public static CloudFlareModule getInstance() {
+        return instance;
+    }
+
+    public ConfigCloudFlare getConfigCloudFlare() {
+        return configCloudFlare;
+    }
+
+    public ExecutorService getExecutor() {
+        return executor;
+    }
+
+    public CloudFlareDatabase getCloudFlareDatabase() {
+        return cloudFlareDatabase;
+    }
+
     @Override
-    public void onLoad()
-    {
+    public void onLoad() {
         instance = this;
     }
 
     @Override
-    public void onBootstrap()
-    {
+    public void onBootstrap() {
         configCloudFlare = new ConfigCloudFlare();
         cloudFlareDatabase = new CloudFlareDatabase(getCloud().getDatabaseManager().getDatabase("cloudnet_internal_cfg"));
-        try
-        {
+        try {
 
             CloudFlareService cloudFlareAPI = new CloudFlareService(configCloudFlare.load());
             cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), new Catcher<String, String>() {
                 @Override
-                public String doCatch(String key)
-                {
+                public String doCatch(String key) {
                     return key;
                 }
             }, new Catcher<SimpledWrapperInfo, Wrapper>() {
                 @Override
-                public SimpledWrapperInfo doCatch(Wrapper key)
-                {
+                public SimpledWrapperInfo doCatch(Wrapper key) {
                     return new SimpledWrapperInfo(key.getServerId(), key.getNetworkInfo().getHostName());
                 }
             }), getCloud().getProxyGroups(), cloudFlareDatabase);
 
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -74,16 +77,13 @@ public class CloudFlareModule extends CoreModule {
     }
 
     @Override
-    public void onShutdown()
-    {
+    public void onShutdown() {
 
         executor.shutdownNow();
 
-        try
-        {
+        try {
             CloudFlareService.getInstance().shutdown(cloudFlareDatabase);
-        } catch (Exception ignored)
-        {
+        } catch (Exception ignored) {
         }
     }
 }

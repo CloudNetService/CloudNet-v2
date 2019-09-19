@@ -15,7 +15,6 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
-import lombok.Getter;
 
 import javax.net.ssl.SSLException;
 import java.security.cert.CertificateException;
@@ -24,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * A simple web server class
  */
-@Getter
 public class WebServer {
 
     /**
@@ -75,56 +73,82 @@ public class WebServer {
      * @param ssl  whether to use SSL with a self-signed certificate
      * @param host the host this web server is bound to.
      * @param port the port this web server is bound to.
+     *
      * @throws CertificateException thrown when the certificate could not
      *                              be generated.
      * @throws SSLException         thrown when an error during the creation of the
      *                              ssl context occurred.
      */
-    public WebServer(boolean ssl, String host, int port) throws CertificateException, SSLException
-    {
+    public WebServer(boolean ssl, String host, int port) throws CertificateException, SSLException {
         this.ssl = ssl;
         this.address = host;
         this.port = port;
         this.webServerProvider = new WebServerProvider();
 
-        if (ssl)
-        {
+        if (ssl) {
             SelfSignedCertificate ssc = new SelfSignedCertificate();
             sslContext = SslContextBuilder.forServer(ssc.key(), ssc.cert()).build();
         }
 
-        serverBootstrap = new ServerBootstrap()
-                .group(acceptorGroup, workerGroup)
-                .childOption(ChannelOption.IP_TOS, 24)
-                .childOption(ChannelOption.TCP_NODELAY, true)
-                .childOption(ChannelOption.AUTO_READ, true)
-                .channel(NetworkUtils.serverSocketChannel())
-                .childHandler(new ChannelInitializer<Channel>() {
-                    @Override
-                    protected void initChannel(Channel channel)
-                    {
-                        if (sslContext != null)
-                            channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
+        serverBootstrap = new ServerBootstrap().group(acceptorGroup, workerGroup)
+                                               .childOption(ChannelOption.IP_TOS, 24)
+                                               .childOption(ChannelOption.TCP_NODELAY,
+                                                            true)
+                                               .childOption(ChannelOption.AUTO_READ, true)
+                                               .channel(NetworkUtils.serverSocketChannel())
+                                               .childHandler(new ChannelInitializer<Channel>() {
+                                                   @Override
+                                                   protected void initChannel(Channel channel) {
+                                                       if (sslContext != null) {
+                                                           channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
+                                                       }
 
-                        channel.pipeline().addLast(new HttpServerCodec(), new HttpObjectAggregator(Integer.MAX_VALUE), new WebServerHandler(WebServer.this));
-                    }
-                });
+                                                       channel.pipeline().addLast(new HttpServerCodec(),
+                                                                                  new HttpObjectAggregator(Integer.MAX_VALUE),
+                                                                                  new WebServerHandler(WebServer.this));
+                                                   }
+                                               });
+    }
+
+    public EventLoopGroup getAcceptorGroup() {
+        return acceptorGroup;
+    }
+
+    public EventLoopGroup getWorkerGroup() {
+        return workerGroup;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public ServerBootstrap getServerBootstrap() {
+        return serverBootstrap;
+    }
+
+    public SslContext getSslContext() {
+        return sslContext;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public WebServerProvider getWebServerProvider() {
+        return webServerProvider;
     }
 
     /**
      * Shuts the event loop groups down and awaits their termination.
      */
-    public void shutdown()
-    {
+    public void shutdown() {
         acceptorGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
 
-        try
-        {
+        try {
             acceptorGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             workerGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-        } catch (InterruptedException ignored)
-        {
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -133,9 +157,8 @@ public class WebServer {
      *
      * @throws InterruptedException thrown when the synchronous call is interrupted.
      */
-    public void bind() throws InterruptedException
-    {
-        System.out.println("Bind WebServer at [" + address + ":" + port + "]");
+    public void bind() throws InterruptedException {
+        System.out.println("Bind WebServer at [" + address + ':' + port + ']');
         serverBootstrap.bind(address, port).sync().channel().closeFuture();
     }
 }

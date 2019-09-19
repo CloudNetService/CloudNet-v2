@@ -7,8 +7,8 @@ import io.netty.channel.Channel;
  */
 public interface ChannelUser {
 
-    void setChannel(Channel channel);
-
     Channel getChannel();
+
+    void setChannel(Channel channel);
 
 }

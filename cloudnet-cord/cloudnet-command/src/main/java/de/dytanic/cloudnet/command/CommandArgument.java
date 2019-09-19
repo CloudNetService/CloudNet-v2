@@ -4,20 +4,19 @@
 
 package de.dytanic.cloudnet.command;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Class to process arguments before and after calling a command.
  */
-@Getter
-@AllArgsConstructor
 public abstract class CommandArgument {
 
     /**
      * The name of the argument to process
      */
     private String name;
+
+    public CommandArgument(String name) {
+        this.name = name;
+    }
 
     /**
      * Method to execute before an argument is processed.
@@ -35,4 +34,7 @@ public abstract class CommandArgument {
      */
     public abstract void postExecute(Command command, String commandLine);
 
+    public String getName() {
+        return name;
+    }
 }

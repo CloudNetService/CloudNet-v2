@@ -21,57 +21,50 @@ import java.util.UUID;
  */
 public final class NameToUUIDDatabase extends DatabaseUsable {
 
-    public NameToUUIDDatabase(Database database)
-    {
+    public NameToUUIDDatabase(Database database) {
         super(database);
     }
 
-    public DatabaseImpl getDatabaseImplementation()
-    {
-        return ((DatabaseImpl) database);
-    }
-
-    public void append(MultiValue<String, UUID> values)
-    {
+    public void append(MultiValue<String, UUID> values) {
         database.insert(new DatabaseDocument(values.getFirst().toLowerCase()).append("uniqueId", values.getSecond()));
 
         database.insert(new DatabaseDocument(values.getSecond().toString()).append("name", values.getFirst()));
     }
 
-    public void replace(MultiValue<UUID, String> replacer)
-    {
+    public void replace(MultiValue<UUID, String> replacer) {
         Document document = database.getDocument(replacer.getFirst().toString());
         document.append("name", replacer.getSecond());
         database.insert(document);
     }
 
-    public UUID get(String name)
-    {
-        if (name == null) return null;
+    public UUID get(String name) {
+        if (name == null) {
+            return null;
+        }
 
-        if (getDatabaseImplementation().containsDoc(name.toLowerCase()))
-        {
+        if (getDatabaseImplementation().containsDoc(name.toLowerCase())) {
             Document document = database.getDocument(name.toLowerCase());
-            if (!document.contains("uniqueId"))
-            {
+            if (!document.contains("uniqueId")) {
                 database.delete(name.toLowerCase());
                 return null;
             }
-            return document.getObject("uniqueId", new TypeToken<UUID>() {
-            }.getType());
+            return document.getObject("uniqueId", new TypeToken<UUID>() {}.getType());
         }
         return null;
     }
 
-    public String get(UUID uniqueId)
-    {
-        if (uniqueId == null) return null;
+    public DatabaseImpl getDatabaseImplementation() {
+        return ((DatabaseImpl) database);
+    }
 
-        if (getDatabaseImplementation().containsDoc(uniqueId.toString()))
-        {
+    public String get(UUID uniqueId) {
+        if (uniqueId == null) {
+            return null;
+        }
+
+        if (getDatabaseImplementation().containsDoc(uniqueId.toString())) {
             Document document = database.getDocument(uniqueId.toString());
-            if (!document.contains("name"))
-            {
+            if (!document.contains("name")) {
                 database.delete(uniqueId.toString());
                 return null;
             }
@@ -80,17 +73,14 @@ public final class NameToUUIDDatabase extends DatabaseUsable {
         return null;
     }
 
-    public void handleUpdate(UpdateConfigurationDatabase updateConfigurationDatabase)
-    {
+    public void handleUpdate(UpdateConfigurationDatabase updateConfigurationDatabase) {
         final String updateKey = "updated_database_from_2_1_Pv29";
-        if (!updateConfigurationDatabase.get().contains(updateKey))
-        {
+        if (!updateConfigurationDatabase.get().contains(updateKey)) {
             Collection<Document> documents = new LinkedList<>(database.loadDocuments().getDocs());
 
             documents.forEach(document -> {
                 String name = document.getString(Database.UNIQUE_NAME_KEY);
-                if (name != null && name.length() < 32)
-                {
+                if (name != null && name.length() < 32) {
                     database.delete(name);
                     database.insert(document.append(Database.UNIQUE_NAME_KEY, name.toLowerCase()));
                 }

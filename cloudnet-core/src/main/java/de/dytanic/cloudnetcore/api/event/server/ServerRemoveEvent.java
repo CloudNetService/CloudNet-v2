@@ -7,19 +7,20 @@ package de.dytanic.cloudnetcore.api.event.server;
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.async.AsyncPosterAdapter;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
-import lombok.Getter;
 
 /**
  * Calls if one server is removed and unwhitelisted from a wrapper
  */
-@Getter
 public class ServerRemoveEvent extends AsyncEvent<ServerRemoveEvent> {
 
     private MinecraftServer minecraftServer;
 
-    public ServerRemoveEvent(MinecraftServer minecraftServer)
-    {
+    public ServerRemoveEvent(MinecraftServer minecraftServer) {
         super(new AsyncPosterAdapter<>());
         this.minecraftServer = minecraftServer;
+    }
+
+    public MinecraftServer getMinecraftServer() {
+        return minecraftServer;
     }
 }

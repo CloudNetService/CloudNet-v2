@@ -4,16 +4,11 @@
 
 package de.dytanic.cloudnet.cloudflare;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Collection;
 
 /**
  * Container for the CloudFlare configuration.
  */
-@Getter
-@AllArgsConstructor
 public class CloudFlareConfig {
 
     /**
@@ -46,4 +41,41 @@ public class CloudFlareConfig {
      */
     private Collection<CloudFlareProxyGroup> groups;
 
+    public CloudFlareConfig(boolean enabled,
+                            String email,
+                            String token,
+                            String domainName,
+                            String zoneId,
+                            Collection<CloudFlareProxyGroup> groups) {
+        this.enabled = enabled;
+        this.email = email;
+        this.token = token;
+        this.domainName = domainName;
+        this.zoneId = zoneId;
+        this.groups = groups;
+    }
+
+    public Collection<CloudFlareProxyGroup> getGroups() {
+        return groups;
+    }
+
+    public String getDomainName() {
+        return domainName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public String getZoneId() {
+        return zoneId;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

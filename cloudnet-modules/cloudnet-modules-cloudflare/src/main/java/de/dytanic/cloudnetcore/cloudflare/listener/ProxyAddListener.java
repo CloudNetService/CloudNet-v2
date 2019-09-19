@@ -16,13 +16,12 @@ import de.dytanic.cloudnetcore.cloudflare.CloudFlareModule;
 public class ProxyAddListener implements IEventListener<ProxyAddEvent> {
 
     @Override
-    public void onCall(ProxyAddEvent event)
-    {
+    public void onCall(ProxyAddEvent event) {
         CloudFlareModule.getInstance().getExecutor().execute(new Runnable() {
             @Override
-            public void run()
-            {
-                CloudFlareService.getInstance().addProxy(event.getProxyServer().getProcessMeta(), CloudFlareModule.getInstance().getCloudFlareDatabase());
+            public void run() {
+                CloudFlareService.getInstance().addProxy(event.getProxyServer().getProcessMeta(),
+                                                         CloudFlareModule.getInstance().getCloudFlareDatabase());
                 NetworkUtils.sleepUninterruptedly(500);
             }
         });

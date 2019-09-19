@@ -9,12 +9,10 @@ import de.dytanic.cloudnet.web.server.util.QueryDecoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
-import lombok.Getter;
 
 /**
  * Abstract class that handles web requests for a given path.
  */
-@Getter
 public abstract class WebHandler implements Cloneable {
 
     protected final String path;
@@ -24,9 +22,12 @@ public abstract class WebHandler implements Cloneable {
      *
      * @param path the path where this handler is available.
      */
-    protected WebHandler(String path)
-    {
+    protected WebHandler(String path) {
         this.path = path;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     /**
@@ -36,21 +37,26 @@ public abstract class WebHandler implements Cloneable {
      * @param queryDecoder          a decoder for possible query parameters
      * @param pathProvider          a path provider with the provided parameters
      * @param httpRequest           the HTTP request that was received and should be handled
+     *
      * @return the full response to the HTTP client
+     *
      * @throws Exception when any error occurred during the handling of the request
      */
-    public abstract FullHttpResponse handleRequest(ChannelHandlerContext channelHandlerContext, QueryDecoder queryDecoder, PathProvider pathProvider, HttpRequest httpRequest) throws Exception;
+    public abstract FullHttpResponse handleRequest(ChannelHandlerContext channelHandlerContext,
+                                                   QueryDecoder queryDecoder,
+                                                   PathProvider pathProvider,
+                                                   HttpRequest httpRequest) throws Exception;
 
     /**
      * Creates and returns a new {@code HTTP 404 - Not found} response without
      * content
      *
      * @param httpVersion the HTTP version to use
+     *
      * @return an HTTP 404 response
      */
     @Deprecated
-    public FullHttpResponse newResponse(HttpVersion httpVersion)
-    {
+    public FullHttpResponse newResponse(HttpVersion httpVersion) {
         return new DefaultFullHttpResponse(httpVersion, HttpResponseStatus.NOT_FOUND);
     }
 
@@ -60,16 +66,15 @@ public abstract class WebHandler implements Cloneable {
      *
      * @param httpVersion the HTTP version to use
      * @param content     the content to put inside the code 404 response
+     *
      * @return an HTTP 404 response with content
      */
-    public FullHttpResponse newResponse(HttpVersion httpVersion, ByteBuf content)
-    {
+    public FullHttpResponse newResponse(HttpVersion httpVersion, ByteBuf content) {
         return new DefaultFullHttpResponse(httpVersion, HttpResponseStatus.NOT_FOUND, content);
     }
 
     @Override
-    public WebHandler clone() throws CloneNotSupportedException
-    {
+    public WebHandler clone() throws CloneNotSupportedException {
         return (WebHandler) super.clone();
     }
 }

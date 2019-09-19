@@ -5,13 +5,11 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.HandlerList;
 
 /**
  * Called if a custom channel message was received
  */
-@AllArgsConstructor
 public class BukkitCustomChannelMessageReceiveEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
@@ -22,29 +20,30 @@ public class BukkitCustomChannelMessageReceiveEvent extends BukkitCloudEvent {
 
     private Document document;
 
-    public String getMessage()
-    {
-        return message;
+    public BukkitCustomChannelMessageReceiveEvent(String channel, String message, Document document) {
+        this.channel = channel;
+        this.message = message;
+        this.document = document;
     }
 
-    public Document getDocument()
-    {
-        return document;
-    }
-
-    public String getChannel()
-    {
-        return channel;
-    }
-
-    public static HandlerList getHandlerList()
-    {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

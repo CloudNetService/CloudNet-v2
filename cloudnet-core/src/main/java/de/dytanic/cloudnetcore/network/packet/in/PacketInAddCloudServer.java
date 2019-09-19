@@ -23,25 +23,24 @@ import de.dytanic.cloudnetcore.network.components.priority.PriorityStopTask;
 public class PacketInAddCloudServer extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (!(packetSender instanceof Wrapper)) return;
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (!(packetSender instanceof Wrapper)) {
+            return;
+        }
         Wrapper cn = ((Wrapper) packetSender);
-        ServerInfo nullServerInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {
-        }.getType());
-        CloudServerMeta serverProcessMeta = data.getObject("cloudServerMeta", new TypeToken<CloudServerMeta>() {
-        }.getType());
+        ServerInfo nullServerInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {}.getType());
+        CloudServerMeta serverProcessMeta = data.getObject("cloudServerMeta", new TypeToken<CloudServerMeta>() {}.getType());
         CloudServer minecraftServer = new CloudServer(cn, nullServerInfo, serverProcessMeta);
         cn.getCloudServers().put(nullServerInfo.getServiceId().getServerId(), minecraftServer);
         cn.getWaitingServices().remove(minecraftServer.getServerId());
 
         {
-            if (serverProcessMeta.isPriorityStop())
-            {
+            if (serverProcessMeta.isPriorityStop()) {
                 ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(serverProcessMeta.getServiceId().getGroup());
-                if (serverGroup != null)
-                {
-                    PriorityStopTask priorityStopTask = new PriorityStopTask(cn, minecraftServer, serverGroup.getPriorityService().getStopTimeInSeconds());
+                if (serverGroup != null) {
+                    PriorityStopTask priorityStopTask = new PriorityStopTask(cn,
+                                                                             minecraftServer,
+                                                                             serverGroup.getPriorityService().getStopTimeInSeconds());
                     ScheduledTask scheduledTask = CloudNet.getInstance().getScheduler().runTaskRepeatSync(priorityStopTask, 0, 50);
                     priorityStopTask.setScheduledTask(scheduledTask);
                 }

@@ -12,6 +12,10 @@ public interface Database {
 
     String UNIQUE_NAME_KEY = "_database_id_unique";
 
+    static DatabaseDocument createEmptyDocument(String name) {
+        return new DatabaseDocument(name);
+    }
+
     Database loadDocuments();
 
     Collection<Document> getDocs();
@@ -39,9 +43,4 @@ public interface Database {
     Database deleteAsync(String name);
 
     FutureTask<Document> getDocumentAsync(String name);
-
-    static DatabaseDocument createEmptyDocument(String name)
-    {
-        return new DatabaseDocument(name);
-    }
 }

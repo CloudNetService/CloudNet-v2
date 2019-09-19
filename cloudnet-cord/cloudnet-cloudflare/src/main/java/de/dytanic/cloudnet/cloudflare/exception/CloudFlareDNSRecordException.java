@@ -14,13 +14,11 @@ public class CloudFlareDNSRecordException extends RuntimeException {
      *
      * @param message the detailed message of this exception.
      */
-    public CloudFlareDNSRecordException(String message)
-    {
+    public CloudFlareDNSRecordException(String message) {
         super(message);
     }
 
-    public CloudFlareDNSRecordException(String message, Throwable cause)
-    {
+    public CloudFlareDNSRecordException(String message, Throwable cause) {
         super(message, cause);
     }
 }

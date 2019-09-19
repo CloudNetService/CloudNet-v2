@@ -5,13 +5,11 @@
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import lombok.AllArgsConstructor;
 import org.bukkit.event.HandlerList;
 
 /**
  * Calls if a subChannelMessage was send
  */
-@AllArgsConstructor
 public class BukkitSubChannelMessageEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
@@ -22,29 +20,30 @@ public class BukkitSubChannelMessageEvent extends BukkitCloudEvent {
 
     private Document document;
 
-    public static HandlerList getHandlerList()
-    {
+    public BukkitSubChannelMessageEvent(String channel, String message, Document document) {
+        this.channel = channel;
+        this.message = message;
+        this.document = document;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
-    public Document getDocument()
-    {
+    public Document getDocument() {
         return document;
     }
 
-    public String getChannel()
-    {
+    public String getChannel() {
         return channel;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

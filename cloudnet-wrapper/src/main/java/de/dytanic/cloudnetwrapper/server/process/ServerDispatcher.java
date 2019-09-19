@@ -14,33 +14,28 @@ public interface ServerDispatcher extends Executable, Screenable {
 
     Value<Boolean> startup = new Value<>(false);
 
-    static Value<Boolean> getStartup()
-    {
+    static Value<Boolean> getStartup() {
         return startup;
+    }
+
+    default void executeCommand(String consoleCommand) {
+        if (getInstance() == null && !getInstance().isAlive()) {
+            return;
+        }
+
+        try {
+            getInstance().getOutputStream().write((consoleCommand + '\n').getBytes());
+            getInstance().getOutputStream().flush();
+        } catch (Exception ex) {
+        }
     }
 
     Process getInstance();
 
-    default void executeCommand(String consoleCommand)
-    {
-        if (getInstance() == null && !getInstance().isAlive()) return;
-
-        try
-        {
-            getInstance().getOutputStream().write((consoleCommand + "\n").getBytes());
-            getInstance().getOutputStream().flush();
-        } catch (Exception ex)
-        {
-        }
-    }
-
-    default boolean isAlive()
-    {
-        try
-        {
+    default boolean isAlive() {
+        try {
             return getInstance() != null && getInstance().isAlive() && getInstance().getInputStream().available() != -1;
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             return false;
         }
     }

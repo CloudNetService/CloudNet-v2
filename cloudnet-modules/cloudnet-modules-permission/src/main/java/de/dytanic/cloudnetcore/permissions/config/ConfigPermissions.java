@@ -27,67 +27,60 @@ public class ConfigPermissions {
 
     private Configuration cache;
 
-    public ConfigPermissions() throws Exception
-    {
-        if (!Files.exists(path))
-        {
+    public ConfigPermissions() throws Exception {
+        if (!Files.exists(path)) {
             Files.createFile(path);
 
             Configuration configuration = new Configuration();
             configuration.set("enabled", true);
             configuration.set("groups", new Configuration());
 
-            if (!Files.exists(Paths.get("local/permissions.yml")))
-            {
-                PermissionGroup member = new PermissionGroup(
-                        "default",
-                        "&8",
-                        "§eMember §7▎ ",
-                        "§f",
-                        "§e",
-                        9999
-                    ,
-                        0,
-                        true,
-                        new HashMap<>(),
-                        MapWrapper.valueableHashMap(new Return<>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
-                        new HashMap<>(),
-                        new ArrayList<>()
-                );
+            if (!Files.exists(Paths.get("local/permissions.yml"))) {
+                PermissionGroup member = new PermissionGroup("default",
+                                                             "&8",
+                                                             "§eMember §7▎ ",
+                                                             "§f",
+                                                             "§e",
+                                                             9999,
+                                                             0,
+                                                             true,
+                                                             new HashMap<>(),
+                                                             MapWrapper.valueableHashMap(new Return<>("Lobby",
+                                                                                                      Arrays.asList(
+                                                                                                          "test.permission.for.group.Lobby"))),
+                                                             new HashMap<>(),
+                                                             new ArrayList<>());
                 write(member, configuration);
 
-                PermissionGroup admin = new PermissionGroup(
-                        "Admin",
-                        "&c",
-                        "§cAdmin §7▎ ",
-                        "§f",
-                        "§c",
-                        0,
-                        100,
-                        false,
-                        MapWrapper.valueableHashMap(new Return<>("*", true)),
-                        MapWrapper.valueableHashMap(new Return<>("Lobby", Arrays.asList("test.permission.for.group.Lobby"))),
-                        new HashMap<>(),
-                        new ArrayList<>()
-                );
+                PermissionGroup admin = new PermissionGroup("Admin",
+                                                            "&c",
+                                                            "§cAdmin §7▎ ",
+                                                            "§f",
+                                                            "§c",
+                                                            0,
+                                                            100,
+                                                            false,
+                                                            MapWrapper.valueableHashMap(new Return<>("*", true)),
+                                                            MapWrapper.valueableHashMap(new Return<>("Lobby",
+                                                                                                     Arrays.asList(
+                                                                                                         "test.permission.for.group.Lobby"))),
+                                                            new HashMap<>(),
+                                                            new ArrayList<>());
                 write(admin, configuration);
-            } else
-            {
+            } else {
                 Document document = Document.loadDocument(Paths.get("local/permissions.yml"));
-                Collection<PermissionGroup> groups = document.getObject("groups", new TypeToken<Collection<PermissionGroup>>() {
-                }.getType());
+                Collection<PermissionGroup> groups = document.getObject("groups",
+                                                                        new TypeToken<Collection<PermissionGroup>>() {}.getType());
                 Map<String, PermissionGroup> maps = MapWrapper.collectionCatcherHashMap(groups, new Catcher<String, PermissionGroup>() {
                     @Override
-                    public String doCatch(PermissionGroup key)
-                    {
+                    public String doCatch(PermissionGroup key) {
                         return key.getName();
                     }
                 });
 
                 configuration.set("enabled", document.getBoolean("enabled"));
 
-                for (PermissionGroup value : maps.values())
-                {
+                for (PermissionGroup value : maps.values()) {
                     write(value, configuration);
                 }
 
@@ -95,8 +88,9 @@ public class ConfigPermissions {
 
             }
 
-            try (OutputStream outputStream = Files.newOutputStream(path); OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))
-            {
+            try (OutputStream outputStream = Files.newOutputStream(path); OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
+                outputStream,
+                StandardCharsets.UTF_8)) {
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
             }
         }
@@ -105,54 +99,7 @@ public class ConfigPermissions {
 
     }
 
-    public void updatePermissionGroup(PermissionGroup permissionGroup)
-    {
-        if (this.cache == null)
-        {
-            loadCache();
-        }
-
-        write(permissionGroup, this.cache);
-
-        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8))
-        {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).save(cache, outputStreamWriter);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public Map<String, PermissionGroup> loadAll0()
-    {
-        loadCache();
-
-        return read(this.cache);
-    }
-
-    public Map<String, PermissionGroup> loadAll()
-    {
-        if (this.cache == null)
-        {
-            loadCache();
-        }
-
-        return read(this.cache);
-    }
-
-    private void loadCache()
-    {
-        try (InputStream inputStream = Files.newInputStream(path); InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8))
-        {
-            this.cache = ConfigurationProvider.getProvider(YamlConfiguration.class).load(inputStreamReader);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void write(PermissionGroup permissionGroup, Configuration configuration)
-    {
+    public void write(PermissionGroup permissionGroup, Configuration configuration) {
         Configuration section = configuration.getSection("groups");
 
         Configuration group = new Configuration();
@@ -165,20 +112,20 @@ public class ConfigPermissions {
         group.set("defaultGroup", permissionGroup.isDefaultGroup());
 
         Collection<String> perms = new CopyOnWriteArrayList<>();
-        for (Map.Entry<String, Boolean> entry : permissionGroup.getPermissions().entrySet())
-        {
+        for (Map.Entry<String, Boolean> entry : permissionGroup.getPermissions().entrySet()) {
             perms.add((!entry.getValue() ? "-" : "") + entry.getKey());
         }
         group.set("permissions", perms);
 
         Configuration permsCfg = new Configuration();
-        for (Map.Entry<String, List<String>> keys : permissionGroup.getServerGroupPermissions().entrySet())
-        {
+        for (Map.Entry<String, List<String>> keys : permissionGroup.getServerGroupPermissions().entrySet()) {
             permsCfg.set(keys.getKey(), keys.getValue());
         }
         group.set("serverGroupPermissions", permsCfg);
 
-        if (permissionGroup.getOptions().size() == 0) permissionGroup.getOptions().put("test_option", true);
+        if (permissionGroup.getOptions().size() == 0) {
+            permissionGroup.getOptions().put("test_option", true);
+        }
 
         group.set("options", permissionGroup.getOptions());
         group.set("implements", permissionGroup.getImplementGroups());
@@ -187,63 +134,91 @@ public class ConfigPermissions {
         section.set(permissionGroup.getName(), group);
     }
 
-    public Map<String, PermissionGroup> read(Configuration configuration)
-    {
+    private void loadCache() {
+        try (InputStream inputStream = Files.newInputStream(path); InputStreamReader inputStreamReader = new InputStreamReader(inputStream,
+                                                                                                                               StandardCharsets.UTF_8)) {
+            this.cache = ConfigurationProvider.getProvider(YamlConfiguration.class).load(inputStreamReader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updatePermissionGroup(PermissionGroup permissionGroup) {
+        if (this.cache == null) {
+            loadCache();
+        }
+
+        write(permissionGroup, this.cache);
+
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(cache, outputStreamWriter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Map<String, PermissionGroup> loadAll0() {
+        loadCache();
+
+        return read(this.cache);
+    }
+
+    public Map<String, PermissionGroup> read(Configuration configuration) {
         Map<String, PermissionGroup> maps = new LinkedHashMap<>();
 
         Configuration section = configuration.getSection("groups");
 
-        for (String key : section.getKeys())
-        {
+        for (String key : section.getKeys()) {
             Configuration group = section.getSection(key);
 
             HashMap<String, Boolean> permissions = new HashMap<>();
             List<String> permissionSection = group.getStringList("permissions");
 
-            for (String entry : permissionSection)
-            {
+            for (String entry : permissionSection) {
                 permissions.put(entry.replaceFirst("-", ""), (!entry.startsWith("-")));
             }
 
             HashMap<String, List<String>> permissionsGroups = new HashMap<>();
             Configuration permissionSectionGroups = group.getSection("serverGroupPermissions");
 
-            for (String entry : permissionSectionGroups.getKeys())
-            {
+            for (String entry : permissionSectionGroups.getKeys()) {
                 permissionsGroups.put(entry, permissionSectionGroups.getStringList(entry));
             }
 
-            PermissionGroup permissionGroup = new PermissionGroup(
-                    key,
-                    group.getString("color"),
-                    group.getString("prefix"),
-                    group.getString("suffix"),
-                    group.getString("display"),
-                    group.getInt("tagId"),
-                    group.getInt("joinPower"),
-                    group.getBoolean("defaultGroup"),
-                    permissions,
-                    permissionsGroups,
-                    group.getSection("options").self,
-                    group.getStringList("implements")
-            );
+            PermissionGroup permissionGroup = new PermissionGroup(key,
+                                                                  group.getString("color"),
+                                                                  group.getString("prefix"),
+                                                                  group.getString("suffix"),
+                                                                  group.getString("display"),
+                                                                  group.getInt("tagId"),
+                                                                  group.getInt("joinPower"),
+                                                                  group.getBoolean("defaultGroup"),
+                                                                  permissions,
+                                                                  permissionsGroups,
+                                                                  group.getSection("options").self,
+                                                                  group.getStringList("implements"));
             maps.put(permissionGroup.getName(), permissionGroup);
         }
 
         return maps;
     }
 
-    public boolean isEnabled()
-    {
+    public Map<String, PermissionGroup> loadAll() {
+        if (this.cache == null) {
+            loadCache();
+        }
+
+        return read(this.cache);
+    }
+
+    public boolean isEnabled() {
         loadCache();
         return this.cache.getBoolean("enabled");
 
     }
 
-    public boolean isEnabled0()
-    {
-        if (this.cache == null)
-        {
+    public boolean isEnabled0() {
+        if (this.cache == null) {
             loadCache();
         }
         return this.cache.getBoolean("enabled");

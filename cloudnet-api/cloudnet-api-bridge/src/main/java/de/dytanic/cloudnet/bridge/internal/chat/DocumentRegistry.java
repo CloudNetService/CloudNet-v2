@@ -11,22 +11,17 @@ import net.md_5.bungee.chat.TranslatableComponentSerializer;
 
 public final class DocumentRegistry {
 
-    private DocumentRegistry()
-    {
+    private DocumentRegistry() {
     }
 
-    public static void fire()
-    {
-        Document.GSON = new GsonBuilder()
-                .serializeNulls()
-                .setPrettyPrinting()
-                .disableHtmlEscaping()
-                //
-                .registerTypeAdapter(BaseComponent.class, new ComponentSerializer())
-                .registerTypeAdapter(TextComponent.class, new TextComponentSerializer())
-                .registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer())
-                //
-                .create();
+    public static void fire() {
+        Document.GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping()
+                                         //
+                                         .registerTypeAdapter(BaseComponent.class, new ComponentSerializer()).registerTypeAdapter(
+                TextComponent.class,
+                new TextComponentSerializer()).registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer())
+                                         //
+                                         .create();
     }
 
 }

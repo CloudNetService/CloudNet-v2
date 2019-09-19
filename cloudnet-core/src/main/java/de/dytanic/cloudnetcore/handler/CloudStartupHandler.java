@@ -16,26 +16,25 @@ import java.util.Collection;
 public class CloudStartupHandler implements ICloudHandler {
 
     @Override
-    public void onHandle(CloudNet cloudNet)
-    {
-        for (ServerGroup serverGroup : cloudNet.getServerGroups().values())
-        {
+    public void onHandle(CloudNet cloudNet) {
+        for (ServerGroup serverGroup : cloudNet.getServerGroups().values()) {
             Collection<String> servers = cloudNet.getServersAndWaitings(serverGroup.getName());
-            if (servers.size() < serverGroup.getMinOnlineServers() && (serverGroup.getMaxOnlineServers() == -1 || serverGroup.getMaxOnlineServers() > servers.size()))
+            if (servers.size() < serverGroup.getMinOnlineServers() && (serverGroup.getMaxOnlineServers() == -1 || serverGroup.getMaxOnlineServers() > servers
+                .size())) {
                 cloudNet.startGameServer(serverGroup);
+            }
         }
 
-        for (ProxyGroup serverGroup : cloudNet.getProxyGroups().values())
-        {
+        for (ProxyGroup serverGroup : cloudNet.getProxyGroups().values()) {
             Collection<String> servers = cloudNet.getProxysAndWaitings(serverGroup.getName());
-            if (servers.size() < serverGroup.getStartup())
+            if (servers.size() < serverGroup.getStartup()) {
                 cloudNet.startProxy(serverGroup);
+            }
         }
     }
 
     @Override
-    public int getTicks()
-    {
+    public int getTicks() {
         return 50;
     }
 }

@@ -15,13 +15,11 @@ import java.util.UUID;
  */
 public class PacketAPIOutGetOfflinePlayer extends Packet {
 
-    public PacketAPIOutGetOfflinePlayer(UUID uniqueId)
-    {
+    public PacketAPIOutGetOfflinePlayer(UUID uniqueId) {
         super(PacketRC.API + 5, new Document("uniqueId", uniqueId));
     }
 
-    public PacketAPIOutGetOfflinePlayer(String name)
-    {
+    public PacketAPIOutGetOfflinePlayer(String name) {
         super(PacketRC.API + 5, new Document("name", name));
     }
 }

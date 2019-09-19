@@ -5,24 +5,32 @@
 package de.dytanic.cloudnetcore.modules;
 
 import de.dytanic.cloudnetcore.CloudNet;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.io.InputStream;
 
 /**
  * Created by Tareko on 22.10.2017.
  */
-@Getter
-@AllArgsConstructor
 public final class DefaultModule {
 
     private String moduleName;
 
     private String moduleVersion;
 
-    protected InputStream stream()
-    {
+    public DefaultModule(String moduleName, String moduleVersion) {
+        this.moduleName = moduleName;
+        this.moduleVersion = moduleVersion;
+    }
+
+    protected InputStream stream() {
         return CloudNet.class.getClassLoader().getResourceAsStream("modules/" + moduleName + ".jar");
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public String getModuleVersion() {
+        return moduleVersion;
     }
 }
