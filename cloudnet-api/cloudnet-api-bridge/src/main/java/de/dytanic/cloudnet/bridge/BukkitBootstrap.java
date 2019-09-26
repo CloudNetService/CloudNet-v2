@@ -11,9 +11,6 @@ import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudServerInitEvent;
 import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandCloudServer;
 import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandResource;
 import de.dytanic.cloudnet.bridge.internal.listener.bukkit.BukkitListener;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.in.PacketInMobSelector;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -36,7 +33,6 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         CloudAPI cloudAPI = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"),
                                                                Paths.get("CLOUD/config.json"),
                                                                ConfigTypeLoader.INTERNAL), this);
-        cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInMobSelector.class);
 
         cloudAPI.setLogger(getLogger());
     }
@@ -52,10 +48,6 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         }
 
         CloudAPI.getInstance().getNetworkHandlerProvider().clear();
-
-        if (MobSelector.getInstance() != null) {
-            MobSelector.getInstance().shutdown();
-        }
 
         Bukkit.getScheduler().cancelTasks(this);
     }
