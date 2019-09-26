@@ -15,7 +15,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>cloudnet-modules-signs</module>
         <module>cloudnet-modules-mobs</module>
         <module>cloudnet-modules-permission</module>
         <module>cloudnet-modules-cloudflare</module>
