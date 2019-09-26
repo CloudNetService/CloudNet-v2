@@ -17,7 +17,6 @@
     <modules>
         <module>cloudnet-modules-mobs</module>
         <module>cloudnet-modules-permission</module>
-        <module>cloudnet-modules-cloudflare</module>
         <module>cloudnet-modules-notifyservice</module>
     </modules>
 
