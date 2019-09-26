@@ -520,9 +520,8 @@ public final class CommandCloud extends Command implements TabExecutor {
                                    CloudAPI.getInstance().getPrefix() + "§7/cloud copy <server> <directory>",
                                    CloudAPI.getInstance().getPrefix() + "§7/cloud version",
                                    CloudAPI.getInstance().getPrefix() + "§7/cloud statistics",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud debug",
-                                   NetworkUtils.SPACE_STRING).stream().map(TextComponent::fromLegacyText).flatMap(Arrays::stream).forEach(
-                    commandSender::sendMessage);
+                                   CloudAPI.getInstance().getPrefix() + "§7/cloud debug", NetworkUtils.SPACE_STRING).stream().map(
+                    TextComponent::fromLegacyText).forEach(commandSender::sendMessage);
                 break;
         }
 
