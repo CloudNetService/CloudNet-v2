@@ -94,10 +94,7 @@ public class CloudPermissible extends PermissibleBase {
             permissions.put(key, permissionAttachmentInfo);
         });
         permissionEntity.getGroups()
-                        .stream()
-                        .filter(g -> g.getTimeout() > System.currentTimeMillis())
-                        .map(g -> CloudAPI.getInstance()
-                                          .getPermissionGroup(g.getGroup()))
+                        .stream().map(g -> CloudAPI.getInstance().getPermissionGroup(g.getGroup()))
                         .filter(Objects::nonNull)
                         .flatMap(g -> {
                             Stream.Builder<PermissionGroup> builder = Stream.<PermissionGroup>builder().add(g);
@@ -112,6 +109,10 @@ public class CloudPermissible extends PermissibleBase {
                         .forEach(g -> {
                             g.getPermissions().forEach((key, value) -> {
                                 PermissionAttachmentInfo permissionAttachmentInfo = new PermissionAttachmentInfo(this, key, null, value);
+                                permissions.put(key, permissionAttachmentInfo);
+                            });
+                            g.getServerGroupPermissions().get(CloudAPI.getInstance().getGroup()).forEach(key -> {
+                                PermissionAttachmentInfo permissionAttachmentInfo = new PermissionAttachmentInfo(this, key, null, true);
                                 permissions.put(key, permissionAttachmentInfo);
                             });
                         });
