@@ -93,8 +93,7 @@ public class CloudPermissible extends PermissibleBase {
             PermissionAttachmentInfo permissionAttachmentInfo = new PermissionAttachmentInfo(this, key, null, value);
             permissions.put(key, permissionAttachmentInfo);
         });
-        permissionEntity.getGroups()
-                        .stream().map(g -> CloudAPI.getInstance().getPermissionGroup(g.getGroup()))
+        permissionEntity.getGroups().stream().map(g -> CloudAPI.getInstance().getPermissionGroup(g.getGroup()))
                         .filter(Objects::nonNull)
                         .flatMap(g -> {
                             Stream.Builder<PermissionGroup> builder = Stream.<PermissionGroup>builder().add(g);
