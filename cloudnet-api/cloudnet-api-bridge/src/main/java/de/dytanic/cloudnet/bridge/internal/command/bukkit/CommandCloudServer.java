@@ -7,16 +7,11 @@ package de.dytanic.cloudnet.bridge.internal.command.bukkit;
 import com.google.common.collect.ImmutableList;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.SignSelector;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutAddMob;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutAddSign;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutRemoveMob;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutRemoveSign;
 import de.dytanic.cloudnet.bridge.internal.util.ItemStackBuilder;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
-import de.dytanic.cloudnet.lib.serverselectors.sign.Position;
-import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -63,10 +58,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         }
 
         if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("removeSign")) {
-                return playerGuard(commandSender, player -> removeSign(commandSender, player));
-
-            } else if (args[0].equalsIgnoreCase("listMobs")) {
+             if (args[0].equalsIgnoreCase("listMobs")) {
                 return listMobs(commandSender);
             } else if (args[0].equalsIgnoreCase("moblist")) {
                 return mobList(commandSender);
@@ -74,14 +66,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                 return debug(commandSender);
             }
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("copyTo")) {
-                return copyTo(commandSender, args[1]);
-            } else if (args[0].equalsIgnoreCase("createSign")) {
-                return playerGuard(commandSender, player -> createSign(commandSender, args, player));
-            } else if (args[0].equalsIgnoreCase("removeSigns")) {
-                return removeSigns(commandSender, args[1]);
-
-            } else if (args[0].equalsIgnoreCase("removeMob")) {
+             if (args[0].equalsIgnoreCase("removeMob")) {
                 return removeMob(commandSender, args[1]);
             }
         } else if (args.length == 3) {
@@ -204,24 +189,6 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         return false;
     }
 
-    private boolean removeSign(CommandSender commandSender, Player player) {
-        if (checkSignSelectorActive(commandSender)) {
-            return true;
-        }
-
-        Block block = player.getTargetBlock((Set<Material>) null, 15);
-        if (block.getState() instanceof org.bukkit.block.Sign) {
-            if (SignSelector.getInstance().containsPosition(block.getLocation())) {
-                Sign sign = SignSelector.getInstance().getSignByPosition(block.getLocation());
-
-                if (sign != null) {
-                    CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveSign(sign));
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The sign has been removed");
-                }
-            }
-        }
-        return false;
-    }
 
     private boolean listMobs(CommandSender commandSender) {
         if (checkMobSelectorActive(commandSender)) {
@@ -263,67 +230,6 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         return false;
     }
 
-    private boolean copyTo(CommandSender commandSender, String arg) {
-        if (checkSignSelectorActive(commandSender)) {
-            return false;
-        }
-
-        if (CloudAPI.getInstance().getServerGroupMap().containsKey(arg)) {
-            for (Sign sign : SignSelector.getInstance().getSigns().values()) {
-                CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddSign(new Sign(sign.getTargetGroup(),
-                                                                                                       new Position(arg,
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getWorld(),
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getX(),
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getY(),
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getZ()))));
-            }
-
-            commandSender.sendMessage(CloudAPI.getInstance()
-                                              .getPrefix() + "The signs by this group was successfully copied to the target group.");
-        }
-        return true;
-    }
-
-    private boolean createSign(CommandSender commandSender, String[] args, Player player) {
-        if (checkSignSelectorActive(commandSender)) {
-            return false;
-        }
-
-        Block block = player.getTargetBlock((Set<Material>) null, 15);
-        if (block.getState() instanceof org.bukkit.block.Sign) {
-            if (!SignSelector.getInstance().containsPosition(block.getLocation())) {
-                if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1])) {
-                    Sign sign = new Sign(args[1], SignSelector.getInstance().toPosition(block.getLocation()));
-                    CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddSign(sign));
-                    commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The sign was successfully created!");
-                } else {
-                    commandSender.sendMessage("The group doesn't exist");
-                }
-            } else {
-                commandSender.sendMessage("The sign already exists!");
-            }
-        }
-        return false;
-    }
-
-    private boolean removeSigns(CommandSender commandSender, String arg) {
-        if (checkSignSelectorActive(commandSender)) {
-            return true;
-        }
-
-        for (Sign sign : SignSelector.getInstance().getSigns().values()) {
-            if (sign.getTargetGroup() != null && sign.getTargetGroup().equalsIgnoreCase(arg)) {
-                CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveSign(sign));
-            }
-        }
-
-        commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "§7You deleted all signs from the group \"§6" + arg + "§7\"");
-        return false;
-    }
 
     private boolean removeMob(CommandSender commandSender, String arg) {
         if (checkMobSelectorActive(commandSender)) {
@@ -361,12 +267,6 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
     }
 
     private void help(CommandSender commandSender) {
-        if (SignSelector.getInstance() != null) {
-            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs createSign <targetGroup>");
-            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs removeSign");
-            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs removeSigns <targetGroup>");
-            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "/cs copyTo <targetGroup>");
-        }
         if (MobSelector.getInstance() != null) {
             commandSender.sendMessage(CloudAPI.getInstance()
                                               .getPrefix() + "/cs createMob <entityType> <name> <targetGroup> <itemName> <autoJoin> <displayName>");
@@ -399,23 +299,11 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                           .orElse(null);
     }
 
-    private static boolean checkSignSelectorActive(CommandSender commandSender) {
-        if (SignSelector.getInstance() == null) {
-            commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Module \"SignSelector\" isn't enabled!");
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         switch (args.length) {
             case 1: {
-                return ImmutableList.of("createSign",
-                                        "removeSign",
-                                        "removeSigns",
-                                        "copyTo",
-                                        "createMob",
+                return ImmutableList.of("createMob",
                                         "removeMob",
                                         "listsMobs",
                                         "moblist",
@@ -425,9 +313,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                                         "debug");
             }
             case 2: {
-                if (args[0].equalsIgnoreCase("createsign") || args[0].equalsIgnoreCase("removesigns") || args[0].equalsIgnoreCase("copyto")) {
-                    return ImmutableList.copyOf(CloudAPI.getInstance().getServerGroupMap().keySet());
-                } else if (args[0].equalsIgnoreCase("removeMob") || args[0].equalsIgnoreCase("setDisplay") || args[0].equalsIgnoreCase(
+               if (args[0].equalsIgnoreCase("removeMob") || args[0].equalsIgnoreCase("setDisplay") || args[0].equalsIgnoreCase(
                     "setItem") || args[0].equalsIgnoreCase("editMobLine")) {
                     return ImmutableList.copyOf(MobSelector.getInstance()
                                                            .getMobs()
