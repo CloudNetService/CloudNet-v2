@@ -28,7 +28,7 @@ public final class SpigotBuilder {
      *
      * @param reader to read the answer
      */
-    public static void start(final ConsoleReader reader) {
+    public static void start(final ConsoleReader reader, Path outputPath) {
         System.out.println("Fetching Spigot versions");
         List<String> versions = loadVersions();
         System.out.println("Available Spigot versions:");
@@ -47,7 +47,7 @@ public final class SpigotBuilder {
             String finalAnswer = name;
             if (versions.stream().anyMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
                 answer = name;
-                buildSpigot(finalAnswer);
+                buildSpigot(finalAnswer, outputPath);
             } else if (versions.stream().noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
                 System.out.println("This version does not exist!");
             }
@@ -83,7 +83,7 @@ public final class SpigotBuilder {
      *
      * @param version the version of spigot
      */
-    private static void buildSpigot(final String version) {
+    private static void buildSpigot(final String version, Path outputPath) {
         File builder = new File("local/builder/spigot");
         File buildFolder = new File(builder, version);
         try {
@@ -93,7 +93,7 @@ public final class SpigotBuilder {
         }
         File buildTools = new File(buildFolder, "buildtools.jar");
         if (!buildTools.exists()) {
-            runBuildTools(version, buildFolder, buildTools);
+            runBuildTools(version, buildFolder, buildTools, outputPath);
         } else {
             if (Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-"))).length > 0) {
                 System.out.println("Skipping build");
@@ -101,13 +101,13 @@ public final class SpigotBuilder {
                 try {
                     Files.copy(new FileInputStream(Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName()
                                                                                                                     .startsWith("spigot-")))[0]),
-                               Paths.get("local/spigot.jar"),
+                               outputPath,
                                StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                runBuildTools(version, buildFolder, buildTools);
+                runBuildTools(version, buildFolder, buildTools, outputPath);
             }
         }
 
@@ -120,7 +120,7 @@ public final class SpigotBuilder {
      * @param buildFolder the folder in there are build
      * @param buildTools  the path of the build tools
      */
-    private static void runBuildTools(String version, File buildFolder, File buildTools) {
+    private static void runBuildTools(String version, File buildFolder, File buildTools, Path outputPath) {
         try {
             long startTime = System.currentTimeMillis();
             Files.createDirectories(buildFolder.toPath());
@@ -139,7 +139,7 @@ public final class SpigotBuilder {
             if (Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-"))).length > 0) {
                 Files.copy(new FileInputStream(Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName()
                                                                                                                 .startsWith("spigot-")))[0]),
-                           Paths.get("local/spigot.jar"),
+                           outputPath,
                            StandardCopyOption.REPLACE_EXISTING);
                 long endTime = System.currentTimeMillis();
                 long minutes = ((endTime - startTime) / 1000) / 60;
@@ -147,7 +147,7 @@ public final class SpigotBuilder {
                 System.out.printf("Total Build Time %dMin %dSec\n", minutes, seconds);
             } else {
                 deleteBuildFolder(buildFolder);
-                buildSpigot(version);
+                buildSpigot(version, outputPath);
             }
         } catch (Exception e) {
             e.printStackTrace();

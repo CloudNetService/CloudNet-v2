@@ -33,7 +33,7 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
                                               "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
                 connection.connect();
                 try (InputStream inputStream = connection.getInputStream()) {
-                    Files.copy(inputStream, target != null ? target : Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(inputStream, SetupSpigotVersion.this.getTarget(), StandardCopyOption.REPLACE_EXISTING);
                 }
                 System.out.println("Download was successfully completed!");
             } catch (Exception e) {
@@ -144,12 +144,16 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
                     }
                 }
             case "buildtools":
-                SpigotBuilder.start(reader);
+                SpigotBuilder.start(reader, this.getTarget());
                 break;
             case "paper":
-                PaperBuilder.start(reader);
+                PaperBuilder.start(reader, this.getTarget());
                 break;
         }
+    }
+
+    public Path getTarget() {
+        return this.target != null ? this.target : Paths.get("local/spigot.jar");
     }
 
     public void setTarget(Path target) {
