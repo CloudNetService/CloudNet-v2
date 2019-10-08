@@ -61,14 +61,14 @@ Maven:
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-api-bridge</artifactId>
-            <version>2.1.15</version>
+            <version>2.1.16</version>
             <scope>provided</scope>
         </dependency>
          <!-- CloudNet Core -->
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-core</artifactId>
-            <version>2.1.15</version>
+            <version>2.1.16</version>
             <scope>provided</scope>
         </dependency>
      </dependencies>

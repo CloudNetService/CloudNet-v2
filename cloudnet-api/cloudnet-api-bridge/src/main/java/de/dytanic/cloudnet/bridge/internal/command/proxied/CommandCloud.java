@@ -492,37 +492,40 @@ public final class CommandCloud extends Command implements TabExecutor {
                 }
                 break;
             default:
-                Lists.newArrayList(NetworkUtils.SPACE_STRING,
-                                   CloudAPI.getInstance().getPrefix() + "All command arguments",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud toggle autoslot",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud toggle maintenance",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud toggle maintenance <time>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud setMaxPlayers <maxonlinecount>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud whitelist",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud whitelist <add : remove> <name>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud start <group> <count>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud start <group> <template>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud startcs <name> <memory> <priorityStop>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud cmds (command server) <server> <command>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud cmdp (command proxy) <proxy> <command>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud stop <server>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud stopGroup <group>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud ustopGroup <group>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud listProxys",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud listOnline",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud listServers",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud log <server>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud listGroups",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud rl",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud list",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud maintenance <group>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud copy <server>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud copy <server> <directory>",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud version",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud statistics",
-                                   CloudAPI.getInstance().getPrefix() + "§7/cloud debug",
-                                   NetworkUtils.SPACE_STRING).stream().map(TextComponent::fromLegacyText).flatMap(Arrays::stream).forEach(
-                    commandSender::sendMessage);
+            	Lists.newArrayList(NetworkUtils.SPACE_STRING,
+                        CloudAPI.getInstance().getPrefix() + "All command arguments",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud toggle autoslot",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud toggle maintenance",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud toggle maintenance <time>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud setMaxPlayers <maxonlinecount>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud whitelist",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud whitelist <add : remove> <name>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud start <group> <count>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud start <group> <template>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud startcs <name> <memory> <priorityStop>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud cmds (command server) <server> <command>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud cmdp (command proxy) <proxy> <command>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud stop <server>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud stopGroup <group>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud ustopGroup <group>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud listProxys",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud listOnline",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud listServers",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud log <server>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud listGroups",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud rl",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud list",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud maintenance <group>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud copy <server>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud copy <server> <directory>",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud version",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud statistics",
+                        CloudAPI.getInstance().getPrefix() + "§7/cloud debug",
+                        NetworkUtils.SPACE_STRING)
+                        .stream()
+                        .map(TextComponent::fromLegacyText)
+                        .forEach(commandSender::sendMessage);
+
                 break;
         }
 
