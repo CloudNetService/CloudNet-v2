@@ -25,7 +25,7 @@ public final class ReflectionUtil {
             return Class.forName("org.bukkit.craftbukkit." + version + suffix);
         } catch (Exception ex) {
             try {
-                return Class.forName("org.bukkit.craftbukkit." + suffix);
+                return Class.forName("org.bukkit.craftbukkit" + suffix);
             } catch (ClassNotFoundException e) {
             }
         }
