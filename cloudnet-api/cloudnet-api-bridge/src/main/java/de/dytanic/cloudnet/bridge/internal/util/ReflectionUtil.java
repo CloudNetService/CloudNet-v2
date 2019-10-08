@@ -46,7 +46,7 @@ public final class ReflectionUtil {
             return Class.forName("net.minecraft.server." + version + suffix);
         } catch (Exception ex) {
             try {
-                return Class.forName("net.minecraft.server." + suffix);
+                return Class.forName("net.minecraft.server" + suffix);
             } catch (ClassNotFoundException e) {
             }
         }
