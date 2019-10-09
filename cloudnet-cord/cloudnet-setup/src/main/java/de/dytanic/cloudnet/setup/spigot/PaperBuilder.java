@@ -30,7 +30,7 @@ public final class PaperBuilder {
      *
      * @param reader Read the answer from console
      */
-    public static void start(ConsoleReader reader, Path outputPath) {
+    public static boolean start(ConsoleReader reader, Path outputPath) {
         try {
             System.out.println("Fetch Versions");
             URLConnection connection = new URL(apiProjectUrl).openConnection();
@@ -56,7 +56,7 @@ public final class PaperBuilder {
                 String finalAnswer = name;
                 if (Arrays.stream(paperMCProject.getVersions()).anyMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
                     answer = name;
-                    buildPaperVersion(answer, outputPath);
+                    return buildPaperVersion(answer, outputPath);
                 } else if (Arrays.stream(paperMCProject.getVersions()).noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
                     System.out.println("This version does not exist!");
                 }
@@ -64,6 +64,7 @@ public final class PaperBuilder {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     /**
@@ -73,7 +74,7 @@ public final class PaperBuilder {
      *
      * @throws Exception If a connection error or something
      */
-    private static void buildPaperVersion(String version, Path outputPath) throws Exception {
+    private static boolean buildPaperVersion(String version, Path outputPath) throws Exception {
         System.out.println(String.format("Fetching build %s", version));
         URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version)).openConnection();
         connection.setRequestProperty("User-Agent",
@@ -94,6 +95,7 @@ public final class PaperBuilder {
         File paperclip = new File(buildFolder, "paperclip.jar");
         if (!paperclip.exists()) {
             runPaperClip(connection, buildFolder, paperclip, outputPath);
+            return true;
         } else {
             File[] paperclips = buildFolder.listFiles(pathname -> pathname.getName().startsWith("paper"));
             if (Objects.requireNonNull(paperclips).length > 0) {
@@ -103,16 +105,18 @@ public final class PaperBuilder {
                     Files.copy(new FileInputStream(Objects.requireNonNull(paperclips)[0]),
                                outputPath,
                                StandardCopyOption.REPLACE_EXISTING);
+                    return true;
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return false;
                 }
             } else {
                 SpigotBuilder.deleteBuildFolder(buildFolder);
                 runPaperClip(connection, buildFolder, paperclip, outputPath);
+                return true;
             }
 
         }
-
     }
 
     /**
