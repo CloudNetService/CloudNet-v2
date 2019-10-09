@@ -97,12 +97,13 @@ public final class PaperBuilder {
             runPaperClip(connection, buildFolder, paperclip, outputPath);
             return true;
         } else {
-            File[] paperclips = buildFolder.listFiles(pathname -> pathname.getName().startsWith("paper"));
-            if (Objects.requireNonNull(paperclips).length > 0) {
+            File cacheFolder = new File(buildFolder, "cache");
+            File[] patchedFiles = cacheFolder.listFiles(pathname -> pathname.getName().startsWith("patched"));
+            if (Objects.requireNonNull(patchedFiles).length > 0) {
                 System.out.println("Skipping build");
                 System.out.println("Copying spigot.jar");
                 try {
-                    Files.copy(new FileInputStream(Objects.requireNonNull(paperclips)[0]),
+                    Files.copy(new FileInputStream(Objects.requireNonNull(patchedFiles)[0]),
                                outputPath,
                                StandardCopyOption.REPLACE_EXISTING);
                     return true;
@@ -136,10 +137,9 @@ public final class PaperBuilder {
         exec = Runtime.getRuntime().exec("java -jar paperclip.jar", null, buildFolder);
         printProcessOutputToConsole(exec);
 
-        Files.copy(new FileInputStream(Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName()
-                                                                                                        .startsWith("paperclip")))[0]),
-                   outputPath,
-                   StandardCopyOption.REPLACE_EXISTING);
+        File cacheFolder = new File(buildFolder, "cache");
+        File[] patchedFiles = cacheFolder.listFiles(pathname -> pathname.getName().startsWith("patched"));
+        Files.copy(new FileInputStream(Objects.requireNonNull(patchedFiles)[0]), outputPath, StandardCopyOption.REPLACE_EXISTING);
     }
 
     /**
