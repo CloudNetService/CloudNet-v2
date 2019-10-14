@@ -199,6 +199,11 @@ public final class PacketInCreateTemplate extends PacketInHandler {
 
     private void extractEntry(ZipFile zipFile, ZipEntry entry, String destDir) throws IOException {
         File file = new File(destDir, entry.getName());
+
+        if (!file.toPath().normalize().startsWith(Paths.get(destDir))) {
+            return;
+        }
+
         final byte[] BUFFER = new byte[0xFFFF];
 
         if (entry.isDirectory()) {
