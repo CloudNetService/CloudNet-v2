@@ -23,34 +23,25 @@ public class ScreenProvider {
 
     private ServiceId mainServiceId;
 
-    public void handleEnableScreen(ServiceId serviceId, Wrapper wrapper)
-    {
+    public void handleEnableScreen(ServiceId serviceId, Wrapper wrapper) {
         screens.put(serviceId.getServerId(), new EnabledScreen(serviceId, wrapper));
     }
 
-    public void handleDisableScreen(ServiceId serviceId)
-    {
+    public void handleDisableScreen(ServiceId serviceId) {
         screens.remove(serviceId.getServerId());
     }
 
-    public void disableScreen(String server)
-    {
+    public void disableScreen(String server) {
         MinecraftServer minecraftServer = CloudNet.getInstance().getServer(server);
-        if (minecraftServer != null)
-        {
+        if (minecraftServer != null) {
             minecraftServer.getWrapper().disableScreen(minecraftServer.getServerInfo());
             return;
         }
 
         ProxyServer proxyServer = CloudNet.getInstance().getProxy(server);
-        if (proxyServer != null)
-        {
+        if (proxyServer != null) {
             proxyServer.getWrapper().disableScreen(proxyServer.getProxyInfo());
         }
-    }
-
-    public void setMainServiceId(ServiceId mainServiceId) {
-        this.mainServiceId = mainServiceId;
     }
 
     public Map<String, EnabledScreen> getScreens() {
@@ -59,5 +50,9 @@ public class ScreenProvider {
 
     public ServiceId getMainServiceId() {
         return mainServiceId;
+    }
+
+    public void setMainServiceId(ServiceId mainServiceId) {
+        this.mainServiceId = mainServiceId;
     }
 }

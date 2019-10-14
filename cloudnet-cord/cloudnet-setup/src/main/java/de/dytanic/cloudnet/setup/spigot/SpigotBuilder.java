@@ -28,15 +28,13 @@ public final class SpigotBuilder {
      *
      * @param reader to read the answer
      */
-    public static void start(final ConsoleReader reader) {
+    public static boolean start(final ConsoleReader reader, Path outputPath) {
         System.out.println("Fetching Spigot versions");
         List<String> versions = loadVersions();
         System.out.println("Available Spigot versions:");
-        System.out
-                .println("-----------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------");
         versions.forEach(System.out::println);
-        System.out
-                .println("-----------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------");
         System.out.println("Please select a version to continue the install process");
         String answer = null;
         while (answer == null) {
@@ -49,11 +47,12 @@ public final class SpigotBuilder {
             String finalAnswer = name;
             if (versions.stream().anyMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
                 answer = name;
-                buildSpigot(finalAnswer);
+                return buildSpigot(finalAnswer, outputPath);
             } else if (versions.stream().noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
                 System.out.println("This version does not exist!");
             }
         }
+        return false;
     }
 
     /**
@@ -63,8 +62,7 @@ public final class SpigotBuilder {
         LinkedList<String> array = new LinkedList<>();
         try {
             Document doc = Jsoup.connect(versionsUrl).userAgent(
-                    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11")
-                    .get();
+                "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11").get();
             for (Element file : doc.select("a")) {
                 String rawName = file.attr("href");
                 if (rawName.contains("../")) {
@@ -86,7 +84,7 @@ public final class SpigotBuilder {
      *
      * @param version the version of spigot
      */
-    private static void buildSpigot(final String version) {
+    private static boolean buildSpigot(final String version, Path outputPath) {
         File builder = new File("local/builder/spigot");
         File buildFolder = new File(builder, version);
         try {
@@ -96,21 +94,23 @@ public final class SpigotBuilder {
         }
         File buildTools = new File(buildFolder, "buildtools.jar");
         if (!buildTools.exists()) {
-            runBuildTools(version, buildFolder, buildTools);
+            return runBuildTools(version, buildFolder, buildTools, outputPath);
         } else {
-            if (Objects.requireNonNull(
-                    buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-"))).length > 0) {
+            if (Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-"))).length > 0) {
                 System.out.println("Skipping build");
                 System.out.println("Copying spigot.jar");
                 try {
-                    Files.copy(new FileInputStream(Objects.requireNonNull(
-                            buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
-                            Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(new FileInputStream(Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName()
+                                                                                                                    .startsWith("spigot-")))[0]),
+                               outputPath,
+                               StandardCopyOption.REPLACE_EXISTING);
+                    return true;
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return false;
                 }
             } else {
-                runBuildTools(version, buildFolder, buildTools);
+                return runBuildTools(version, buildFolder, buildTools, outputPath);
             }
         }
 
@@ -123,53 +123,52 @@ public final class SpigotBuilder {
      * @param buildFolder the folder in there are build
      * @param buildTools  the path of the build tools
      */
-    private static void runBuildTools(String version, File buildFolder, File buildTools) {
+    private static boolean runBuildTools(String version, File buildFolder, File buildTools, Path outputPath) {
         try {
             long startTime = System.currentTimeMillis();
             Files.createDirectories(buildFolder.toPath());
             System.out.println("Downloading BuildTools.jar...");
             URLConnection connection = new URL(buildToolsUrl).openConnection();
             connection.setRequestProperty("User-Agent",
-                    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
             connection.connect();
             try (InputStream inputStream = connection.getInputStream()) {
-                Files.copy(inputStream, Paths.get(buildTools.toURI()),
-                        StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(inputStream, Paths.get(buildTools.toURI()), StandardCopyOption.REPLACE_EXISTING);
             }
             System.out.println("Download was successfully completed!");
             System.out.println("Building Spigot " + version);
-            exec = Runtime.getRuntime()
-                    .exec(String.format("java -jar buildtools.jar --rev %s", version), null, buildFolder);
+            exec = Runtime.getRuntime().exec(String.format("java -jar buildtools.jar --rev %s", version), null, buildFolder);
             PaperBuilder.printProcessOutputToConsole(exec);
-            if (Objects.requireNonNull(
-                    buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-"))).length > 0) {
-                Files.copy(new FileInputStream(Objects.requireNonNull(
-                        buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-")))[0]),
-                        Paths.get("local/spigot.jar"), StandardCopyOption.REPLACE_EXISTING);
+            if (Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName().startsWith("spigot-"))).length > 0) {
+                Files.copy(new FileInputStream(Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName()
+                                                                                                                .startsWith("spigot-")))[0]),
+                           outputPath,
+                           StandardCopyOption.REPLACE_EXISTING);
                 long endTime = System.currentTimeMillis();
                 long minutes = ((endTime - startTime) / 1000) / 60;
                 long seconds = ((endTime - startTime) / 1000) % 60;
                 System.out.printf("Total Build Time %dMin %dSec\n", minutes, seconds);
+                return true;
             } else {
                 deleteBuildFolder(buildFolder);
-                buildSpigot(version);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     /**
      * Delete the build folder
      *
      * @param buildFolder foldr path
+     *
      * @throws IOException throws if tree throws
      */
     static void deleteBuildFolder(File buildFolder) throws IOException {
         Files.walkFileTree(buildFolder.toPath(), new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult visitFile(Path file,
-                                             BasicFileAttributes attrs) throws IOException {
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 File toFile = file.toFile();
                 toFile.setExecutable(true, false);
                 toFile.setWritable(true, false);
@@ -178,8 +177,7 @@ public final class SpigotBuilder {
             }
 
             @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc)
-                    throws IOException {
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 
                 File file = dir.toFile();
                 file.setExecutable(true, false);

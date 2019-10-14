@@ -17,6 +17,7 @@ public interface TabCompletable {
      *
      * @param argsLength the amount of arguments currently given to the command
      * @param lastWord   the last word, given to the command
+     *
      * @return a list of tab complete candidates
      */
     List<String> onTab(long argsLength, String lastWord);

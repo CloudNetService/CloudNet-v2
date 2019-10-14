@@ -23,18 +23,15 @@ public class ProxiedSubChannelMessageEvent extends ProxiedCloudEvent {
         this.document = document;
     }
 
-    public String getChannel()
-    {
+    public String getChannel() {
         return channel;
     }
 
-    public Document getDocument()
-    {
+    public Document getDocument() {
         return document;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 }

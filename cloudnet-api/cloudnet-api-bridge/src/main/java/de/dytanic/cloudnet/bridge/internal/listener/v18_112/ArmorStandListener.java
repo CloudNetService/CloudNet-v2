@@ -21,39 +21,40 @@ import java.lang.reflect.InvocationTargetException;
 public final class ArmorStandListener implements Listener {
 
     @EventHandler
-    public void handle(PlayerArmorStandManipulateEvent e)
-    {
-        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
-            @Override
-            public boolean isAccepted(MobSelector.MobImpl value)
-            {
-                try
-                {
-                    return e.getRightClicked().getUniqueId().equals(value.getDisplayMessage().getClass().getMethod("getUniqueId").invoke(value.getDisplayMessage()));
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1)
-                {
-                    return false;
-                }
-            }
-        });
-        if (mob != null)
-        {
+    public void handle(PlayerArmorStandManipulateEvent e) {
+        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(),
+                                                           new Acceptable<MobSelector.MobImpl>() {
+                                                               @Override
+                                                               public boolean isAccepted(MobSelector.MobImpl value) {
+                                                                   try {
+                                                                       return e.getRightClicked()
+                                                                               .getUniqueId()
+                                                                               .equals(value.getDisplayMessage()
+                                                                                            .getClass()
+                                                                                            .getMethod("getUniqueId")
+                                                                                            .invoke(value.getDisplayMessage()));
+                                                                   } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
+                                                                       return false;
+                                                                   }
+                                                               }
+                                                           });
+        if (mob != null) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void handle(ItemDespawnEvent e)
-    {
-        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(), new Acceptable<MobSelector.MobImpl>() {
-            @Override
-            public boolean isAccepted(MobSelector.MobImpl value)
-            {
-                return ((Entity) value.getDisplayMessage()).getPassenger() != null && e.getEntity().getEntityId() == ((Entity) value.getDisplayMessage()).getPassenger().getEntityId();
-            }
-        });
-        if (mob != null)
-        {
+    public void handle(ItemDespawnEvent e) {
+        MobSelector.MobImpl mob = CollectionWrapper.filter(MobSelector.getInstance().getMobs().values(),
+                                                           new Acceptable<MobSelector.MobImpl>() {
+                                                               @Override
+                                                               public boolean isAccepted(MobSelector.MobImpl value) {
+                                                                   return ((Entity) value.getDisplayMessage()).getPassenger() != null && e.getEntity()
+                                                                                                                                          .getEntityId() == ((Entity) value
+                                                                       .getDisplayMessage()).getPassenger().getEntityId();
+                                                               }
+                                                           });
+        if (mob != null) {
             e.setCancelled(true);
         }
     }

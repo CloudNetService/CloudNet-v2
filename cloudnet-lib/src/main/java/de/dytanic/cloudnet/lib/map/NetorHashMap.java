@@ -8,57 +8,47 @@ public class NetorHashMap<Key, VF, VS> implements NetorMap<Key> {
     private ConcurrentHashMap<Key, NetorSet<VF, VS>> values = new ConcurrentHashMap<>();
 
     @Override
-    public void clear()
-    {
+    public void clear() {
         values.clear();
     }
 
     @Override
-    public int size()
-    {
+    public int size() {
         return values.size();
     }
 
-    public void add(Key key, VF valueF, VS valueS)
-    {
-        values.put(key, new NetorSet<>(valueF, valueS));
-    }
-
     @Override
-    public void remove(Key key)
-    {
+    public void remove(Key key) {
         values.remove(key);
     }
 
     @Override
-    public Set<Key> keySet()
-    {
-        return values.keySet();
-    }
-
-    @Override
-    public boolean contains(Key key)
-    {
+    public boolean contains(Key key) {
         return values.containsKey(key) ? true : false;
     }
 
-    public VF getF(Key key)
-    {
+    @Override
+    public Set<Key> keySet() {
+        return values.keySet();
+    }
+
+    public void add(Key key, VF valueF, VS valueS) {
+        values.put(key, new NetorSet<>(valueF, valueS));
+    }
+
+    public VF getF(Key key) {
         return values.get(key).getFirstValue();
     }
 
-    public VS getS(Key key)
-    {
+    public VS getS(Key key) {
         return values.get(key).getSecondValue();
     }
 
-    public void updateF(Key key, VF value)
-    {
+    public void updateF(Key key, VF value) {
         values.get(key).updateFirst(value);
     }
 
-    public void updateS(Key key, VS value)
-    {
+    public void updateS(Key key, VS value) {
         values.get(key).updateSecond(value);
     }
 

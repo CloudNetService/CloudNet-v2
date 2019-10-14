@@ -14,32 +14,33 @@ import org.bukkit.event.EventHandler;
 public class ServerGetExample {
 
     @EventHandler
-    public void handle(ProxiedServerAddEvent e)
-    {
-        if (e.getServerInfo().getServerConfig().getProperties().contains("myUUID") &&
-                e.getServerInfo().getServerConfig().getProperties().getString("myUUID").equals("test"))
-        {
+    public void handle(ProxiedServerAddEvent e) {
+        if (e.getServerInfo().getServerConfig().getProperties().contains("myUUID") && e.getServerInfo()
+                                                                                       .getServerConfig()
+                                                                                       .getProperties()
+                                                                                       .getString("myUUID")
+                                                                                       .equals("test")) {
             ServerInfo serverInfo = e.getServerInfo();
             /* ... */
         }
 
-        if (e.getServerInfo().getServiceId().getServerId().equals("Lobby-1"))
-        {
+        if (e.getServerInfo().getServiceId().getServerId().equals("Lobby-1")) {
             ServerInfo serverInfo = e.getServerInfo();
             /* ... */
         }
     }
 
     @EventHandler
-    public void handle(BukkitServerAddEvent e)
-    {
+    public void handle(BukkitServerAddEvent e) {
         /* - // - */
     }
 
-    public void start()
-    {
-        CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData("Lobby"), new ServerConfig(true, "4820", new Document("myUUID", "test"), System.currentTimeMillis()));
-        CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData("Lobby"), new ServerConfig(true, "4820", new Document("myUUID", "test"), System.currentTimeMillis()), "Lobby-1");
+    public void start() {
+        CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData("Lobby"),
+                                               new ServerConfig(true, "4820", new Document("myUUID", "test"), System.currentTimeMillis()));
+        CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData("Lobby"),
+                                               new ServerConfig(true, "4820", new Document("myUUID", "test"), System.currentTimeMillis()),
+                                               "Lobby-1");
     }
 
 }

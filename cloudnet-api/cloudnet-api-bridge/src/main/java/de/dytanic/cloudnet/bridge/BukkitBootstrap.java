@@ -34,9 +34,10 @@ import java.nio.file.Paths;
 public final class BukkitBootstrap extends JavaPlugin implements Runnable {
 
     @Override
-    public void onLoad()
-    {
-        CloudAPI cloudAPI = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"), Paths.get("CLOUD/config.json"), ConfigTypeLoader.INTERNAL), this);
+    public void onLoad() {
+        CloudAPI cloudAPI = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"),
+                                                               Paths.get("CLOUD/config.json"),
+                                                               ConfigTypeLoader.INTERNAL), this);
         cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 1, PacketInSignSelector.class);
         cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInMobSelector.class);
 
@@ -44,20 +45,40 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
     }
 
     @Override
-    public void onEnable()
-    {
+    public void onDisable() {
+
+        getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+
+        if (CloudAPI.getInstance() != null) {
+            CloudServer.getInstance().updateDisable();
+            CloudAPI.getInstance().shutdown();
+        }
+
+        CloudAPI.getInstance().getNetworkHandlerProvider().clear();
+
+        if (SignSelector.getInstance() != null && SignSelector.getInstance().getWorker() != null) {
+            SignSelector.getInstance().getWorker().stop();
+        }
+
+        if (MobSelector.getInstance() != null) {
+            MobSelector.getInstance().shutdown();
+        }
+
+        Bukkit.getScheduler().cancelTasks(this);
+    }
+
+    @Override
+    public void onEnable() {
         new CloudServer(this, CloudAPI.getInstance());
 
         CloudAPI.getInstance().bootstrap();
         checkRegistryAccess();
 
-        try
-        {
+        try {
             Field field = Class.forName("org.spigotmc.AsyncCatcher").getDeclaredField("enabled");
             field.setAccessible(true);
             field.set(null, false);
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
         }
 
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
@@ -70,65 +91,27 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         loadPlayers();
     }
 
-    @Override
-    public void onDisable()
-    {
-
-        getServer().getMessenger().unregisterOutgoingPluginChannel(this);
-
-        if (CloudAPI.getInstance() != null)
-        {
-            CloudServer.getInstance().updateDisable();
-            CloudAPI.getInstance().shutdown();
-        }
-
-        CloudAPI.getInstance().getNetworkHandlerProvider().clear();
-
-        if (SignSelector.getInstance() != null && SignSelector.getInstance().getWorker() != null)
-            SignSelector.getInstance().getWorker().stop();
-
-        if (MobSelector.getInstance() != null)
-            MobSelector.getInstance().shutdown();
-
-        Bukkit.getScheduler().cancelTasks(this);
-    }
-
-    @Deprecated
-    @Override
-    public void run()
-    {
-        getServer().getPluginManager().disablePlugin(this);
-        Bukkit.shutdown();
-    }
-
-    private void checkRegistryAccess()
-    {
-        try
-        {
+    private void checkRegistryAccess() {
+        try {
             Class.forName("net.md_5.bungee.api.chat.BaseComponent");
             Class.forName("de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry").getMethod("fire").invoke(null);
-        } catch (Exception ignored)
-        {
+        } catch (Exception ignored) {
         }
     }
 
-    private void loadPlayers()
-    {
-        for (Player all : getServer().getOnlinePlayers())
-            CloudServer.getInstance().getPlayerAndCache(all.getUniqueId());
-    }
-
-    private void enableTasks()
-    {
+    private void enableTasks() {
         Bukkit.getScheduler().runTask(this, new Runnable() {
             @Override
-            public void run()
-            {
-                if (CloudServer.getInstance().getGroupData() != null)
-                {
-                    if (CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getMode().equals(ServerGroupMode.LOBBY) ||
-                            CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getMode().equals(ServerGroupMode.STATIC_LOBBY))
-                    {
+            public void run() {
+                if (CloudServer.getInstance().getGroupData() != null) {
+                    if (CloudAPI.getInstance()
+                                .getServerGroupData(CloudAPI.getInstance().getGroup())
+                                .getMode()
+                                .equals(ServerGroupMode.LOBBY) || CloudAPI.getInstance()
+                                                                          .getServerGroupData(CloudAPI.getInstance()
+                                                                                                      .getGroup())
+                                                                          .getMode()
+                                                                          .equals(ServerGroupMode.STATIC_LOBBY)) {
                         CommandCloudServer server = new CommandCloudServer();
 
                         getCommand("cloudserver").setExecutor(server);
@@ -139,52 +122,74 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
                     Bukkit.getPluginManager().callEvent(new BukkitCloudServerInitEvent(CloudServer.getInstance()));
                     CloudServer.getInstance().update();
 
-                    if (CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getAdvancedServerConfig().isDisableAutoSavingForWorlds())
-                        for (World world : Bukkit.getWorlds())
+                    if (CloudAPI.getInstance()
+                                .getServerGroupData(CloudAPI.getInstance().getGroup())
+                                .getAdvancedServerConfig()
+                                .isDisableAutoSavingForWorlds()) {
+                        for (World world : Bukkit.getWorlds()) {
                             world.setAutoSave(false);
+                        }
+                    }
                 }
 
-                if (CloudServer.getInstance().getGroupData() != null)
-                {
+                if (CloudServer.getInstance().getGroupData() != null) {
                     getServer().getScheduler().runTaskTimer(BukkitBootstrap.this, new Runnable() {
                         @Override
-                        public void run()
-                        {
-                            try
-                            {
-                                ServerListPingEvent serverListPingEvent = new ServerListPingEvent(
-                                        new InetSocketAddress("127.0.0.1", 53345).getAddress(),
-                                        CloudServer.getInstance().getMotd(), Bukkit.getOnlinePlayers().size(), CloudServer.getInstance().getMaxPlayers()
-                                );
+                        public void run() {
+                            try {
+                                ServerListPingEvent serverListPingEvent = new ServerListPingEvent(new InetSocketAddress("127.0.0.1",
+                                                                                                                        53345).getAddress(),
+                                                                                                  CloudServer.getInstance().getMotd(),
+                                                                                                  Bukkit.getOnlinePlayers().size(),
+                                                                                                  CloudServer.getInstance()
+                                                                                                             .getMaxPlayers());
                                 Bukkit.getPluginManager().callEvent(serverListPingEvent);
-                                if (!serverListPingEvent.getMotd().equalsIgnoreCase(CloudServer.getInstance().getMotd()) ||
-                                        serverListPingEvent.getMaxPlayers() != CloudServer.getInstance().getMaxPlayers()) {
+                                if (!serverListPingEvent.getMotd().equalsIgnoreCase(CloudServer.getInstance()
+                                                                                               .getMotd()) || serverListPingEvent.getMaxPlayers() != CloudServer
+                                    .getInstance()
+                                    .getMaxPlayers()) {
                                     CloudServer.getInstance().setMotd(serverListPingEvent.getMotd());
                                     CloudServer.getInstance().setMaxPlayers(serverListPingEvent.getMaxPlayers());
-                                    if (serverListPingEvent.getMotd().toLowerCase().contains("running") || serverListPingEvent.getMotd().toLowerCase().contains("ingame")) {
+                                    if (serverListPingEvent.getMotd().toLowerCase().contains("running") || serverListPingEvent.getMotd()
+                                                                                                                              .toLowerCase()
+                                                                                                                              .contains(
+                                                                                                                                  "ingame")) {
                                         CloudServer.getInstance().changeToIngame();
                                     } else {
                                         CloudServer.getInstance().update();
                                     }
                                 }
-                            } catch (Exception ex)
-                            {
+                            } catch (Exception ex) {
                             }
                         }
                     }, 0, 5);
                 }
 
-                if (CloudAPI.getInstance().getPermissionPool() != null &&
-                        (getServer().getPluginManager().isPluginEnabled("VaultAPI") || getServer().getPluginManager().isPluginEnabled("Vault")))
-                    try
-                    {
+                if (CloudAPI.getInstance().getPermissionPool() != null && (getServer().getPluginManager()
+                                                                                      .isPluginEnabled("VaultAPI") || getServer().getPluginManager()
+                                                                                                                                 .isPluginEnabled(
+                                                                                                                                     "Vault"))) {
+                    try {
                         Class.forName("de.dytanic.cloudnet.bridge.vault.VaultInvoker").getMethod("invoke").invoke(null);
-                    } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e)
-                    {
+                    } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
+                }
             }
         });
+    }
+
+    private void loadPlayers() {
+        for (Player all : getServer().getOnlinePlayers()) {
+            CloudServer.getInstance().getPlayerAndCache(all.getUniqueId());
+        }
+    }
+
+    @Deprecated
+    @Override
+    public void run() {
+        getServer().getPluginManager().disablePlugin(this);
+        Bukkit.shutdown();
     }
 
 }

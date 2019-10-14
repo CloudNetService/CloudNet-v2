@@ -20,20 +20,17 @@ public class SetupWrapper {
 
     private String name;
 
-    public SetupWrapper(CommandSender commandSender, String name)
-    {
+    public SetupWrapper(CommandSender commandSender, String name) {
         this.name = name;
 
         Setup setup = new Setup().setupCancel(new ISetupCancel() {
             @Override
-            public void cancel()
-            {
+            public void cancel() {
                 System.out.println("Setup was cancelled");
             }
         }).setupComplete(new ISetupComplete() {
             @Override
-            public void complete(Document data)
-            {
+            public void complete(Document data) {
                 String host = data.getString("address");
                 String user = data.getString("user");
 
@@ -44,20 +41,26 @@ public class SetupWrapper {
         });
 
         Consumer<SetupRequest> request = setup::request;
-        request.accept(new SetupRequest("address", "What's the IP address of the wrapper?", "Specified IP address is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
-            @Override
-            public Boolean doCatch(String key)
-            {
-                return key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1");
-            }
-        }));
-        request.accept(new SetupRequest("user", "What's the user of the wrapper?", "Specified name is invalid!", SetupResponseType.STRING, new Catcher<Boolean, String>() {
-            @Override
-            public Boolean doCatch(String key)
-            {
-                return CloudNet.getInstance().getUser(key) != null;
-            }
-        }));
+        request.accept(new SetupRequest("address",
+                                        "What's the IP address of the wrapper?",
+                                        "Specified IP address is invalid!",
+                                        SetupResponseType.STRING,
+                                        new Catcher<Boolean, String>() {
+                                            @Override
+                                            public Boolean doCatch(String key) {
+                                                return key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1");
+                                            }
+                                        }));
+        request.accept(new SetupRequest("user",
+                                        "What's the user of the wrapper?",
+                                        "Specified name is invalid!",
+                                        SetupResponseType.STRING,
+                                        new Catcher<Boolean, String>() {
+                                            @Override
+                                            public Boolean doCatch(String key) {
+                                                return CloudNet.getInstance().getUser(key) != null;
+                                            }
+                                        }));
         setup.start(CloudNet.getLogger().getReader());
     }
 

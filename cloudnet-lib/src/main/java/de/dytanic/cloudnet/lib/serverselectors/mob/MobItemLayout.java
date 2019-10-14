@@ -47,8 +47,7 @@ public class MobItemLayout implements Cloneable {
     }
 
     @Override
-    public MobItemLayout clone()
-    {
+    public MobItemLayout clone() {
         return new MobItemLayout(itemId, itemName, subId, display, lore);
     }
 }

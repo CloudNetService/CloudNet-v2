@@ -37,11 +37,10 @@ public class CommandLocalWrapper extends Command {
                 return;
             }
 
-            sender.sendMessage(
-                    "Local wrapper " + wrapper.getName() + ":",
-                    "Info: CPU Usage: " + NetworkUtils.DECIMAL_FORMAT.format(wrapper.getCpuUsage()) + "/100% | Memory: " + wrapper.getUsedMemory() + NetworkUtils.SLASH_STRING + wrapper.getMaxMemory() + "MB",
-                    " "
-            );
+            sender.sendMessage("Local wrapper " + wrapper.getName() + ':',
+                               "Info: CPU Usage: " + NetworkUtils.DECIMAL_FORMAT.format(wrapper.getCpuUsage()) + "/100% | Memory: " + wrapper
+                                   .getUsedMemory() + NetworkUtils.SLASH_STRING + wrapper.getMaxMemory() + "MB",
+                               " ");
 
             Configuration configuration = CloudNet.getInstance().getLocalCloudWrapper().loadWrapperConfiguration();
             try (StringWriter writer = new StringWriter()) {
@@ -74,12 +73,7 @@ public class CommandLocalWrapper extends Command {
                 e.printStackTrace();
             }
         } else {
-            sender.sendMessage(
-                    "lw info",
-                    "lw restart",
-                    "lw cmd",
-                    "lw console"
-            );
+            sender.sendMessage("lw info", "lw restart", "lw cmd", "lw console");
         }
     }
 }

@@ -1,11 +1,8 @@
 package de.dytanic.cloudnet.lib.network;
 
-import lombok.ToString;
-
 /**
  * Created by Tareko on 29.06.2017.
  */
-@ToString
 public class WrapperInfo {
 
     private String serverId;
@@ -16,8 +13,14 @@ public class WrapperInfo {
     private int startPort;
     private int process_queue_size;
     private int memory;
-
-    public WrapperInfo(String serverId, String hostName, String version, boolean ready, int availableProcessors, int startPort, int process_queue_size, int memory) {
+    public WrapperInfo(String serverId,
+                       String hostName,
+                       String version,
+                       boolean ready,
+                       int availableProcessors,
+                       int startPort,
+                       int process_queue_size,
+                       int memory) {
         this.serverId = serverId;
         this.hostName = hostName;
         this.version = version;
@@ -26,6 +29,11 @@ public class WrapperInfo {
         this.startPort = startPort;
         this.process_queue_size = process_queue_size;
         this.memory = memory;
+    }
+
+    @Override
+    public String toString() {
+        return "WrapperInfo{" + "serverId='" + serverId + '\'' + ", hostName='" + hostName + '\'' + ", version='" + version + '\'' + ", ready=" + ready + ", availableProcessors=" + availableProcessors + ", startPort=" + startPort + ", process_queue_size=" + process_queue_size + ", memory=" + memory + '}';
     }
 
     public String getServerId() {
@@ -54,5 +62,9 @@ public class WrapperInfo {
 
     public String getVersion() {
         return version;
+    }
+
+    public boolean isReady() {
+        return ready;
     }
 }

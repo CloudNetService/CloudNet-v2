@@ -9,9 +9,12 @@ public class BukkitOfflinePlayerUpdateEvent extends BukkitCloudEvent {
 
     private OfflinePlayer offlinePlayer;
 
-    public BukkitOfflinePlayerUpdateEvent(OfflinePlayer offlinePlayer)
-    {
+    public BukkitOfflinePlayerUpdateEvent(OfflinePlayer offlinePlayer) {
         this.offlinePlayer = offlinePlayer;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlerList;
     }
 
     public OfflinePlayer getOfflinePlayer() {
@@ -19,13 +22,7 @@ public class BukkitOfflinePlayerUpdateEvent extends BukkitCloudEvent {
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
-        return handlerList;
-    }
-
-    public static HandlerList getHandlerList()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 

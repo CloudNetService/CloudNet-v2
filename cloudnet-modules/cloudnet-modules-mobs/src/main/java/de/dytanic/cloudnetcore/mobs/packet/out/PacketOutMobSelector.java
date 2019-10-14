@@ -18,8 +18,7 @@ import java.util.UUID;
  */
 public final class PacketOutMobSelector extends Packet {
 
-    public PacketOutMobSelector(MobConfig mobConfig, Map<UUID, ServerMob> mobs)
-    {
+    public PacketOutMobSelector(MobConfig mobConfig, Map<UUID, ServerMob> mobs) {
         super(PacketRC.SERVER_SELECTORS + 2, new Document("mobConfig", mobConfig).append("mobs", mobs));
     }
 }

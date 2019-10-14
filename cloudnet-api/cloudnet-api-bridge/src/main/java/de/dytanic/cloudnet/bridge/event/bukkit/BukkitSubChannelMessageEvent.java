@@ -20,35 +20,30 @@ public class BukkitSubChannelMessageEvent extends BukkitCloudEvent {
 
     private Document document;
 
-    public static HandlerList getHandlerList()
-    {
-        return handlerList;
-    }
-
     public BukkitSubChannelMessageEvent(String channel, String message, Document document) {
         this.channel = channel;
         this.message = message;
         this.document = document;
     }
 
-    public String getMessage()
-    {
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
+
+    public String getMessage() {
         return message;
     }
 
-    public Document getDocument()
-    {
+    public Document getDocument() {
         return document;
     }
 
-    public String getChannel()
-    {
+    public String getChannel() {
         return channel;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlerList;
     }
 }

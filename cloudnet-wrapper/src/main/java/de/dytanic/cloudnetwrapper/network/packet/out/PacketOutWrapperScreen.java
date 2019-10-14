@@ -15,8 +15,8 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
  */
 public class PacketOutWrapperScreen extends Packet {
 
-    public PacketOutWrapperScreen(String line)
-    {
-        super(PacketRC.CN_WRAPPER + 12, new Document("screen", new WrapperScreen(CloudNetWrapper.getInstance().getWrapperConfig().getWrapperId(), line)));
+    public PacketOutWrapperScreen(String line) {
+        super(PacketRC.CN_WRAPPER + 12,
+              new Document("screen", new WrapperScreen(CloudNetWrapper.getInstance().getWrapperConfig().getWrapperId(), line)));
     }
 }

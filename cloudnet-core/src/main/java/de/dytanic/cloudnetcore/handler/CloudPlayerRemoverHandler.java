@@ -17,26 +17,21 @@ import java.util.UUID;
 public class CloudPlayerRemoverHandler implements ICloudHandler {
 
     @Override
-    public void onHandle(CloudNet cloudNet)
-    {
+    public void onHandle(CloudNet cloudNet) {
 
         Collection<UUID> collection = new ArrayList<>();
 
-        for (ProxyServer proxyServer : CloudNet.getInstance().getProxys().values())
-        {
+        for (ProxyServer proxyServer : CloudNet.getInstance().getProxys().values()) {
             CollectionWrapper.iterator(proxyServer.getProxyInfo().getPlayers(), new Runnabled<MultiValue<UUID, String>>() {
                 @Override
-                public void run(MultiValue<UUID, String> obj)
-                {
+                public void run(MultiValue<UUID, String> obj) {
                     collection.add(obj.getFirst());
                 }
             });
         }
 
-        for (CloudPlayer entries : CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values())
-        {
-            if (!collection.contains(entries.getUniqueId()))
-            {
+        for (CloudPlayer entries : CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values()) {
+            if (!collection.contains(entries.getUniqueId())) {
                 CloudNet.getInstance().getNetworkManager().getOnlinePlayers().remove(entries.getUniqueId());
             }
         }
@@ -44,8 +39,7 @@ public class CloudPlayerRemoverHandler implements ICloudHandler {
     }
 
     @Override
-    public int getTicks()
-    {
+    public int getTicks() {
         return 10;
     }
 }

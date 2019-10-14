@@ -17,8 +17,7 @@ public class ChannelInitEvent extends Event {
 
     private INetworkComponent iNetworkComponent;
 
-    public ChannelInitEvent(Channel channel, INetworkComponent iNetworkComponent)
-    {
+    public ChannelInitEvent(Channel channel, INetworkComponent iNetworkComponent) {
         this.channel = channel;
         this.iNetworkComponent = iNetworkComponent;
     }

@@ -42,8 +42,16 @@ public class CloudServerMeta {
 
     private Template template;
 
-    public CloudServerMeta(ServiceId serviceId, int memory, boolean priorityStop, String[] processParameters, Collection<ServerInstallablePlugin> plugins, ServerConfig serverConfig, int port, String templateName, Properties properties, ServerGroupType serverGroupType)
-    {
+    public CloudServerMeta(ServiceId serviceId,
+                           int memory,
+                           boolean priorityStop,
+                           String[] processParameters,
+                           Collection<ServerInstallablePlugin> plugins,
+                           ServerConfig serverConfig,
+                           int port,
+                           String templateName,
+                           Properties properties,
+                           ServerGroupType serverGroupType) {
         this.serviceId = serviceId;
         this.memory = memory;
         this.priorityStop = priorityStop;

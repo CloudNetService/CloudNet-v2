@@ -22,11 +22,9 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
  */
 public class MobModule extends CoreModule implements IEventListener<UpdateAllEvent> {
 
-    private ConfigMobs configMobs;
-
-    private MobDatabase mobDatabase;
-
     private static MobModule instance;
+    private ConfigMobs configMobs;
+    private MobDatabase mobDatabase;
 
     public static MobModule getInstance() {
         return instance;
@@ -41,23 +39,19 @@ public class MobModule extends CoreModule implements IEventListener<UpdateAllEve
     }
 
     @Override
-    public void onLoad()
-    {
+    public void onLoad() {
         instance = this;
     }
 
     @Override
-    public void onBootstrap()
-    {
+    public void onBootstrap() {
         configMobs = new ConfigMobs();
         mobDatabase = new MobDatabase(getCloud().getDatabaseManager().getDatabase("cloud_internal_cfg"));
 
-        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 3).size() == 0)
-        {
+        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 3).size() == 0) {
             getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 3, PacketInAddMob.class);
         }
-        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 4).size() == 0)
-        {
+        if (getCloud().getPacketManager().buildHandlers(PacketRC.SERVER_SELECTORS + 4).size() == 0) {
             getCloud().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 4, PacketInRemoveMob.class);
         }
 
@@ -66,23 +60,23 @@ public class MobModule extends CoreModule implements IEventListener<UpdateAllEve
     }
 
     @Override
-    public void onCall(UpdateAllEvent event)
-    {
-        if (event.isOnlineCloudNetworkUpdate())
+    public void onCall(UpdateAllEvent event) {
+        if (event.isOnlineCloudNetworkUpdate()) {
             getCloud().getNetworkManager().sendToLobbys(new PacketOutMobSelector(configMobs.load(), mobDatabase.loadAll()));
+        }
     }
 
     private class ListenerImpl implements IEventListener<ChannelInitEvent> {
 
         @Override
-        public void onCall(ChannelInitEvent event)
-        {
-            if (event.getINetworkComponent() instanceof MinecraftServer)
-            {
+        public void onCall(ChannelInitEvent event) {
+            if (event.getINetworkComponent() instanceof MinecraftServer) {
                 MinecraftServer minecraftServer = (MinecraftServer) event.getINetworkComponent();
 
-                if (minecraftServer.getGroupMode().equals(ServerGroupMode.LOBBY) || minecraftServer.getGroupMode().equals(ServerGroupMode.STATIC_LOBBY))
+                if (minecraftServer.getGroupMode().equals(ServerGroupMode.LOBBY) || minecraftServer.getGroupMode()
+                                                                                                   .equals(ServerGroupMode.STATIC_LOBBY)) {
                     minecraftServer.sendPacket(new PacketOutMobSelector(configMobs.load(), mobDatabase.loadAll()));
+                }
             }
         }
     }

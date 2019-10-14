@@ -15,33 +15,30 @@ import de.dytanic.cloudnetcore.network.components.Wrapper;
 public final class PacketInUpdateWrapperInfo extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (!(packetSender instanceof Wrapper)) return;
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (!(packetSender instanceof Wrapper)) {
+            return;
+        }
 
-        WrapperInfo wrapperInfo = data.getObject("wrapperInfo", new TypeToken<WrapperInfo>() {
-        }.getType());
+        WrapperInfo wrapperInfo = data.getObject("wrapperInfo", new TypeToken<WrapperInfo>() {}.getType());
 
-        if (((Wrapper) packetSender).getWrapperInfo() != null)
-        {
+        if (((Wrapper) packetSender).getWrapperInfo() != null) {
             ((Wrapper) packetSender).setWrapperInfo(wrapperInfo);
             ((Wrapper) packetSender).setMaxMemory(wrapperInfo.getMemory());
-            System.out.println("Wrapper [" + ((Wrapper) packetSender).getServerId() + "] is ready with C" + wrapperInfo.getAvailableProcessors() + " and " + wrapperInfo.getMemory() + "MB");
-        } else
-        {
+            System.out.println("Wrapper [" + ((Wrapper) packetSender).getServerId() + "] is ready with C" + wrapperInfo.getAvailableProcessors() + " and " + wrapperInfo
+                .getMemory() + "MB");
+        } else {
             ((Wrapper) packetSender).setWrapperInfo(wrapperInfo);
             ((Wrapper) packetSender).setMaxMemory(wrapperInfo.getMemory());
             ((Wrapper) packetSender).updateWrapper();
-            System.out.println("Wrapper [" + ((Wrapper) packetSender).getServerId() + "] is ready with C" + wrapperInfo.getAvailableProcessors() + " and " + wrapperInfo.getMemory() + "MB");
+            System.out.println("Wrapper [" + ((Wrapper) packetSender).getServerId() + "] is ready with C" + wrapperInfo.getAvailableProcessors() + " and " + wrapperInfo
+                .getMemory() + "MB");
 
-            if (wrapperInfo.getVersion() != null && !wrapperInfo.getVersion().equals(NetworkUtils.class.getPackage().getImplementationVersion())) {
-                System.err.println(
-                        "Wrapper ["
-                                + ((Wrapper) packetSender).getServerId()
-                                + "] does not use the same version as this CloudNet Master [Master:" +
-                                NetworkUtils.class.getPackage().getImplementationVersion() + "/Wrapper:" + wrapperInfo.getVersion()
-                                + "], please update"
-                );
+            if (wrapperInfo.getVersion() != null && !wrapperInfo.getVersion().equals(NetworkUtils.class.getPackage()
+                                                                                                       .getImplementationVersion())) {
+                System.err.println("Wrapper [" + ((Wrapper) packetSender).getServerId() + "] does not use the same version as this CloudNet Master [Master:" + NetworkUtils.class
+                    .getPackage()
+                    .getImplementationVersion() + "/Wrapper:" + wrapperInfo.getVersion() + "], please update");
             }
         }
     }

@@ -13,13 +13,11 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 
 public class PacketOutCreateTemplate extends Packet {
 
-    public PacketOutCreateTemplate(ServerGroup serverGroup)
-    {
+    public PacketOutCreateTemplate(ServerGroup serverGroup) {
         super(PacketRC.CN_CORE + 5, new Document("serverGroup", serverGroup).append("type", DefaultType.BUKKIT.name()));
     }
 
-    public PacketOutCreateTemplate(ProxyGroup serverGroup)
-    {
+    public PacketOutCreateTemplate(ProxyGroup serverGroup) {
         super(PacketRC.CN_CORE + 5, new Document("proxyGroup", serverGroup).append("type", DefaultType.BUNGEE_CORD.name()));
     }
 }

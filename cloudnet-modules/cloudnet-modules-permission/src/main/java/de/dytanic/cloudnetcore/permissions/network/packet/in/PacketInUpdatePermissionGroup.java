@@ -18,10 +18,8 @@ import de.dytanic.cloudnetcore.permissions.PermissionModule;
 public class PacketInUpdatePermissionGroup extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        PermissionGroup permissionGroup = data.getObject("permissionGroup", new TypeToken<PermissionGroup>() {
-        }.getType());
+    public void handleInput(Document data, PacketSender packetSender) {
+        PermissionGroup permissionGroup = data.getObject("permissionGroup", new TypeToken<PermissionGroup>() {}.getType());
         PermissionModule.getInstance().getConfigPermission().updatePermissionGroup(permissionGroup);
         CloudNet.getInstance().getNetworkManager().reload();
         CloudNet.getInstance().getNetworkManager().updateAll0();

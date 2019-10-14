@@ -33,31 +33,26 @@ public class TemplateLoader {
         return dest;
     }
 
-    public TemplateLoader load()
-    {
-        try
-        {
+    public TemplateLoader load() {
+        try {
             URLConnection urlConnection = new URL(url).openConnection();
-            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            urlConnection.setRequestProperty("User-Agent",
+                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
             urlConnection.setUseCaches(false);
             urlConnection.connect();
             Files.copy(urlConnection.getInputStream(), Paths.get(dest));
             ((HttpURLConnection) urlConnection).disconnect();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;
     }
 
-    public TemplateLoader unZip(String dest)
-    {
-        try
-        {
+    public TemplateLoader unZip(String dest) {
+        try {
             ZipConverter.extract(Paths.get(this.dest), Paths.get(dest));
             new File(this.dest).delete();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return this;

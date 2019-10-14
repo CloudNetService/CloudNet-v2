@@ -14,8 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketOutUpdatePermissionGroup extends Packet {
 
-    public PacketOutUpdatePermissionGroup(PermissionGroup permissionGroup)
-    {
+    public PacketOutUpdatePermissionGroup(PermissionGroup permissionGroup) {
         super(PacketRC.CN_CORE + 1, new Document("permissionGroup", permissionGroup));
     }
 }

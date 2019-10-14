@@ -18,8 +18,7 @@ public class ProxyInfoUpdateEvent extends AsyncEvent<ProxyInfoUpdateEvent> {
 
     private ProxyServer proxyServer;
 
-    public ProxyInfoUpdateEvent(ProxyServer proxyServer, ProxyInfo proxyInfo)
-    {
+    public ProxyInfoUpdateEvent(ProxyServer proxyServer, ProxyInfo proxyInfo) {
         super(new AsyncPosterAdapter<>());
         this.proxyServer = proxyServer;
         this.proxyInfo = proxyInfo;

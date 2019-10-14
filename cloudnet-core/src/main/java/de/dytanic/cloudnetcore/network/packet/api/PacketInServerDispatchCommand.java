@@ -20,30 +20,23 @@ import de.dytanic.cloudnetcore.network.components.ProxyServer;
 public class PacketInServerDispatchCommand extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        DefaultType defaultType = data.getObject("defaultType", new TypeToken<DefaultType>() {
-        }.getType());
+    public void handleInput(Document data, PacketSender packetSender) {
+        DefaultType defaultType = data.getObject("defaultType", new TypeToken<DefaultType>() {}.getType());
         String serverId = data.getString("serverId");
         String commandLine = data.getString("commandLine");
 
-        if (defaultType == DefaultType.BUKKIT)
-        {
+        if (defaultType == DefaultType.BUKKIT) {
             MinecraftServer minecraftServer = CloudNet.getInstance().getServer(serverId);
-            if (minecraftServer != null)
-            {
+            if (minecraftServer != null) {
                 minecraftServer.getWrapper().writeServerCommand(commandLine, minecraftServer.getServerInfo());
             }
             CloudServer cloudServer = CloudNet.getInstance().getCloudGameServer(serverId);
-            if (cloudServer != null)
-            {
+            if (cloudServer != null) {
                 cloudServer.getWrapper().writeServerCommand(commandLine, minecraftServer.getServerInfo());
             }
-        } else
-        {
+        } else {
             ProxyServer proxyServer = CloudNet.getInstance().getProxy(serverId);
-            if (proxyServer != null)
-            {
+            if (proxyServer != null) {
                 proxyServer.getWrapper().writeProxyCommand(commandLine, proxyServer.getProxyInfo());
             }
         }

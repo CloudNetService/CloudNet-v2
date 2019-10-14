@@ -18,12 +18,10 @@ import java.util.UUID;
 public class PacketInLoginSuccess extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
+    public void handleInput(Document data, PacketSender packetSender) {
         UUID unique = data.getObject("uniqueId", UUID.class);
         CloudPlayer cloudPlayer = CloudNet.getInstance().getNetworkManager().getWaitingPlayers().get(unique);
-        if (cloudPlayer != null)
-        {
+        if (cloudPlayer != null) {
             CloudNet.getInstance().getNetworkManager().getWaitingPlayers().remove(unique);
             CloudNet.getInstance().getNetworkManager().getOnlinePlayers().put(cloudPlayer.getUniqueId(), cloudPlayer);
         }

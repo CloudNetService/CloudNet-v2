@@ -16,23 +16,18 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 public class PacketInExecuteServerCommand extends PacketInHandler {
 
     @Override
-    public void handleInput(Document data, PacketSender packetSender)
-    {
-        if (data.getObject("type", DefaultType.class).equals(DefaultType.BUKKIT))
-        {
-            ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {
-            }.getType());
-            if (CloudNetWrapper.getInstance().getServers().containsKey(serverInfo.getServiceId().getServerId()))
-            {
-                CloudNetWrapper.getInstance().getServers().get(serverInfo.getServiceId().getServerId()).executeCommand(data.getString("commandLine"));
+    public void handleInput(Document data, PacketSender packetSender) {
+        if (data.getObject("type", DefaultType.class).equals(DefaultType.BUKKIT)) {
+            ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>() {}.getType());
+            if (CloudNetWrapper.getInstance().getServers().containsKey(serverInfo.getServiceId().getServerId())) {
+                CloudNetWrapper.getInstance().getServers().get(serverInfo.getServiceId().getServerId()).executeCommand(data.getString(
+                    "commandLine"));
             }
-        } else
-        {
-            ProxyInfo serverInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>() {
-            }.getType());
-            if (CloudNetWrapper.getInstance().getProxys().containsKey(serverInfo.getServiceId().getServerId()))
-            {
-                CloudNetWrapper.getInstance().getProxys().get(serverInfo.getServiceId().getServerId()).executeCommand(data.getString("commandLine"));
+        } else {
+            ProxyInfo serverInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>() {}.getType());
+            if (CloudNetWrapper.getInstance().getProxys().containsKey(serverInfo.getServiceId().getServerId())) {
+                CloudNetWrapper.getInstance().getProxys().get(serverInfo.getServiceId().getServerId()).executeCommand(data.getString(
+                    "commandLine"));
             }
         }
     }
