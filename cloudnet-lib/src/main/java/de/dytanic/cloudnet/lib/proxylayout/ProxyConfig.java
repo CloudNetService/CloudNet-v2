@@ -159,6 +159,10 @@ public class ProxyConfig {
         this.enabled = enabled;
     }
 
+    /**
+     * @deprecated this option is not used anymore and will be removed in a future release
+     */
+    @Deprecated
     public boolean isFastConnect() {
         return fastConnect;
     }
