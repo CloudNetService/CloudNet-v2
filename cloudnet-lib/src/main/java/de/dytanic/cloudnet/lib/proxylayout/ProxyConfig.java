@@ -21,8 +21,6 @@ public class ProxyConfig {
 
     private int maxPlayers;
 
-    private boolean fastConnect;
-
     private Boolean customPayloadFixer;
 
     private AutoSlot autoSlot;
@@ -41,7 +39,6 @@ public class ProxyConfig {
                        Motd maintenanceMotdLayout,
                        String maintenaceProtocol,
                        int maxPlayers,
-                       boolean fastConnect,
                        Boolean customPayloadFixer,
                        AutoSlot autoSlot,
                        TabList tabList,
@@ -54,7 +51,6 @@ public class ProxyConfig {
         this.maintenanceMotdLayout = maintenanceMotdLayout;
         this.maintenaceProtocol = maintenaceProtocol;
         this.maxPlayers = maxPlayers;
-        this.fastConnect = fastConnect;
         this.customPayloadFixer = customPayloadFixer;
         this.autoSlot = autoSlot;
         this.tabList = tabList;
@@ -159,15 +155,4 @@ public class ProxyConfig {
         this.enabled = enabled;
     }
 
-    /**
-     * @deprecated this option is not used anymore and will be removed in a future release
-     */
-    @Deprecated
-    public boolean isFastConnect() {
-        return fastConnect;
-    }
-
-    public void setFastConnect(boolean fastConnect) {
-        this.fastConnect = fastConnect;
-    }
 }
