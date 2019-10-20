@@ -128,7 +128,7 @@ public class VaultPermissionImpl extends Permission {
     @Override
     public String[] getPlayerGroups(String world, String player) {
         PermissionEntity permissionEntity = getPlayer(player).getPermissionEntity();
-        return (String[]) permissionEntity.getGroups().stream().map(GroupEntityData::getGroup).toArray();
+        return permissionEntity.getGroups().stream().map(GroupEntityData::getGroup).toArray(String[]::new);
     }
 
     @Override
