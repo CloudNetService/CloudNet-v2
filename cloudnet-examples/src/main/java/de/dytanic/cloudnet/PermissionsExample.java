@@ -31,7 +31,7 @@ public class PermissionsExample {
         CloudAPI.getInstance().updatePermissionGroup(permissionGroup); //Updates the permission group
     }
 
-    //Easyer to use
+    //Easier to use
     public void handlePermissions() {
         PermissionProvider.getGroupJoinPower("Admins"); //returns the joinpower of group "Admins"
         PermissionProvider.setJoinPower("Admins", 100); //set the joinpower of group "Admins" to 100
