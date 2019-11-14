@@ -40,6 +40,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 25.08.2017.
@@ -262,7 +263,7 @@ public final class MobSelector {
         mobs.clear();
     }
 
-    public Location toLocation(MobPosition position) {
+    public static Location toLocation(MobPosition position) {
         return new Location(Bukkit.getWorld(position.getWorld()),
                             position.getX(),
                             position.getY(),
@@ -271,7 +272,7 @@ public final class MobSelector {
                             position.getPitch());
     }
 
-    public MobPosition toPosition(String group, Location location) {
+    public static MobPosition toPosition(String group, Location location) {
         return new MobPosition(group,
                                location.getWorld().getName(),
                                location.getX(),
@@ -340,12 +341,7 @@ public final class MobSelector {
     }
 
     public Collection<Inventory> inventories() {
-        return CollectionWrapper.getCollection(this.mobs, new Catcher<Inventory, MobImpl>() {
-            @Override
-            public Inventory doCatch(MobImpl key) {
-                return key.getInventory();
-            }
-        });
+        this.mobs.values().stream().map(MobImpl::getInventory).collect(Collectors.toList());
     }
 
     public MobImpl find(Inventory inventory) {
@@ -567,13 +563,13 @@ public final class MobSelector {
                     }, new Catcher<MobImpl, ServerMob>() {
                         @Override
                         public MobImpl doCatch(ServerMob key) {
-                            MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
-                            Entity entity = MobSelector.getInstance()
-                                                       .toLocation(key.getPosition())
-                                                       .getWorld()
-                                                       .spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()),
-                                                                    EntityType.valueOf(key.getType()));
-                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()),
+                            MobSelector.toLocation(key.getPosition()).getChunk().load();
+                            Entity entity = MobSelector
+                                .toLocation(key.getPosition())
+                                .getWorld()
+                                .spawnEntity(MobSelector.toLocation(key.getPosition()),
+                                             EntityType.valueOf(key.getType()));
+                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.toLocation(key.getPosition()),
                                                                                   entity,
                                                                                   key);
 

@@ -1,15 +1,13 @@
 package de.dytanic.cloudnetcore.handler;
 
 import de.dytanic.cloudnet.lib.MultiValue;
-import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 20.11.2017.
@@ -18,24 +16,16 @@ public class CloudPlayerRemoverHandler implements ICloudHandler {
 
     @Override
     public void onHandle(CloudNet cloudNet) {
+        Set<UUID> collection = CloudNet.getInstance().getProxys().values().stream()
+                                       .map(ProxyServer::getProxyInfo)
+                                       .map(ProxyInfo::getPlayers)
+                                       .flatMap(multiValues -> multiValues.stream().map(MultiValue::getFirst))
+                                       .collect(Collectors.toSet());
 
-        Collection<UUID> collection = new ArrayList<>();
-
-        for (ProxyServer proxyServer : CloudNet.getInstance().getProxys().values()) {
-            CollectionWrapper.iterator(proxyServer.getProxyInfo().getPlayers(), new Runnabled<MultiValue<UUID, String>>() {
-                @Override
-                public void run(MultiValue<UUID, String> obj) {
-                    collection.add(obj.getFirst());
-                }
-            });
-        }
-
-        for (CloudPlayer entries : CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values()) {
-            if (!collection.contains(entries.getUniqueId())) {
-                CloudNet.getInstance().getNetworkManager().getOnlinePlayers().remove(entries.getUniqueId());
-            }
-        }
-
+        CloudNet.getInstance().getNetworkManager().getOnlinePlayers()
+                .keySet()
+                .removeIf(uuid ->
+                              !collection.contains(uuid));
     }
 
     @Override

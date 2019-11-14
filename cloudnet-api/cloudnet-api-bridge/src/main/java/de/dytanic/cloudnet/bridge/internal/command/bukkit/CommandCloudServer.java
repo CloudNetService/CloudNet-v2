@@ -104,7 +104,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         }
     }
 
-    private boolean createMob(CommandSender commandSender, String[] args, Player player) {
+    private static boolean createMob(CommandSender commandSender, String[] args, Player player) {
         if (checkMobSelectorActive(commandSender)) {
             return true;
         }
@@ -141,7 +141,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                                                     -1,
                                                     material.name(),
                                                     args[5].equalsIgnoreCase("true"),
-                                                    MobSelector.getInstance()
+                                                    MobSelector
                                                                .toPosition(CloudAPI.getInstance().getGroup(), player.getLocation()),
                                                     "§8#§c%group% &bPlayers online §8|§7 %group_online% of %max_players%",
                                                     new Document());

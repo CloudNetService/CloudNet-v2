@@ -286,16 +286,10 @@ public class CloudConfig {
         return this;
     }
 
-    public void createGroup(ProxyGroup serverGroup) {
+    public void createGroup(ProxyGroup proxyGroup) {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {}.getType());
-        CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
-            @Override
-            public boolean isAccepted(ProxyGroup value) {
-                return value.getName().equals(serverGroup.getName());
-            }
-        });
-
-        groups.add(serverGroup);
+        groups.removeIf(value -> value.getName().equals(proxyGroup.getName()));
+        groups.add(proxyGroup);
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
     }
 
@@ -305,12 +299,7 @@ public class CloudConfig {
 
     public void deleteGroup(ProxyGroup proxyGroup) {
         Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {}.getType());
-        CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
-            @Override
-            public boolean isAccepted(ProxyGroup value) {
-                return value.getName().equals(proxyGroup.getName());
-            }
-        });
+        groups.removeIf(value -> value.getName().equals(proxyGroup.getName()));
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
     }
 

@@ -12,14 +12,15 @@ import de.dytanic.cloudnet.lib.player.permission.DefaultPermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateOfflinePlayer;
 import de.dytanic.cloudnetcore.permissions.PermissionModule;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,15 +67,12 @@ public final class CommandPermissions extends Command {
                         }
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                         sender.sendMessage("Permissions for server groups:");
-                        for (Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet()) {
-                            sender.sendMessage(x.getKey() + ':');
-                            CollectionWrapper.iterator(x.getValue(), new Runnabled<String>() {
-                                @Override
-                                public void run(String obj) {
-                                    sender.sendMessage("- " + obj);
-                                }
-                            });
-                        }
+                        permissionGroup.getServerGroupPermissions().entrySet()
+                                       .forEach(entry -> {
+                                           sender.sendMessage(entry.getKey() + ':');
+                                           entry.getValue().forEach(permission ->
+                                                                        sender.sendMessage("- " + permission));
+                                       });
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                     } else {
                         sender.sendMessage("The specified permission group doesn't exist");
@@ -456,7 +454,7 @@ public final class CommandPermissions extends Command {
         CloudNet.getInstance().getNetworkManager().sendAllUpdate(new PacketOutUpdateOfflinePlayer(offlinePlayer));
     }
 
-    private long calcDays(int value) {
+    private static long calcDays(int value) {
         return (System.currentTimeMillis() + ((TimeUnit.DAYS.toMillis(value))));
     }
 }

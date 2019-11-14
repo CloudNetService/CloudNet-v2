@@ -36,10 +36,8 @@ import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -149,14 +147,9 @@ public final class CloudAPI implements MetaObj {
      * Returns synchronized the OnlineCount from the group
      */
     public int getOnlineCount(String group) {
-        AtomicInteger integer = new AtomicInteger(0);
-        CollectionWrapper.iterator(getServers(group), new Runnabled<ServerInfo>() {
-            @Override
-            public void run(ServerInfo obj) {
-                integer.addAndGet(obj.getOnlineCount());
-            }
-        });
-        return integer.get();
+        return getServers(group).stream()
+                                .mapToInt(ServerInfo::getOnlineCount)
+                                .sum();
     }
 
     /**

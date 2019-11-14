@@ -8,9 +8,6 @@ import de.dytanic.cloudnetcore.CloudNet;
 @Deprecated
 public final class PacketAPIInGetRegisteredPlayers extends PacketAPIIO {
 
-    public PacketAPIInGetRegisteredPlayers() {
-    }
-
     @Override
     public void handleInput(Document data, PacketSender packetSender) {
         packetSender.sendPacket(getResult(new Document().append("players",

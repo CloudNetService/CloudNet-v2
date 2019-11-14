@@ -10,6 +10,7 @@ import jline.console.ConsoleReader;
 
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Consumer;
 
 /**
  * Builder class for setup sequences.
@@ -32,12 +33,12 @@ public class Setup implements ISetup {
     /**
      * Method that called once this setup sequence has been completed successfully.
      */
-    private ISetupComplete setupComplete = null;
+    private Consumer<Document> setupComplete = null;
 
     /**
      * Method that called when this setup sequence is cancelled.
      */
-    private ISetupCancel setupCancel = null;
+    private Runnable setupCancel = null;
 
     @Override
     public void start(ConsoleReader consoleReader) {
@@ -46,7 +47,7 @@ public class Setup implements ISetup {
             if (setupRequest == null) {
                 setupRequest = requests.poll();
             }
-            System.out.print(setupRequest.getQuestion() + " | " + setupRequest.getResponseType().toString());
+            System.out.print(setupRequest.getQuestion() + " | " + setupRequest.getResponseType());
 
             String input;
             try {
@@ -58,7 +59,7 @@ public class Setup implements ISetup {
 
             if (input.equalsIgnoreCase(CANCEL)) {
                 if (setupCancel != null) {
-                    setupCancel.cancel();
+                    setupCancel.run();
                 }
                 return;
             }
@@ -121,7 +122,7 @@ public class Setup implements ISetup {
         }
 
         if (setupComplete != null) {
-            setupComplete.complete(document);
+            setupComplete.accept(document);
         }
 
     }
@@ -147,7 +148,7 @@ public class Setup implements ISetup {
      *
      * @return this setup instance
      */
-    public Setup setupComplete(ISetupComplete iSetupComplete) {
+    public Setup setupComplete(Consumer<Document> iSetupComplete) {
         this.setupComplete = iSetupComplete;
         return this;
     }
@@ -160,7 +161,7 @@ public class Setup implements ISetup {
      *
      * @return this setup instance
      */
-    public Setup setupCancel(ISetupCancel iSetupCancel) {
+    public Setup setupCancel(Runnable iSetupCancel) {
         this.setupCancel = iSetupCancel;
         return this;
     }

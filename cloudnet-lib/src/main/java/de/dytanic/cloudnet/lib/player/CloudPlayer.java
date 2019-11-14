@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  */
 public class CloudPlayer extends OfflinePlayer {
-    public static final Type TYPE = new TypeToken<CloudPlayer>() {}.getType();
+    public static final Type TYPE = TypeToken.get(CloudPlayer.class).getType();
     private PlayerConnection playerConnection;
     private String proxy;
     private String server;

@@ -1,7 +1,6 @@
 package de.dytanic.cloudnet.lib.utility.document;
 
 import com.google.gson.*;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -16,10 +15,9 @@ import java.util.*;
  */
 public class Document implements DocumentAbstract {
 
-    protected static final JsonParser PARSER = new JsonParser();
     public static Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
     protected String name;
-    protected JsonObject dataCatcher;
+    private JsonObject dataCatcher;
     private File file;
 
     public Document(String name) {
@@ -157,22 +155,8 @@ public class Document implements DocumentAbstract {
         return GSON.toJson(dataCatcher);
     }
 
-    public boolean saveAsConfig(File backend) {
-        if (backend == null) {
-            return false;
-        }
-
-        if (backend.exists()) {
-            backend.delete();
-        }
-
-        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(backend), "UTF-8")) {
-            GSON.toJson(dataCatcher, (writer));
-            return true;
-        } catch (IOException ex) {
-            ex.getStackTrace();
-        }
-        return false;
+    public static Document loadDocument(Path backend) {
+        return new Document().loadToExistingDocument(backend);
     }
 
     public boolean saveAsConfig(String path) {
@@ -186,14 +170,14 @@ public class Document implements DocumentAbstract {
         return new Document(dataCatcher.get(key).getAsJsonObject());
     }
 
-    public boolean saveAsConfig(Path path) {
-        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), "UTF-8")) {
-            GSON.toJson(dataCatcher, outputStreamWriter);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+    public Document loadToExistingDocument(Path path) {
+        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            this.dataCatcher = JsonParser.parseReader(reader).getAsJsonObject();
+            return this;
+        } catch (Exception ex) {
+            ex.getStackTrace();
         }
-        return false;
+        return new Document();
     }
 
     public Document(String key, Object value) {
@@ -214,10 +198,6 @@ public class Document implements DocumentAbstract {
         this.append(key, value);
     }
 
-    public Document(Document defaults) {
-        this.dataCatcher = defaults.dataCatcher;
-    }
-
     public Document(Document defaults, String name) {
         this.dataCatcher = defaults.dataCatcher;
         this.name = name;
@@ -235,43 +215,36 @@ public class Document implements DocumentAbstract {
         return loadDocument(backend.toPath());
     }
 
-    public static Document loadDocument(Path backend) {
-
-        try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(backend),
-                                                              "UTF-8"); BufferedReader bufferedReader = new BufferedReader(reader)) {
-            JsonObject object = PARSER.parse(bufferedReader).getAsJsonObject();
-            return new Document(object);
-        } catch (Exception ex) {
-            ex.getStackTrace();
-        }
-        return new Document();
-
-        /*
-        try
-        {
-            return new Document(PARSER.parse(new String(Files.readAllBytes(backend), StandardCharsets.UTF_8)).getAsJsonObject());
-        }catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return new Document();
-        */
-    }
-
     public static Document $loadDocument(File backend) throws Exception {
         try {
-            return new Document(PARSER.parse(new String(Files.readAllBytes(backend.toPath()), StandardCharsets.UTF_8)).getAsJsonObject());
+            return new Document(JsonParser.parseString(new String(Files.readAllBytes(backend.toPath()), StandardCharsets.UTF_8))
+                                          .getAsJsonObject());
         } catch (Exception ex) {
             throw new Exception(ex);
         }
     }
 
     public static Document load(String input) {
-        try (InputStreamReader reader = new InputStreamReader(new StringBufferInputStream(input), "UTF-8")) {
-            return new Document(PARSER.parse(new BufferedReader(reader)).getAsJsonObject());
-        } catch (IOException e) {
+        try {
+            return new Document(JsonParser.parseString(input).getAsJsonObject());
+        } catch (JsonSyntaxException e) {
             e.printStackTrace();
+            return new Document();
         }
-        return new Document();
+    }
+
+    public boolean saveAsConfig(File backend) {
+        if (backend == null) {
+            return false;
+        }
+
+        try (OutputStreamWriter writer = new FileWriter(backend, false)) {
+            GSON.toJson(dataCatcher, writer);
+            return true;
+        } catch (IOException ex) {
+            ex.getStackTrace();
+        }
+        return false;
     }
 
     public static Document load(JsonObject input) {
@@ -364,41 +337,20 @@ public class Document implements DocumentAbstract {
         return dataCatcher.get(key).getAsJsonArray();
     }
 
-    @Deprecated
-    public boolean saveAsConfig0(File backend) {
-        if (backend == null) {
-            return false;
-        }
-
-        if (backend.exists()) {
-            backend.delete();
-        }
-
-        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(backend), "UTF-8")) {
-            NetworkUtils.GSON.toJson(dataCatcher, (writer));
+    public boolean saveAsConfig(Path path) {
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
+            GSON.toJson(dataCatcher, outputStreamWriter);
             return true;
-        } catch (IOException ex) {
-            ex.getStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return false;
     }
 
-    public Document loadToExistingDocument(File backend) {
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(backend), "UTF-8")) {
-
-            this.dataCatcher = PARSER.parse(reader).getAsJsonObject();
-            this.file = backend;
-            return this;
-        } catch (Exception ex) {
-            ex.getStackTrace();
-        }
-        return new Document();
-    }
-
-    public Document loadToExistingDocument(Path path) {
-        try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(path), "UTF-8")) {
-
-            this.dataCatcher = PARSER.parse(reader).getAsJsonObject();
+    public Document loadToExistingDocument(File file) {
+        try (Reader reader = new FileReader(file)) {
+            this.dataCatcher = JsonParser.parseReader(reader).getAsJsonObject();
+            this.file = file;
             return this;
         } catch (Exception ex) {
             ex.getStackTrace();

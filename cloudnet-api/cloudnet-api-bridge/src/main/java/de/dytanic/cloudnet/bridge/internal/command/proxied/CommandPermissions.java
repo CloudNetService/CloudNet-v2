@@ -12,8 +12,6 @@ import de.dytanic.cloudnet.lib.player.permission.DefaultPermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -66,7 +64,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                         sender.sendMessage("Permissions for groups:");
                         for (Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet()) {
                             sender.sendMessage(x.getKey() + ':');
-                            CollectionWrapper.iterator(x.getValue(), (Runnabled<String>) obj -> sender.sendMessage("- " + obj));
+                            x.getValue().forEach(permission -> sender.sendMessage("- " + permission));
                         }
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                     } else {

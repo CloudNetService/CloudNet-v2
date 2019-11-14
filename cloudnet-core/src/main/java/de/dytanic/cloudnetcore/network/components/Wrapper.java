@@ -22,16 +22,15 @@ import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.Quad;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.packet.out.*;
 import io.netty.channel.Channel;
 import net.md_5.bungee.config.Configuration;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by Tareko on 26.05.2017.
@@ -121,27 +120,21 @@ public final class Wrapper implements INetworkComponent {
     }
 
     public int getUsedMemoryAndWaitings() {
-        AtomicInteger integer = new AtomicInteger(getUsedMemory());
-
-        CollectionWrapper.iterator(this.waitingServices.values(), new Runnabled<Quad<Integer, Integer, ServiceId, Template>>() {
-            @Override
-            public void run(Quad<Integer, Integer, ServiceId, Template> obj) {
-                integer.addAndGet(obj.getSecond());
-            }
-        });
-
-        return integer.get();
+        return waitingServices.values().stream()
+                              .map(Quad::getSecond)
+                              .mapToInt(i -> i)
+                              .sum() + getUsedMemory();
     }
 
     public int getUsedMemory() {
         int mem = 0;
 
         for (ProxyServer proxyServer : proxys.values()) {
-            mem = mem + proxyServer.getProxyInfo().getMemory();
+            mem += proxyServer.getProxyInfo().getMemory();
         }
 
         for (MinecraftServer proxyServer : servers.values()) {
-            mem = mem + proxyServer.getProcessMeta().getMemory();
+            mem += proxyServer.getProcessMeta().getMemory();
         }
 
         return mem;
@@ -247,22 +240,17 @@ public final class Wrapper implements INetworkComponent {
         sendPacket(new PacketOutExecuteServerCommand(proxyInfo, commandLine));
     }
 
-    public Collection<Integer> getBinndedPorts() {
-        Collection<Integer> ports = new ArrayList<>();
-
-        for (Quad<Integer, Integer, ServiceId, Template> serviceIdValues : waitingServices.values()) {
-            ports.add(serviceIdValues.getFirst());
-        }
-
-        for (MinecraftServer minecraftServer : servers.values()) {
-            ports.add(minecraftServer.getProcessMeta().getPort());
-        }
-
-        for (ProxyServer proxyServer : proxys.values()) {
-            ports.add(proxyServer.getProcessMeta().getPort());
-        }
-
-        return ports;
+    public List<Integer> getBoundPorts() {
+        return Stream.concat(
+            Stream.concat(waitingServices.values().stream()
+                                         .map(Quad::getFirst),
+                          servers.values().stream()
+                                 .map(MinecraftServer::getProcessMeta)
+                                 .map(ServerProcessMeta::getPort)),
+            proxys.values().stream()
+                  .map(ProxyServer::getProcessMeta)
+                  .map(ProxyProcessMeta::getPort))
+                     .collect(Collectors.toList());
     }
 
     public void startProxy(ProxyProcessMeta proxyProcessMeta) {

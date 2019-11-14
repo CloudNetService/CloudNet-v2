@@ -16,9 +16,9 @@ public class WrapperExternal {
 
     private SimpledUser user;
 
-    private java.util.Map<String, ServerGroup> serverGroups;
+    private Map<String, ServerGroup> serverGroups;
 
-    private java.util.Map<String, ProxyGroup> proxyGroups;
+    private Map<String, ProxyGroup> proxyGroups;
 
     public WrapperExternal(CloudNetwork cloudNetwork,
                            SimpledUser user,

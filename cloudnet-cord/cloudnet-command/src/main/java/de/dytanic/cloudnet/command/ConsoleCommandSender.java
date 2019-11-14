@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,7 +29,9 @@ public class ConsoleCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String... message) {
-        CollectionWrapper.iterator(message, System.out::println);
+        for (final String s : message) {
+            System.out.println(s);
+        }
     }
 
     @Override

@@ -11,18 +11,15 @@ import java.util.Set;
  */
 public interface DocumentAbstract extends Nameable {
 
-    <T extends DocumentAbstract> T append(String key, String value);
+    DocumentAbstract append(String key, String value);
 
-    <T extends DocumentAbstract> T append(String key, Number value);
+    DocumentAbstract append(String key, Number value);
 
-    <T extends DocumentAbstract> T append(String key, Boolean value);
+    DocumentAbstract append(String key, Boolean value);
 
-    <T extends DocumentAbstract> T append(String key, JsonElement value);
+    DocumentAbstract append(String key, JsonElement value);
 
-    @Deprecated
-    <T extends DocumentAbstract> T append(String key, Object value);
-
-    <T extends DocumentAbstract> T remove(String key);
+    DocumentAbstract remove(String key);
 
     Set<String> keys();
 
@@ -46,6 +43,6 @@ public interface DocumentAbstract extends Nameable {
 
     boolean saveAsConfig(String path);
 
-    <T extends DocumentAbstract> T getDocument(String key);
+    DocumentAbstract getDocument(String key);
 
 }

@@ -67,14 +67,14 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
 
                         @Override
                         public MobSelector.MobImpl doCatch(ServerMob key) {
-                            MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
-                            Entity entity = MobSelector.getInstance()
-                                                       .toLocation(key.getPosition())
-                                                       .getWorld()
-                                                       .spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()),
-                                                                    EntityType.valueOf(key.getType()));
+                            MobSelector.toLocation(key.getPosition()).getChunk().load();
+                            Entity entity = MobSelector
+                                .toLocation(key.getPosition())
+                                .getWorld()
+                                .spawnEntity(MobSelector.toLocation(key.getPosition()),
+                                             EntityType.valueOf(key.getType()));
                             entity.setFireTicks(0);
-                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()),
+                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.toLocation(key.getPosition()),
                                                                                   entity,
                                                                                   key);
 
@@ -136,13 +136,13 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                     }, new Catcher<MobSelector.MobImpl, ServerMob>() {
                         @Override
                         public MobSelector.MobImpl doCatch(ServerMob key) {
-                            MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
-                            Entity entity = MobSelector.getInstance()
-                                                       .toLocation(key.getPosition())
-                                                       .getWorld()
-                                                       .spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()),
-                                                                    EntityType.valueOf(key.getType()));
-                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()),
+                            MobSelector.toLocation(key.getPosition()).getChunk().load();
+                            Entity entity = MobSelector
+                                .toLocation(key.getPosition())
+                                .getWorld()
+                                .spawnEntity(MobSelector.toLocation(key.getPosition()),
+                                             EntityType.valueOf(key.getType()));
+                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.toLocation(key.getPosition()),
                                                                                   entity,
                                                                                   key);
 
