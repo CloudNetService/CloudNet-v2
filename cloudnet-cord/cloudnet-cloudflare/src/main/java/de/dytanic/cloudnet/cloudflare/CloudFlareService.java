@@ -17,8 +17,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.io.*;
@@ -107,37 +105,22 @@ public class CloudFlareService {
     }
 
     /**
-     * Deletes a DNSRecord with the id of the DNS record
+     * Removes a proxy and its DNS records from CloudFlare.
      *
-     * @param postResponse the cached information about the dns record
+     * @param proxyServer        the proxy server to remove
+     * @param cloudFlareDatabase the database to remove the proxy server from
      */
-    public void deleteRecord(PostResponse postResponse) {
+    public void removeProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase) {
+        bungeeSRVRecords.values().stream()
+                        .filter(value -> value.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId()))
+                        .forEach(postResponse -> {
+                            bungeeSRVRecords.remove(postResponse.getSecond());
+                            cloudFlareDatabase.remove(postResponse.getFirst().getId());
+                            deleteRecord(postResponse.getFirst());
 
-        try {
-            HttpURLConnection delete = (HttpURLConnection) new URL(PREFIX_URL + "zones/" + postResponse.getCloudFlareConfig()
-                                                                                                       .getZoneId() + "/dns_records/" + postResponse
-                .getId()).openConnection();
+                            NetworkUtils.sleepUninterruptedly(500);
+                        });
 
-            delete.setRequestMethod("DELETE");
-            delete.setRequestProperty("X-Auth-Email", postResponse.getCloudFlareConfig().getEmail());
-            delete.setRequestProperty("X-Auth-Key", postResponse.getCloudFlareConfig().getToken());
-            delete.setRequestProperty("Accept", "application/json");
-            delete.setRequestProperty("Content-Type", "application/json");
-            delete.connect();
-
-            try (InputStream inputStream = delete.getResponseCode() < 400 ? delete.getInputStream() : delete.getErrorStream()) {
-                JsonObject jsonObject = toJsonInput(inputStream);
-                if (jsonObject.get("success").getAsBoolean()) {
-                    System.out.println(prefix + "DNSRecord [" + postResponse.getId() + "] was removed");
-                } else {
-                    throw new CloudFlareDNSRecordException("Failed to delete DNSRecord \n " + jsonObject);
-                }
-            }
-
-            delete.disconnect();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     /**
@@ -283,42 +266,37 @@ public class CloudFlareService {
     }
 
     /**
-     * Removes a proxy and its DNS records from CloudFlare.
+     * Deletes a DNSRecord with the id of the DNS record
      *
-     * @param proxyServer        the proxy server to remove
-     * @param cloudFlareDatabase the database to remove the proxy server from
+     * @param postResponse the cached information about the dns record
      */
-    public void removeProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase) {
-        //if (!bungeeSRVRecords.containsKey(proxyServer.getServiceId().getServerId())) return;
+    public void deleteRecord(PostResponse postResponse) {
 
-        Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(),
-                                                                                                  new Acceptable<MultiValue<PostResponse, String>>() {
-                                                                                                      @Override
-                                                                                                      public boolean isAccepted(MultiValue<PostResponse, String> postResponseStringMultiValue) {
-                                                                                                          return postResponseStringMultiValue
-                                                                                                              .getSecond()
-                                                                                                              .equalsIgnoreCase(proxyServer.getServiceId()
-                                                                                                                                           .getServerId());
-                                                                                                      }
-                                                                                                  });
+        try {
+            HttpURLConnection delete = (HttpURLConnection) new URL(PREFIX_URL + "zones/" +
+                                                                       postResponse.getCloudFlareConfig()
+                                                                                   .getZoneId() + "/dns_records/" + postResponse.getId())
+                .openConnection();
 
-        //MultiValue<PostResponse, String> postResponse = bungeeSRVRecords.get(proxyServer.getServiceId().getServerId());
-            /*
-            if (postResponse != null)
-            {
-                cloudFlareDatabase.remove(postResponse.getFirst().getId());
-                deleteRecord(postResponse.getFirst());
-            } else break;
-            */
+            delete.setRequestMethod("DELETE");
+            delete.setRequestProperty("X-Auth-Email", postResponse.getCloudFlareConfig().getEmail());
+            delete.setRequestProperty("X-Auth-Key", postResponse.getCloudFlareConfig().getToken());
+            delete.setRequestProperty("Accept", "application/json");
+            delete.setRequestProperty("Content-Type", "application/json");
+            delete.connect();
 
-        for (MultiValue<PostResponse, String> postResponse : postResponses) {
-            if (postResponse != null) {
-                bungeeSRVRecords.remove(postResponse.getSecond());
-                cloudFlareDatabase.remove(postResponse.getFirst().getId());
-                deleteRecord(postResponse.getFirst());
-
-                NetworkUtils.sleepUninterruptedly(500);
+            try (InputStream inputStream = delete.getResponseCode() < 400 ? delete.getInputStream() : delete.getErrorStream()) {
+                JsonObject jsonObject = toJsonInput(inputStream);
+                if (jsonObject.get("success").getAsBoolean()) {
+                    System.out.println(prefix + "DNSRecord [" + postResponse.getId() + "] was removed");
+                } else {
+                    throw new CloudFlareDNSRecordException("Failed to delete DNSRecord \n " + jsonObject);
+                }
             }
+
+            delete.disconnect();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }

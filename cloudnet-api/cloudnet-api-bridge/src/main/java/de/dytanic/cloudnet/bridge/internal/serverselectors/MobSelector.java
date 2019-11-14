@@ -21,7 +21,10 @@ import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobItemLayout;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobPosition;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
-import de.dytanic.cloudnet.lib.utility.*;
+import de.dytanic.cloudnet.lib.utility.Catcher;
+import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
+import de.dytanic.cloudnet.lib.utility.MapWrapper;
+import de.dytanic.cloudnet.lib.utility.Return;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -194,13 +197,8 @@ public final class MobSelector {
         }
     }
 
-    private Collection<ServerInfo> filter(String group) {
-        return CollectionWrapper.filterMany(servers.values(), new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo value) {
-                return value.getServiceId().getGroup().equals(group);
-            }
-        });
+    private List<ServerInfo> getServers(String group) {
+        return filter(group);
     }
 
     private ItemStack transform(MobItemLayout mobItemLayout, ServerInfo serverInfo) {
@@ -305,15 +303,10 @@ public final class MobSelector {
             }))).displayName(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay())).build();
     }
 
-    private List<ServerInfo> getServers(String group) {
-        List<ServerInfo> groups = new ArrayList<>(CollectionWrapper.filterMany(this.servers.values(), new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo serverInfo) {
-                return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
-            }
-        }));
-
-        return groups;
+    private List<ServerInfo> filter(String group) {
+        return servers.values().stream()
+                      .filter(serverInfo -> serverInfo.getServiceId().getGroup().equals(group))
+                      .collect(Collectors.toList());
     }
 
     @Deprecated

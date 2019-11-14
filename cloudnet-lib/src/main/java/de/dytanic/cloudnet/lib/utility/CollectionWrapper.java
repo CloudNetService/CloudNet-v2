@@ -5,7 +5,6 @@
 package de.dytanic.cloudnet.lib.utility;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class CollectionWrapper {
@@ -25,13 +24,4 @@ public final class CollectionWrapper {
         return new CopyOnWriteArrayList<>();
     }
 
-    public static <E> Collection<E> filterMany(Collection<E> elements, Acceptable<E> acceptable) {
-        Collection<E> collection = new LinkedList<>();
-        for (E element : elements) {
-            if (acceptable.isAccepted(element)) {
-                collection.add(element);
-            }
-        }
-        return collection;
-    }
 }

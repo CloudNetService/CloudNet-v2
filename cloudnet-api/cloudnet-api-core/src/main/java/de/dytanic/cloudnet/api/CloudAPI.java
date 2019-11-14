@@ -33,16 +33,17 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public final class CloudAPI implements MetaObj {
 
+    private static final Type SERVER_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ServerInfo.class).getType();
     private static CloudAPI instance;
 
     private Document config;
@@ -159,16 +160,13 @@ public final class CloudAPI implements MetaObj {
      */
     public Collection<ServerInfo> getServers(String group) {
         if (cloudService != null && cloudService.isProxyInstance()) {
-            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
-                @Override
-                public boolean isAccepted(ServerInfo serverInfo) {
-                    return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
-                }
-            });
+            return cloudService.getServers().values().stream()
+                               .filter(serverInfo -> serverInfo.getServiceId().getGroup().equals(group))
+                               .collect(Collectors.toList());
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(group), networkConnection);
-        return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {}.getType());
+        return result.getResult().getObject("serverInfos", SERVER_INFO_COLLECTION_TYPE);
     }
 
     @Deprecated
@@ -1352,7 +1350,7 @@ public final class CloudAPI implements MetaObj {
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(), networkConnection);
-        return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {}.getType());
+        return result.getResult().getObject("serverInfos", SERVER_INFO_COLLECTION_TYPE);
     }
 
     /**
@@ -1360,16 +1358,13 @@ public final class CloudAPI implements MetaObj {
      */
     public Collection<ServerInfo> getCloudServers() {
         if (cloudService != null && cloudService.isProxyInstance()) {
-            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
-                @Override
-                public boolean isAccepted(ServerInfo serverInfo) {
-                    return serverInfo.getServiceId().getGroup() == null;
-                }
-            });
+            return cloudService.getServers().values().stream()
+                               .filter(serverInfo -> serverInfo.getServiceId().getGroup() == null)
+                               .collect(Collectors.toList());
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetCloudServers(), networkConnection);
-        return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {}.getType());
+        return result.getResult().getObject("serverInfos", SERVER_INFO_COLLECTION_TYPE);
     }
 
     /**
