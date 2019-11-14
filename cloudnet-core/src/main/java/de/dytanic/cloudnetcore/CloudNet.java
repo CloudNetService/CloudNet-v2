@@ -958,7 +958,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             return;
         }
 
-        List<Integer> ports = wrapper.getBoundPorts())
+        List<Integer> ports = wrapper.getBoundPorts();
         int startPort = proxyGroup.getStartPort();
         while (ports.contains(startPort)) {
             startPort++;
@@ -2764,7 +2764,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         if (serverGroup.getTemplates().size() == 0) {
             return;
         }
-        Map<Template, Integer> templateMap = getTemplateStatistics(wrappers, serverGroup);
+        Map<Template, Integer> templateMap = getTemplateStatistics(wrapper, serverGroup);
 
         Optional<Template> entry = templateMap.entrySet().stream()
                                               .min(Map.Entry.comparingByValue())

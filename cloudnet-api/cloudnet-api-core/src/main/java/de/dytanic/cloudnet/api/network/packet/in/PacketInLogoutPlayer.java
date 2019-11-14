@@ -6,12 +6,10 @@ package de.dytanic.cloudnet.api.network.packet.in;
 
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.api.network.packet.PacketInHandlerDefault;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 
 import java.util.UUID;
 
@@ -26,22 +24,14 @@ public final class PacketInLogoutPlayer extends PacketInHandlerDefault {
 
         if (cloudPlayer != null) {
             if (CloudAPI.getInstance() != null) {
-                CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
-                    @Override
-                    public void run(NetworkHandler obj) {
-                        obj.onPlayerDisconnectNetwork(cloudPlayer);
-                    }
-                });
+                CloudAPI.getInstance().getNetworkHandlerProvider().iterator(
+                    obj -> obj.onPlayerDisconnectNetwork(cloudPlayer));
             }
         } else {
             UUID uuid = data.getObject("uniqueId", UUID.class);
             if (CloudAPI.getInstance() != null) {
-                CloudAPI.getInstance().getNetworkHandlerProvider().iterator(new Runnabled<NetworkHandler>() {
-                    @Override
-                    public void run(NetworkHandler obj) {
-                        obj.onPlayerDisconnectNetwork(uuid);
-                    }
-                });
+                CloudAPI.getInstance().getNetworkHandlerProvider().iterator(
+                    obj -> obj.onPlayerDisconnectNetwork(uuid));
             }
         }
     }

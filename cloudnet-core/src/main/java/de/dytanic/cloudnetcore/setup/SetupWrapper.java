@@ -6,8 +6,9 @@ package de.dytanic.cloudnetcore.setup;
 
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.setup.*;
+import de.dytanic.cloudnet.setup.Setup;
+import de.dytanic.cloudnet.setup.SetupRequest;
+import de.dytanic.cloudnet.setup.SetupResponseType;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.WrapperMeta;
 
@@ -23,22 +24,15 @@ public class SetupWrapper {
     public SetupWrapper(CommandSender commandSender, String name) {
         this.name = name;
 
-        Setup setup = new Setup().setupCancel(new ISetupCancel() {
-            @Override
-            public void cancel() {
-                System.out.println("Setup was cancelled");
-            }
-        }).setupComplete(new ISetupComplete() {
-            @Override
-            public void complete(Document data) {
-                String host = data.getString("address");
-                String user = data.getString("user");
+        Setup setup = new Setup().setupCancel(() -> System.out.println("Setup was cancelled"))
+                                 .setupComplete(data -> {
+                                     String host = data.getString("address");
+                                     String user = data.getString("user");
 
-                WrapperMeta wrapperMeta = new WrapperMeta(name, host, user);
-                CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
-                commandSender.sendMessage("Wrapper [" + wrapperMeta.getId() + "] was registered on CloudNet");
-            }
-        });
+                                     WrapperMeta wrapperMeta = new WrapperMeta(name, host, user);
+                                     CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
+                                     commandSender.sendMessage("Wrapper [" + wrapperMeta.getId() + "] was registered on CloudNet");
+                                 });
 
         Consumer<SetupRequest> request = setup::request;
         request.accept(new SetupRequest("address",

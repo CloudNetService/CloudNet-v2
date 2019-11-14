@@ -28,13 +28,7 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
     String getServerId();
 
     default void sendPacket(Packet packet) {
-        CloudNet.getLogger().debug("Sending Packet " + packet.getClass().getSimpleName() + " (id=" + CloudNet.getInstance()
-                                                                                                             .getPacketManager()
-                                                                                                             .packetId(packet) + ";dataLength=" + CloudNet
-            .getInstance()
-            .getPacketManager()
-            .packetData(packet)
-            .size() + ") to " + getServerId());
+        CloudNet.getLogger().debug(String.format("Sending packet %s to %s", packet, getServerId()));
 
         if (getChannel() == null) {
             return;
@@ -61,13 +55,8 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
         if (getChannel() == null) {
             return;
         }
-        CloudNet.getLogger().debug("Sending Packet " + packet.getClass().getSimpleName() + " (id=" + CloudNet.getInstance()
-                                                                                                             .getPacketManager()
-                                                                                                             .packetId(packet) + ";dataLength=" + CloudNet
-            .getInstance()
-            .getPacketManager()
-            .packetData(packet)
-            .size() + ") to " + getServerId());
+        CloudNet.getLogger().debug(String.format("Sending packet %s to %s", packet, getServerId()));
+
         getChannel().writeAndFlush(packet).syncUninterruptibly();
     }
 

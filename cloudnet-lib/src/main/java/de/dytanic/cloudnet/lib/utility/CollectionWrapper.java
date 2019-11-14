@@ -20,7 +20,7 @@ public final class CollectionWrapper {
         return xCollection;
     }
 
-    public static <E> java.util.List<E> newCopyOnWriteArrayList() {
+    private static <E> java.util.List<E> newCopyOnWriteArrayList() {
         return new CopyOnWriteArrayList<>();
     }
 

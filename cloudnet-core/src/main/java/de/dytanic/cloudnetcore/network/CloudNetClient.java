@@ -38,8 +38,7 @@ public class CloudNetClient extends SimpleChannelInboundHandler {
         this.networkComponent.setChannel(channel);
         this.channel = channel;
 
-        System.out.println("Channel connected [" + channel.remoteAddress()
-                                                          .toString() + "/serverId=" + networkComponent.getServerId() + ']');
+        System.out.println("Channel connected [" + channel.remoteAddress() + "/serverId=" + networkComponent.getServerId() + ']');
 
         if (networkComponent instanceof Wrapper) {
             StatisticManager.getInstance().wrapperConnections();
@@ -85,8 +84,7 @@ public class CloudNetClient extends SimpleChannelInboundHandler {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if ((!channel.isActive() || !channel.isOpen() || !channel.isWritable())) {
-            System.out.println("Channel disconnected [" + channel.remoteAddress()
-                                                                 .toString() + "/serverId=" + networkComponent.getServerId() + ']');
+            System.out.println("Channel disconnected [" + channel.remoteAddress() + "/serverId=" + networkComponent.getServerId() + ']');
             ctx.close().syncUninterruptibly();
             if (networkComponent instanceof MinecraftServer) {
                 ((MinecraftServer) networkComponent).setChannelLostTime(System.currentTimeMillis());
@@ -128,19 +126,12 @@ public class CloudNetClient extends SimpleChannelInboundHandler {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object obj) throws Exception {
-
         if (!(obj instanceof Packet)) {
             return;
         }
 
         Packet packet = (Packet) obj;
-        CloudNet.getLogger().debug("Receiving Packet (id=" + CloudNet.getInstance()
-                                                                     .getPacketManager()
-                                                                     .packetId(packet) + ";dataLength=" + CloudNet.getInstance()
-                                                                                                                  .getPacketManager()
-                                                                                                                  .packetData(packet)
-                                                                                                                  .size() + ") by " + getNetworkComponent()
-            .getServerId());
+        CloudNet.getLogger().debug(String.format("Receiving packet %s from %s", packet, networkComponent.getServerId()));
         CloudNet.getInstance().getPacketManager().dispatchPacket(packet, networkComponent);
     }
 
