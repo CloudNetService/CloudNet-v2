@@ -44,7 +44,7 @@ public final class CommandHub extends Command {
                           .getProxyGroup()
                           .getProxyConfig()
                           .getDynamicFallback()
-                          .getNamedFallbackes()
+                          .getNamedFallbacks()
                           .contains(serverInfo.getServiceId().getGroup())) {
                 commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                                                                                  CloudAPI.getInstance()

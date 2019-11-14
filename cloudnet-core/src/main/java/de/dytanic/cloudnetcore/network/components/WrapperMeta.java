@@ -4,6 +4,8 @@
 
 package de.dytanic.cloudnetcore.network.components;
 
+import java.util.Objects;
+
 /**
  * Created by Tareko on 24.07.2017.
  */
@@ -31,5 +33,24 @@ public class WrapperMeta {
 
     public String getUser() {
         return user;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, hostName, user);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WrapperMeta)) {
+            return false;
+        }
+        final WrapperMeta that = (WrapperMeta) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(hostName, that.hostName) &&
+            Objects.equals(user, that.user);
     }
 }

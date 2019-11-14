@@ -361,17 +361,16 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns one of the wrapper infos
+     * Finds the first wrapper with the given case-insensitive name.
+     * If no wrapper with the given id can be found, this returns null
      *
-     * @param wrapperId
+     * @param wrapperId the case-insensitive wrapper id of the wrapper to get
+     * @return the {@link WrapperInfo} instance of the wrapper with the given wrapper id or {@code null}
      */
     public WrapperInfo getWrapper(String wrapperId) {
-        return CollectionWrapper.filter(cloudNetwork.getWrappers(), new Acceptable<WrapperInfo>() {
-            @Override
-            public boolean isAccepted(WrapperInfo value) {
-                return value.getServerId().equalsIgnoreCase(wrapperId);
-            }
-        });
+        return cloudNetwork.getWrappers().stream()
+                           .filter(wrapperInfo -> wrapperInfo.getServerId().equalsIgnoreCase(wrapperId))
+                           .findFirst().orElse(null);
     }
 
     /**

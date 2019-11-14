@@ -1,7 +1,5 @@
 package de.dytanic.cloudnet.lib.player.permission;
 
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
@@ -195,7 +193,7 @@ public class PermissionEntity {
     }
 
     public boolean isInGroup(String group) {
-        return CollectionWrapper.filter(this.groups, value -> value.getGroup().equals(group)) != null;
+        return this.groups.stream().anyMatch(groupEntityData -> groupEntityData.getGroup().equals(group));
     }
 
 }

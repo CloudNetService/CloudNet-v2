@@ -249,7 +249,7 @@ public final class MobSelector {
         for (MobImpl mobImpl : this.mobs.values()) {
             if (mobImpl.displayMessage != null) {
                 try {
-                    Entity entity = (Entity) mobImpl.displayMessage;
+                    Entity entity = mobImpl.displayMessage;
                     if (entity.getPassenger() != null) {
                         entity.getPassenger().remove();
                     }
@@ -341,16 +341,14 @@ public final class MobSelector {
     }
 
     public Collection<Inventory> inventories() {
-        this.mobs.values().stream().map(MobImpl::getInventory).collect(Collectors.toList());
+        return this.mobs.values().stream().map(MobImpl::getInventory).collect(Collectors.toList());
     }
 
     public MobImpl find(Inventory inventory) {
-        return CollectionWrapper.filter(this.mobs.values(), new Acceptable<MobImpl>() {
-            @Override
-            public boolean isAccepted(MobImpl value) {
-                return value.getInventory().equals(inventory);
-            }
-        });
+        return this.mobs.values().stream()
+                        .filter(mob -> mob.inventory.equals(inventory))
+                        .findFirst()
+                        .orElse(null);
     }
 
     //MobImpl
@@ -366,14 +364,14 @@ public final class MobSelector {
 
         private Map<Integer, String> serverPosition;
 
-        private Object displayMessage;
+        private Entity displayMessage;
 
         public MobImpl(UUID uniqueId,
                        ServerMob mob,
                        Entity entity,
                        Inventory inventory,
                        Map<Integer, String> serverPosition,
-                       Object displayMessage) {
+                       Entity displayMessage) {
             this.uniqueId = uniqueId;
             this.mob = mob;
             this.entity = entity;
@@ -414,11 +412,11 @@ public final class MobSelector {
             this.serverPosition = serverPosition;
         }
 
-        public Object getDisplayMessage() {
+        public Entity getDisplayMessage() {
             return displayMessage;
         }
 
-        public void setDisplayMessage(Object displayMessage) {
+        public void setDisplayMessage(Entity displayMessage) {
             this.displayMessage = displayMessage;
         }
 
@@ -456,13 +454,7 @@ public final class MobSelector {
 
         @EventHandler
         public void handleRightClick(PlayerInteractEntityEvent e) {
-            MobImpl mobImpl = CollectionWrapper.filter(mobs.values(), new Acceptable<MobImpl>() {
-                @Override
-                public boolean isAccepted(MobImpl value) {
-                    return value.getEntity().getUniqueId().equals(e.getRightClicked().getUniqueId());
-                }
-            });
-
+            MobImpl mobImpl = mobs.get(e.getRightClicked().getUniqueId());
             if (mobImpl != null) {
                 e.setCancelled(true);
                 if (!CloudAPI.getInstance().getServerGroupData(mobImpl.getMob().getTargetGroup()).isMaintenance()) {
@@ -497,12 +489,7 @@ public final class MobSelector {
 
         @EventHandler
         public void entityDamage(EntityDamageEvent e) {
-            MobImpl mob = CollectionWrapper.filter(mobs.values(), new Acceptable<MobImpl>() {
-                @Override
-                public boolean isAccepted(MobImpl value) {
-                    return e.getEntity().getUniqueId().equals(value.getEntity().getUniqueId());
-                }
-            });
+            MobImpl mob = mobs.get(e.getEntity().getUniqueId());
             if (mob != null) {
                 e.getEntity().setFireTicks(0);
                 e.setCancelled(true);
@@ -564,26 +551,23 @@ public final class MobSelector {
                         @Override
                         public MobImpl doCatch(ServerMob key) {
                             MobSelector.toLocation(key.getPosition()).getChunk().load();
-                            Entity entity = MobSelector
+                            LivingEntity entity = (LivingEntity) MobSelector
                                 .toLocation(key.getPosition())
                                 .getWorld()
                                 .spawnEntity(MobSelector.toLocation(key.getPosition()),
                                              EntityType.valueOf(key.getType()));
-                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.toLocation(key.getPosition()),
-                                                                                  entity,
-                                                                                  key);
+                            Entity armorStand = ReflectionUtil.armorStandCreation(MobSelector.toLocation(key.getPosition()), entity, key);
 
                             if (armorStand != null) {
                                 MobSelector.getInstance().updateCustom(key, armorStand);
-                                Entity armor = (Entity) armorStand;
-                                if (armor.getPassenger() == null && key.getItemId() != null) {
+                                if (armorStand.getPassenger() == null && key.getItemId() != null) {
                                     Material material = ItemStackBuilder.getMaterialIgnoreVersion(key.getItemName(), key.getItemId());
                                     if (material != null) {
-                                        Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(),
+                                        Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armorStand.getLocation(),
                                                                                                            new ItemStack(material));
                                         item.setPickupDelay(Integer.MAX_VALUE);
                                         item.setTicksLived(Integer.MAX_VALUE);
-                                        armor.setPassenger(item);
+                                        armorStand.setPassenger(item);
                                     }
                                 }
                             }

@@ -288,7 +288,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         return true;
     }
 
-    private boolean createSign(CommandSender commandSender, String[] args, Player player) {
+    private static boolean createSign(CommandSender commandSender, String[] args, Player player) {
         if (checkSignSelectorActive(commandSender)) {
             return false;
         }
@@ -297,7 +297,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         if (block.getState() instanceof org.bukkit.block.Sign) {
             if (!SignSelector.getInstance().containsPosition(block.getLocation())) {
                 if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1])) {
-                    Sign sign = new Sign(args[1], SignSelector.getInstance().toPosition(block.getLocation()));
+                    Sign sign = new Sign(args[1], SignSelector.toPosition(block.getLocation()));
                     CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddSign(sign));
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The sign was successfully created!");
                 } else {

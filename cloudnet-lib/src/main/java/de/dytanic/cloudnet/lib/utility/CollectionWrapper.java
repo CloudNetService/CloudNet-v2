@@ -34,13 +34,4 @@ public final class CollectionWrapper {
         }
         return collection;
     }
-
-    public static <E> E filter(Collection<E> elements, Acceptable<E> acceptable) {
-        for (E element : elements) {
-            if (acceptable.isAccepted(element)) {
-                return element;
-            }
-        }
-        return null;
-    }
 }

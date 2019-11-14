@@ -130,7 +130,7 @@ public class CloudFlareService {
                 if (jsonObject.get("success").getAsBoolean()) {
                     System.out.println(prefix + "DNSRecord [" + postResponse.getId() + "] was removed");
                 } else {
-                    throw new CloudFlareDNSRecordException("Failed to delete DNSRecord \n " + jsonObject.toString());
+                    throw new CloudFlareDNSRecordException("Failed to delete DNSRecord \n " + jsonObject);
                 }
             }
 
@@ -171,7 +171,7 @@ public class CloudFlareService {
                 if (jsonObject.get("success").getAsBoolean()) {
                     System.out.println(prefix + "DNSRecord [" + dnsRecord.getName() + '/' + dnsRecord.getType() + "] was created");
                 } else {
-                    throw new CloudFlareDNSRecordException("Failed to create DNSRecord \n " + jsonObject.toString());
+                    throw new CloudFlareDNSRecordException("Failed to create DNSRecord \n " + jsonObject);
                 }
 
                 httpPost.disconnect();
@@ -276,7 +276,10 @@ public class CloudFlareService {
      * @return the CloudFlareProxyGroup with the given group or null
      */
     public CloudFlareProxyGroup cloudFlareProxyGroup(CloudFlareConfig cloudFlareConfig, String group) {
-        return CollectionWrapper.filter(cloudFlareConfig.getGroups(), value -> value.getName().equals(group));
+        return cloudFlareConfig.getGroups().stream()
+                               .filter(cloudFlareProxyGroup -> cloudFlareProxyGroup.getName().equals(group))
+                               .findFirst()
+                               .orElse(null);
     }
 
     /**

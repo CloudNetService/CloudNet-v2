@@ -22,9 +22,7 @@ import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnet.lib.service.wrapper.WrapperScreen;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
@@ -437,12 +435,12 @@ public final class NetworkManager {
     }
 
     public CloudPlayer getPlayer(String name) {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
-            @Override
-            public boolean isAccepted(CloudPlayer value) {
-                return value.getName().equalsIgnoreCase(name);
+        for (final CloudPlayer player : onlinePlayers.values()) {
+            if (player.getName().equalsIgnoreCase(name)) {
+                return player;
             }
-        });
+        }
+        return null;
     }
 
     public void handlePlayerUpdate(CloudPlayer cloudPlayer) {
@@ -498,12 +496,7 @@ public final class NetworkManager {
     }
 
     public CloudPlayer getOnlinePlayer(UUID uniqueId) {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
-            @Override
-            public boolean isAccepted(CloudPlayer cloudPlayer) {
-                return cloudPlayer.getUniqueId().equals(uniqueId);
-            }
-        });
+        return onlinePlayers.get(uniqueId);
     }
 
     public NetworkManager handleServerUpdate(ServerInfo serverInfo) {

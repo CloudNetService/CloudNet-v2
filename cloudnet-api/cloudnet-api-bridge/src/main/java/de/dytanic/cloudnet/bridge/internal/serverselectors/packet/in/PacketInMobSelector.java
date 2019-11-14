@@ -74,13 +74,13 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                                 .spawnEntity(MobSelector.toLocation(key.getPosition()),
                                              EntityType.valueOf(key.getType()));
                             entity.setFireTicks(0);
-                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.toLocation(key.getPosition()),
+                            Entity armorStand = ReflectionUtil.armorStandCreation(MobSelector.toLocation(key.getPosition()),
                                                                                   entity,
                                                                                   key);
 
                             if (armorStand != null) {
                                 MobSelector.getInstance().updateCustom(key, armorStand);
-                                Entity armor = (Entity) armorStand;
+                                Entity armor = armorStand;
                                 if (armor.getPassenger() == null && key.getItemId() != null) {
 
                                     Material material = ItemStackBuilder.getMaterialIgnoreVersion(key.getItemName(), key.getItemId());
@@ -142,13 +142,13 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
                                 .getWorld()
                                 .spawnEntity(MobSelector.toLocation(key.getPosition()),
                                              EntityType.valueOf(key.getType()));
-                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.toLocation(key.getPosition()),
+                            Entity armorStand = ReflectionUtil.armorStandCreation(MobSelector.toLocation(key.getPosition()),
                                                                                   entity,
                                                                                   key);
 
                             if (armorStand != null) {
                                 MobSelector.getInstance().updateCustom(key, armorStand);
-                                Entity armor = (Entity) armorStand;
+                                Entity armor = armorStand;
                                 if (armor.getPassenger() == null && key.getItemId() != null) {
                                     Material material = ItemStackBuilder.getMaterialIgnoreVersion(key.getItemName(), key.getItemId());
                                     if (material != null) {

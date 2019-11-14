@@ -11,9 +11,7 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.user.BasicUser;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.web.server.util.WebServerConfig;
@@ -30,6 +28,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,6 +42,7 @@ import java.util.*;
 public class CloudConfig {
 
     private static final ConfigurationProvider CONFIGURATION_PROVIDER = ConfigurationProvider.getProvider(YamlConfiguration.class);
+    private static final Type WRAPPER_META_TYPE = TypeToken.getParameterized(Collection.class, WrapperMeta.class).getType();
 
     private final Path configPath = Paths.get("config.yml"), servicePath = Paths.get("services.json"), usersPath = Paths.get("users.json");
 
@@ -241,18 +241,8 @@ public class CloudConfig {
     }
 
     public void createWrapper(WrapperMeta wrapperMeta) {
-        Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper",
-                                                                              new TypeToken<Collection<WrapperMeta>>() {}.getType());
-        WrapperMeta is = CollectionWrapper.filter(wrapperMetas, new Acceptable<WrapperMeta>() {
-            @Override
-            public boolean isAccepted(WrapperMeta wrapperMeta_) {
-                return wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId());
-            }
-        });
-        if (is != null) {
-            wrapperMetas.remove(is);
-        }
-
+        Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", WRAPPER_META_TYPE);
+        wrapperMetas.removeIf(meta -> meta.getId().equals(wrapperMeta.getId()));
         wrapperMetas.add(wrapperMeta);
         this.serviceDocument.append("wrapper", wrapperMetas).saveAsConfig(servicePath);
         CloudNet.getInstance().getWrappers().put(wrapperMeta.getId(), new Wrapper(wrapperMeta));
@@ -264,11 +254,8 @@ public class CloudConfig {
     }
 
     private List<WrapperMeta> deleteWrapper0(WrapperMeta wrapperMeta) {
-        List<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>() {}.getType());
-        WrapperMeta is = CollectionWrapper.filter(wrapperMetas, wrapperMeta_ -> wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId()));
-        if (is != null) {
-            wrapperMetas.remove(is);
-        }
+        List<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", WRAPPER_META_TYPE);
+        wrapperMetas.removeIf(meta -> meta.getId().equals(wrapperMeta.getId()));
         return wrapperMetas;
     }
 
@@ -345,9 +332,8 @@ public class CloudConfig {
     }
 
     public void createGroup(ServerGroup serverGroup) {
-
-        new Document("group", serverGroup).saveAsConfig(Paths.get("groups/" + serverGroup.getName() + ".json"));
-
+        new Document("group", serverGroup)
+            .saveAsConfig(Paths.get("groups/" + serverGroup.getName() + ".json"));
     }
 
     public Map<String, ProxyGroup> getProxyGroups() {

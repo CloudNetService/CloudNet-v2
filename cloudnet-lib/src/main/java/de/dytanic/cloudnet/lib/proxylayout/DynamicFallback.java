@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet.lib.proxylayout;
 
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 
@@ -16,9 +15,9 @@ import java.util.List;
  */
 public class DynamicFallback {
 
-    private String defaultFallback;
+    private final String defaultFallback;
 
-    private List<ServerFallback> fallbacks;
+    private final List<ServerFallback> fallbacks;
 
     public DynamicFallback(String defaultFallback, List<ServerFallback> fallbacks) {
         this.defaultFallback = defaultFallback;
@@ -34,15 +33,12 @@ public class DynamicFallback {
     }
 
     public ServerFallback getDefault() {
-        return CollectionWrapper.filter(fallbacks, new Acceptable<ServerFallback>() {
-            @Override
-            public boolean isAccepted(ServerFallback serverFallback) {
-                return serverFallback.getGroup().equals(defaultFallback);
-            }
-        });
+        return fallbacks.stream()
+                        .filter(fallback -> fallback.getGroup().equals(defaultFallback))
+                        .findFirst().orElseThrow(() -> new IllegalStateException("No default fallback defined!"));
     }
 
-    public Collection<String> getNamedFallbackes() {
+    public Collection<String> getNamedFallbacks() {
         return CollectionWrapper.transform(this.fallbacks, new Catcher<String, ServerFallback>() {
             @Override
             public String doCatch(ServerFallback key) {

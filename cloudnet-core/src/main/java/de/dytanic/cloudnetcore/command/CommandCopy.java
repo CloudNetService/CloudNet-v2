@@ -8,8 +8,6 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
@@ -20,6 +18,8 @@ import java.util.HashSet;
  * Created by Tareko on 28.08.2017.
  */
 public final class CommandCopy extends Command {
+
+    private static final String[] EMTPY_STRING_ARRAY = new String[0];
 
     public CommandCopy() {
         super("copy", "cloudnet.command.copy");
@@ -39,24 +39,23 @@ public final class CommandCopy extends Command {
                 } else {
                     sender.sendMessage("The specified server doesn't exist");
                 }
+                break;
             }
-            break;
             case 2: {
                 MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);
                 if (minecraftServer != null) {
                     ServerGroup serverGroup = minecraftServer.getGroup();
                     if (serverGroup != null) {
-                        Template template = CollectionWrapper.filter(serverGroup.getTemplates(), new Acceptable<Template>() {
-                            @Override
-                            public boolean isAccepted(Template template) {
-                                return template.getName().equalsIgnoreCase(args[1]);
-                            }
-                        });
+                        Template template = serverGroup.getTemplates().stream()
+                                                       .filter(t -> t.getName().equalsIgnoreCase(args[1]))
+                                                       .findFirst()
+                                                       .orElse(null);
+
                         if (template == null) {
                             template = new Template(args[1],
                                                     minecraftServer.getProcessMeta().getTemplate().getBackend(),
                                                     minecraftServer.getProcessMeta().getTemplate().getUrl(),
-                                                    new String[0],
+                                                    EMTPY_STRING_ARRAY,
                                                     new HashSet<>());
                             serverGroup.getTemplates().add(template);
                             CloudNet.getInstance().getConfig().createGroup(serverGroup);
@@ -74,13 +73,14 @@ public final class CommandCopy extends Command {
                     }
                     return;
                 }
+                break;
             }
-            break;
-            default:
+            default: {
                 sender.sendMessage("copy <server> | Copies the current server as a local template to the wrapper of the instance");
                 sender.sendMessage(
                     "copy <server> <template> | Copies the current server as a local template to the wrapper of the instance which you set");
                 break;
+            }
         }
     }
 }
