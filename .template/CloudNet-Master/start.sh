@@ -1,2 +1,2 @@
 #!/bin/sh
-screen -RS CloudNet java -Xmx128m -jar CloudNet-Master.jar
+screen -RS CloudNet java -Dfile.encoding=UTF-8 -Xmx128m -jar CloudNet-Master.jar

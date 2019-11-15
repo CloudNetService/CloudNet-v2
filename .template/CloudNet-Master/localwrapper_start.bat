@@ -1,2 +1,2 @@
 title CloudNet-Master
-java -Xmx128m -jar CloudNet-Master.jar --installWrapper
+java -Dfile.encoding=UTF-8 -Xmx128m -jar CloudNet-Master.jar --installWrapper
