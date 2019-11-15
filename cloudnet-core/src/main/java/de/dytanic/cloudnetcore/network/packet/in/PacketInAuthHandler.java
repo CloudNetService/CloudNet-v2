@@ -38,18 +38,23 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                 String id = authData.getString("id");
 
                 if (CloudNet.getInstance().getWrappers().containsKey(id)) {
-                    Wrapper cn = CloudNet.getInstance().getWrappers().get(id);
+                    Wrapper wrapper = CloudNet.getInstance().getWrappers().get(id);
                     String wrapperKey = CloudNet.getInstance().getConfig().getWrapperKey();
-                    if (wrapperKey != null && cn.getChannel() == null && wrapperKey.equals(key)) {
+                    if (wrapperKey != null && wrapper.getChannel() == null && wrapperKey.equals(key)) {
                         Channel channel = client.getChannel();
                         channel.pipeline().remove("client");
                         client.getChannel().writeAndFlush(new PacketOutAuthResult(new AuthLoginResult(true))).syncUninterruptibly();
-                        channel.pipeline().addLast(new CloudNetClient(cn, channel));
+                        channel.pipeline().addLast(new CloudNetClient(wrapper, channel));
                         return;
                     } else {
                         client.getChannel().writeAndFlush(new PacketOutAuthResult(new AuthLoginResult(false))).syncUninterruptibly();
-                        CloudNet.getLogger()
-                                .info("Authentication failed [" + (wrapperKey != null ? "Invalid WrapperKey or Wrapper is already connected!" : "WrapperKey not found, please copy a wrapper key to this instance") + ']');
+                        if (wrapperKey != null) {
+                            CloudNet.getLogger().info(
+                                "Authentication failed [Invalid WrapperKey or Wrapper is already connected!]");
+                        } else {
+                            CloudNet.getLogger().info(
+                                "Authentication failed [WrapperKey not found, please copy a wrapper key to this instance]");
+                        }
                     }
                 } else {
                     client.getChannel().writeAndFlush(new PacketOutAuthResult(new AuthLoginResult(false))).syncUninterruptibly();
@@ -59,7 +64,6 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
             case GAMESERVER_OR_BUNGEE: {
                 ServiceId serviceId = authData.getObject("serviceId", ServiceId.class);
                 if (CloudNet.getInstance().getWrappers().containsKey(serviceId.getWrapperId())) {
-
                     Wrapper wrapper = CloudNet.getInstance().getWrappers().get(serviceId.getWrapperId());
                     if (wrapper.getServers().containsKey(serviceId.getServerId())) {
                         MinecraftServer minecraftServer = wrapper.getServers().get(serviceId.getServerId());
@@ -95,9 +99,6 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                     client.getChannel().close().syncUninterruptibly();
                 }
             }
-            return;
-            default:
-                return;
         }
     }
 

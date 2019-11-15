@@ -14,17 +14,17 @@ import de.dytanic.cloudnetcore.network.packet.api.sync.PacketAPIIO;
 /**
  * Created by Tareko on 25.08.2017.
  */
-public class PacketDBInExistsDocument extends PacketAPIIO {
+public class PacketDBInExistsDocument implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        String name = data.getString("name");
-        boolean document = CloudNet.getInstance().getDatabaseManager().getDatabase(data.getString("db")).containsDoc(name);
-        packetSender.sendPacket(getResult(new Document("exists", document)));
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        boolean exists = CloudNet.getInstance()
+                                 .getDatabaseManager()
+                                 .getDatabase(packet.getData().getString("db"))
+                                 .containsDoc(packet.getData().getString("name"));
+        packetSender.sendPacket(getResult(packet, new Document("exists", exists)));
     }
 
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, PacketRC.DB, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), PacketRC.DB, value);
     }
 }

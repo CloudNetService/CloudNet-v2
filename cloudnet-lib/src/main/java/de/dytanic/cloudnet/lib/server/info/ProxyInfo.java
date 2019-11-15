@@ -1,8 +1,10 @@
 package de.dytanic.cloudnet.lib.server.info;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +12,8 @@ import java.util.UUID;
  * Created by Tareko on 25.05.2017.
  */
 public class ProxyInfo {
+
+    public static final Type TYPE = TypeToken.get(ProxyInfo.class).getType();
 
     private ServiceId serviceId;
 

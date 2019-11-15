@@ -19,24 +19,23 @@ import java.util.stream.Stream;
 /**
  * Created by Tareko on 19.08.2017.
  */
-public class PacketAPIInGetProxys extends PacketAPIIO {
+public class PacketAPIInGetProxys implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
+    public void handleInput(Packet packet, PacketSender packetSender) {
         Stream<ProxyServer> proxyServers = CloudNet.getInstance().getProxys().values().stream();
 
-        if (data.contains("group")) {
-            proxyServers = proxyServers.filter(proxyServer ->
-                                                   proxyServer.getServiceId().getGroup().equals(data.getString("group")));
+        if (packet.getData().contains("group")) {
+            proxyServers = proxyServers.filter(
+                proxyServer ->
+                    proxyServer.getServiceId().getGroup().equals(packet.getData().getString("group")));
         }
         List<ProxyInfo> proxyInfos = proxyServers
             .map(ProxyServer::getProxyInfo)
             .collect(Collectors.toList());
-        packetSender.sendPacket(getResult(new Document("proxyInfos", proxyInfos)));
+        packetSender.sendPacket(getResult(packet, new Document("proxyInfos", proxyInfos)));
     }
 
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, PacketRC.SERVER_HANDLE, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), PacketRC.SERVER_HANDLE, value);
     }
 }

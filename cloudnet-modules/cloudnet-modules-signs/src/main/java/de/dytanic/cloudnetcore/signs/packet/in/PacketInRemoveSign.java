@@ -4,22 +4,20 @@
 
 package de.dytanic.cloudnetcore.signs.packet.in;
 
-import com.google.gson.reflect.TypeToken;
+import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.signs.SignsModule;
 
 /**
  * Created by Tareko on 23.08.2017.
  */
-public class PacketInRemoveSign extends PacketInHandler {
+public class PacketInRemoveSign implements PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        Sign sign = data.getObject("sign", new TypeToken<Sign>() {}.getType());
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        Sign sign = packet.getData().getObject("sign", Sign.TYPE);
         SignsModule.getInstance().getSignDatabase().removeSign(sign.getUniqueId());
 
         CloudNet.getInstance().getNetworkManager().reload();

@@ -1,7 +1,6 @@
 package de.dytanic.cloudnet.lib;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.sun.management.OperatingSystemMXBean;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolInDecoder;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolLengthDeserializer;
@@ -37,6 +36,7 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
@@ -81,10 +81,6 @@ public final class NetworkUtils {
         return ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean());
     }
 
-    public static TypeToken<CloudNetwork> cloudnet() {
-        return new TypeToken<CloudNetwork>() {};
-    }
-
     public static Class<? extends SocketChannel> socketChannel() {
         return EPOLL ? EpollSocketChannel.class : KQueue.isAvailable() ? KQueueSocketChannel.class : NioSocketChannel.class;
     }
@@ -126,7 +122,7 @@ public final class NetworkUtils {
         key.addAll(value);
     }
 
-    public static <T, V> void addAll(java.util.Map<T, V> key, java.util.Map<T, V> value) {
+    public static <T, V> void addAll(Map<T, V> key, Map<T, V> value) {
         for (T key_ : value.keySet()) {
             key.put(key_, value.get(key_));
         }
@@ -138,16 +134,16 @@ public final class NetworkUtils {
         }
     }
 
-    public static <T, V> void addAll(java.util.Map<T, V> map, List<V> list, Catcher<T, V> catcher) {
+    public static <T, V> void addAll(Map<T, V> map, List<V> list, Catcher<T, V> catcher) {
         for (V ke : list) {
             map.put(catcher.doCatch(ke), ke);
         }
     }
 
-    public static <T, V> void addAll(java.util.Map<T, V> key, java.util.Map<T, V> value, Acceptable<V> handle) {
-        for (T key_ : value.keySet()) {
-            if (handle.isAccepted(value.get(key_))) {
-                key.put(key_, value.get(key_));
+    public static <T, V> void addAll(Map<T, V> key, Map<T, V> value, Acceptable<V> handle) {
+        for (final Map.Entry<T, V> entry : value.entrySet()) {
+            if (handle.isAccepted(entry.getValue())) {
+                key.put(entry.getKey(), entry.getValue());
             }
         }
     }

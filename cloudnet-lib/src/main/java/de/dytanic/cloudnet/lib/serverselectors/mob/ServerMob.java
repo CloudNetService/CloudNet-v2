@@ -1,14 +1,18 @@
 package de.dytanic.cloudnet.lib.serverselectors.mob;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
+import java.lang.reflect.Type;
 import java.util.UUID;
 
 /**
  * Created by Tareko on 09.07.2017.
  */
 public class ServerMob implements Nameable {
+
+    public static final Type TYPE = TypeToken.get(ServerMob.class).getType();
 
     protected UUID uniqueId;
     protected String display;

@@ -18,19 +18,17 @@ import java.util.stream.Collectors;
 /**
  * Created by Tareko on 25.10.2017.
  */
-public class PacketAPIInGetCloudServers extends PacketAPIIO {
+public class PacketAPIInGetCloudServers implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
+    public void handleInput(Packet packet, PacketSender packetSender) {
         List<ServerInfo> serverInfos = CloudNet.getInstance().getCloudGameServers().values()
                                                .stream()
                                                .map(CloudServer::getServerInfo)
                                                .collect(Collectors.toList());
-        packetSender.sendPacket(getResult(new Document("serverInfos", serverInfos)));
+        packetSender.sendPacket(getResult(packet, new Document("serverInfos", serverInfos)));
     }
 
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, PacketRC.API, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), PacketRC.API, value);
     }
 }

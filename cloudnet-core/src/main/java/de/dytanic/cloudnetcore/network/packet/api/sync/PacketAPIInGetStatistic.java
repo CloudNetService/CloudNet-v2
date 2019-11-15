@@ -5,17 +5,15 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.database.StatisticManager;
 
-public final class PacketAPIInGetStatistic extends PacketAPIIO {
+public final class PacketAPIInGetStatistic implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        Packet packet = getResult(StatisticManager.getInstance().getStatistics());
-        packetSender.sendPacket(packet);
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        packetSender.sendPacket(getResult(
+            packet, StatisticManager.getInstance().getStatistics()));
     }
 
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, -643, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), -643, value);
     }
 
 }

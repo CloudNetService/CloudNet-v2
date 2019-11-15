@@ -4,18 +4,22 @@
 
 package de.dytanic.cloudnet.lib.server;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
 import de.dytanic.cloudnet.lib.map.WrappedMap;
 import de.dytanic.cloudnet.lib.proxylayout.ProxyConfig;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.version.ProxyVersion;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 /**
  * Created by Tareko on 18.07.2017.
  */
 public class ProxyGroup implements Nameable {
+
+    public static final Type TYPE = TypeToken.get(ProxyGroup.class).getType();
 
     protected String name;
     protected Collection<String> wrapper;

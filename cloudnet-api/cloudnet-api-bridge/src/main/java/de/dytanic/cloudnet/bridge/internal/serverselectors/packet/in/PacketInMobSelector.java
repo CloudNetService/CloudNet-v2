@@ -13,6 +13,7 @@ import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
 import de.dytanic.cloudnet.bridge.internal.util.ItemStackBuilder;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
@@ -20,7 +21,6 @@ import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -35,15 +35,14 @@ import java.util.UUID;
 /**
  * Created by Tareko on 25.08.2017.
  */
-public class PacketInMobSelector extends PacketInHandlerDefault {
+public class PacketInMobSelector implements PacketInHandlerDefault {
 
     private static final Type UUID_SERVERMOB_MAP_TYPE = TypeToken.getParameterized(Map.class, UUID.class, ServerMob.class).getType();
     private static final Type MOBCONFIG_TYPE = TypeToken.get(MobConfig.class).getType();
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        Map<UUID, ServerMob> mobMap = data.getObject("mobs", UUID_SERVERMOB_MAP_TYPE);
-        MobConfig mobConfig = data.getObject("mobConfig", MOBCONFIG_TYPE);
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        Map<UUID, ServerMob> mobMap = packet.getData().getObject("mobs", UUID_SERVERMOB_MAP_TYPE);
+        MobConfig mobConfig = packet.getData().getObject("mobConfig", MOBCONFIG_TYPE);
 
 
         Map<UUID, ServerMob> filteredMobs = MapWrapper.filter(mobMap, new Acceptable<ServerMob>() {
@@ -80,16 +79,15 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
 
                         if (armorStand != null) {
                             MobSelector.getInstance().updateCustom(key, armorStand);
-                            Entity armor = armorStand;
-                            if (armor.getPassenger() == null && key.getItemId() != null) {
+                            if (armorStand.getPassenger() == null && key.getItemId() != null) {
 
                                 Material material = ItemStackBuilder.getMaterialIgnoreVersion(key.getItemName(), key.getItemId());
                                 if (material != null) {
-                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(),
+                                    Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armorStand.getLocation(),
                                                                                                        new ItemStack(material));
                                     item.setTicksLived(Integer.MAX_VALUE);
                                     item.setPickupDelay(Integer.MAX_VALUE);
-                                    armor.setPassenger(item);
+                                    armorStand.setPassenger(item);
                                 }
                             }
                         }
@@ -147,15 +145,14 @@ public class PacketInMobSelector extends PacketInHandlerDefault {
 
                             if (armorStand != null) {
                                 MobSelector.getInstance().updateCustom(key, armorStand);
-                                Entity armor = armorStand;
-                                if (armor.getPassenger() == null && key.getItemId() != null) {
+                                if (armorStand.getPassenger() == null && key.getItemId() != null) {
                                     Material material = ItemStackBuilder.getMaterialIgnoreVersion(key.getItemName(), key.getItemId());
                                     if (material != null) {
-                                        Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(),
+                                        Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armorStand.getLocation(),
                                                                                                            new ItemStack(material));
                                         item.setTicksLived(Integer.MAX_VALUE);
                                         item.setPickupDelay(Integer.MAX_VALUE);
-                                        armor.setPassenger(item);
+                                        armorStand.setPassenger(item);
                                     }
                                 }
                             }

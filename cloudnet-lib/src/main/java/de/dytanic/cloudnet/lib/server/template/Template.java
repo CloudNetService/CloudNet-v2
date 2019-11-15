@@ -1,7 +1,9 @@
 package de.dytanic.cloudnet.lib.server.template;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -9,6 +11,9 @@ import java.util.Collection;
  * Created by Tareko on 18.07.2017.
  */
 public class Template {
+
+    public static final Type TYPE = TypeToken.get(Template.class).getType();
+
     private String name;
     private TemplateResource backend;
     private String url;

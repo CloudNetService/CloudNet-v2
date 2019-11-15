@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.zip.ZipConverter;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -94,7 +93,7 @@ public class MasterTemplateLoader {
     public MasterTemplateLoader unZip(String dest) {
         try {
             ZipConverter.extract(Paths.get(this.dest), Paths.get(dest));
-            new File(this.dest).delete();
+            Files.deleteIfExists(Paths.get(this.dest));
         } catch (IOException e) {
             e.printStackTrace();
         }

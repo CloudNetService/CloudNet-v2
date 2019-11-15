@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.bridge.internal.listener.proxied;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.network.packet.out.*;
 import de.dytanic.cloudnet.bridge.CloudProxy;
@@ -24,10 +23,6 @@ import de.dytanic.cloudnet.lib.proxylayout.TabList;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageEncoder;
-import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -38,11 +33,7 @@ import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import net.md_5.bungee.netty.ChannelWrapper;
-import net.md_5.bungee.protocol.DefinedPacket;
-import net.md_5.bungee.protocol.packet.Respawn;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -238,7 +229,7 @@ public class ProxiedListener implements Listener {
         Document result = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketOutPlayerLoginRequest(
             playerConnection), CloudAPI.getInstance().getNetworkConnection()).getResult();
 
-        CloudPlayer cloudPlayer = result.getObject("player", new TypeToken<CloudPlayer>() {}.getType());
+        CloudPlayer cloudPlayer = result.getObject("player", CloudPlayer.TYPE);
 
         if (cloudPlayer == null) {
             CloudAPI.getInstance().getLogger().finest("cloudPlayer is null!");

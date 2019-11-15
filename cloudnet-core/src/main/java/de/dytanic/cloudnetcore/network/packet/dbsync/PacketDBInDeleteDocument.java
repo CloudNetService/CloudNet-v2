@@ -4,19 +4,18 @@
 
 package de.dytanic.cloudnetcore.network.packet.dbsync;
 
+import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 
 /**
  * Created by Tareko on 25.08.2017.
  */
-public class PacketDBInDeleteDocument extends PacketInHandler {
+public class PacketDBInDeleteDocument implements PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        String name = data.getString("name");
-        CloudNet.getInstance().getDatabaseManager().getDatabase(data.getString("db")).delete(name);
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        String name = packet.getData().getString("name");
+        CloudNet.getInstance().getDatabaseManager().getDatabase(packet.getData().getString("db")).delete(name);
     }
 }

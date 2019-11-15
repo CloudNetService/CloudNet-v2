@@ -13,16 +13,14 @@ import de.dytanic.cloudnetcore.CloudNet;
 /**
  * Created by Tareko on 19.08.2017.
  */
-public class PacketAPIInGetServerGroup extends PacketAPIIO {
+public class PacketAPIInGetServerGroup implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        String name = data.getString("serverGroup");
-        packetSender.sendPacket(getResult(new Document("serverGroup", CloudNet.getInstance().getServerGroups().get(name))));
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        String name = packet.getData().getString("serverGroup");
+        packetSender.sendPacket(getResult(packet, new Document("serverGroup", CloudNet.getInstance().getServerGroups().get(name))));
     }
 
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, PacketRC.SERVER_HANDLE, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), PacketRC.SERVER_HANDLE, value);
     }
 }

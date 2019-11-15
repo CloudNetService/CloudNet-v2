@@ -19,25 +19,23 @@ import java.util.stream.Stream;
 /**
  * Created by Tareko on 19.08.2017.
  */
-public class PacketAPIInGetServers extends PacketAPIIO {
+public class PacketAPIInGetServers implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        if (packetUniqueId == null) {
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        if (packet.getUniqueId() == null) {
             return;
         }
         Stream<MinecraftServer> servers = CloudNet.getInstance().getServers().values().stream();
-        if (data.contains("group")) {
-            servers = servers.filter(server -> server.getServiceId().getGroup().equals(data.getString("group")));
+        if (packet.getData().contains("group")) {
+            servers = servers.filter(server -> server.getServiceId().getGroup().equals(packet.getData().getString("group")));
         }
         List<ServerInfo> serverInfos = servers
             .map(MinecraftServer::getServerInfo)
             .collect(Collectors.toList());
-        packetSender.sendPacket(getResult(new Document("serverInfos", serverInfos)));
+        packetSender.sendPacket(getResult(packet, new Document("serverInfos", serverInfos)));
     }
 
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, PacketRC.SERVER_HANDLE, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), PacketRC.SERVER_HANDLE, value);
     }
 }

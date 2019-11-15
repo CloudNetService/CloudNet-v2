@@ -14,16 +14,15 @@ import de.dytanic.cloudnetcore.network.packet.api.sync.PacketAPIIO;
 /**
  * Created by Tareko on 25.08.2017.
  */
-public class PacketDBInGetSize extends PacketAPIIO {
+public class PacketDBInGetSize implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        String db = data.getString("name");
-        packetSender.sendPacket(getResult(new Document("size", CloudNet.getInstance().getDatabaseManager().getDatabase(db).size())));
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        String db = packet.getData().getString("name");
+        packetSender.sendPacket(getResult(packet,
+                                          new Document("size", CloudNet.getInstance().getDatabaseManager().getDatabase(db).size())));
     }
 
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, PacketRC.DB, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), PacketRC.DB, value);
     }
 }

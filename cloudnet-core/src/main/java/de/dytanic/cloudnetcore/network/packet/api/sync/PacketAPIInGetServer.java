@@ -15,26 +15,23 @@ import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 /**
  * Created by Tareko on 31.08.2017.
  */
-public class PacketAPIInGetServer extends PacketAPIIO {
+public class PacketAPIInGetServer implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        MinecraftServer minecraftServer = CloudNet.getInstance().getServer(data.getString("server"));
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        MinecraftServer minecraftServer = CloudNet.getInstance().getServer(packet.getData().getString("server"));
         if (minecraftServer != null) {
-            packetSender.sendPacket(getResult(new Document("serverInfo", minecraftServer.getServerInfo())));
+            packetSender.sendPacket(getResult(packet, new Document("serverInfo", minecraftServer.getServerInfo())));
         } else {
-            CloudServer cloudServer = CloudNet.getInstance().getCloudGameServer(data.getString("server"));
+            CloudServer cloudServer = CloudNet.getInstance().getCloudGameServer(packet.getData().getString("server"));
             if (cloudServer != null) {
-                packetSender.sendPacket(getResult(new Document("serverInfo", cloudServer.getServerInfo())));
-                return;
+                packetSender.sendPacket(getResult(packet, new Document("serverInfo", cloudServer.getServerInfo())));
             } else {
-                packetSender.sendPacket(getResult(new Document()));
+                packetSender.sendPacket(getResult(packet, new Document()));
             }
         }
     }
 
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, PacketRC.API, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), PacketRC.API, value);
     }
 }

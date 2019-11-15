@@ -9,4 +9,4 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 /**
  * Marks a default Packet server
  */
-public abstract class PacketInHandlerDefault extends PacketInHandler {}
+public interface PacketInHandlerDefault extends PacketInHandler {}

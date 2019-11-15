@@ -1,7 +1,9 @@
 package de.dytanic.cloudnet.lib.serverselectors.sign;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 
+import java.lang.reflect.Type;
 import java.util.UUID;
 
 /**
@@ -9,6 +11,7 @@ import java.util.UUID;
  */
 public class Sign {
 
+    public static final Type TYPE = TypeToken.get(Sign.class).getType();
     private UUID uniqueId;
     private String targetGroup;
     private Position position;

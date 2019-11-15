@@ -80,16 +80,10 @@ public final class PacketManager {
             return false;
         }
 
-        packetHandlers.getOrDefault(incoming.id, Collections.emptyList()).forEach(handler -> {
-            if (incoming.uniqueId != null) {
-                handler.packetUniqueId = incoming.uniqueId;
-            }
-            handler.handleInput(incoming.data, packetSender);
-            /*
-            * future:
-            handler.handleInput(incoming, packetSender);
-             */
-        });
+        packetHandlers.getOrDefault(incoming.id, Collections.emptyList())
+                      .forEach(handler -> {
+                          handler.handleInput(incoming, packetSender);
+                      });
         return true;
     }
 
