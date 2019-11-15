@@ -677,9 +677,8 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         }
 
         commandBuilder.append(
-            "-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -XX:CompileThreshold=100 -Dcom.mojang.eula.agree=true -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -Xmx" + serverProcess
-                .getMeta()
-                .getMemory() + "M -jar ");
+            "-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx"
+                + serverProcess.getMeta().getMemory() + "M -jar ");
 
         switch (serverGroup.getServerType()) {
             case CAULDRON:
