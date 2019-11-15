@@ -22,7 +22,6 @@ import de.dytanic.cloudnet.lib.serverselectors.mob.MobItemLayout;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobPosition;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
 import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.Return;
 import org.bukkit.Bukkit;
@@ -203,13 +202,15 @@ public final class MobSelector {
 
     private ItemStack transform(MobItemLayout mobItemLayout, ServerInfo serverInfo) {
         Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
-        return material == null ? null : ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId()).lore(new ArrayList<>(
-            CollectionWrapper.transform(mobItemLayout.getLore(), new Catcher<String, String>() {
-                @Override
-                public String doCatch(String key) {
-                    return initPatterns(ChatColor.translateAlternateColorCodes('&', key), serverInfo);
-                }
-            }))).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
+        if (material == null) {
+            return null;
+        } else {
+            return ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId()).lore(
+                mobItemLayout.getLore().stream()
+                             .map(lore -> initPatterns(ChatColor.translateAlternateColorCodes('&', lore), serverInfo))
+                             .collect(Collectors.toList())
+            ).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
+        }
     }
 
     public Return<Integer, Integer> getOnlineCount(String group) {
@@ -294,13 +295,15 @@ public final class MobSelector {
 
     private ItemStack transform(MobItemLayout mobItemLayout) {
         Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
-        return material == null ? null : ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId()).lore(new ArrayList<>(
-            CollectionWrapper.transform(mobItemLayout.getLore(), new Catcher<String, String>() {
-                @Override
-                public String doCatch(String key) {
-                    return ChatColor.translateAlternateColorCodes('&', key);
-                }
-            }))).displayName(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay())).build();
+        if (material == null) {
+            return null;
+        } else {
+            return ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId()).lore(
+                mobItemLayout.getLore().stream()
+                             .map(lore -> ChatColor.translateAlternateColorCodes('&', lore))
+                             .collect(Collectors.toList())
+            ).displayName(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay())).build();
+        }
     }
 
     private List<ServerInfo> filter(String group) {

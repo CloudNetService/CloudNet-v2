@@ -4,11 +4,9 @@
 
 package de.dytanic.cloudnet.lib.proxylayout;
 
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 05.10.2017.
@@ -39,12 +37,9 @@ public class DynamicFallback {
     }
 
     public Collection<String> getNamedFallbacks() {
-        return CollectionWrapper.transform(this.fallbacks, new Catcher<String, ServerFallback>() {
-            @Override
-            public String doCatch(ServerFallback key) {
-                return key.getGroup();
-            }
-        });
+        return this.fallbacks.stream()
+                             .map(ServerFallback::getGroup)
+                             .collect(Collectors.toList());
     }
 
 }

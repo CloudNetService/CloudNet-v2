@@ -4,20 +4,20 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 19.01.2018.
  */
 public final class CommandInfo extends Command {
+
+    public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     public CommandInfo() {
         super("info", "cloudnet.command.info", "i");
@@ -119,16 +119,10 @@ public final class CommandInfo extends Command {
                                            "DynamicFixMaxHeapSize: " + group.getDynamicMemory() + "MB",
                                            "MinOnlineServers: " + group.getMinOnlineServers(),
                                            "MaxOnlineServers: " + group.getMaxOnlineServers(),
-                                           "Wrappers: " + Arrays.toString(group.getWrapper().toArray(new String[0])),
-                                           "Templates: " + Arrays.toString(CollectionWrapper.transform(group.getTemplates(),
-                                                                                                       new Catcher<String, Template>() {
-                                                                                                           @Override
-                                                                                                           public String doCatch(Template key) {
-                                                                                                               return key.getName() + ':' + key
-                                                                                                                   .getBackend()
-                                                                                                                   .name();
-                                                                                                           }
-                                                                                                       }).toArray()),
+                                           "Wrappers: " + Arrays.toString(group.getWrapper().toArray(EMPTY_STRING_ARRAY)),
+                                           group.getTemplates().stream()
+                                                .map(template -> template.getName() + ':' + template.getBackend().name())
+                                                .collect(Collectors.joining(", ", "Templates: ", "")),
                                            NetworkUtils.SPACE_STRING);
                     }
                     break;

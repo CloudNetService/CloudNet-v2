@@ -36,7 +36,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -225,10 +224,6 @@ public final class NetworkUtils {
             Thread.sleep(time);
         } catch (InterruptedException e) {
         }
-    }
-
-    public static <K, V> HashMap<K, V> newHashMap() {
-        return new HashMap<>(0);
     }
 
     public static <K, V> ConcurrentHashMap<K, V> newConcurrentHashMap() {

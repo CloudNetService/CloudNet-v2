@@ -22,8 +22,6 @@ import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import net.md_5.bungee.api.ChatColor;
@@ -41,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * This Class represents the Proxy Instance on based on cloudnet
@@ -275,15 +274,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                                             CloudAPI.getInstance().getConfig().getString("host"),
                                             0,
                                             true,
-                                            new ArrayList<>(CollectionWrapper.transform(ProxyServer.getInstance().getPlayers(),
-                                                                                        new Catcher<MultiValue<UUID, String>, ProxiedPlayer>() {
-                                                                                            @Override
-                                                                                            public MultiValue<UUID, String> doCatch(
-                                                                                                ProxiedPlayer key) {
-                                                                                                return new MultiValue<>(key.getUniqueId(),
-                                                                                                                        key.getName());
-                                                                                            }
-                                                                                        })),
+                                            ProxyServer.getInstance().getPlayers().stream()
+                                                       .map(player -> new MultiValue<>(player.getUniqueId(), player.getName()))
+                                                       .collect(Collectors.toList()),
                                             proxyProcessMeta.getMemory(),
                                             ProxyServer.getInstance().getOnlineCount());
         CloudAPI.getInstance().update(proxyInfo);

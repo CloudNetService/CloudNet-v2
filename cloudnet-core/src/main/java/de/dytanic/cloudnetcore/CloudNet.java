@@ -24,7 +24,8 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.*;
+import de.dytanic.cloudnet.lib.utility.Acceptable;
+import de.dytanic.cloudnet.lib.utility.Quad;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 import de.dytanic.cloudnet.logging.CloudLogger;
@@ -644,13 +645,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper) {
         int id = 1;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key) {
-                return key.getId();
-            }
-        });
-        while (collection.contains(id)) {
+        List<Integer> serverIds = serviceIds.stream()
+                                            .map(ServiceId::getId)
+                                            .collect(Collectors.toList());
+        while (serverIds.contains(id)) {
             id++;
         }
 
@@ -677,16 +675,27 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
                              serverGroup.getName() + config.getFormatSplitter() + id);
     }
 
+    public Collection<ServiceId> getServerServiceIdsAndWaitings(String group) {
+        List<ServiceId> serviceIds = getServers(group).stream()
+                                                      .map(MinecraftServer::getServiceId)
+                                                      .collect(Collectors.toList());
+
+        wrappers.values().stream()
+                .flatMap(wrapper -> wrapper.getWaitingServices().values().stream())
+                .filter(quad -> quad.getThird().getGroup().equals(group))
+                .map(Quad::getThird)
+                .forEach(serviceIds::add);
+
+        return serviceIds;
+    }
+
     public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, UUID uniqueId) {
         int id = 0;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key) {
-                return key.getId();
-            }
-        });
-        while (collection.contains(id)) {
+        Collection<Integer> ids = serviceIds.stream()
+                                            .map(ServiceId::getId)
+                                            .collect(Collectors.toList());
+        while (ids.contains(id)) {
             id++;
         }
         return new ServiceId(serverGroup.getName(),
@@ -694,24 +703,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
                              uniqueId,
                              wrapper.getNetworkInfo().getId(),
                              serverGroup.getName() + config.getFormatSplitter() + id);
-    }
-
-    public Collection<ServiceId> getServerServiceIdsAndWaitings(String group) {
-        Collection<ServiceId> strings = CollectionWrapper.transform(getServers(group), new Catcher<ServiceId, MinecraftServer>() {
-            @Override
-            public ServiceId doCatch(MinecraftServer key) {
-                return key.getServiceId();
-            }
-        });
-
-        for (Wrapper wrapper : wrappers.values()) {
-            for (Map.Entry<String, Quad<Integer, Integer, ServiceId, Template>> serviceId : wrapper.getWaitingServices().entrySet()) {
-                if (serviceId.getValue().getThird().getGroup().equalsIgnoreCase(group)) {
-                    strings.add(serviceId.getValue().getThird());
-                }
-            }
-        }
-        return strings;
     }
 
     public Collection<MinecraftServer> getServers(String group) {
@@ -740,15 +731,12 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     }
 
     public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, UUID uniqueId, String serverId) {
-        int id = 0;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key) {
-                return key.getId();
-            }
-        });
-        while (collection.contains(id)) {
+        List<Integer> ids = serviceIds.stream()
+                                      .map(ServiceId::getId)
+                                      .collect(Collectors.toList());
+        int id = 0;
+        while (ids.contains(id)) {
             id++;
         }
         return new ServiceId(serverGroup.getName(), id, uniqueId, wrapper.getNetworkInfo().getId(), serverId);
@@ -758,24 +746,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         return wrappers.values().stream()
                        .mapToLong(Wrapper::getMaxMemory)
                        .sum();
-    }
-
-    public Collection<Trio<String, Integer, Integer>> getServersAndWaitingData(String group) {
-        Collection<Trio<String, Integer, Integer>> strings = CollectionWrapper.transform(getServers(group),
-                                                                                         key -> new Trio<>(key.getServerId(),
-                                                                                                           key.getServerInfo()
-                                                                                                              .getOnlineCount(),
-                                                                                                           key.getServerInfo()
-                                                                                                              .getMaxPlayers()));
-
-        for (Wrapper wrapper : wrappers.values()) {
-            for (Map.Entry<String, Quad<Integer, Integer, ServiceId, Template>> serviceId : wrapper.getWaitingServices().entrySet()) {
-                if (serviceId.getValue().getThird().getGroup().equalsIgnoreCase(group)) {
-                    strings.add(new Trio<>(serviceId.getKey(), 0, 0));
-                }
-            }
-        }
-        return strings;
     }
 
     public CloudServer getCloudGameServer(String serverId) {
@@ -804,21 +774,17 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     }
 
     public Collection<String> getServersAndWaitings(String group) {
-        Collection<String> strings = CollectionWrapper.transform(getServers(group), new Catcher<String, MinecraftServer>() {
-            @Override
-            public String doCatch(MinecraftServer key) {
-                return key.getServerId();
-            }
-        });
+        List<String> serverIds = getServers(group).stream()
+                                                  .map(MinecraftServer::getServerId)
+                                                  .collect(Collectors.toList());
 
-        for (Wrapper wrapper : wrappers.values()) {
-            for (Map.Entry<String, Quad<Integer, Integer, ServiceId, Template>> serviceId : wrapper.getWaitingServices().entrySet()) {
-                if (serviceId.getValue().getThird().getGroup().equalsIgnoreCase(group)) {
-                    strings.add(serviceId.getKey());
-                }
-            }
-        }
-        return strings;
+        wrappers.values().stream()
+                .flatMap(wrapper -> wrapper.getWaitingServices().entrySet().stream())
+                .filter(entry -> entry.getValue().getThird().getGroup().equals(group))
+                .map(Map.Entry::getKey)
+                .forEach(serverIds::add);
+
+        return serverIds;
     }
 
     public void startProxy(Wrapper wrapper, ProxyGroup proxyGroup) {
@@ -839,37 +805,30 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     }
 
     public Collection<String> getServersAndWaitings() {
-        Collection<String> strings = CollectionWrapper.transform(getServers().values(), new Catcher<String, MinecraftServer>() {
-            @Override
-            public String doCatch(MinecraftServer key) {
-                return key.getServerId();
-            }
-        });
+        List<String> serverIds = getServers().values().stream()
+                                             .map(MinecraftServer::getServerId)
+                                             .collect(Collectors.toList());
 
-        for (Wrapper wrapper : wrappers.values()) {
-            for (Map.Entry<String, Quad<Integer, Integer, ServiceId, Template>> serviceId : wrapper.getWaitingServices().entrySet()) {
-                strings.add(serviceId.getKey());
-            }
-        }
-        return strings;
+        wrappers.values().stream()
+                .flatMap(wrapper -> wrapper.getWaitingServices().entrySet().stream())
+                .map(Map.Entry::getKey)
+                .forEach(serverIds::add);
+
+        return serverIds;
     }
 
     public Collection<String> getProxysAndWaitings(String group) {
-        Collection<String> strings = CollectionWrapper.transform(getProxys(group), new Catcher<String, ProxyServer>() {
-            @Override
-            public String doCatch(ProxyServer key) {
-                return key.getServerId();
-            }
-        });
+        List<String> proxyIds = getProxys(group).stream()
+                                                .map(ProxyServer::getServerId)
+                                                .collect(Collectors.toList());
 
-        for (Wrapper wrapper : wrappers.values()) {
-            for (Quad<Integer, Integer, ServiceId, Template> serviceId : wrapper.getWaitingServices().values()) {
-                if (serviceId.getThird().getGroup().equalsIgnoreCase(group)) {
-                    strings.add(serviceId.getThird().getServerId());
-                }
-            }
-        }
-        return strings;
+        wrappers.values().stream()
+                .flatMap(wrapper -> wrapper.getWaitingServices().entrySet().stream())
+                .filter(entry -> entry.getValue().getThird().getGroup().equals(group))
+                .map(Map.Entry::getKey)
+                .forEach(proxyIds::add);
+
+        return proxyIds;
     }
 
     public Collection<ProxyServer> getProxys(String group) {
@@ -884,9 +843,11 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     }
 
     public ServiceId newServiceId(ProxyGroup proxyGroup, Wrapper wrapper) {
-        int id = 1;
         Collection<ServiceId> serviceIds = getProxysServiceIdsAndWaitings(proxyGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, ServiceId::getId);
+        List<Integer> collection = serviceIds.stream()
+                                             .map(ServiceId::getId)
+                                             .collect(Collectors.toList());
+        int id = 1;
         while (collection.contains(id)) {
             id++;
         }
@@ -1083,21 +1044,17 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     }
 
     public Collection<ServiceId> getProxysServiceIdsAndWaitings(String group) {
-        Collection<ServiceId> strings = CollectionWrapper.transform(getProxys(group), new Catcher<ServiceId, ProxyServer>() {
-            @Override
-            public ServiceId doCatch(ProxyServer key) {
-                return key.getServiceId();
-            }
-        });
+        List<ServiceId> serviceIds = getProxys(group).stream()
+                                                     .map(ProxyServer::getServiceId)
+                                                     .collect(Collectors.toList());
 
-        for (Wrapper wrapper : wrappers.values()) {
-            for (Quad<Integer, Integer, ServiceId, Template> serviceId : wrapper.getWaitingServices().values()) {
-                if (serviceId.getThird().getGroup().equalsIgnoreCase(group)) {
-                    strings.add(serviceId.getThird());
-                }
-            }
-        }
-        return strings;
+        wrappers.values().stream()
+                .flatMap(wrapper -> wrapper.getWaitingServices().values().stream())
+                .filter(entry -> entry.getThird().getGroup().equals(group))
+                .map(Quad::getThird)
+                .forEach(serviceIds::add);
+
+        return serviceIds;
     }
 
     public void startProxy(ProxyGroup proxyGroup,
@@ -1220,13 +1177,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public ServiceId newServiceId(ProxyGroup proxyGroup, Wrapper wrapper, UUID uuid) {
         int id = 1;
         Collection<ServiceId> serviceIds = getProxysServiceIdsAndWaitings(proxyGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key) {
-                return key.getId();
-            }
-        });
-        while (collection.contains(id)) {
+        List<Integer> serverIds = serviceIds.stream()
+                                            .map(ServiceId::getId)
+                                            .collect(Collectors.toList());
+        while (serverIds.contains(id)) {
             id++;
         }
 
@@ -2793,13 +2747,10 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, String serverId) {
         int id = 1;
         Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> collection = CollectionWrapper.transform(serviceIds, new Catcher<Integer, ServiceId>() {
-            @Override
-            public Integer doCatch(ServiceId key) {
-                return key.getId();
-            }
-        });
-        while (collection.contains(id)) {
+        List<Integer> serverIds = serviceIds.stream()
+                                            .map(ServiceId::getId)
+                                            .collect(Collectors.toList());
+        while (serverIds.contains(id)) {
             id++;
         }
 
