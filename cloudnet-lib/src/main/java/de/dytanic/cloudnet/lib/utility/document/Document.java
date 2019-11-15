@@ -16,6 +16,7 @@ import java.util.*;
 public class Document implements DocumentAbstract {
 
     public static Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
+    private static final JsonParser JSON_PARSER = new JsonParser();
     protected String name;
     private JsonObject dataCatcher;
     private File file;
@@ -170,14 +171,12 @@ public class Document implements DocumentAbstract {
         return new Document(dataCatcher.get(key).getAsJsonObject());
     }
 
-    public Document loadToExistingDocument(Path path) {
-        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            this.dataCatcher = JsonParser.parseReader(reader).getAsJsonObject();
-            return this;
+    public static Document $loadDocument(File backend) throws Exception {
+        try {
+            return new Document(JSON_PARSER.parse(Files.newBufferedReader(backend.toPath())).getAsJsonObject());
         } catch (Exception ex) {
-            ex.getStackTrace();
+            throw new Exception(ex);
         }
-        return new Document();
     }
 
     public Document(String key, Object value) {
@@ -215,22 +214,23 @@ public class Document implements DocumentAbstract {
         return loadDocument(backend.toPath());
     }
 
-    public static Document $loadDocument(File backend) throws Exception {
-        try {
-            return new Document(JsonParser.parseString(new String(Files.readAllBytes(backend.toPath()), StandardCharsets.UTF_8))
-                                          .getAsJsonObject());
-        } catch (Exception ex) {
-            throw new Exception(ex);
-        }
-    }
-
     public static Document load(String input) {
         try {
-            return new Document(JsonParser.parseString(input).getAsJsonObject());
+            return new Document(JSON_PARSER.parse(input).getAsJsonObject());
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
             return new Document();
         }
+    }
+
+    public Document loadToExistingDocument(Path path) {
+        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            this.dataCatcher = JSON_PARSER.parse(reader).getAsJsonObject();
+            return this;
+        } catch (Exception ex) {
+            ex.getStackTrace();
+        }
+        return new Document();
     }
 
     public boolean saveAsConfig(File backend) {
@@ -286,10 +286,8 @@ public class Document implements DocumentAbstract {
         return this;
     }
 
-    public Document appendValues(java.util.Map<String, Object> values) {
-        for (java.util.Map.Entry<String, Object> valuess : values.entrySet()) {
-            append(valuess.getKey(), valuess.getValue());
-        }
+    public Document appendValues(Map<String, Object> values) {
+        values.forEach(this::append);
         return this;
     }
 
@@ -349,7 +347,7 @@ public class Document implements DocumentAbstract {
 
     public Document loadToExistingDocument(File file) {
         try (Reader reader = new FileReader(file)) {
-            this.dataCatcher = JsonParser.parseReader(reader).getAsJsonObject();
+            this.dataCatcher = JSON_PARSER.parse(reader).getAsJsonObject();
             this.file = file;
             return this;
         } catch (Exception ex) {
