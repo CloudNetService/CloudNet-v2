@@ -94,12 +94,17 @@ public final class NetworkUtils {
     }
 
     public static EventLoopGroup eventLoopGroup() {
-        return eventLoopGroup(Runtime.getRuntime().availableProcessors());
+        return eventLoopGroup(Math.min(Runtime.getRuntime().availableProcessors(), 4));
     }
 
     public static EventLoopGroup eventLoopGroup(int threads) {
-        return EPOLL ? new EpollEventLoopGroup(threads) : KQueue.isAvailable() ? new KQueueEventLoopGroup(threads) : new NioEventLoopGroup(
-            threads);
+        if (EPOLL) {
+            return new EpollEventLoopGroup(threads);
+        } else if (KQueue.isAvailable()) {
+            return new KQueueEventLoopGroup(threads);
+        } else {
+            return new NioEventLoopGroup(threads);
+        }
     }
 
     public static EventLoopGroup eventLoopGroup(ThreadFactory threadFactory) {

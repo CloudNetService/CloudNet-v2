@@ -10,6 +10,7 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import joptsimple.OptionSet;
 
@@ -19,24 +20,23 @@ import joptsimple.OptionSet;
 public final class CloudNetServer extends ChannelInitializer<Channel> implements AutoCloseable {
 
     private SslContext sslContext;
-    private EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup(), bossGroup = NetworkUtils.eventLoopGroup();
+    private EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
+    private EventLoopGroup bossGroup = NetworkUtils.eventLoopGroup();
 
     public CloudNetServer(OptionSet optionSet, ConnectableAddress connectableAddress) {
         try {
             if (optionSet.has("ssl")) {
                 CloudNet.getLogger().debug("Enabling SSL Context for service requests");
                 SelfSignedCertificate ssc = new SelfSignedCertificate();
-                sslContext = SslContext.newServerContext(ssc.certificate(), ssc.privateKey());
+                sslContext = SslContextBuilder
+                    .forServer(ssc.certificate(), ssc.privateKey())
+                    .build();
             }
 
             ServerBootstrap serverBootstrap = new ServerBootstrap().group(bossGroup, workerGroup)
-
                                                                    .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                                                                   .option(ChannelOption.AUTO_READ,
-                                                                           true)
-
+                                                                   .option(ChannelOption.AUTO_READ, true)
                                                                    .channel(NetworkUtils.serverSocketChannel())
-
                                                                    .childOption(ChannelOption.IP_TOS, 24)
                                                                    .childOption(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
                                                                    .childOption(ChannelOption.TCP_NODELAY, true)
@@ -87,7 +87,7 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
 
     @Override
     protected void initChannel(Channel channel) {
-        System.out.println("Channel [" + channel.remoteAddress().toString() + "] connecting...");
+        System.out.println("Channel [" + channel.remoteAddress() + "] connecting...");
 
         ChannelConnectEvent channelConnectEvent = new ChannelConnectEvent(false, channel);
         CloudNet.getInstance().getEventManager().callEvent(channelConnectEvent);
