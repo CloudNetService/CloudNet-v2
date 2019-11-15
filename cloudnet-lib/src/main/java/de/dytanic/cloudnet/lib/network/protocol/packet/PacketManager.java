@@ -63,8 +63,9 @@ public final class PacketManager {
         executorService.schedule(() -> packetSender.sendPacket(packet));
 
         try {
+            final Result result = future.get(2, TimeUnit.SECONDS);
             synchronizedHandlers.remove(uniqueId);
-            return future.get(2, TimeUnit.SECONDS);
+            return result;
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
             return new Result(uniqueId, new Document());
@@ -79,19 +80,21 @@ public final class PacketManager {
             return false;
         }
 
-        packetHandlers.get(incoming.id).forEach(handler -> {
+        packetHandlers.getOrDefault(incoming.id, Collections.emptyList()).forEach(handler -> {
             if (incoming.uniqueId != null) {
                 handler.packetUniqueId = incoming.uniqueId;
             }
-            if (handler != null) {
-                handler.handleInput(incoming.data, packetSender);
-            }
+            handler.handleInput(incoming.data, packetSender);
+            /*
+            * future:
+            handler.handleInput(incoming, packetSender);
+             */
         });
         return true;
     }
 
     public Collection<PacketInHandler> buildHandlers(int id) {
-        return packetHandlers.get(id);
+        return packetHandlers.getOrDefault(id, Collections.emptyList());
     }
 
 }

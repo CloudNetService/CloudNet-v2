@@ -739,6 +739,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         while (ids.contains(id)) {
             id++;
         }
+        if (serverId == null) {
+            serverId = serverGroup.getName() + this.config.getFormatSplitter() + id;
+        }
         return new ServiceId(serverGroup.getName(), id, uniqueId, wrapper.getNetworkInfo().getId(), serverId);
     }
 
@@ -1267,9 +1270,8 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
                                 Collection<ServerInstallablePlugin> plugins,
                                 String customServerName,
                                 Properties serverProperties) {
-        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance()
-                                                                                                         .getServersAndWaitings(serverGroup.getName())
-                                                                                                         .size() >= serverGroup.getMaxOnlineServers()) {
+        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 &&
+            CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) {
             return;
         }
 
@@ -1282,7 +1284,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
             return;
         }
         Map<Template, Integer> templateMap = getTemplateStatistics(wrapper, serverGroup);
-        List<Integer> ports = wrapper.getBoundPorts();
 
         Optional<Template> entry = templateMap.entrySet().stream()
                                               .min(Map.Entry.comparingByValue())
@@ -2752,6 +2753,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
                                             .collect(Collectors.toList());
         while (serverIds.contains(id)) {
             id++;
+        }
+        if (serverId == null) {
+            serverId = serverGroup.getName() + this.config.getFormatSplitter() + id;
         }
 
         return new ServiceId(serverGroup.getName(), id, UUID.randomUUID(), wrapper.getNetworkInfo().getId(), serverId);
