@@ -13,6 +13,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public final class FileUtility {
 
@@ -59,33 +60,29 @@ public final class FileUtility {
     }
 
     public static void copyFilesInDirectory(File from, File to) throws IOException {
-        if (to == null || from == null || !from.exists()) {
+        final Path sourcePath = from.toPath();
+        final Path targetPath = to.toPath();
+        if (!Files.isDirectory(sourcePath)) {
             return;
         }
-
-        if (!to.exists()) {
-            to.mkdirs();
+        if (Files.notExists(targetPath)) {
+            Files.createDirectories(targetPath);
         }
 
-        if (!from.isDirectory()) {
-            return;
-        }
-
-        File[] list = from.listFiles();
-        byte[] buffer = new byte[16384];
-        if (list != null) {
-            for (File file : list) {
-                if (file == null) {
-                    continue;
+        try (Stream<Path> sourceFiles = Files.walk(sourcePath)) {
+            sourceFiles.forEach(path -> {
+                try {
+                    final Path absoluteTargetPath = targetPath.resolve(
+                        sourcePath.relativize(path));
+                    if (Files.isDirectory(path) && Files.notExists(absoluteTargetPath)) {
+                        Files.createDirectories(absoluteTargetPath);
+                    } else if (Files.isRegularFile(path)) {
+                        copy(path, absoluteTargetPath);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
-                if (file.isDirectory()) {
-                    copyFilesInDirectory(file, new File(to.getAbsolutePath() + '/' + file.getName()));
-                } else {
-                    Path destination = to.toPath().resolve(file.getName());
-                    copy(file.toPath(), destination);
-                }
-            }
+            });
         }
     }
 
@@ -102,7 +99,7 @@ public final class FileUtility {
     }
 
     public static void deleteDirectory(File file) {
-        if (!Files.exists(file.toPath())) {
+        if (Files.notExists(file.toPath())) {
             return;
         }
         try {
