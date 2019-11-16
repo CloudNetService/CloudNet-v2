@@ -9,10 +9,8 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +43,7 @@ public final class FileUtility {
     }
 
     public static void copyFileToDirectory(File from, File to) throws IOException {
-        copy(from.toPath(), new File(to.getPath(), from.getName()).toPath());
+        copy(from.toPath(), new File(to, from.getName()).toPath());
     }
 
     public static void copy(Path from, Path to) throws IOException {
@@ -104,25 +102,14 @@ public final class FileUtility {
     }
 
     public static void deleteDirectory(File file) {
-        if (file == null) {
+        if (!Files.exists(file.toPath())) {
             return;
         }
-
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-
-            if (files != null) {
-                for (File entry : files) {
-                    if (entry.isDirectory()) {
-                        deleteDirectory(entry);
-                    } else {
-                        entry.delete();
-                    }
-                }
-            }
+        try {
+            Files.walkFileTree(file.toPath(), new DeletingFileVisitor());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        file.delete();
     }
 
     public static void rewriteFileUtils(File file, String host) throws Exception {
@@ -139,6 +126,22 @@ public final class FileUtility {
             try (Writer writer = new FileWriter(file)) {
                 YAML.dump(configuration, writer);
             }
+        }
+    }
+
+    private static class DeletingFileVisitor extends SimpleFileVisitor<Path> {
+        @Override
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+            super.visitFile(file, attrs);
+            Files.delete(file);
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
+            super.postVisitDirectory(dir, exc);
+            Files.delete(dir);
+            return FileVisitResult.CONTINUE;
         }
     }
 
