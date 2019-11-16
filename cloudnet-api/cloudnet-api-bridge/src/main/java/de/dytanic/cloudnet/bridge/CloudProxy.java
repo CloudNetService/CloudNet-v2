@@ -61,25 +61,26 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         this.proxyProcessMeta = cloudAPI.getConfig().getObject("proxyProcess", new TypeToken<ProxyProcessMeta>() {}.getType());
         cloudAPI.getNetworkHandlerProvider().registerHandler(new NetworkHandlerImpl());
         ProxyServer.getInstance().getScheduler().schedule(proxiedBootstrap, () -> {
-            NetworkUtils.addAll(cachedServers,
-                                MapWrapper.collectionCatcherHashMap(cloudAPI.getServers(), key -> {
-                                    ProxyServer.getInstance().getServers().put(
-                                        key.getServiceId().getServerId(),
-                                        ProxyServer.getInstance()
-                                                   .constructServerInfo(key.getServiceId().getServerId(),
-                                                                        new InetSocketAddress(key.getHost(), key.getPort()),
-                                                                        "CloudNet2 Game-Server",
-                                                                        false));
+            cachedServers.putAll(
+                MapWrapper.collectionCatcherHashMap(cloudAPI.getServers(), key -> {
+                    ProxyServer.getInstance().getServers().put(
+                        key.getServiceId().getServerId(),
+                        ProxyServer.getInstance().constructServerInfo(
+                            key.getServiceId().getServerId(),
+                            new InetSocketAddress(key.getHost(), key.getPort()),
+                            "CloudNet2 Game-Server",
+                            false)
+                    );
 
-                                    // Add default fallback to server priority of Bungeecord
-                                    if (key.getServiceId().getGroup().equals(
-                                        getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
-                                        ProxyServer.getInstance().getConfig().getListeners()
-                                                   .forEach(listener ->
-                                                                listener.getServerPriority().add(key.getServiceId().getServerId()));
-                                    }
-                                    return key.getServiceId().getServerId();
-                                }));
+                    // Add default fallback to server priority of Bungeecord
+                    if (key.getServiceId().getGroup().equals(
+                        getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
+                        ProxyServer.getInstance().getConfig().getListeners().forEach(
+                            listener ->
+                                listener.getServerPriority().add(key.getServiceId().getServerId()));
+                    }
+                    return key.getServiceId().getServerId();
+                }));
 
             cloudAPI.setCloudService(CloudProxy.this);
 

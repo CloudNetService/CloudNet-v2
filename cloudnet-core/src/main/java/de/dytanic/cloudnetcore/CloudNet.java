@@ -770,7 +770,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         Map<String, CloudServer> cloudServerMap = new HashMap<>();
 
         for (Wrapper wrapper : wrappers.values()) {
-            NetworkUtils.addAll(cloudServerMap, wrapper.getCloudServers());
+            cloudServerMap.putAll(wrapper.getCloudServers());
         }
 
         return cloudServerMap;

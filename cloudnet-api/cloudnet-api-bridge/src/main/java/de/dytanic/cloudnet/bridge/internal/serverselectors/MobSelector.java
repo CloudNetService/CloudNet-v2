@@ -89,26 +89,15 @@ public final class MobSelector {
     public void init() {
         CloudAPI.getInstance().getNetworkHandlerProvider().registerHandler(new NetworkHandlerAdapterImplx());
 
-        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                NetworkUtils.addAll(servers,
-                                    MapWrapper.collectionCatcherHashMap(CloudAPI.getInstance().getServers(),
-                                                                        new Catcher<String, ServerInfo>() {
-                                                                            @Override
-                                                                            public String doCatch(ServerInfo key) {
-                                                                                return key.getServiceId().getServerId();
-                                                                            }
-                                                                        }));
-                Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        for (ServerInfo serverInfo : servers.values()) {
-                            handleUpdate(serverInfo);
-                        }
-                    }
-                });
-            }
+        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
+            servers.putAll(MapWrapper.collectionCatcherHashMap(
+                CloudAPI.getInstance().getServers(),
+                key -> key.getServiceId().getServerId()));
+            Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), () -> {
+                for (ServerInfo serverInfo : servers.values()) {
+                    handleUpdate(serverInfo);
+                }
+            });
         });
 
         if (ReflectionUtil.forName("org.bukkit.entity.ArmorStand") != null) {

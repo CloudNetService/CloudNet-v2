@@ -34,12 +34,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -100,31 +98,6 @@ public final class NetworkUtils {
             return new KQueueEventLoopGroup(threads);
         } else {
             return new NioEventLoopGroup(threads);
-        }
-    }
-
-    public static EventLoopGroup eventLoopGroup(ThreadFactory threadFactory) {
-        return eventLoopGroup(0, threadFactory);
-    }
-
-    public static EventLoopGroup eventLoopGroup(int threads, ThreadFactory threadFactory) {
-        return EPOLL ? new EpollEventLoopGroup(threads, threadFactory) : KQueue.isAvailable() ? new KQueueEventLoopGroup(threads,
-                                                                                                                         threadFactory) : new NioEventLoopGroup(
-            threads,
-            threadFactory);
-    }
-
-    public static <T> void addAll(Collection<T> key, Collection<T> value) {
-        if (key == null || value == null) {
-            return;
-        }
-
-        key.addAll(value);
-    }
-
-    public static <T, V> void addAll(Map<T, V> key, Map<T, V> value) {
-        for (T key_ : value.keySet()) {
-            key.put(key_, value.get(key_));
         }
     }
 
