@@ -5,15 +5,27 @@
 
 package de.dytanic.cloudnetwrapper.util;
 
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
 
 public final class FileUtility {
+
+    private static final Yaml YAML;
+
+    static {
+        // Kept in sync with BungeeCord
+        DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        YAML = new Yaml(dumperOptions);
+    }
 
     private FileUtility() {
     }
@@ -41,13 +53,11 @@ public final class FileUtility {
             return;
         }
 
-        if (!Files.exists(to)) {
+        if (!Files.exists(to.getParent())) {
             Files.createDirectories(to.getParent());
-            Files.deleteIfExists(to);
-            Files.createFile(to);
         }
 
-        Files.copy(from, to);
+        Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
     }
 
     public static void copyFilesInDirectory(File from, File to) throws IOException {
@@ -74,8 +84,8 @@ public final class FileUtility {
                 if (file.isDirectory()) {
                     copyFilesInDirectory(file, new File(to.getAbsolutePath() + '/' + file.getName()));
                 } else {
-                    File n = new File(to.getAbsolutePath() + '/' + file.getName());
-                    copy(file.toPath(), n.toPath());
+                    Path destination = to.toPath().resolve(file.getName());
+                    copy(file.toPath(), destination);
                 }
             }
         }
@@ -115,38 +125,21 @@ public final class FileUtility {
         file.delete();
     }
 
-    // TODO
     public static void rewriteFileUtils(File file, String host) throws Exception {
-        file.setReadable(true);
-        FileInputStream in = new FileInputStream(file);
-        List<String> liste = new CopyOnWriteArrayList<>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        String input;
-        boolean value = false;
-        while ((input = reader.readLine()) != null) {
-            if (value) {
-                liste.add("  host: " + host + '\n');
-                value = false;
-            } else {
-                if (input.startsWith("  query_enabled")) {
-                    liste.add(input + '\n');
-                    value = true;
-                } else {
-                    liste.add(input + '\n');
-                }
+
+        Map<String, Object> configuration;
+        try (Reader reader = new FileReader(file)) {
+            configuration = YAML.load(reader);
+        }
+
+        if (configuration != null) {
+            //noinspection unchecked
+            List<Map<String, Object>> listeners = (List<Map<String, Object>>) configuration.get("listeners");
+            listeners.get(0).put("host", host);
+            try (Writer writer = new FileWriter(file)) {
+                YAML.dump(configuration, writer);
             }
         }
-        file.delete();
-        file.createNewFile();
-        file.setReadable(true);
-        FileOutputStream out = new FileOutputStream(file);
-        PrintWriter w = new PrintWriter(out);
-        for (String wert : liste) {
-            w.write(wert);
-            w.flush();
-        }
-        reader.close();
-        w.close();
     }
 
 }

@@ -169,7 +169,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
             if (!Files.exists(dir)) {
                 Files.createDirectories(dir);
                 if (proxyProcessMeta.getUrl() != null) {
-                    Files.createDirectory(Paths.get(path + "/plugins"));
+                    Files.createDirectory(Paths.get(path, "plugins"));
                     for (ServerInstallablePlugin plugin : proxyProcessMeta.getDownloadablePlugins()) {
                         FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"),
                                                         new File(path + "/plugins"));
@@ -341,9 +341,8 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         FileUtility.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
         FileUtility.rewriteFileUtils(new File(path + "/config.yml"),
-                                     '"' + CloudNetWrapper.getInstance()
-                                                          .getWrapperConfig()
-                                                          .getProxy_config_host() + ':' + this.proxyProcessMeta.getPort() + '"');
+                                     CloudNetWrapper.getInstance().getWrapperConfig().getProxyConfigHost() +
+                                         ':' + this.proxyProcessMeta.getPort());
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isViaVersion()) {
             if (!Files.exists(Paths.get("local/ViaVersion-Proxied.jar"))) {
@@ -381,7 +380,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                       .append("host",
                               CloudNetWrapper.getInstance()
                                              .getWrapperConfig()
-                                             .getProxy_config_host() + ':' + this.proxyProcessMeta.getPort())
+                                             .getProxyConfigHost() + ':' + this.proxyProcessMeta.getPort())
                       .append("proxyInfo", proxyInfo)
                       .append("ssl", CloudNetWrapper.getInstance().getOptionSet().has("ssl"))
                       .append("memory", proxyProcessMeta.getMemory())
