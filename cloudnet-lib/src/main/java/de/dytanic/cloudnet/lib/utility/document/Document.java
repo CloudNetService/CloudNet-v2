@@ -171,14 +171,6 @@ public class Document implements DocumentAbstract {
         return new Document(dataCatcher.get(key).getAsJsonObject());
     }
 
-    public static Document $loadDocument(File backend) throws Exception {
-        try {
-            return new Document(JSON_PARSER.parse(Files.newBufferedReader(backend.toPath())).getAsJsonObject());
-        } catch (Exception ex) {
-            throw new Exception(ex);
-        }
-    }
-
     public Document(String key, Object value) {
         this.dataCatcher = new JsonObject();
         this.append(key, value);

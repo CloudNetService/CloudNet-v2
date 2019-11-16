@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnetwrapper.network.packet.in;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.WrapperExternal;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
@@ -17,14 +16,13 @@ public class PacketInWrapperInfo implements PacketInHandler {
         WrapperExternal wrapperExternal = packet.getData().getObject("wrapper", WrapperExternal.TYPE);
         CloudNetWrapper.getInstance().setSimpledUser(wrapperExternal.getUser());
         CloudNetWrapper.getInstance().getServerGroups().clear();
-        NetworkUtils.addAll(CloudNetWrapper.getInstance().getServerGroups(), wrapperExternal.getServerGroups(), value -> {
-            System.out.println("Importing server group [" + value.getName() + "] from CloudNet-Master");
-            return true;
-        });
+        CloudNetWrapper.getInstance().getServerGroups().putAll(wrapperExternal.getServerGroups());
+        CloudNetWrapper.getInstance().getServerGroups().forEach(
+            (name, serverGroup) -> System.out.printf("Importing server group [%s] from CloudNet-Master%n", name));
+
         CloudNetWrapper.getInstance().getProxyGroups().clear();
-        NetworkUtils.addAll(CloudNetWrapper.getInstance().getProxyGroups(), wrapperExternal.getProxyGroups(), value -> {
-            System.out.println("Importing proxy group [" + value.getName() + "] from CloudNet-Master");
-            return true;
-        });
+        CloudNetWrapper.getInstance().getProxyGroups().putAll(wrapperExternal.getProxyGroups());
+        CloudNetWrapper.getInstance().getProxyGroups().forEach(
+            (name, serverGroup) -> System.out.printf("Importing proxy group [%s] from CloudNet-Master%n", name));
     }
 }

@@ -316,7 +316,7 @@ public class CloudConfig {
                 for (File file : files) {
                     if (file.getName().endsWith(".json")) {
                         try {
-                            entry = Document.$loadDocument(file);
+                            entry = Document.loadDocument(file);
                             ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
                             groups.put(serverGroup.getName(), serverGroup);
                         } catch (Throwable ex) {

@@ -6,9 +6,6 @@ import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolInDecoder;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolLengthDeserializer;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolLengthSerializer;
 import de.dytanic.cloudnet.lib.network.protocol.codec.ProtocolOutEncoder;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
@@ -26,7 +23,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
@@ -34,9 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -45,12 +38,15 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class NetworkUtils {
 
-    public static final boolean EPOLL = Epoll.isAvailable();
+    public static final String DEV_PROPERTY = "_CLOUDNET_DEV_SERVICE_UNIQUEID_";
     public static final Gson GSON = new Gson();
     public static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("##.##");
-    public static final String DEV_PROPERTY = "_CLOUDNET_DEV_SERVICE_UNIQUEID_", EMPTY_STRING = "", SPACE_STRING = " ", SLASH_STRING = "/";
-    private static final char[] VALUES = new char[] {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+    public static final String EMPTY_STRING = "";
+    public static final String SPACE_STRING = " ";
+    public static final String SLASH_STRING = "/";
+    private static final boolean EPOLL = Epoll.isAvailable();
+    private static final char[] ALPHABET = new char[] {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
     private NetworkUtils() {
     }
@@ -80,11 +76,23 @@ public final class NetworkUtils {
     }
 
     public static Class<? extends SocketChannel> socketChannel() {
-        return EPOLL ? EpollSocketChannel.class : KQueue.isAvailable() ? KQueueSocketChannel.class : NioSocketChannel.class;
+        if (EPOLL) {
+            return EpollSocketChannel.class;
+        } else if (KQueue.isAvailable()) {
+            return KQueueSocketChannel.class;
+        } else {
+            return NioSocketChannel.class;
+        }
     }
 
     public static Class<? extends ServerSocketChannel> serverSocketChannel() {
-        return EPOLL ? EpollServerSocketChannel.class : KQueue.isAvailable() ? KQueueServerSocketChannel.class : NioServerSocketChannel.class;
+        if (EPOLL) {
+            return EpollServerSocketChannel.class;
+        } else if (KQueue.isAvailable()) {
+            return KQueueServerSocketChannel.class;
+        } else {
+            return NioServerSocketChannel.class;
+        }
     }
 
     public static EventLoopGroup eventLoopGroup() {
@@ -98,26 +106,6 @@ public final class NetworkUtils {
             return new KQueueEventLoopGroup(threads);
         } else {
             return new NioEventLoopGroup(threads);
-        }
-    }
-
-    public static void addAll(Document key, Document value) {
-        for (String keys : value.keys()) {
-            key.append(keys, value.get(keys));
-        }
-    }
-
-    public static <T, V> void addAll(Map<T, V> map, List<V> list, Catcher<T, V> catcher) {
-        for (V ke : list) {
-            map.put(catcher.doCatch(ke), ke);
-        }
-    }
-
-    public static <T, V> void addAll(Map<T, V> key, Map<T, V> value, Acceptable<V> handle) {
-        for (final Map.Entry<T, V> entry : value.entrySet()) {
-            if (handle.isAccepted(entry.getValue())) {
-                key.put(entry.getKey(), entry.getValue());
-            }
         }
     }
 
@@ -138,35 +126,25 @@ public final class NetworkUtils {
         }
     }
 
-    public static ConnectableAddress fromString(String input) {
-        String[] x = input.split(":");
-        return new ConnectableAddress(x[0], Integer.parseInt(x[1]));
-    }
-
     public static String randomString(int size) {
         StringBuilder stringBuilder = new StringBuilder();
         for (short i = 0; i < size; i++) {
-            stringBuilder.append(VALUES[RANDOM.nextInt(VALUES.length)]);
+            stringBuilder.append(ALPHABET[RANDOM.nextInt(ALPHABET.length)]);
         }
         return stringBuilder.substring(0);
     }
 
     public static void writeWrapperKey() {
-        Random random = new Random();
-
         Path path = Paths.get("WRAPPER_KEY.cnd");
-        if (!Files.exists(path)) {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (short i = 0; i < 4096; i++) {
-                stringBuilder.append(VALUES[random.nextInt(VALUES.length)]);
+        if (Files.notExists(path)) {
+            StringBuilder stringBuilder = new StringBuilder(4096);
+            for (int i = 0; i < 4096; i++) {
+                stringBuilder.append(ALPHABET[RANDOM.nextInt(ALPHABET.length)]);
             }
 
             try {
                 Files.createFile(path);
-                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
-                    outputStreamWriter.write(stringBuilder.substring(0) + '\n');
-                    outputStreamWriter.flush();
-                }
+                Files.writeString(path, stringBuilder.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -197,6 +175,7 @@ public final class NetworkUtils {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

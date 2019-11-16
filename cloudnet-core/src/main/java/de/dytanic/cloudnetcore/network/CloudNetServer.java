@@ -33,16 +33,17 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
                     .build();
             }
 
-            ServerBootstrap serverBootstrap = new ServerBootstrap().group(bossGroup, workerGroup)
-                                                                   .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                                                                   .option(ChannelOption.AUTO_READ, true)
-                                                                   .channel(NetworkUtils.serverSocketChannel())
-                                                                   .childOption(ChannelOption.IP_TOS, 24)
-                                                                   .childOption(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                                                                   .childOption(ChannelOption.TCP_NODELAY, true)
-                                                                   .childOption(ChannelOption.AUTO_READ, true)
-                                                                   .childOption(ChannelOption.SO_KEEPALIVE, true)
-                                                                   .childHandler(this);
+            ServerBootstrap serverBootstrap = new ServerBootstrap()
+                .group(bossGroup, workerGroup)
+                .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
+                .option(ChannelOption.AUTO_READ, true)
+                .channel(NetworkUtils.serverSocketChannel())
+                .childOption(ChannelOption.IP_TOS, 24)
+                .childOption(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.AUTO_READ, true)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childHandler(this);
 
             CloudNet.getLogger().debug("Using " + (Epoll.isAvailable() ? "Epoll native transport" : "NIO transport"));
             CloudNet.getLogger().debug("Try to bind to " + connectableAddress.getHostName() + ':' + connectableAddress.getPort() + "...");

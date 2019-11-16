@@ -23,117 +23,113 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Created by Tareko on 23.10.2017.
  */
 public class SetupProxyGroup {
 
+    private static final Pattern WRAPPER_SPLITTER = Pattern.compile("\\s?+,\\s?+");
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private String name;
+    private final Setup setup;
 
     public SetupProxyGroup(CommandSender commandSender, String name) {
         this.name = name;
 
-        Setup setup = new Setup().setupCancel(() -> commandSender.sendMessage("Setup cancelled!"))
-                                 .setupComplete(data -> {
+        setup = new Setup().setupCancel(() -> commandSender.sendMessage("Setup cancelled!"))
+                           .setupComplete(data -> {
+                               // Make sure there is at least one valid wrapper
+                               List<String> wrappers = new ArrayList<>(Arrays.asList(WRAPPER_SPLITTER.split(data.getString("wrapper"))));
+                               if (wrappers.size() == 0) {
+                                   return;
+                               }
+                               Set<String> cloudWrappers = CloudNet.getInstance().getWrappers().keySet();
+                               wrappers.removeIf(wrapper -> !cloudWrappers.contains(wrapper));
+                               if (wrappers.size() == 0) {
+                                   return;
+                               }
 
-                                     // Make sure there is at least one valid wrapper
-                                     List<String> wrappers = new ArrayList<>(Arrays.asList(data.getString("wrapper").split(",")));
-                                     if (wrappers.size() == 0) {
-                                         return;
-                                     }
-                                     Set<String> cloudWrappers = CloudNet.getInstance().getWrappers().keySet();
-                                     wrappers.removeIf(wrapper -> !cloudWrappers.contains(wrapper));
-                                     if (wrappers.size() == 0) {
-                                         return;
-                                     }
+                               ProxyGroupMode proxyGroupMode;
 
-                                     ProxyGroupMode proxyGroupMode;
+                               try {
+                                   proxyGroupMode = ProxyGroupMode.valueOf(data.getString("mode").toUpperCase());
+                               } catch (IllegalArgumentException exception) {
+                                   commandSender.sendMessage("Proxy group mode unknown, defaulting to DYNAMIC");
+                                   proxyGroupMode = ProxyGroupMode.DYNAMIC;
+                               }
 
-                                     try {
-                                         proxyGroupMode = ProxyGroupMode.valueOf(data.getString("mode").toUpperCase());
-                                     } catch (IllegalArgumentException exception) {
-                                         commandSender.sendMessage("Proxy group mode unknown, defaulting to DYNAMIC");
-                                         proxyGroupMode = ProxyGroupMode.DYNAMIC;
-                                     }
+                               ProxyGroup proxyGroup = new ProxyGroup(name,
+                                                                      wrappers,
+                                                                      new Template("default",
+                                                                                   TemplateResource.valueOf(data.getString("template")),
+                                                                                   null,
+                                                                                   EMPTY_STRING_ARRAY,
+                                                                                   new ArrayList<>()),
+                                                                      ProxyVersion.BUNGEECORD,
+                                                                      data.getInt("startport"),
+                                                                      data.getInt("startup"),
+                                                                      data.getInt("memory"),
+                                                                      new BasicProxyConfig(),
+                                                                      proxyGroupMode,
+                                                                      new WrappedMap());
 
-                                     ProxyGroup proxyGroup = new ProxyGroup(name,
-                                                                            wrappers,
-                                                                            new Template("default",
-                                                                                         TemplateResource.valueOf(data.getString("template")),
-                                                                                         null,
-                                                                                         EMPTY_STRING_ARRAY,
-                                                                                         new ArrayList<>()),
-                                                                            ProxyVersion.BUNGEECORD,
-                                                                            data.getInt("startport"),
-                                                                            data.getInt("startup"),
-                                                                            data.getInt("memory"),
-                                                                            new BasicProxyConfig(),
-                                                                            proxyGroupMode,
-                                                                            new WrappedMap());
-
-                                     CloudNet.getInstance().getConfig().createGroup(proxyGroup);
-                                     CloudNet.getInstance().getProxyGroups().put(proxyGroup.getName(), proxyGroup);
-                                     commandSender.sendMessage("The proxy group " + proxyGroup.getName() + " was created!");
-                                     CloudNet.getInstance().setupProxy(proxyGroup);
-                                     for (Wrapper wrapper : CloudNet.getInstance().toWrapperInstances(wrappers)) {
-                                         wrapper.updateWrapper();
-            }
-        }).request(new SetupRequest("memory",
-                                    "How many MB of RAM should the proxy group have?",
-                                    "Specified memory is invalid",
-                                    SetupResponseType.NUMBER,
-                                    key -> NetworkUtils.checkIsNumber(key) &&
-                                        Integer.parseInt(key) > 64))
-                                 .request(new SetupRequest("startport",
-                                                           "What's the starting port of the proxygroup?",
-                                                           "Specified starting port is invalid",
-                                                           SetupResponseType.NUMBER,
-                                                           key -> NetworkUtils.checkIsNumber(key) &&
-                                                               Integer.parseInt(key) > 128 &&
-                                                               Integer.parseInt(key) < 65536))
-                                 .request(new SetupRequest("startup",
-                                                           "How many proxys should always be online?",
-                                                           "Specified startup count is invalid",
-                                                           SetupResponseType.NUMBER,
-                                                           null))
-                                 .request(new SetupRequest("mode",
-                                                           "Should the group be STATIC or DYNAMIC?",
-                                                           "Group mode is invalid",
-                                                           SetupResponseType.STRING,
-                                                           key -> key
-                                                               .equalsIgnoreCase("STATIC") ||
-                                                               key.equalsIgnoreCase("DYNAMIC")))
-                                 .request(
-            new SetupRequest("template",
-                             "What is the backend of the group default template? [\"LOCAL\" for the wrapper local | \"MASTER\" for the master backend]",
-                             "String is invalid",
-                             SetupResponseType.STRING,
-                             key -> key.equals("MASTER") || key.equals("LOCAL")))
-                                 .request(new SetupRequest("wrapper",
-                                                           "Which wrappers should be used for this group?",
-                                                           "String is invalid",
-                                                           SetupResponseType.STRING,
-                                                           key -> {
-                                                               // Make sure there is at least one valid wrapper
-                                                               List<String> wrappers = new ArrayList<>(Arrays.asList(key.split(",")));
-                                                               if (wrappers.size() == 0) {
-                                                                   return false;
-                                                               }
-                                                               for (short i = 0; i < wrappers.size(); i++) {
-                                                                   if (!CloudNet.getInstance()
-                                                                                .getWrappers()
-                                                                                .containsKey(wrappers.get(i))) {
-                                                                       wrappers.remove(wrappers.get(i));
-                                                                   }
-                                                               }
-                                                               return wrappers.size() != 0;
-                                                          }));
-        setup.start(CloudNet.getLogger().getReader());
+                               CloudNet.getInstance().getConfig().createGroup(proxyGroup);
+                               CloudNet.getInstance().getProxyGroups().put(proxyGroup.getName(), proxyGroup);
+                               commandSender.sendMessage("The proxy group " + proxyGroup.getName() + " was created!");
+                               CloudNet.getInstance().setupProxy(proxyGroup);
+                               CloudNet.getInstance().toWrapperInstances(wrappers).forEach(Wrapper::updateWrapper);
+                           }).request(new SetupRequest("memory",
+                                                       "How many MB of RAM should the proxy group have?",
+                                                       "Specified memory is invalid",
+                                                       SetupResponseType.NUMBER,
+                                                       key -> NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 64))
+                           .request(new SetupRequest("startport",
+                                                     "What's the starting port of the proxygroup?",
+                                                     "Specified starting port is invalid",
+                                                     SetupResponseType.NUMBER,
+                                                     key -> NetworkUtils.checkIsNumber(key) &&
+                                                         Integer.parseInt(key) > 128 &&
+                                                         Integer.parseInt(key) < 65536))
+                           .request(new SetupRequest("startup",
+                                                     "How many proxys should always be online?",
+                                                     "Specified startup count is invalid",
+                                                     SetupResponseType.NUMBER,
+                                                     key -> NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 1))
+                           .request(new SetupRequest("mode",
+                                                     "Should the group be STATIC or DYNAMIC?",
+                                                     "Group mode is invalid",
+                                                     SetupResponseType.STRING,
+                                                     key -> key
+                                                         .equalsIgnoreCase("STATIC") ||
+                                                         key.equalsIgnoreCase("DYNAMIC")))
+                           .request(new SetupRequest("template",
+                                                     "What is the backend of the group default template? [\"LOCAL\" for the wrapper local | \"MASTER\" for the master backend]",
+                                                     "String is invalid",
+                                                     SetupResponseType.STRING,
+                                                     key -> key.equals("MASTER") || key.equals("LOCAL")))
+                           .request(new SetupRequest("wrapper",
+                                                     "Which wrappers should be used for this group?",
+                                                     "String is invalid",
+                                                     SetupResponseType.STRING,
+                                                     key -> {
+                                                         // Make sure there is at least one valid wrapper
+                                                         List<String> wrappers = new ArrayList<>(Arrays.asList(WRAPPER_SPLITTER.split(key)));
+                                                         if (wrappers.size() == 0) {
+                                                             return false;
+                                                         }
+                                                         Set<String> cloudWrappers = CloudNet.getInstance().getWrappers().keySet();
+                                                         wrappers.removeIf(wrapper -> !cloudWrappers.contains(wrapper));
+                                                         return wrappers.size() != 0;
+                                                     }));
     }
 
     public String getName() {
         return name;
+    }
+
+    public void startSetup() {
+        setup.start(CloudNet.getLogger().getReader());
     }
 }

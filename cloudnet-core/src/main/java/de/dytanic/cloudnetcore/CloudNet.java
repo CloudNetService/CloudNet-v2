@@ -24,7 +24,6 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Quad;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
@@ -248,16 +247,16 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         this.users = config.getUsers();
 
-        NetworkUtils.addAll(this.serverGroups, config.getServerGroups(), serverGroup -> {
-            System.out.println("Loading ServerGroup: " + serverGroup.getName());
+        this.serverGroups.putAll(config.getServerGroups());
+        this.serverGroups.forEach((name, serverGroup) -> {
+            logger.info(String.format("Loading server group: %s", serverGroup.getName()));
             setupGroup(serverGroup);
-            return true;
         });
 
-        NetworkUtils.addAll(this.proxyGroups, config.getProxyGroups(), proxyGroup -> {
-            System.out.println("Loading ProxyGroup: " + proxyGroup.getName());
+        this.proxyGroups.putAll(config.getProxyGroups());
+        this.proxyGroups.forEach((name, proxyGroup) -> {
+            logger.info(String.format("Loading proxy group: %s", proxyGroup.getName()));
             setupProxy(proxyGroup);
-            return true;
         });
 
         webServer = new WebServer(optionSet.has("ssl"), config.getWebServerConfig().getAddress(), config.getWebServerConfig().getPort());
@@ -552,20 +551,16 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         this.users = config.getUsers();
 
-        NetworkUtils.addAll(this.serverGroups, config.getServerGroups(), new Acceptable<ServerGroup>() {
-            public boolean isAccepted(ServerGroup value) {
-                System.out.println("Loading server group: " + value.getName());
-                setupGroup(value);
-                return true;
-            }
+        this.serverGroups.putAll(config.getServerGroups());
+        this.serverGroups.forEach((name, serverGroup) -> {
+            logger.info(String.format("Loading server group: %s", serverGroup.getName()));
+            setupGroup(serverGroup);
         });
 
-        NetworkUtils.addAll(this.proxyGroups, config.getProxyGroups(), new Acceptable<ProxyGroup>() {
-            public boolean isAccepted(ProxyGroup value) {
-                System.out.println("Loading proxy group: " + value.getName());
-                setupProxy(value);
-                return true;
-            }
+        this.proxyGroups.putAll(config.getProxyGroups());
+        this.proxyGroups.forEach((name, proxyGroup) -> {
+            logger.info(String.format("Loading proxy group: %s", proxyGroup.getName()));
+            setupProxy(proxyGroup);
         });
 
         this.initialCommands();
@@ -577,9 +572,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         }
 
         System.out.println("Updating wrappers...");
-        for (Wrapper wrapper : wrappers.values()) {
-            wrapper.updateWrapper();
-        }
+        wrappers.values().forEach(Wrapper::updateWrapper);
 
         networkManager.reload();
         networkManager.updateAll();
