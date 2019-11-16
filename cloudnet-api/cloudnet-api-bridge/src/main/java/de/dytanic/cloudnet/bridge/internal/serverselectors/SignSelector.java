@@ -31,6 +31,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 
@@ -43,7 +44,7 @@ public final class SignSelector implements Listener {
     private Map<UUID, Sign> signs;
     private volatile SignLayoutConfig signLayoutConfig;
     private Thread worker;
-    private Map<String, ServerInfo> servers = NetworkUtils.newConcurrentHashMap();
+    private Map<String, ServerInfo> servers = new ConcurrentHashMap<>();
 
     public SignSelector(Map<UUID, Sign> signs, SignLayoutConfig signLayoutConfig) {
         instance = this;

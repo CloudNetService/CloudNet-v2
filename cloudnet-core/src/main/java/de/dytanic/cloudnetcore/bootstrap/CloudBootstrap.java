@@ -10,7 +10,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.SystemTimer;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
-import de.dytanic.cloudnet.logging.util.HeaderFunction;
 import de.dytanic.cloudnetcore.CloudConfig;
 import de.dytanic.cloudnetcore.CloudNet;
 import io.netty.util.ResourceLeakDetector;
@@ -96,7 +95,7 @@ public final class CloudBootstrap {
             helpService.getDescriptions().put("requestTerminationSignal",
                                               new ServiceDescription[] {new ServiceDescription("--requestTerminationSignal",
                                                                                                "Enables the request if you use STRG+C")});
-            System.out.println(helpService.toString());
+            System.out.println(helpService);
             return;
         }
 
@@ -126,7 +125,7 @@ public final class CloudBootstrap {
             }
         });
 
-        new HeaderFunction();
+        NetworkUtils.header();
         CloudConfig coreConfig = new CloudConfig(cloudNetLogging.getReader());
         CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, consolePreInit, Arrays.asList(args));
 

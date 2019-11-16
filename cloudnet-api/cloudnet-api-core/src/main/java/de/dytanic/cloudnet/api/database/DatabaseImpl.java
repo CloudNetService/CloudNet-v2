@@ -7,7 +7,6 @@ package de.dytanic.cloudnet.api.database;
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.database.packet.out.*;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -15,6 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.FutureTask;
 
 /**
@@ -22,7 +22,7 @@ import java.util.concurrent.FutureTask;
  */
 public class DatabaseImpl implements Database {
 
-    private Map<String, Document> docs = NetworkUtils.newConcurrentHashMap();
+    private Map<String, Document> docs = new ConcurrentHashMap<>();
     private String name;
 
     public DatabaseImpl(String name) {

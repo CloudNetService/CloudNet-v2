@@ -4,11 +4,10 @@
 
 package de.dytanic.cloudnet.lib.utility;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public final class MapWrapper {
@@ -25,7 +24,7 @@ public final class MapWrapper {
     }
 
     public static <K, V> Map<K, V> filter(Map<K, V> map, Acceptable<V> acceptable) {
-        Map<K, V> filter = NetworkUtils.newConcurrentHashMap();
+        Map<K, V> filter = new ConcurrentHashMap<>();
         for (Map.Entry<K, V> value : map.entrySet()) {
             if (acceptable.isAccepted(value.getValue())) {
                 filter.put(value.getKey(), value.getValue());

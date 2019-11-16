@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -51,8 +52,8 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     private ProxiedBootstrap proxiedBootstrap;
     private ProxyProcessMeta proxyProcessMeta;
 
-    private Map<String, ServerInfo> cachedServers = NetworkUtils.newConcurrentHashMap();
-    private Map<UUID, CloudPlayer> cloudPlayers = NetworkUtils.newConcurrentHashMap();
+    private Map<String, ServerInfo> cachedServers = new ConcurrentHashMap<>();
+    private Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
 
     public CloudProxy(ProxiedBootstrap proxiedBootstrap, CloudAPI cloudAPI) {
         instance = this;

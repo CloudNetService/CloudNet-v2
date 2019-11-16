@@ -1,7 +1,5 @@
 package de.dytanic.cloudnet.lib.utility.threading;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
-
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,7 +10,7 @@ public final class Scheduler implements TaskCancelable, Runnable {
 
     private final int ticks;
     private final Random random = new Random();
-    private ConcurrentHashMap<Long, ScheduledTask> tasks = NetworkUtils.newConcurrentHashMap();
+    private ConcurrentHashMap<Long, ScheduledTask> tasks = new ConcurrentHashMap<>();
 
     public Scheduler(int ticks) {
         this.ticks = ticks;

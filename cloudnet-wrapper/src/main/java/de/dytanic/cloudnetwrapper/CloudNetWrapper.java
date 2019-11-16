@@ -45,6 +45,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
@@ -58,11 +59,11 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     private final Scheduler scheduler = new Scheduler(40);
     private final CommandManager commandManager = new CommandManager();
     private final WebClient webClient = new WebClient();
-    private final java.util.Map<String, GameServer> servers = NetworkUtils.newConcurrentHashMap();
-    private final java.util.Map<String, BungeeCord> proxys = NetworkUtils.newConcurrentHashMap();
-    private final java.util.Map<String, CloudGameServer> cloudServers = NetworkUtils.newConcurrentHashMap();
-    private final java.util.Map<String, ServerGroup> serverGroups = NetworkUtils.newConcurrentHashMap();
-    private final java.util.Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
+    private final java.util.Map<String, GameServer> servers = new ConcurrentHashMap<>();
+    private final java.util.Map<String, BungeeCord> proxys = new ConcurrentHashMap<>();
+    private final java.util.Map<String, CloudGameServer> cloudServers = new ConcurrentHashMap<>();
+    private final java.util.Map<String, ServerGroup> serverGroups = new ConcurrentHashMap<>();
+    private final java.util.Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
     private Auth auth;
     private OptionSet optionSet;
     private ServerProcessQueue serverProcessQueue;

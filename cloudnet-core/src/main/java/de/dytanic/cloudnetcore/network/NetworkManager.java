@@ -40,14 +40,15 @@ import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Tareko on 19.07.2017.
  */
 public final class NetworkManager {
 
-    private java.util.Map<UUID, CloudPlayer> waitingPlayers = NetworkUtils.newConcurrentHashMap();
-    private java.util.Map<UUID, CloudPlayer> onlinePlayers = NetworkUtils.newConcurrentHashMap();
+    private java.util.Map<UUID, CloudPlayer> waitingPlayers = new ConcurrentHashMap<>();
+    private java.util.Map<UUID, CloudPlayer> onlinePlayers = new ConcurrentHashMap<>();
     private Document moduleProperties = new Document();
 
     private MessageConfig messageConfig;

@@ -42,6 +42,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -55,7 +56,7 @@ public final class MobSelector {
 
     private MobConfig mobConfig;
 
-    private Map<String, ServerInfo> servers = NetworkUtils.newConcurrentHashMap();
+    private Map<String, ServerInfo> servers = new ConcurrentHashMap<>();
 
     public MobSelector(MobConfig mobConfig) {
         instance = this;

@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -291,7 +292,7 @@ public class CloudConfig {
     }
 
     public java.util.Map<String, ServerGroup> getServerGroups() {
-        Map<String, ServerGroup> groups = NetworkUtils.newConcurrentHashMap();
+        Map<String, ServerGroup> groups = new ConcurrentHashMap<>();
 
         if (serviceDocument.contains("serverGroups")) {
 

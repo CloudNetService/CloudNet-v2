@@ -57,6 +57,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,9 +81,9 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     private final NetworkManager networkManager = new NetworkManager();
     private final Scheduler scheduler = new Scheduler(50);
-    private final Map<String, Wrapper> wrappers = NetworkUtils.newConcurrentHashMap();
-    private final Map<String, ServerGroup> serverGroups = NetworkUtils.newConcurrentHashMap();
-    private final Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
+    private final Map<String, Wrapper> wrappers = new ConcurrentHashMap<>();
+    private final Map<String, ServerGroup> serverGroups = new ConcurrentHashMap<>();
+    private final Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
     private final LocalCloudWrapper localCloudWrapper = new LocalCloudWrapper();
     private Collection<CloudNetServer> cloudServers = new CopyOnWriteArrayList<>();
     private WebClient webClient = new WebClient();

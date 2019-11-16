@@ -8,13 +8,14 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import jline.console.completer.Completer;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class that manages commands for the interfaces of CloudNet.
  */
 public final class CommandManager implements Completer {
 
-    private final Map<String, Command> commands = NetworkUtils.newConcurrentHashMap();
+    private final Map<String, Command> commands = new ConcurrentHashMap<>();
     private ConsoleCommandSender consoleSender = new ConsoleCommandSender();
 
     /**

@@ -13,7 +13,6 @@ import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.bridge.event.bukkit.*;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.CloudNetwork;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
@@ -48,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
@@ -60,7 +60,7 @@ public class CloudServer implements ICloudService {
 
     private BukkitBootstrap bukkitBootstrap;
 
-    private Map<UUID, CloudPlayer> cloudPlayers = NetworkUtils.newConcurrentHashMap();
+    private Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
 
     /*=================================================*/
     private int maxPlayers;

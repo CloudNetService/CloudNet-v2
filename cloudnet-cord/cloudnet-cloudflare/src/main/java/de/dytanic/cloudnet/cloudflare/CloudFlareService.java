@@ -25,6 +25,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -36,8 +37,8 @@ public class CloudFlareService {
     private static CloudFlareService instance;
     private final String prefix = "[CLOUDFLARE] | ";
     // WrapperId DNSRecord
-    private final Map<String, MultiValue<PostResponse, String>> ipARecords = NetworkUtils.newConcurrentHashMap();
-    private final Map<String, MultiValue<PostResponse, String>> bungeeSRVRecords = NetworkUtils.newConcurrentHashMap();
+    private final Map<String, MultiValue<PostResponse, String>> ipARecords = new ConcurrentHashMap<>();
+    private final Map<String, MultiValue<PostResponse, String>> bungeeSRVRecords = new ConcurrentHashMap<>();
     private Collection<CloudFlareConfig> cloudFlareConfigs;
 
     /**

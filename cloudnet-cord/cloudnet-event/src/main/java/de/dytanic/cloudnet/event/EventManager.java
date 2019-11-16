@@ -2,20 +2,20 @@ package de.dytanic.cloudnet.event;
 
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.interfaces.IEventManager;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import net.jodah.typetools.TypeResolver;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class that manages events
  */
 public final class EventManager implements IEventManager {
 
-    private final Map<Class<? extends Event>, Collection<EventEntity>> registeredListeners = NetworkUtils.newConcurrentHashMap();
+    private final Map<Class<? extends Event>, Collection<EventEntity>> registeredListeners = new ConcurrentHashMap<>();
 
     /**
      * Clears all currently registered {@link EventEntity}s from this event

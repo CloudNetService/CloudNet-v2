@@ -4,11 +4,11 @@
 
 package de.dytanic.cloudnet.database;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -22,7 +22,7 @@ public class DatabaseManager {
     private final Timer timer;
     private short tick = 1;
 
-    private java.util.Map<String, Database> databaseCollection = NetworkUtils.newConcurrentHashMap();
+    private java.util.Map<String, Database> databaseCollection = new ConcurrentHashMap<>();
 
     /**
      * Constructs a new database manager.
@@ -122,7 +122,7 @@ public class DatabaseManager {
             file.mkdir();
         }
 
-        database = new DatabaseImpl(name, NetworkUtils.newConcurrentHashMap(), file);
+        database = new DatabaseImpl(name, new ConcurrentHashMap<>(), file);
         this.databaseCollection.put(name, database);
 
         return database;

@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet.lib.network.protocol.packet;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
 import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -18,8 +17,8 @@ import java.util.concurrent.*;
  */
 public final class PacketManager {
 
-    private final Map<Integer, List<PacketInHandler>> packetHandlers = NetworkUtils.newConcurrentHashMap();
-    private final Map<UUID, CompletableFuture<Result>> synchronizedHandlers = NetworkUtils.newConcurrentHashMap();
+    private final Map<Integer, List<PacketInHandler>> packetHandlers = new ConcurrentHashMap<>();
+    private final Map<UUID, CompletableFuture<Result>> synchronizedHandlers = new ConcurrentHashMap<>();
     private final Queue<Packet> packetQueue = new ConcurrentLinkedQueue<>();
     private final TaskScheduler executorService = new TaskScheduler(1);
 

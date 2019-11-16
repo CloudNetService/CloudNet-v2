@@ -4,13 +4,13 @@
 
 package de.dytanic.cloudnet.lib.network.protocol;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.file.FileProtocol;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketProtocol;
 import io.netty.buffer.ByteBuf;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -21,7 +21,7 @@ public final class ProtocolProvider {
     private static Map<Integer, IProtocol> protocols;
 
     static {
-        protocols = NetworkUtils.newConcurrentHashMap();
+        protocols = new ConcurrentHashMap<>();
         registerProtocol(new PacketProtocol());
         registerProtocol(new FileProtocol());
     }

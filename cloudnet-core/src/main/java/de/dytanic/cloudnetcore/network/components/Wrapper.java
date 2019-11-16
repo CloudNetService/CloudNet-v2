@@ -5,7 +5,6 @@
 package de.dytanic.cloudnetcore.network.components;
 
 import de.dytanic.cloudnet.lib.DefaultType;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.cloudserver.CloudServerMeta;
 import de.dytanic.cloudnet.lib.network.WrapperExternal;
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
@@ -27,6 +26,7 @@ import net.md_5.bungee.config.Configuration;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,11 +35,11 @@ import java.util.stream.Stream;
  */
 public final class Wrapper implements INetworkComponent {
 
-    private final Map<String, ProxyServer> proxys = NetworkUtils.newConcurrentHashMap();
-    private final Map<String, MinecraftServer> servers = NetworkUtils.newConcurrentHashMap();
-    private final Map<String, CloudServer> cloudServers = NetworkUtils.newConcurrentHashMap();
+    private final Map<String, ProxyServer> proxys = new ConcurrentHashMap<>();
+    private final Map<String, MinecraftServer> servers = new ConcurrentHashMap<>();
+    private final Map<String, CloudServer> cloudServers = new ConcurrentHashMap<>();
     // Group, ServiceId
-    private final Map<String, Quad<Integer, Integer, ServiceId, Template>> waitingServices = NetworkUtils.newConcurrentHashMap();
+    private final Map<String, Quad<Integer, Integer, ServiceId, Template>> waitingServices = new ConcurrentHashMap<>();
     private Channel channel;
     private WrapperInfo wrapperInfo;
     private WrapperMeta networkInfo;
@@ -181,7 +181,7 @@ public final class Wrapper implements INetworkComponent {
             return this;
         }
 
-        Map<String, ServerGroup> groups = NetworkUtils.newConcurrentHashMap();
+        Map<String, ServerGroup> groups = new ConcurrentHashMap<>();
         for (ServerGroup serverGroup : CloudNet.getInstance().getServerGroups().values()) {
             if (serverGroup.getWrapper().contains(networkInfo.getId())) {
                 groups.put(serverGroup.getName(), serverGroup);
@@ -189,7 +189,7 @@ public final class Wrapper implements INetworkComponent {
             }
         }
 
-        Map<String, ProxyGroup> proxyGroups = NetworkUtils.newConcurrentHashMap();
+        Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
         for (ProxyGroup serverGroup : CloudNet.getInstance().getProxyGroups().values()) {
             if (serverGroup.getWrapper().contains(networkInfo.getId())) {
                 proxyGroups.put(serverGroup.getName(), serverGroup);
