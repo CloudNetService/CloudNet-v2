@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -41,7 +42,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void print(boolean x) {
         if (Thread.currentThread() != worker) {
-            queue.offer(() -> print0(x));
+            queue.offer(() -> super.print(x));
         } else {
             super.print(x);
         }
@@ -50,7 +51,7 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void print(char x) {
         if (Thread.currentThread() != worker) {
-            queue.offer(() -> print0(x));
+            queue.offer(() -> super.print(x));
         } else {
             super.print(x);
         }
@@ -59,33 +60,25 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void print(int x) {
         if (Thread.currentThread() != worker) {
-            queue.offer(() -> print0(x));
+            queue.offer(() -> super.print(x));
         } else {
             super.print(x);
         }
-    }
-
-    private void print0(int x) {
-        super.print(x);
     }
 
     @Override
     public void print(long x) {
         if (Thread.currentThread() != worker) {
-            queue.offer(() -> print0(x));
+            queue.offer(() -> super.print(x));
         } else {
             super.print(x);
         }
     }
 
-    private void print0(long x) {
-        super.print(x);
-    }
-
     @Override
     public void print(float x) {
         if (Thread.currentThread() != worker) {
-            queue.offer(() -> print0(x));
+            queue.offer(() -> super.print(x));
         } else {
             super.print(x);
         }
@@ -94,20 +87,16 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void print(double x) {
         if (Thread.currentThread() != worker) {
-            queue.offer(() -> print0(x));
+            queue.offer(() -> super.print(x));
         } else {
             super.print(x);
         }
     }
 
-    private void print0(double x) {
-        super.print(x);
-    }
-
     @Override
     public void print(char[] x) {
         if (Thread.currentThread() != worker) {
-            queue.offer(() -> print0(x));
+            queue.offer(() -> super.print(x));
         } else {
             super.print(x);
         }
@@ -116,20 +105,16 @@ public class AsyncPrintStream extends PrintStream {
     @Override
     public void print(String x) {
         if (Thread.currentThread() != worker) {
-            queue.offer(() -> print0(x));
+            queue.offer(() -> super.print(x));
         } else {
             super.print(x);
         }
     }
 
-    private void print0(String x) {
-        super.print(x);
-    }
-
     @Override
     public void print(Object x) {
         if (Thread.currentThread() != worker) {
-            queue.offer(() -> print0(x));
+            queue.offer(() -> super.print(x));
         } else {
             super.print(x);
         }
@@ -137,113 +122,77 @@ public class AsyncPrintStream extends PrintStream {
 
     @Override
     public void println() {
-        queue.offer(this::println0);
-    }
-
-    private void println0() {
-        super.println();
+        queue.offer(super::println);
     }
 
     @Override
     public void println(boolean x) {
-        queue.offer(() -> println0(x));
+        queue.offer(() -> super.println(x));
     }
 
     @Override
     public void println(char x) {
-        queue.offer(() -> println0(x));
+        queue.offer(() -> super.println(x));
     }
 
     @Override
     public void println(int x) {
-        queue.offer(() -> println0(x));
-    }
-
-    private void println0(int x) {
-        super.println(x);
+        queue.offer(() -> super.println(x));
     }
 
     @Override
     public void println(long x) {
-        queue.offer(() -> println0(x));
-    }
-
-    private void println0(long x) {
-        super.println(x);
+        queue.offer(() -> super.println(x));
     }
 
     @Override
     public void println(float x) {
-        queue.offer(() -> println0(x));
+        queue.offer(() -> super.println(x));
     }
 
     @Override
     public void println(double x) {
-        queue.offer(() -> println0(x));
-    }
-
-    private void println0(double x) {
-        super.println(x);
+        queue.offer(() -> super.println(x));
     }
 
     @Override
     public void println(char[] x) {
-        queue.offer(() -> println0(x));
+        queue.offer(() -> super.println(x));
     }
 
     @Override
     public void println(String x) {
-        queue.offer(() -> println0(x));
-    }
-
-    private void println0(String x) {
-        super.println(x);
+        queue.offer(() -> super.println(x));
     }
 
     @Override
     public void println(Object x) {
-        queue.offer(() -> println0(x));
+        queue.offer(() -> super.println(x));
     }
 
-    private void println0(Object x) {
-        super.println(x);
+    @Override
+    public PrintStream printf(final String format, final Object... args) {
+        if (Thread.currentThread() != worker) {
+            //noinspection resource
+            queue.offer(() -> super.printf(format, args));
+            return this;
+        } else {
+            return super.printf(format, args);
+        }
     }
 
-    private void println0(char[] x) {
-        super.println(x);
+    @Override
+    public PrintStream printf(final Locale locale, final String format, final Object... args) {
+        if (Thread.currentThread() != worker) {
+            //noinspection resource
+            queue.offer(() -> super.printf(locale, format, args));
+            return this;
+        } else {
+            return super.printf(format, args);
+        }
     }
 
-    private void println0(float x) {
-        super.println(x);
-    }
 
-    private void println0(char x) {
-        super.println(x);
-    }
-
-    private void println0(boolean x) {
-        super.println(x);
-    }
-
-    private void print0(Object x) {
-        super.print(x);
-    }
-
-    private void print0(char[] x) {
-        super.print(x);
-    }
-
-    private void print0(float x) {
-        super.print(x);
-    }
-
-    private void print0(char x) {
-        super.print(x);
-    }
-
-    private void print0(boolean x) {
-        super.print(x);
-    }
 
     /**
      * A worker thread for the {@link AsyncPrintStream}.

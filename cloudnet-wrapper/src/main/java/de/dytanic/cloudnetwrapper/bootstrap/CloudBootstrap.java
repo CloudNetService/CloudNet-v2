@@ -12,7 +12,6 @@ import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.CloudNetWrapperConfig;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
-import io.netty.util.ResourceLeakDetector;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
@@ -24,16 +23,9 @@ import java.util.Arrays;
 public class CloudBootstrap {
 
     public static void main(String[] args) throws Exception {
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
 
         System.setProperty("file.encoding", "UTF-8");
         System.setProperty("java.net.preferIPv4Stack", "true");
-        System.setProperty("io.netty.noPreferDirect", "true");
-        System.setProperty("client.encoding.override", "UTF-8");
-        System.setProperty("io.netty.maxDirectMemory", "0");
-        System.setProperty("io.netty.leakDetectionLevel", "DISABLED");
-        System.setProperty("io.netty.recycler.maxCapacity", "0");
-        System.setProperty("io.netty.recycler.maxCapacity.default", "0");
 
         OptionParser optionParser = new OptionParser();
 
@@ -113,14 +105,14 @@ public class CloudBootstrap {
 
         if (!optionSet.has("noconsole")) {
             System.out.println("Use the command \"help\" for further information!");
-            String commandLine;
 
             String user = System.getProperty("user.name");
 
-            while (true) {
+            String commandLine;
+            final String prompt = user + '@' + cloudNetWrapper.getWrapperConfig().getWrapperId() + " $ ";
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    while ((commandLine = cloudNetLogging.readLine(user + '@' + cloudNetWrapper.getWrapperConfig()
-                                                                                               .getWrapperId() + " $ ")) != null) {
+                    while ((commandLine = cloudNetLogging.readLine(prompt)) != null) {
 
                         try {
                             if (!cloudNetWrapper.getCommandManager().dispatchCommand(commandLine)) {
@@ -131,11 +123,11 @@ public class CloudBootstrap {
                         }
                     }
                 } catch (Exception ex) {
-
+                    ex.printStackTrace();
                 }
             }
         } else {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
             }
         }
