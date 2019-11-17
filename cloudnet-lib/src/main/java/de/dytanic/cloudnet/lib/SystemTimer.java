@@ -9,25 +9,12 @@ import java.lang.management.ManagementFactory;
 /**
  * Created by Tareko on 23.09.2017.
  */
-public class SystemTimer extends Thread {
+public class SystemTimer {
 
-    public SystemTimer() {
-        setDaemon(true);
-        start();
-    }
-
-    @Override
-    public void run() {
-        while (!isInterrupted()) {
-            System.out.printf("Memory [\"%dKB\"] | CPU Programm [\"%s\"] | CPU System [\"%s\"]%n",
-                              ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1024,
-                              NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.internalCpuUsage()),
-                              NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.cpuUsage()));
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }
+    public static void run() {
+        System.out.printf("Memory [\"%dKB\"] | CPU Programm [\"%s\"] | CPU System [\"%s\"]%n",
+                          ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1024,
+                          NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.internalCpuUsage()),
+                          NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.cpuUsage()));
     }
 }

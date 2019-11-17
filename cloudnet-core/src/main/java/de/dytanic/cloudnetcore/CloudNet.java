@@ -94,12 +94,11 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     private DefaultModuleManager defaultModuleManager;
     private List<String> arguments;
     private DatabaseBasicHandlers dbHandlers;
-    private List<String> preConsoleOutput;
     private Collection<User> users;
     private long startupTime = System.currentTimeMillis();
     private boolean downTown = true;
 
-    public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> objective, List<String> args) throws
+    public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) throws
         Exception {
         if (instance == null) {
             instance = this;
@@ -107,7 +106,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         this.config = config;
         this.logger = cloudNetLogging;
-        this.preConsoleOutput = objective;
         this.optionSet = optionSet;
         this.arguments = args;
         this.defaultModuleManager = new DefaultModuleManager();
@@ -207,10 +205,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
     public List<String> getArguments() {
         return arguments;
-    }
-
-    public List<String> getPreConsoleOutput() {
-        return preConsoleOutput;
     }
 
     public LocalCloudWrapper getLocalCloudWrapper() {

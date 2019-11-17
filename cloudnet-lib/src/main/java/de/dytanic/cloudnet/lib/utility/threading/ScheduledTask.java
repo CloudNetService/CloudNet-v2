@@ -18,7 +18,7 @@ public class ScheduledTask implements Runnable {
         this.taskId = taskId;
         this.runnable = runnable;
         this.delay = delay != -1 && delay != 0 ? delay : 0;
-        this.repeatDelay = repeatDelay != -1 ? repeatDelay : 0;
+        this.repeatDelay = repeatDelay == -1 ? 0 : repeatDelay;
         this.interrupted = false;
 
         this.delayTime = this.delay;

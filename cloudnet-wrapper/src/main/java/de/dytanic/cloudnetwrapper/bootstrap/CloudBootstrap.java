@@ -70,10 +70,6 @@ public class CloudBootstrap {
             return;
         }
 
-        if (optionSet.has("systemTimer")) {
-            new SystemTimer();
-        }
-
         if (optionSet.has("version") || optionSet.has("v")) {
             System.out.println("CloudNet-Wrapper RezSyM Version " + CloudBootstrap.class.getPackage()
                                                                                         .getImplementationVersion() + '-' + CloudBootstrap.class
@@ -98,6 +94,10 @@ public class CloudBootstrap {
         NetworkUtils.header();
         CloudNetWrapperConfig cloudNetWrapperConfig = new CloudNetWrapperConfig(cloudNetLogging.getReader());
         CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging);
+
+        if (optionSet.has("systemTimer")) {
+            cloudNetWrapper.getScheduler().runTaskRepeatAsync(SystemTimer::run, 0, 40);
+        }
 
         if (!cloudNetWrapper.bootstrap()) {
             System.exit(0);

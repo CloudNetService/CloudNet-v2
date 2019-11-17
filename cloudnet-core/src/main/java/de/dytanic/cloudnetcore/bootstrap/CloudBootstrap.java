@@ -11,13 +11,10 @@ import de.dytanic.cloudnet.lib.SystemTimer;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnetcore.CloudConfig;
 import de.dytanic.cloudnetcore.CloudNet;
-import io.netty.util.ResourceLeakDetector;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Tareko on 24.07.2017.
@@ -25,8 +22,6 @@ import java.util.List;
 public final class CloudBootstrap {
 
     public static synchronized void main(String[] args) throws Exception {
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
-
         System.setProperty("file.encoding", "UTF-8");
         System.setProperty("java.net.preferIPv4Stack", "true");
 
@@ -47,8 +42,6 @@ public final class CloudBootstrap {
         optionParser.accepts("onlyConsole");
 
         OptionSet optionSet = optionParser.parse(args);
-
-        List<String> consolePreInit = new ArrayList<>();
 
         if (optionSet.has("help") || optionSet.has("?")) {
             HelpService helpService = new HelpService();
@@ -92,10 +85,6 @@ public final class CloudBootstrap {
             return;
         }
 
-        if (optionSet.has("systemTimer")) {
-            new SystemTimer();
-        }
-
         if (optionSet.has("version")) {
             System.out.printf("CloudNet-Core RezSyM Version %s-%s",
                               CloudBootstrap.class.getPackage().getImplementationVersion(),
@@ -108,15 +97,13 @@ public final class CloudBootstrap {
             cloudNetLogging.setDebugging(true);
         }
 
-        cloudNetLogging.getHandler().add(input -> {
-            if (!CloudNet.RUNNING) {
-                consolePreInit.add(input);
-            }
-        });
-
         NetworkUtils.header();
         CloudConfig coreConfig = new CloudConfig(cloudNetLogging.getReader());
-        CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, consolePreInit, Arrays.asList(args));
+        CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args));
+
+        if (optionSet.has("systemTimer")) {
+            cloudNetCore.getScheduler().runTaskRepeatAsync(SystemTimer::run, 0, 50);
+        }
 
         if (!cloudNetCore.bootstrap()) {
             System.exit(0);
