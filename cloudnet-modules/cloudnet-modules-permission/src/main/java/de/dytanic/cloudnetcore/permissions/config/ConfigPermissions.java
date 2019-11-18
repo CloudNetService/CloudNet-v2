@@ -176,8 +176,11 @@ public class ConfigPermissions {
             List<String> permissionSection = group.getStringList("permissions");
 
             for (String entry : permissionSection) {
-                // TODO breaks on permission nodes with - in them
-                permissions.put(entry.replaceFirst("-", ""), (!entry.startsWith("-")));
+                if (entry.startsWith("-")) {
+                    permissions.put(entry.substring(1), false);
+                } else {
+                    permissions.put(entry, true);
+                }
             }
 
             HashMap<String, List<String>> permissionsGroups = new HashMap<>();
