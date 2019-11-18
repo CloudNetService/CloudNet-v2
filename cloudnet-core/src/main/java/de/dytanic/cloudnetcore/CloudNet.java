@@ -64,7 +64,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class CloudNet implements Executable, Runnable, Reloadable {
+// Because this is an API class, we can and should suppress warnings about
+// unused methods and weaker access.
+@SuppressWarnings({"unused", "WeakerAccess"})
+public final class CloudNet implements Executable, Reloadable {
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     public static volatile boolean RUNNING = false;
@@ -96,7 +99,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
     private DatabaseBasicHandlers dbHandlers;
     private Collection<User> users;
     private long startupTime = System.currentTimeMillis();
-    private boolean downTown = true;
 
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) throws
         Exception {
@@ -215,10 +217,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         return startupTime;
     }
 
-    public boolean isDownTown() {
-        return downTown;
-    }
-
     @Override
     public boolean bootstrap() throws Exception {
         if (!optionSet.has("disable-autoupdate")) {
@@ -273,7 +271,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
         webServer.bind();
 
         RUNNING = true;
-        Runtime.getRuntime().addShutdownHook(new Thread(this));
 
         {
             if (!optionSet.has("onlyConsole")) {
@@ -517,9 +514,7 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         RUNNING = false;
         this.logger.shutdownAll();
-        if (downTown) {
-            System.exit(0);
-        }
+        System.exit(0);
         return true;
     }
 
@@ -571,13 +566,6 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         networkManager.reload();
         networkManager.updateAll();
-    }
-
-    @Deprecated
-    @Override
-    public void run() {
-        downTown = false;
-        shutdown();
     }
 
     public boolean authorization(String name, String token) {

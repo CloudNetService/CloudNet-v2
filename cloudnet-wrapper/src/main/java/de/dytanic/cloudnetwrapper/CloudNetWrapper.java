@@ -317,7 +317,6 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             cloudGameServer.shutdown();
         }
 
-        this.cloudNetLogging.shutdownAll();
         if (networkConnection.getChannel() != null) {
             networkConnection.tryDisconnect();
         }
@@ -334,6 +333,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         System.out.println("   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/");
         System.out.println();
         RUNNING = false;
+        this.cloudNetLogging.shutdownAll();
         System.exit(0);
         return true;
     }

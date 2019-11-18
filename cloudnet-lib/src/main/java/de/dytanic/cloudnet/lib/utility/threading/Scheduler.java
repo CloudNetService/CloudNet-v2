@@ -77,6 +77,7 @@ public final class Scheduler implements TaskCancelable, Runnable {
             try {
                 Thread.sleep(1000 / ticks);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
 
             if (tasks.isEmpty()) {

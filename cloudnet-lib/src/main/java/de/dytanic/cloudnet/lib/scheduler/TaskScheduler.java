@@ -28,9 +28,8 @@ public class TaskScheduler {
 
     protected final long threadLiveMillis;
 
-    protected int maxThreads = 0;
-
-    protected Logger logger;
+    protected final Logger logger;
+    protected int maxThreads;
 
     protected Deque<TaskEntry<?>> taskEntries = new ConcurrentLinkedDeque<>();
 
@@ -147,7 +146,7 @@ public class TaskScheduler {
 
 
     public TaskScheduler(int maxThreads, boolean dynamicWorkerCount) {
-        this(maxThreads, (Logger) null, dynamicWorkerCount);
+        this(maxThreads, null, dynamicWorkerCount);
     }
 
     public TaskScheduler(int maxThreads, Logger logger, boolean dynamicWorkerCount) {
@@ -186,18 +185,20 @@ public class TaskScheduler {
         return offerEntry(taskEntry);
     }
 
-    private <V> TaskEntryFuture<V> offerEntry(TaskEntry<V> entry) {
-        this.taskEntries.offer(entry);
-        checkEnougthThreads();
-        return entry.drop();
+    public <V> Collection<TaskEntryFuture<V>> schedule(Collection<TaskEntry<V>> threadEntries) {
+
+        Collection<TaskEntryFuture<V>> taskEntryFutures = new ArrayList<TaskEntryFuture<V>>();
+        for (TaskEntry<V> entry : threadEntries) {
+            taskEntryFutures.add(offerEntry(entry));
+        }
+
+        return taskEntryFutures;
     }
 
-    private void checkEnougthThreads() {
-        Worker worker = hasFreeWorker();
-        if (getCurrentThreadSize() < maxThreads || (dynamicWorkerCount && maxThreads > 1 && taskEntries.size() > getCurrentThreadSize() && taskEntries
-            .size() <= (getMaxThreads() * 2)) && worker == null) {
-            newWorker();
-        }
+    private <V> TaskEntryFuture<V> offerEntry(TaskEntry<V> entry) {
+        this.taskEntries.offer(entry);
+        checkEnoughThreads();
+        return entry.drop();
     }
 
     private Worker hasFreeWorker() {
@@ -409,14 +410,15 @@ public class TaskScheduler {
         return schedule(callable, callback, timeUnit.toMillis(delay), repeats);
     }
 
-    public <V> Collection<TaskEntryFuture<V>> schedule(Collection<TaskEntry<V>> threadEntries) {
-
-        Collection<TaskEntryFuture<V>> TaskEntryFutures = new ArrayList<TaskEntryFuture<V>>();
-        for (TaskEntry<V> entry : threadEntries) {
-            TaskEntryFutures.add(offerEntry(entry));
+    private void checkEnoughThreads() {
+        Worker worker = hasFreeWorker();
+        if (getCurrentThreadSize() < maxThreads
+            || (dynamicWorkerCount && maxThreads > 1
+            && taskEntries.size() > getCurrentThreadSize()
+            && taskEntries.size() <= (maxThreads * 2))
+            && worker == null) {
+            newWorker();
         }
-
-        return TaskEntryFutures;
     }
 
     @SuppressWarnings("deprecation")
@@ -424,8 +426,10 @@ public class TaskScheduler {
 
         for (Worker worker : workers) {
             try {
-                worker.interrupt();
-                worker.stop();
+                if (Thread.currentThread() != worker) {
+                    worker.interrupt();
+                    worker.stop();
+                }
             } catch (ThreadDeath th) {
                 workers.remove(worker);
             }
@@ -455,19 +459,11 @@ public class TaskScheduler {
         return name;
     }
 
-    public Deque<TaskEntry<?>> getThreadEntries() {
-        return new ConcurrentLinkedDeque<>();
-    }
-
     public Logger getLogger() {
         return logger;
     }
 
     /* =================================== */
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-    }
 
     public class Worker extends Thread {
 
@@ -568,7 +564,7 @@ public class TaskScheduler {
 
     }
 
-    private final class VoidTaskEntry extends TaskEntry<Void> {
+    private static final class VoidTaskEntry extends TaskEntry<Void> {
 
         public VoidTaskEntry(Callable<Void> pTask, Callback<Void> pComplete, long pDelay, long pRepeat) {
             super(pTask, pComplete, pDelay, pRepeat);

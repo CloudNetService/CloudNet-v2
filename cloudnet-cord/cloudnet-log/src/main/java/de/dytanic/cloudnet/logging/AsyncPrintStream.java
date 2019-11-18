@@ -220,7 +220,7 @@ public class AsyncPrintStream extends PrintStream {
                 try {
                     queue.take().run();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
                 }
             }
         }

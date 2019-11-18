@@ -131,5 +131,6 @@ public class CloudBootstrap {
                 NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
             }
         }
+        cloudNetLogging.info("Shutting down now!");
     }
 }
