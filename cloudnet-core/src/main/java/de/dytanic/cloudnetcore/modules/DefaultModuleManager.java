@@ -38,7 +38,9 @@ public class DefaultModuleManager {
             Files.deleteIfExists(path);
 
             try (InputStream inputStream = defaultModule.stream()) {
-                Files.copy(inputStream, path);
+                if (inputStream != null) {
+                    Files.copy(inputStream, path);
+                }
             }
         }
     }

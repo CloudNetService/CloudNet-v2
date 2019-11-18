@@ -177,61 +177,61 @@ public final class NetworkManager {
     }
 
     public void handlePlayerLoginRequest(ProxyServer proxyServer, PlayerConnection cloudPlayerConnection, UUID uniqueId) {
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " onlinePlayers");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " onlinePlayers");
         if (this.onlinePlayers.containsKey(cloudPlayerConnection.getUniqueId())) {
             proxyServer.sendPacketSynchronized(new PacketOutLoginPlayer(uniqueId, null, "Already connected in network"));
             return;
         }
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " call LoginRequestEvent");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " call LoginRequestEvent");
         LoginRequestEvent loginRequestEvent = new LoginRequestEvent(proxyServer, cloudPlayerConnection);
         CloudNet.getInstance().getEventManager().callEvent(loginRequestEvent);
 
         PlayerDatabase playerDatabase = CloudNet.getInstance().getDbHandlers().getPlayerDatabase();
         OfflinePlayer offlinePlayer = null;
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database contains");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database contains");
         if (!playerDatabase.containsPlayer(cloudPlayerConnection.getUniqueId())) {
-            CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database register");
+            CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database register");
             offlinePlayer = playerDatabase.registerPlayer(cloudPlayerConnection);
         }
 
         if (offlinePlayer == null) {
-            CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database get");
+            CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database get");
             offlinePlayer = playerDatabase.getPlayer(cloudPlayerConnection.getUniqueId());
         }
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " create CloudPlayer");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " create CloudPlayer");
         CloudPlayer cloudPlayer = new CloudPlayer(offlinePlayer, cloudPlayerConnection, proxyServer.getServerId());
         cloudPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
         if (cloudPlayer.getFirstLogin() == null) {
-            CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " set firstLogin");
+            CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " set firstLogin");
             cloudPlayer.setFirstLogin(System.currentTimeMillis());
         }
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " call PlayerInitEvent");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " call PlayerInitEvent");
         CloudNet.getInstance().getEventManager().callEvent(new PlayerInitEvent(cloudPlayer));
 
         CloudNet.getLogger()
-                .debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " NameToUUIDDatabase append");
+                .finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " NameToUUIDDatabase append");
         CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().append(new MultiValue<>(cloudPlayerConnection.getName(),
                                                                                                cloudPlayerConnection.getUniqueId()));
         CloudNet.getLogger()
-                .debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " NameToUUIDDatabase replace");
+                .finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " NameToUUIDDatabase replace");
         CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().replace(new MultiValue<>(cloudPlayerConnection.getUniqueId(),
                                                                                                 cloudPlayerConnection.getName()));
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " setName");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " setName");
         cloudPlayer.setName(cloudPlayerConnection.getName());
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " updatePlayer");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " updatePlayer");
         CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(CloudPlayer.newOfflinePlayer(cloudPlayer));
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " PacketOutLoginPlayer");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " PacketOutLoginPlayer");
         proxyServer.sendPacket(new PacketOutLoginPlayer(uniqueId, cloudPlayer, "successful Login"));
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " waitingPlayers");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " waitingPlayers");
         this.waitingPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " handlePlayerLogin");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " handlePlayerLogin");
         handlePlayerLogin(cloudPlayer);
     }
 

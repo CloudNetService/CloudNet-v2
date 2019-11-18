@@ -12,7 +12,7 @@ public class PermissionEntity {
 
     protected UUID uniqueId;
 
-    protected java.util.Map<String, Boolean> permissions;
+    protected Map<String, Boolean> permissions;
 
     protected String prefix;
 

@@ -40,7 +40,7 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                                 QueryDecoder queryDecoder,
                                 PathProvider path,
                                 HttpRequest httpRequest) throws Exception {
-        CloudNet.getLogger().debug("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
+        CloudNet.getLogger().finest("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
 
         FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), HttpResponseStatus.UNAUTHORIZED);
         fullHttpResponse.headers().set("Content-Type", "application/json");

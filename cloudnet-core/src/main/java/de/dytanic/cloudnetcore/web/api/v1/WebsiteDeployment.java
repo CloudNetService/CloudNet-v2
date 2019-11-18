@@ -36,7 +36,7 @@ public class WebsiteDeployment extends MethodWebHandlerAdapter {
                                  QueryDecoder queryDecoder,
                                  PathProvider path,
                                  HttpRequest httpRequest) throws Exception {
-        CloudNet.getLogger().debug("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
+        CloudNet.getLogger().finest("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
 
         if (!(httpRequest instanceof FullHttpRequest)) {
             return null;
@@ -74,7 +74,6 @@ public class WebsiteDeployment extends MethodWebHandlerAdapter {
                 String pluginName = httpRequest.headers().get("-Xvalue");
                 File file = new File(new StringBuilder("local/plugins/").append(pluginName).append(".jar").substring(0));
                 if (file.getParentFile().mkdirs()) {
-                    ;
                 }
                 file.createNewFile();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {

@@ -33,7 +33,7 @@ public class WebsiteLog extends WebHandler {
                                           QueryDecoder queryDecoder,
                                           PathProvider path,
                                           HttpRequest httpRequest) throws Exception {
-        CloudNet.getLogger().debug("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
+        CloudNet.getLogger().finest("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
         if (!queryDecoder.getQueryParams().containsKey("server")) {
             FullHttpResponse fullHttpResponse = newResponse(httpRequest.getProtocolVersion());
             fullHttpResponse.setStatus(HttpResponseStatus.NOT_FOUND);

@@ -86,9 +86,9 @@ public final class CloudBootstrap {
         }
 
         if (optionSet.has("version")) {
-            System.out.printf("CloudNet-Core RezSyM Version %s-%s%n",
-                              CloudBootstrap.class.getPackage().getImplementationVersion(),
-                              CloudBootstrap.class.getPackage().getSpecificationVersion());
+            System.out.println(String.format("CloudNet-Core RezSyM Version %s-%s%n",
+                                             CloudBootstrap.class.getPackage().getImplementationVersion(),
+                                             CloudBootstrap.class.getPackage().getSpecificationVersion()));
             return;
         }
 

@@ -12,9 +12,9 @@ import java.lang.management.ManagementFactory;
 public class SystemTimer {
 
     public static void run() {
-        System.out.printf("Memory [\"%dKB\"] | CPU Programm [\"%s\"] | CPU System [\"%s\"]%n",
-                          ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1024,
-                          NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.internalCpuUsage()),
-                          NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.cpuUsage()));
+        System.out.println(String.format("Memory [\"%dKB\"] | CPU Programm [\"%s\"] | CPU System [\"%s\"]",
+                                         ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1024,
+                                         NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.internalCpuUsage()),
+                                         NetworkUtils.DECIMAL_FORMAT.format(NetworkUtils.cpuUsage())));
     }
 }

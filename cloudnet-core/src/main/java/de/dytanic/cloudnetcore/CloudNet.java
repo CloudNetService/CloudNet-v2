@@ -244,13 +244,13 @@ public final class CloudNet implements Executable, Runnable, Reloadable {
 
         this.serverGroups.putAll(config.getServerGroups());
         this.serverGroups.forEach((name, serverGroup) -> {
-            logger.info(String.format("Loading server group: %s%n", serverGroup.getName()));
+            logger.info(String.format("Loading server group: %s", serverGroup.getName()));
             setupGroup(serverGroup);
         });
 
         this.proxyGroups.putAll(config.getProxyGroups());
         this.proxyGroups.forEach((name, proxyGroup) -> {
-            logger.info(String.format("Loading proxy group: %s%n", proxyGroup.getName()));
+            logger.info(String.format("Loading proxy group: %s", proxyGroup.getName()));
             setupProxy(proxyGroup);
         });
 

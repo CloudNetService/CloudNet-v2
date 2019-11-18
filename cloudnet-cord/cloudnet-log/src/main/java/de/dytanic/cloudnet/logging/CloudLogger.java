@@ -33,8 +33,8 @@ public class CloudLogger extends Logger {
 
     private final List<ICloudLoggerHandler> handler = new LinkedList<>();
 
-    private boolean debugging = false;
     private boolean showPrompt = !Boolean.getBoolean("cloudnet.logging.prompt.disabled");
+    private final Handler loggingHandler;
 
     /**
      * Constructs a new cloud logger instance that handles logging messages from
@@ -65,7 +65,7 @@ public class CloudLogger extends Logger {
 
         addHandler(fileHandler);
 
-        LoggingHandler loggingHandler = new LoggingHandler(reader, this);
+        loggingHandler = new LoggingHandler(reader, this);
         loggingHandler.setFormatter(formatter);
         loggingHandler.setEncoding(StandardCharsets.UTF_8.name());
         loggingHandler.setLevel(Level.INFO);
@@ -87,11 +87,16 @@ public class CloudLogger extends Logger {
     }
 
     public boolean isDebugging() {
-        return debugging;
+        return this.isLoggable(Level.ALL);
     }
 
     public void setDebugging(boolean debugging) {
-        this.debugging = debugging;
+        if (debugging) {
+            this.setLevel(Level.ALL);
+        } else {
+            this.setLevel(Level.INFO);
+        }
+        loggingHandler.setLevel(this.getLevel());
     }
 
     @Override
@@ -105,17 +110,6 @@ public class CloudLogger extends Logger {
 
     public List<ICloudLoggerHandler> getHandler() {
         return handler;
-    }
-
-    /**
-     * This posts a new debug message, if {@link #debugging} is true.
-     *
-     * @param message the message to send to the log
-     */
-    public void debug(String message) {
-        if (debugging) {
-            log(Level.WARNING, "[DEBUG] " + message);
-        }
     }
 
     public String readLine(String prompt) {
@@ -254,6 +248,10 @@ public class CloudLogger extends Logger {
                    .append(record.getLevel().getName())
                    .append(": ")
                    .append(message);
+
+            if (!message.endsWith(SEPARATOR)) {
+                builder.append(SEPARATOR);
+            }
 
             if (record.getThrown() != null) {
                 try (StringWriter writer = new StringWriter()) {

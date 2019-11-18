@@ -147,7 +147,7 @@ public final class SpigotBuilder {
                 long endTime = System.currentTimeMillis();
                 long minutes = ((endTime - startTime) / 1000) / 60;
                 long seconds = ((endTime - startTime) / 1000) % 60;
-                System.out.printf("Total Build Time %dMin %dSec%n", minutes, seconds);
+                System.out.println(String.format("Total Build Time %dMin %dSec%n", minutes, seconds));
                 return true;
             } else {
                 deleteBuildFolder(buildFolder);

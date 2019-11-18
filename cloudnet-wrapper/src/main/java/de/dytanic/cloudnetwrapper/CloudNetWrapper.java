@@ -324,7 +324,15 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
         FileUtility.deleteDirectory(new File("temp"));
 
-        System.out.println("\n    _  _     _______   _                       _          \n" + "  _| || |_  |__   __| | |                     | |         \n" + " |_  __  _|    | |    | |__     __ _   _ __   | | __  ___ \n" + "  _| || |_     | |    | '_ \\   / _` | | '_ \\  | |/ / / __|\n" + " |_  __  _|    | |    | | | | | (_| | | | | | |   <  \\__ \\\n" + "   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/\n" + "                                                          \n" + "                                                          ");
+        System.out.println();
+
+        System.out.println("    _  _     _______   _                       _          ");
+        System.out.println("  _| || |_  |__   __| | |                     | |         ");
+        System.out.println(" |_  __  _|    | |    | |__     __ _   _ __   | | __  ___ ");
+        System.out.println("  _| || |_     | |    | '_ \\   / _` | | '_ \\  | |/ / / __|");
+        System.out.println(" |_  __  _|    | |    | | | | | (_| | | | | | |   <  \\__ \\");
+        System.out.println("   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/");
+        System.out.println();
         RUNNING = false;
         System.exit(0);
         return true;

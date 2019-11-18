@@ -18,11 +18,11 @@ public class PacketInWrapperInfo implements PacketInHandler {
         CloudNetWrapper.getInstance().getServerGroups().clear();
         CloudNetWrapper.getInstance().getServerGroups().putAll(wrapperExternal.getServerGroups());
         CloudNetWrapper.getInstance().getServerGroups().forEach(
-            (name, serverGroup) -> System.out.printf("Importing server group [%s] from CloudNet-Master%n", name));
+            (name, serverGroup) -> System.out.println(String.format("Importing server group [%s] from CloudNet-Master%n", name)));
 
         CloudNetWrapper.getInstance().getProxyGroups().clear();
         CloudNetWrapper.getInstance().getProxyGroups().putAll(wrapperExternal.getProxyGroups());
         CloudNetWrapper.getInstance().getProxyGroups().forEach(
-            (name, serverGroup) -> System.out.printf("Importing proxy group [%s] from CloudNet-Master%n", name));
+            (name, serverGroup) -> System.out.println(String.format("Importing proxy group [%s] from CloudNet-Master%n", name)));
     }
 }

@@ -26,7 +26,7 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
     public CloudNetServer(OptionSet optionSet, ConnectableAddress connectableAddress) {
         try {
             if (optionSet.has("ssl")) {
-                CloudNet.getLogger().debug("Enabling SSL Context for service requests");
+                CloudNet.getLogger().finest("Enabling SSL Context for service requests");
                 SelfSignedCertificate ssc = new SelfSignedCertificate();
                 sslContext = SslContextBuilder
                     .forServer(ssc.certificate(), ssc.privateKey())
@@ -45,8 +45,8 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(this);
 
-            CloudNet.getLogger().debug("Using " + (Epoll.isAvailable() ? "Epoll native transport" : "NIO transport"));
-            CloudNet.getLogger().debug("Try to bind to " + connectableAddress.getHostName() + ':' + connectableAddress.getPort() + "...");
+            CloudNet.getLogger().finest("Using " + (Epoll.isAvailable() ? "Epoll native transport" : "NIO transport"));
+            CloudNet.getLogger().finest("Try to bind to " + connectableAddress.getHostName() + ':' + connectableAddress.getPort() + "...");
 
             ChannelFuture channelFuture = serverBootstrap.bind(connectableAddress.getHostName(), connectableAddress.getPort()).addListener(
                 new ChannelFutureListener() {
