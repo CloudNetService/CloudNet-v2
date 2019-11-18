@@ -542,6 +542,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 

@@ -26,7 +26,7 @@ import java.nio.file.Path;
 public final class NetworkConnection implements PacketSender {
 
     private final PacketManager packetManager = new PacketManager();
-    private final EventLoopGroup eventLoopGroup = NetworkUtils.eventLoopGroup(4);
+    private final EventLoopGroup eventLoopGroup = NetworkUtils.eventLoopGroup(2);
     private Channel channel;
     private ConnectableAddress connectableAddress;
     private long connectionTrys = 0;
