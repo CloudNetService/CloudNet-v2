@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet.bridge;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
@@ -21,7 +20,6 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -38,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -58,33 +55,26 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
         instance = this;
 
         this.proxiedBootstrap = proxiedBootstrap;
-        this.proxyProcessMeta = cloudAPI.getConfig().getObject("proxyProcess", new TypeToken<ProxyProcessMeta>() {}.getType());
+        this.proxyProcessMeta = cloudAPI.getConfig().getObject("proxyProcess", ProxyProcessMeta.TYPE);
         cloudAPI.getNetworkHandlerProvider().registerHandler(new NetworkHandlerImpl());
-        ProxyServer.getInstance().getScheduler().schedule(proxiedBootstrap, () -> {
-            cachedServers.putAll(
-                MapWrapper.collectionCatcherHashMap(cloudAPI.getServers(), key -> {
-                    ProxyServer.getInstance().getServers().put(
-                        key.getServiceId().getServerId(),
-                        ProxyServer.getInstance().constructServerInfo(
-                            key.getServiceId().getServerId(),
-                            new InetSocketAddress(key.getHost(), key.getPort()),
-                            "CloudNet2 Game-Server",
-                            false)
-                    );
-
-                    // Add default fallback to server priority of Bungeecord
-                    if (key.getServiceId().getGroup().equals(
-                        getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
-                        ProxyServer.getInstance().getConfig().getListeners().forEach(
-                            listener ->
-                                listener.getServerPriority().add(key.getServiceId().getServerId()));
-                    }
-                    return key.getServiceId().getServerId();
-                }));
-
-            cloudAPI.setCloudService(CloudProxy.this);
-
-        }, 250, TimeUnit.MILLISECONDS);
+        cloudAPI.getServers().forEach(server -> {
+            final String serverId = server.getServiceId().getServerId();
+            ProxyServer.getInstance().getServers().put(
+                serverId, ProxyServer.getInstance().constructServerInfo(
+                    serverId,
+                    new InetSocketAddress(server.getHost(), server.getPort()),
+                    "CloudNet2 Game-Server",
+                    false)
+            );
+            // Add default fallback to server priority of Bungeecord
+            if (server.getServiceId().getGroup().equals(
+                getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
+                ProxyServer.getInstance().getConfig().getListeners().forEach(
+                    listener -> listener.getServerPriority().add(serverId));
+            }
+            cachedServers.put(serverId, server);
+        });
+        cloudAPI.setCloudService(this);
     }
 
     public ProxyGroup getProxyGroup() {
@@ -341,9 +331,8 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
             // Remove default fallback to server priority of Bungeecord
             if (serverInfo.getServiceId().getGroup().equals(
                 getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
-                ProxyServer.getInstance().getConfig().getListeners()
-                           .forEach(listener ->
-                                        listener.getServerPriority().remove(serverInfo.getServiceId().getServerId()));
+                ProxyServer.getInstance().getConfig().getListeners().forEach(
+                    listener -> listener.getServerPriority().remove(serverInfo.getServiceId().getServerId()));
             }
 
             if (CloudAPI.getInstance().getModuleProperties().contains("notifyService") && CloudAPI.getInstance()

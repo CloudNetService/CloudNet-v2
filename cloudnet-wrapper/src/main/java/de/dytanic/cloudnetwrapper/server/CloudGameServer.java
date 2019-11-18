@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -443,12 +444,12 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
         if (instance.isAlive()) {
             executeCommand("stop");
             try {
-                Thread.sleep(1000);
+                instance.waitFor(60, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
+                e.printStackTrace();
+                instance.destroyForcibly();
             }
         }
-
-        instance.destroyForcibly();
 
         try {
             Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
@@ -472,6 +473,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
             try {
                 masterTemplateDeploy.deploy();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

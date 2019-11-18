@@ -35,7 +35,7 @@ public class ProxiedBootstrap extends Plugin {
                          }
                      });
         getLogger().setLevel(Level.INFO);
-        CloudAPI.getInstance().setLogger(getLogger());
+        CloudAPI.getInstance().setLogger(this.getLogger());
     }
 
     @Override

@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class GameServer extends AbstractScreenService implements ServerDispatcher {
 
@@ -499,10 +500,13 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     public void kill() {
         if (instance.isAlive()) {
             executeCommand("stop");
-            NetworkUtils.sleepUninterruptedly(500);
+            try {
+                instance.waitFor(60, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                instance.destroyForcibly();
+            }
         }
-
-        instance.destroyForcibly();
     }
 
     /**

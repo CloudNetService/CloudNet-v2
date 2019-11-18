@@ -309,12 +309,12 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             gameServer.shutdown();
         }
 
-        for (BungeeCord gameServer : proxys.values()) {
-            gameServer.shutdown();
+        for (BungeeCord bungeeCord : proxys.values()) {
+            bungeeCord.shutdown();
         }
 
-        for (CloudGameServer gameServer : cloudServers.values()) {
-            gameServer.shutdown();
+        for (CloudGameServer cloudGameServer : cloudServers.values()) {
+            cloudGameServer.shutdown();
         }
 
         this.cloudNetLogging.shutdownAll();

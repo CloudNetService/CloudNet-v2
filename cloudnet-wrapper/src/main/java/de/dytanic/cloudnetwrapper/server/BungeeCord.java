@@ -28,7 +28,6 @@ import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -39,6 +38,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 
 public class BungeeCord extends AbstractScreenService implements ServerDispatcher {
 
@@ -430,19 +430,19 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
 
         if (instance.isAlive()) {
             executeCommand("end");
-            NetworkUtils.sleepUninterruptedly(500);
-        }
+            try {
+                instance.waitFor(60, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                instance.destroyForcibly();
+            }
 
-        instance.destroyForcibly();
+        }
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isSavingRecords()) {
             try {
-                for (File file : new File(path).listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname) {
-                        return pathname.getName().contains("proxy.log");
-                    }
-                })) {
+                for (File file : new File(path).listFiles(
+                    pathname -> pathname.getName().contains("proxy.log"))) {
                     FileUtility.copyFileToDirectory(file, new File("local/records/" + proxyProcessMeta.getServiceId()));
                 }
 
