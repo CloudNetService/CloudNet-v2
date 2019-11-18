@@ -63,13 +63,13 @@ public final class CommandReload extends Command {
 
         CloudNet.getInstance().getServerGroups().putAll(CloudNet.getInstance().getConfig().getServerGroups());
         CloudNet.getInstance().getServerGroups().forEach((name, serverGroup) -> {
-            CloudNet.getLogger().info(String.format("Loading server group: %s", serverGroup.getName()));
+            CloudNet.getLogger().info(String.format("Loading server group: %s%n", serverGroup.getName()));
             CloudNet.getInstance().setupGroup(serverGroup);
         });
 
         CloudNet.getInstance().getProxyGroups().putAll(CloudNet.getInstance().getConfig().getProxyGroups());
         CloudNet.getInstance().getProxyGroups().forEach((name, proxyGroup) -> {
-            CloudNet.getLogger().info(String.format("Loading proxy group: %s", proxyGroup.getName()));
+            CloudNet.getLogger().info(String.format("Loading proxy group: %s%n", proxyGroup.getName()));
             CloudNet.getInstance().setupProxy(proxyGroup);
         });
 

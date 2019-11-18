@@ -42,7 +42,7 @@ public final class BukkitListener implements Listener {
         CloudAPI.getInstance().getLogger().logp(Level.FINEST,
                                                 this.getClass().getSimpleName(),
                                                 "handle0",
-                                                String.format("Handling async player pre login event: %s", e));
+                                                String.format("Handling async player pre login event: %s%n", e));
         for (Player all : Bukkit.getOnlinePlayers()) {
             if (all.getUniqueId().equals(e.getUniqueId())) {
                 e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
@@ -63,7 +63,7 @@ public final class BukkitListener implements Listener {
         CloudAPI.getInstance().getLogger().logp(Level.FINEST,
                                                 this.getClass().getSimpleName(),
                                                 "handle",
-                                                String.format("Handling bukkit sub channel message event: %s", event));
+                                                String.format("Handling Bukkit sub channel message event: %s%n", event));
         if (event.getChannel().equalsIgnoreCase("cloudnet_internal") || event.getMessage().equalsIgnoreCase("server_connect_request")) {
             UUID uniqueId = event.getDocument().getObject("uniqueId", UUID.class);
             if (uniqueId != null) {
@@ -83,7 +83,7 @@ public final class BukkitListener implements Listener {
         CloudAPI.getInstance().getLogger().logp(Level.FINEST,
                                                 this.getClass().getSimpleName(),
                                                 "handleLast",
-                                                String.format("Handling player login event: %s", event));
+                                                String.format("Handling player login event: %s%n", event));
         if (this.kicks.contains(event.getPlayer().getUniqueId())) {
             this.kicks.remove(event.getPlayer().getUniqueId());
 
@@ -101,7 +101,7 @@ public final class BukkitListener implements Listener {
         CloudAPI.getInstance().getLogger().logp(Level.FINEST,
                                                 this.getClass().getSimpleName(),
                                                 "handleFirst",
-                                                String.format("Handling player login event: %s", event));
+                                                String.format("Handling player login event: %s%n", event));
         if (CloudServer.getInstance().getCloudPlayers().containsKey(event.getPlayer().getUniqueId()) && requests.contains(event.getPlayer()
                                                                                                                                .getUniqueId())) {
             requests.remove(event.getPlayer().getUniqueId());

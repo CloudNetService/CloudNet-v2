@@ -43,7 +43,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
-        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s (label = %s) with arguments %s",
+        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s (label = %s) with arguments %s%n",
                                                                 commandSender,
                                                                 command,
                                                                 label,

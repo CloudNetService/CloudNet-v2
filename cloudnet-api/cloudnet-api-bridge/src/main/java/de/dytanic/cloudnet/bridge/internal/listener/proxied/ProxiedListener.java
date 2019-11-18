@@ -88,7 +88,7 @@ public class ProxiedListener implements Listener {
         CloudAPI.getInstance().getLogger().logp(Level.FINEST,
                                                 this.getClass().getSimpleName(),
                                                 "handlePluginMessage",
-                                                String.format("Handling plugin message event: %s", e));
+                                                String.format("Handling plugin message event: %s%n", e));
         if (e.getTag().equals("MC|BSign") || e.getTag().equals("MC|BEdit")) {
             if (CloudProxy.getInstance().getProxyGroup() != null && CloudProxy.getInstance()
                                                                               .getProxyGroup()
@@ -104,7 +104,7 @@ public class ProxiedListener implements Listener {
         CloudAPI.getInstance().getLogger().logp(Level.FINEST,
                                                 this.getClass().getSimpleName(),
                                                 "handlePlayerServerSwitch",
-                                                String.format("Handling server switch event: %s", e));
+                                                String.format("Handling server switch event: %s%n", e));
         CloudPlayer cloudPlayer = CloudProxy.getInstance().getCloudPlayers().get(e.getPlayer().getUniqueId());
         cloudPlayer.setServer(e.getPlayer().getServer().getInfo().getName());
 
@@ -217,7 +217,7 @@ public class ProxiedListener implements Listener {
         CloudAPI.getInstance().getLogger().logp(Level.FINEST,
                                                 this.getClass().getSimpleName(),
                                                 "handleLogin",
-                                                String.format("Handling login event: %s", e));
+                                                String.format("Handling login event: %s%n", e));
         PlayerConnection playerConnection = new PlayerConnection(e.getConnection().getUniqueId(),
                                                                  e.getConnection().getName(),
                                                                  e.getConnection().getVersion(),
@@ -293,7 +293,7 @@ public class ProxiedListener implements Listener {
         CloudAPI.getInstance().getLogger().logp(Level.FINEST,
                                                 this.getClass().getSimpleName(),
                                                 "handlePost",
-                                                String.format("Handling post login event: %s", e));
+                                                String.format("Handling post login event: %s%n", e));
 
         CloudProxy.getInstance().update();
         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutLoginSuccess(e.getPlayer().getUniqueId()));
@@ -358,7 +358,7 @@ public class ProxiedListener implements Listener {
         CloudAPI.getInstance().getLogger().logp(Level.FINEST,
                                                 this.getClass().getSimpleName(),
                                                 "handleServerConnect",
-                                                String.format("Handling server connect event: %s", event));
+                                                String.format("Handling server connect event: %s%n", event));
         if (event.getPlayer().getServer() == null) {
             String fallback = CloudProxy.getInstance().fallback(event.getPlayer());
             ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent(event.getPlayer(),

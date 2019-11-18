@@ -45,7 +45,7 @@ public final class CommandCloud extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender commandSender, String[] args) {
-        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s with arguments %s",
+        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s with arguments %s%n",
                                                                 commandSender,
                                                                 this,
                                                                 Arrays.toString(args)));
@@ -100,7 +100,7 @@ public final class CommandCloud extends Command implements TabExecutor {
 
                     for (String key : document.keys()) {
                         if (!Database.UNIQUE_NAME_KEY.equalsIgnoreCase(key)) {
-                            commandSender.sendMessage(TextComponent.fromLegacyText("§3" + key + "§8| §e " + document.get(key).toString()));
+                            commandSender.sendMessage(TextComponent.fromLegacyText("§3" + key + "§8| §e " + document.get(key)));
                         }
                     }
                     return;

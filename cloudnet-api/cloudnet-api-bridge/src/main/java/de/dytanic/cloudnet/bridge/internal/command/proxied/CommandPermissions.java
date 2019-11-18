@@ -33,7 +33,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s with arguments %s", sender, this, Arrays.toString(args)));
+        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s with arguments %s%n", sender, this, Arrays.toString(args)));
         PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool();
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("group")) {

@@ -75,7 +75,7 @@ public final class PaperBuilder {
      * @throws Exception If a connection error or something
      */
     private static boolean buildPaperVersion(String version, Path outputPath) throws Exception {
-        System.out.println(String.format("Fetching build %s", version));
+        System.out.printf("Fetching build %s%n", version);
         URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version)).openConnection();
         connection.setRequestProperty("User-Agent",
                                       "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");

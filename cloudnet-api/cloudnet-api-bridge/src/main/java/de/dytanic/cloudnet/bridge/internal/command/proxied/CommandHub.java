@@ -27,7 +27,7 @@ public final class CommandHub extends Command {
 
     @Override
     public void execute(CommandSender commandSender, String[] args) {
-        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s with arguments %s",
+        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s with arguments %s%n",
                                                                 commandSender,
                                                                 this,
                                                                 Arrays.toString(args)));

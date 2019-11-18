@@ -127,7 +127,7 @@ public final class CloudAPI implements MetaObj {
     }
 
     public CloudAPI update(ServerInfo serverInfo) {
-        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "update", String.format("Updating server info: %s", serverInfo));
+        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "update", String.format("Updating server info: %s%n", serverInfo));
         if (networkConnection.isConnected()) {
             networkConnection.sendPacket(new PacketOutUpdateServerInfo(serverInfo));
         }
@@ -137,7 +137,7 @@ public final class CloudAPI implements MetaObj {
     /*================= API =====================*/
 
     public CloudAPI update(ProxyInfo proxyInfo) {
-        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "update", String.format("Updating proxy info: %s", proxyInfo));
+        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "update", String.format("Updating proxy info: %s%n", proxyInfo));
         if (networkConnection.isConnected()) {
             networkConnection.sendPacket(new PacketOutUpdateProxyInfo(proxyInfo));
         }
@@ -415,7 +415,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updatePermissionGroup",
-                         String.format("Updating permission group: %s", permissionGroup));
+                         String.format("Updating permission group: %s%n", permissionGroup));
         networkConnection.sendPacket(new PacketOutUpdatePermissionGroup(permissionGroup));
     }
 
@@ -428,7 +428,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updateProxyGroup",
-                         String.format("Updating proxy group: %s", proxyGroup));
+                         String.format("Updating proxy group: %s%n", proxyGroup));
         networkConnection.sendPacket(new PacketOutUpdateProxyGroup(proxyGroup));
     }
 
@@ -439,7 +439,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "sendCloudCommand",
-                         String.format("Sending cloud command: %s", commandLine));
+                         String.format("Sending cloud command: %s%n", commandLine));
         networkConnection.sendPacket(new PacketOutExecuteCommand(commandLine));
     }
 
@@ -452,7 +452,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "dispatchConsoleMessage",
-                         String.format("Dispatching console message: %s", output));
+                         String.format("Dispatching console message: %s%n", output));
         networkConnection.sendPacket(new PacketOutDispatchConsoleMessage(output));
     }
 
@@ -467,7 +467,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "sendConsoleMessage",
-                         String.format("Sending console message: %s %s %s", defaultType, serverId, commandLine));
+                         String.format("Sending console message: %s %s %s%n", defaultType, serverId, commandLine));
         networkConnection.sendPacket(new PacketOutServerDispatchCommand(defaultType, serverId, commandLine));
     }
 
@@ -485,7 +485,7 @@ public final class CloudAPI implements MetaObj {
      * @param serverId the server-id to stop
      */
     public void stopServer(String serverId) {
-        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopServer", String.format("Stopping server: %s", serverId));
+        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopServer", String.format("Stopping server: %s%n", serverId));
         networkConnection.sendPacket(new PacketOutStopServer(serverId));
     }
 
@@ -495,7 +495,7 @@ public final class CloudAPI implements MetaObj {
      * Stop a BungeeCord proxy server with the id @proxyId
      */
     public void stopProxy(String proxyId) {
-        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopProxy", String.format("Stopping proxy: %s", proxyId));
+        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopProxy", String.format("Stopping proxy: %s%n", proxyId));
         networkConnection.sendPacket(new PacketOutStopProxy(proxyId));
     }
 
@@ -506,7 +506,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "createServerLogUrl",
-                         String.format("Creating server log url: %s", serverId));
+                         String.format("Creating server log url: %s%n", serverId));
         String rnd = NetworkUtils.randomString(10);
         networkConnection.sendPacket(new PacketOutCreateServerLog(rnd, serverId));
         ConnectableAddress connectableAddress = cloudConfigLoader.loadConnnection();
@@ -550,7 +550,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "startProxy",
-                         String.format("Starting proxy: %s, %d, %s, %s, %s, %s",
+                         String.format("Starting proxy: %s, %d, %s, %s, %s, %s%n",
                                        proxyGroup,
                                        memory,
                                        Arrays.toString(processParameters),
@@ -604,7 +604,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "startProxy",
-                         String.format("Starting proxy: %s, %s, %d, %s, %s, %s, %s",
+                         String.format("Starting proxy: %s, %s, %d, %s, %s, %s, %s%n",
                                        wrapperInfo,
                                        proxyGroup,
                                        memory,
@@ -717,7 +717,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "startGameServer",
-                         String.format("Starting game server: %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s",
+                         String.format("Starting game server: %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s%n",
                                        simpleServerGroup,
                                        serverConfig,
                                        memory,
@@ -838,7 +838,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "startGameServer",
-                         String.format("Starting game server: %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s",
+                         String.format("Starting game server: %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s%n",
                                        simpleServerGroup,
                                        serverConfig,
                                        memory,
@@ -1089,7 +1089,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "startGameServer",
-                         String.format("Starting game server: %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s",
+                         String.format("Starting game server: %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s%n",
                                        wrapperInfo,
                                        simpleServerGroup,
                                        serverConfig,
@@ -1172,7 +1172,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "startGameServer",
-                         String.format("Starting game server: %s, %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s",
+                         String.format("Starting game server: %s, %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s%n",
                                        wrapperInfo,
                                        simpleServerGroup,
                                        serverId,
@@ -1238,7 +1238,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "startCloudServer",
-                         String.format("Starting cloud server: %s, %s, %s, %d, %s, %s, %s, %s, %s",
+                         String.format("Starting cloud server: %s, %s, %s, %d, %s, %s, %s, %s, %s%n",
                                        wrapperInfo,
                                        serverName,
                                        serverConfig,
@@ -1296,7 +1296,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "startCloudServer",
-                         String.format("Starting cloud server: %s, %s, %d, %s, %s, %s, %s, %s",
+                         String.format("Starting cloud server: %s, %s, %d, %s, %s, %s, %s, %s%n",
                                        serverName,
                                        serverConfig,
                                        memory,
@@ -1324,7 +1324,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updatePlayer",
-                         String.format(String.format("Updating cloud player: %s", cloudPlayer)));
+                         String.format(String.format("Updating cloud player: %s%n", cloudPlayer)));
         networkConnection.sendPacket(new PacketOutUpdatePlayer(CloudPlayer.newOfflinePlayer(cloudPlayer)));
     }
 
@@ -1337,7 +1337,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updatePlayer",
-                         String.format("Updating offline player: %s", offlinePlayer));
+                         String.format("Updating offline player: %s%n", offlinePlayer));
         networkConnection.sendPacket(new PacketOutUpdatePlayer(offlinePlayer));
     }
 

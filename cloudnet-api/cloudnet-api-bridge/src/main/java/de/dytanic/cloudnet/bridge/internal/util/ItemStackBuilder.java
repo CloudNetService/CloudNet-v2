@@ -84,7 +84,7 @@ public class ItemStackBuilder {
                                                         ItemStackBuilder.class.getSimpleName(),
                                                         "getMaterialIgnoreVersion",
                                                         String.format(
-                                                            "Can't get material by id %d! Beginning with MC 1.13 you HAVE to use material names!",
+                                                            "Can't get material by id %d! Beginning with MC 1.13 you HAVE to use material names!%n",
                                                             id),
                                                         exception);
                 return null;

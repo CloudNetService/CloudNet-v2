@@ -27,7 +27,7 @@ import java.util.logging.*;
  */
 public class CloudLogger extends Logger {
 
-    private final String separator = System.getProperty("line.separator");
+    private static final String SEPARATOR = System.lineSeparator();
     private final ConsoleReader reader;
     private final String name = System.getProperty("user.name");
 
@@ -97,10 +97,6 @@ public class CloudLogger extends Logger {
     @Override
     public String getName() {
         return name;
-    }
-
-    public String getSeparator() {
-        return separator;
     }
 
     public ConsoleReader getReader() {
@@ -250,21 +246,25 @@ public class CloudLogger extends Logger {
         @Override
         public String format(LogRecord record) {
             StringBuilder builder = new StringBuilder();
+            final String message = formatMessage(record);
+            builder.append(ConsoleReader.RESET_LINE)
+                   .append('[')
+                   .append(dateFormat.format(record.getMillis()))
+                   .append("] ")
+                   .append(record.getLevel().getName())
+                   .append(": ")
+                   .append(message);
+
             if (record.getThrown() != null) {
                 try (StringWriter writer = new StringWriter()) {
                     record.getThrown().printStackTrace(new PrintWriter(writer));
-                    builder.append('\n').append(writer);
+                    builder.append(writer).append(SEPARATOR);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
-            return String.format("%s[%s] %s: %s%s",
-                                 ConsoleReader.RESET_LINE,
-                                 dateFormat.format(record.getMillis()),
-                                 record.getLevel().getName(),
-                                 formatMessage(record),
-                                 builder);
+            return builder.toString();
         }
     }
 }
