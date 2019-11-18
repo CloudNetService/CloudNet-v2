@@ -143,7 +143,7 @@ public final class NetworkUtils {
 
             try {
                 Files.createFile(path);
-                Files.writeString(path, stringBuilder.toString());
+                Files.write(path, stringBuilder.toString().getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
             }
