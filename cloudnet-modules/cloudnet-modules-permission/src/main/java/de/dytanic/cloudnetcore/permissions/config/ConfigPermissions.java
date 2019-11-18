@@ -4,13 +4,13 @@ import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
-import de.dytanic.cloudnet.lib.utility.Return;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +23,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class ConfigPermissions {
 
+    private static final Type COLLECTION_PERMISSION_GROUP_TYPE = TypeToken.getParameterized(Collection.class, PermissionGroup.class)
+                                                                          .getType();
     private final Path path = Paths.get("local/perms.yml");
 
     private Configuration cache;
@@ -36,6 +38,10 @@ public class ConfigPermissions {
             configuration.set("groups", new Configuration());
 
             if (!Files.exists(Paths.get("local/permissions.yml"))) {
+                final Map<String, List<String>> defaultServerGroupPermissions = new HashMap<>();
+                defaultServerGroupPermissions.put("Lobby", Collections.singletonList("test.permission.for.group.lobby"));
+                final Map<String, Boolean> defaultAdminPermissions = Collections.singletonMap("*", true);
+
                 PermissionGroup member = new PermissionGroup("default",
                                                              "&8",
                                                              "§eMember §7▎ ",
@@ -45,9 +51,7 @@ public class ConfigPermissions {
                                                              0,
                                                              true,
                                                              new HashMap<>(),
-                                                             MapWrapper.valueableHashMap(new Return<>("Lobby",
-                                                                                                      Arrays.asList(
-                                                                                                          "test.permission.for.group.Lobby"))),
+                                                             defaultServerGroupPermissions,
                                                              new HashMap<>(),
                                                              new ArrayList<>());
                 write(member, configuration);
@@ -60,17 +64,14 @@ public class ConfigPermissions {
                                                             0,
                                                             100,
                                                             false,
-                                                            MapWrapper.valueableHashMap(new Return<>("*", true)),
-                                                            MapWrapper.valueableHashMap(new Return<>("Lobby",
-                                                                                                     Arrays.asList(
-                                                                                                         "test.permission.for.group.Lobby"))),
+                                                            defaultAdminPermissions,
+                                                            defaultServerGroupPermissions,
                                                             new HashMap<>(),
                                                             new ArrayList<>());
                 write(admin, configuration);
             } else {
                 Document document = Document.loadDocument(Paths.get("local/permissions.yml"));
-                Collection<PermissionGroup> groups = document.getObject("groups",
-                                                                        new TypeToken<Collection<PermissionGroup>>() {}.getType());
+                Collection<PermissionGroup> groups = document.getObject("groups", COLLECTION_PERMISSION_GROUP_TYPE);
                 Map<String, PermissionGroup> maps = MapWrapper.collectionCatcherHashMap(groups, new Catcher<String, PermissionGroup>() {
                     @Override
                     public String doCatch(PermissionGroup key) {
@@ -113,7 +114,7 @@ public class ConfigPermissions {
 
         Collection<String> perms = new CopyOnWriteArrayList<>();
         for (Map.Entry<String, Boolean> entry : permissionGroup.getPermissions().entrySet()) {
-            perms.add((!entry.getValue() ? "-" : "") + entry.getKey());
+            perms.add((entry.getValue() ? "" : "-") + entry.getKey());
         }
         group.set("permissions", perms);
 
@@ -175,6 +176,7 @@ public class ConfigPermissions {
             List<String> permissionSection = group.getStringList("permissions");
 
             for (String entry : permissionSection) {
+                // TODO breaks on permission nodes with - in them
                 permissions.put(entry.replaceFirst("-", ""), (!entry.startsWith("-")));
             }
 

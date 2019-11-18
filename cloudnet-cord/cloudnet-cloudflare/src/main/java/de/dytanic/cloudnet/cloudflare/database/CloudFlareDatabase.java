@@ -11,10 +11,9 @@ import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
-import de.dytanic.cloudnet.lib.utility.Return;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,7 +24,10 @@ import java.util.Map;
  */
 public class CloudFlareDatabase extends DatabaseUsable {
 
-    private static final String CLOUDFLARE_CACHE = "cloudflare_cache", CLOUDFLARE_CACHE_REQ = "cloudflare_cache_dnsreq";
+    private static final Type MAP_STRING_POST_RESPONSE_TYPE = TypeToken.getParameterized(Map.class, String.class, PostResponse.class)
+                                                                       .getType();
+    private static final String CLOUDFLARE_CACHE = "cloudflare_cache";
+    private static final String CLOUDFLARE_CACHE_REQ = "cloudflare_cache_dnsreq";
 
     public CloudFlareDatabase(Database database) {
         super(database);
@@ -101,11 +103,13 @@ public class CloudFlareDatabase extends DatabaseUsable {
 
         Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
         if (document.contains("requests")) {
-            Map<String, PostResponse> responses = document.getObject("requests", new TypeToken<Map<String, PostResponse>>() {}.getType());
+            Map<String, PostResponse> responses = document.getObject("requests", MAP_STRING_POST_RESPONSE_TYPE);
             responses.put(postResponse.getId(), postResponse);
             document.append("requests", responses);
         } else {
-            document.append("requests", MapWrapper.valueableHashMap(new Return<>(postResponse.getId(), postResponse)));
+            Map<String, PostResponse> responses = new HashMap<>();
+            responses.put(postResponse.getId(), postResponse);
+            document.append("requests", responses);
         }
 
         database.insert(document);
@@ -114,7 +118,7 @@ public class CloudFlareDatabase extends DatabaseUsable {
     public void remove(PostResponse postResponse) {
         Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
         if (document.contains("requests")) {
-            Map<String, PostResponse> responses = document.getObject("requests", new TypeToken<Map<String, PostResponse>>() {}.getType());
+            Map<String, PostResponse> responses = document.getObject("requests", MAP_STRING_POST_RESPONSE_TYPE);
             responses.remove(postResponse.getId());
             document.append("requests", responses);
         } else {
