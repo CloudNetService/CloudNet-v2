@@ -18,7 +18,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.Catcher;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import org.bukkit.Bukkit;
@@ -43,21 +42,16 @@ public class PacketInMobSelector implements PacketInHandlerDefault {
     public void handleInput(Packet packet, PacketSender packetSender) {
         Map<UUID, ServerMob> mobMap = packet.getData().getObject("mobs", UUID_SERVERMOB_MAP_TYPE);
         MobConfig mobConfig = packet.getData().getObject("mobConfig", MOBCONFIG_TYPE);
+        final String group = CloudAPI.getInstance().getGroup();
 
-
-        Map<UUID, ServerMob> filteredMobs = MapWrapper.filter(mobMap, new Acceptable<ServerMob>() {
-            @Override
-            public boolean isAccepted(ServerMob value) {
-                return value.getPosition().getGroup().equalsIgnoreCase(CloudAPI.getInstance().getGroup());
-            }
-        });
+        mobMap.entrySet().removeIf(entry -> !entry.getValue().getPosition().getGroup().equals(group));
 
         if (MobSelector.getInstance() != null) {
             Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
                 MobSelector.getInstance().shutdown();
                 MobSelector.getInstance().setMobConfig(mobConfig);
                 MobSelector.getInstance().setMobs(new HashMap<>());
-                MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Catcher<UUID, UUID>() {
+                MobSelector.getInstance().setMobs(MapWrapper.transform(mobMap, new Catcher<UUID, UUID>() {
                     @Override
                     public UUID doCatch(UUID key) {
                         return key;
@@ -125,7 +119,7 @@ public class PacketInMobSelector implements PacketInHandlerDefault {
             Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Catcher<UUID, UUID>() {
+                    MobSelector.getInstance().setMobs(MapWrapper.transform(mobMap, new Catcher<UUID, UUID>() {
                         @Override
                         public UUID doCatch(UUID key) {
                             return key;

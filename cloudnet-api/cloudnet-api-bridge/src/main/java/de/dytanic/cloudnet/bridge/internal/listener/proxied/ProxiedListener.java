@@ -404,24 +404,19 @@ public class ProxiedListener implements Listener {
         if (e.getCancelServer() != null) {
             ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(e.getKickedFrom().getName());
             String fallback;
-            if (CloudAPI.getInstance().getServerGroupData(serverInfo.getServiceId().getGroup()) != null && CloudAPI.getInstance()
-                                                                                                                   .getServerGroupData(
-                                                                                                                       serverInfo.getServiceId()
-                                                                                                                                 .getGroup())
-                                                                                                                   .isKickedForceFallback()) {
-                fallback = CloudProxy.getInstance().fallbackOnEnabledKick(e.getPlayer(),
-                                                                          serverInfo.getServiceId().getGroup(),
-                                                                          e.getKickedFrom().getName());
+            if (CloudAPI.getInstance().getServerGroupData(serverInfo.getServiceId().getGroup()) != null &&
+                CloudAPI.getInstance().getServerGroupData(serverInfo.getServiceId().getGroup()).isKickedForceFallback()) {
+                fallback = CloudProxy.getInstance().fallbackOnEnabledKick(
+                    e.getPlayer(), serverInfo.getServiceId().getGroup(), e.getKickedFrom().getName());
             } else {
                 fallback = CloudProxy.getInstance().fallback(e.getPlayer(), e.getKickedFrom().getName());
             }
 
-            ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent(e.getPlayer(),
-                                                                                                   CloudAPI.getInstance()
-                                                                                                           .getOnlinePlayer(e.getPlayer()
-                                                                                                                             .getUniqueId()),
-                                                                                                   ProxiedPlayerFallbackEvent.FallbackType.SERVER_KICK,
-                                                                                                   fallback);
+            ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent(
+                e.getPlayer(),
+                CloudAPI.getInstance().getOnlinePlayer(e.getPlayer().getUniqueId()),
+                ProxiedPlayerFallbackEvent.FallbackType.SERVER_KICK,
+                fallback);
 
             ProxyServer.getInstance().getPluginManager().callEvent(proxiedPlayerFallbackEvent);
             fallback = proxiedPlayerFallbackEvent.getFallback();

@@ -21,7 +21,6 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
 import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import net.md_5.bungee.api.ChatColor;
@@ -93,45 +92,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     }
 
     public String fallback(ProxiedPlayer cloudPlayer) {
-
-        for (ServerFallback serverFallback : CloudProxy.getInstance()
-                                                       .getProxyGroup()
-                                                       .getProxyConfig()
-                                                       .getDynamicFallback()
-                                                       .getFallbacks()) {
-            if (serverFallback.getGroup().equals(CloudProxy.getInstance()
-                                                           .getProxyGroup()
-                                                           .getProxyConfig()
-                                                           .getDynamicFallback()
-                                                           .getDefaultFallback())) {
-                continue;
-            }
-
-            if (serverFallback.getPermission() != null) {
-                if (!cloudPlayer.hasPermission(serverFallback.getPermission())) {
-                    continue;
-                }
-
-                List<String> servers = CloudProxy.getInstance().getServers(serverFallback.getGroup());
-                if (servers.size() != 0) {
-                    return servers.get(NetworkUtils.RANDOM.nextInt(servers.size()));
-                }
-            }
-        }
-
-        String fallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
-        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo value) {
-                return value.getServiceId().getGroup().equalsIgnoreCase(fallback);
-            }
-        }).keySet());
-
-        if (liste.size() == 0) {
-            return null;
-        } else {
-            return liste.get(NetworkUtils.RANDOM.nextInt(liste.size()));
-        }
+        return fallback(cloudPlayer, null);
     }
 
     /**
@@ -163,103 +124,88 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     }
 
     public String fallback(ProxiedPlayer cloudPlayer, String kickedFrom) {
+        String dynamicFallbackServer = getDynamicFallbackServer(cloudPlayer);
 
-        for (ServerFallback serverFallback : CloudProxy.getInstance()
-                                                       .getProxyGroup()
-                                                       .getProxyConfig()
-                                                       .getDynamicFallback()
-                                                       .getFallbacks()) {
-            if (serverFallback.getGroup().equals(CloudProxy.getInstance()
-                                                           .getProxyGroup()
-                                                           .getProxyConfig()
-                                                           .getDynamicFallback()
-                                                           .getDefaultFallback())) {
-                continue;
-            }
-
-            if (serverFallback.getPermission() != null) {
-                if (!cloudPlayer.hasPermission(serverFallback.getPermission())) {
-                    continue;
-                }
-
-                List<String> servers = CloudProxy.getInstance().getServers(serverFallback.getGroup());
-                servers.remove(kickedFrom);
-                if (servers.size() != 0) {
-                    return servers.get(NetworkUtils.RANDOM.nextInt(servers.size()));
-                }
-            }
-        }
-
-        String fallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
-        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo value) {
-                return value.getServiceId().getGroup().equalsIgnoreCase(fallback);
-            }
-        }).keySet());
-        liste.remove(kickedFrom);
-
-        if (liste.size() == 0) {
-            return null;
+        if (dynamicFallbackServer != null) {
+            return dynamicFallbackServer;
         } else {
-            return liste.get(NetworkUtils.RANDOM.nextInt(liste.size()));
+            // Default defaultFallback
+            return getDefaultFallbackServer(kickedFrom);
         }
     }
 
-    public String fallbackOnEnabledKick(ProxiedPlayer cloudPlayer, String group, String kickedFrom) {
+    private String getDynamicFallbackServer(final ProxiedPlayer cloudPlayer) {
+        String defaultFallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
 
+        // Choose dynamic defaultFallback
         for (ServerFallback serverFallback : CloudProxy.getInstance()
                                                        .getProxyGroup()
                                                        .getProxyConfig()
                                                        .getDynamicFallback()
                                                        .getFallbacks()) {
-            if (serverFallback.getGroup().equals(CloudProxy.getInstance()
-                                                           .getProxyGroup()
-                                                           .getProxyConfig()
-                                                           .getDynamicFallback()
-                                                           .getDefaultFallback())) {
+            if (serverFallback.getGroup().equals(defaultFallback)) {
                 continue;
             }
 
-            if (serverFallback.getPermission() != null) {
-                if (!cloudPlayer.hasPermission(serverFallback.getPermission())) {
-                    continue;
-                }
-
+            if (serverFallback.getPermission() == null || cloudPlayer.hasPermission(serverFallback.getPermission())) {
                 List<String> servers = CloudProxy.getInstance().getServers(serverFallback.getGroup());
-                servers.remove(kickedFrom);
                 if (servers.size() != 0) {
                     return servers.get(NetworkUtils.RANDOM.nextInt(servers.size()));
                 }
             }
         }
+        return null;
+    }
 
-        {
-            List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
-                @Override
-                public boolean isAccepted(ServerInfo value) {
-                    return value.getServiceId().getGroup().equalsIgnoreCase(group);
-                }
-            }).keySet());
-            liste.remove(kickedFrom);
-            if (liste.size() != 0) {
-                return liste.get(NetworkUtils.RANDOM.nextInt(liste.size()));
-            }
-        }
+    private String getDefaultFallbackServer(final String kickedFrom) {
+        String defaultFallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
 
-        String fallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
-        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo value) {
-                return value.getServiceId().getGroup().equalsIgnoreCase(fallback);
-            }
-        }).keySet());
-        liste.remove(kickedFrom);
-        if (liste.size() == 0) {
-            return null;
+        final List<String> fallbackServers = cachedServers.entrySet()
+                                                          .stream()
+                                                          .filter(entry -> entry.getValue()
+                                                                                .getServiceId()
+                                                                                .getGroup()
+                                                                                .equals(defaultFallback))
+                                                          .map(Map.Entry::getKey)
+                                                          .filter(server -> !server.equals(kickedFrom))
+                                                          .collect(Collectors.toList());
+
+        if (fallbackServers.size() != 0) {
+            return fallbackServers.get(NetworkUtils.RANDOM.nextInt(fallbackServers.size()));
         } else {
-            return liste.get(NetworkUtils.RANDOM.nextInt(liste.size()));
+            return null;
         }
+    }
+
+    /**
+     * Determines the fallback server for a player that has been kicked from a server.
+     *
+     * @param cloudPlayer the player to determine the fallback server for
+     * @param group       the group of the server that the player was kicked from
+     * @param kickedFrom  the server-id of the server the player was kicked from
+     *
+     * @return the server-id of the server to fall back to
+     */
+    public String fallbackOnEnabledKick(ProxiedPlayer cloudPlayer, String group, String kickedFrom) {
+        String dynamicFallbackServer = getDynamicFallbackServer(cloudPlayer);
+
+        if (dynamicFallbackServer != null) {
+            return dynamicFallbackServer;
+        }
+
+        List<String> fallbackServers = cachedServers.entrySet()
+                                                    .stream()
+                                                    .filter(entry -> entry.getValue().getServiceId().getGroup().equals(group))
+                                                    .map(Map.Entry::getKey)
+                                                    .filter(server -> !server.equals(kickedFrom))
+                                                    .collect(Collectors.toList());
+
+        if (fallbackServers.size() != 0) {
+            return fallbackServers.get(NetworkUtils.RANDOM.nextInt(fallbackServers.size()));
+        }
+
+        //Default defaultFallback
+        return getDefaultFallbackServer(kickedFrom);
     }
 
     public void updateAsync() {
