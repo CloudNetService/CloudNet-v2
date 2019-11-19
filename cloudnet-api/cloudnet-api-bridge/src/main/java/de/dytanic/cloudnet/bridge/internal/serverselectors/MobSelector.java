@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.api.handlers.adapter.NetworkHandlerAdapter;
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitMobInitEvent;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitMobUpdateEvent;
+import de.dytanic.cloudnet.bridge.internal.listener.v18_112.ArmorStandListener;
 import de.dytanic.cloudnet.bridge.internal.util.ItemStackBuilder;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.NetworkUtils;
@@ -91,26 +92,17 @@ public final class MobSelector {
         CloudAPI.getInstance().getNetworkHandlerProvider().registerHandler(new NetworkHandlerAdapterImplx());
 
         Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
-            servers.putAll(MapWrapper.collectionCatcherHashMap(
-                CloudAPI.getInstance().getServers(),
-                key -> key.getServiceId().getServerId()));
+            CloudAPI.getInstance().getServers().forEach(
+                serverInfo -> this.servers.put(serverInfo.getServiceId().getServerId(), serverInfo)
+            );
             Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), () -> {
-                for (ServerInfo serverInfo : servers.values()) {
+                for (ServerInfo serverInfo : this.servers.values()) {
                     handleUpdate(serverInfo);
                 }
             });
         });
 
-        if (ReflectionUtil.forName("org.bukkit.entity.ArmorStand") != null) {
-            try {
-                Bukkit.getPluginManager().registerEvents((Listener) ReflectionUtil.forName(
-                    "de.dytanic.cloudnet.bridge.internal.listener.v18_112.ArmorStandListener").newInstance(),
-                                                         CloudServer.getInstance().getPlugin());
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
+        Bukkit.getPluginManager().registerEvents(new ArmorStandListener(), CloudServer.getInstance().getPlugin());
         Bukkit.getPluginManager().registerEvents(new ListenrImpl(), CloudServer.getInstance().getPlugin());
     }
 

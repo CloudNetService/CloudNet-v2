@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet.lib.utility;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,14 +11,6 @@ import java.util.Map;
 public final class MapWrapper {
 
     private MapWrapper() {
-    }
-
-    public static <K, V> Map<K, V> collectionCatcherHashMap(Collection<V> key, Catcher<K, V> catcher) {
-        HashMap<K, V> kvHashMap = new HashMap<>();
-        for (V value : key) {
-            kvHashMap.put(catcher.doCatch(value), value);
-        }
-        return kvHashMap;
     }
 
     public static <K, V, NK, VK> Map<NK, VK> transform(Map<K, V> values, Catcher<NK, K> keyCatcher, Catcher<VK, V> valueCatcher) {

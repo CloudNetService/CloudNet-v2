@@ -14,7 +14,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.sign.*;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -98,9 +97,8 @@ public final class SignSelector implements Listener {
         worker.start();
 
         Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () ->
-            servers.putAll(
-                MapWrapper.collectionCatcherHashMap(CloudAPI.getInstance().getServers(),
-                                                    key -> key.getServiceId().getServerId())));
+            CloudAPI.getInstance().getServers().forEach(
+                server -> this.servers.put(server.getServiceId().getServerId(), server)));
     }
 
     @EventHandler
