@@ -190,7 +190,7 @@ public final class NetworkUtils {
         headerOut();
     }
 
-    public static void headerOut() {
+    private static void headerOut() {
         System.out.println();
         System.out.println("«» The Cloud Network Environment Technology 2");
         System.out.print(String.format("«» Support https://discord.gg/5NUhKuR      [%s]%n",

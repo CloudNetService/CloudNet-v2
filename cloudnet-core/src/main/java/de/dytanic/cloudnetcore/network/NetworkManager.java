@@ -127,14 +127,27 @@ public final class NetworkManager {
         return this;
     }
 
-    public int getOnlineCount() {
-        int atomicInteger = 0;
-
-        for (ProxyServer proxyServer : CloudNet.getInstance().getProxys().values()) {
-            atomicInteger += proxyServer.getProxyInfo().getOnlineCount();
+    public void handlePlayerLogout(CloudPlayer playerWhereAmI) {
+        CloudNet.getInstance().getEventManager().callEvent(new LogoutEvent(playerWhereAmI));
+        try {
+            System.out.printf("Player [%s/%s/%s] is disconnected on %s%n",
+                              playerWhereAmI.getName(),
+                              playerWhereAmI.getUniqueId(),
+                              playerWhereAmI.getPlayerConnection().getHost(),
+                              playerWhereAmI.getProxy());
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
 
-        return atomicInteger;
+        this.onlinePlayers.remove(playerWhereAmI.getUniqueId());
+
+        this.sendAllUpdate(new PacketOutLogoutPlayer(playerWhereAmI));
+        this.sendAll(new PacketOutUpdateOnlineCount(getOnlineCount()));
+
+        playerWhereAmI.setLastLogin(System.currentTimeMillis());
+        playerWhereAmI.setLastPlayerConnection(playerWhereAmI.getPlayerConnection());
+        CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(CloudPlayer.newOfflinePlayer(playerWhereAmI));
+
     }
 
     public NetworkManager sendAll(Packet packet, ChannelFilter filter) {
@@ -290,30 +303,11 @@ public final class NetworkManager {
         });
     }
 
-    public void handlePlayerLogout(CloudPlayer playerWhereAmI) {
-        CloudNet.getInstance().getEventManager().callEvent(new LogoutEvent(playerWhereAmI));
-        try {
-            System.out.println("Player [" + playerWhereAmI.getName() + NetworkUtils.SLASH_STRING + playerWhereAmI.getUniqueId() + NetworkUtils.SLASH_STRING + playerWhereAmI
-                .getPlayerConnection()
-                .getHost() + "] is disconnected on " + playerWhereAmI.getProxy());
-        } catch (Exception ignored) {
-        }
-
-        try {
-            this.onlinePlayers.remove(playerWhereAmI.getUniqueId());
-        } catch (Exception ignored) {
-
-        }
-        this.sendAllUpdate(new PacketOutLogoutPlayer(playerWhereAmI));
-        this.sendAll(new PacketOutUpdateOnlineCount(getOnlineCount()));
-
-        try {
-            playerWhereAmI.setLastLogin(System.currentTimeMillis());
-            playerWhereAmI.setLastPlayerConnection(playerWhereAmI.getPlayerConnection());
-            CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(CloudPlayer.newOfflinePlayer(playerWhereAmI));
-        } catch (Exception ignored) {
-
-        }
+    public int getOnlineCount() {
+        return CloudNet.getInstance().getProxys().values()
+                       .stream()
+                       .mapToInt(proxy -> proxy.getProxyInfo().getOnlineCount())
+                       .sum();
     }
 
     public void handlePlayerLogout(UUID uniqueId, ProxyServer proxyServer) {
@@ -323,7 +317,7 @@ public final class NetworkManager {
 
         try {
             this.onlinePlayers.remove(uniqueId);
-        } catch (Exception ignored) {
+        } catch (Exception exception) {
         }
 
         this.sendAllUpdate(new PacketOutLogoutPlayer(uniqueId));

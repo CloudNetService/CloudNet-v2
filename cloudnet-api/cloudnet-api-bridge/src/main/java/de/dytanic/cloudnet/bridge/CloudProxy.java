@@ -51,7 +51,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     private Map<String, ServerInfo> cachedServers = new ConcurrentHashMap<>();
     private Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
 
-    public CloudProxy(ProxiedBootstrap proxiedBootstrap, CloudAPI cloudAPI) {
+    CloudProxy(ProxiedBootstrap proxiedBootstrap, CloudAPI cloudAPI) {
         instance = this;
 
         this.proxiedBootstrap = proxiedBootstrap;
@@ -96,7 +96,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
     public List<String> getServers(String group) {
         List<String> x = new ArrayList<>();
-        for (ServerInfo server : this.getCachedServers().values()) {
+        for (ServerInfo server : this.cachedServers.values()) {
             if (server.getServiceId().getGroup().equalsIgnoreCase(group)) {
                 x.add(server.getServiceId().getServerId());
             }
@@ -199,12 +199,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     }
 
     public void updateAsync() {
-        proxiedBootstrap.getProxy().getScheduler().runAsync(proxiedBootstrap, new Runnable() {
-            @Override
-            public void run() {
-                update();
-            }
-        });
+        proxiedBootstrap.getProxy().getScheduler().runAsync(proxiedBootstrap, this::update);
     }
 
     public void update() {

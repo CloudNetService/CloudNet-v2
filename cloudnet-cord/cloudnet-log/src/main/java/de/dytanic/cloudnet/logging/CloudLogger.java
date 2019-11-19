@@ -87,16 +87,15 @@ public class CloudLogger extends Logger {
     }
 
     public boolean isDebugging() {
-        return this.isLoggable(Level.ALL);
+        return loggingHandler.getLevel().intValue() <= Level.ALL.intValue();
     }
 
     public void setDebugging(boolean debugging) {
         if (debugging) {
-            this.setLevel(Level.ALL);
+            loggingHandler.setLevel(Level.ALL);
         } else {
-            this.setLevel(Level.INFO);
+            loggingHandler.setLevel(Level.INFO);
         }
-        loggingHandler.setLevel(this.getLevel());
     }
 
     @Override
