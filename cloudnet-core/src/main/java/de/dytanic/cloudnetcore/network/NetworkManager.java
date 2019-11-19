@@ -22,8 +22,6 @@ import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnet.lib.service.wrapper.WrapperScreen;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.network.CustomChannelMessageEvent;
@@ -98,17 +96,12 @@ public final class NetworkManager {
             }
         }
         cloudNetwork.setWrappers(wrappers);
-        cloudNetwork.setServerGroups(MapWrapper.transform(CloudNet.getInstance().getServerGroups(), new Catcher<String, String>() {
-            @Override
-            public String doCatch(String key) {
-                return key;
-            }
-        }, new Catcher<SimpleServerGroup, ServerGroup>() {
-            @Override
-            public SimpleServerGroup doCatch(ServerGroup key) {
-                return key.toSimple();
-            }
-        }));
+
+        final Map<String, SimpleServerGroup> serverGroups = new HashMap<>();
+        CloudNet.getInstance().getServerGroups().forEach(
+            (serverId, serverGroup) -> serverGroups.put(serverId, serverGroup.toSimple()));
+
+        cloudNetwork.setServerGroups(serverGroups);
         //cloudNetwork.setPermissionPool(permissionPool);
         cloudNetwork.setProxyGroups(CloudNet.getInstance().getProxyGroups());
         cloudNetwork.setModules(moduleProperties);

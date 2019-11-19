@@ -5,6 +5,7 @@
 package de.dytanic.cloudnet.bridge.internal.util;
 
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -21,7 +22,7 @@ public final class ReflectionUtil {
 
     public static Class<?> reflectCraftClazz(String suffix) {
         try {
-            String version = org.bukkit.Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             return Class.forName("org.bukkit.craftbukkit." + version + suffix);
         } catch (Exception ex) {
             try {
@@ -42,9 +43,9 @@ public final class ReflectionUtil {
 
     public static Class<?> reflectNMSClazz(String suffix) {
         try {
-            String version = org.bukkit.Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             return Class.forName("net.minecraft.server." + version + suffix);
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException ex) {
             try {
                 return Class.forName("net.minecraft.server" + suffix);
             } catch (ClassNotFoundException e) {

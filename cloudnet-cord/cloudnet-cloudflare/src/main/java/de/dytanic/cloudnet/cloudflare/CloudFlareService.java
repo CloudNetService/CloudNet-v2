@@ -16,7 +16,7 @@ import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
-import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
+import de.dytanic.cloudnet.lib.service.SimpleWrapperInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.io.*;
@@ -73,7 +73,7 @@ public class CloudFlareService {
     }
 
     @Deprecated
-    public boolean bootstrap(Map<String, SimpledWrapperInfo> wrapperInfoMap,
+    public boolean bootstrap(Map<String, SimpleWrapperInfo> wrapperInfoMap,
                              Map<String, ProxyGroup> groups,
                              CloudFlareDatabase cloudFlareDatabase) {
         for (MultiValue<PostResponse, String> id : cloudFlareDatabase.getAndRemove().values()) {

@@ -8,23 +8,21 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.info.SimpleServerInfo;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PacketOutUpdateProxyServerList extends Packet {
 
-    public PacketOutUpdateProxyServerList(java.util.Map<String, ServerInfo> stringServerInfoMap) {
-        super(PacketRC.SERVER_HANDLE + 1, new Document("servers", MapWrapper.transform(stringServerInfoMap, new Catcher<String, String>() {
-            @Override
-            public String doCatch(String key) {
-                return key;
-            }
-        }, new Catcher<SimpleServerInfo, ServerInfo>() {
-            @Override
-            public SimpleServerInfo doCatch(ServerInfo key) {
-                return key.toSimple();
-            }
-        })));
+    public PacketOutUpdateProxyServerList(Map<String, ServerInfo> stringServerInfoMap) {
+        super(PacketRC.SERVER_HANDLE + 1, new Document("servers", getSimpleServerMap(stringServerInfoMap)));
+    }
+
+    private static Object getSimpleServerMap(final Map<String, ServerInfo> stringServerInfoMap) {
+        final Map<String, SimpleServerInfo> simpleServerMap = new HashMap<>();
+        stringServerInfoMap.forEach(
+            (serverId, serverInfo) -> simpleServerMap.put(serverId, serverInfo.toSimple()));
+        return simpleServerMap;
     }
 }
