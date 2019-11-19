@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * Created by Tareko on 21.05.2017.
  */
-public class Document implements DocumentAbstract {
+public class Document {
 
     public static Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
     private static final JsonParser JSON_PARSER = new JsonParser();
@@ -65,7 +65,6 @@ public class Document implements DocumentAbstract {
         return this;
     }
 
-    @Override
     public Document append(String key, JsonElement value) {
         if (value == null) {
             return this;
@@ -87,7 +86,6 @@ public class Document implements DocumentAbstract {
         return this;
     }
 
-    @Override
     public Document remove(String key) {
         this.dataCatcher.remove(key);
         return this;
@@ -243,7 +241,6 @@ public class Document implements DocumentAbstract {
         return new Document(input);
     }
 
-    @Override
     public String getName() {
         return name;
     }
