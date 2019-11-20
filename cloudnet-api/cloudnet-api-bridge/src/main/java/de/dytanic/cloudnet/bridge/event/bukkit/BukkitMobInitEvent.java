@@ -4,7 +4,7 @@
 
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
-import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
+import de.dytanic.cloudnet.bridge.internal.serverselectors.Mob;
 import org.bukkit.event.HandlerList;
 
 /**
@@ -14,9 +14,9 @@ public class BukkitMobInitEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
-    private MobSelector.MobImpl mob;
+    private Mob mob;
 
-    public BukkitMobInitEvent(MobSelector.MobImpl mob) {
+    public BukkitMobInitEvent(Mob mob) {
         this.mob = mob;
     }
 
@@ -24,7 +24,7 @@ public class BukkitMobInitEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
-    public MobSelector.MobImpl getMob() {
+    public Mob getMob() {
         return mob;
     }
 

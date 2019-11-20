@@ -21,7 +21,6 @@ import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobItemLayout;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobPosition;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
-import de.dytanic.cloudnet.lib.utility.Return;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -44,7 +43,7 @@ public final class MobSelector {
 
     private static MobSelector instance;
 
-    private Map<UUID, MobImpl> mobs;
+    private Map<UUID, Mob> mobs;
 
     private MobConfig mobConfig;
 
@@ -59,7 +58,7 @@ public final class MobSelector {
         return instance;
     }
 
-    public MobImpl spawnMob(final MobConfig mobConfig, final UUID uuid, final ServerMob serverMob) {
+    public Mob spawnMob(final MobConfig mobConfig, final UUID uuid, final ServerMob serverMob) {
         Location location = toLocation(serverMob.getPosition());
 
         if (!location.getChunk().isLoaded()) {
@@ -108,7 +107,7 @@ public final class MobSelector {
         entity.setCustomName(ChatColor.translateAlternateColorCodes('&', serverMob.getDisplay()));
 
 
-        MobImpl mob = new MobImpl(
+        Mob mob = new Mob(
             uuid,
             serverMob,
             entity,
@@ -123,12 +122,28 @@ public final class MobSelector {
         return mob;
     }
 
-    public Map<UUID, MobImpl> getMobs() {
-        return mobs;
+    public void updateCustom(ServerMob serverMob, ArmorStand armorStand) {
+        OnlineCount onlineCount = getOnlineCount(serverMob.getTargetGroup());
+        if (armorStand != null) {
+
+            armorStand.setCustomName(
+                ChatColor.translateAlternateColorCodes('&', serverMob.getDisplayMessage() + NetworkUtils.EMPTY_STRING)
+                         .replace("%max_players%", onlineCount.getMaxPlayers() + NetworkUtils.EMPTY_STRING)
+                         .replace("%group%", serverMob.getTargetGroup())
+                         .replace("%group_online%", onlineCount.getOnlineCount() + NetworkUtils.EMPTY_STRING));
+        }
     }
 
-    public void setMobs(Map<UUID, MobImpl> mobs) {
-        this.mobs = mobs;
+    public OnlineCount getOnlineCount(String group) {
+        int onlineCount = 0;
+        int maxPlayers = 0;
+        for (ServerInfo serverInfo : this.servers.values()) {
+            if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(group)) {
+                onlineCount += serverInfo.getOnlineCount();
+                maxPlayers += serverInfo.getMaxPlayers();
+            }
+        }
+        return new OnlineCount(onlineCount, maxPlayers);
     }
 
     public MobConfig getMobConfig() {
@@ -143,16 +158,8 @@ public final class MobSelector {
         return servers;
     }
 
-    public void updateCustom(ServerMob serverMob, ArmorStand armorStand) {
-        Return<Integer, Integer> x = getOnlineCount(serverMob.getTargetGroup());
-        if (armorStand != null) {
-
-            armorStand.setCustomName(
-                ChatColor.translateAlternateColorCodes('&', serverMob.getDisplayMessage() + NetworkUtils.EMPTY_STRING)
-                         .replace("%max_players%", x.getSecond() + NetworkUtils.EMPTY_STRING)
-                         .replace("%group%", serverMob.getTargetGroup())
-                         .replace("%group_online%", x.getFirst() + NetworkUtils.EMPTY_STRING));
-        }
+    public Map<UUID, Mob> getMobs() {
+        return mobs;
     }
 
     public Inventory createInventory(MobConfig mobConfig, ServerMob mob) {
@@ -185,12 +192,29 @@ public final class MobSelector {
         Bukkit.getPluginManager().registerEvents(new MobListener(this), CloudServer.getInstance().getPlugin());
     }
 
+    public void setMobs(Map<UUID, Mob> mobs) {
+        this.mobs = mobs;
+    }
+
+    private ItemStack transform(MobItemLayout mobItemLayout, ServerInfo serverInfo) {
+        Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
+        if (material == null) {
+            return null;
+        } else {
+            return ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId()).lore(
+                mobItemLayout.getLore().stream()
+                             .map(lore -> initPatterns(ChatColor.translateAlternateColorCodes('&', lore), serverInfo))
+                             .collect(Collectors.toList())
+            ).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
+        }
+    }
+
     public void handleUpdate(ServerInfo serverInfo) {
         if (serverInfo.getServiceId().getGroup() == null) {
             return;
         }
 
-        for (MobImpl mob : this.mobs.values()) {
+        for (Mob mob : this.mobs.values()) {
             if (mob.getMob().getTargetGroup().equals(serverInfo.getServiceId().getGroup())) {
                 mob.getEntity().setTicksLived(Integer.MAX_VALUE);
                 updateCustom(mob.getMob(), mob.getDisplayMessage());
@@ -233,31 +257,6 @@ public final class MobSelector {
                 }
             }
         }
-    }
-
-    private ItemStack transform(MobItemLayout mobItemLayout, ServerInfo serverInfo) {
-        Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
-        if (material == null) {
-            return null;
-        } else {
-            return ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId()).lore(
-                mobItemLayout.getLore().stream()
-                             .map(lore -> initPatterns(ChatColor.translateAlternateColorCodes('&', lore), serverInfo))
-                             .collect(Collectors.toList())
-            ).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
-        }
-    }
-
-    public Return<Integer, Integer> getOnlineCount(String group) {
-        int atomicInteger = 0;
-        int atomicInteger1 = 0;
-        for (ServerInfo serverInfo : this.servers.values()) {
-            if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(group)) {
-                atomicInteger = atomicInteger + serverInfo.getOnlineCount();
-                atomicInteger1 = atomicInteger1 + serverInfo.getMaxPlayers();
-            }
-        }
-        return new Return<>(atomicInteger, atomicInteger1);
     }
 
     private String initPatterns(String x, ServerInfo serverInfo) {
@@ -322,15 +321,15 @@ public final class MobSelector {
 
     @Deprecated
     public void shutdown() {
-        for (MobImpl mobImpl : this.mobs.values()) {
-            if (mobImpl.displayMessage != null) {
-                Entity entity = mobImpl.displayMessage;
+        for (Mob mobImpl : this.mobs.values()) {
+            if (mobImpl.getDisplayMessage() != null) {
+                Entity entity = mobImpl.getDisplayMessage();
                 if (entity.getPassenger() != null) {
                     entity.getPassenger().remove();
                 }
-                mobImpl.displayMessage.remove();
+                mobImpl.getDisplayMessage().remove();
             }
-            mobImpl.entity.remove();
+            mobImpl.getEntity().remove();
         }
 
         mobs.clear();
@@ -361,92 +360,14 @@ public final class MobSelector {
     }
 
     public Collection<Inventory> getInventories() {
-        return this.mobs.values().stream().map(MobImpl::getInventory).collect(Collectors.toList());
+        return this.mobs.values().stream().map(Mob::getInventory).collect(Collectors.toList());
     }
 
-    public MobImpl findByInventory(Inventory inventory) {
+    public Mob findByInventory(Inventory inventory) {
         return this.mobs.values().stream()
-                        .filter(mob -> mob.inventory.equals(inventory))
+                        .filter(mob -> mob.getInventory().equals(inventory))
                         .findFirst()
                         .orElse(null);
-    }
-
-    //MobImpl
-    public static class MobImpl {
-
-        private UUID uniqueId;
-
-        private ServerMob mob;
-
-        private Entity entity;
-
-        private Inventory inventory;
-
-        private Map<Integer, String> serverPosition;
-
-        private ArmorStand displayMessage;
-
-        public MobImpl(UUID uniqueId,
-                       ServerMob mob,
-                       Entity entity,
-                       Inventory inventory,
-                       Map<Integer, String> serverPosition,
-                       ArmorStand displayMessage) {
-            this.uniqueId = uniqueId;
-            this.mob = mob;
-            this.entity = entity;
-            this.inventory = inventory;
-            this.serverPosition = serverPosition;
-            this.displayMessage = displayMessage;
-        }
-
-        public UUID getUniqueId() {
-            return uniqueId;
-        }
-
-        public void setUniqueId(UUID uniqueId) {
-            this.uniqueId = uniqueId;
-        }
-
-        public Entity getEntity() {
-            return entity;
-        }
-
-        public void setEntity(Entity entity) {
-            this.entity = entity;
-        }
-
-        public Inventory getInventory() {
-            return inventory;
-        }
-
-        public void setInventory(Inventory inventory) {
-            this.inventory = inventory;
-        }
-
-        public Map<Integer, String> getServerPosition() {
-            return serverPosition;
-        }
-
-        public void setServerPosition(Map<Integer, String> serverPosition) {
-            this.serverPosition = serverPosition;
-        }
-
-        public ArmorStand getDisplayMessage() {
-            return displayMessage;
-        }
-
-        public void setDisplayMessage(ArmorStand displayMessage) {
-            this.displayMessage = displayMessage;
-        }
-
-        public ServerMob getMob() {
-            return mob;
-        }
-
-        public void setMob(ServerMob mob) {
-            this.mob = mob;
-        }
     }
 
     private class NetworkHandlerAdapterImplx extends NetworkHandlerAdapter {

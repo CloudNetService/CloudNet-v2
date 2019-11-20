@@ -6,6 +6,7 @@ package de.dytanic.cloudnet.bridge.internal.command.bukkit;
 
 import com.google.common.collect.ImmutableList;
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.bridge.internal.serverselectors.Mob;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.SignSelector;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutAddMob;
@@ -165,7 +166,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        MobSelector.MobImpl mob = findMobWithName(args[1]);
+        Mob mob = findMobWithName(args[1]);
         if (mob != null) {
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -184,24 +185,14 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         return false;
     }
 
-    private boolean setDisplay(CommandSender commandSender, String[] args) {
-        MobSelector.MobImpl mob = findMobWithName(args[1]);
-        if (mob != null) {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            for (short i = 2; i < args.length; i++) {
-                stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
-            }
-
-            mob.getMob().setDisplay(stringBuilder.substring(0, stringBuilder.length() - 1));
-            CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(mob.getMob()));
-            commandSender.sendMessage(CloudAPI.getInstance()
-                                              .getPrefix() + "You set the display for \"" + args[1] + "\" the line \"" + stringBuilder.substring(
-                0,
-                stringBuilder.length() - 1) + '"');
-            return true;
-        }
-        return false;
+    private static Mob findMobWithName(String arg) {
+        return MobSelector.getInstance()
+                          .getMobs()
+                          .values()
+                          .stream()
+                          .filter(value -> value.getMob().getName().equalsIgnoreCase(arg))
+                          .findFirst()
+                          .orElse(null);
     }
 
     private boolean removeSign(CommandSender commandSender, Player player) {
@@ -325,37 +316,37 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         return false;
     }
 
+    private boolean setDisplay(CommandSender commandSender, String[] args) {
+        Mob mob = findMobWithName(args[1]);
+        if (mob != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            for (short i = 2; i < args.length; i++) {
+                stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
+            }
+
+            mob.getMob().setDisplay(stringBuilder.substring(0, stringBuilder.length() - 1));
+            CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(mob.getMob()));
+            commandSender.sendMessage(CloudAPI.getInstance()
+                                              .getPrefix() + "You set the display for \"" + args[1] + "\" the line \"" + stringBuilder.substring(
+                0,
+                stringBuilder.length() - 1) + '"');
+            return true;
+        }
+        return false;
+    }
+
     private boolean removeMob(CommandSender commandSender, String arg) {
         if (checkMobSelectorActive(commandSender)) {
             return true;
         }
 
-        MobSelector.MobImpl mob = findMobWithName(arg);
+        Mob mob = findMobWithName(arg);
         if (mob != null) {
             CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveMob(mob.getMob()));
             commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob has been removed");
         } else {
             commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Mob doesn't exist on this group");
-        }
-        return false;
-    }
-
-    private boolean setItem(CommandSender commandSender, String[] args) {
-        if (checkMobSelectorActive(commandSender)) {
-            return true;
-        }
-
-        MobSelector.MobImpl mob = findMobWithName(args[1]);
-        if (mob != null) {
-            int itemId = NetworkUtils.checkIsNumber(args[2]) ? Integer.parseInt(args[2]) : 138;
-            Material material = ItemStackBuilder.getMaterialIgnoreVersion(args[2], itemId);
-            if (material != null) {
-                mob.getMob().setItemName(material.name());
-                CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(mob.getMob()));
-                commandSender.sendMessage(CloudAPI.getInstance()
-                                                  .getPrefix() + "You set the item for \"" + args[1] + "\" the material \"" + material.name() + '"');
-            }
-            return true;
         }
         return false;
     }
@@ -389,14 +380,24 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         }
     }
 
-    private static MobSelector.MobImpl findMobWithName(String arg) {
-        return MobSelector.getInstance()
-                          .getMobs()
-                          .values()
-                          .stream()
-                          .filter(value -> value.getMob().getName().equalsIgnoreCase(arg))
-                          .findFirst()
-                          .orElse(null);
+    private boolean setItem(CommandSender commandSender, String[] args) {
+        if (checkMobSelectorActive(commandSender)) {
+            return true;
+        }
+
+        Mob mob = findMobWithName(args[1]);
+        if (mob != null) {
+            int itemId = NetworkUtils.checkIsNumber(args[2]) ? Integer.parseInt(args[2]) : 138;
+            Material material = ItemStackBuilder.getMaterialIgnoreVersion(args[2], itemId);
+            if (material != null) {
+                mob.getMob().setItemName(material.name());
+                CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(mob.getMob()));
+                commandSender.sendMessage(CloudAPI.getInstance()
+                                                  .getPrefix() + "You set the item for \"" + args[1] + "\" the material \"" + material.name() + '"');
+            }
+            return true;
+        }
+        return false;
     }
 
     private static boolean checkSignSelectorActive(CommandSender commandSender) {

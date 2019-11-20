@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.CloudServer;
+import de.dytanic.cloudnet.bridge.internal.serverselectors.Mob;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
 import de.dytanic.cloudnet.bridge.internal.util.ItemStackBuilder;
 import de.dytanic.cloudnet.lib.server.ServerState;
@@ -34,7 +35,7 @@ public class MobListener implements Listener {
 
     @EventHandler
     public void handleRightClick(PlayerInteractEntityEvent e) {
-        MobSelector.MobImpl mobImpl = mobSelector.getMobs().get(e.getRightClicked().getUniqueId());
+        Mob mobImpl = mobSelector.getMobs().get(e.getRightClicked().getUniqueId());
         if (mobImpl != null) {
             e.setCancelled(true);
             if (!CloudAPI.getInstance().getServerGroupData(mobImpl.getMob().getTargetGroup()).isMaintenance()) {
@@ -72,7 +73,7 @@ public class MobListener implements Listener {
 
     @EventHandler
     public void entityDamage(EntityDamageEvent e) {
-        MobSelector.MobImpl mob = mobSelector.getMobs().get(e.getEntity().getUniqueId());
+        Mob mob = mobSelector.getMobs().get(e.getEntity().getUniqueId());
         if (mob != null) {
             e.getEntity().setFireTicks(0);
             e.setCancelled(true);
@@ -91,7 +92,7 @@ public class MobListener implements Listener {
             if (ItemStackBuilder.getMaterialIgnoreVersion(mobSelector.getMobConfig().getItemLayout().getItemName(),
                                                           mobSelector.getMobConfig().getItemLayout().getItemId()) == e.getCurrentItem()
                                                                                                                       .getType()) {
-                MobSelector.MobImpl mob = mobSelector.findByInventory(e.getInventory());
+                Mob mob = mobSelector.findByInventory(e.getInventory());
                 if (mob.getServerPosition().containsKey(e.getSlot())) {
                     if (CloudAPI.getInstance().getServerId().equalsIgnoreCase(mob.getServerPosition().get(e.getSlot()))) {
                         return;
@@ -118,10 +119,10 @@ public class MobListener implements Listener {
 
 
         Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(), () -> {
-            Map<UUID, MobSelector.MobImpl> mobImplementationMap = new HashMap<>();
+            Map<UUID, Mob> mobImplementationMap = new HashMap<>();
 
             mobMap.forEach((uuid, serverMob) -> {
-                MobSelector.MobImpl mob = mobSelector.spawnMob(mobSelector.getMobConfig(), uuid, serverMob);
+                Mob mob = mobSelector.spawnMob(mobSelector.getMobConfig(), uuid, serverMob);
                 if (mob == null) {
                     return;
                 }

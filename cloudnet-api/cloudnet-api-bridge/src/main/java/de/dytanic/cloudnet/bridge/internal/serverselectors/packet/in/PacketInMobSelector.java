@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.network.packet.PacketInHandlerDefault;
 import de.dytanic.cloudnet.bridge.CloudServer;
+import de.dytanic.cloudnet.bridge.internal.serverselectors.Mob;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
@@ -57,10 +58,10 @@ public class PacketInMobSelector implements PacketInHandlerDefault {
 
     private static void runBukkitTask(final Map<UUID, ServerMob> mobMap, final MobConfig mobConfig) {
         Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
-            Map<UUID, MobSelector.MobImpl> mobImplementationMap = new HashMap<>();
+            Map<UUID, Mob> mobImplementationMap = new HashMap<>();
 
             mobMap.forEach((uuid, serverMob) -> {
-                MobSelector.MobImpl mob = MobSelector.getInstance().spawnMob(mobConfig, uuid, serverMob);
+                Mob mob = MobSelector.getInstance().spawnMob(mobConfig, uuid, serverMob);
                 if (mob == null) {
                     return;
                 }
