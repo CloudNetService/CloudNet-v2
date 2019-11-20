@@ -71,8 +71,9 @@ public final class CloudAPI implements MetaObj {
         instance = this;
         this.cloudConfigLoader = loader;
         this.config = loader.loadConfig();
-        this.networkConnection = new NetworkConnection(loader.loadConnnection());
-        this.serviceId = config.getObject("serviceId", new TypeToken<ServiceId>() {}.getType());
+        this.networkConnection = new NetworkConnection(loader.loadConnnection(),
+                                                       new ConnectableAddress("0.0.0.0", 0));
+        this.serviceId = config.getObject("serviceId", ServiceId.TYPE);
         this.shutdownTask = cancelTask;
         this.memory = config.getInt("memory");
 

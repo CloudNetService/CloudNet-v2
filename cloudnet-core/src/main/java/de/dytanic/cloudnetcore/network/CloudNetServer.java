@@ -14,6 +14,8 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import joptsimple.OptionSet;
 
+import java.net.InetSocketAddress;
+
 /**
  * Created by Tareko on 26.05.2017.
  */
@@ -97,28 +99,30 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
             return;
         }
 
-        String[] address = channel.remoteAddress().toString().split(":");
-        String host = address[0].replaceFirst(NetworkUtils.SLASH_STRING, NetworkUtils.EMPTY_STRING);
-        for (Wrapper cn : CloudNet.getInstance().getWrappers().values()) {
-            if (cn.getChannel() == null && cn.getNetworkInfo().getHostName().equalsIgnoreCase(host)) {
-                if (sslContext != null) {
-                    channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
+        if (channel.remoteAddress() instanceof InetSocketAddress) {
+            InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
+
+            for (Wrapper cn : CloudNet.getInstance().getWrappers().values()) {
+                if (cn.getChannel() == null && cn.getNetworkInfo().getHostName().equalsIgnoreCase(address.getAddress().getHostAddress())) {
+                    if (sslContext != null) {
+                        channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
+                    }
+
+                    NetworkUtils.initChannel(channel);
+                    channel.pipeline().addLast("client", new CloudNetClientAuth(channel, this));
+                    return;
                 }
 
-                NetworkUtils.initChannel(channel);
-                channel.pipeline().addLast("client", new CloudNetClientAuth(channel, this));
-                return;
-            }
+                if (cn.getNetworkInfo().getHostName().equals(address.getAddress().getHostAddress())) {
+                    if (sslContext != null) {
+                        channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
+                    }
 
-            if (cn.getNetworkInfo().getHostName().equals(host)) {
-                if (sslContext != null) {
-                    channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
+                    NetworkUtils.initChannel(channel);
+                    CloudNetClientAuth cloudNetProxyClientAuth = new CloudNetClientAuth(channel, this);
+                    channel.pipeline().addLast("client", cloudNetProxyClientAuth);
+                    return;
                 }
-
-                NetworkUtils.initChannel(channel);
-                CloudNetClientAuth cloudNetProxyClientAuth = new CloudNetClientAuth(channel, this);
-                channel.pipeline().addLast("client", cloudNetProxyClientAuth);
-                return;
             }
         }
 

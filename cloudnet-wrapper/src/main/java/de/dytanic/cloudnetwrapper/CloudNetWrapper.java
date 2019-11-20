@@ -80,15 +80,16 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
         this.wrapperConfig = cloudNetWrapperConfig;
         this.cloudNetLogging = cloudNetLogging;
-        this.networkConnection = new NetworkConnection(new ConnectableAddress(cloudNetWrapperConfig.getCloudnetHost(),
-                                                                              cloudNetWrapperConfig.getCloudnetPort()), new Runnable() {
-            @Override
-            public void run() {
+        this.networkConnection = new NetworkConnection(
+            new ConnectableAddress(
+                cloudNetWrapperConfig.getCloudnetHost(),
+                cloudNetWrapperConfig.getCloudnetPort()),
+            new ConnectableAddress(cloudNetWrapperConfig.getInternalIP(), 0),
+            () -> {
                 try {
                     onShutdownCentral();
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
             }
         });
 
@@ -210,7 +211,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         System.out.println("Trying to connect " + networkConnection.getConnectableAddress()
                                                                    .getHostName() + ':' + networkConnection.getConnectableAddress()
                                                                                                            .getPort());
-        while (networkConnection.getConnectionTrys() < 5 && networkConnection.getChannel() == null) {
+        while (networkConnection.getConnectionTries() < 5 && networkConnection.getChannel() == null) {
             networkConnection.tryConnect(optionSet.has("ssl"), new NetDispatcher(networkConnection, false), auth);
             if (networkConnection.getChannel() != null) {
                 networkConnection.sendPacketSynchronized(new PacketOutUpdateWrapperInfo());
@@ -218,7 +219,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             }
             Thread.sleep(2000);
 
-            if (networkConnection.getConnectionTrys() == 5) {
+            if (networkConnection.getConnectionTries() == 5) {
                 System.exit(0);
             }
         }

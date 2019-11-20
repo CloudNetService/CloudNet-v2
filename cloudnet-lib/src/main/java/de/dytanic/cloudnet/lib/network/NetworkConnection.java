@@ -18,6 +18,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 import java.io.File;
+import java.net.InetSocketAddress;
 import java.nio.file.Path;
 
 /**
@@ -27,18 +28,23 @@ public final class NetworkConnection implements PacketSender {
 
     private final PacketManager packetManager = new PacketManager();
     private final EventLoopGroup eventLoopGroup = NetworkUtils.eventLoopGroup(2);
+    private final ConnectableAddress localAddress;
     private Channel channel;
     private ConnectableAddress connectableAddress;
-    private long connectionTrys = 0;
+    private long connectionTries = 0;
     private Runnable task;
     private SslContext sslContext;
 
-    public NetworkConnection(ConnectableAddress connectableAddress) {
+    public NetworkConnection(ConnectableAddress connectableAddress, final ConnectableAddress localAddress) {
         this.connectableAddress = connectableAddress;
+        this.localAddress = localAddress;
     }
 
-    public NetworkConnection(ConnectableAddress connectableAddress, Runnable task) {
+    public NetworkConnection(ConnectableAddress connectableAddress,
+                             final ConnectableAddress localAddress,
+                             Runnable task) {
         this.connectableAddress = connectableAddress;
+        this.localAddress = localAddress;
         this.task = task;
     }
 
@@ -66,8 +72,8 @@ public final class NetworkConnection implements PacketSender {
         return eventLoopGroup;
     }
 
-    public long getConnectionTrys() {
-        return connectionTrys;
+    public long getConnectionTries() {
+        return connectionTries;
     }
 
     public Runnable getTask() {
@@ -95,25 +101,28 @@ public final class NetworkConnection implements PacketSender {
 
                                                      @Override
                                                      protected void initChannel(Channel channel) throws Exception {
-
                                                          if (sslContext != null) {
-                                                             channel.pipeline().addLast(sslContext.newHandler(channel.alloc(),
-                                                                                                              connectableAddress.getHostName(),
-                                                                                                              connectableAddress.getPort()));
+                                                             channel.pipeline().addLast(sslContext.newHandler(
+                                                                 channel.alloc(),
+                                                                 connectableAddress.getHostName(),
+                                                                 connectableAddress.getPort()));
                                                          }
-
                                                          NetworkUtils.initChannel(channel).pipeline().addLast(default_handler);
-
                                                      }
                                                  })
                                                  .channel(NetworkUtils.socketChannel());
-            this.channel = bootstrap.connect(connectableAddress.getHostName(), connectableAddress.getPort()).sync().channel().writeAndFlush(
-                new PacketOutAuth(auth)).syncUninterruptibly().channel();
+            this.channel = bootstrap.connect(new InetSocketAddress(connectableAddress.getHostName(), connectableAddress.getPort()),
+                                             new InetSocketAddress(localAddress.getHostName(), localAddress.getPort()))
+                                    .sync()
+                                    .channel()
+                                    .writeAndFlush(new PacketOutAuth(auth))
+                                    .syncUninterruptibly()
+                                    .channel();
 
             return true;
         } catch (Exception ex) {
-            connectionTrys++;
-            System.out.println("Failed to connect... [" + connectionTrys + ']');
+            connectionTries++;
+            System.out.println("Failed to connect... [" + connectionTries + ']');
             System.out.println("Error: " + ex.getMessage());
 
             if (this.channel != null) {
