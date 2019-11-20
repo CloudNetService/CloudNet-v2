@@ -5,7 +5,6 @@
 package de.dytanic.cloudnetcore.setup;
 
 import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.map.WrappedMap;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyGroupMode;
@@ -14,7 +13,8 @@ import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.server.version.ProxyVersion;
 import de.dytanic.cloudnet.setup.Setup;
 import de.dytanic.cloudnet.setup.SetupRequest;
-import de.dytanic.cloudnet.setup.SetupResponseType;
+import de.dytanic.cloudnet.setup.responsetype.IntegerResponseType;
+import de.dytanic.cloudnet.setup.responsetype.StringResponseType;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.util.defaults.BasicProxyConfig;
@@ -81,38 +81,36 @@ public class SetupProxyGroup {
                                CloudNet.getInstance().setupProxy(proxyGroup);
                                CloudNet.getInstance().toWrapperInstances(wrappers).forEach(Wrapper::updateWrapper);
                            }).request(new SetupRequest("memory",
-                                                       "How many MB of RAM should the proxy group have?",
-                                                       "Specified memory is invalid",
-                                                       SetupResponseType.NUMBER,
-                                                       key -> NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 64))
+                                                       "How much memory should each proxy of this proxy group have (in mb)?",
+                                                       "Specified amount of memory is invalid",
+                                                       IntegerResponseType.getInstance(),
+                                                       key -> Integer.parseInt(key) > 64))
                            .request(new SetupRequest("startport",
-                                                     "What's the starting port of the proxygroup?",
+                                                     "What should be the starting port of the proxy group?",
                                                      "Specified starting port is invalid",
-                                                     SetupResponseType.NUMBER,
-                                                     key -> NetworkUtils.checkIsNumber(key) &&
-                                                         Integer.parseInt(key) > 128 &&
+                                                     IntegerResponseType.getInstance(),
+                                                     key -> Integer.parseInt(key) > 128 &&
                                                          Integer.parseInt(key) < 65536))
                            .request(new SetupRequest("startup",
-                                                     "How many proxys should always be online?",
-                                                     "Specified startup count is invalid",
-                                                     SetupResponseType.NUMBER,
-                                                     key -> NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 1))
+                                                     "How many proxy instances should always be online?",
+                                                     "Please enter a positive number",
+                                                     IntegerResponseType.getInstance(),
+                                                     key -> Integer.parseInt(key) >= 0))
                            .request(new SetupRequest("mode",
                                                      "Should the group be STATIC or DYNAMIC?",
-                                                     "Group mode is invalid",
-                                                     SetupResponseType.STRING,
-                                                     key -> key
-                                                         .equalsIgnoreCase("STATIC") ||
+                                                     "The specified proxy group mode is invalid",
+                                                     StringResponseType.getInstance(),
+                                                     key -> key.equalsIgnoreCase("STATIC") ||
                                                          key.equalsIgnoreCase("DYNAMIC")))
                            .request(new SetupRequest("template",
-                                                     "What is the backend of the group default template? [\"LOCAL\" for the wrapper local | \"MASTER\" for the master backend]",
-                                                     "String is invalid",
-                                                     SetupResponseType.STRING,
+                                                     "What should be the backend of the group's default template? [\"LOCAL\" for a wrapper local backend | \"MASTER\" for the master backend]",
+                                                     "The specified backend is invalid",
+                                                     StringResponseType.getInstance(),
                                                      key -> key.equals("MASTER") || key.equals("LOCAL")))
                            .request(new SetupRequest("wrapper",
                                                      "Which wrappers should be used for this group?",
-                                                     "String is invalid",
-                                                     SetupResponseType.STRING,
+                                                     "The specified list of wrappers is invalid",
+                                                     StringResponseType.getInstance(),
                                                      key -> {
                                                          // Make sure there is at least one valid wrapper
                                                          List<String> wrappers = new ArrayList<>(Arrays.asList(WRAPPER_SPLITTER.split(key)));

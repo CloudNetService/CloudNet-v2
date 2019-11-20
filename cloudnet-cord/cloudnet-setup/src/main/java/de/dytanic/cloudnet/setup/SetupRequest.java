@@ -5,9 +5,9 @@
 package de.dytanic.cloudnet.setup;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
 
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Class that represents a request for setup data.
@@ -24,35 +24,35 @@ public class SetupRequest implements Nameable {
     /**
      * Message that is shown when the input was invalid.
      */
-    private String inValidMessage;
+    private String invalidMessage;
     /**
      * The type of response that is required from the user.
      */
-    private SetupResponseType responseType;
+    private SetupResponseType<?> responseType;
     /**
      * The validation function that determines whether the input is valid or not.
      */
-    private Catcher<Boolean, String> validater;
+    private Predicate<String> validator;
 
     public SetupRequest(String name,
                         String question,
-                        String inValidMessage,
-                        SetupResponseType responseType,
-                        Catcher<Boolean, String> validater) {
+                        String invalidMessage,
+                        SetupResponseType<?> responseType,
+                        Predicate<String> validator) {
         this.name = name;
         this.question = question;
-        this.inValidMessage = inValidMessage;
+        this.invalidMessage = invalidMessage;
         this.responseType = responseType;
-        this.validater = validater;
+        this.validator = validator;
     }
 
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (question != null ? question.hashCode() : 0);
-        result = 31 * result + (inValidMessage != null ? inValidMessage.hashCode() : 0);
+        result = 31 * result + (invalidMessage != null ? invalidMessage.hashCode() : 0);
         result = 31 * result + (responseType != null ? responseType.hashCode() : 0);
-        result = 31 * result + (validater != null ? validater.hashCode() : 0);
+        result = 31 * result + (validator != null ? validator.hashCode() : 0);
         return result;
     }
 
@@ -64,15 +64,33 @@ public class SetupRequest implements Nameable {
         if (!(o instanceof SetupRequest)) {
             return false;
         }
+
         final SetupRequest that = (SetupRequest) o;
-        return Objects.equals(name, that.name) && Objects.equals(question, that.question) && Objects.equals(inValidMessage,
-                                                                                                            that.inValidMessage) && responseType == that.responseType && Objects
-            .equals(validater, that.validater);
+
+        if (!Objects.equals(name, that.name)) {
+            return false;
+        }
+        if (!Objects.equals(question, that.question)) {
+            return false;
+        }
+        if (!Objects.equals(invalidMessage, that.invalidMessage)) {
+            return false;
+        }
+        if (responseType != that.responseType) {
+            return false;
+        }
+        return Objects.equals(validator, that.validator);
     }
 
     @Override
     public String toString() {
-        return "SetupRequest{" + "name='" + name + '\'' + ", question='" + question + '\'' + ", inValidMessage='" + inValidMessage + '\'' + ", responseType=" + responseType + ", validater=" + validater + '}';
+        return "de.dytanic.cloudnet.setup.SetupRequest{" +
+            "name='" + name + '\'' +
+            ", question='" + question + '\'' +
+            ", inValidMessage='" + invalidMessage + '\'' +
+            ", responseType=" + responseType +
+            ", validator=" + validator +
+            '}';
     }
 
     @Override
@@ -80,16 +98,20 @@ public class SetupRequest implements Nameable {
         return name;
     }
 
-    public Catcher<Boolean, String> getValidater() {
-        return validater;
+    public Predicate<String> getValidator() {
+        return validator;
     }
 
-    public SetupResponseType getResponseType() {
+    public boolean hasValidator() {
+        return validator != null;
+    }
+
+    public SetupResponseType<?> getResponseType() {
         return responseType;
     }
 
-    public String getInValidMessage() {
-        return inValidMessage;
+    public String getInvalidMessage() {
+        return invalidMessage;
     }
 
     public String getQuestion() {

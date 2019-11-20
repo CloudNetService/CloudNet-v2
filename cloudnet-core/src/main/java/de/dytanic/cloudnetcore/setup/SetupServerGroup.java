@@ -5,7 +5,6 @@
 package de.dytanic.cloudnetcore.setup;
 
 import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.server.ServerGroupType;
@@ -14,7 +13,8 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.setup.Setup;
 import de.dytanic.cloudnet.setup.SetupRequest;
-import de.dytanic.cloudnet.setup.SetupResponseType;
+import de.dytanic.cloudnet.setup.responsetype.IntegerResponseType;
+import de.dytanic.cloudnet.setup.responsetype.StringResponseType;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public class SetupServerGroup {
 
-    public static final String[] EMPTY_STRING_ARRAY = new String[0];
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final Pattern WRAPPER_SPLITTER = Pattern.compile("\\s?+,\\s?+");
     private String name;
     private final Setup setup;
@@ -67,12 +67,17 @@ public class SetupServerGroup {
                                                                          data.getInt("percent"),
                                                                          serverGroupType,
                                                                          serverGroupMode,
+                                                                         new Template("globaltemplate",
+                                                                                      TemplateResource.valueOf(data.getString("template")),
+                                                                                      null,
+                                                                                      EMPTY_STRING_ARRAY,
+                                                                                      Collections.emptyList()),
                                                                          Collections.singletonList(
                                                                              new Template("default",
                                                                                           TemplateResource.valueOf(data.getString("template")),
                                                                                           null,
                                                                                           EMPTY_STRING_ARRAY,
-                                                                                          new ArrayList<>())),
+                                                                                          Collections.emptyList())),
                                                                          new AdvancedServerConfig(false,
                                                                                                   false,
                                                                                                   false,
@@ -84,55 +89,53 @@ public class SetupServerGroup {
                                commandSender.sendMessage(String.format("The server group %s is now created!", serverGroup.getName()));
                            })
                            .request(new SetupRequest("memory",
-                                                     "How many MB RAM should the server group have?",
-                                                     "Specified Memory is invalid",
-                                                     SetupResponseType.NUMBER,
-                                                     key -> NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 64))
+                                                     "How much memory should each server of this server group have?",
+                                                     "The specified amount of memory is invalid",
+                                                     IntegerResponseType.getInstance(),
+                                                     key -> Integer.parseInt(key) >= 64))
                            .request(new SetupRequest("startup",
                                                      "How many servers should always be online?",
-                                                     "Specified startup count is invalid",
-                                                     SetupResponseType.NUMBER,
-                                                     key -> NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 0))
+                                                     "The specified amount of servers is invalid",
+                                                     IntegerResponseType.getInstance(),
+                                                     key -> Integer.parseInt(key) >= 0))
                            .request(new SetupRequest("percent",
-                                                     "How full does the server have to be until a new server is started? (In Percent)?",
-                                                     "Specified percent count is invalid",
-                                                     SetupResponseType.NUMBER,
-                                                     key -> NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) <= 100))
+                                                     "How full does the server have to be to start a new server? (in percent)",
+                                                     "The specified percentage is invalid",
+                                                     IntegerResponseType.getInstance(),
+                                                     key -> Integer.parseInt(key) >= 0 && Integer.parseInt(key) <= 100))
                            .request(new SetupRequest("mode",
-                                                     "Which server group mode should be used? [STATIC, STATIC_LOBBY, LOBBY, DYNAMIC]",
-                                                     "Specified server group mode is invalid",
-                                                     SetupResponseType.STRING,
+                                                     "Which server group mode should be used for this server group? [STATIC, STATIC_LOBBY, LOBBY, DYNAMIC]",
+                                                     "The specified server group mode is invalid",
+                                                     StringResponseType.getInstance(),
                                                      key -> key.equalsIgnoreCase("STATIC") ||
                                                          key.equalsIgnoreCase("STATIC_LOBBY") ||
                                                          key.equalsIgnoreCase("LOBBY") ||
                                                          key.equalsIgnoreCase("DYNAMIC")))
                            .request(new SetupRequest("type",
                                                      "Which server group type should be used? [BUKKIT, GLOWSTONE]",
-                                                     "Specified group type is invalid",
-                                                     SetupResponseType.STRING,
-                                                     key -> key.equals("BUKKIT") ||
-                                                         key.equals("GLOWSTONE")))
+                                                     "The specified group type is invalid",
+                                                     StringResponseType.getInstance(),
+                                                     key -> key.equals("BUKKIT") || key.equals("GLOWSTONE")))
                            .request(new SetupRequest("template",
-                                                     "What is the backend of the group default template? [\"LOCAL\" for the wrapper local | \"MASTER\" for the master backend]",
-                                                     "Specified string is invalid",
-                                                     SetupResponseType.STRING,
+                                                     "What backend should be used for the group's default template? [\"LOCAL\" for a wrapper local backend | \"MASTER\" for the master backend]",
+                                                     "The specified backend is invalid",
+                                                     StringResponseType.getInstance(),
                                                      key -> key.equals("MASTER") || key.equals("LOCAL")))
                            .request(new SetupRequest("onlineGroup",
-                                                     "How many servers should be online if 100 players are online in the group?",
-                                                     "Specified string is invalid",
-                                                     SetupResponseType.NUMBER,
-                                                     key -> NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 0))
+                                                     "How many servers should be online, if 100 players are online in the group?",
+                                                     "The specified amount is invalid",
+                                                     IntegerResponseType.getInstance(),
+                                                     key -> Integer.parseInt(key) > 0))
                            .request(new SetupRequest("onlineGlobal",
-                                                     "How many servers should be online if 100 global players are online?",
-                                                     "Specified string is invalid",
-                                                     SetupResponseType.NUMBER,
-                                                     key -> NetworkUtils.checkIsNumber(key) && Integer.parseInt(key) > 0))
-
+                                                     "How many servers should be online, if 100 global players are online?",
+                                                     "The specified amount is invalid",
+                                                     IntegerResponseType.getInstance(),
+                                                     key -> Integer.parseInt(key) > 0))
                            .request(
                                new SetupRequest("wrapper",
                                                 "Which wrappers should be used for this group? (comma-separated list)",
-                                                "Specified string is invalid",
-                                                SetupResponseType.STRING,
+                                                "The specified list of wrappers is invalid",
+                                                StringResponseType.getInstance(),
                                                 key -> {
                                                     // Make sure there is at least one valid wrapper
                                                     List<String> wrappers = new ArrayList<>(Arrays.asList(WRAPPER_SPLITTER.split(key)));

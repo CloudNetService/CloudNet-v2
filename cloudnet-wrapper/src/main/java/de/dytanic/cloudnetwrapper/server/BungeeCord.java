@@ -420,7 +420,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         if (instance == null) {
             if (proxyGroup.getProxyGroupMode().equals(ProxyGroupMode.DYNAMIC)) {
                 try {
-                    Files.delete(Paths.get(path));
+                    Files.deleteIfExists(Paths.get(path));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

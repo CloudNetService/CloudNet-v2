@@ -7,7 +7,7 @@ package de.dytanic.cloudnetcore.setup;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.setup.Setup;
 import de.dytanic.cloudnet.setup.SetupRequest;
-import de.dytanic.cloudnet.setup.SetupResponseType;
+import de.dytanic.cloudnet.setup.responsetype.StringResponseType;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.WrapperMeta;
 
@@ -34,14 +34,14 @@ public class SetupWrapper {
                            });
 
         setup.request(new SetupRequest("address",
-                                       "What's the IP address of the wrapper?",
-                                       "Specified IP address is invalid!",
-                                       SetupResponseType.STRING,
+                                       "What is the IP address of this wrapper?",
+                                       "The specified IP address is invalid!",
+                                       StringResponseType.getInstance(),
                                        key -> key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1")));
         setup.request(new SetupRequest("user",
-                                       "What's the user of the wrapper?",
-                                       "Specified name is invalid!",
-                                       SetupResponseType.STRING,
+                                       "What is the user of the wrapper?",
+                                       "The specified user does not exist!",
+                                       StringResponseType.getInstance(),
                                        key -> CloudNet.getInstance().getUser(key) != null));
     }
 

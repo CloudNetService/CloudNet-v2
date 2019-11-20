@@ -130,14 +130,14 @@ public final class FileUtility {
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
             super.visitFile(file, attrs);
-            Files.delete(file);
+            Files.deleteIfExists(file);
             return FileVisitResult.CONTINUE;
         }
 
         @Override
         public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
             super.postVisitDirectory(dir, exc);
-            Files.delete(dir);
+            Files.deleteIfExists(dir);
             return FileVisitResult.CONTINUE;
         }
     }

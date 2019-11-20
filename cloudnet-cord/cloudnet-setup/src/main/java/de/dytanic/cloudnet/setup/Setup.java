@@ -42,19 +42,26 @@ public class Setup implements ISetup {
 
     @Override
     public void start(ConsoleReader consoleReader) {
-        SetupRequest setupRequest = null;
+        boolean successful = true;
         while (!requests.isEmpty()) {
-            if (setupRequest == null) {
+            SetupRequest setupRequest = null;
+            if (successful) {
                 setupRequest = requests.poll();
             }
-            System.out.print(setupRequest.getQuestion() + " | " + setupRequest.getResponseType());
+            if (setupRequest == null) {
+                return;
+            }
+            SetupResponseType<?> responseType = setupRequest.getResponseType();
+            System.out.println(String.format("%s | %s", setupRequest.getQuestion(), responseType.userFriendlyString()));
 
             String input;
+
             try {
                 input = consoleReader.readLine();
             } catch (Exception ex) {
                 System.out.println("Error while reading input: " + ex.getLocalizedMessage());
-                continue;
+                setupCancel.run();
+                return;
             }
 
             if (input.equalsIgnoreCase(CANCEL)) {
@@ -65,60 +72,21 @@ public class Setup implements ISetup {
             }
 
             if (!input.isEmpty() && !input.equals(NetworkUtils.SPACE_STRING)) {
-                switch (setupRequest.getResponseType()) {
-                    case NUMBER:
-                        if (!NetworkUtils.checkIsNumber(input)) {
-                            System.out.println(setupRequest.getInValidMessage());
-                            continue;
-                        }
-                        if (setupRequest.getValidater() != null) {
-                            if (setupRequest.getValidater().doCatch(input)) {
-                                document.append(setupRequest.getName(), Integer.parseInt(input));
-                                setupRequest = null;
-                            } else {
-                                System.out.println(setupRequest.getInValidMessage());
-                                continue;
-                            }
-                        } else {
-                            document.append(setupRequest.getName(), Integer.parseInt(input));
-                            setupRequest = null;
-                        }
-                        break;
-                    case BOOL:
-                        if (input.equalsIgnoreCase("yes") || (setupRequest.getValidater() != null && setupRequest.getValidater().doCatch(
-                            input))) {
-                            document.append(setupRequest.getName(), true);
-                            setupRequest = null;
-                            continue;
-                        }
-                        if (input.equalsIgnoreCase("no") || (setupRequest.getValidater() != null && setupRequest.getValidater().doCatch(
-                            input))) {
-                            document.append(setupRequest.getName(), false);
-                            setupRequest = null;
-                            continue;
-                        }
-
-                        System.out.println(setupRequest.getInValidMessage());
-                        break;
-                    case STRING:
-                        if (setupRequest.getValidater() != null) {
-                            if (setupRequest.getValidater().doCatch(input)) {
-                                document.append(setupRequest.getName(), input);
-                                setupRequest = null;
-                            } else {
-                                System.out.println(setupRequest.getInValidMessage());
-                                continue;
-                            }
-                        } else {
-                            document.append(setupRequest.getName(), input);
-                            setupRequest = null;
-                        }
-                        break;
+                if (responseType.isValidInput(input)) {
+                    if ((setupRequest.hasValidator() &&
+                        setupRequest.getValidator().test(input)) ||
+                        !setupRequest.hasValidator()) {
+                        successful = true;
+                        responseType.appendDocument(document, setupRequest.getName(), input);
+                    } else {
+                        successful = false;
+                        System.out.println(setupRequest.getInvalidMessage());
+                    }
                 }
             } else {
-                System.out.println(setupRequest.getInValidMessage());
+                successful = false;
+                System.out.println(setupRequest.getInvalidMessage());
             }
-
         }
 
         if (setupComplete != null) {
