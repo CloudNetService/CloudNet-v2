@@ -15,10 +15,8 @@ import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.Quad;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.packet.out.*;
 import io.netty.channel.Channel;
@@ -39,7 +37,7 @@ public final class Wrapper implements INetworkComponent {
     private final Map<String, MinecraftServer> servers = new ConcurrentHashMap<>();
     private final Map<String, CloudServer> cloudServers = new ConcurrentHashMap<>();
     // Group, ServiceId
-    private final Map<String, Quad<Integer, Integer, ServiceId, Template>> waitingServices = new ConcurrentHashMap<>();
+    private final Map<String, WaitingService> waitingServices = new ConcurrentHashMap<>();
     private Channel channel;
     private WrapperInfo wrapperInfo;
     private WrapperMeta networkInfo;
@@ -82,7 +80,7 @@ public final class Wrapper implements INetworkComponent {
         return proxys;
     }
 
-    public Map<String, Quad<Integer, Integer, ServiceId, Template>> getWaitingServices() {
+    public Map<String, WaitingService> getWaitingServices() {
         return waitingServices;
     }
 
@@ -119,7 +117,7 @@ public final class Wrapper implements INetworkComponent {
 
     public int getUsedMemoryAndWaitings() {
         return waitingServices.values().stream()
-                              .map(Quad::getSecond)
+                              .map(WaitingService::getUsedMemory)
                               .mapToInt(i -> i)
                               .sum() + getUsedMemory();
     }
@@ -149,7 +147,7 @@ public final class Wrapper implements INetworkComponent {
             try {
                 minecraftServer.disconnect();
             } catch (Exception ex) {
-
+                ex.printStackTrace();
             }
         }
 
@@ -157,7 +155,7 @@ public final class Wrapper implements INetworkComponent {
             try {
                 cloudServer.disconnect();
             } catch (Exception ex) {
-
+                ex.printStackTrace();
             }
         }
 
@@ -165,7 +163,7 @@ public final class Wrapper implements INetworkComponent {
             try {
                 minecraftServer.disconnect();
             } catch (Exception ex) {
-
+                ex.printStackTrace();
             }
         }
 
@@ -177,7 +175,7 @@ public final class Wrapper implements INetworkComponent {
 
     public Wrapper updateWrapper() {
 
-        if (getChannel() == null) {
+        if (channel == null) {
             return this;
         }
 
@@ -236,7 +234,7 @@ public final class Wrapper implements INetworkComponent {
     public List<Integer> getBoundPorts() {
         return Stream.concat(
             Stream.concat(waitingServices.values().stream()
-                                         .map(Quad::getFirst),
+                                         .map(WaitingService::getPort),
                           servers.values().stream()
                                  .map(MinecraftServer::getProcessMeta)
                                  .map(ServerProcessMeta::getPort)),
@@ -251,10 +249,10 @@ public final class Wrapper implements INetworkComponent {
         System.out.println("Proxy [" + proxyProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(),
-                                 new Quad<>(proxyProcessMeta.getPort(),
-                                            proxyProcessMeta.getMemory(),
-                                            proxyProcessMeta.getServiceId(),
-                                            null));
+                                 new WaitingService(proxyProcessMeta.getPort(),
+                                                    proxyProcessMeta.getMemory(),
+                                                    proxyProcessMeta.getServiceId(),
+                                                    null));
     }
 
     public void startProxyAsync(ProxyProcessMeta proxyProcessMeta) {
@@ -262,10 +260,10 @@ public final class Wrapper implements INetworkComponent {
         System.out.println("Proxy [" + proxyProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(),
-                                 new Quad<>(proxyProcessMeta.getPort(),
-                                            proxyProcessMeta.getMemory(),
-                                            proxyProcessMeta.getServiceId(),
-                                            null));
+                                 new WaitingService(proxyProcessMeta.getPort(),
+                                                    proxyProcessMeta.getMemory(),
+                                                    proxyProcessMeta.getServiceId(),
+                                                    null));
     }
 
     public void startGameServer(ServerProcessMeta serverProcessMeta) {
@@ -273,10 +271,10 @@ public final class Wrapper implements INetworkComponent {
         System.out.println("Server [" + serverProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(),
-                                 new Quad<>(serverProcessMeta.getPort(),
-                                            serverProcessMeta.getMemory(),
-                                            serverProcessMeta.getServiceId(),
-                                            serverProcessMeta.getTemplate()));
+                                 new WaitingService(serverProcessMeta.getPort(),
+                                                    serverProcessMeta.getMemory(),
+                                                    serverProcessMeta.getServiceId(),
+                                                    serverProcessMeta.getTemplate()));
     }
 
     public void startGameServerAsync(ServerProcessMeta serverProcessMeta) {
@@ -284,10 +282,10 @@ public final class Wrapper implements INetworkComponent {
         System.out.println("Server [" + serverProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(),
-                                 new Quad<>(serverProcessMeta.getPort(),
-                                            serverProcessMeta.getMemory(),
-                                            serverProcessMeta.getServiceId(),
-                                            serverProcessMeta.getTemplate()));
+                                 new WaitingService(serverProcessMeta.getPort(),
+                                                    serverProcessMeta.getMemory(),
+                                                    serverProcessMeta.getServiceId(),
+                                                    serverProcessMeta.getTemplate()));
     }
 
     public void startCloudServer(CloudServerMeta cloudServerMeta) {
@@ -295,10 +293,10 @@ public final class Wrapper implements INetworkComponent {
         System.out.println("CloudServer [" + cloudServerMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(),
-                                 new Quad<>(cloudServerMeta.getPort(),
-                                            cloudServerMeta.getMemory(),
-                                            cloudServerMeta.getServiceId(),
-                                            cloudServerMeta.getTemplate()));
+                                 new WaitingService(cloudServerMeta.getPort(),
+                                                    cloudServerMeta.getMemory(),
+                                                    cloudServerMeta.getServiceId(),
+                                                    cloudServerMeta.getTemplate()));
     }
 
     public void startCloudServerAsync(CloudServerMeta cloudServerMeta) {
@@ -306,10 +304,10 @@ public final class Wrapper implements INetworkComponent {
         System.out.println("CloudServer [" + cloudServerMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(),
-                                 new Quad<>(cloudServerMeta.getPort(),
-                                            cloudServerMeta.getMemory(),
-                                            cloudServerMeta.getServiceId(),
-                                            cloudServerMeta.getTemplate()));
+                                 new WaitingService(cloudServerMeta.getPort(),
+                                                    cloudServerMeta.getMemory(),
+                                                    cloudServerMeta.getServiceId(),
+                                                    cloudServerMeta.getTemplate()));
     }
 
     public Wrapper stopServer(MinecraftServer minecraftServer) {

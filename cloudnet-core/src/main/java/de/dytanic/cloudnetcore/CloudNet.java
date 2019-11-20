@@ -24,7 +24,6 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.Quad;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 import de.dytanic.cloudnet.logging.CloudLogger;
@@ -60,7 +59,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -592,14 +590,14 @@ public final class CloudNet implements Executable, Reloadable {
     }
 
     public int getGlobalUsedMemoryAndWaitings() {
-        AtomicInteger atomicInteger = new AtomicInteger(0);
+        int usedMemory = 0;
         for (final Wrapper wrapper : wrappers.values()) {
-            atomicInteger.addAndGet(wrapper.getUsedMemory());
-            for (final Quad<Integer, Integer, ServiceId, Template> service : wrapper.getWaitingServices().values()) {
-                atomicInteger.addAndGet(service.getSecond());
+            usedMemory += wrapper.getUsedMemory();
+            for (final WaitingService service : wrapper.getWaitingServices().values()) {
+                usedMemory += service.getUsedMemory();
             }
         }
-        return atomicInteger.get();
+        return usedMemory;
     }
 
     public Map<String, Wrapper> getWrappers() {
@@ -658,8 +656,8 @@ public final class CloudNet implements Executable, Reloadable {
 
         wrappers.values().stream()
                 .flatMap(wrapper -> wrapper.getWaitingServices().values().stream())
-                .filter(quad -> quad.getThird().getGroup().equals(group))
-                .map(Quad::getThird)
+                .filter(waitingService -> waitingService.getServiceId().getGroup().equals(group))
+                .map(WaitingService::getServiceId)
                 .forEach(serviceIds::add);
 
         return serviceIds;
@@ -690,12 +688,6 @@ public final class CloudNet implements Executable, Reloadable {
             }
         }
         return minecraftServers;
-    }
-
-    public Map<String, MinecraftServer> getGameServers() {
-        Map<String, MinecraftServer> minecraftServerMap = new HashMap<>();
-
-        return minecraftServerMap;
     }
 
     public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, int id, String serverId) {
@@ -759,7 +751,7 @@ public final class CloudNet implements Executable, Reloadable {
 
         wrappers.values().stream()
                 .flatMap(wrapper -> wrapper.getWaitingServices().entrySet().stream())
-                .filter(entry -> entry.getValue().getThird().getGroup().equals(group))
+                .filter(entry -> entry.getValue().getServiceId().getGroup().equals(group))
                 .map(Map.Entry::getKey)
                 .forEach(serverIds::add);
 
@@ -803,7 +795,7 @@ public final class CloudNet implements Executable, Reloadable {
 
         wrappers.values().stream()
                 .flatMap(wrapper -> wrapper.getWaitingServices().entrySet().stream())
-                .filter(entry -> entry.getValue().getThird().getGroup().equals(group))
+                .filter(entry -> entry.getValue().getServiceId().getGroup().equals(group))
                 .map(Map.Entry::getKey)
                 .forEach(proxyIds::add);
 
@@ -1029,8 +1021,8 @@ public final class CloudNet implements Executable, Reloadable {
 
         wrappers.values().stream()
                 .flatMap(wrapper -> wrapper.getWaitingServices().values().stream())
-                .filter(entry -> entry.getThird().getGroup().equals(group))
-                .map(Quad::getThird)
+                .filter(entry -> entry.getServiceId().getGroup().equals(group))
+                .map(WaitingService::getServiceId)
                 .forEach(serviceIds::add);
 
         return serviceIds;
@@ -1437,8 +1429,8 @@ public final class CloudNet implements Executable, Reloadable {
                                          .forEach(template -> templateMap.merge(template, 1, Integer::sum));
 
         wrapper.getWaitingServices().values().stream()
-               .filter(quad -> quad.getThird().getGroup().equals(serverGroup.getName()))
-               .map(Quad::getFourth)
+               .filter(quad -> quad.getServiceId().getGroup().equals(serverGroup.getName()))
+               .map(WaitingService::getTemplate)
                .forEach(template -> templateMap.merge(template, 1, Integer::sum));
 
         serverGroup.getTemplates()
