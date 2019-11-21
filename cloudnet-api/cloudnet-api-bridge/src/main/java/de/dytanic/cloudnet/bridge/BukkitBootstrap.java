@@ -149,17 +149,6 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
                         }
                     }, 0, 5);
                 }
-
-                if (CloudAPI.getInstance().getPermissionPool() != null && (getServer().getPluginManager()
-                                                                                      .isPluginEnabled("VaultAPI") || getServer().getPluginManager()
-                                                                                                                                 .isPluginEnabled(
-                                                                                                                                     "Vault"))) {
-                    try {
-                        Class.forName("de.dytanic.cloudnet.bridge.vault.VaultInvoker").getMethod("invoke").invoke(null);
-                    } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         });
     }

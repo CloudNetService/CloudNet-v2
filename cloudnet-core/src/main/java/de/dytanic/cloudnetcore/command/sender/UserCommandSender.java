@@ -5,7 +5,6 @@
 package de.dytanic.cloudnetcore.command.sender;
 
 import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.user.permission.UserablePermissionEntity;
 
@@ -17,7 +16,7 @@ import java.util.UUID;
 public class UserCommandSender implements CommandSender {
 
     private User user;
-    private PermissionEntity permissionEntity;
+    private UserablePermissionEntity permissionEntity;
 
     public UserCommandSender(User user) {
         this.user = user;
@@ -41,11 +40,10 @@ public class UserCommandSender implements CommandSender {
 
     @Override
     public boolean hasPermission(String permission) {
-        return ((UserablePermissionEntity) getPermissionEntity()).hasPermission(permission);
+        return getPermissionEntity().hasPermission(permission);
     }
 
-    @Override
-    public PermissionEntity getPermissionEntity() {
+    public UserablePermissionEntity getPermissionEntity() {
         if (permissionEntity == null) {
             permissionEntity = new UserablePermissionEntity(UUID.randomUUID(), user);
         }

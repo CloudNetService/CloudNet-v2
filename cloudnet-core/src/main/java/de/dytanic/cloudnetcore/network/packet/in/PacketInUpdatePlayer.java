@@ -26,7 +26,7 @@ public class PacketInUpdatePlayer extends PacketInHandler {
         if (CloudNet.getInstance().getNetworkManager().getOnlinePlayers().containsKey(offlinePlayer.getUniqueId())) {
             CloudPlayer cloudPlayer = CloudNet.getInstance().getNetworkManager().getOnlinePlayers().get(offlinePlayer.getUniqueId());
             cloudPlayer.setMetaData(offlinePlayer.getMetaData());
-            cloudPlayer.setPermissionEntity(offlinePlayer.getPermissionEntity());
+            //cloudPlayer.setPermissionEntity(offlinePlayer.getPermissionEntity());
             CloudNet.getInstance().getNetworkManager().handlePlayerUpdate(cloudPlayer);
         } else {
             CloudNet.getInstance().getNetworkManager().sendAllUpdate(new PacketOutUpdateOfflinePlayer(offlinePlayer));

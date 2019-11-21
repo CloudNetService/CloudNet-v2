@@ -23,8 +23,7 @@ public class CloudPlayer extends OfflinePlayer {
               player.getMetaData(),
               player.getLastLogin(),
               player.getFirstLogin(),
-              player.getLastPlayerConnection(),
-              player.getPermissionEntity());
+              player.getLastPlayerConnection());
 
         this.playerConnection = onlineConnection;
         this.proxy = proxy;
@@ -39,8 +38,7 @@ public class CloudPlayer extends OfflinePlayer {
                                  cloudPlayer.getMetaData(),
                                  cloudPlayer.getLastLogin(),
                                  cloudPlayer.getFirstLogin(),
-                                 cloudPlayer.getLastPlayerConnection(),
-                                 cloudPlayer.getPermissionEntity());
+                                 cloudPlayer.getLastPlayerConnection());
     }
 
     @Override

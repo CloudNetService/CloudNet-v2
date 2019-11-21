@@ -360,31 +360,6 @@ public class ProxiedListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void handlePermissionCheck(PermissionCheckEvent e) {
-        if (CloudAPI.getInstance().getPermissionPool() == null || !CloudAPI.getInstance().getPermissionPool().isAvailable()) {
-            return;
-        }
-
-        if (e.getSender() instanceof ProxiedPlayer) {
-            if (CloudProxy.getInstance().getCloudPlayers().containsKey(((ProxiedPlayer) e.getSender()).getUniqueId())) {
-                e.setHasPermission(CloudProxy.getInstance()
-                                             .getCloudPlayers()
-                                             .get(((ProxiedPlayer) e.getSender()).getUniqueId())
-                                             .getPermissionEntity()
-                                             .hasPermission(CloudAPI.getInstance().getPermissionPool(),
-                                                            e.getPermission(),
-                                                            CloudAPI.getInstance().getGroup()));
-            }
-        } else if (e.getSender() instanceof CloudPlayerCommandSender) {
-            e.setHasPermission(((CloudPlayerCommandSender) e.getSender()).getCloudPlayer()
-                                                                         .getPermissionEntity()
-                                                                         .hasPermission(CloudAPI.getInstance().getPermissionPool(),
-                                                                                        e.getPermission(),
-                                                                                        CloudAPI.getInstance().getGroup()));
-        }
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void handleDisconnect(PlayerDisconnectEvent e) {
         CloudPlayer cloudPlayer = CloudProxy.getInstance().getCloudPlayers().get(e.getPlayer().getUniqueId());
