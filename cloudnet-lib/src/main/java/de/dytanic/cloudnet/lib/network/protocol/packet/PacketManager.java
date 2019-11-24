@@ -4,8 +4,8 @@
 
 package de.dytanic.cloudnet.lib.network.protocol.packet;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +20,6 @@ public final class PacketManager {
     private final Map<Integer, List<PacketInHandler>> packetHandlers = new ConcurrentHashMap<>();
     private final Map<UUID, CompletableFuture<Result>> synchronizedHandlers = new ConcurrentHashMap<>();
     private final Queue<Packet> packetQueue = new ConcurrentLinkedQueue<>();
-    private final TaskScheduler executorService = new TaskScheduler(1);
 
     public void registerHandler(int id, Class<? extends PacketInHandler> packetHandlerClass) {
         try {
@@ -59,7 +58,7 @@ public final class PacketManager {
         packet.uniqueId = uniqueId;
         CompletableFuture<Result> future = new CompletableFuture<>();
         synchronizedHandlers.put(uniqueId, future);
-        executorService.schedule(() -> packetSender.sendPacket(packet));
+        NetworkUtils.getExecutor().submit(() -> packetSender.sendPacket(packet));
 
         try {
             final Result result = future.get(2, TimeUnit.SECONDS);

@@ -19,6 +19,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class CloudBootstrap {
 
@@ -95,7 +96,7 @@ public class CloudBootstrap {
         CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging);
 
         if (optionSet.has("systemTimer")) {
-            cloudNetWrapper.getScheduler().runTaskRepeatAsync(SystemTimer::run, 0, 40);
+            CloudNetWrapper.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);
         }
 
         if (!cloudNetWrapper.bootstrap()) {

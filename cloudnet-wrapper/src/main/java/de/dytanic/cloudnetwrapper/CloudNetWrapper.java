@@ -12,13 +12,10 @@ import de.dytanic.cloudnet.lib.network.NetDispatcher;
 import de.dytanic.cloudnet.lib.network.NetworkConnection;
 import de.dytanic.cloudnet.lib.network.auth.Auth;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
-import de.dytanic.cloudnet.lib.utility.threading.Scheduler;
 import de.dytanic.cloudnet.logging.CloudLogger;
-import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import de.dytanic.cloudnet.setup.spigot.PaperBuilder;
 import de.dytanic.cloudnet.setup.spigot.SetupSpigotVersion;
 import de.dytanic.cloudnet.setup.spigot.SpigotBuilder;
@@ -46,6 +43,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
@@ -56,14 +55,13 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     private final NetworkConnection networkConnection;
     private final CloudLogger cloudNetLogging;
     private final CloudNetWrapperConfig wrapperConfig;
-    private final Scheduler scheduler = new Scheduler(40);
     private final CommandManager commandManager = new CommandManager();
     private final WebClient webClient = new WebClient();
-    private final java.util.Map<String, GameServer> servers = new ConcurrentHashMap<>();
-    private final java.util.Map<String, BungeeCord> proxys = new ConcurrentHashMap<>();
-    private final java.util.Map<String, CloudGameServer> cloudServers = new ConcurrentHashMap<>();
-    private final java.util.Map<String, ServerGroup> serverGroups = new ConcurrentHashMap<>();
-    private final java.util.Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
+    private final Map<String, GameServer> servers = new ConcurrentHashMap<>();
+    private final Map<String, BungeeCord> proxys = new ConcurrentHashMap<>();
+    private final Map<String, CloudGameServer> cloudServers = new ConcurrentHashMap<>();
+    private final Map<String, ServerGroup> serverGroups = new ConcurrentHashMap<>();
+    private final Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
     private Auth auth;
     private OptionSet optionSet;
     private ServerProcessQueue serverProcessQueue;
@@ -173,11 +171,6 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             new SetupSpigotVersion().accept(cloudNetLogging.getReader());
         }
 
-        Thread thread = new Thread(scheduler);
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.setDaemon(true);
-        thread.start();
-
         Thread processQueueThread = new Thread(serverProcessQueue);
         processQueueThread.setPriority(Thread.MIN_PRIORITY);
         processQueueThread.setDaemon(true);
@@ -231,25 +224,19 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         //Server Handlers
         {
             networkConnection.sendPacket(new PacketOutSetReadyWrapper(true));
-            IWrapperHandler iWrapperHandler = new StopTimeHandler(), readConsoleLogWrapperHandler = new ReadConsoleLogHandler();
+            IWrapperHandler iWrapperHandler = new StopTimeHandler();
+            IWrapperHandler readConsoleLogWrapperHandler = new ReadConsoleLogHandler();
 
-            scheduler.runTaskRepeatSync(iWrapperHandler.toExecutor(), 0, iWrapperHandler.getTicks());
-            scheduler.runTaskRepeatSync(readConsoleLogWrapperHandler.toExecutor(), 0, readConsoleLogWrapperHandler.getTicks());
+            getExecutor().scheduleWithFixedDelay(iWrapperHandler.toExecutor(), 0, 250, TimeUnit.MILLISECONDS);
+            getExecutor().scheduleWithFixedDelay(readConsoleLogWrapperHandler.toExecutor(), 0, 1, TimeUnit.SECONDS);
 
-            scheduler.runTaskRepeatAsync(new Runnable() {
-                @Override
-                public void run() {
-                    networkConnection.sendPacket(new PacketOutUpdateCPUUsage(getCpuUsage()));
-                }
-            }, 0, 200);
+            getExecutor().scheduleWithFixedDelay(
+                () -> networkConnection.sendPacket(new PacketOutUpdateCPUUsage(getCpuUsage())), 0, 5, TimeUnit.SECONDS);
         }
 
-        cloudNetLogging.getHandler().add(new ICloudLoggerHandler() {
-            @Override
-            public void handleConsole(String input) {
-                if (networkConnection.isConnected()) {
-                    networkConnection.sendPacket(new PacketOutWrapperScreen(input));
-                }
+        cloudNetLogging.getHandler().add(input -> {
+            if (networkConnection.isConnected()) {
+                networkConnection.sendPacket(new PacketOutWrapperScreen(input));
             }
         });
 
@@ -298,9 +285,8 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             return false;
         }
         System.out.println("Wrapper shutdown...");
-        TaskScheduler.runtimeScheduler().shutdown();
 
-        scheduler.cancelAllTasks();
+        getExecutor().shutdownNow();
 
         if (serverProcessQueue != null) {
             serverProcessQueue.setRunning(false);
@@ -335,6 +321,11 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         System.out.println();
         RUNNING = false;
         this.cloudNetLogging.shutdownAll();
+        try {
+            getExecutor().awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.exit(0);
         return true;
     }
@@ -362,10 +353,6 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
     public CloudNetWrapperConfig getWrapperConfig() {
         return this.wrapperConfig;
-    }
-
-    public Scheduler getScheduler() {
-        return this.scheduler;
     }
 
     public CommandManager getCommandManager() {
@@ -430,5 +417,9 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
     public boolean isCanDeployed() {
         return this.canDeployed;
+    }
+
+    public static ScheduledExecutorService getExecutor() {
+        return NetworkUtils.getExecutor();
     }
 }

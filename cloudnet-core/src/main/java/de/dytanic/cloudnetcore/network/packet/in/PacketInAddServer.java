@@ -10,11 +10,13 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.utility.threading.ScheduledTask;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.network.components.priority.PriorityStopTask;
+
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 20.07.2017.
@@ -41,11 +43,11 @@ public class PacketInAddServer implements PacketInHandler {
             if (serverProcessMeta.isPriorityStop()) {
                 ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(serverProcessMeta.getServiceId().getGroup());
                 if (serverGroup != null) {
-                    PriorityStopTask priorityStopTask = new PriorityStopTask(wrapper,
-                                                                             minecraftServer,
-                                                                             serverGroup.getPriorityService().getStopTimeInSeconds());
-                    ScheduledTask scheduledTask = CloudNet.getInstance().getScheduler().runTaskRepeatSync(priorityStopTask, 0, 50);
-                    priorityStopTask.setScheduledTask(scheduledTask);
+                    PriorityStopTask priorityStopTask =
+                        new PriorityStopTask(wrapper, minecraftServer, serverGroup.getPriorityService().getStopTimeInSeconds());
+                    Future<?> scheduledTask = CloudNet.getExecutor().scheduleWithFixedDelay(
+                        priorityStopTask, 0, 1, TimeUnit.SECONDS);
+                    priorityStopTask.setFuture(scheduledTask);
                 }
             }
         }

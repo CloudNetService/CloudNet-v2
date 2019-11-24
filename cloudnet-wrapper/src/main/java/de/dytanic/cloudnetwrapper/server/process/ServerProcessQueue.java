@@ -6,7 +6,6 @@ package de.dytanic.cloudnetwrapper.server.process;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.cloudserver.CloudServerMeta;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
@@ -165,28 +164,22 @@ public class ServerProcessQueue implements Runnable {
         GameServer gameServer = new GameServer(new ServerProcess(process, ServerStage.SETUP),
                                                ServerStage.SETUP,
                                                CloudNetWrapper.getInstance().getServerGroups().get(process.getServiceId().getGroup()));
-        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    gameServer.bootstrap();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        NetworkUtils.getExecutor().submit(() -> {
+            try {
+                gameServer.bootstrap();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
 
     public void patchAsync(CloudServerMeta cloudServerMeta) {
         CloudGameServer cloudGameServer = new CloudGameServer(cloudServerMeta);
-        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    cloudGameServer.bootstrap();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        NetworkUtils.getExecutor().submit(() -> {
+            try {
+                cloudGameServer.bootstrap();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
@@ -202,14 +195,11 @@ public class ServerProcessQueue implements Runnable {
             return;
         }
 
-        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    bungeeCord.bootstrap();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        NetworkUtils.getExecutor().submit(() -> {
+            try {
+                bungeeCord.bootstrap();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

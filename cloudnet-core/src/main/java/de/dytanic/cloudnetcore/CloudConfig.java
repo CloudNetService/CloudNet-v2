@@ -113,7 +113,7 @@ public class CloudConfig {
                           Arrays.asList("https://hastebin.com",
                                         "https://hasteb.in",
                                         "https://haste.llamacloud.io",
-                                        "https://paste.dsyn.ga"));
+                                        "https://pastes.cf"));
 
         configuration.set("server.hostaddress", hostName);
         configuration.set("server.ports", Collections.singletonList(1410));
@@ -208,7 +208,7 @@ public class CloudConfig {
                                   Arrays.asList("https://hastebin.com",
                                                 "https://hasteb.in",
                                                 "https://haste.llamacloud.io",
-                                                "https://paste.dsyn.ga"));
+                                                "https://pastes.cf"));
 
                 try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath),
                                                                                     StandardCharsets.UTF_8)) {

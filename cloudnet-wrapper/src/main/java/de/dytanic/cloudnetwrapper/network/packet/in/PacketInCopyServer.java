@@ -23,9 +23,9 @@ public class PacketInCopyServer implements PacketInHandler {
         GameServer gameServer = CloudNetWrapper.getInstance().getServers().get(serverInfo.getServiceId().getServerId());
         if (gameServer != null) {
             if (!packet.getData().contains("template")) {
-                CloudNetWrapper.getInstance().getScheduler().runTaskAsync(gameServer::copy);
+                CloudNetWrapper.getExecutor().submit((Runnable) gameServer::copy);
             } else {
-                CloudNetWrapper.getInstance().getScheduler().runTaskAsync(
+                CloudNetWrapper.getExecutor().submit(
                     () -> gameServer.copy(packet.getData().getObject("template", Template.TYPE)));
             }
         }

@@ -27,20 +27,9 @@ public class PacketInStartServer implements PacketInHandler {
         TypeToken.getParameterized(Collection.class, ServerInstallablePlugin.class).getType();
 
     public void handleInput(Packet packet, PacketSender packetSender) {
-        CloudNet.getInstance().getScheduler().runTaskSync(() -> {
+        CloudNet.getExecutor().submit(() -> {
             if (packet.getData().contains("customServer")) {
-                CloudNet.getInstance().startGameServer(CloudNet.getInstance()
-                                                               .getServerGroups()
-                                                               .get(packet.getData().getString("group")),
-                                                       packet.getData().getObject("serverConfig", ServerConfig.TYPE),
-                                                       packet.getData().getInt("memory"),
-                                                       packet.getData().getBoolean("priorityStop"),
-                                                       packet.getData().getString("url"),
-                                                       packet.getData().getObject("processParameters", STRING_ARRAY_TYPE),
-                                                       packet.getData().getBoolean("onlinemode"),
-                                                       packet.getData().getObject("plugins", SERVER_INSTALLABLE_PLUGIN_COLLECTION_TYPE),
-                                                       packet.getData().getString("customServer"),
-                                                       packet.getData().getObject("properties", Properties.class));
+                startCustomServer(packet);
             } else {
                 if (packet.getData().contains("template")) {
                     if (packet.getData().contains("wrapper")) {
@@ -94,21 +83,23 @@ public class PacketInStartServer implements PacketInHandler {
                                                                packet.getData().getString("customServer"),
                                                                packet.getData().getObject("properties", Properties.class));
                     } else {
-                        CloudNet.getInstance().startGameServer(CloudNet.getInstance()
-                                                                       .getServerGroups().get(packet.getData().getString("group")),
-                                                               packet.getData().getObject("serverConfig", ServerConfig.TYPE),
-                                                               packet.getData().getInt("memory"),
-                                                               packet.getData().getBoolean("priorityStop"),
-                                                               packet.getData().getString("url"),
-                                                               packet.getData().getObject("processParameters", STRING_ARRAY_TYPE),
-                                                               packet.getData().getBoolean("onlinemode"),
-                                                               packet.getData()
-                                                                     .getObject("plugins", SERVER_INSTALLABLE_PLUGIN_COLLECTION_TYPE),
-                                                               packet.getData().getString("customServer"),
-                                                               packet.getData().getObject("properties", Properties.class));
+                        startCustomServer(packet);
                     }
                 }
             }
         });
+    }
+
+    private static void startCustomServer(final Packet packet) {
+        CloudNet.getInstance().startGameServer(CloudNet.getInstance().getServerGroups().get(packet.getData().getString("group")),
+                                               packet.getData().getObject("serverConfig", ServerConfig.TYPE),
+                                               packet.getData().getInt("memory"),
+                                               packet.getData().getBoolean("priorityStop"),
+                                               packet.getData().getString("url"),
+                                               packet.getData().getObject("processParameters", STRING_ARRAY_TYPE),
+                                               packet.getData().getBoolean("onlinemode"),
+                                               packet.getData().getObject("plugins", SERVER_INSTALLABLE_PLUGIN_COLLECTION_TYPE),
+                                               packet.getData().getString("customServer"),
+                                               packet.getData().getObject("properties", Properties.class));
     }
 }

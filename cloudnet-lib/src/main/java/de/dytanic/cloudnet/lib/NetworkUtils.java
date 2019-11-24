@@ -30,6 +30,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -47,7 +49,13 @@ public final class NetworkUtils {
     private static final boolean EPOLL = Epoll.isAvailable();
     private static final char[] ALPHABET = new char[] {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
+    private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
     private NetworkUtils() {
+    }
+
+    public static ScheduledExecutorService getExecutor() {
+        return executor;
     }
 
     public static String getHostName() {

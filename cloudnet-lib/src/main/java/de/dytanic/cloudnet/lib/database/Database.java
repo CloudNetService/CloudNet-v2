@@ -3,7 +3,7 @@ package de.dytanic.cloudnet.lib.database;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.util.Collection;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.Future;
 
 /**
  * Created by Tareko on 01.07.2017.
@@ -42,5 +42,5 @@ public interface Database {
 
     Database deleteAsync(String name);
 
-    FutureTask<Document> getDocumentAsync(String name);
+    Future<Document> getDocumentAsync(String name);
 }

@@ -12,7 +12,7 @@ import de.dytanic.cloudnetwrapper.server.GameServer;
 public final class StopTimeHandler implements IWrapperHandler {
 
     @Override
-    public void run(CloudNetWrapper wrapper) {
+    public void accept(CloudNetWrapper wrapper) {
         for (GameServer gameServer : CloudNetWrapper.getInstance().getServers().values()) {
             try {
                 if (!gameServer.isAlive()) {
@@ -49,8 +49,4 @@ public final class StopTimeHandler implements IWrapperHandler {
 
     }
 
-    @Override
-    public int getTicks() {
-        return 10;
-    }
 }

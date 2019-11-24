@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.database;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.io.File;
@@ -16,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.Future;
 
 /**
  * Implementation of {@link Database}.
@@ -162,23 +161,19 @@ public class DatabaseImpl implements Database {
 
     @Override
     public Database insertAsync(Document... documents) {
-        TaskScheduler.runtimeScheduler().schedule(() -> {
-            insert(documents);
-        });
+        NetworkUtils.getExecutor().submit(() -> insert(documents));
         return this;
     }
 
     @Override
     public Database deleteAsync(String name) {
-        TaskScheduler.runtimeScheduler().schedule(() -> {
-            delete(name);
-        });
+        NetworkUtils.getExecutor().submit(() -> delete(name));
         return this;
     }
 
     @Override
-    public FutureTask<Document> getDocumentAsync(String name) {
-        return new FutureTask<>(() -> getDocument(name));
+    public Future<Document> getDocumentAsync(String name) {
+        return NetworkUtils.getExecutor().submit(() -> getDocument(name));
     }
 
     /**

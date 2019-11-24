@@ -4,9 +4,9 @@
 
 package de.dytanic.cloudnet.lib.network;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.file.FileDeploy;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -60,21 +60,13 @@ public class NetDispatcher extends SimpleChannelInboundHandler {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
         if (o instanceof Packet) {
-            TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-                @Override
-                public void run() {
-                    networkConnection.getPacketManager().dispatchPacket(((Packet) o), networkConnection);
-                }
+            NetworkUtils.getExecutor().submit(() -> {
+                networkConnection.getPacketManager().dispatchPacket(((Packet) o), networkConnection);
             });
         } else {
             if (o instanceof FileDeploy) {
                 FileDeploy deploy = ((FileDeploy) o);
-                TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        deploy.toWrite();
-                    }
-                });
+                NetworkUtils.getExecutor().submit(deploy::toWrite);
             }
         }
     }

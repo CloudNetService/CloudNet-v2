@@ -15,6 +15,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 24.07.2017.
@@ -102,7 +103,7 @@ public final class CloudBootstrap {
         CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args));
 
         if (optionSet.has("systemTimer")) {
-            cloudNetCore.getScheduler().runTaskRepeatAsync(SystemTimer::run, 0, 50);
+            CloudNet.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);
         }
 
         if (!cloudNetCore.bootstrap()) {

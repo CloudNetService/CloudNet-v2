@@ -2,7 +2,7 @@ package de.dytanic.cloudnet.event;
 
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.interfaces.IEventManager;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import net.jodah.typetools.TypeResolver;
 
 import java.util.Collection;
@@ -83,12 +83,8 @@ public final class EventManager implements IEventManager {
             return true;
         }
 
-        if (!(event instanceof AsyncEvent)) {
-            for (EventEntity eventEntity : this.registeredListeners.get(event.getClass())) {
-                eventEntity.getEventListener().onCall(event);
-            }
-        } else {
-            TaskScheduler.runtimeScheduler().schedule(() -> {
+        if (event instanceof AsyncEvent) {
+            NetworkUtils.getExecutor().submit(() -> {
                 AsyncEvent asyncEvent = ((AsyncEvent) event);
                 asyncEvent.getPoster().onPreCall(asyncEvent);
                 for (EventEntity eventEntity : registeredListeners.get(event.getClass())) {
@@ -96,6 +92,10 @@ public final class EventManager implements IEventManager {
                 }
                 asyncEvent.getPoster().onPostCall(asyncEvent);
             });
+        } else {
+            for (EventEntity eventEntity : this.registeredListeners.get(event.getClass())) {
+                eventEntity.getEventListener().onCall(event);
+            }
         }
         return false;
     }
