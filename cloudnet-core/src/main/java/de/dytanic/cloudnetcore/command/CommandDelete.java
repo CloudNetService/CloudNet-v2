@@ -20,7 +20,7 @@ public final class CommandDelete extends Command {
     public CommandDelete() {
         super("delete", "cloudnet.command.delete");
 
-        description = "Deletes a servergroup, proxygroup, wrapper or templates of a servergroup";
+        description = "Deletes a server group, proxy group, wrapper or templates of a server group";
 
     }
 

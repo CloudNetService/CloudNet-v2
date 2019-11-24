@@ -18,7 +18,7 @@ public final class CommandInstallPlugin extends Command {
     public CommandInstallPlugin() {
         super("installplugin", "cloudnet.command.installplugin");
 
-        description = "Installs plugin for one server";
+        description = "Installs plugin onto a server";
 
     }
 

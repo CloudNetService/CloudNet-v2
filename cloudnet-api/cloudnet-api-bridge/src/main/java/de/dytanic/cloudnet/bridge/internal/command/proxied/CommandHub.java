@@ -35,9 +35,8 @@ public final class CommandHub extends Command {
             return;
         }
 
-        ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(((ProxiedPlayer) commandSender).getServer()
-                                                                                                               .getInfo()
-                                                                                                               .getName());
+        ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(
+            ((ProxiedPlayer) commandSender).getServer().getInfo().getName());
 
         if (serverInfo != null) {
             if (CloudProxy.getInstance()
@@ -46,11 +45,9 @@ public final class CommandHub extends Command {
                           .getDynamicFallback()
                           .getNamedFallbacks()
                           .contains(serverInfo.getServiceId().getGroup())) {
-                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                                                                 CloudAPI.getInstance()
-                                                                                         .getCloudNetwork()
-                                                                                         .getMessages()
-                                                                                         .getString("hub-already")));
+                commandSender.sendMessage(
+                    ChatColor.translateAlternateColorCodes(
+                        '&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("hub-already")));
                 return;
             }
         }

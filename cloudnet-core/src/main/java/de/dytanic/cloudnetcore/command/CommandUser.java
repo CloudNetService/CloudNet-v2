@@ -15,7 +15,7 @@ public class CommandUser extends Command {
     public CommandUser() {
         super("user", "cloudnet.command.user");
 
-        description = "Manages all cloudnet internal users";
+        description = "Manages CloudNet internal users";
     }
 
     @Override

@@ -19,12 +19,12 @@ import java.util.HashSet;
  */
 public final class CommandCopy extends Command {
 
-    private static final String[] EMTPY_STRING_ARRAY = new String[0];
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     public CommandCopy() {
         super("copy", "cloudnet.command.copy");
 
-        description = "Copies a minecraft server to a template which is loaded local";
+        description = "Copies a game server to the template which it loaded from";
 
     }
 
@@ -55,7 +55,7 @@ public final class CommandCopy extends Command {
                             template = new Template(args[1],
                                                     minecraftServer.getProcessMeta().getTemplate().getBackend(),
                                                     minecraftServer.getProcessMeta().getTemplate().getUrl(),
-                                                    EMTPY_STRING_ARRAY,
+                                                    EMPTY_STRING_ARRAY,
                                                     new HashSet<>());
                             serverGroup.getTemplates().add(template);
                             CloudNet.getInstance().getConfig().createGroup(serverGroup);

@@ -20,7 +20,7 @@ public final class CommandStatistic extends Command {
     public CommandStatistic() {
         super("statistic", "cloudnet.command.statistic");
 
-        description = "Shows a list of all statistics of cloudnet!";
+        description = "Shows a list of all recorded statistics of this CloudNet instance!";
 
     }
 
