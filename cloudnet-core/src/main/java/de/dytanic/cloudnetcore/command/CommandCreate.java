@@ -10,8 +10,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
-import de.dytanic.cloudnet.lib.user.BasicUser;
-import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.setup.SetupProxyGroup;
@@ -73,9 +71,6 @@ public final class CommandCreate extends Command {
                     startServers(sender, args[1], Integer.parseInt(args[2]));
                     break;
                 }
-                if (args[0].equalsIgnoreCase("user")) {
-                    createUser(sender, args);
-                }
                 break;
             case 4:
                 if ((args[0].equalsIgnoreCase("proxy") || args[0].equalsIgnoreCase("-p")) && NetworkUtils.checkIsNumber(args[2])) {
@@ -120,7 +115,6 @@ public final class CommandCreate extends Command {
                                    "create SERVER <serverGroup> <count> | Creates a game server of a server group. <count> is not mandatory",
                                    "create SERVER <serverGroup> <count> <wrapper> | Creates a game server of a server group. <count> is not mandatory",
                                    "create CLOUDSERVER <name> <memory> <priorityStop>",
-                                   "create USER <name> <password> | Creates a new user with specified name and password",
                                    "create PROXYGROUP <name> | Creates a completely new proxy group for BungeeCord with its own configurations, etc.",
                                    "create SERVERGROUP <name> | Creates a completely new server group for Minecraft servers with its own configurations, etc.",
                                    "create DISPATCHCOMMAND <main-command> <command> | Creates a simple command alias",
@@ -164,17 +158,6 @@ public final class CommandCreate extends Command {
             sender.sendMessage("Trying to startup a game server...");
         } else {
             sender.sendMessage("The server group doesn't exists");
-        }
-    }
-
-    private static void createUser(final CommandSender sender, final String[] args) {
-        if (CloudNet.getInstance().getUser(args[1]) == null) {
-            User user = new BasicUser(args[1], args[2], Collections.emptyList());
-            CloudNet.getInstance().getUsers().add(user);
-            CloudNet.getInstance().getConfig().save(CloudNet.getInstance().getUsers());
-            sender.sendMessage("The user was created!");
-        } else {
-            sender.sendMessage("The user already exists!");
         }
     }
 
