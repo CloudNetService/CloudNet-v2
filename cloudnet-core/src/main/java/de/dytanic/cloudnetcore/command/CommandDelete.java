@@ -56,6 +56,13 @@ public final class CommandDelete extends Command {
                     }
                 } else if (args[0].equalsIgnoreCase("wrapper")) {
                     if (CloudNet.getInstance().getWrappers().containsKey(args[1])) {
+                        final Wrapper localWrapper = CloudNet.getInstance()
+                                                             .getLocalCloudWrapper()
+                                                             .getWrapper();
+                        if (localWrapper != null && localWrapper.getServerId().equals(args[1])) {
+                            sender.sendMessage("You can't delete the local wrapper!");
+                            return;
+                        }
                         Wrapper wrapper = CloudNet.getInstance().getWrappers().get(args[1]);
                         CloudNet.getInstance()
                                 .getConfig()
