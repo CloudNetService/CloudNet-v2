@@ -109,11 +109,18 @@ public class DatabaseManager {
 
                            System.out.printf("Upgrading %s...%n", dbName);
 
-                           final Map<String, DatabaseDocument> documents = oldDb.loadDocuments().getDocuments();
-                           System.out.println(String.format("Converting %d documents", documents.size()));
-                           documents.forEach((name, document) -> newDb.insert(document));
-                           nitrite.commit();
-                           System.out.println(String.format("Upgraded %s.", dbName));
+                           final String[] files = oldDb.getBackendDir().list();
+                           if (files != null) {
+                               System.out.println(String.format("Converting %d documents", files.length));
+                               for (final String file : files) {
+                                   final DatabaseDocument document = oldDb.getDocument(file);
+                                   newDb.insert(document);
+                                   // Clear every time to prevent OOM
+                                   oldDb.getDocuments().clear();
+                               }
+                               nitrite.commit();
+                               System.out.println(String.format("Upgraded %s.", dbName));
+                           }
                            try {
                                Files.move(dir, upgradedDir.resolve(dbName));
                            } catch (IOException e) {
