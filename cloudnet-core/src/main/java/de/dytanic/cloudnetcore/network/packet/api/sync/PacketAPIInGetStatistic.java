@@ -9,7 +9,7 @@ public final class PacketAPIInGetStatistic implements PacketAPIIO {
 
     public void handleInput(Packet packet, PacketSender packetSender) {
         packetSender.sendPacket(getResult(
-            packet, StatisticManager.getInstance().getStatistics()));
+            packet, StatisticManager.getInstance().getStatistics().toDocument()));
     }
 
     public Packet getResult(Packet packet, Document value) {

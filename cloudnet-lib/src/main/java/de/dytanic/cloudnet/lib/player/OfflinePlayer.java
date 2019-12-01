@@ -10,12 +10,13 @@ import de.dytanic.cloudnet.lib.player.permission.Permissible;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.UUID;
 
-public class OfflinePlayer implements Nameable, Permissible {
+public class OfflinePlayer implements Nameable, Permissible, Serializable {
 
-    public static final Type TYPE = new TypeToken<OfflinePlayer>() {}.getType();
+    public static final Type TYPE = TypeToken.get(OfflinePlayer.class).getType();
 
     protected UUID uniqueId;
 

@@ -14,7 +14,6 @@ import de.dytanic.cloudnet.bridge.internal.serverselectors.listeners.MobListener
 import de.dytanic.cloudnet.bridge.internal.util.ItemStackBuilder;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.Value;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
@@ -223,37 +222,33 @@ public final class MobSelector {
                 mob.getServerPosition().clear();
                 Collection<ServerInfo> serverInfos = getServersOfGroup(serverInfo.getServiceId().getGroup());
 
-                final Value<Integer> index = new Value<>(0);
-
+                int index = 0;
                 for (ServerInfo server : serverInfos) {
                     if (server.isOnline() && server.getServerState().equals(ServerState.LOBBY) &&
                         !server.getServerConfig().isHideServer() &&
                         !server.getServerConfig().getProperties().contains(NetworkUtils.DEV_PROPERTY)) {
-                        while (mobConfig.getDefaultItemInventory().containsKey((index.getValue() + 1))) {
-                            index.setValue(index.getValue() + 1);
+                        while (mobConfig.getDefaultItemInventory().containsKey(index + 1)) {
+                            ++index;
                         }
 
-                        if ((mobConfig.getInventorySize() - 1) <= index.getValue()) {
+                        if ((mobConfig.getInventorySize() - 1) <= index) {
                             break;
                         }
 
-                        final int value = index.getValue();
-                        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
-                                mob.getInventory().setItem(value, transform(mobConfig.getItemLayout(), server));
-                                mob.getServerPosition().put(value, server.getServiceId().getServerId());
-                            }
+                        final int value = index;
+                        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
+                            mob.getInventory().setItem(value, transform(mobConfig.getItemLayout(), server));
+                            mob.getServerPosition().put(value, server.getServiceId().getServerId());
                         });
-                        index.setValue(index.getValue() + 1);
+                        ++index;
                     }
                 }
 
-                while (index.getValue() < (mob.getInventory().getSize())) {
-                    if (!mobConfig.getDefaultItemInventory().containsKey(index.getValue() + 1)) {
-                        mob.getInventory().setItem(index.getValue(), new ItemStack(Material.AIR));
+                while (index < mob.getInventory().getSize()) {
+                    if (!mobConfig.getDefaultItemInventory().containsKey(index + 1)) {
+                        mob.getInventory().setItem(index, new ItemStack(Material.AIR));
                     }
-                    index.setValue(index.getValue() + 1);
+                    ++index;
                 }
             }
         }

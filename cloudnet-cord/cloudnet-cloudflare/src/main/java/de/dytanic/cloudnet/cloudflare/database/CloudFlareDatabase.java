@@ -11,7 +11,6 @@ import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -41,19 +40,19 @@ public class CloudFlareDatabase extends DatabaseUsable {
     }
 
     public Collection<String> getAll() {
-        Collection<String> collection = database.getDocument(CLOUDFLARE_CACHE).keys();
+        Collection<String> collection = database.getDocument(CLOUDFLARE_CACHE).keySet();
         collection.remove(Database.UNIQUE_NAME_KEY);
         return collection;
     }
 
     public void putPostResponse(MultiValue<PostResponse, String> postResponse) {
-        Document document = database.getDocument(CLOUDFLARE_CACHE);
+        DatabaseDocument document = database.getDocument(CLOUDFLARE_CACHE);
         document.append(postResponse.getFirst().getId(), postResponse);
         database.insert(document);
     }
 
     public boolean contains(CloudFlareConfig cloudFlareConfig, String wrapper) {
-        Document document = database.getDocument(CLOUDFLARE_CACHE);
+        DatabaseDocument document = database.getDocument(CLOUDFLARE_CACHE);
 
         /*
         Map<String, MultiValue<PostResponse, String>> responses = document.getObject("requests", new TypeToken<Map<String, MultiValue<PostResponse, String>>>() {
@@ -70,15 +69,12 @@ public class CloudFlareDatabase extends DatabaseUsable {
         }) != null;
         */
 
-        for (String key : document.keys()) {
+        for (String key : document.keySet()) {
             if (!key.equalsIgnoreCase(Database.UNIQUE_NAME_KEY)) {
-                MultiValue<PostResponse, String> value = document.getObject(key,
-                                                                            new TypeToken<MultiValue<PostResponse, String>>() {}.getType());
+                MultiValue<PostResponse, String> value = document.getObject(key, MAP_STRING_POST_RESPONSE_TYPE);
 
-                if (value != null && value.getSecond().equalsIgnoreCase(wrapper) && value.getFirst()
-                                                                                         .getCloudFlareConfig()
-                                                                                         .getDomainName()
-                                                                                         .equalsIgnoreCase(cloudFlareConfig.getDomainName())) {
+                if (value != null && value.getSecond().equalsIgnoreCase(wrapper) &&
+                    value.getFirst().getCloudFlareConfig().getDomainName().equalsIgnoreCase(cloudFlareConfig.getDomainName())) {
                     return true;
                 }
             }
@@ -93,7 +89,7 @@ public class CloudFlareDatabase extends DatabaseUsable {
     }
 
     public PostResponse getResponse(String wrapper) {
-        return database.getDocument(CLOUDFLARE_CACHE).getObject(wrapper, new TypeToken<PostResponse>() {}.getType());
+        return database.getDocument(CLOUDFLARE_CACHE).getObject(wrapper, PostResponse.class);
     }
 
     public void add(PostResponse postResponse) {
@@ -101,7 +97,7 @@ public class CloudFlareDatabase extends DatabaseUsable {
             return;
         }
 
-        Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
+        DatabaseDocument document = database.getDocument(CLOUDFLARE_CACHE_REQ);
         if (document.contains("requests")) {
             Map<String, PostResponse> responses = document.getObject("requests", MAP_STRING_POST_RESPONSE_TYPE);
             responses.put(postResponse.getId(), postResponse);
@@ -116,7 +112,7 @@ public class CloudFlareDatabase extends DatabaseUsable {
     }
 
     public void remove(PostResponse postResponse) {
-        Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
+        DatabaseDocument document = database.getDocument(CLOUDFLARE_CACHE_REQ);
         if (document.contains("requests")) {
             Map<String, PostResponse> responses = document.getObject("requests", MAP_STRING_POST_RESPONSE_TYPE);
             responses.remove(postResponse.getId());
@@ -129,15 +125,13 @@ public class CloudFlareDatabase extends DatabaseUsable {
     }
 
     public Map<String, MultiValue<PostResponse, String>> getAndRemove() {
-        Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
+        DatabaseDocument document = database.getDocument(CLOUDFLARE_CACHE_REQ);
         if (document.contains("requests")) {
-            Map<String, MultiValue<PostResponse, String>> responses = document.getObject("requests",
-                                                                                         new TypeToken<Map<String, MultiValue<PostResponse, String>>>() {}
-                                                                                             .getType());
-            document.append("requests", Collections.EMPTY_MAP);
+            Map<String, MultiValue<PostResponse, String>> responses = document.getObject("requests", MAP_STRING_POST_RESPONSE_TYPE);
+            document.append("requests", Collections.emptyMap());
             database.insert(document);
             return responses;
         }
-        return Collections.EMPTY_MAP;
+        return Collections.emptyMap();
     }
 }

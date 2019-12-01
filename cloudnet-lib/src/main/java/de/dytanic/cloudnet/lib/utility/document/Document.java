@@ -291,9 +291,8 @@ public class Document {
         if (!dataCatcher.has(key)) {
             return null;
         }
-        JsonElement element = dataCatcher.get(key);
 
-        return GSON.fromJson(element, class_);
+        return GSON.fromJson(dataCatcher.get(key), class_);
     }
 
     public Document clear() {
@@ -325,8 +324,8 @@ public class Document {
     }
 
     public boolean saveAsConfig(Path path) {
-        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
-            GSON.toJson(dataCatcher, outputStreamWriter);
+        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            GSON.toJson(dataCatcher, writer);
             return true;
         } catch (IOException e) {
             e.printStackTrace();

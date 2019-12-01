@@ -8,56 +8,53 @@ import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.database.packet.out.*;
 import de.dytanic.cloudnet.lib.database.Database;
+import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
-import java.util.Collection;
+import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.FutureTask;
 
 /**
  * Created by Tareko on 24.08.2017.
  */
 public class DatabaseImpl implements Database {
 
-    private Map<String, Document> docs = new ConcurrentHashMap<>();
+    private static final Type MAP_STRING_DOCUMENT_TYPE = TypeToken.getParameterized(Map.class, String.class, Document.class).getType();
+    private Map<String, DatabaseDocument> documents = new ConcurrentHashMap<>();
     private String name;
 
-    public DatabaseImpl(String name) {
+    DatabaseImpl(String name) {
         this.name = name;
     }
 
     @Override
+    public Map<String, DatabaseDocument> getDocuments() {
+        return documents;
+    }
+
+    @Override
     public Database loadDocuments() {
-        Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketDBOutGetDocument(name),
-                                                                                                   CloudAPI.getInstance()
-                                                                                                           .getNetworkConnection());
-        this.docs = result.getResult().getObject("docs", new TypeToken<Map<String, Document>>() {}.getType());
+        Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager()
+                                .sendQuery(new PacketDBOutGetDocument(name), CloudAPI.getInstance().getNetworkConnection());
+        this.documents = result.getResult().getObject("docs", MAP_STRING_DOCUMENT_TYPE);
         return this;
     }
 
     @Override
-    public Collection<Document> getDocs() {
-        return docs.values();
-    }
+    public DatabaseDocument getDocument(String name) {
+        Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager()
+                                .sendQuery(new PacketDBOutGetDocument(name, this.name), CloudAPI.getInstance().getNetworkConnection());
+        DatabaseDocument document = new DatabaseDocument(result.getResult().getDocument("result"));
 
-    @Override
-    public Document getDocument(String name) {
-        Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketDBOutGetDocument(name,
-                                                                                                                              this.name),
-                                                                                                   CloudAPI.getInstance()
-                                                                                                           .getNetworkConnection());
-        Document document = result.getResult().getDocument("result");
-
-        this.docs.put(document.getString(Database.UNIQUE_NAME_KEY), document);
+        this.documents.put(document.getString(Database.UNIQUE_NAME_KEY), document);
 
         return document;
     }
 
     @Override
-    public Database insert(Document... documents) {
+    public Database insert(DatabaseDocument... documents) {
         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketDBOutInsertDocument(name, documents));
         return this;
     }
@@ -69,49 +66,37 @@ public class DatabaseImpl implements Database {
     }
 
     @Override
-    public Database delete(Document document) {
+    public Database delete(DatabaseDocument document) {
         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketDBOutDeleteDocument(document, this.name));
         return this;
     }
 
     @Override
-    public Document load(String name) {
+    public DatabaseDocument load(String name) {
         return getDocument(name);
     }
 
     @Override
-    public boolean contains(Document document) {
+    public boolean contains(DatabaseDocument document) {
         return contains(document.getString(Database.UNIQUE_NAME_KEY));
     }
 
     @Override
     public boolean contains(String name) {
-        Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketDBOutExistsDocument(name,
-                                                                                                                                 this.name),
-                                                                                                   CloudAPI.getInstance()
-                                                                                                           .getNetworkConnection());
+        Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager()
+                                .sendQuery(new PacketDBOutExistsDocument(name, this.name), CloudAPI.getInstance().getNetworkConnection());
         return result.getResult().getBoolean("exists");
     }
 
     @Override
     public int size() {
-        Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketDBOutGetSize(name),
-                                                                                                   CloudAPI.getInstance()
-                                                                                                           .getNetworkConnection());
+        Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager()
+                                .sendQuery(new PacketDBOutGetSize(name), CloudAPI.getInstance().getNetworkConnection());
         return result.getResult().getInt("size");
     }
 
     @Override
-    public boolean containsDoc(String name) {
-        Result result = CloudAPI.getInstance().getNetworkConnection().getPacketManager().sendQuery(new PacketDBOutExistsDocument(name,
-                                                                                                                                 this.name),
-                                                                                                   CloudAPI.getInstance()
-                                                                                                           .getNetworkConnection());
-        return result.getResult().getBoolean("exists");
-    }
-
-    @Override
-    public Database insertAsync(Document... documents) {
+    public Database insertAsync(DatabaseDocument... documents) {
         return insert(documents);
     }
 
@@ -120,14 +105,13 @@ public class DatabaseImpl implements Database {
         return delete(name);
     }
 
-    @Deprecated
     @Override
-    public FutureTask<Document> getDocumentAsync(String name) {
-        return new FutureTask<>(new Callable<Document>() {
-            @Override
-            public Document call() throws Exception {
-                return getDocument(name);
-            }
-        });
+    public void save() {
+
+    }
+
+    @Override
+    public void clear() {
+        this.documents.clear();
     }
 }

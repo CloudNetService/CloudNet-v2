@@ -4,7 +4,7 @@
 
 package de.dytanic.cloudnetcore.network.packet.dbsync;
 
-import de.dytanic.cloudnet.database.DatabaseImpl;
+import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
@@ -21,15 +21,15 @@ public class PacketDBInGetDocument implements PacketAPIIO {
 
     public void handleInput(Packet packet, PacketSender packetSender) {
         if (!packet.getData().contains("name")) {
-            Map<String, Document> docs = ((DatabaseImpl) CloudNet.getInstance()
-                                                                 .getDatabaseManager()
-                                                                 .getDatabase(packet.getData().getString("db"))
-                                                                 .loadDocuments()).getDocuments();
+            Map<String, DatabaseDocument> docs = CloudNet.getInstance()
+                                                         .getDatabaseManager()
+                                                         .getDatabase(packet.getData().getString("db"))
+                                                         .loadDocuments().getDocuments();
             packetSender.sendPacket(getResult(packet, new Document("docs", docs)));
         } else {
             String name = packet.getData().getString("name");
             String db = packet.getData().getString("db");
-            Document document = CloudNet.getInstance().getDatabaseManager().getDatabase(db).getDocument(name);
+            DatabaseDocument document = CloudNet.getInstance().getDatabaseManager().getDatabase(db).getDocument(name);
             packetSender.sendPacket(getResult(packet, new Document("result", document)));
         }
     }

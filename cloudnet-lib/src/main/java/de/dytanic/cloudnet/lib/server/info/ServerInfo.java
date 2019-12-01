@@ -13,7 +13,7 @@ import java.util.List;
  * Created by Tareko on 24.05.2017.
  */
 public class ServerInfo {
-    public static final Type TYPE = new TypeToken<ServerInfo>() {}.getType();
+    public static final Type TYPE = TypeToken.get(ServerInfo.class).getType();
     private ServiceId serviceId;
     private String host;
     private int port;

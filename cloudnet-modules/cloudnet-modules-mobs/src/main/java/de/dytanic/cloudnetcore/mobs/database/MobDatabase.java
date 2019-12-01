@@ -21,22 +21,30 @@ public class MobDatabase extends DatabaseUsable {
 
     public MobDatabase(Database database) {
         super(database);
-        Document document = database.getDocument("server_selector_mobs");
+        DatabaseDocument document = database.getDocument("server_selector_mobs");
         if (document == null) {
-            document = new DatabaseDocument("server_selector_mobs").append("mobs", new Document());
+            document = new DatabaseDocument("server_selector_mobs")
+                .append("mobs", new Document());
         }
         database.insert(document);
     }
 
     public void append(ServerMob serverMob) {
-        Document document = database.getDocument("server_selector_mobs").getDocument("mobs").append(serverMob.getUniqueId().toString(),
-                                                                                                    serverMob);
-        database.insert(document);
+        final DatabaseDocument mobDocument = database.getDocument("server_selector_mobs");
+        Document document = mobDocument
+            .getDocument("mobs")
+            .append(serverMob.getUniqueId().toString(), serverMob);
+        mobDocument.append("server_selector_mobs", document);
+        database.insert(mobDocument);
     }
 
     public void remove(ServerMob serverMob) {
-        Document document = database.getDocument("server_selector_mobs").getDocument("mobs").remove(serverMob.getUniqueId().toString());
-        database.insert(document);
+        final DatabaseDocument mobDocument = database.getDocument("server_selector_mobs");
+        Document document = mobDocument
+            .getDocument("mobs")
+            .remove(serverMob.getUniqueId().toString());
+        mobDocument.append("server_selector_mobs", document);
+        database.insert(mobDocument);
     }
 
     public Map<UUID, ServerMob> loadAll() {
@@ -56,7 +64,7 @@ public class MobDatabase extends DatabaseUsable {
         }
 
         if (injectable) {
-            Document document = database.getDocument("server_selector_mobs");
+            DatabaseDocument document = database.getDocument("server_selector_mobs");
             document.append("mobs", mobMap);
             database.insert(document);
         }

@@ -12,6 +12,7 @@ import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
+import de.dytanic.cloudnetcore.wrapper.local.LocalCloudWrapper;
 
 import java.util.stream.Collectors;
 
@@ -56,20 +57,17 @@ public final class CommandDelete extends Command {
                     }
                 } else if (args[0].equalsIgnoreCase("wrapper")) {
                     if (CloudNet.getInstance().getWrappers().containsKey(args[1])) {
-                        final Wrapper localWrapper = CloudNet.getInstance()
-                                                             .getLocalCloudWrapper()
-                                                             .getWrapper();
-                        if (localWrapper != null && localWrapper.getServerId().equals(args[1])) {
+                        final Wrapper wrapper = CloudNet.getInstance().getWrappers().get(args[1]);
+                        final LocalCloudWrapper localWrapper = CloudNet.getInstance().getLocalCloudWrapper();
+                        if (localWrapper.getWrapper() == wrapper) {
                             sender.sendMessage("You can't delete the local wrapper!");
                             return;
                         }
-                        Wrapper wrapper = CloudNet.getInstance().getWrappers().get(args[1]);
                         CloudNet.getInstance()
                                 .getConfig()
                                 .getWrappers()
                                 .stream()
-                                .filter(wrapperMeta -> wrapperMeta.getId()
-                                                                  .equals(wrapper.getName()))
+                                .filter(wrapperMeta -> wrapperMeta.getId().equals(wrapper.getName()))
                                 .findFirst()
                                 .ifPresent(CloudNet.getInstance().getConfig()::deleteWrapper);
                         sender.sendMessage("The wrapper was successfully deleted");

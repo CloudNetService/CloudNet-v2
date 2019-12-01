@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.api.database.packet.out;
 
+import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -13,7 +14,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketDBOutInsertDocument extends Packet {
 
-    public PacketDBOutInsertDocument(String db, Document... documents) {
+    public PacketDBOutInsertDocument(String db, DatabaseDocument... documents) {
         super(PacketRC.DB + 2, new Document("insert", documents).append("db", db));
     }
 }

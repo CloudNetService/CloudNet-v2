@@ -20,7 +20,7 @@ public class PacketDBInExistsDocument implements PacketAPIIO {
         boolean exists = CloudNet.getInstance()
                                  .getDatabaseManager()
                                  .getDatabase(packet.getData().getString("db"))
-                                 .containsDoc(packet.getData().getString("name"));
+                                 .contains(packet.getData().getString("name"));
         packetSender.sendPacket(getResult(packet, new Document("exists", exists)));
     }
 
