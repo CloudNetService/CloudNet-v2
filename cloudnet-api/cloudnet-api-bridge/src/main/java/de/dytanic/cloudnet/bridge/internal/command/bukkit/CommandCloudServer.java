@@ -143,7 +143,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                                                     material.name(),
                                                     args[5].equalsIgnoreCase("true"),
                                                     MobSelector
-                                                               .toPosition(CloudAPI.getInstance().getGroup(), player.getLocation()),
+                                                        .toPosition(CloudAPI.getInstance().getGroup(), player.getLocation()),
                                                     "§8#§c%group% &bPlayers online §8|§7 %group_online% of %max_players%",
                                                     new Document());
                 CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(serverMob));
@@ -261,16 +261,13 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
         if (CloudAPI.getInstance().getServerGroupMap().containsKey(arg)) {
             for (Sign sign : SignSelector.getInstance().getSigns().values()) {
-                CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddSign(new Sign(sign.getTargetGroup(),
-                                                                                                       new Position(arg,
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getWorld(),
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getX(),
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getY(),
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getZ()))));
+                CloudAPI.getInstance().getNetworkConnection().sendPacket(
+                    new PacketOutAddSign(new Sign(sign.getTargetGroup(),
+                                                  new Position(arg,
+                                                               sign.getPosition().getWorld(),
+                                                               sign.getPosition().getX(),
+                                                               sign.getPosition().getY(),
+                                                               sign.getPosition().getZ()))));
             }
 
             commandSender.sendMessage(CloudAPI.getInstance()
@@ -409,7 +406,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args) {
         switch (args.length) {
             case 1: {
                 return ImmutableList.of("createSign",
@@ -423,36 +420,62 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                                         "setDisplay",
                                         "setItem",
                                         "editMobLine",
-                                        "debug");
+                                        "debug")
+                                    .stream()
+                                    .filter(s -> s.startsWith(args[args.length - 1]))
+                                    .sorted()
+                                    .collect(Collectors.toList());
             }
             case 2: {
                 if (args[0].equalsIgnoreCase("createsign") || args[0].equalsIgnoreCase("removesigns") || args[0].equalsIgnoreCase("copyto")) {
-                    return ImmutableList.copyOf(CloudAPI.getInstance().getServerGroupMap().keySet());
+                    return CloudAPI.getInstance().getServerGroupMap().keySet()
+                                   .stream()
+                                   .filter(s -> s.startsWith(args[args.length - 1]))
+                                   .sorted()
+                                   .collect(Collectors.toList());
                 } else if (args[0].equalsIgnoreCase("removeMob") || args[0].equalsIgnoreCase("setDisplay") || args[0].equalsIgnoreCase(
                     "setItem") || args[0].equalsIgnoreCase("editMobLine")) {
-                    return ImmutableList.copyOf(MobSelector.getInstance()
-                                                           .getMobs()
-                                                           .values()
-                                                           .stream()
-                                                           .map(mob -> mob.getMob().getName())
-                                                           .collect(Collectors.toList()));
+                    return MobSelector.getInstance()
+                                      .getMobs()
+                                      .values()
+                                      .stream()
+                                      .map(mob -> mob.getMob().getName())
+                                      .filter(s -> s.startsWith(args[args.length - 1]))
+                                      .sorted()
+                                      .collect(Collectors.toList());
                 } else if (args[0].equalsIgnoreCase("createMob")) {
-                    return ImmutableList.copyOf(Arrays.stream(EntityType.values()).map(Enum::name).collect(Collectors.toList()));
+                    return Arrays.stream(EntityType.values())
+                                 .map(Enum::name)
+                                 .filter(s -> s.startsWith(args[args.length - 1]))
+                                 .sorted()
+                                 .collect(Collectors.toList());
                 }
             }
             case 4: {
                 if (args[0].equalsIgnoreCase("createMob")) {
-                    return ImmutableList.copyOf(CloudAPI.getInstance().getServerGroupMap().keySet());
+                    return CloudAPI.getInstance().getServerGroupMap().keySet()
+                                   .stream()
+                                   .filter(s -> s.startsWith(args[args.length - 1]))
+                                   .sorted()
+                                   .collect(Collectors.toList());
                 }
             }
             case 5: {
                 if (args[0].equalsIgnoreCase("createMob")) {
-                    return ImmutableList.copyOf(Arrays.stream(Material.values()).map(Enum::name).collect(Collectors.toList()));
+                    return Arrays.stream(Material.values())
+                                 .map(Enum::name)
+                                 .filter(s -> s.startsWith(args[args.length - 1]))
+                                 .sorted()
+                                 .collect(Collectors.toList());
                 }
             }
             case 6: {
                 if (args[0].equalsIgnoreCase("createMob")) {
-                    return ImmutableList.of("true", "false");
+                    return ImmutableList.of("true", "false")
+                                        .stream()
+                                        .filter(s -> s.startsWith(args[args.length - 1]))
+                                        .sorted()
+                                        .collect(Collectors.toList());
                 }
             }
         }
