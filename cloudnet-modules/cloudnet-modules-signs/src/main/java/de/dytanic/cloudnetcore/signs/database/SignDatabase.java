@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class SignDatabase extends DatabaseUsable {
 
         DatabaseDocument document = database.getDocument("signs");
         if (document == null) {
-            database.insert(new DatabaseDocument("signs").append("signs", new DatabaseDocument()));
+            database.insert(new DatabaseDocument("signs").append("signs", Collections.emptyMap()));
         }
     }
 
