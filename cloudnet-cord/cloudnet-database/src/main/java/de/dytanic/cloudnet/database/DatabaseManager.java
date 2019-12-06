@@ -107,11 +107,11 @@ public class DatabaseManager {
 
                            NitriteDatabase newDb = new NitriteDatabase(dbName, nitrite);
 
-                           System.out.printf("Upgrading %s...%n", dbName);
+                           System.out.printf("Upgrading %s...", dbName);
 
                            final String[] files = oldDb.getBackendDir().list();
                            if (files != null) {
-                               System.out.println(String.format("Converting %d documents", files.length));
+                               System.out.printf("Converting %d documents", files.length);
                                for (final String file : files) {
                                    final DatabaseDocument document = oldDb.getDocument(file);
                                    newDb.insert(document);
@@ -119,7 +119,7 @@ public class DatabaseManager {
                                    oldDb.getDocuments().clear();
                                }
                                nitrite.commit();
-                               System.out.println(String.format("Upgraded %s.", dbName));
+                               System.out.printf("Upgraded %s.", dbName);
                            }
                            try {
                                Files.move(dir, upgradedDir.resolve(dbName));
