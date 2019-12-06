@@ -35,7 +35,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
@@ -330,7 +330,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
             }
 
             FileUtility.copyFileToDirectory(new File("local/proxy_versions/" + version.getSecond()), new File(this.path));
-            new File(this.path + NetworkUtils.SLASH_STRING + version.getSecond()).renameTo(new File(this.path + "/BungeeCord.jar"));
+            Files.move(Paths.get(this.path, version.getSecond()), Paths.get(this.path, "BungeeCord.jar"));
         }
 
         if (!Files.exists(Paths.get(path + "/server-icon.png")) && Files.exists(Paths.get("local/server-icon.png"))) {
@@ -367,7 +367,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                        CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP(),
                                        proxyProcessMeta.getPort(),
                                        false,
-                                       new LinkedList<>(),
+                                       new HashMap<>(),
                                        proxyProcessMeta.getMemory(),
                                        0);
 
