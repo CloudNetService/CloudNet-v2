@@ -1,6 +1,5 @@
 package de.dytanic.cloudnetcore.handler;
 
-import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
@@ -19,13 +18,12 @@ public class CloudPlayerRemoverHandler implements ICloudHandler {
         Set<UUID> collection = CloudNet.getInstance().getProxys().values().stream()
                                        .map(ProxyServer::getProxyInfo)
                                        .map(ProxyInfo::getPlayers)
-                                       .flatMap(multiValues -> multiValues.stream().map(MultiValue::getFirst))
+                                       .flatMap(maps -> maps.keySet().stream())
                                        .collect(Collectors.toSet());
 
         CloudNet.getInstance().getNetworkManager().getOnlinePlayers()
                 .keySet()
-                .removeIf(uuid ->
-                              !collection.contains(uuid));
+                .removeIf(uuid -> !collection.contains(uuid));
     }
 
     @Override

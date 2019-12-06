@@ -74,9 +74,7 @@ public class NitriteDatabase implements Database {
             if (document.contains(Database.UNIQUE_NAME_KEY)) {
                 repository.update(document, true);
             } else {
-                // This path probably throws an exception due to a missing
-                // unique key.
-                repository.insert(document);
+                throw new IllegalArgumentException("Missing unique key in document.");
             }
         }
         this.save();

@@ -351,11 +351,11 @@ public final class NetworkManager {
         Collection<UUID> players = new ArrayList<>();
 
         for (ProxyServer proxy : CloudNet.getInstance().getProxys().values()) {
-            for (MultiValue<UUID, String> multiValue : proxy.getProxyInfo().getPlayers()) {
-                players.add(multiValue.getFirst());
-            }
+            proxy.getProxyInfo().getPlayers().forEach((key, value) -> players.add(key));
         }
 
+        // Remove all players that have left the cloud network but haven't been removed
+        // from the NetworkManager yet.
         for (CloudPlayer cloudPlayer : this.onlinePlayers.values()) {
             if (!players.contains(cloudPlayer.getUniqueId())) {
                 this.onlinePlayers.remove(cloudPlayer.getUniqueId());

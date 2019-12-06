@@ -44,9 +44,8 @@ public class CloudNetClient extends SimpleChannelInboundHandler {
             StatisticManager.getInstance().wrapperConnections();
             System.out.println("Wrapper [" + networkComponent.getServerId() + "] is connected.");
             CloudNet.getInstance().getEventManager().callEvent(new WrapperChannelInitEvent((Wrapper) networkComponent, channel));
-            CloudNet.getInstance().getDbHandlers().getWrapperSessionDatabase().addSession(new WrapperSession(UUID.randomUUID(),
-                                                                                                             ((Wrapper) networkComponent).getNetworkInfo(),
-                                                                                                             System.currentTimeMillis()));
+            CloudNet.getInstance().getDbHandlers().getWrapperSessionDatabase().addSession(
+                new WrapperSession(UUID.randomUUID(), ((Wrapper) networkComponent).getNetworkInfo(), System.currentTimeMillis()));
         }
 
         CloudNetwork cloudNetwork = CloudNet.getInstance().getNetworkManager().newCloudNetwork();

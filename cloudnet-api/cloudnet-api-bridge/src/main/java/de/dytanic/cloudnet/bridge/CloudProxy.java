@@ -10,7 +10,6 @@ import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.bridge.event.proxied.*;
 import de.dytanic.cloudnet.bridge.internal.chat.PlayerChatExecutor;
 import de.dytanic.cloudnet.lib.CloudNetwork;
-import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
@@ -21,10 +20,7 @@ import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.Title;
+import net.md_5.bungee.api.*;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -208,8 +204,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                                             0,
                                             true,
                                             ProxyServer.getInstance().getPlayers().stream()
-                                                       .map(player -> new MultiValue<>(player.getUniqueId(), player.getName()))
-                                                       .collect(Collectors.toList()),
+                                                       .collect(Collectors.toMap(ProxiedPlayer::getUniqueId, CommandSender::getName)),
                                             proxyProcessMeta.getMemory(),
                                             ProxyServer.getInstance().getOnlineCount());
         CloudAPI.getInstance().update(proxyInfo);
