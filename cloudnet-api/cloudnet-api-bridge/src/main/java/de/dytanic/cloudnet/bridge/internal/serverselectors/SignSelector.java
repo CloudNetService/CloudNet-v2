@@ -474,7 +474,7 @@ public final class SignSelector implements Listener {
                             }
                         }
                     } catch (Exception ex) {
-
+                        ex.printStackTrace();
                     }
                 }
 

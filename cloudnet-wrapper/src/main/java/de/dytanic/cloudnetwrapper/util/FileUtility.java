@@ -109,6 +109,7 @@ public final class FileUtility {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void rewriteFileUtils(File file, String host) throws Exception {
 
         Map<String, Object> configuration;
@@ -117,9 +118,9 @@ public final class FileUtility {
         }
 
         if (configuration != null) {
-            //noinspection unchecked
-            List<Map<String, Object>> listeners = (List<Map<String, Object>>) configuration.get("listeners");
-            listeners.get(0).put("host", host);
+            List listeners = (List) configuration.get("listeners");
+            final Map map = (Map) listeners.get(0);
+            map.put("host", host);
             try (Writer writer = new FileWriter(file)) {
                 YAML.dump(configuration, writer);
             }

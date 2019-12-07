@@ -23,7 +23,8 @@ import java.util.Collection;
 
 public class WebClient {
 
-    public static final String DEFAULT_URL = "https://cloudnetservice.eu/cloudnet/";
+    public static final Type STRING_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, String.class).getType();
+    private static final String DEFAULT_URL = "https://cloudnetservice.eu/cloudnet/";
 
     /**
      * Loads all official modules
@@ -31,7 +32,7 @@ public class WebClient {
      * @return a collection containing all official plugins.
      */
     public Collection<String> getInstallableModules() {
-        return handleRequest(DEFAULT_URL + "modules", new TypeToken<Collection<String>>() {}.getType());
+        return handleRequest(DEFAULT_URL + "modules", STRING_COLLECTION_TYPE);
     }
 
     /**
@@ -47,14 +48,14 @@ public class WebClient {
         try {
             URLConnection urlConnection = new java.net.URL(url).openConnection();
             urlConnection.setRequestProperty("User-Agent",
-                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                             NetworkUtils.USER_AGENT);
             urlConnection.setUseCaches(false);
             urlConnection.setConnectTimeout(1000);
             urlConnection.connect();
 
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(),
                                                                                           StandardCharsets.UTF_8))) {
-                JsonObject jsonObject = new JsonParser().parse(bufferedReader).getAsJsonObject();
+                JsonObject jsonObject = JsonParser.parseReader(bufferedReader).getAsJsonObject();
                 return NetworkUtils.GSON.fromJson(jsonObject.get("result"), type);
             }
         } catch (IOException e) {
@@ -69,7 +70,7 @@ public class WebClient {
      * @return a collection containing all official templates.
      */
     public Collection<String> getInstallableTemplates() {
-        return handleRequest(DEFAULT_URL + "templates", new TypeToken<Collection<String>>() {}.getType());
+        return handleRequest(DEFAULT_URL + "templates", STRING_COLLECTION_TYPE);
     }
 
     /**
@@ -94,14 +95,14 @@ public class WebClient {
         try {
             URLConnection urlConnection = new java.net.URL(url).openConnection();
             urlConnection.setRequestProperty("User-Agent",
-                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                             NetworkUtils.USER_AGENT);
             urlConnection.setUseCaches(false);
             urlConnection.setConnectTimeout(1000);
             urlConnection.connect();
 
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(),
                                                                                           StandardCharsets.UTF_8))) {
-                JsonObject jsonObject = new JsonParser().parse(bufferedReader).getAsJsonObject();
+                JsonObject jsonObject = JsonParser.parseReader(bufferedReader).getAsJsonObject();
                 return jsonObject.get(key).getAsString();
             }
         } catch (IOException e) {
@@ -122,7 +123,7 @@ public class WebClient {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(DEFAULT_URL + "update/" + (getEnvironment() ? "CloudNet-Master.jar" : "CloudNet-Wrapper.jar"))
                 .openConnection();
             httpURLConnection.setRequestProperty("User-Agent",
-                                                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                 NetworkUtils.USER_AGENT);
             httpURLConnection.setUseCaches(false);
             httpURLConnection.setConnectTimeout(1000);
             httpURLConnection.connect();
@@ -179,8 +180,7 @@ public class WebClient {
     public void updateLocalCloudWrapper(Path outputPath) {
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(DEFAULT_URL + "update/CloudNet-Wrapper.jar").openConnection();
-            httpURLConnection.setRequestProperty("User-Agent",
-                                                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            httpURLConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             httpURLConnection.setUseCaches(false);
             httpURLConnection.setConnectTimeout(1000);
             httpURLConnection.connect();

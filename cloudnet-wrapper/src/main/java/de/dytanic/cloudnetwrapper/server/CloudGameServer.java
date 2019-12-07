@@ -121,7 +121,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                         try {
                             URLConnection urlConnection = new java.net.URL(url.getUrl()).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
-                                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                             NetworkUtils.USER_AGENT);
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -146,7 +146,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                                                                                .append("/cloudnet/api/v1/download")
                                                                                .substring(0)).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
-                                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                             NetworkUtils.USER_AGENT);
 
                             SimpledUser simpledUser = CloudNetWrapper.getInstance().getSimpledUser();
                             urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
@@ -202,7 +202,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                 URLConnection connection = new URL("https://yivesmirror.com/files/cauldron/cauldron-1.7.10-2.1403.1.54.zip").openConnection();
                 connection.setUseCaches(false);
                 connection.setRequestProperty("User-Agent",
-                                              "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                              NetworkUtils.USER_AGENT);
                 connection.connect();
                 Files.copy(connection.getInputStream(), Paths.get(path + "/cauldron.zip"));
                 ((HttpURLConnection) connection).disconnect();
@@ -295,7 +295,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                     System.out.println("Downloading ViaVersion...");
                     URLConnection url = new URL("https://ci.viaversion.com/job/ViaVersion/177/artifact/jar/target/ViaVersion-1.2.0.jar").openConnection();
                     url.setRequestProperty("User-Agent",
-                                           "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                           NetworkUtils.USER_AGENT);
                     url.connect();
                     Files.copy(url.getInputStream(), Paths.get("local/viaversion.jar"));
                     ((HttpURLConnection) url).disconnect();
@@ -516,7 +516,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                 URLConnection connection = new URL("https://yivesmirror.com/grab/glowstone/Glowstone-latest.jar").openConnection();
                 connection.setUseCaches(false);
                 connection.setRequestProperty("User-Agent",
-                                              "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                              NetworkUtils.USER_AGENT);
                 connection.connect();
                 System.out.println("Downloading glowstone.jar...");
                 Files.copy(connection.getInputStream(), path);

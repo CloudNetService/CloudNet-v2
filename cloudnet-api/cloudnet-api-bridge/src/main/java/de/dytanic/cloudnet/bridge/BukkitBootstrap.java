@@ -56,7 +56,7 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         CloudAPI.getInstance().getNetworkHandlerProvider().clear();
 
         if (SignSelector.getInstance() != null && SignSelector.getInstance().getWorker() != null) {
-            SignSelector.getInstance().getWorker().stop();
+            SignSelector.getInstance().getWorker().interrupt();
         }
 
         if (MobSelector.getInstance() != null) {
@@ -109,7 +109,7 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
                 getServer().getScheduler().runTaskTimer(BukkitBootstrap.this, () -> {
                     try {
                         ServerListPingEvent serverListPingEvent = new ServerListPingEvent(
-                            new InetSocketAddress("127.0.0.1", 53345).getAddress(),
+                            new InetSocketAddress(0).getAddress(),
                             CloudServer.getInstance().getMotd(),
                             Bukkit.getOnlinePlayers().size(),
                             CloudServer.getInstance().getMaxPlayers());
@@ -146,7 +146,7 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
 
     private void loadPlayers() {
         for (Player all : getServer().getOnlinePlayers()) {
-            CloudServer.getInstance().getPlayerAndCache(all.getUniqueId());
+            CloudAPI.getInstance().getOnlinePlayer(all.getUniqueId());
         }
     }
 

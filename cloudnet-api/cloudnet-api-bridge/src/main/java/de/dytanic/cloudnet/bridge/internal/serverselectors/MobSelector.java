@@ -314,7 +314,6 @@ public final class MobSelector {
         }
     }
 
-    @Deprecated
     public void shutdown() {
         for (Mob mobImpl : this.mobs.values()) {
             if (mobImpl.getDisplayMessage() != null) {

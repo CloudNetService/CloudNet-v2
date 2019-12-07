@@ -1,5 +1,6 @@
 package de.dytanic.cloudnet.setup.spigot;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.setup.models.PaperMCProject;
 import de.dytanic.cloudnet.setup.models.PaperMCProjectVersion;
@@ -33,8 +34,7 @@ public final class PaperBuilder {
         try {
             System.out.println("Fetch Versions");
             URLConnection connection = new URL(API_PROJECT_URL).openConnection();
-            connection.setRequestProperty("User-Agent",
-                                          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            connection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             connection.connect();
             PaperMCProject paperMCProject = Document.GSON.fromJson(new InputStreamReader(connection.getInputStream()),
                                                                    PaperMCProject.class);
@@ -77,7 +77,7 @@ public final class PaperBuilder {
         System.out.println(String.format("Fetching build %s", version));
         URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version)).openConnection();
         connection.setRequestProperty("User-Agent",
-                                      "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                      NetworkUtils.USER_AGENT);
         connection.connect();
         PaperMCProjectVersion paperMCProjectVersion = Document.GSON.fromJson(new InputStreamReader(connection.getInputStream()),
                                                                              PaperMCProjectVersion.class);
@@ -86,7 +86,7 @@ public final class PaperBuilder {
                                            version,
                                            paperMCProjectVersion.getBuilds().getLatest())).openConnection();
         connection.setRequestProperty("User-Agent",
-                                      "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                      NetworkUtils.USER_AGENT);
         connection.connect();
         File builder = new File("local/builder/papermc");
         File buildFolder = new File(builder, version);

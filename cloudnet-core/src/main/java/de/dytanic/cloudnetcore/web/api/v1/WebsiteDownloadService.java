@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by Tareko on 29.09.2017.
@@ -42,7 +43,7 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                                 HttpRequest httpRequest) throws Exception {
         CloudNet.getLogger().finest("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
 
-        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), HttpResponseStatus.UNAUTHORIZED);
+        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.UNAUTHORIZED);
         fullHttpResponse.headers().set("Content-Type", "application/json");
 
         Document dataDocument = new Document("success", false).append("reason", new ArrayList<>()).append("response", new Document());
@@ -111,7 +112,8 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                     fullHttpResponse.content().writeBytes(value);
                 } else {
                     fullHttpResponse.headers().set("Content-Type", "application/json");
-                    dataDocument.append("reason", Arrays.asList("cannot find file \"" + httpRequest.headers().get("-Xvalue") + '"'));
+                    dataDocument.append("reason",
+                                        Collections.singletonList("cannot find file \"" + httpRequest.headers().get("-Xvalue") + '"'));
                     fullHttpResponse.content().writeBytes(dataDocument.toBytesAsUTF_8());
                 }
             }

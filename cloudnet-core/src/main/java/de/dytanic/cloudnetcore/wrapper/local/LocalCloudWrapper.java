@@ -129,7 +129,7 @@ public class LocalCloudWrapper implements Consumer<OptionSet>, Closeable {
                 System.out.println("Downloading wrapper...");
                 URLConnection urlConnection = new URL(WRAPPER_URL).openConnection();
                 urlConnection.setRequestProperty("User-Agent",
-                                                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                 NetworkUtils.USER_AGENT);
                 urlConnection.connect();
                 Files.copy(urlConnection.getInputStream(), path);
                 System.out.println("Download completed!");

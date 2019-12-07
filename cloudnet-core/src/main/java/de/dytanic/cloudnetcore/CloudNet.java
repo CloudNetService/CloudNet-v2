@@ -211,7 +211,6 @@ public final class CloudNet implements Executable, Reloadable {
         return NetworkUtils.getExecutor();
     }
 
-    @Deprecated
     @Override
     public boolean shutdown() {
         if (!RUNNING) {
@@ -357,7 +356,6 @@ public final class CloudNet implements Executable, Reloadable {
         }
     }
 
-    @Deprecated
     public void setupGroup(ServerGroup serverGroup) {
         Path path;
         for (Template template : serverGroup.getTemplates()) {
@@ -387,7 +385,6 @@ public final class CloudNet implements Executable, Reloadable {
 
     }
 
-    @Deprecated
     public void setupProxy(ProxyGroup proxyGroup) {
         Path path = Paths.get("local/templates/" + proxyGroup.getName());
         if (!Files.exists(path)) {

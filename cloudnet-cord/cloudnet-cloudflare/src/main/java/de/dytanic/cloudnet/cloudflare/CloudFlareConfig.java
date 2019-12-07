@@ -4,12 +4,17 @@
 
 package de.dytanic.cloudnet.cloudflare;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 /**
  * Container for the CloudFlare configuration.
  */
 public class CloudFlareConfig {
+
+    public static final Type TYPE = TypeToken.get(CloudFlareConfig.class).getType();
 
     /**
      * Whether or not the module is enabled

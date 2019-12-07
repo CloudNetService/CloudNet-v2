@@ -96,7 +96,7 @@ public final class PacketInCreateTemplate implements PacketInHandler {
                 URLConnection connection = new URL("https://yivesmirror.com/files/cauldron/cauldron-1.7.10-2.1403.1.54.zip").openConnection();
                 connection.setUseCaches(false);
                 connection.setRequestProperty("User-Agent",
-                                              "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                              NetworkUtils.USER_AGENT);
                 connection.connect();
                 try (InputStream inputStream = connection.getInputStream()) {
                     Files.copy(inputStream, basePath.resolve("cauldron.zip"));

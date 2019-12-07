@@ -35,9 +35,8 @@ public final class EventManager implements IEventManager {
         registeredListeners.get(eventClazz).add(new EventEntity<>(eventListener, eventKey, eventClazz));
     }
 
-    @SafeVarargs
     @Override
-    public final <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>... eventListeners) {
+    public final <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>[] eventListeners) {
         for (IEventListener<T> eventListener : eventListeners) {
             registerListener(eventKey, eventListener);
         }

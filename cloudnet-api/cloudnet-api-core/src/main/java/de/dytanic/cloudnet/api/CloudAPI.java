@@ -40,9 +40,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class CloudAPI implements MetaObj {
 
     private static final Type SERVER_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ServerInfo.class).getType();
+    public static final String[] EMPTY_STRING_ARRAY = {};
     private static CloudAPI instance;
 
     private Document config;
@@ -111,7 +113,6 @@ public final class CloudAPI implements MetaObj {
         return instance;
     }
 
-    @Deprecated
     public void bootstrap() {
         this.networkConnection.tryConnect(config.getBoolean("ssl"),
                                           new NetDispatcher(networkConnection, false),
@@ -120,7 +121,6 @@ public final class CloudAPI implements MetaObj {
         NetworkUtils.header();
     }
 
-    @Deprecated
     public void shutdown() {
         this.networkConnection.tryDisconnect();
     }
@@ -523,7 +523,7 @@ public final class CloudAPI implements MetaObj {
      * @param proxyGroup
      */
     public void startProxy(ProxyGroup proxyGroup) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), new String[] {});
+        startProxy(proxyGroup, proxyGroup.getMemory(), EMPTY_STRING_ARRAY);
     }
 
     /**
@@ -574,7 +574,7 @@ public final class CloudAPI implements MetaObj {
      * @param proxyGroup
      */
     public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup) {
-        startProxy(wrapperInfo, proxyGroup, proxyGroup.getMemory(), new String[] {});
+        startProxy(wrapperInfo, proxyGroup, proxyGroup.getMemory(), EMPTY_STRING_ARRAY);
     }
 
     /*=====================================================================================*/
@@ -678,7 +678,7 @@ public final class CloudAPI implements MetaObj {
         startGameServer(simpleServerGroup,
                         serverConfig,
                         memory,
-                        new String[] {},
+                        EMPTY_STRING_ARRAY,
                         null,
                         null,
                         false,
@@ -795,7 +795,7 @@ public final class CloudAPI implements MetaObj {
         startGameServer(simpleServerGroup,
                         serverConfig,
                         memory,
-                        new String[] {},
+                        EMPTY_STRING_ARRAY,
                         null,
                         null,
                         false,
@@ -837,7 +837,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "startGameServer",
-                         String.format("Starting game server: %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s%n",
+                         String.format("Starting game server: %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s%n",
                                        simpleServerGroup,
                                        serverConfig,
                                        memory,
@@ -917,7 +917,7 @@ public final class CloudAPI implements MetaObj {
         startGameServer(simpleServerGroup,
                         serverConfig,
                         memory,
-                        new String[] {},
+                        EMPTY_STRING_ARRAY,
                         template,
                         null,
                         false,
@@ -980,7 +980,7 @@ public final class CloudAPI implements MetaObj {
         startGameServer(simpleServerGroup,
                         serverConfig,
                         memory,
-                        new String[] {},
+                        EMPTY_STRING_ARRAY,
                         template,
                         null,
                         false,
@@ -1049,7 +1049,7 @@ public final class CloudAPI implements MetaObj {
                         simpleServerGroup,
                         serverConfig,
                         memory,
-                        new String[] {},
+                        EMPTY_STRING_ARRAY,
                         null,
                         null,
                         false,
@@ -1131,7 +1131,7 @@ public final class CloudAPI implements MetaObj {
                         simpleServerGroup,
                         serverConfig,
                         memory,
-                        new String[] {},
+                        EMPTY_STRING_ARRAY,
                         template,
                         null,
                         false,
@@ -1216,7 +1216,7 @@ public final class CloudAPI implements MetaObj {
                          serverConfig,
                          memory,
                          priorityStop,
-                         new String[0],
+                         CloudAPI.EMPTY_STRING_ARRAY,
                          new ArrayList<>(),
                          new Properties(),
                          ServerGroupType.BUKKIT);
@@ -1273,7 +1273,7 @@ public final class CloudAPI implements MetaObj {
                          serverConfig,
                          memory,
                          priorityStop,
-                         new String[0],
+                         CloudAPI.EMPTY_STRING_ARRAY,
                          new ArrayList<>(),
                          new Properties(),
                          ServerGroupType.BUKKIT);
@@ -1323,7 +1323,7 @@ public final class CloudAPI implements MetaObj {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updatePlayer",
-                         String.format(String.format("Updating cloud player: %s%n", cloudPlayer)));
+                         String.format("Updating cloud player: %s%n", cloudPlayer));
         networkConnection.sendPacket(new PacketOutUpdatePlayer(CloudPlayer.newOfflinePlayer(cloudPlayer)));
     }
 

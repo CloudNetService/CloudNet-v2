@@ -19,10 +19,12 @@ import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.service.SimpleWrapperInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +37,7 @@ public class CloudFlareService {
 
     private static final String PREFIX_URL = "https://api.cloudflare.com/client/v4/";
     private static CloudFlareService instance;
-    private final String prefix = "[CLOUDFLARE] | ";
+    private static final String PREFIX = "[CLOUDFLARE] | ";
     // WrapperId DNSRecord
     private final Map<String, MultiValue<PostResponse, String>> ipARecords = new ConcurrentHashMap<>();
     private final Map<String, MultiValue<PostResponse, String>> bungeeSRVRecords = new ConcurrentHashMap<>();
@@ -56,10 +58,6 @@ public class CloudFlareService {
         return instance;
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
-
     public Collection<CloudFlareConfig> getCloudFlareConfigs() {
         return cloudFlareConfigs;
     }
@@ -72,7 +70,6 @@ public class CloudFlareService {
         return ipARecords;
     }
 
-    @Deprecated
     public boolean bootstrap(Map<String, SimpleWrapperInfo> wrapperInfoMap,
                              Map<String, ProxyGroup> groups,
                              CloudFlareDatabase cloudFlareDatabase) {
@@ -151,9 +148,9 @@ public class CloudFlareService {
             }
 
             try (InputStream inputStream = httpPost.getResponseCode() < 400 ? httpPost.getInputStream() : httpPost.getErrorStream()) {
-                JsonObject jsonObject = toJsonInput(inputStream);
+                JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
                 if (jsonObject.get("success").getAsBoolean()) {
-                    System.out.println(prefix + "DNSRecord [" + dnsRecord.getName() + '/' + dnsRecord.getType() + "] was created");
+                    System.out.println(PREFIX + "DNSRecord [" + dnsRecord.getName() + '/' + dnsRecord.getType() + "] was created");
                 } else {
                     throw new CloudFlareDNSRecordException("Failed to create DNSRecord \n " + jsonObject);
                 }
@@ -166,22 +163,6 @@ public class CloudFlareService {
         }
 
         return null;
-    }
-
-    private JsonObject toJsonInput(InputStream inputStream) {
-        StringBuilder stringBuilder = new StringBuilder();
-        String input;
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
-        try {
-            while ((input = bufferedReader.readLine()) != null) {
-                stringBuilder.append(input);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new JsonParser().parse(stringBuilder.substring(0)).getAsJsonObject();
     }
 
     public boolean shutdown(CloudFlareDatabase cloudFlareDatabase) {
@@ -287,9 +268,9 @@ public class CloudFlareService {
             delete.connect();
 
             try (InputStream inputStream = delete.getResponseCode() < 400 ? delete.getInputStream() : delete.getErrorStream()) {
-                JsonObject jsonObject = toJsonInput(inputStream);
+                JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
                 if (jsonObject.get("success").getAsBoolean()) {
-                    System.out.println(prefix + "DNSRecord [" + postResponse.getId() + "] was removed");
+                    System.out.println(PREFIX + "DNSRecord [" + postResponse.getId() + "] was removed");
                 } else {
                     throw new CloudFlareDNSRecordException("Failed to delete DNSRecord \n " + jsonObject);
                 }

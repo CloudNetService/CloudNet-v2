@@ -102,7 +102,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                 try {
                     URLConnection urlConnection = new java.net.URL(url.getUrl()).openConnection();
                     urlConnection.setRequestProperty("User-Agent",
-                                                     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                     NetworkUtils.USER_AGENT);
                     Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -118,7 +118,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                         try {
                             URLConnection urlConnection = new java.net.URL(url.getUrl()).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
-                                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                             NetworkUtils.USER_AGENT);
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -143,7 +143,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                                                                .append("/cloudnet/api/v1/download")
                                                                                .substring(0)).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
-                                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                             NetworkUtils.USER_AGENT);
 
                             SimpledUser simpledUser = CloudNetWrapper.getInstance().getSimpledUser();
                             urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
@@ -320,7 +320,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                 try {
                     URLConnection urlConnection = new URL(version.getFirst()).openConnection();
                     urlConnection.setRequestProperty("User-Agent",
-                                                     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                     NetworkUtils.USER_AGENT);
                     urlConnection.connect();
                     System.out.println("Downloading " + version.getSecond() + "...");
                     Files.copy(urlConnection.getInputStream(), path);
@@ -351,7 +351,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                     URLConnection url = new URL(
                         "https://ci.cloudnetservice.eu/job/ViaVersion/lastStableBuild/artifact/jar/target/ViaVersion.jar").openConnection();
                     url.setRequestProperty("User-Agent",
-                                           "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                           NetworkUtils.USER_AGENT);
                     url.connect();
                     Files.copy(url.getInputStream(), Paths.get("local/ViaVersion-Proxied.jar"));
                     ((HttpURLConnection) url).disconnect();

@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.setup.spigot;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import jline.console.ConsoleReader;
 
 import java.io.IOException;
@@ -28,8 +29,7 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
         try {
             System.out.println("Downloading spigot.jar...");
             URLConnection connection = new URL(url).openConnection();
-            connection.setRequestProperty("User-Agent",
-                                          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            connection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             connection.connect();
             try (InputStream inputStream = connection.getInputStream()) {
                 Files.copy(inputStream, SetupSpigotVersion.this.getTarget(), StandardCopyOption.REPLACE_EXISTING);

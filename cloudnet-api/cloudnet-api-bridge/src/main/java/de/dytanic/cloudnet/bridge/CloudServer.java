@@ -13,6 +13,7 @@ import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.bridge.event.bukkit.*;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.CloudNetwork;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
@@ -589,8 +590,7 @@ public class CloudServer implements ICloudService {
                     String url = document.getString("url");
                     try {
                         URLConnection urlConnection = new URL(url).openConnection();
-                        urlConnection.setRequestProperty("User-Agent",
-                                                         "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                        urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
                         urlConnection.connect();
                         Files.copy(urlConnection.getInputStream(), Paths.get("plugins/" + document.getString("name") + ".jar"));
                         File file = new File("plugins/" + document.getString("name") + ".jar");

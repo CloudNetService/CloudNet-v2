@@ -55,7 +55,7 @@ public final class BukkitListener implements Listener {
             }
         }
 
-        CloudServer.getInstance().getPlayerAndCache(e.getUniqueId());
+        CloudAPI.getInstance().getOnlinePlayer(e.getUniqueId());
     }
 
     @EventHandler

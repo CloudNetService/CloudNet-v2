@@ -331,16 +331,16 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     }
 
     public int getUsedMemory() {
-        int m = 0;
+        int memory = 0;
         for (GameServer gameServer : servers.values()) {
-            m = m + gameServer.getServerProcess().getMeta().getMemory();
+            memory += gameServer.getServerProcess().getMeta().getMemory();
         }
 
         for (BungeeCord bungeeCord : proxys.values()) {
-            m = m + bungeeCord.getProxyProcessMeta().getMemory();
+            memory += bungeeCord.getProxyProcessMeta().getMemory();
         }
 
-        return m;
+        return memory;
     }
 
     public NetworkConnection getNetworkConnection() {

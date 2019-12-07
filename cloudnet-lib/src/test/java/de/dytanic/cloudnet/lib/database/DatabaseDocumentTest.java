@@ -34,9 +34,10 @@ public class DatabaseDocumentTest {
         DatabaseDocument document = new DatabaseDocument();
         List<Float> toAppend = new ArrayList<>(Collections.singletonList(0.5f));
         document.append("test", toAppend);
+        final Type listOfFloats = TypeToken.getParameterized(List.class, Float.class).getType();
         Assert.assertEquals("Appended object does not equal gotten object",
                             toAppend,
-                            document.getObject("test", TypeToken.getParameterized(List.class, Float.class).getType())
+                            document.getObject("test", listOfFloats)
         );
 
     }
@@ -97,12 +98,7 @@ public class DatabaseDocumentTest {
         document.append("primitive", 1);
         document.append("array", Collections.singletonList(2));
         document.append("object", new Sign("test",
-                                           new Position(
-                                               "test",
-                                               "world",
-                                               0.0D,
-                                               0.0D,
-                                               0.0D)));
+                                           new Position("test", "world", 0.0D, 0.0D, 0.0D)));
 
         //noinspection MismatchedQueryAndUpdateOfCollection
         DatabaseDocument databaseDocument = new DatabaseDocument(document);
