@@ -20,6 +20,7 @@ import java.util.logging.Level;
 /**
  * Created by Tareko on 26.08.2017.
  */
+@SuppressWarnings("deprecation")
 public class ItemStackBuilder {
 
     protected ItemMeta itemMeta;

@@ -89,7 +89,6 @@ public final class SignSelector implements Listener {
         this.signLayoutConfig = signLayoutConfig;
     }
 
-    @Deprecated
     public void start() {
         CloudAPI.getInstance().getNetworkHandlerProvider().registerHandler(new NetworkHandlerAdapterImpl());
         worker = new ThreadImpl();
@@ -109,7 +108,7 @@ public final class SignSelector implements Listener {
                 Sign sign = getSignByPosition(e.getClickedBlock().getLocation());
                 if (sign.getServerInfo() != null) {
                     String s = sign.getServerInfo().getServiceId().getServerId();
-                    ByteArrayDataOutput output = ByteStreams.newDataOutput();
+                    @SuppressWarnings("UnstableApiUsage") ByteArrayDataOutput output = ByteStreams.newDataOutput();
                     output.writeUTF("Connect");
                     output.writeUTF(s);
                     e.getPlayer().sendPluginMessage(CloudServer.getInstance().getPlugin(), "BungeeCord", output.toByteArray());
@@ -259,7 +258,6 @@ public final class SignSelector implements Listener {
                                                                                                                                 .isHideServer()) {
                 sign.setServerInfo(null);
                 String[] layout = updateOfflineAndMaintenance(searchLayer.getSignLayout().clone(), sign);
-                layout = updateOfflineAndMaintenance(layout, sign);
                 for (Player all : Bukkit.getOnlinePlayers()) {
                     sendUpdate(all, location, layout);
                 }
@@ -403,6 +401,7 @@ public final class SignSelector implements Listener {
         });
     }
 
+    @SuppressWarnings("deprecation")
     public void changeBlock(Location location, String blockName, int blockId, int subId) {
         Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
             Material material = ItemStackBuilder.getMaterialIgnoreVersion(blockName, blockId);
@@ -513,7 +512,6 @@ public final class SignSelector implements Listener {
                                     if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame()) {
                                         if (signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) {
                                             String[] layout = updateOfflineAndMaintenance(searchLayer.getSignLayout().clone(), sign);
-                                            layout = updateOfflineAndMaintenance(layout, sign);
                                             sendUpdateSynchronized(location, layout);
                                             changeBlock(location,
                                                         searchLayer.getBlockName(),
@@ -642,7 +640,6 @@ public final class SignSelector implements Listener {
                             sign.setServerInfo(null);
                             SignLayout signLayout = getSearchingLayout(((ThreadImpl) worker).animationTick);
                             String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), sign);
-                            layout = updateOfflineAndMaintenance(layout, sign);
                             for (Player all : Bukkit.getOnlinePlayers()) {
                                 sendUpdate(all, location, layout);
                             }

@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -53,7 +52,7 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                                                                                                                                 "-Xcloudnet-password")) || !httpRequest
             .headers()
             .contains("-Xmessage") || !httpRequest.headers().contains("-Xvalue")) {
-            dataDocument.append("reason", Arrays.asList("-Xcloudnet-user, -Xcloudnet-token or -Xmessage not found!"));
+            dataDocument.append("reason", Collections.singletonList("-Xcloudnet-user, -Xcloudnet-token or -Xmessage not found!"));
             fullHttpResponse.content().writeBytes(dataDocument.convertToJsonString().getBytes(StandardCharsets.UTF_8));
             return fullHttpResponse;
         }
@@ -64,7 +63,7 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                                                                                                                   .get("-Xcloudnet-token")) : !CloudNet
             .getInstance()
             .authorizationPassword(httpRequest.headers().get("-Xcloudnet-user"), httpRequest.headers().get("-Xcloudnet-password"))) {
-            dataDocument.append("reason", Arrays.asList("failed authorization!"));
+            dataDocument.append("reason", Collections.singletonList("failed authorization!"));
             fullHttpResponse.content().writeBytes(dataDocument.toBytesAsUTF_8());
             return fullHttpResponse;
         }
@@ -82,7 +81,8 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                     fullHttpResponse.content().writeBytes(value);
                 } else {
                     fullHttpResponse.headers().set("Content-Type", "application/json");
-                    dataDocument.append("reason", Arrays.asList("cannot find file \"" + httpRequest.headers().get("-Xvalue") + '"'));
+                    dataDocument.append("reason",
+                                        Collections.singletonList("cannot find file \"" + httpRequest.headers().get("-Xvalue") + '"'));
                     fullHttpResponse.content().writeBytes(dataDocument.toBytesAsUTF_8());
                 }
             }

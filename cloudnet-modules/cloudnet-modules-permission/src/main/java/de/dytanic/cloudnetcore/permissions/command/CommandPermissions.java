@@ -62,17 +62,13 @@ public final class CommandPermissions extends Command {
                         sender.sendMessage("Implementations: " + permissionGroup.getImplementGroups());
                         sender.sendMessage("TagId: " + permissionGroup.getTagId());
                         sender.sendMessage("JoinPower: " + permissionGroup.getJoinPower());
-                        for (Map.Entry<String, Boolean> x : permissionGroup.getPermissions().entrySet()) {
-                            sender.sendMessage("- " + x.getKey() + ':' + x.getValue());
-                        }
+                        permissionGroup.getPermissions().forEach((key, value) -> sender.sendMessage("- " + key + ':' + value));
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                         sender.sendMessage("Permissions for server groups:");
-                        permissionGroup.getServerGroupPermissions().entrySet()
-                                       .forEach(entry -> {
-                                           sender.sendMessage(entry.getKey() + ':');
-                                           entry.getValue().forEach(permission ->
-                                                                        sender.sendMessage("- " + permission));
-                                       });
+                        permissionGroup.getServerGroupPermissions().forEach((key, value) -> {
+                            sender.sendMessage(key + ':');
+                            value.forEach(permission -> sender.sendMessage("- " + permission));
+                        });
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                     } else {
                         sender.sendMessage("The specified permission group doesn't exist");
@@ -264,8 +260,11 @@ public final class CommandPermissions extends Command {
                             StringBuilder stringBuilder = new StringBuilder();
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy-HH:mm:ss");
                             for (GroupEntityData groupEntityData : offlinePlayer.getPermissionEntity().getGroups()) {
-                                stringBuilder.append(groupEntityData.getGroup() + '@' + (groupEntityData.getTimeout() == 0 || groupEntityData
-                                    .getTimeout() == -1 ? "LIFETIME" : simpleDateFormat.format(groupEntityData.getTimeout())) + NetworkUtils.SPACE_STRING);
+                                stringBuilder.append(groupEntityData.getGroup())
+                                             .append('@')
+                                             .append(groupEntityData.getTimeout() == 0 || groupEntityData
+                                                 .getTimeout() == -1 ? "LIFETIME" : simpleDateFormat.format(groupEntityData.getTimeout()))
+                                             .append(NetworkUtils.SPACE_STRING);
                             }
 
                             sender.sendMessage(NetworkUtils.SPACE_STRING,

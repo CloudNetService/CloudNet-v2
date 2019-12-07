@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -46,8 +47,9 @@ public final class CommandHub extends Command {
                           .getNamedFallbacks()
                           .contains(serverInfo.getServiceId().getGroup())) {
                 commandSender.sendMessage(
-                    ChatColor.translateAlternateColorCodes(
-                        '&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("hub-already")));
+                    TextComponent.fromLegacyText(
+                        ChatColor.translateAlternateColorCodes(
+                            '&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("hub-already"))));
                 return;
             }
         }
@@ -70,11 +72,12 @@ public final class CommandHub extends Command {
         ProxyServer.getInstance().getPluginManager().callEvent(proxiedPlayerFallbackEvent);
 
         if (fallback == null) {
-            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                                                             CloudAPI.getInstance()
-                                                                                     .getCloudNetwork()
-                                                                                     .getMessages()
-                                                                                     .getString("hubCommandNoServerFound")));
+            commandSender.sendMessage(TextComponent.fromLegacyText(
+                ChatColor.translateAlternateColorCodes('&',
+                                                       CloudAPI.getInstance()
+                                                               .getCloudNetwork()
+                                                               .getMessages()
+                                                               .getString("hubCommandNoServerFound"))));
         } else {
             ((ProxiedPlayer) commandSender).connect(ProxyServer.getInstance().getServerInfo(fallback));
         }

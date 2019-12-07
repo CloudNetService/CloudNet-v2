@@ -43,7 +43,7 @@ public class WebsiteDeployment extends MethodWebHandlerAdapter {
         }
 
         FullHttpRequest fullHttpRequest = ((FullHttpRequest) httpRequest);
-        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), HttpResponseStatus.UNAUTHORIZED);
+        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.UNAUTHORIZED);
 
         Document dataDocument = new Document("success", false).append("reason", new ArrayList<>()).append("response", new Document());
         if (!httpRequest.headers().contains("-Xcloudnet-user") || (!httpRequest.headers()

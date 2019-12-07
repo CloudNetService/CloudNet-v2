@@ -38,7 +38,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                                 QueryDecoder queryDecoder,
                                 PathProvider path,
                                 HttpRequest httpRequest) throws Exception {
-        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), HttpResponseStatus.UNAUTHORIZED);
+        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.UNAUTHORIZED);
         fullHttpResponse.headers().set("Content-Type", "application/json");
 
         Document dataDocument = new Document("success", false).append("reason", new ArrayList<>()).append("response", new Document());

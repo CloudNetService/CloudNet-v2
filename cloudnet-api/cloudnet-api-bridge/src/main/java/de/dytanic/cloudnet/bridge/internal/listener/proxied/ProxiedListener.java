@@ -44,6 +44,8 @@ import java.util.logging.Level;
  */
 public class ProxiedListener implements Listener {
 
+    public static final String IMPLEMENTATION_VERSION = CloudProxy.class.getPackage().getImplementationVersion();
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void handleProxyPing(ProxyPingEvent event) {
         ProxyGroup proxyGroup = CloudAPI.getInstance().getProxyGroupData(CloudAPI.getInstance().getGroup());
@@ -53,16 +55,19 @@ public class ProxiedListener implements Listener {
 
             if (!proxyConfig.isMaintenance()) {
                 Motd motd = proxyConfig.getMotdsLayouts().get(NetworkUtils.RANDOM.nextInt(proxyConfig.getMotdsLayouts().size()));
-                serverPing.setDescription(ChatColor.translateAlternateColorCodes('&', motd.getFirstLine() + '\n' + motd.getSecondLine())
-                                                   .replace("%proxy%", CloudAPI.getInstance().getServerId())
-                                                   .replace("%version%", CloudProxy.class.getPackage().getImplementationVersion()));
+                serverPing.setDescriptionComponent(
+                    new TextComponent(TextComponent.fromLegacyText(
+                        ChatColor.translateAlternateColorCodes('&', motd.getFirstLine() + '\n' + motd.getSecondLine())
+                                 .replace("%proxy%", CloudAPI.getInstance().getServerId())
+                                 .replace("%version%", IMPLEMENTATION_VERSION))));
             } else {
-                serverPing.setDescription(
-                    ChatColor.translateAlternateColorCodes(
-                        '&', proxyConfig.getMaintenanceMotdLayout().getFirstLine() + '\n' +
-                            proxyConfig.getMaintenanceMotdLayout().getSecondLine())
-                                                   .replace("%proxy%", CloudAPI.getInstance().getServerId())
-                                                   .replace("%version%", CloudProxy.class.getPackage().getImplementationVersion()));
+                serverPing.setDescriptionComponent(
+                    new TextComponent(TextComponent.fromLegacyText(
+                        ChatColor.translateAlternateColorCodes(
+                            '&', proxyConfig.getMaintenanceMotdLayout().getFirstLine() + '\n' +
+                                proxyConfig.getMaintenanceMotdLayout().getSecondLine())
+                                 .replace("%proxy%", CloudAPI.getInstance().getServerId())
+                                 .replace("%version%", IMPLEMENTATION_VERSION))));
             }
 
             int onlineCount = CloudAPI.getInstance().getOnlineCount();
@@ -251,8 +256,8 @@ public class ProxiedListener implements Listener {
                     !proxyConfig.getWhitelist().contains(e.getConnection().getUniqueId().toString()) &&
                     !ProxyServer.getInstance().getPluginManager().callEvent(permissionCheckEvent).hasPermission()) {
                     e.setCancelled(true);
-                    e.setCancelReason(ChatColor.translateAlternateColorCodes(
-                        '&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("kick-maintenance")));
+                    e.setCancelReason(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes(
+                        '&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("kick-maintenance"))));
                     return;
                 }
             }
@@ -267,8 +272,8 @@ public class ProxiedListener implements Listener {
 
                     if (!ProxyServer.getInstance().getPluginManager().callEvent(permissionCheckEvent).hasPermission()) {
                         e.setCancelled(true);
-                        e.setCancelReason(ChatColor.translateAlternateColorCodes(
-                            '&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("full-join")));
+                        e.setCancelReason(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes(
+                            '&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("full-join"))));
                         return;
                     }
                 }

@@ -5,14 +5,13 @@
 package de.dytanic.cloudnet.lib.network;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.network.protocol.file.FileDeploy;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.io.IOException;
 
-public class NetDispatcher extends SimpleChannelInboundHandler {
+public class NetDispatcher extends SimpleChannelInboundHandler<Packet> {
 
     private final NetworkConnection networkConnection;
 
@@ -58,16 +57,11 @@ public class NetDispatcher extends SimpleChannelInboundHandler {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
-        if (o instanceof Packet) {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet packet) throws Exception {
+        if (packet != null) {
             NetworkUtils.getExecutor().submit(() -> {
-                networkConnection.getPacketManager().dispatchPacket(((Packet) o), networkConnection);
+                networkConnection.getPacketManager().dispatchPacket(packet, networkConnection);
             });
-        } else {
-            if (o instanceof FileDeploy) {
-                FileDeploy deploy = ((FileDeploy) o);
-                NetworkUtils.getExecutor().submit(deploy::toWrite);
-            }
         }
     }
 }

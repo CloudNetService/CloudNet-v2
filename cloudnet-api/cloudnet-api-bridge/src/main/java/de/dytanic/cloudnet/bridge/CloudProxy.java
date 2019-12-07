@@ -249,7 +249,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
     @Override
     public Map<String, ServerInfo> getServers() {
-        return this.getCachedServers();
+        return this.cachedServers;
     }
 
     private class NetworkHandlerImpl implements NetworkHandler {
@@ -279,14 +279,16 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                 CloudAPI.getInstance().getModuleProperties().getBoolean("notifyService")) {
                 for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
                     if (proxiedPlayer.hasPermission("cloudnet.notify")) {
-                        proxiedPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                                                                         CloudAPI.getInstance()
-                                                                                                 .getCloudNetwork()
-                                                                                                 .getMessages()
-                                                                                                 .getString("notify-message-server-add")
-                                                                                                 .replace("%server%",
-                                                                                                          serverInfo.getServiceId()
-                                                                                                                    .getServerId())));
+                        proxiedPlayer.sendMessage(
+                            TextComponent.fromLegacyText(
+                                ChatColor.translateAlternateColorCodes('&',
+                                                                       CloudAPI.getInstance()
+                                                                               .getCloudNetwork()
+                                                                               .getMessages()
+                                                                               .getString("notify-message-server-add")
+                                                                               .replace("%server%",
+                                                                                        serverInfo.getServiceId()
+                                                                                                  .getServerId()))));
                     }
                 }
             }
@@ -331,12 +333,14 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                 for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
                     if (proxiedPlayer.hasPermission("cloudnet.notify")) {
                         proxiedPlayer.sendMessage(
-                            ChatColor.translateAlternateColorCodes('&',
-                                                                   CloudAPI.getInstance()
-                                                                           .getCloudNetwork()
-                                                                           .getMessages()
-                                                                           .getString("notify-message-server-remove")
-                                                                           .replace("%server%", serverInfo.getServiceId().getServerId())));
+                            TextComponent.fromLegacyText(
+                                ChatColor.translateAlternateColorCodes('&',
+                                                                       CloudAPI.getInstance()
+                                                                               .getCloudNetwork()
+                                                                               .getMessages()
+                                                                               .getString("notify-message-server-remove")
+                                                                               .replace("%server%",
+                                                                                        serverInfo.getServiceId().getServerId()))));
                     }
                 }
             }
@@ -367,11 +371,13 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                     for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
                         if (!proxyGroup.getProxyConfig().getWhitelist().contains(proxiedPlayer.getName()) && !proxiedPlayer.hasPermission(
                             "cloudnet.maintenance")) {
-                            proxiedPlayer.disconnect(ChatColor.translateAlternateColorCodes('&',
-                                                                                            CloudAPI.getInstance()
-                                                                                                    .getCloudNetwork()
-                                                                                                    .getMessages()
-                                                                                                    .getString("kick-maintenance")));
+                            proxiedPlayer.disconnect(
+                                TextComponent.fromLegacyText(
+                                    ChatColor.translateAlternateColorCodes('&',
+                                                                           CloudAPI.getInstance()
+                                                                                   .getCloudNetwork()
+                                                                                   .getMessages()
+                                                                                   .getString("kick-maintenance"))));
                         }
                     }
                 }
@@ -565,7 +571,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                         ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
 
                         if (proxiedPlayer != null) {
-                            proxiedPlayer.disconnect(document.getString("reason"));
+                            proxiedPlayer.disconnect(TextComponent.fromLegacyText(document.getString("reason")));
                         }
                     }
                     return true;

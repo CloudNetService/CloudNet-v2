@@ -5,7 +5,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.auth.Auth;
 import de.dytanic.cloudnet.lib.network.auth.packetio.PacketOutAuth;
 import de.dytanic.cloudnet.lib.network.protocol.IProtocol;
-import de.dytanic.cloudnet.lib.network.protocol.ProtocolProvider;
 import de.dytanic.cloudnet.lib.network.protocol.ProtocolRequest;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
@@ -16,9 +15,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
-import java.io.File;
 import java.net.InetSocketAddress;
-import java.nio.file.Path;
 
 /**
  * Created by Tareko on 22.07.2017.
@@ -146,10 +143,6 @@ public final class NetworkConnection implements PacketSender {
         return false;
     }
 
-    public void sendFile(Path path) {
-        send(ProtocolProvider.getProtocol(2), path);
-    }
-
     @Override
     public void send(Object object) {
         if (channel == null) {
@@ -208,10 +201,6 @@ public final class NetworkConnection implements PacketSender {
     @Override
     public void sendSynchronized(IProtocol iProtocol, Object element) {
         sendSynchronized(new ProtocolRequest(iProtocol.getId(), element));
-    }
-
-    public void sendFile(File file) {
-        send(ProtocolProvider.getProtocol(2), file);
     }
 
     @Override

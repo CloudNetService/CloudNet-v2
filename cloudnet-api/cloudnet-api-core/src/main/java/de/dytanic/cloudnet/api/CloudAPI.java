@@ -168,12 +168,10 @@ public final class CloudAPI implements MetaObj {
         return result.getResult().getObject("serverInfos", SERVER_INFO_COLLECTION_TYPE);
     }
 
-    @Deprecated
     public ICloudService getCloudService() {
         return cloudService;
     }
 
-    @Deprecated
     public void setCloudService(ICloudService cloudService) {
         this.cloudService = cloudService;
     }
@@ -1452,7 +1450,7 @@ public final class CloudAPI implements MetaObj {
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(name), networkConnection);
-        return result.getResult().getObject("player", new TypeToken<OfflinePlayer>() {}.getType());
+        return result.getResult().getObject("player", OfflinePlayer.TYPE);
     }
 
     private CloudPlayer checkAndGet(String name) {

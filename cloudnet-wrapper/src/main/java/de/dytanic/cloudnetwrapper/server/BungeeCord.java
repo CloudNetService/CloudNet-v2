@@ -357,7 +357,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                     ((HttpURLConnection) url).disconnect();
                     System.out.println("Download complete successfully!");
                 } catch (Exception ex) {
-
+                    ex.printStackTrace();
                 }
             }
             FileUtility.copyFileToDirectory(new File("local/ViaVersion-Proxied.jar"), new File(path + "/plugins"));
@@ -402,9 +402,9 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
             commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
         }
 
-        commandBuilder.append(
-            "-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx"
-                + proxyProcessMeta.getMemory() + "M -jar BungeeCord.jar");
+        commandBuilder.append("-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx")
+                      .append(proxyProcessMeta.getMemory())
+                      .append("M -jar BungeeCord.jar");
 
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddProxy(proxyInfo, proxyProcessMeta));
         System.out.println("Proxy " + this + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
@@ -460,10 +460,6 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveProxy(proxyInfo));
         System.out.println("Proxy " + this + " was stopped");
 
-        try {
-            this.finalize();
-        } catch (Throwable throwable) {
-        }
         return true;
     }
 

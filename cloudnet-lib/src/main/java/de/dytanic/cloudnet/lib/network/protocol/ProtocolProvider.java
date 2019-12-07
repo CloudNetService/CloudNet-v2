@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet.lib.network.protocol;
 
-import de.dytanic.cloudnet.lib.network.protocol.file.FileProtocol;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketProtocol;
 import io.netty.buffer.ByteBuf;
 
@@ -23,7 +22,6 @@ public final class ProtocolProvider {
     static {
         protocols = new ConcurrentHashMap<>();
         registerProtocol(new PacketProtocol());
-        registerProtocol(new FileProtocol());
     }
 
     private ProtocolProvider() {

@@ -13,6 +13,7 @@ import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
@@ -38,37 +39,37 @@ public final class CommandPermissions extends Command implements TabExecutor {
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("group")) {
                 if (args.length == 1) {
-                    sender.sendMessage(NetworkUtils.SPACE_STRING);
-                    sender.sendMessage("The following permission groups are registered:");
+                    sender.sendMessage(TextComponent.fromLegacyText(NetworkUtils.SPACE_STRING));
+                    sender.sendMessage(TextComponent.fromLegacyText("The following permission groups are registered:"));
                     ArrayList<PermissionGroup> permissionGroups = new ArrayList<>(permissionPool.getGroups().values());
                     permissionGroups.sort(Comparator.comparingInt(PermissionGroup::getTagId));
                     for (PermissionGroup permissionGroup : permissionGroups) {
-                        sender.sendMessage(permissionGroup.getName() + " [" + permissionGroup.getJoinPower() + "] implements " + permissionGroup
-                            .getImplementGroups());
+                        sender.sendMessage(TextComponent.fromLegacyText(permissionGroup.getName() + " [" + permissionGroup.getJoinPower() + "] implements " + permissionGroup
+                            .getImplementGroups()));
                     }
-                    sender.sendMessage(NetworkUtils.SPACE_STRING);
+                    sender.sendMessage(TextComponent.fromLegacyText(NetworkUtils.SPACE_STRING));
                     return;
                 }
                 if (args.length == 2) {
                     if (permissionPool.getGroups().containsKey(args[1])) {
-                        sender.sendMessage(NetworkUtils.SPACE_STRING);
+                        sender.sendMessage(TextComponent.fromLegacyText(NetworkUtils.SPACE_STRING));
                         PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
-                        sender.sendMessage("Name: " + permissionGroup.getName());
-                        sender.sendMessage("Implementations: " + permissionGroup.getImplementGroups());
-                        sender.sendMessage("TagId: " + permissionGroup.getTagId());
-                        sender.sendMessage("JoinPower: " + permissionGroup.getJoinPower());
+                        sender.sendMessage(TextComponent.fromLegacyText("Name: " + permissionGroup.getName()));
+                        sender.sendMessage(TextComponent.fromLegacyText("Implementations: " + permissionGroup.getImplementGroups()));
+                        sender.sendMessage(TextComponent.fromLegacyText("TagId: " + permissionGroup.getTagId()));
+                        sender.sendMessage(TextComponent.fromLegacyText("JoinPower: " + permissionGroup.getJoinPower()));
                         for (Map.Entry<String, Boolean> x : permissionGroup.getPermissions().entrySet()) {
-                            sender.sendMessage("- " + x.getKey() + ':' + x.getValue());
+                            sender.sendMessage(TextComponent.fromLegacyText("- " + x.getKey() + ':' + x.getValue()));
                         }
-                        sender.sendMessage(NetworkUtils.SPACE_STRING);
-                        sender.sendMessage("Permissions for groups:");
+                        sender.sendMessage(TextComponent.fromLegacyText(NetworkUtils.SPACE_STRING));
+                        sender.sendMessage(TextComponent.fromLegacyText("Permissions for groups:"));
                         for (Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet()) {
-                            sender.sendMessage(x.getKey() + ':');
-                            x.getValue().forEach(permission -> sender.sendMessage("- " + permission));
+                            sender.sendMessage(TextComponent.fromLegacyText(x.getKey() + ':'));
+                            x.getValue().forEach(permission -> sender.sendMessage(TextComponent.fromLegacyText("- " + permission)));
                         }
-                        sender.sendMessage(NetworkUtils.SPACE_STRING);
+                        sender.sendMessage(TextComponent.fromLegacyText(NetworkUtils.SPACE_STRING));
                     } else {
-                        sender.sendMessage("The specified permission group doesn't exist");
+                        sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                     }
                 }
 
@@ -78,10 +79,11 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
                             permissionGroup.setDisplay(args[3].replace("_", NetworkUtils.SPACE_STRING));
                             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You set the display name of the permission group " + permissionGroup.getName() + " to \"" + permissionGroup
-                                .getDisplay() + '"');
+                            sender.sendMessage(TextComponent.fromLegacyText("You set the display name of the permission group " + permissionGroup
+                                .getName() + " to \"" + permissionGroup
+                                .getDisplay() + '"'));
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
 
@@ -90,10 +92,10 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
                             permissionGroup.setPrefix(args[3].replace("_", NetworkUtils.SPACE_STRING));
                             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You set the prefix of the permission group " + permissionGroup.getName() + " to \"" + permissionGroup
-                                .getPrefix() + '"');
+                            sender.sendMessage(TextComponent.fromLegacyText("You set the prefix of the permission group " + permissionGroup.getName() + " to \"" + permissionGroup
+                                .getPrefix() + '"'));
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
 
@@ -102,10 +104,10 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
                             permissionGroup.setSuffix(args[3].replace("_", NetworkUtils.SPACE_STRING));
                             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You set the suffix of the permission group " + permissionGroup.getName() + " the suffix \"" + permissionGroup
-                                .getSuffix() + '"');
+                            sender.sendMessage(TextComponent.fromLegacyText("You set the suffix of the permission group " + permissionGroup.getName() + " the suffix \"" + permissionGroup
+                                .getSuffix() + '"'));
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
 
@@ -114,10 +116,11 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
                             permissionGroup.setDefaultGroup(args[3].equalsIgnoreCase("true"));
                             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You set the default group attribute of the permission group" + permissionGroup.getName() + " to \"" + permissionGroup
-                                .isDefaultGroup() + '"');
+                            sender.sendMessage(TextComponent.fromLegacyText("You set the default group attribute of the permission group" + permissionGroup
+                                .getName() + " to \"" + permissionGroup
+                                .isDefaultGroup() + '"'));
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
 
@@ -126,10 +129,11 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
                             permissionGroup.setJoinPower(Integer.parseInt(args[3]));
                             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You set the needed join power of the permission group " + permissionGroup.getName() + " to \"" + permissionGroup
-                                .getJoinPower() + '"');
+                            sender.sendMessage(TextComponent.fromLegacyText("You set the needed join power of the permission group " + permissionGroup
+                                .getName() + " to \"" + permissionGroup
+                                .getJoinPower() + '"'));
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
                     if (args[2].equalsIgnoreCase("setColor")) {
@@ -137,10 +141,11 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
                             permissionGroup.setColor(args[3]);
                             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You set the needed color of the permission group " + permissionGroup.getName() + " to \"" + permissionGroup
-                                .getColor() + '"');
+                            sender.sendMessage(TextComponent.fromLegacyText("You set the needed color of the permission group " + permissionGroup
+                                .getName() + " to \"" + permissionGroup
+                                .getColor() + '"'));
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
 
@@ -149,10 +154,11 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             PermissionGroup permissionGroup = permissionPool.getGroups().get(args[1]);
                             permissionGroup.setTagId(Integer.parseInt(args[3]));
                             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                            sender.sendMessage("You set the tagID of the the permission group " + permissionGroup.getName() + " to \"" + permissionGroup
-                                .getTagId() + '"');
+                            sender.sendMessage(TextComponent.fromLegacyText("You set the tagID of the the permission group " + permissionGroup
+                                .getName() + " to \"" + permissionGroup
+                                .getTagId() + '"'));
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
                     return;
@@ -171,12 +177,13 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                     if (!permissionIsSet(permissionGroup.getPermissions(), permission, value)) {
                                         permissionGroup.getPermissions().put(permission, value);
                                         CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                                        sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup
-                                            .getName() + '"');
+                                        sender.sendMessage(TextComponent.fromLegacyText("You added the permission " + args[4] + " for the permission group \"" + permissionGroup
+                                            .getName() + '"'));
                                     } else {
-                                        sender.sendMessage("The permission " + permission + " with the value " + String.valueOf(value)
-                                                                                                                       .toLowerCase() + " is already set for the permission group " + permissionGroup
-                                            .getName());
+                                        sender.sendMessage(TextComponent.fromLegacyText("The permission " + permission + " with the value " + String
+                                            .valueOf(value)
+                                            .toLowerCase() + " is already set for the permission group " + permissionGroup
+                                            .getName()));
                                     }
                                 }
                             };
@@ -191,7 +198,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             }
 
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
 
@@ -202,8 +209,8 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                 public void accept(PermissionGroup permissionGroup) {
                                     permissionGroup.getPermissions().remove(args[4]);
                                     CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                                    sender.sendMessage("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup
-                                        .getName() + '"');
+                                    sender.sendMessage(TextComponent.fromLegacyText("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup
+                                        .getName() + '"'));
                                 }
                             };
 
@@ -216,7 +223,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                 consumer.accept(permissionGroup);
                             }
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
                 }
@@ -235,8 +242,8 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                                                                                                       NetworkUtils.EMPTY_STRING));
                                     CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
 
-                                    sender.sendMessage("You added the permission " + args[4] + " for the permission group \"" + permissionGroup
-                                        .getName() + "\" on server group " + args[5]);
+                                    sender.sendMessage(TextComponent.fromLegacyText("You added the permission " + args[4] + " for the permission group \"" + permissionGroup
+                                        .getName() + "\" on server group " + args[5]));
                                 }
                             };
 
@@ -250,7 +257,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             }
 
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
 
@@ -266,8 +273,8 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                     permissionGroup.getServerGroupPermissions().get(args[5]).remove(args[4].replaceFirst("-",
                                                                                                                          NetworkUtils.EMPTY_STRING));
                                     CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                                    sender.sendMessage("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup
-                                        .getName() + "\" on server group " + args[5]);
+                                    sender.sendMessage(TextComponent.fromLegacyText("You removed the permission " + args[4] + " for the permission group \"" + permissionGroup
+                                        .getName() + "\" on server group " + args[5]));
                                 }
                             };
 
@@ -281,7 +288,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                             }
 
                         } else {
-                            sender.sendMessage("The specified permission group doesn't exist");
+                            sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                         }
                     }
                 }
@@ -300,22 +307,22 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                 stringBuilder.append(groupEntityData.getGroup() + '@' + (groupEntityData.getTimeout() == 0 || groupEntityData
                                     .getTimeout() == -1 ? "LIFETIME" : simpleDateFormat.format(groupEntityData.getTimeout())) + NetworkUtils.SPACE_STRING);
                             }
-                            sender.sendMessage(NetworkUtils.SPACE_STRING);
-                            sender.sendMessage("Player " + offlinePlayer.getName() + ": " + offlinePlayer.getUniqueId());
-                            sender.sendMessage("Groups: " + stringBuilder.substring(0));
+                            sender.sendMessage(TextComponent.fromLegacyText(NetworkUtils.SPACE_STRING));
+                            sender.sendMessage(TextComponent.fromLegacyText("Player " + offlinePlayer.getName() + ": " + offlinePlayer.getUniqueId()));
+                            sender.sendMessage(TextComponent.fromLegacyText("Groups: " + stringBuilder.substring(0)));
 
                             for (Map.Entry<String, Boolean> booleanEntry : offlinePlayer.getPermissionEntity()
                                                                                         .getPermissions()
                                                                                         .entrySet()) {
-                                sender.sendMessage("- " + booleanEntry.getKey() + " [" + booleanEntry.getValue() + ']');
+                                sender.sendMessage(TextComponent.fromLegacyText("- " + booleanEntry.getKey() + " [" + booleanEntry.getValue() + ']'));
                             }
 
-                            sender.sendMessage(NetworkUtils.SPACE_STRING);
+                            sender.sendMessage(TextComponent.fromLegacyText(NetworkUtils.SPACE_STRING));
                         } else {
-                            sender.sendMessage("The player isn't registered in permissions database");
+                            sender.sendMessage(TextComponent.fromLegacyText("The player isn't registered in permissions database"));
                         }
                     } else {
-                        sender.sendMessage("The player isn't registered in permissions database");
+                        sender.sendMessage(TextComponent.fromLegacyText("The player isn't registered in permissions database"));
                     }
                     return;
                 }
@@ -347,7 +354,7 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                                          .add(new GroupEntityData(permissionPool.getDefaultGroup().getName(), 0));
                                         }
                                         updatePlayer(offlinePlayer);
-                                        sender.sendMessage("The player " + offlinePlayer.getName() + " is no longer a member of permission group " + args[4]);
+                                        sender.sendMessage(TextComponent.fromLegacyText("The player " + offlinePlayer.getName() + " is no longer a member of permission group " + args[4]));
                                     }
                                 }
                             }
@@ -358,7 +365,8 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                                                                                                   NetworkUtils.EMPTY_STRING),
                                                                                              !args[4].startsWith("-"));
                                     updatePlayer(offlinePlayer);
-                                    sender.sendMessage("The permission \"" + args[4] + "\" was added for " + offlinePlayer.getName());
+                                    sender.sendMessage(TextComponent.fromLegacyText("The permission \"" + args[4] + "\" was added for " + offlinePlayer
+                                        .getName()));
                                 }
                             }
 
@@ -366,14 +374,15 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                 if (args[3].equalsIgnoreCase("PERMISSION")) {
                                     offlinePlayer.getPermissionEntity().getPermissions().remove(args[4]);
                                     updatePlayer(offlinePlayer);
-                                    sender.sendMessage("The permission \"" + args[4] + "\" was removed for " + offlinePlayer.getName());
+                                    sender.sendMessage(TextComponent.fromLegacyText("The permission \"" + args[4] + "\" was removed for " + offlinePlayer
+                                        .getName()));
                                 }
                             }
                         } else {
-                            sender.sendMessage("The player isn't registered in permissions database");
+                            sender.sendMessage(TextComponent.fromLegacyText("The player isn't registered in permissions database"));
                         }
                     } else {
-                        sender.sendMessage("The player isn't registered in permissions database");
+                        sender.sendMessage(TextComponent.fromLegacyText("The player isn't registered in permissions database"));
                     }
                     return;
                 }
@@ -393,9 +402,9 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                                                                                                     .checkIsNumber(args[5]) ? calcDays(
                                                                                                                     Integer.parseInt(args[5])) : 0L)));
                                         updatePlayer(offlinePlayer);
-                                        sender.sendMessage("The central group of " + offlinePlayer.getName() + " is now " + args[4]);
+                                        sender.sendMessage(TextComponent.fromLegacyText("The central group of " + offlinePlayer.getName() + " is now " + args[4]));
                                     } else {
-                                        sender.sendMessage("The specified permission group doesn't exist");
+                                        sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                                     }
                                     return;
                                 }
@@ -407,18 +416,18 @@ public final class CommandPermissions extends Command implements TabExecutor {
                                                                                                                     .checkIsNumber(args[5]) ? calcDays(
                                                                                                                     Integer.parseInt(args[5])) : 0L)));
                                         updatePlayer(offlinePlayer);
-                                        sender.sendMessage("The player " + offlinePlayer.getName() + " is now also a member of the group " + args[4]);
+                                        sender.sendMessage(TextComponent.fromLegacyText("The player " + offlinePlayer.getName() + " is now also a member of the group " + args[4]));
                                     } else {
-                                        sender.sendMessage("The specified permission group doesn't exist");
+                                        sender.sendMessage(TextComponent.fromLegacyText("The specified permission group doesn't exist"));
                                     }
                                     return;
                                 }
                             }
                         } else {
-                            sender.sendMessage("The player isn't registered in permissions database");
+                            sender.sendMessage(TextComponent.fromLegacyText("The player isn't registered in permissions database"));
                         }
                     } else {
-                        sender.sendMessage("The player isn't registered in permissions database");
+                        sender.sendMessage(TextComponent.fromLegacyText("The player isn't registered in permissions database"));
                     }
                     return;
                 }
@@ -431,35 +440,42 @@ public final class CommandPermissions extends Command implements TabExecutor {
                     if (!permissionPool.getGroups().containsKey(args[1])) {
                         PermissionGroup permissionGroup = new DefaultPermissionGroup(args[1]);
                         CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
-                        sender.sendMessage("The group " + args[1] + " was created!");
+                        sender.sendMessage(TextComponent.fromLegacyText("The group " + args[1] + " was created!"));
                     } else {
-                        sender.sendMessage("The permission group already exists");
+                        sender.sendMessage(TextComponent.fromLegacyText("The permission group already exists"));
                     }
                 }
             }
         } else {
-            sender.sendMessages("CloudNet-Permissions: [\"_\" = \" \"]",
-                                NetworkUtils.SPACE_STRING,
-                                CloudAPI.getInstance().getPrefix() + "/cperms CREATE <groupName>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name | *> add permission <permission>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name | *> remove permission <permission>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name | *> add permission <permission> <group>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name | *> remove permission <permission> <group>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDisplay <display>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setJoinPower <joinPower>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setSuffix <suffix>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setPrefix <prefix>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setTagId <tagId>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDefault <true : false>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setColor <colorCode>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms USER <user>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP SET <name> <lifetime | time in days> ",
-                                CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP ADD <name> <lifetime | time in days> ",
-                                CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP REMOVE <name>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms USER <user> ADD PERMISSION <permission>",
-                                CloudAPI.getInstance().getPrefix() + "/cperms USER <user> REMOVE PERMISSION <permission>");
+            Arrays.asList(
+                TextComponent.fromLegacyText("CloudNet-Permissions: [\"_\" = \" \"]"),
+                TextComponent.fromLegacyText(NetworkUtils.SPACE_STRING),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms CREATE <groupName>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms GROUP"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name | *> add permission <permission>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance()
+                                                     .getPrefix() + "/cperms GROUP <name | *> remove permission <permission>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance()
+                                                     .getPrefix() + "/cperms GROUP <name | *> add permission <permission> <group>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance()
+                                                     .getPrefix() + "/cperms GROUP <name | *> remove permission <permission> <group>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDisplay <display>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setJoinPower <joinPower>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setSuffix <suffix>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setPrefix <prefix>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setTagId <tagId>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setDefault <true : false>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms GROUP <name> setColor <colorCode>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms USER <user>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance()
+                                                     .getPrefix() + "/cperms USER <user> GROUP SET <name> <lifetime | time in days> "),
+                TextComponent.fromLegacyText(CloudAPI.getInstance()
+                                                     .getPrefix() + "/cperms USER <user> GROUP ADD <name> <lifetime | time in days> "),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms USER <user> GROUP REMOVE <name>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms USER <user> ADD PERMISSION <permission>"),
+                TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "/cperms USER <user> REMOVE PERMISSION <permission>"))
+                  .forEach(sender::sendMessage);
         }
     }
 

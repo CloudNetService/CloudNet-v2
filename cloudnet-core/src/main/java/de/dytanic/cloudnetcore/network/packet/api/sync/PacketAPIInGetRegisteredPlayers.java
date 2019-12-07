@@ -5,7 +5,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 
-@Deprecated
 public final class PacketAPIInGetRegisteredPlayers implements PacketAPIIO {
 
     public void handleInput(Packet packet, PacketSender packetSender) {

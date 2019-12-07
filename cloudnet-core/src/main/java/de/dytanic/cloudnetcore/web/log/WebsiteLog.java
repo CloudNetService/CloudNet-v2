@@ -10,6 +10,7 @@ import de.dytanic.cloudnet.web.server.util.QueryDecoder;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.web.api.v1.WebsiteDocumentation;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -35,18 +36,13 @@ public class WebsiteLog extends WebHandler {
                                           HttpRequest httpRequest) throws Exception {
         CloudNet.getLogger().finest("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
         if (!queryDecoder.getQueryParams().containsKey("server")) {
-            FullHttpResponse fullHttpResponse = newResponse(httpRequest.getProtocolVersion());
-            fullHttpResponse.setStatus(HttpResponseStatus.NOT_FOUND);
-            return fullHttpResponse;
+            return new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.NOT_FOUND);
         }
         if (!CloudNet.getInstance().getServerLogManager().getScreenInfos().contains(queryDecoder.getQueryParams().get("server"))) {
-            FullHttpResponse fullHttpResponse = newResponse(httpRequest.getProtocolVersion());
-            fullHttpResponse.setStatus(HttpResponseStatus.NOT_FOUND);
-            return fullHttpResponse;
+            return new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.NOT_FOUND);
         }
 
-        FullHttpResponse fullHttpResponse = newResponse(httpRequest.getProtocolVersion());
-        fullHttpResponse.setStatus(HttpResponseStatus.OK);
+        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.OK);
         fullHttpResponse.headers().set("Content-Type", "text/html; charset=utf-8");
 
         StringBuilder stringBuilder = new StringBuilder();
