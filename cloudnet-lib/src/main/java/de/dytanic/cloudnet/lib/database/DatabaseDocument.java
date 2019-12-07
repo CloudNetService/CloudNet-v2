@@ -70,7 +70,6 @@ public class DatabaseDocument implements org.dizitart.no2.mapper.Mappable {
         }
         // We ignore the deprecation message here, because we need to store the object
         // in the document
-        //noinspection deprecation
         this.backingDocument.append(name, object);
         return this;
     }
@@ -193,30 +192,6 @@ public class DatabaseDocument implements org.dizitart.no2.mapper.Mappable {
         } else {
             return value.getAsCharacter();
         }
-    }
-
-    @Override
-    public int hashCode() {
-        int result = _database_id_unique != null ? _database_id_unique.hashCode() : 0;
-        result = 31 * result + (backingDocument != null ? backingDocument.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof DatabaseDocument)) {
-            return false;
-        }
-
-        final DatabaseDocument document = (DatabaseDocument) o;
-
-        if (!Objects.equals(_database_id_unique, document._database_id_unique)) {
-            return false;
-        }
-        return Objects.equals(backingDocument, document.backingDocument);
     }
 
     @Override
