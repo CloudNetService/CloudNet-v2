@@ -29,11 +29,6 @@ public class DatabaseManager {
     private static final String NITRITE_UPGRADED_DIR = ".upgraded_nitrite";
 
     /**
-     * Directory where the database files are stored.
-     */
-    private final Path dir = Paths.get("database");
-
-    /**
      * Base database store for all used databases with the nitrite format.
      * This database store is the default, starting with 2.2.0.
      */
@@ -50,10 +45,11 @@ public class DatabaseManager {
      * Constructs a new database manager.
      */
     public DatabaseManager() {
+        final Path dir = Paths.get("database");
         try {
-            if (!Files.exists(this.dir) || !Files.isDirectory(this.dir)) {
-                Files.deleteIfExists(this.dir);
-                Files.createDirectories(this.dir);
+            if (!Files.exists(dir) || !Files.isDirectory(dir)) {
+                Files.deleteIfExists(dir);
+                Files.createDirectories(dir);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,9 +58,9 @@ public class DatabaseManager {
                               .filePath(dir.resolve("cloudnet.db").toFile())
                               .openOrCreate();
 
-        if (needsUpgrade(this.dir)) {
+        if (needsUpgrade(dir)) {
             System.out.println("Database upgrade necessary.");
-            upgradeDatabases(this.dir);
+            upgradeDatabases(dir);
         }
     }
 
@@ -158,14 +154,6 @@ public class DatabaseManager {
             database.clear();
         }
         return this;
-    }
-
-    public Path getDir() {
-        return dir;
-    }
-
-    public Map<String, Database> getDatabaseCollection() {
-        return databaseCollection;
     }
 
     /**

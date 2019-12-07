@@ -83,10 +83,10 @@ public class DatabaseImpl implements Database {
         DatabaseDocument document = documents.get(name);
 
         if (document == null) {
-            File doc = new File("database/" + this.name + NetworkUtils.SLASH_STRING + name);
-            if (doc.exists()) {
+            Path doc = Paths.get(this.backendDir.getAbsolutePath(), name);
+            if (Files.exists(doc)) {
                 document = new DatabaseDocument(Document.loadDocument(doc));
-                this.documents.put(doc.getName(), document);
+                this.documents.put(document.getString(Database.UNIQUE_NAME_KEY), document);
                 return document;
             }
         }

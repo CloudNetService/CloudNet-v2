@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Document that is used in conjunction with a {@link Database}.
  * This class provides type-safe and type-ignorant access to stored objects.
- *
+ * <p>
  * Care must be taken to prevent cyclic references in appended objects, as those can not
  * be resolved and lead to exceptions or undefined behaviour.
  */
@@ -84,6 +84,9 @@ public class DatabaseDocument implements org.dizitart.no2.mapper.Mappable {
     public DatabaseDocument(final Document document) {
         this();
         this.backingDocument = document;
+        if (document.contains(Database.UNIQUE_NAME_KEY)) {
+            this._database_id_unique = document.getString(Database.UNIQUE_NAME_KEY);
+        }
     }
 
     /**
