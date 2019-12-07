@@ -72,7 +72,7 @@ public class CloudBootstrap {
         }
 
         if (optionSet.has("version") || optionSet.has("v")) {
-            System.out.printf("CloudNet-Wrapper RezSyM Version %s-%s",
+            System.out.printf("CloudNet-Wrapper RezSyM Version %s-%s%n",
                               CloudBootstrap.class.getPackage().getImplementationVersion(),
                               CloudBootstrap.class.getPackage().getSpecificationVersion());
             return;
