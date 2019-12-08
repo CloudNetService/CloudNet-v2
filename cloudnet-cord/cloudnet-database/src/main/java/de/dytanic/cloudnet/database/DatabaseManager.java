@@ -116,15 +116,15 @@ public class DatabaseManager {
                                        // Clear every time to prevent OOM
                                        oldDb.getDocuments().clear();
                                    } catch (Exception exception) {
-                                       System.err.println(String.format("Error processing document at %s", file));
+                                       System.err.println(String.format("Error processing document %s", file));
                                        exception.printStackTrace();
                                    }
 
-                                   if (i % 1000 == 0) {
+                                   if ((i + 1) % 1000 == 0 || i == filesLength - 1) {
                                        System.out.println(String.format("Progress: %d/%d (%.2f%%)",
-                                                                        i,
+                                                                        i + 1,
                                                                         filesLength,
-                                                                        ((double) i) / filesLength));
+                                                                        ((double) i + 1) / filesLength * 100.0));
                                    }
                                }
                                nitrite.commit();
