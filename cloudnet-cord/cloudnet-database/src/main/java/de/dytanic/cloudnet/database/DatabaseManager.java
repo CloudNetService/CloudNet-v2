@@ -108,11 +108,24 @@ public class DatabaseManager {
                            final String[] files = oldDb.getBackendDir().list();
                            if (files != null) {
                                System.out.println(String.format("Converting %d documents", files.length));
-                               for (final String file : files) {
-                                   final DatabaseDocument document = oldDb.getDocument(file);
-                                   newDb.insert(document);
-                                   // Clear every time to prevent OOM
-                                   oldDb.getDocuments().clear();
+                               for (int i = 0, filesLength = files.length; i < filesLength; i++) {
+                                   final String file = files[i];
+                                   try {
+                                       final DatabaseDocument document = oldDb.getDocument(file);
+                                       newDb.insert(document);
+                                       // Clear every time to prevent OOM
+                                       oldDb.getDocuments().clear();
+                                   } catch (Exception exception) {
+                                       System.err.println(String.format("Error processing document at %s", file));
+                                       exception.printStackTrace();
+                                   }
+
+                                   if (i % 1000 == 0) {
+                                       System.out.println(String.format("Progress: %d/%d (%.2f%%)",
+                                                                        i,
+                                                                        filesLength,
+                                                                        ((double) i) / filesLength));
+                                   }
                                }
                                nitrite.commit();
                                System.out.println(String.format("Upgraded %s.", dbName));
