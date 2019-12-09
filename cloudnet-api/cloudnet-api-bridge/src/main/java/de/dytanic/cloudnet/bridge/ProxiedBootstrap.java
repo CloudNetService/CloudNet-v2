@@ -24,12 +24,17 @@ import java.util.logging.Level;
  */
 public class ProxiedBootstrap extends Plugin {
 
+    private CloudAPI api;
+    private CloudProxy cloudProxy;
+
     @Override
     public void onLoad() {
-        new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"), Paths.get("CLOUD/config.json"), ConfigTypeLoader.INTERNAL),
-                     () -> getProxy().stop("CloudNet-Stop!"));
+        api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"),
+                                                 Paths.get("CLOUD/config.json"),
+                                                 ConfigTypeLoader.INTERNAL),
+                           () -> getProxy().stop("CloudNet-Stop!"));
         getLogger().setLevel(Level.INFO);
-        CloudAPI.getInstance().setLogger(this.getLogger());
+        api.setLogger(this.getLogger());
     }
 
     @Override
@@ -38,7 +43,7 @@ public class ProxiedBootstrap extends Plugin {
         DocumentRegistry.fire();
 
         getProxy().registerChannel("cloudnet:main");
-        CloudAPI.getInstance().bootstrap();
+        api.bootstrap();
 
         ProxyServer.getInstance().getConfig().getListeners().forEach(listenerInfo -> listenerInfo.getServerPriority().clear());
 
@@ -50,28 +55,23 @@ public class ProxiedBootstrap extends Plugin {
         //Alternate Commands
         getProxy().getPluginManager().registerCommand(this, new CommandIp());
 
-        new CloudProxy(this, CloudAPI.getInstance());
-        CloudProxy.getInstance().updateAsync();
+        cloudProxy = new CloudProxy(this, api);
+        cloudProxy.updateAsync();
 
-        if (CloudAPI.getInstance().getPermissionPool() != null && CloudAPI.getInstance().getPermissionPool().isAvailable()) {
-            getProxy().getPluginManager().registerCommand(ProxiedBootstrap.this, new CommandPermissions());
+        if (api.getPermissionPool() != null && api.getPermissionPool().isAvailable()) {
+            getProxy().getPluginManager().registerCommand(this, new CommandPermissions());
         }
 
-        if (CloudProxy.getInstance().getProxyGroup() != null &&
-            CloudProxy.getInstance().getProxyGroup().getProxyConfig().getCustomPayloadFixer()) {
+        if (cloudProxy.getProxyGroup() != null && cloudProxy.getProxyGroup().getProxyConfig().getCustomPayloadFixer()) {
             getProxy().registerChannel("MC|BSign");
             getProxy().registerChannel("MC|BEdit");
         }
-
-
-        //        getProxy().getScheduler().schedule(this, () ->
-        //            CloudProxy.getInstance().update(), 0, 1, TimeUnit.SECONDS);
     }
 
     @Override
     public void onDisable() {
-        if (CloudAPI.getInstance() != null) {
-            CloudAPI.getInstance().shutdown();
+        if (api != null) {
+            api.shutdown();
         }
     }
 }
