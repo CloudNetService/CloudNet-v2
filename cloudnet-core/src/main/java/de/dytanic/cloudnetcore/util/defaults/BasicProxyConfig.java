@@ -21,7 +21,6 @@ public class BasicProxyConfig extends ProxyConfig {
                        "         §bMaintenance §8» §7We are still in §bmaintenance"),
               "§8➜ §bMaintenance §8§l【§c✘§8§l】",
               1000,
-              false,
               true,
               new AutoSlot(0, false),
               new TabList(true,

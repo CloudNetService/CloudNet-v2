@@ -513,6 +513,11 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
 
     private void extractEntry(ZipFile zipFile, ZipEntry entry, String destDir) throws IOException {
         File file = new File(destDir, entry.getName());
+
+        if (!file.toPath().normalize().startsWith(Paths.get(destDir))) {
+            return;
+        }
+
         final byte[] BUFFER = new byte[0xFFFF];
 
         if (entry.isDirectory()) {

@@ -15,6 +15,7 @@ import io.netty.handler.codec.http.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -136,6 +137,11 @@ public class WebsiteDeployment extends MethodWebHandlerAdapter {
 
     private void extractEntry(ZipFile zipFile, ZipEntry entry, String destDir) throws IOException {
         File file = new File(destDir, entry.getName());
+
+        if (!file.toPath().normalize().startsWith(Paths.get(destDir))) {
+            return;
+        }
+
         final byte[] BUFFER = new byte[0xFFFF];
 
         if (entry.isDirectory()) {

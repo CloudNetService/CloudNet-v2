@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ public final class PaperBuilder {
      *
      * @param reader Read the answer from console
      */
-    public static void start(ConsoleReader reader) {
+    public static boolean start(ConsoleReader reader, Path outputPath) {
         try {
             System.out.println("Fetch Versions");
             URLConnection connection = new URL(apiProjectUrl).openConnection();
@@ -55,7 +56,7 @@ public final class PaperBuilder {
                 String finalAnswer = name;
                 if (Arrays.stream(paperMCProject.getVersions()).anyMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
                     answer = name;
-                    buildPaperVersion(answer);
+                    return buildPaperVersion(answer, outputPath);
                 } else if (Arrays.stream(paperMCProject.getVersions()).noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
                     System.out.println("This version does not exist!");
                 }
@@ -63,6 +64,7 @@ public final class PaperBuilder {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     /**
@@ -72,7 +74,7 @@ public final class PaperBuilder {
      *
      * @throws Exception If a connection error or something
      */
-    private static void buildPaperVersion(String version) throws Exception {
+    private static boolean buildPaperVersion(String version, Path outputPath) throws Exception {
         System.out.println(String.format("Fetching build %s", version));
         URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version)).openConnection();
         connection.setRequestProperty("User-Agent",
@@ -92,26 +94,30 @@ public final class PaperBuilder {
         Files.createDirectories(buildFolder.toPath());
         File paperclip = new File(buildFolder, "paperclip.jar");
         if (!paperclip.exists()) {
-            runPaperClip(connection, buildFolder, paperclip);
+            runPaperClip(connection, buildFolder, paperclip, outputPath);
+            return true;
         } else {
-            File[] paperclips = buildFolder.listFiles(pathname -> pathname.getName().startsWith("paper"));
-            if (Objects.requireNonNull(paperclips).length > 0) {
+            File cacheFolder = new File(buildFolder, "cache");
+            File[] patchedFiles = cacheFolder.listFiles(pathname -> pathname.getName().startsWith("patched"));
+            if (Objects.requireNonNull(patchedFiles).length > 0) {
                 System.out.println("Skipping build");
                 System.out.println("Copying spigot.jar");
                 try {
-                    Files.copy(new FileInputStream(Objects.requireNonNull(paperclips)[0]),
-                               Paths.get("local/spigot.jar"),
+                    Files.copy(new FileInputStream(Objects.requireNonNull(patchedFiles)[0]),
+                               outputPath,
                                StandardCopyOption.REPLACE_EXISTING);
+                    return true;
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return false;
                 }
             } else {
                 SpigotBuilder.deleteBuildFolder(buildFolder);
-                runPaperClip(connection, buildFolder, paperclip);
+                runPaperClip(connection, buildFolder, paperclip, outputPath);
+                return true;
             }
 
         }
-
     }
 
     /**
@@ -123,7 +129,7 @@ public final class PaperBuilder {
      *
      * @throws IOException Throws if input stream null
      */
-    private static void runPaperClip(URLConnection connection, File buildFolder, File paperclip) throws IOException {
+    private static void runPaperClip(URLConnection connection, File buildFolder, File paperclip, Path outputPath) throws IOException {
         System.out.println("Downloading Paperclip");
         try (InputStream inputStream = connection.getInputStream()) {
             Files.copy(inputStream, Paths.get(paperclip.toURI()), StandardCopyOption.REPLACE_EXISTING);
@@ -131,10 +137,9 @@ public final class PaperBuilder {
         exec = Runtime.getRuntime().exec("java -jar paperclip.jar", null, buildFolder);
         printProcessOutputToConsole(exec);
 
-        Files.copy(new FileInputStream(Objects.requireNonNull(buildFolder.listFiles(pathname -> pathname.getName()
-                                                                                                        .startsWith("paperclip")))[0]),
-                   Paths.get("local/spigot.jar"),
-                   StandardCopyOption.REPLACE_EXISTING);
+        File cacheFolder = new File(buildFolder, "cache");
+        File[] patchedFiles = cacheFolder.listFiles(pathname -> pathname.getName().startsWith("patched"));
+        Files.copy(new FileInputStream(Objects.requireNonNull(patchedFiles)[0]), outputPath, StandardCopyOption.REPLACE_EXISTING);
     }
 
     /**

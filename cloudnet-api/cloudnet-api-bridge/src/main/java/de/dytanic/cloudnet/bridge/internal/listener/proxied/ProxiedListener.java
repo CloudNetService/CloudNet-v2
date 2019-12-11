@@ -306,46 +306,6 @@ public class ProxiedListener implements Listener {
 
         CloudProxy.getInstance().update();
         CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutLoginSuccess(e.getPlayer().getUniqueId()));
-
-        if (CloudProxy.getInstance().getProxyGroup().getProxyConfig().isFastConnect()) {
-            try {
-
-                Field channelWrapper;
-                try {
-                    channelWrapper = UserConnection.class.getDeclaredField("ch");
-                    channelWrapper.setAccessible(true);
-                } catch (Exception ex) {
-                    channelWrapper = UserConnection.class.getField("ch");
-                    channelWrapper.setAccessible(true);
-                }
-
-                Field field;
-                try {
-                    field = ChannelWrapper.class.getDeclaredField("ch");
-                    field.setAccessible(true);
-                } catch (Exception ex) {
-                    field = ChannelWrapper.class.getField("ch");
-                    field.setAccessible(true);
-                }
-
-                Channel channel = (Channel) field.get(channelWrapper.get(e.getPlayer()));
-                channel.pipeline().addAfter("packet-encoder", "cloudConnection", new MessageToMessageEncoder<DefinedPacket>() {
-                    @Override
-                    protected void encode(ChannelHandlerContext channelHandlerContext, DefinedPacket definedPacket, List<Object> out) throws
-                        Exception {
-                        if (definedPacket instanceof Respawn) {
-                            if (((Respawn) definedPacket).getDimension() != ((UserConnection) e.getPlayer()).getDimension()) {
-                                ((Respawn) definedPacket).setDimension(((UserConnection) e.getPlayer()).getDimension());
-                            }
-                        }
-                        out.add(definedPacket);
-                    }
-                });
-            } catch (IllegalAccessException | NoSuchFieldException e1) {
-                e1.printStackTrace();
-            }
-        }
-
     }
 
     @EventHandler
