@@ -57,7 +57,6 @@
         <module>cloudnet-cord</module>
         <module>cloudnet-wrapper</module>
         <module>cloudnet-api</module>
-        <module>cloudnet-modules</module>
     </modules>
 
     <build>
