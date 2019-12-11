@@ -87,7 +87,7 @@ public class CloudServer implements ICloudService {
         cloudAPI.setCloudService(this);
 
         this.bukkitBootstrap = bukkitBootstrap;
-        ServerInfo serverInfo = cloudAPI.getConfig().getObject("serverInfo", new TypeToken<ServerInfo>() {}.getType());
+        ServerInfo serverInfo = cloudAPI.getConfig().getObject("serverInfo", ServerInfo.TYPE);
 
         cloudAPI.getNetworkHandlerProvider().registerHandler(new NetworkHandlerImpl());
         this.allowAutoStart = !cloudAPI.getConfig().contains("cloudProcess");
@@ -384,7 +384,7 @@ public class CloudServer implements ICloudService {
      * @return
      */
     public ServerProcessMeta getServerProcessMeta() {
-        return CloudAPI.getInstance().getConfig().getObject("serverProcess", new TypeToken<ServerProcessMeta>() {}.getType());
+        return CloudAPI.getInstance().getConfig().getObject("serverProcess", ServerProcessMeta.TYPE);
     }
 
 

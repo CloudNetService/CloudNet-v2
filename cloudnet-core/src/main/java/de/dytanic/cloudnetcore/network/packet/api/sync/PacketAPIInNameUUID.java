@@ -20,7 +20,8 @@ public class PacketAPIInNameUUID implements PacketAPIIO {
 
     public void handleInput(Packet packet, PacketSender packetSender) {
         if (packet.getData().contains("uniqueId")) {
-            UUID uniqueId = packet.getData().getObject("uniqueId", new TypeToken<UUID>() {}.getType());
+
+            UUID uniqueId = packet.getData().getObject("uniqueId", TypeToken.get(UUID.class).getType());
             String name = CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().get(uniqueId);
             packetSender.sendPacket(getResult(packet, new Document("name", name)));
         } else {

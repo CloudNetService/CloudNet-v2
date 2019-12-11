@@ -58,7 +58,7 @@ public final class PacketInCreateTemplate implements PacketInHandler {
                 createGlowstoneTemplate(serverGroup, serverGroup.getGlobalTemplate());
             }
         } else {
-            ProxyGroup proxyGroup = packet.getData().getObject("proxyGroup", new TypeToken<ProxyGroup>() {}.getType());
+            ProxyGroup proxyGroup = packet.getData().getObject("proxyGroup", ProxyGroup.TYPE);
             try {
                 if (!Files.exists(Paths.get("local/templates/" + proxyGroup.getName()))) {
                     System.out.println("Creating GroupTemplate for " + proxyGroup.getName() + " DEFAULT...");

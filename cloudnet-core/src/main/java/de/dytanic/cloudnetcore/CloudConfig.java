@@ -233,7 +233,7 @@ public class CloudConfig {
 
         this.serviceDocument = Document.loadDocument(servicePath);
 
-        this.wrappers = this.serviceDocument.getObject("wrapper", new TypeToken<List<WrapperMeta>>() {}.getType());
+        this.wrappers = this.serviceDocument.getObject("wrapper", TypeToken.getParameterized(List.class,WrapperMeta.class).getType());
 
         this.userDocument = Document.loadDocument(usersPath);
 
@@ -263,7 +263,7 @@ public class CloudConfig {
         if (this.userDocument == null) {
             return null;
         }
-        return userDocument.getObject("users", new TypeToken<Collection<User>>() {}.getType());
+        return userDocument.getObject("users", TypeToken.getParameterized(Collection.class,User.class).getType());
     }
 
     public CloudConfig save(Collection<User> users) {
@@ -295,8 +295,9 @@ public class CloudConfig {
 
         if (serviceDocument.contains("serverGroups")) {
 
+
             Collection<ServerGroup> collection = serviceDocument.getObject("serverGroups",
-                                                                           new TypeToken<Collection<ServerGroup>>() {}.getType());
+                                                                           TypeToken.getParameterized(Collection.class,ServerGroup.TYPE).getType());
 
             for (ServerGroup serverGroup : collection) {
                 createGroup(serverGroup);

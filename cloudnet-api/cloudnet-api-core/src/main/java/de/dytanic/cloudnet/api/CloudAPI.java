@@ -1337,9 +1337,10 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns all proxyInfos on network
      */
-    public Collection<ProxyInfo> getProxys() {
+    public Collection<ProxyInfo> getProxies() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(), networkConnection);
-        return result.getResult().getObject("proxyInfos", new TypeToken<Collection<ProxyInfo>>() {}.getType());
+
+        return result.getResult().getObject("proxyInfos", TypeToken.getParameterized(Collection.class,ProxyInfo.TYPE).getType());
     }
 
     /**
@@ -1347,9 +1348,9 @@ public final class CloudAPI implements MetaObj {
      *
      * @param group
      */
-    public Collection<ProxyInfo> getProxys(String group) {
+    public Collection<ProxyInfo> getProxies(String group) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(group), networkConnection);
-        return result.getResult().getObject("proxyInfos", new TypeToken<Collection<ProxyInfo>>() {}.getType());
+        return result.getResult().getObject("proxyInfos", TypeToken.getParameterized(Collection.class,ProxyInfo.TYPE).getType());
     }
 
     /**
@@ -1357,8 +1358,9 @@ public final class CloudAPI implements MetaObj {
      */
     public Collection<CloudPlayer> getOnlinePlayers() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayers(), networkConnection);
+
         Collection<CloudPlayer> cloudPlayers = result.getResult().getObject("players",
-                                                                            new TypeToken<Collection<CloudPlayer>>() {}.getType());
+                                                                            TypeToken.getParameterized(Collection.class,CloudPlayer.TYPE).getType());
 
         if (cloudPlayers == null) {
             return new ArrayList<>();
@@ -1405,7 +1407,7 @@ public final class CloudAPI implements MetaObj {
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(uniqueId), networkConnection);
-        return result.getResult().getObject("player", new TypeToken<OfflinePlayer>() {}.getType());
+        return result.getResult().getObject("player", OfflinePlayer.TYPE);
     }
 
     /**
@@ -1434,7 +1436,7 @@ public final class CloudAPI implements MetaObj {
      */
     public ServerGroup getServerGroup(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServerGroup(name), networkConnection);
-        return result.getResult().getObject("serverGroup", new TypeToken<ServerGroup>() {}.getType());
+        return result.getResult().getObject("serverGroup", ServerGroup.TYPE);
     }
 
     /**
@@ -1442,7 +1444,7 @@ public final class CloudAPI implements MetaObj {
      */
     public UUID getPlayerUniqueId(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutNameUUID(name), networkConnection);
-        return result.getResult().getObject("uniqueId", new TypeToken<UUID>() {}.getType());
+        return result.getResult().getObject("uniqueId", TypeToken.get(UUID.class).getType());
     }
 
     /**
@@ -1458,7 +1460,7 @@ public final class CloudAPI implements MetaObj {
      */
     public ServerInfo getServerInfo(String serverName) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServer(serverName), networkConnection);
-        return result.getResult().getObject("serverInfo", new TypeToken<ServerInfo>() {}.getType());
+        return result.getResult().getObject("serverInfo", ServerInfo.TYPE);
     }
 
     /**
@@ -1492,7 +1494,8 @@ public final class CloudAPI implements MetaObj {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetRegisteredPlayers(), networkConnection);
 
         if (result.getResult() != null) {
-            return result.getResult().getObject("players", new TypeToken<Map<UUID, OfflinePlayer>>() {}.getType());
+
+            return result.getResult().getObject("players", TypeToken.getParameterized(Map.class,UUID.class,OfflinePlayer.TYPE).getType());
         }
 
         return new HashMap<>();

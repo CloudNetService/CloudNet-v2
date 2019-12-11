@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 public class ServerGroup implements Nameable {
 
-    public static final Type TYPE = new TypeToken<ServerGroup>() {}.getType();
+    public static final Type TYPE = TypeToken.get(ServerGroup.class).getType();
 
     protected String name;
     protected Collection<String> wrapper;
