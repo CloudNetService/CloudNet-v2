@@ -9,17 +9,13 @@ import de.dytanic.cloudnet.help.ServiceDescription;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.SystemTimer;
 import de.dytanic.cloudnet.logging.CloudLogger;
-import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
-import de.dytanic.cloudnet.logging.util.HeaderFunction;
 import de.dytanic.cloudnetcore.CloudConfig;
 import de.dytanic.cloudnetcore.CloudNet;
-import io.netty.util.ResourceLeakDetector;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 24.07.2017.
@@ -27,24 +23,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class CloudBootstrap {
 
     public static synchronized void main(String[] args) throws Exception {
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
-
         System.setProperty("file.encoding", "UTF-8");
         System.setProperty("java.net.preferIPv4Stack", "true");
-        System.setProperty("io.netty.noPreferDirect", "true");
-        System.setProperty("client.encoding.override", "UTF-8");
-        System.setProperty("io.netty.maxDirectMemory", "0");
-        System.setProperty("io.netty.leakDetectionLevel", "DISABLED");
-        System.setProperty("io.netty.recycler.maxCapacity", "0");
-        System.setProperty("io.netty.recycler.maxCapacity.default", "0");
 
         OptionParser optionParser = new OptionParser();
 
         optionParser.allowsUnrecognizedOptions();
         optionParser.acceptsAll(Arrays.asList("version", "v"));
         optionParser.acceptsAll(Arrays.asList("help", "?"));
-        optionParser.acceptsAll(Arrays.asList("notifyWrappers"));
-        optionParser.acceptsAll(Arrays.asList("disable-autoupdate"));
+        optionParser.accepts("notifyWrappers");
+        optionParser.accepts("disable-autoupdate");
         optionParser.accepts("debug");
         optionParser.accepts("noconsole");
         optionParser.accepts("ssl");
@@ -55,8 +43,6 @@ public final class CloudBootstrap {
         optionParser.accepts("onlyConsole");
 
         OptionSet optionSet = optionParser.parse(args);
-
-        List<String> consolePreInit = new CopyOnWriteArrayList<>();
 
         if (optionSet.has("help") || optionSet.has("?")) {
             HelpService helpService = new HelpService();
@@ -96,19 +82,14 @@ public final class CloudBootstrap {
             helpService.getDescriptions().put("requestTerminationSignal",
                                               new ServiceDescription[] {new ServiceDescription("--requestTerminationSignal",
                                                                                                "Enables the request if you use STRG+C")});
-            System.out.println(helpService.toString());
+            System.out.println(helpService);
             return;
         }
 
-        if (optionSet.has("systemTimer")) {
-            new SystemTimer();
-        }
-
         if (optionSet.has("version")) {
-            System.out.println("CloudNet-Core RezSyM Version " + CloudBootstrap.class.getPackage()
-                                                                                     .getImplementationVersion() + '-' + CloudBootstrap.class
-                .getPackage()
-                .getSpecificationVersion());
+            System.out.println(String.format("CloudNet-Core RezSyM Version %s-%s%n",
+                                             CloudBootstrap.class.getPackage().getImplementationVersion(),
+                                             CloudBootstrap.class.getPackage().getSpecificationVersion()));
             return;
         }
 
@@ -117,18 +98,13 @@ public final class CloudBootstrap {
             cloudNetLogging.setDebugging(true);
         }
 
-        cloudNetLogging.getHandler().add(new ICloudLoggerHandler() {
-            @Override
-            public void handleConsole(String input) {
-                if (!CloudNet.RUNNING) {
-                    consolePreInit.add(input);
-                }
-            }
-        });
-
-        new HeaderFunction();
+        NetworkUtils.header();
         CloudConfig coreConfig = new CloudConfig(cloudNetLogging.getReader());
-        CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, consolePreInit, Arrays.asList(args));
+        CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args));
+
+        if (optionSet.has("systemTimer")) {
+            CloudNet.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);
+        }
 
         if (!cloudNetCore.bootstrap()) {
             System.exit(0);
@@ -136,36 +112,34 @@ public final class CloudBootstrap {
 
         if (!optionSet.has("noconsole")) {
             System.out.println("Use the command \"help\" for further information!");
-            String commandLine;
+
 
             String user = System.getProperty("user.name");
-
+            String commandLine;
+            final String prompt = user + "@Master $ ";
             try {
-                while (true) {
-                    while ((commandLine = cloudNetLogging.readLine(user + "@Master $ ")) != null && CloudNet.RUNNING) {
-                        String dispatcher = cloudNetCore.getDbHandlers().getCommandDispatcherDatabase().findDispatcher(commandLine);
-                        if (dispatcher != null) {
-                            try {
-                                if (!cloudNetCore.getCommandManager().dispatchCommand(dispatcher)) {
-                                    continue;
-                                }
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
+                while ((commandLine = cloudNetLogging.readLine(prompt)) != null && CloudNet.RUNNING) {
+                    // Aliases
+                    String dispatcher = cloudNetCore.getDbHandlers().getCommandDispatcherDatabase().findDispatcher(commandLine);
+                    if (dispatcher != null) {
+                        try {
+                            cloudNetCore.getCommandManager().dispatchCommand(dispatcher);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
                         }
-
-                        if (!cloudNetCore.getCommandManager().dispatchCommand(commandLine)) {
-                            System.out.println("Command not found. Use the command \"help\" for further information!");
-                        }
+                        // Normal commands
+                    } else if (!cloudNetCore.getCommandManager().dispatchCommand(commandLine)) {
+                        System.out.println("Command not found. Use the command \"help\" for further information!");
                     }
                 }
             } catch (Exception ex) {
-
+                ex.printStackTrace();
             }
         } else {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
             }
         }
+        cloudNetLogging.info("Shutting down now!");
     }
 }

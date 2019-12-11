@@ -1,11 +1,16 @@
 package de.dytanic.cloudnet.lib.server;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+
+import java.lang.reflect.Type;
 
 /**
  * Created by Tareko on 25.07.2017.
  */
 public class ServerConfig {
+
+    public static final Type TYPE = TypeToken.get(ServerConfig.class).getType();
 
     private boolean hideServer;
     private String extra;

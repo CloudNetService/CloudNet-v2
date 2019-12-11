@@ -29,7 +29,6 @@ listeners:
   query_enabled: false
   host: 0.0.0.0:25577
   forced_hosts:
-    pvp.md-5.net: pvp
   max_players: 1
   tab_size: 60
   ping_passthrough: false
@@ -37,8 +36,5 @@ listeners:
 ip_forward: true
 network_compression_threshold: 256
 groups:
-  Dytanic:
-  - admin
 connection_throttle: -1
-stats: 13be5ac9-5731-4502-9ccc-c4a80163f14a
 prevent_proxy_connections: false

@@ -22,7 +22,7 @@ public class CloudNetWrapperConfig {
 
     private Configuration configuration;
 
-    private String internalIP, wrapperId, cloudnetHost, devServicePath, proxy_config_host;
+    private String internalIP, wrapperId, cloudnetHost, devServicePath, proxyConfigHost;
 
     private boolean savingRecords, viaVersion, autoUpdate, maintenance_copy;
 
@@ -156,7 +156,7 @@ public class CloudNetWrapperConfig {
 
             //generatated configurations
 
-            this.proxy_config_host = configuration.getString("general.proxy-config-host");
+            this.proxyConfigHost = configuration.getString("general.proxy-config-host");
 
             if (!Files.exists(Paths.get(devServicePath))) {
                 Files.createDirectories(Paths.get(devServicePath));
@@ -213,8 +213,8 @@ public class CloudNetWrapperConfig {
         return internalIP;
     }
 
-    public String getProxy_config_host() {
-        return proxy_config_host;
+    public String getProxyConfigHost() {
+        return proxyConfigHost;
     }
 
     public String getWrapperId() {

@@ -4,11 +4,9 @@
 
 package de.dytanic.cloudnet.api.handlers;
 
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 /**
  * Managed all NetworkHandlers an you can registerd new NetworkHandler implmentations
@@ -31,8 +29,8 @@ public class NetworkHandlerProvider {
      *
      * @param handlerTask
      */
-    public void iterator(Runnabled<NetworkHandler> handlerTask) {
-        CollectionWrapper.iterator(handlers, handlerTask);
+    public void iterator(Consumer<NetworkHandler> handlerTask) {
+        handlers.forEach(handlerTask);
     }
 
     public void clear() {

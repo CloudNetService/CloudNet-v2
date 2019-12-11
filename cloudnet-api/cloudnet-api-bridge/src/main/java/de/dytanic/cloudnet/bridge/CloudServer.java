@@ -23,8 +23,6 @@ import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
@@ -61,7 +60,7 @@ public class CloudServer implements ICloudService {
 
     private BukkitBootstrap bukkitBootstrap;
 
-    private Map<UUID, CloudPlayer> cloudPlayers = NetworkUtils.newConcurrentHashMap();
+    private Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
 
     /*=================================================*/
     private int maxPlayers;
@@ -411,12 +410,12 @@ public class CloudServer implements ICloudService {
     }
 
     public CloudPlayer getCachedPlayer(String name) {
-        return CollectionWrapper.filter(this.cloudPlayers.values(), new Acceptable<CloudPlayer>() {
-            @Override
-            public boolean isAccepted(CloudPlayer cloudPlayer) {
-                return cloudPlayer.getName().equalsIgnoreCase(name);
+        for (final CloudPlayer player : cloudPlayers.values()) {
+            if (player.getName().equalsIgnoreCase(name)) {
+                return player;
             }
-        });
+        }
+        return null;
     }
 
     @Override
@@ -486,8 +485,7 @@ public class CloudServer implements ICloudService {
                     String url = document.getString("url");
                     try {
                         URLConnection urlConnection = new URL(url).openConnection();
-                        urlConnection.setRequestProperty("User-Agent",
-                                                         "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                        urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
                         urlConnection.connect();
                         Files.copy(urlConnection.getInputStream(), Paths.get("plugins/" + document.getString("name") + ".jar"));
                         File file = new File("plugins/" + document.getString("name") + ".jar");

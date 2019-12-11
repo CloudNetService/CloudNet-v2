@@ -15,13 +15,16 @@ public final class DocumentRegistry {
     }
 
     public static void fire() {
-        Document.GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping()
-                                         //
-                                         .registerTypeAdapter(BaseComponent.class, new ComponentSerializer()).registerTypeAdapter(
-                TextComponent.class,
-                new TextComponentSerializer()).registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer())
-                                         //
-                                         .create();
+        Document.GSON = new GsonBuilder()
+            .serializeNulls()
+            .setPrettyPrinting()
+            .disableHtmlEscaping()
+            //
+            .registerTypeAdapter(BaseComponent.class, new ComponentSerializer())
+            .registerTypeAdapter(TextComponent.class, new TextComponentSerializer())
+            .registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer())
+            //
+            .create();
     }
 
 }

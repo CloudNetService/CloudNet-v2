@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -45,16 +46,16 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
 
     private CloudServerMeta cloudServerMeta;
     private Path dir;
-    private String path;
+    private Path path;
     private ServerInfo serverInfo;
     private Process instance;
 
     public CloudGameServer(CloudServerMeta cloudServerMeta) {
         this.cloudServerMeta = cloudServerMeta;
-        this.path = CloudNetWrapper.getInstance()
-                                   .getWrapperConfig()
-                                   .getDevServicePath() + NetworkUtils.SLASH_STRING + cloudServerMeta.getServiceId().getServerId();
-        this.dir = Paths.get(path);
+        this.path = Paths.get(CloudNetWrapper.getInstance()
+                                             .getWrapperConfig().getDevServicePath(),
+                              cloudServerMeta.getServiceId().getServerId());
+        this.dir = path;
     }
 
     @Override
@@ -95,7 +96,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
         return dir;
     }
 
-    public String getPath() {
+    public Path getPath() {
         return path;
     }
 
@@ -120,7 +121,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                         try {
                             URLConnection urlConnection = new java.net.URL(url.getUrl()).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
-                                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                             NetworkUtils.USER_AGENT);
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -145,7 +146,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                                                                                .append("/cloudnet/api/v1/download")
                                                                                .substring(0)).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
-                                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                             NetworkUtils.USER_AGENT);
 
                             SimpledUser simpledUser = CloudNetWrapper.getInstance().getSimpledUser();
                             urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
@@ -183,7 +184,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                                                                                                   .getWebPort())
                                                                            .append("/cloudnet/api/v1/download")
                                                                            .toString(),
-                                                                       dir.toString() + "/template.zip",
+                                                                       dir + "/template.zip",
                                                                        CloudNetWrapper.getInstance().getSimpledUser(),
                                                                        null,
                                                                        null,
@@ -192,7 +193,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
         templateLoader.load();
         templateLoader.unZip(dir.toString());
 
-        FileUtility.copyFilesInDirectory(new File(dir.toString()), new File(path));
+        FileUtility.copyFilesInDirectory(dir.toFile(), path.toFile());
 
         if (cloudServerMeta.getServerGroupType().equals(ServerGroupType.CAULDRON)) {
             try {
@@ -201,7 +202,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                 URLConnection connection = new URL("https://yivesmirror.com/files/cauldron/cauldron-1.7.10-2.1403.1.54.zip").openConnection();
                 connection.setUseCaches(false);
                 connection.setRequestProperty("User-Agent",
-                                              "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                              NetworkUtils.USER_AGENT);
                 connection.connect();
                 Files.copy(connection.getInputStream(), Paths.get(path + "/cauldron.zip"));
                 ((HttpURLConnection) connection).disconnect();
@@ -233,21 +234,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
 
         if (cloudServerMeta.getServerGroupType().equals(ServerGroupType.GLOWSTONE)) {
             Path path = Paths.get(this.path + "/glowstone.jar");
-            if (!Files.exists(path)) {
-                try {
-                    URLConnection connection = new URL("https://yivesmirror.com/grab/glowstone/Glowstone-latest.jar").openConnection();
-                    connection.setUseCaches(false);
-                    connection.setRequestProperty("User-Agent",
-                                                  "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-                    connection.connect();
-                    System.out.println("Downloading glowstone.jar...");
-                    Files.copy(connection.getInputStream(), path);
-                    System.out.println("Download was completed successfully");
-                    ((HttpURLConnection) connection).disconnect();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
+            downloadGlowstone(path);
         }
 
         //Init
@@ -261,7 +248,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
 
         if (cloudServerMeta.getServerGroupType().equals(ServerGroupType.BUKKIT)) {
             if (!Files.exists(Paths.get(path + "/spigot.jar"))) {
-                FileUtility.copyFileToDirectory(new File("local/spigot.jar"), new File(path));
+                FileUtility.copyFileToDirectory(new File("local/spigot.jar"), path.toFile());
             }
         }
 
@@ -298,7 +285,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
         FileUtility.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
         try {
-            FileUtility.copyFilesInDirectory(new File("local/global_cloudserver"), new File(path));
+            FileUtility.copyFilesInDirectory(new File("local/global_cloudserver"), path.toFile());
         } catch (Exception ex) {
         }
 
@@ -308,7 +295,7 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
                     System.out.println("Downloading ViaVersion...");
                     URLConnection url = new URL("https://ci.viaversion.com/job/ViaVersion/177/artifact/jar/target/ViaVersion-1.2.0.jar").openConnection();
                     url.setRequestProperty("User-Agent",
-                                           "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                           NetworkUtils.USER_AGENT);
                     url.connect();
                     Files.copy(url.getInputStream(), Paths.get("local/viaversion.jar"));
                     ((HttpURLConnection) url).disconnect();
@@ -420,8 +407,8 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
         }
 
         commandBuilder.append(
-            "-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -XX:CompileThreshold=100 -Dio.netty.leakDetectionLevel=DISABLED -Dfile.encoding=UTF-8 -Dio.netty.maxDirectMemory=0 -Dcom.mojang.eula.agree=true -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -Xmx" + cloudServerMeta
-                .getMemory() + "M -jar ");
+            "-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx"
+                + cloudServerMeta.getMemory() + "M -jar ");
 
         switch (cloudServerMeta.getServerGroupType()) {
             case CAULDRON:
@@ -440,9 +427,9 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
 
         CloudNetWrapper.getInstance().getCloudServers().put(this.cloudServerMeta.getServiceId().getServerId(), this);
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddCloudServer(this.serverInfo, cloudServerMeta));
-        System.out.println("CloudServer " + toString() + " [" + (cloudServerMeta.isPriorityStop() ? "priority stop: true" : "priority stop: false") + "] start [" + (System
+        System.out.println("CloudServer " + this + " [" + (cloudServerMeta.isPriorityStop() ? "priority stop: true" : "priority stop: false") + "] start [" + (System
             .currentTimeMillis() - startupTime) + " milliseconds]");
-        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, new File(path));
+        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, path.toFile());
 
         return true;
     }
@@ -457,20 +444,21 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
         if (instance.isAlive()) {
             executeCommand("stop");
             try {
-                Thread.sleep(1000);
+                instance.waitFor(60, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
+                e.printStackTrace();
+                instance.destroyForcibly();
             }
         }
-
-        instance.destroyForcibly();
 
         try {
             Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
         } catch (IOException e) {
+            e.printStackTrace();
         }
 
         if (CloudNetWrapper.getInstance().isCanDeployed()) {
-            MasterTemplateDeploy masterTemplateDeploy = new MasterTemplateDeploy(path,
+            MasterTemplateDeploy masterTemplateDeploy = new MasterTemplateDeploy(path.toString(),
                                                                                  new ConnectableAddress(CloudNetWrapper.getInstance()
                                                                                                                        .getWrapperConfig()
                                                                                                                        .getCloudnetHost(),
@@ -485,20 +473,31 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
             try {
                 masterTemplateDeploy.deploy();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
-        FileUtility.deleteDirectory(new File(path));
+        FileUtility.deleteDirectory(path.toFile());
 
         CloudNetWrapper.getInstance().getCloudServers().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveCloudServer(serverInfo));
-        System.out.println("Server " + toString() + " was stopped");
-
-        try {
-            this.finalize();
-        } catch (Throwable throwable) {
-        }
+        System.out.println("Server " + this + " was stopped");
         return true;
+    }
+
+    public static void extractEntry(ZipFile zipFile, ZipEntry entry, Path destDir) throws IOException {
+        Path outputPath = destDir.resolve(entry.getName());
+
+        if (!outputPath.normalize().startsWith(destDir)) {
+            return;
+        }
+
+        if (entry.isDirectory()) {
+            Files.createDirectories(outputPath);
+        } else {
+            Files.createDirectory(outputPath.getParent());
+            Files.copy(zipFile.getInputStream(entry), outputPath);
+        }
     }
 
     @Override
@@ -511,38 +510,20 @@ public class CloudGameServer extends AbstractScreenService implements ServerDisp
         return instance;
     }
 
-    private void extractEntry(ZipFile zipFile, ZipEntry entry, String destDir) throws IOException {
-        File file = new File(destDir, entry.getName());
-
-        if (!file.toPath().normalize().startsWith(Paths.get(destDir))) {
-            return;
-        }
-
-        final byte[] BUFFER = new byte[0xFFFF];
-
-        if (entry.isDirectory()) {
-            file.mkdirs();
-        } else {
-            new File(file.getParent()).mkdirs();
-
-            InputStream is = null;
-            OutputStream os = null;
-
+    public static void downloadGlowstone(final Path path) {
+        if (!Files.exists(path)) {
             try {
-                is = zipFile.getInputStream(entry);
-                os = new FileOutputStream(file);
-
-                int len;
-                while ((len = is.read(BUFFER)) != -1) {
-                    os.write(BUFFER, 0, len);
-                }
-            } finally {
-                if (os != null) {
-                    os.close();
-                }
-                if (is != null) {
-                    is.close();
-                }
+                URLConnection connection = new URL("https://yivesmirror.com/grab/glowstone/Glowstone-latest.jar").openConnection();
+                connection.setUseCaches(false);
+                connection.setRequestProperty("User-Agent",
+                                              NetworkUtils.USER_AGENT);
+                connection.connect();
+                System.out.println("Downloading glowstone.jar...");
+                Files.copy(connection.getInputStream(), path);
+                System.out.println("Download was completed successfully");
+                ((HttpURLConnection) connection).disconnect();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
     }

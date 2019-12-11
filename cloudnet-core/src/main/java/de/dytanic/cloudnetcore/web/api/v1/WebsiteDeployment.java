@@ -36,14 +36,14 @@ public class WebsiteDeployment extends MethodWebHandlerAdapter {
                                  QueryDecoder queryDecoder,
                                  PathProvider path,
                                  HttpRequest httpRequest) throws Exception {
-        CloudNet.getLogger().debug("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
+        CloudNet.getLogger().finest("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
 
         if (!(httpRequest instanceof FullHttpRequest)) {
             return null;
         }
 
         FullHttpRequest fullHttpRequest = ((FullHttpRequest) httpRequest);
-        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), HttpResponseStatus.UNAUTHORIZED);
+        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.UNAUTHORIZED);
 
         Document dataDocument = new Document("success", false).append("reason", new ArrayList<>()).append("response", new Document());
         if (!httpRequest.headers().contains("-Xcloudnet-user") || (!httpRequest.headers()
@@ -74,7 +74,6 @@ public class WebsiteDeployment extends MethodWebHandlerAdapter {
                 String pluginName = httpRequest.headers().get("-Xvalue");
                 File file = new File(new StringBuilder("local/plugins/").append(pluginName).append(".jar").substring(0));
                 if (file.getParentFile().mkdirs()) {
-                    ;
                 }
                 file.createNewFile();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {

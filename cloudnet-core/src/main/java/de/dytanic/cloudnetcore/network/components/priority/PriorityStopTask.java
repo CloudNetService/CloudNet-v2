@@ -4,12 +4,13 @@
 
 package de.dytanic.cloudnetcore.network.components.priority;
 
-import de.dytanic.cloudnet.lib.utility.threading.ScheduledTask;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.INetworkComponent;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
+
+import java.util.concurrent.Future;
 
 /**
  * Created by Tareko on 20.08.2017.
@@ -22,7 +23,7 @@ public final class PriorityStopTask implements Runnable {
 
     private int time;
 
-    private ScheduledTask scheduledTask;
+    private Future<?> future;
 
     public PriorityStopTask(Wrapper wrapper, INetworkComponent iNetworkComponent, int time) {
         this.wrapper = wrapper.getServerId();
@@ -34,14 +35,14 @@ public final class PriorityStopTask implements Runnable {
     public void run() {
 
         if (iNetworkComponent instanceof ProxyServer) {
-            if (!getWrapperInstance().getProxys().containsKey(iNetworkComponent.getServerId()) && scheduledTask != null) {
-                scheduledTask.cancel();
+            if (!getWrapperInstance().getProxys().containsKey(iNetworkComponent.getServerId()) && future != null) {
+                future.cancel(true);
             }
         }
 
         if (iNetworkComponent instanceof MinecraftServer) {
-            if (!getWrapperInstance().getServers().containsKey(iNetworkComponent.getServerId()) && scheduledTask != null) {
-                scheduledTask.cancel();
+            if (!getWrapperInstance().getServers().containsKey(iNetworkComponent.getServerId()) && future != null) {
+                future.cancel(true);
             }
         }
 
@@ -68,8 +69,8 @@ public final class PriorityStopTask implements Runnable {
                 getWrapperInstance().stopServer(((MinecraftServer) iNetworkComponent));
             }
 
-            if (scheduledTask != null) {
-                scheduledTask.cancel();
+            if (future != null) {
+                future.cancel(true);
             }
         }
     }
@@ -78,20 +79,16 @@ public final class PriorityStopTask implements Runnable {
         return CloudNet.getInstance().getWrappers().get(wrapper);
     }
 
-    public INetworkComponent getiNetworkComponent() {
-        return iNetworkComponent;
-    }
-
     public int getTime() {
         return time;
     }
 
-    public ScheduledTask getScheduledTask() {
-        return scheduledTask;
+    public Future<?> getFuture() {
+        return future;
     }
 
-    public void setScheduledTask(ScheduledTask scheduledTask) {
-        this.scheduledTask = scheduledTask;
+    public void setFuture(Future<?> future) {
+        this.future = future;
     }
 
     public String getWrapper() {

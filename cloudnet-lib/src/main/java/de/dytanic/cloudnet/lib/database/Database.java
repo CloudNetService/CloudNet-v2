@@ -1,46 +1,142 @@
 package de.dytanic.cloudnet.lib.database;
 
-import de.dytanic.cloudnet.lib.utility.document.Document;
-
-import java.util.Collection;
-import java.util.concurrent.FutureTask;
+import java.util.Map;
 
 /**
  * Created by Tareko on 01.07.2017.
  */
 public interface Database {
 
+    /**
+     * Unique key identifying the value that should be used for providing
+     * the unique key for a document.
+     */
     String UNIQUE_NAME_KEY = "_database_id_unique";
 
-    static DatabaseDocument createEmptyDocument(String name) {
-        return new DatabaseDocument(name);
-    }
+    /**
+     * Returns all documents currently loaded in the database.
+     * Some implementations may choose to only return documents that
+     * are currently loaded in memory, while others might return all
+     * documents in the database.
+     *
+     * @return all documents associated with their unique name.
+     */
+    Map<String, DatabaseDocument> getDocuments();
 
+    /**
+     * Loads all documents of the database into the buffer, if necessary.
+     *
+     * @return the database.
+     */
     Database loadDocuments();
 
-    Collection<Document> getDocs();
+    /**
+     * Returns the document with the given name.
+     *
+     * @param name the name of the document to find.
+     *
+     * @return the document with the given name or {@code null}, if none could be found.
+     */
+    DatabaseDocument getDocument(String name);
 
-    Document getDocument(String name);
+    /**
+     * Inserts the given documents into this database.
+     * Some implementations may or may not directly commit
+     * the changes to the data store on disk.
+     *
+     * @param documents the array of documents to insert into the database.
+     *
+     * @return the database.
+     */
+    Database insert(DatabaseDocument... documents);
 
-    Database insert(Document... documents);
-
+    /**
+     * Delete the document with the given name from this database.
+     *
+     * @param name the name of the document to delete.
+     * @return the database.
+     */
     Database delete(String name);
 
-    Database delete(Document document);
+    /**
+     * Deletes the given database document from the database.
+     * This method usually checks the document for an entry with the
+     * name {@link #UNIQUE_NAME_KEY} and deletes the document that way.
+     *
+     * @param document the document to delete.
+     *
+     * @return the database.
+     *
+     * @see #delete(String)
+     */
+    Database delete(DatabaseDocument document);
 
-    Document load(String name);
+    /**
+     * Loads the document with the given name into memory, if necessary, and returns it.
+     *
+     * @param name the name of the document to load.
+     *
+     * @return the loaded database document.
+     */
+    DatabaseDocument load(String name);
 
-    boolean contains(Document document);
+    /**
+     * Checks whether this database contains a document with the same name as the given document.
+     * This method is similar to {@link Map#containsKey(Object)}.
+     *
+     * @param document the document to check for.
+     *
+     * @return whether the database contains a document that matches the name of the given document.
+     *
+     * @see DatabaseDocument#equals(Object)
+     * @see #contains(String)
+     */
+    boolean contains(DatabaseDocument document);
 
+    /**
+     * Checks whether this database contains a document with the given name.
+     *
+     * @param name the name to check for.
+     * @return whether the database contains a document with the given name.
+     */
     boolean contains(String name);
 
+    /**
+     * Returns the amount of documents in this database.
+     * @return the amount of documents in this database.
+     */
     int size();
 
-    boolean containsDoc(String name);
+    /**
+     * Asynchronously inserts the documents to this database.
+     * This method makes no guarantees about the actual asynchronicity of this method.
+     *
+     * @param documents the documents to insert.
+     *
+     * @return this database.
+     *
+     * @see #insert(DatabaseDocument...)
+     */
+    Database insertAsync(DatabaseDocument... documents);
 
-    Database insertAsync(Document... documents);
-
+    /**
+     * Asynchronously deletes a document in this database, matching the given name.
+     * This method makes no guarantees about the actual asynchronicity of this method.
+     *
+     * @param name the name of the document to delete.
+     * @return this database.
+     *
+     * @see #delete(String)
+     */
     Database deleteAsync(String name);
 
-    FutureTask<Document> getDocumentAsync(String name);
+    /**
+     * Saves the currently loaded documents to their files.
+     */
+    void save();
+
+    /**
+     * Clears the currently loaded documents.
+     */
+    void clear();
 }

@@ -3,19 +3,19 @@ package de.dytanic.cloudnet.event;
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.interfaces.IEventManager;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import net.jodah.typetools.TypeResolver;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class that manages events
  */
 public final class EventManager implements IEventManager {
 
-    private final Map<Class<? extends Event>, Collection<EventEntity>> registeredListeners = NetworkUtils.newConcurrentHashMap();
+    private final Map<Class<? extends Event>, Collection<EventEntity>> registeredListeners = new ConcurrentHashMap<>();
 
     /**
      * Clears all currently registered {@link EventEntity}s from this event
@@ -35,9 +35,8 @@ public final class EventManager implements IEventManager {
         registeredListeners.get(eventClazz).add(new EventEntity<>(eventListener, eventKey, eventClazz));
     }
 
-    @SafeVarargs
     @Override
-    public final <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>... eventListeners) {
+    public final <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>[] eventListeners) {
         for (IEventListener<T> eventListener : eventListeners) {
             registerListener(eventKey, eventListener);
         }
@@ -83,12 +82,8 @@ public final class EventManager implements IEventManager {
             return true;
         }
 
-        if (!(event instanceof AsyncEvent)) {
-            for (EventEntity eventEntity : this.registeredListeners.get(event.getClass())) {
-                eventEntity.getEventListener().onCall(event);
-            }
-        } else {
-            TaskScheduler.runtimeScheduler().schedule(() -> {
+        if (event instanceof AsyncEvent) {
+            NetworkUtils.getExecutor().submit(() -> {
                 AsyncEvent asyncEvent = ((AsyncEvent) event);
                 asyncEvent.getPoster().onPreCall(asyncEvent);
                 for (EventEntity eventEntity : registeredListeners.get(event.getClass())) {
@@ -96,6 +91,10 @@ public final class EventManager implements IEventManager {
                 }
                 asyncEvent.getPoster().onPostCall(asyncEvent);
             });
+        } else {
+            for (EventEntity eventEntity : this.registeredListeners.get(event.getClass())) {
+                eventEntity.getEventListener().onCall(event);
+            }
         }
         return false;
     }

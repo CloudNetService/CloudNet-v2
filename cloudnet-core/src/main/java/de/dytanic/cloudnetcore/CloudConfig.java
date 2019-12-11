@@ -11,10 +11,6 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.user.BasicUser;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.web.server.util.WebServerConfig;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
@@ -30,11 +26,13 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -43,6 +41,8 @@ import java.util.*;
 public class CloudConfig {
 
     private static final ConfigurationProvider CONFIGURATION_PROVIDER = ConfigurationProvider.getProvider(YamlConfiguration.class);
+    private static final Type WRAPPER_META_TYPE = TypeToken.getParameterized(Collection.class, WrapperMeta.class).getType();
+    private static final Type COLLECTION_PROXY_GROUP_TYPE = TypeToken.getParameterized(Collection.class, ProxyGroup.class).getType();
 
     private final Path configPath = Paths.get("config.yml"), servicePath = Paths.get("services.json"), usersPath = Paths.get("users.json");
 
@@ -113,7 +113,7 @@ public class CloudConfig {
                           Arrays.asList("https://hastebin.com",
                                         "https://hasteb.in",
                                         "https://haste.llamacloud.io",
-                                        "https://paste.dsyn.ga"));
+                                        "https://pastes.cf"));
 
         configuration.set("server.hostaddress", hostName);
         configuration.set("server.ports", Collections.singletonList(1410));
@@ -208,7 +208,7 @@ public class CloudConfig {
                                   Arrays.asList("https://hastebin.com",
                                                 "https://hasteb.in",
                                                 "https://haste.llamacloud.io",
-                                                "https://paste.dsyn.ga"));
+                                                "https://pastes.cf"));
 
                 try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath),
                                                                                     StandardCharsets.UTF_8)) {
@@ -241,18 +241,8 @@ public class CloudConfig {
     }
 
     public void createWrapper(WrapperMeta wrapperMeta) {
-        Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper",
-                                                                              new TypeToken<Collection<WrapperMeta>>() {}.getType());
-        WrapperMeta is = CollectionWrapper.filter(wrapperMetas, new Acceptable<WrapperMeta>() {
-            @Override
-            public boolean isAccepted(WrapperMeta wrapperMeta_) {
-                return wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId());
-            }
-        });
-        if (is != null) {
-            wrapperMetas.remove(is);
-        }
-
+        Collection<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", WRAPPER_META_TYPE);
+        wrapperMetas.removeIf(meta -> meta.getId().equals(wrapperMeta.getId()));
         wrapperMetas.add(wrapperMeta);
         this.serviceDocument.append("wrapper", wrapperMetas).saveAsConfig(servicePath);
         CloudNet.getInstance().getWrappers().put(wrapperMeta.getId(), new Wrapper(wrapperMeta));
@@ -264,11 +254,8 @@ public class CloudConfig {
     }
 
     private List<WrapperMeta> deleteWrapper0(WrapperMeta wrapperMeta) {
-        List<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", new TypeToken<Collection<WrapperMeta>>() {}.getType());
-        WrapperMeta is = CollectionWrapper.filter(wrapperMetas, wrapperMeta_ -> wrapperMeta_.getId().equalsIgnoreCase(wrapperMeta.getId()));
-        if (is != null) {
-            wrapperMetas.remove(is);
-        }
+        List<WrapperMeta> wrapperMetas = this.serviceDocument.getObject("wrapper", WRAPPER_META_TYPE);
+        wrapperMetas.removeIf(meta -> meta.getId().equals(wrapperMeta.getId()));
         return wrapperMetas;
     }
 
@@ -286,16 +273,10 @@ public class CloudConfig {
         return this;
     }
 
-    public void createGroup(ProxyGroup serverGroup) {
-        Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {}.getType());
-        CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
-            @Override
-            public boolean isAccepted(ProxyGroup value) {
-                return value.getName().equals(serverGroup.getName());
-            }
-        });
-
-        groups.add(serverGroup);
+    public void createGroup(ProxyGroup proxyGroup) {
+        Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", COLLECTION_PROXY_GROUP_TYPE);
+        groups.removeIf(value -> value.getName().equals(proxyGroup.getName()));
+        groups.add(proxyGroup);
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
     }
 
@@ -304,18 +285,13 @@ public class CloudConfig {
     }
 
     public void deleteGroup(ProxyGroup proxyGroup) {
-        Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {}.getType());
-        CollectionWrapper.checkAndRemove(groups, new Acceptable<ProxyGroup>() {
-            @Override
-            public boolean isAccepted(ProxyGroup value) {
-                return value.getName().equals(proxyGroup.getName());
-            }
-        });
+        Collection<ProxyGroup> groups = this.serviceDocument.getObject("proxyGroups", COLLECTION_PROXY_GROUP_TYPE);
+        groups.removeIf(value -> value.getName().equals(proxyGroup.getName()));
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
     }
 
     public java.util.Map<String, ServerGroup> getServerGroups() {
-        Map<String, ServerGroup> groups = NetworkUtils.newConcurrentHashMap();
+        Map<String, ServerGroup> groups = new ConcurrentHashMap<>();
 
         if (serviceDocument.contains("serverGroups")) {
 
@@ -340,7 +316,7 @@ public class CloudConfig {
                 for (File file : files) {
                     if (file.getName().endsWith(".json")) {
                         try {
-                            entry = Document.$loadDocument(file);
+                            entry = Document.loadDocument(file);
                             ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
                             groups.put(serverGroup.getName(), serverGroup);
                         } catch (Throwable ex) {
@@ -356,20 +332,18 @@ public class CloudConfig {
     }
 
     public void createGroup(ServerGroup serverGroup) {
-
-        new Document("group", serverGroup).saveAsConfig(Paths.get("groups/" + serverGroup.getName() + ".json"));
-
+        new Document("group", serverGroup)
+            .saveAsConfig(Paths.get("groups/" + serverGroup.getName() + ".json"));
     }
 
     public Map<String, ProxyGroup> getProxyGroups() {
-        Collection<ProxyGroup> collection = serviceDocument.getObject("proxyGroups", new TypeToken<Collection<ProxyGroup>>() {}.getType());
+        Collection<ProxyGroup> proxyGroups = serviceDocument.getObject("proxyGroups", COLLECTION_PROXY_GROUP_TYPE);
 
-        return MapWrapper.collectionCatcherHashMap(collection, new Catcher<String, ProxyGroup>() {
-            @Override
-            public String doCatch(ProxyGroup key) {
-                return key.getName();
-            }
-        });
+        Map<String, ProxyGroup> proxyGroupMap = new HashMap<>();
+        for (ProxyGroup proxyGroup : proxyGroups) {
+            proxyGroupMap.put(proxyGroup.getName(), proxyGroup);
+        }
+        return proxyGroupMap;
     }
 
 

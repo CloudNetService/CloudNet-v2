@@ -4,11 +4,10 @@
 
 package de.dytanic.cloudnetcore.network.packet.api;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.DefaultType;
+import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.CloudServer;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
@@ -17,13 +16,12 @@ import de.dytanic.cloudnetcore.network.components.ProxyServer;
 /**
  * Created by Tareko on 21.08.2017.
  */
-public class PacketInServerDispatchCommand extends PacketInHandler {
+public class PacketInServerDispatchCommand implements PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        DefaultType defaultType = data.getObject("defaultType", new TypeToken<DefaultType>() {}.getType());
-        String serverId = data.getString("serverId");
-        String commandLine = data.getString("commandLine");
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        DefaultType defaultType = packet.getData().getObject("defaultType", DefaultType.TYPE);
+        String serverId = packet.getData().getString("serverId");
+        String commandLine = packet.getData().getString("commandLine");
 
         if (defaultType == DefaultType.BUKKIT) {
             MinecraftServer minecraftServer = CloudNet.getInstance().getServer(serverId);
@@ -32,7 +30,7 @@ public class PacketInServerDispatchCommand extends PacketInHandler {
             }
             CloudServer cloudServer = CloudNet.getInstance().getCloudGameServer(serverId);
             if (cloudServer != null) {
-                cloudServer.getWrapper().writeServerCommand(commandLine, minecraftServer.getServerInfo());
+                cloudServer.getWrapper().writeServerCommand(commandLine, cloudServer.getServerInfo());
             }
         } else {
             ProxyServer proxyServer = CloudNet.getInstance().getProxy(serverId);

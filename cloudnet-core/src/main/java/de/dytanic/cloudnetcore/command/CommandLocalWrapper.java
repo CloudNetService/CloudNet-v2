@@ -20,7 +20,7 @@ public class CommandLocalWrapper extends Command {
     public CommandLocalWrapper() {
         super("local-wrapper", "cloudnet.command.local-wrapper", "lw");
 
-        description = "Manages the local wrapper in the master of this cloud if it is enabled";
+        description = "Manages the local wrapper in the master of this cloud, if it is enabled";
     }
 
     @Override

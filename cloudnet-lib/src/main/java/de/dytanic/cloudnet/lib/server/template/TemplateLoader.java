@@ -4,6 +4,7 @@
 
 package de.dytanic.cloudnet.lib.server.template;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.zip.ZipConverter;
 
 import java.io.File;
@@ -36,8 +37,7 @@ public class TemplateLoader {
     public TemplateLoader load() {
         try {
             URLConnection urlConnection = new URL(url).openConnection();
-            urlConnection.setRequestProperty("User-Agent",
-                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             urlConnection.setUseCaches(false);
             urlConnection.connect();
             Files.copy(urlConnection.getInputStream(), Paths.get(dest));

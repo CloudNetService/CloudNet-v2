@@ -35,7 +35,7 @@ public class WebsiteDocumentation extends MethodWebHandlerAdapter {
                                 QueryDecoder queryDecoder,
                                 PathProvider path,
                                 HttpRequest httpRequest) throws Exception {
-        CloudNet.getLogger().debug("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
+        CloudNet.getLogger().finest("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -50,7 +50,7 @@ public class WebsiteDocumentation extends MethodWebHandlerAdapter {
 
         String output = stringBuilder.substring(0);
         ByteBuf byteBuf = Unpooled.wrappedBuffer(output.getBytes(StandardCharsets.UTF_8));
-        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), HttpResponseStatus.OK, byteBuf);
+        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.OK, byteBuf);
         fullHttpResponse.headers().set("Content-Type", "text/plain");
         return fullHttpResponse;
     }

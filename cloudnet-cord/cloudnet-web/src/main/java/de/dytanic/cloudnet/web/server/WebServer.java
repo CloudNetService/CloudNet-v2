@@ -43,12 +43,12 @@ public class WebServer {
     /**
      * The connection acceptor event loop group, handling server channels.
      */
-    protected EventLoopGroup acceptorGroup = NetworkUtils.eventLoopGroup();
+    private EventLoopGroup acceptorGroup = NetworkUtils.eventLoopGroup();
 
     /**
      * The child event loop group to the acceptor group, handling channels.
      */
-    protected EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
+    private EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
 
     /**
      * The SSL context with certificate and private key, when SSL is enabled.
@@ -90,24 +90,23 @@ public class WebServer {
             sslContext = SslContextBuilder.forServer(ssc.key(), ssc.cert()).build();
         }
 
-        serverBootstrap = new ServerBootstrap().group(acceptorGroup, workerGroup)
-                                               .childOption(ChannelOption.IP_TOS, 24)
-                                               .childOption(ChannelOption.TCP_NODELAY,
-                                                            true)
-                                               .childOption(ChannelOption.AUTO_READ, true)
-                                               .channel(NetworkUtils.serverSocketChannel())
-                                               .childHandler(new ChannelInitializer<Channel>() {
-                                                   @Override
-                                                   protected void initChannel(Channel channel) {
-                                                       if (sslContext != null) {
-                                                           channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
-                                                       }
-
-                                                       channel.pipeline().addLast(new HttpServerCodec(),
-                                                                                  new HttpObjectAggregator(Integer.MAX_VALUE),
-                                                                                  new WebServerHandler(WebServer.this));
-                                                   }
-                                               });
+        serverBootstrap = new ServerBootstrap()
+            .group(acceptorGroup, workerGroup)
+            .childOption(ChannelOption.IP_TOS, 24)
+            .childOption(ChannelOption.TCP_NODELAY, true)
+            .childOption(ChannelOption.AUTO_READ, true)
+            .channel(NetworkUtils.serverSocketChannel())
+            .childHandler(new ChannelInitializer<Channel>() {
+                @Override
+                protected void initChannel(Channel channel) {
+                    if (sslContext != null) {
+                        channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
+                    }
+                    channel.pipeline().addLast(new HttpServerCodec(),
+                                               new HttpObjectAggregator(Integer.MAX_VALUE),
+                                               new WebServerHandler(WebServer.this));
+                }
+            });
     }
 
     public EventLoopGroup getAcceptorGroup() {

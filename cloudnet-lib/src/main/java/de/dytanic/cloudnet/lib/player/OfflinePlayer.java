@@ -6,14 +6,17 @@ package de.dytanic.cloudnet.lib.player;
 
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
+import de.dytanic.cloudnet.lib.player.permission.Permissible;
+import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.UUID;
 
-public class OfflinePlayer implements Nameable {
+public class OfflinePlayer implements Nameable, Permissible, Serializable {
 
-    public static final Type TYPE = new TypeToken<OfflinePlayer>() {}.getType();
+    public static final Type TYPE = TypeToken.get(OfflinePlayer.class).getType();
 
     protected UUID uniqueId;
 
@@ -27,20 +30,22 @@ public class OfflinePlayer implements Nameable {
 
     protected PlayerConnection lastPlayerConnection;
 
-
+    protected PermissionEntity permissionEntity;
 
     public OfflinePlayer(UUID uniqueId,
                          String name,
                          Document metaData,
                          Long lastLogin,
                          Long firstLogin,
-                         PlayerConnection lastPlayerConnection) {
+                         PlayerConnection lastPlayerConnection,
+                         PermissionEntity permissionEntity) {
         this.uniqueId = uniqueId;
         this.name = name;
         this.metaData = metaData;
         this.lastLogin = lastLogin;
         this.firstLogin = firstLogin;
         this.lastPlayerConnection = lastPlayerConnection;
+        this.permissionEntity = permissionEntity;
     }
 
     @Override
@@ -82,6 +87,15 @@ public class OfflinePlayer implements Nameable {
 
     public void setLastLogin(Long lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    @Override
+    public PermissionEntity getPermissionEntity() {
+        return permissionEntity;
+    }
+
+    public void setPermissionEntity(PermissionEntity permissionEntity) {
+        this.permissionEntity = permissionEntity;
     }
 
     public PlayerConnection getLastPlayerConnection() {

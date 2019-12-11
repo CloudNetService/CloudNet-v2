@@ -24,6 +24,7 @@ public class CommandClear extends Command {
         try {
             CloudNetWrapper.getInstance().getCloudNetLogging().getReader().clearScreen();
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

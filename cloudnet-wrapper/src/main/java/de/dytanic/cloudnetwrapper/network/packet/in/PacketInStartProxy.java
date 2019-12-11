@@ -4,20 +4,18 @@
 
 package de.dytanic.cloudnetwrapper.network.packet.in;
 
-import com.google.gson.reflect.TypeToken;
+import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 
-public final class PacketInStartProxy extends PacketInHandler {
+public final class PacketInStartProxy implements PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        ProxyProcessMeta proxyProcessMeta = data.getObject("proxyProcess", new TypeToken<ProxyProcessMeta>() {}.getType());
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        ProxyProcessMeta proxyProcessMeta = packet.getData().getObject("proxyProcess", ProxyProcessMeta.TYPE);
 
-        if (!data.contains("async")) {
+        if (!packet.getData().contains("async")) {
             System.out.println("Proxy process is now in queue [" + proxyProcessMeta.getServiceId() + ']');
             CloudNetWrapper.getInstance().getServerProcessQueue().putProcess(proxyProcessMeta);
         } else {

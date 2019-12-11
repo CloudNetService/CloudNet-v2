@@ -13,11 +13,10 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 /**
  * Created by Tareko on 20.08.2017.
  */
-public class PacketInTestResult extends PacketInHandler {
+public class PacketInTestResult implements PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        packetSender.sendPacket(new Packet(packetUniqueId,
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        packetSender.sendPacket(new Packet(packet.getUniqueId(),
                                            PacketRC.TEST,
                                            new Document("message",
                                                         "System.out.println(\"Hello World!\"); //Das ist perfekt für entwickler")));

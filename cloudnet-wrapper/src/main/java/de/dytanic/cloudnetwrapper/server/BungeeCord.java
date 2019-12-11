@@ -28,7 +28,6 @@ import de.dytanic.cloudnetwrapper.server.process.ServerDispatcher;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -36,9 +35,10 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 
 public class BungeeCord extends AbstractScreenService implements ServerDispatcher {
 
@@ -102,7 +102,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                 try {
                     URLConnection urlConnection = new java.net.URL(url.getUrl()).openConnection();
                     urlConnection.setRequestProperty("User-Agent",
-                                                     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                     NetworkUtils.USER_AGENT);
                     Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -118,7 +118,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                         try {
                             URLConnection urlConnection = new java.net.URL(url.getUrl()).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
-                                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                             NetworkUtils.USER_AGENT);
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -143,7 +143,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                                                                .append("/cloudnet/api/v1/download")
                                                                                .substring(0)).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
-                                                             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                             NetworkUtils.USER_AGENT);
 
                             SimpledUser simpledUser = CloudNetWrapper.getInstance().getSimpledUser();
                             urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
@@ -169,7 +169,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
             if (!Files.exists(dir)) {
                 Files.createDirectories(dir);
                 if (proxyProcessMeta.getUrl() != null) {
-                    Files.createDirectory(Paths.get(path + "/plugins"));
+                    Files.createDirectory(Paths.get(path, "plugins"));
                     for (ServerInstallablePlugin plugin : proxyProcessMeta.getDownloadablePlugins()) {
                         FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"),
                                                         new File(path + "/plugins"));
@@ -320,7 +320,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                 try {
                     URLConnection urlConnection = new URL(version.getFirst()).openConnection();
                     urlConnection.setRequestProperty("User-Agent",
-                                                     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                     NetworkUtils.USER_AGENT);
                     urlConnection.connect();
                     System.out.println("Downloading " + version.getSecond() + "...");
                     Files.copy(urlConnection.getInputStream(), path);
@@ -330,7 +330,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
             }
 
             FileUtility.copyFileToDirectory(new File("local/proxy_versions/" + version.getSecond()), new File(this.path));
-            new File(this.path + NetworkUtils.SLASH_STRING + version.getSecond()).renameTo(new File(this.path + "/BungeeCord.jar"));
+            Files.move(Paths.get(this.path, version.getSecond()), Paths.get(this.path, "BungeeCord.jar"));
         }
 
         if (!Files.exists(Paths.get(path + "/server-icon.png")) && Files.exists(Paths.get("local/server-icon.png"))) {
@@ -341,9 +341,8 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         FileUtility.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
 
         FileUtility.rewriteFileUtils(new File(path + "/config.yml"),
-                                     '"' + CloudNetWrapper.getInstance()
-                                                          .getWrapperConfig()
-                                                          .getProxy_config_host() + ':' + this.proxyProcessMeta.getPort() + '"');
+                                     CloudNetWrapper.getInstance().getWrapperConfig().getProxyConfigHost() +
+                                         ':' + this.proxyProcessMeta.getPort());
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isViaVersion()) {
             if (!Files.exists(Paths.get("local/ViaVersion-Proxied.jar"))) {
@@ -352,13 +351,13 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                     URLConnection url = new URL(
                         "https://ci.cloudnetservice.eu/job/ViaVersion/lastStableBuild/artifact/jar/target/ViaVersion.jar").openConnection();
                     url.setRequestProperty("User-Agent",
-                                           "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                           NetworkUtils.USER_AGENT);
                     url.connect();
                     Files.copy(url.getInputStream(), Paths.get("local/ViaVersion-Proxied.jar"));
                     ((HttpURLConnection) url).disconnect();
                     System.out.println("Download complete successfully!");
                 } catch (Exception ex) {
-
+                    ex.printStackTrace();
                 }
             }
             FileUtility.copyFileToDirectory(new File("local/ViaVersion-Proxied.jar"), new File(path + "/plugins"));
@@ -368,7 +367,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                        CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP(),
                                        proxyProcessMeta.getPort(),
                                        false,
-                                       new LinkedList<>(),
+                                       new HashMap<>(),
                                        proxyProcessMeta.getMemory(),
                                        0);
 
@@ -381,7 +380,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                       .append("host",
                               CloudNetWrapper.getInstance()
                                              .getWrapperConfig()
-                                             .getProxy_config_host() + ':' + this.proxyProcessMeta.getPort())
+                                             .getProxyConfigHost() + ':' + this.proxyProcessMeta.getPort())
                       .append("proxyInfo", proxyInfo)
                       .append("ssl", CloudNetWrapper.getInstance().getOptionSet().has("ssl"))
                       .append("memory", proxyProcessMeta.getMemory())
@@ -403,12 +402,12 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
             commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
         }
 
-        commandBuilder.append(
-            "-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:MaxPermSize=256M -XX:-UseAdaptiveSizePolicy -XX:CompileThreshold=100 -Dio.netty.leakDetectionLevel=DISABLED -Dfile.encoding=UTF-8 -Dio.netty.maxDirectMemory=0 -Dio.netty.recycler.maxCapacity=0 -Dio.netty.recycler.maxCapacity.default=0 -Djline.terminal=jline.UnsupportedTerminal -DIReallyKnowWhatIAmDoingISwear=true -Xmx" + proxyProcessMeta
-                .getMemory() + "M -jar BungeeCord.jar -o true -p");
+        commandBuilder.append("-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx")
+                      .append(proxyProcessMeta.getMemory())
+                      .append("M -jar BungeeCord.jar");
 
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddProxy(proxyInfo, proxyProcessMeta));
-        System.out.println("Proxy " + toString() + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
+        System.out.println("Proxy " + this + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
 
         this.instance = Runtime.getRuntime().exec(commandBuilder.substring(0).split(NetworkUtils.SPACE_STRING), null, new File(path));
         CloudNetWrapper.getInstance().getProxys().put(this.proxyProcessMeta.getServiceId().getServerId(), this);
@@ -421,7 +420,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         if (instance == null) {
             if (proxyGroup.getProxyGroupMode().equals(ProxyGroupMode.DYNAMIC)) {
                 try {
-                    Files.delete(Paths.get(path));
+                    Files.deleteIfExists(Paths.get(path));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -431,20 +430,20 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
 
         if (instance.isAlive()) {
             executeCommand("end");
-            NetworkUtils.sleepUninterruptedly(500);
-        }
+            try {
+                instance.waitFor(60, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                instance.destroyForcibly();
+            }
 
-        instance.destroyForcibly();
+        }
 
         if (CloudNetWrapper.getInstance().getWrapperConfig().isSavingRecords()) {
             try {
-                for (File file : new File(path).listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname) {
-                        return pathname.getName().contains("proxy.log");
-                    }
-                })) {
-                    FileUtility.copyFileToDirectory(file, new File("local/records/" + proxyProcessMeta.getServiceId().toString()));
+                for (File file : new File(path).listFiles(
+                    pathname -> pathname.getName().contains("proxy.log"))) {
+                    FileUtility.copyFileToDirectory(file, new File("local/records/" + proxyProcessMeta.getServiceId()));
                 }
 
                 new Document("meta", proxyProcessMeta).saveAsConfig(Paths.get("local/records/metadata.json"));
@@ -459,12 +458,8 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
 
         CloudNetWrapper.getInstance().getProxys().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveProxy(proxyInfo));
-        System.out.println("Proxy " + toString() + " was stopped");
+        System.out.println("Proxy " + this + " was stopped");
 
-        try {
-            this.finalize();
-        } catch (Throwable throwable) {
-        }
         return true;
     }
 

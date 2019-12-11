@@ -4,7 +4,7 @@
 
 package de.dytanic.cloudnetcore.network.packet.dbsync;
 
-import de.dytanic.cloudnet.database.DatabaseImpl;
+import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
@@ -17,26 +17,24 @@ import java.util.Map;
 /**
  * Created by Tareko on 25.08.2017.
  */
-public class PacketDBInGetDocument extends PacketAPIIO {
+public class PacketDBInGetDocument implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        if (!data.contains("name")) {
-            Map<String, Document> docs = ((DatabaseImpl) CloudNet.getInstance()
-                                                                 .getDatabaseManager()
-                                                                 .getDatabase(data.getString("db"))
-                                                                 .loadDocuments()).getDocuments();
-            packetSender.sendPacket(getResult(new Document("docs", docs)));
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        if (!packet.getData().contains("name")) {
+            Map<String, DatabaseDocument> docs = CloudNet.getInstance()
+                                                         .getDatabaseManager()
+                                                         .getDatabase(packet.getData().getString("db"))
+                                                         .loadDocuments().getDocuments();
+            packetSender.sendPacket(getResult(packet, new Document("docs", docs)));
         } else {
-            String x = data.getString("name");
-            String db = data.getString("db");
-            Document document = CloudNet.getInstance().getDatabaseManager().getDatabase(db).getDocument(x);
-            packetSender.sendPacket(getResult(new Document("result", document)));
+            String name = packet.getData().getString("name");
+            String db = packet.getData().getString("db");
+            DatabaseDocument document = CloudNet.getInstance().getDatabaseManager().getDatabase(db).getDocument(name);
+            packetSender.sendPacket(getResult(packet, new Document("result", document)));
         }
     }
 
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, PacketRC.DB, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), PacketRC.DB, value);
     }
 }

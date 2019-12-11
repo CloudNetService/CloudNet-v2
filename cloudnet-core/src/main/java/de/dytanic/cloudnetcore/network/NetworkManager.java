@@ -14,7 +14,6 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerCommandExecution;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
@@ -22,10 +21,6 @@ import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
 import de.dytanic.cloudnet.lib.service.wrapper.WrapperScreen;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.network.CustomChannelMessageEvent;
@@ -42,14 +37,15 @@ import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Tareko on 19.07.2017.
  */
 public final class NetworkManager {
 
-    private java.util.Map<UUID, CloudPlayer> waitingPlayers = NetworkUtils.newConcurrentHashMap();
-    private java.util.Map<UUID, CloudPlayer> onlinePlayers = NetworkUtils.newConcurrentHashMap();
+    private java.util.Map<UUID, CloudPlayer> waitingPlayers = new ConcurrentHashMap<>();
+    private java.util.Map<UUID, CloudPlayer> onlinePlayers = new ConcurrentHashMap<>();
     private Document moduleProperties = new Document();
 
     private MessageConfig messageConfig;
@@ -99,17 +95,12 @@ public final class NetworkManager {
             }
         }
         cloudNetwork.setWrappers(wrappers);
-        cloudNetwork.setServerGroups(MapWrapper.transform(CloudNet.getInstance().getServerGroups(), new Catcher<String, String>() {
-            @Override
-            public String doCatch(String key) {
-                return key;
-            }
-        }, new Catcher<SimpleServerGroup, ServerGroup>() {
-            @Override
-            public SimpleServerGroup doCatch(ServerGroup key) {
-                return key.toSimple();
-            }
-        }));
+
+        final Map<String, SimpleServerGroup> serverGroups = new HashMap<>();
+        CloudNet.getInstance().getServerGroups().forEach(
+            (serverId, serverGroup) -> serverGroups.put(serverId, serverGroup.toSimple()));
+
+        cloudNetwork.setServerGroups(serverGroups);
         //cloudNetwork.setPermissionPool(permissionPool);
         cloudNetwork.setProxyGroups(CloudNet.getInstance().getProxyGroups());
         cloudNetwork.setModules(moduleProperties);
@@ -128,44 +119,54 @@ public final class NetworkManager {
         return this;
     }
 
-    public int getOnlineCount() {
-        int atomicInteger = 0;
-
-        for (ProxyServer proxyServer : CloudNet.getInstance().getProxys().values()) {
-            atomicInteger += proxyServer.getProxyInfo().getOnlineCount();
+    public void handlePlayerLogout(CloudPlayer playerWhereAmI) {
+        CloudNet.getInstance().getEventManager().callEvent(new LogoutEvent(playerWhereAmI));
+        try {
+            System.out.printf("Player [%s/%s/%s] is disconnected on %s%n",
+                              playerWhereAmI.getName(),
+                              playerWhereAmI.getUniqueId(),
+                              playerWhereAmI.getPlayerConnection().getHost(),
+                              playerWhereAmI.getProxy());
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
 
-        return atomicInteger;
+        this.onlinePlayers.remove(playerWhereAmI.getUniqueId());
+
+        this.sendAllUpdate(new PacketOutLogoutPlayer(playerWhereAmI));
+        this.sendAll(new PacketOutUpdateOnlineCount(getOnlineCount()));
+
+        playerWhereAmI.setLastLogin(System.currentTimeMillis());
+        playerWhereAmI.setLastPlayerConnection(playerWhereAmI.getPlayerConnection());
+        CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(CloudPlayer.newOfflinePlayer(playerWhereAmI));
+
     }
 
     public NetworkManager sendAll(Packet packet, ChannelFilter filter) {
-        TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-            @Override
-            public void run() {
-                for (Wrapper cn : CloudNet.getInstance().getWrappers().values()) {
-                    if (cn.getChannel() != null && filter.accept(cn)) {
-                        cn.sendPacket(packet);
-                    }
-
-                    for (ProxyServer proxyServer : cn.getProxys().values()) {
-                        if (proxyServer.getChannel() != null && filter.accept(proxyServer)) {
-                            proxyServer.sendPacket(packet);
-                        }
-                    }
-
-                    for (MinecraftServer minecraftServer : cn.getServers().values()) {
-                        if (minecraftServer.getChannel() != null && filter.accept(minecraftServer)) {
-                            minecraftServer.sendPacket(packet);
-                        }
-                    }
-
-                    for (CloudServer cloudServer : cn.getCloudServers().values()) {
-                        if (cloudServer.getChannel() != null && filter.accept(cloudServer)) {
-                            cloudServer.sendPacket(packet);
-                        }
-                    }
-
+        NetworkUtils.getExecutor().submit(() -> {
+            for (Wrapper cn : CloudNet.getInstance().getWrappers().values()) {
+                if (cn.getChannel() != null && filter.accept(cn)) {
+                    cn.sendPacket(packet);
                 }
+
+                for (ProxyServer proxyServer : cn.getProxys().values()) {
+                    if (proxyServer.getChannel() != null && filter.accept(proxyServer)) {
+                        proxyServer.sendPacket(packet);
+                    }
+                }
+
+                for (MinecraftServer minecraftServer : cn.getServers().values()) {
+                    if (minecraftServer.getChannel() != null && filter.accept(minecraftServer)) {
+                        minecraftServer.sendPacket(packet);
+                    }
+                }
+
+                for (CloudServer cloudServer : cn.getCloudServers().values()) {
+                    if (cloudServer.getChannel() != null && filter.accept(cloudServer)) {
+                        cloudServer.sendPacket(packet);
+                    }
+                }
+
             }
         });
         return this;
@@ -178,61 +179,61 @@ public final class NetworkManager {
     }
 
     public void handlePlayerLoginRequest(ProxyServer proxyServer, PlayerConnection cloudPlayerConnection, UUID uniqueId) {
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " onlinePlayers");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " onlinePlayers");
         if (this.onlinePlayers.containsKey(cloudPlayerConnection.getUniqueId())) {
             proxyServer.sendPacketSynchronized(new PacketOutLoginPlayer(uniqueId, null, "Already connected in network"));
             return;
         }
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " call LoginRequestEvent");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " call LoginRequestEvent");
         LoginRequestEvent loginRequestEvent = new LoginRequestEvent(proxyServer, cloudPlayerConnection);
         CloudNet.getInstance().getEventManager().callEvent(loginRequestEvent);
 
         PlayerDatabase playerDatabase = CloudNet.getInstance().getDbHandlers().getPlayerDatabase();
         OfflinePlayer offlinePlayer = null;
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database contains");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database contains");
         if (!playerDatabase.containsPlayer(cloudPlayerConnection.getUniqueId())) {
-            CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database register");
+            CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database register");
             offlinePlayer = playerDatabase.registerPlayer(cloudPlayerConnection);
         }
 
         if (offlinePlayer == null) {
-            CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database get");
+            CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " database get");
             offlinePlayer = playerDatabase.getPlayer(cloudPlayerConnection.getUniqueId());
         }
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " create CloudPlayer");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " create CloudPlayer");
         CloudPlayer cloudPlayer = new CloudPlayer(offlinePlayer, cloudPlayerConnection, proxyServer.getServerId());
         cloudPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
         if (cloudPlayer.getFirstLogin() == null) {
-            CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " set firstLogin");
+            CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " set firstLogin");
             cloudPlayer.setFirstLogin(System.currentTimeMillis());
         }
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " call PlayerInitEvent");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " call PlayerInitEvent");
         CloudNet.getInstance().getEventManager().callEvent(new PlayerInitEvent(cloudPlayer));
 
         CloudNet.getLogger()
-                .debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " NameToUUIDDatabase append");
+                .finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " NameToUUIDDatabase append");
         CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().append(new MultiValue<>(cloudPlayerConnection.getName(),
                                                                                                cloudPlayerConnection.getUniqueId()));
         CloudNet.getLogger()
-                .debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " NameToUUIDDatabase replace");
+                .finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " NameToUUIDDatabase replace");
         CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().replace(new MultiValue<>(cloudPlayerConnection.getUniqueId(),
                                                                                                 cloudPlayerConnection.getName()));
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " setName");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " setName");
         cloudPlayer.setName(cloudPlayerConnection.getName());
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " updatePlayer");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " updatePlayer");
         CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(CloudPlayer.newOfflinePlayer(cloudPlayer));
 
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " PacketOutLoginPlayer");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " PacketOutLoginPlayer");
         proxyServer.sendPacket(new PacketOutLoginPlayer(uniqueId, cloudPlayer, "successful Login"));
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " waitingPlayers");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " waitingPlayers");
         this.waitingPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
-        CloudNet.getLogger().debug("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " handlePlayerLogin");
+        CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " handlePlayerLogin");
         handlePlayerLogin(cloudPlayer);
     }
 
@@ -291,30 +292,11 @@ public final class NetworkManager {
         });
     }
 
-    public void handlePlayerLogout(CloudPlayer playerWhereAmI) {
-        CloudNet.getInstance().getEventManager().callEvent(new LogoutEvent(playerWhereAmI));
-        try {
-            System.out.println("Player [" + playerWhereAmI.getName() + NetworkUtils.SLASH_STRING + playerWhereAmI.getUniqueId() + NetworkUtils.SLASH_STRING + playerWhereAmI
-                .getPlayerConnection()
-                .getHost() + "] is disconnected on " + playerWhereAmI.getProxy());
-        } catch (Exception ignored) {
-        }
-
-        try {
-            this.onlinePlayers.remove(playerWhereAmI.getUniqueId());
-        } catch (Exception ignored) {
-
-        }
-        this.sendAllUpdate(new PacketOutLogoutPlayer(playerWhereAmI));
-        this.sendAll(new PacketOutUpdateOnlineCount(getOnlineCount()));
-
-        try {
-            playerWhereAmI.setLastLogin(System.currentTimeMillis());
-            playerWhereAmI.setLastPlayerConnection(playerWhereAmI.getPlayerConnection());
-            CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(CloudPlayer.newOfflinePlayer(playerWhereAmI));
-        } catch (Exception ignored) {
-
-        }
+    public int getOnlineCount() {
+        return CloudNet.getInstance().getProxys().values()
+                       .stream()
+                       .mapToInt(proxy -> proxy.getProxyInfo().getOnlineCount())
+                       .sum();
     }
 
     public void handlePlayerLogout(UUID uniqueId, ProxyServer proxyServer) {
@@ -324,7 +306,7 @@ public final class NetworkManager {
 
         try {
             this.onlinePlayers.remove(uniqueId);
-        } catch (Exception ignored) {
+        } catch (Exception exception) {
         }
 
         this.sendAllUpdate(new PacketOutLogoutPlayer(uniqueId));
@@ -369,11 +351,11 @@ public final class NetworkManager {
         Collection<UUID> players = new ArrayList<>();
 
         for (ProxyServer proxy : CloudNet.getInstance().getProxys().values()) {
-            for (MultiValue<UUID, String> multiValue : proxy.getProxyInfo().getPlayers()) {
-                players.add(multiValue.getFirst());
-            }
+            proxy.getProxyInfo().getPlayers().forEach((key, value) -> players.add(key));
         }
 
+        // Remove all players that have left the cloud network but haven't been removed
+        // from the NetworkManager yet.
         for (CloudPlayer cloudPlayer : this.onlinePlayers.values()) {
             if (!players.contains(cloudPlayer.getUniqueId())) {
                 this.onlinePlayers.remove(cloudPlayer.getUniqueId());
@@ -437,12 +419,12 @@ public final class NetworkManager {
     }
 
     public CloudPlayer getPlayer(String name) {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
-            @Override
-            public boolean isAccepted(CloudPlayer value) {
-                return value.getName().equalsIgnoreCase(name);
+        for (final CloudPlayer player : onlinePlayers.values()) {
+            if (player.getName().equalsIgnoreCase(name)) {
+                return player;
             }
-        });
+        }
+        return null;
     }
 
     public void handlePlayerUpdate(CloudPlayer cloudPlayer) {
@@ -498,12 +480,7 @@ public final class NetworkManager {
     }
 
     public CloudPlayer getOnlinePlayer(UUID uniqueId) {
-        return CollectionWrapper.filter(this.onlinePlayers.values(), new Acceptable<CloudPlayer>() {
-            @Override
-            public boolean isAccepted(CloudPlayer cloudPlayer) {
-                return cloudPlayer.getUniqueId().equals(uniqueId);
-            }
-        });
+        return onlinePlayers.get(uniqueId);
     }
 
     public NetworkManager handleServerUpdate(ServerInfo serverInfo) {

@@ -7,12 +7,9 @@ import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
 import de.dytanic.cloudnet.lib.server.priority.PriorityConfig;
 import de.dytanic.cloudnet.lib.server.priority.PriorityService;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Created by Tareko on 21.05.2017.
@@ -59,6 +56,7 @@ public class ServerGroup implements Nameable {
                        int percentForNewServerAutomatically,
                        ServerGroupType serverType,
                        ServerGroupMode groupMode,
+                       Template globalTemplate,
                        Collection<Template> templates,
                        AdvancedServerConfig advancedServerConfig) {
         this.name = name;
@@ -73,7 +71,7 @@ public class ServerGroup implements Nameable {
         this.serverType = serverType;
         this.groupMode = groupMode;
         this.advancedServerConfig = advancedServerConfig;
-        this.globalTemplate = new Template("globaltemplate", TemplateResource.LOCAL, null, new String[] {}, new ArrayList<>());
+        this.globalTemplate = globalTemplate;
         this.templates = templates;
 
         this.settings = new WrappedMap();
@@ -83,12 +81,6 @@ public class ServerGroup implements Nameable {
         this.priorityService = new PriorityService(priorityStopTime,
                                                    new PriorityConfig(priority, onlineCountForPriority),
                                                    new PriorityConfig(groupPriority, priorityForGroupOnlineCount));
-
-        this.templates = new ArrayList<>(Collections.singletonList(new Template("default",
-                                                                                TemplateResource.LOCAL,
-                                                                                null,
-                                                                                new String[] {},
-                                                                                new ArrayList<>())));
     }
 
     public int getMemory() {

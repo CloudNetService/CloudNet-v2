@@ -1,6 +1,7 @@
 package de.dytanic.cloudnet.setup.spigot;
 
-import com.google.gson.Gson;
+import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.setup.models.PaperMCProject;
 import de.dytanic.cloudnet.setup.models.PaperMCProjectVersion;
 import de.dytanic.cloudnet.setup.utils.StreamThread;
@@ -19,11 +20,10 @@ import java.util.concurrent.CountDownLatch;
 
 public final class PaperBuilder {
 
-    private static Gson gson = new Gson();
+    private static final String API_PROJECT_URL = "https://papermc.io/api/v1/paper";
+    private static final String API_PROJECT_VERSION_DOWNLOAD = "https://papermc.io/api/v1/paper/%s/%s/download";
+    private static final String API_PROJECT_VERSION_URL = "https://papermc.io/api/v1/paper/%s";
     private static Process exec;
-    private static String apiProjectUrl = "https://papermc.io/api/v1/paper";
-    private static String apiProjectVersionDownload = "https://papermc.io/api/v1/paper/%s/%s/download";
-    private static String API_PROJECT_VERSION_URL = "https://papermc.io/api/v1/paper/%s";
 
     /**
      * Start the process of choice the paper version And build after choice
@@ -33,11 +33,11 @@ public final class PaperBuilder {
     public static boolean start(ConsoleReader reader, Path outputPath) {
         try {
             System.out.println("Fetch Versions");
-            URLConnection connection = new URL(apiProjectUrl).openConnection();
-            connection.setRequestProperty("User-Agent",
-                                          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            URLConnection connection = new URL(API_PROJECT_URL).openConnection();
+            connection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             connection.connect();
-            PaperMCProject paperMCProject = gson.fromJson(new InputStreamReader(connection.getInputStream()), PaperMCProject.class);
+            PaperMCProject paperMCProject = Document.GSON.fromJson(new InputStreamReader(connection.getInputStream()),
+                                                                   PaperMCProject.class);
             System.out.println("Available Paper Versions:");
             System.out.println("-----------------------------------------------------------------------------");
             System.out.println("PaperSpigot Version");
@@ -45,22 +45,21 @@ public final class PaperBuilder {
             Arrays.asList(paperMCProject.getVersions()).forEach(System.out::println);
             System.out.println("-----------------------------------------------------------------------------");
             System.out.println("Please select a version to continue the install process");
-            String answer = null;
-            while (answer == null) {
-                String name = null;
+            String name;
+            do {
+                name = null;
                 try {
                     name = reader.readLine().toLowerCase();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String finalAnswer = name;
+                final String finalAnswer = name;
                 if (Arrays.stream(paperMCProject.getVersions()).anyMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
-                    answer = name;
-                    return buildPaperVersion(answer, outputPath);
-                } else if (Arrays.stream(paperMCProject.getVersions()).noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
+                    return buildPaperVersion(name, outputPath);
+                } else {
                     System.out.println("This version does not exist!");
                 }
-            }
+            } while (name == null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,16 +77,16 @@ public final class PaperBuilder {
         System.out.println(String.format("Fetching build %s", version));
         URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version)).openConnection();
         connection.setRequestProperty("User-Agent",
-                                      "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                      NetworkUtils.USER_AGENT);
         connection.connect();
-        PaperMCProjectVersion paperMCProjectVersion = gson.fromJson(new InputStreamReader(connection.getInputStream()),
-                                                                    PaperMCProjectVersion.class);
+        PaperMCProjectVersion paperMCProjectVersion = Document.GSON.fromJson(new InputStreamReader(connection.getInputStream()),
+                                                                             PaperMCProjectVersion.class);
 
-        connection = new URL(String.format(apiProjectVersionDownload,
+        connection = new URL(String.format(API_PROJECT_VERSION_DOWNLOAD,
                                            version,
                                            paperMCProjectVersion.getBuilds().getLatest())).openConnection();
         connection.setRequestProperty("User-Agent",
-                                      "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                      NetworkUtils.USER_AGENT);
         connection.connect();
         File builder = new File("local/builder/papermc");
         File buildFolder = new File(builder, version);

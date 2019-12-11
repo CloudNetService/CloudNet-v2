@@ -1,9 +1,10 @@
 package de.dytanic.cloudnet.lib.server.info;
 
-import de.dytanic.cloudnet.lib.MultiValue;
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 
-import java.util.List;
+import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -11,12 +12,14 @@ import java.util.UUID;
  */
 public class ProxyInfo {
 
+    public static final Type TYPE = TypeToken.get(ProxyInfo.class).getType();
+
     private ServiceId serviceId;
 
     private String host;
     private int port;
     private boolean online;
-    private List<MultiValue<UUID, String>> players;
+    private Map<UUID, String> players;
     private int memory;
     private int onlineCount;
 
@@ -24,7 +27,7 @@ public class ProxyInfo {
                      String host,
                      int port,
                      boolean online,
-                     List<MultiValue<UUID, String>> players,
+                     Map<UUID, String> players,
                      int memory,
                      int onlineCount) {
         this.serviceId = serviceId;
@@ -65,7 +68,7 @@ public class ProxyInfo {
         return online;
     }
 
-    public List<MultiValue<UUID, String>> getPlayers() {
+    public Map<UUID, String> getPlayers() {
         return players;
     }
 

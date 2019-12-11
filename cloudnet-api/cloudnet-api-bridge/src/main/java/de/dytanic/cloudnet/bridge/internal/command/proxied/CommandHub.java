@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -27,7 +28,7 @@ public final class CommandHub extends Command {
 
     @Override
     public void execute(CommandSender commandSender, String[] args) {
-        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s with arguments %s",
+        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s with arguments %s%n",
                                                                 commandSender,
                                                                 this,
                                                                 Arrays.toString(args)));
@@ -35,22 +36,20 @@ public final class CommandHub extends Command {
             return;
         }
 
-        ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(((ProxiedPlayer) commandSender).getServer()
-                                                                                                               .getInfo()
-                                                                                                               .getName());
+        ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(
+            ((ProxiedPlayer) commandSender).getServer().getInfo().getName());
 
         if (serverInfo != null) {
             if (CloudProxy.getInstance()
                           .getProxyGroup()
                           .getProxyConfig()
                           .getDynamicFallback()
-                          .getNamedFallbackes()
+                          .getNamedFallbacks()
                           .contains(serverInfo.getServiceId().getGroup())) {
-                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                                                                 CloudAPI.getInstance()
-                                                                                         .getCloudNetwork()
-                                                                                         .getMessages()
-                                                                                         .getString("hub-already")));
+                commandSender.sendMessage(
+                    TextComponent.fromLegacyText(
+                        ChatColor.translateAlternateColorCodes(
+                            '&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("hub-already"))));
                 return;
             }
         }
@@ -73,11 +72,12 @@ public final class CommandHub extends Command {
         ProxyServer.getInstance().getPluginManager().callEvent(proxiedPlayerFallbackEvent);
 
         if (fallback == null) {
-            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                                                             CloudAPI.getInstance()
-                                                                                     .getCloudNetwork()
-                                                                                     .getMessages()
-                                                                                     .getString("hubCommandNoServerFound")));
+            commandSender.sendMessage(TextComponent.fromLegacyText(
+                ChatColor.translateAlternateColorCodes('&',
+                                                       CloudAPI.getInstance()
+                                                               .getCloudNetwork()
+                                                               .getMessages()
+                                                               .getString("hubCommandNoServerFound"))));
         } else {
             ((ProxiedPlayer) commandSender).connect(ProxyServer.getInstance().getServerInfo(fallback));
         }

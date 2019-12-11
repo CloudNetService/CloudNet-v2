@@ -16,7 +16,7 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
     private final byte[] buffer = new byte[1024];
 
     @Override
-    public void run(CloudNetWrapper obj) {
+    public void accept(CloudNetWrapper obj) {
         for (CloudGameServer cloudGameServer : obj.getCloudServers().values()) {
             if (cloudGameServer.isAlive() && cloudGameServer.getInstance() != null) {
                 readConsoleLog(cloudGameServer);
@@ -70,8 +70,4 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
         }
     }
 
-    @Override
-    public int getTicks() {
-        return 40;
-    }
 }

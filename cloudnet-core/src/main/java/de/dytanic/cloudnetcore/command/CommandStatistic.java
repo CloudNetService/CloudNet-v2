@@ -6,7 +6,7 @@ package de.dytanic.cloudnetcore.command;
 
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.lib.utility.document.Document;
+import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.database.StatisticManager;
 
@@ -20,13 +20,13 @@ public final class CommandStatistic extends Command {
     public CommandStatistic() {
         super("statistic", "cloudnet.command.statistic");
 
-        description = "Shows a list of all statistics of cloudnet!";
+        description = "Shows a list of all recorded statistics of this CloudNet instance!";
 
     }
 
     @Override
     public void onExecuteCommand(CommandSender sender, String[] args) {
-        Document document = StatisticManager.getInstance().getStatistics();
+        DatabaseDocument document = StatisticManager.getInstance().getStatistics();
         sender.sendMessage("CloudNet2 Statistics:",
                            " ",
                            "CloudStartups: " + StatisticManager.getInstance().getStatistics().getInt("cloudStartup"),

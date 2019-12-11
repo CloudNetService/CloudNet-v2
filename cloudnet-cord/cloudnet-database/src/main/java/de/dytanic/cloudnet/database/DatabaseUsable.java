@@ -9,7 +9,7 @@ import de.dytanic.cloudnet.lib.database.Database;
 /**
  * Parent class for all databases used by CloudNet.
  */
-public class DatabaseUsable {
+public abstract class DatabaseUsable {
 
     /**
      * The data store that this database uses

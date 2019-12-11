@@ -4,14 +4,12 @@
 
 package de.dytanic.cloudnet.bridge;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.bridge.event.proxied.*;
 import de.dytanic.cloudnet.bridge.internal.chat.PlayerChatExecutor;
 import de.dytanic.cloudnet.lib.CloudNetwork;
-import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
@@ -21,19 +19,10 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.Title;
+import net.md_5.bungee.api.*;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -42,7 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * This Class represents the Proxy Instance on based on cloudnet
@@ -54,52 +44,33 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     private ProxiedBootstrap proxiedBootstrap;
     private ProxyProcessMeta proxyProcessMeta;
 
-    private Map<String, ServerInfo> cachedServers = NetworkUtils.newConcurrentHashMap();
-    private Map<UUID, CloudPlayer> cloudPlayers = NetworkUtils.newConcurrentHashMap();
+    private Map<String, ServerInfo> cachedServers = new ConcurrentHashMap<>();
+    private Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
 
-    public CloudProxy(ProxiedBootstrap proxiedBootstrap, CloudAPI cloudAPI) {
+    CloudProxy(ProxiedBootstrap proxiedBootstrap, CloudAPI cloudAPI) {
         instance = this;
 
         this.proxiedBootstrap = proxiedBootstrap;
-        this.proxyProcessMeta = cloudAPI.getConfig().getObject("proxyProcess", new TypeToken<ProxyProcessMeta>() {}.getType());
+        this.proxyProcessMeta = cloudAPI.getConfig().getObject("proxyProcess", ProxyProcessMeta.TYPE);
         cloudAPI.getNetworkHandlerProvider().registerHandler(new NetworkHandlerImpl());
-        ProxyServer.getInstance().getScheduler().schedule(proxiedBootstrap, new Runnable() {
-            @Override
-            public void run() {
-                NetworkUtils.addAll(cachedServers,
-                                    MapWrapper.collectionCatcherHashMap(cloudAPI.getServers(), new Catcher<String, ServerInfo>() {
-                                        @Override
-                                        public String doCatch(ServerInfo key) {
-                                            ProxyServer.getInstance().getServers().put(key.getServiceId().getServerId(),
-                                                                                       ProxyServer.getInstance()
-                                                                                                  .constructServerInfo(key.getServiceId()
-                                                                                                                          .getServerId(),
-                                                                                                                       new InetSocketAddress(
-                                                                                                                           key.getHost(),
-                                                                                                                           key.getPort()),
-                                                                                                                       "CloudNet2 Game-Server",
-                                                                                                                       false));
-
-                                            if (key.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig()
-                                                                                                              .getDynamicFallback()
-                                                                                                              .getDefaultFallback())) {
-                                                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(),
-                                                                           new Runnabled<ListenerInfo>() {
-                                                                               @Override
-                                                                               public void run(ListenerInfo obj) {
-                                                                                   obj.getServerPriority().add(key.getServiceId()
-                                                                                                                  .getServerId());
-                                                                               }
-                                                                           });
-                                            }
-                                            return key.getServiceId().getServerId();
-                                        }
-                                    }));
-
-                cloudAPI.setCloudService(CloudProxy.this);
-
+        cloudAPI.getServers().forEach(server -> {
+            final String serverId = server.getServiceId().getServerId();
+            ProxyServer.getInstance().getServers().put(
+                serverId, ProxyServer.getInstance().constructServerInfo(
+                    serverId,
+                    new InetSocketAddress(server.getHost(), server.getPort()),
+                    "CloudNet2 Game-Server",
+                    false)
+            );
+            // Add default fallback to server priority of Bungeecord
+            if (server.getServiceId().getGroup().equals(
+                getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
+                ProxyServer.getInstance().getConfig().getListeners().forEach(
+                    listener -> listener.getServerPriority().add(serverId));
             }
-        }, 250, TimeUnit.MILLISECONDS);
+            cachedServers.put(serverId, server);
+        });
+        cloudAPI.setCloudService(this);
     }
 
     public ProxyGroup getProxyGroup() {
@@ -107,45 +78,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     }
 
     public String fallback(ProxiedPlayer cloudPlayer) {
-
-        for (ServerFallback serverFallback : CloudProxy.getInstance()
-                                                       .getProxyGroup()
-                                                       .getProxyConfig()
-                                                       .getDynamicFallback()
-                                                       .getFallbacks()) {
-            if (serverFallback.getGroup().equals(CloudProxy.getInstance()
-                                                           .getProxyGroup()
-                                                           .getProxyConfig()
-                                                           .getDynamicFallback()
-                                                           .getDefaultFallback())) {
-                continue;
-            }
-
-            if (serverFallback.getPermission() != null) {
-                if (!cloudPlayer.hasPermission(serverFallback.getPermission())) {
-                    continue;
-                }
-
-                List<String> servers = CloudProxy.getInstance().getServers(serverFallback.getGroup());
-                if (servers.size() != 0) {
-                    return servers.get(NetworkUtils.RANDOM.nextInt(servers.size()));
-                }
-            }
-        }
-
-        String fallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
-        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo value) {
-                return value.getServiceId().getGroup().equalsIgnoreCase(fallback);
-            }
-        }).keySet());
-
-        if (liste.size() == 0) {
-            return null;
-        } else {
-            return liste.get(NetworkUtils.RANDOM.nextInt(liste.size()));
-        }
+        return fallback(cloudPlayer, null);
     }
 
     /**
@@ -159,7 +92,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
     public List<String> getServers(String group) {
         List<String> x = new ArrayList<>();
-        for (ServerInfo server : this.getCachedServers().values()) {
+        for (ServerInfo server : this.cachedServers.values()) {
             if (server.getServiceId().getGroup().equalsIgnoreCase(group)) {
                 x.add(server.getServiceId().getServerId());
             }
@@ -177,112 +110,92 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     }
 
     public String fallback(ProxiedPlayer cloudPlayer, String kickedFrom) {
+        String dynamicFallbackServer = getDynamicFallbackServer(cloudPlayer);
 
-        for (ServerFallback serverFallback : CloudProxy.getInstance()
-                                                       .getProxyGroup()
-                                                       .getProxyConfig()
-                                                       .getDynamicFallback()
-                                                       .getFallbacks()) {
-            if (serverFallback.getGroup().equals(CloudProxy.getInstance()
-                                                           .getProxyGroup()
-                                                           .getProxyConfig()
-                                                           .getDynamicFallback()
-                                                           .getDefaultFallback())) {
-                continue;
-            }
-
-            if (serverFallback.getPermission() != null) {
-                if (!cloudPlayer.hasPermission(serverFallback.getPermission())) {
-                    continue;
-                }
-
-                List<String> servers = CloudProxy.getInstance().getServers(serverFallback.getGroup());
-                servers.remove(kickedFrom);
-                if (servers.size() != 0) {
-                    return servers.get(NetworkUtils.RANDOM.nextInt(servers.size()));
-                }
-            }
-        }
-
-        String fallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
-        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo value) {
-                return value.getServiceId().getGroup().equalsIgnoreCase(fallback);
-            }
-        }).keySet());
-        liste.remove(kickedFrom);
-
-        if (liste.size() == 0) {
-            return null;
+        if (dynamicFallbackServer != null) {
+            return dynamicFallbackServer;
         } else {
-            return liste.get(NetworkUtils.RANDOM.nextInt(liste.size()));
+            // Default defaultFallback
+            return getDefaultFallbackServer(kickedFrom);
         }
     }
 
-    public String fallbackOnEnabledKick(ProxiedPlayer cloudPlayer, String group, String kickedFrom) {
+    private String getDynamicFallbackServer(final ProxiedPlayer cloudPlayer) {
+        String defaultFallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
 
+        // Choose dynamic defaultFallback
         for (ServerFallback serverFallback : CloudProxy.getInstance()
                                                        .getProxyGroup()
                                                        .getProxyConfig()
                                                        .getDynamicFallback()
                                                        .getFallbacks()) {
-            if (serverFallback.getGroup().equals(CloudProxy.getInstance()
-                                                           .getProxyGroup()
-                                                           .getProxyConfig()
-                                                           .getDynamicFallback()
-                                                           .getDefaultFallback())) {
+            if (serverFallback.getGroup().equals(defaultFallback)) {
                 continue;
             }
 
-            if (serverFallback.getPermission() != null) {
-                if (!cloudPlayer.hasPermission(serverFallback.getPermission())) {
-                    continue;
-                }
-
+            if (serverFallback.getPermission() == null || cloudPlayer.hasPermission(serverFallback.getPermission())) {
                 List<String> servers = CloudProxy.getInstance().getServers(serverFallback.getGroup());
-                servers.remove(kickedFrom);
                 if (servers.size() != 0) {
                     return servers.get(NetworkUtils.RANDOM.nextInt(servers.size()));
                 }
             }
         }
+        return null;
+    }
 
-        {
-            List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
-                @Override
-                public boolean isAccepted(ServerInfo value) {
-                    return value.getServiceId().getGroup().equalsIgnoreCase(group);
-                }
-            }).keySet());
-            liste.remove(kickedFrom);
-            if (liste.size() != 0) {
-                return liste.get(NetworkUtils.RANDOM.nextInt(liste.size()));
-            }
-        }
+    private String getDefaultFallbackServer(final String kickedFrom) {
+        String defaultFallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
 
-        String fallback = getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback();
-        List<String> liste = new ArrayList<>(MapWrapper.filter(cachedServers, new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo value) {
-                return value.getServiceId().getGroup().equalsIgnoreCase(fallback);
-            }
-        }).keySet());
-        liste.remove(kickedFrom);
-        if (liste.size() == 0) {
-            return null;
+        final List<String> fallbackServers = cachedServers.entrySet()
+                                                          .stream()
+                                                          .filter(entry -> entry.getValue()
+                                                                                .getServiceId()
+                                                                                .getGroup()
+                                                                                .equals(defaultFallback))
+                                                          .map(Map.Entry::getKey)
+                                                          .filter(server -> !server.equals(kickedFrom))
+                                                          .collect(Collectors.toList());
+
+        if (fallbackServers.size() != 0) {
+            return fallbackServers.get(NetworkUtils.RANDOM.nextInt(fallbackServers.size()));
         } else {
-            return liste.get(NetworkUtils.RANDOM.nextInt(liste.size()));
+            return null;
         }
+    }
+
+    /**
+     * Determines the fallback server for a player that has been kicked from a server.
+     *
+     * @param cloudPlayer the player to determine the fallback server for
+     * @param group       the group of the server that the player was kicked from
+     * @param kickedFrom  the server-id of the server the player was kicked from
+     *
+     * @return the server-id of the server to fall back to
+     */
+    public String fallbackOnEnabledKick(ProxiedPlayer cloudPlayer, String group, String kickedFrom) {
+        String dynamicFallbackServer = getDynamicFallbackServer(cloudPlayer);
+
+        if (dynamicFallbackServer != null) {
+            return dynamicFallbackServer;
+        }
+
+        List<String> fallbackServers = cachedServers.entrySet()
+                                                    .stream()
+                                                    .filter(entry -> entry.getValue().getServiceId().getGroup().equals(group))
+                                                    .map(Map.Entry::getKey)
+                                                    .filter(server -> !server.equals(kickedFrom))
+                                                    .collect(Collectors.toList());
+
+        if (fallbackServers.size() != 0) {
+            return fallbackServers.get(NetworkUtils.RANDOM.nextInt(fallbackServers.size()));
+        }
+
+        //Default defaultFallback
+        return getDefaultFallbackServer(kickedFrom);
     }
 
     public void updateAsync() {
-        proxiedBootstrap.getProxy().getScheduler().runAsync(proxiedBootstrap, new Runnable() {
-            @Override
-            public void run() {
-                update();
-            }
-        });
+        proxiedBootstrap.getProxy().getScheduler().runAsync(proxiedBootstrap, this::update);
     }
 
     public void update() {
@@ -290,15 +203,8 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                                             CloudAPI.getInstance().getConfig().getString("host"),
                                             0,
                                             true,
-                                            new ArrayList<>(CollectionWrapper.transform(ProxyServer.getInstance().getPlayers(),
-                                                                                        new Catcher<MultiValue<UUID, String>, ProxiedPlayer>() {
-                                                                                            @Override
-                                                                                            public MultiValue<UUID, String> doCatch(
-                                                                                                ProxiedPlayer key) {
-                                                                                                return new MultiValue<>(key.getUniqueId(),
-                                                                                                                        key.getName());
-                                                                                            }
-                                                                                        })),
+                                            ProxyServer.getInstance().getPlayers().stream()
+                                                       .collect(Collectors.toMap(ProxiedPlayer::getUniqueId, CommandSender::getName)),
                                             proxyProcessMeta.getMemory(),
                                             ProxyServer.getInstance().getOnlineCount());
         CloudAPI.getInstance().update(proxyInfo);
@@ -328,12 +234,12 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
     }
 
     public CloudPlayer getCachedPlayer(String name) {
-        return CollectionWrapper.filter(this.cloudPlayers.values(), new Acceptable<CloudPlayer>() {
-            @Override
-            public boolean isAccepted(CloudPlayer cloudPlayer) {
-                return cloudPlayer.getName().equalsIgnoreCase(name);
+        for (final CloudPlayer player : cloudPlayers.values()) {
+            if (player.getName().equalsIgnoreCase(name)) {
+                return player;
             }
-        });
+        }
+        return null;
     }
 
     @Override
@@ -343,7 +249,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
     @Override
     public Map<String, ServerInfo> getServers() {
-        return this.getCachedServers();
+        return this.cachedServers;
     }
 
     private class NetworkHandlerImpl implements NetworkHandler {
@@ -355,23 +261,37 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
             ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerAddEvent(serverInfo));
             ProxyServer.getInstance().getServers().put(serverInfo.getServiceId().getServerId(),
-                                                       ProxyServer.getInstance()
-                                                                  .constructServerInfo(serverInfo.getServiceId().getServerId(),
-                                                                                       new InetSocketAddress(serverInfo.getHost(),
-                                                                                                             serverInfo.getPort()),
-                                                                                       "CloudNet2 Game-Server",
-                                                                                       false));
-            if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig()
-                                                                                     .getDynamicFallback()
-                                                                                     .getDefaultFallback())) {
-                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {
-                    @Override
-                    public void run(ListenerInfo obj) {
-                        obj.getServerPriority().add(serverInfo.getServiceId().getServerId());
-                    }
-                });
+                                                       ProxyServer.getInstance().constructServerInfo(
+                                                           serverInfo.getServiceId().getServerId(),
+                                                           new InetSocketAddress(serverInfo.getHost(), serverInfo.getPort()),
+                                                           "CloudNet2 Game-Server",
+                                                           false));
+            // Add default fallback to server priority of Bungeecord
+            if (serverInfo.getServiceId().getGroup().equals(
+                getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
+                ProxyServer.getInstance().getConfig().getListeners()
+                           .forEach(listener ->
+                                        listener.getServerPriority().add(serverInfo.getServiceId().getServerId()));
             }
             cachedServers.put(serverInfo.getServiceId().getServerId(), serverInfo);
+
+            if (CloudAPI.getInstance().getModuleProperties().contains("notifyService") &&
+                CloudAPI.getInstance().getModuleProperties().getBoolean("notifyService")) {
+                for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
+                    if (proxiedPlayer.hasPermission("cloudnet.notify")) {
+                        proxiedPlayer.sendMessage(
+                            TextComponent.fromLegacyText(
+                                ChatColor.translateAlternateColorCodes('&',
+                                                                       CloudAPI.getInstance()
+                                                                               .getCloudNetwork()
+                                                                               .getMessages()
+                                                                               .getString("notify-message-server-add")
+                                                                               .replace("%server%",
+                                                                                        serverInfo.getServiceId()
+                                                                                                  .getServerId()))));
+                    }
+                }
+            }
 
         }
 
@@ -400,15 +320,29 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
 
             cachedServers.remove(serverInfo.getServiceId().getServerId());
 
-            if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(getProxyGroup().getProxyConfig()
-                                                                                     .getDynamicFallback()
-                                                                                     .getDefaultFallback())) {
-                CollectionWrapper.iterator(ProxyServer.getInstance().getConfig().getListeners(), new Runnabled<ListenerInfo>() {
-                    @Override
-                    public void run(ListenerInfo obj) {
-                        obj.getServerPriority().remove(serverInfo.getServiceId().getServerId());
+            // Remove default fallback to server priority of Bungeecord
+            if (serverInfo.getServiceId().getGroup().equals(
+                getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
+                ProxyServer.getInstance().getConfig().getListeners().forEach(
+                    listener -> listener.getServerPriority().remove(serverInfo.getServiceId().getServerId()));
+            }
+
+            if (CloudAPI.getInstance().getModuleProperties().contains("notifyService") && CloudAPI.getInstance()
+                                                                                                  .getModuleProperties()
+                                                                                                  .getBoolean("notifyService")) {
+                for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
+                    if (proxiedPlayer.hasPermission("cloudnet.notify")) {
+                        proxiedPlayer.sendMessage(
+                            TextComponent.fromLegacyText(
+                                ChatColor.translateAlternateColorCodes('&',
+                                                                       CloudAPI.getInstance()
+                                                                               .getCloudNetwork()
+                                                                               .getMessages()
+                                                                               .getString("notify-message-server-remove")
+                                                                               .replace("%server%",
+                                                                                        serverInfo.getServiceId().getServerId()))));
                     }
-                });
+                }
             }
         }
 
@@ -437,11 +371,13 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                     for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
                         if (!proxyGroup.getProxyConfig().getWhitelist().contains(proxiedPlayer.getName()) && !proxiedPlayer.hasPermission(
                             "cloudnet.maintenance")) {
-                            proxiedPlayer.disconnect(ChatColor.translateAlternateColorCodes('&',
-                                                                                            CloudAPI.getInstance()
-                                                                                                    .getCloudNetwork()
-                                                                                                    .getMessages()
-                                                                                                    .getString("kick-maintenance")));
+                            proxiedPlayer.disconnect(
+                                TextComponent.fromLegacyText(
+                                    ChatColor.translateAlternateColorCodes('&',
+                                                                           CloudAPI.getInstance()
+                                                                                   .getCloudNetwork()
+                                                                                   .getMessages()
+                                                                                   .getString("kick-maintenance"))));
                         }
                     }
                 }
@@ -635,7 +571,7 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                         ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
 
                         if (proxiedPlayer != null) {
-                            proxiedPlayer.disconnect(document.getString("reason"));
+                            proxiedPlayer.disconnect(TextComponent.fromLegacyText(document.getString("reason")));
                         }
                     }
                     return true;

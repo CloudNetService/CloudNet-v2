@@ -1,9 +1,15 @@
 package de.dytanic.cloudnet.lib.network;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+
 /**
  * Created by Tareko on 29.06.2017.
  */
 public class WrapperInfo {
+
+    public static final Type TYPE = TypeToken.get(WrapperInfo.class).getType();
 
     private String serverId;
     private String hostName;

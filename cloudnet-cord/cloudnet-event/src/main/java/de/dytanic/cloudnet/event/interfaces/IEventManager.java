@@ -33,7 +33,7 @@ public interface IEventManager {
      *
      * @see #registerListener(EventKey, IEventListener)
      */
-    <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>... eventListeners);
+    <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>[] eventListeners);
 
     /**
      * Removes all listener from a specific {@link EventKey} from this event manager.

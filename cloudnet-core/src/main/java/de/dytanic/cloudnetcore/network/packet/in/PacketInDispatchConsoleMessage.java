@@ -4,14 +4,13 @@
 
 package de.dytanic.cloudnetcore.network.packet.in;
 
+import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 
-public class PacketInDispatchConsoleMessage extends PacketInHandler {
+public class PacketInDispatchConsoleMessage implements PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        System.out.println(data.getString("output"));
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        System.out.println(packet.getData().getString("output"));
     }
 }

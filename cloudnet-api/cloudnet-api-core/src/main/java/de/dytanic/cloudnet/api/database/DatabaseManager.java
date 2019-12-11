@@ -4,11 +4,11 @@
 
 package de.dytanic.cloudnet.api.database;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class DatabaseManager {
 
-    private Map<String, Database> databaseMap = NetworkUtils.newConcurrentHashMap();
+    private Map<String, Database> databaseMap = new ConcurrentHashMap<>();
 
     public DatabaseManager() {
 

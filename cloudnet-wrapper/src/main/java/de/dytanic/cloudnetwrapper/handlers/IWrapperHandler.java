@@ -4,19 +4,13 @@
 
 package de.dytanic.cloudnetwrapper.handlers;
 
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 
-public interface IWrapperHandler extends Runnabled<CloudNetWrapper> {
+import java.util.function.Consumer;
 
-    int getTicks();
+public interface IWrapperHandler extends Consumer<CloudNetWrapper> {
 
     default Runnable toExecutor() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                IWrapperHandler.this.run(CloudNetWrapper.getInstance());
-            }
-        };
+        return () -> accept(CloudNetWrapper.getInstance());
     }
 }

@@ -21,6 +21,6 @@ public class WrapperSessionDatabase extends DatabaseUsable {
     public void addSession(WrapperSession session) {
         DatabaseDocument databaseDocument = new DatabaseDocument(session.getUniqueId().toString());
         databaseDocument.append("session", session);
-        databaseDocument.insert(database);
+        database.insert(databaseDocument);
     }
 }

@@ -10,6 +10,7 @@ import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
+import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.player.UpdatePlayerEvent;
@@ -34,26 +35,31 @@ public class PlayerDatabase extends DatabaseUsable {
                                                         new Document(),
                                                         System.currentTimeMillis(),
                                                         System.currentTimeMillis(),
-                                                        playerConnection);
+                                                        playerConnection,
+                                                        new PermissionEntity(playerConnection.getUniqueId(),
+                                                                             new HashMap<>(),
+                                                                             null,
+                                                                             null,
+                                                                             new LinkedList<>()));
         database.insert(new DatabaseDocument(playerConnection.getUniqueId().toString()).append("offlinePlayer", offlinePlayer));
         return offlinePlayer;
     }
 
     public PlayerDatabase updatePlayer(OfflinePlayer offlinePlayer) {
-        CloudNet.getLogger().debug("PlayerDatabase updatePlayer offlinePlayer null: " + (offlinePlayer == null));
+        CloudNet.getLogger().finest("PlayerDatabase updatePlayer offlinePlayer null: " + (offlinePlayer == null));
         if (offlinePlayer == null) {
             return this;
         }
-        Document document = database.getDocument(offlinePlayer.getUniqueId().toString());
+        DatabaseDocument document = database.getDocument(offlinePlayer.getUniqueId().toString());
         document.append("offlinePlayer", CloudPlayer.newOfflinePlayer(offlinePlayer));
         database.insert(document);
-        CloudNet.getLogger().debug("PlayerDatabase updatePlayer call UpdatePlayerEvent");
+        CloudNet.getLogger().finest("PlayerDatabase updatePlayer call UpdatePlayerEvent");
         CloudNet.getInstance().getEventManager().callEvent(new UpdatePlayerEvent(offlinePlayer));
         return this;
     }
 
     public PlayerDatabase updateName(UUID uuid, String name) {
-        Document document = database.getDocument(uuid.toString());
+        DatabaseDocument document = database.getDocument(uuid.toString());
         OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
         offlinePlayer.setName(name);
         document.append("offlinePlayer", offlinePlayer);
@@ -62,20 +68,29 @@ public class PlayerDatabase extends DatabaseUsable {
     }
 
     public boolean containsPlayer(UUID uuid) {
-        return database.containsDoc(uuid.toString());
+        return database.contains(uuid.toString());
+    }
+
+    public PlayerDatabase updatePermissionEntity(UUID uuid, PermissionEntity permissionEntity) {
+        DatabaseDocument document = database.getDocument(uuid.toString());
+        OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
+        offlinePlayer.setPermissionEntity(permissionEntity);
+        document.append("offlinePlayer", offlinePlayer);
+        database.insert(document);
+        return this;
     }
 
     public OfflinePlayer getPlayer(UUID uniqueId) {
-        CloudNet.getLogger().debug("PlayerDatabase getPlayer uniqueId " + uniqueId);
+        CloudNet.getLogger().finest("PlayerDatabase getPlayer uniqueId " + uniqueId);
         if (uniqueId == null) {
             return null;
         }
-        Document document = database.getDocument(uniqueId.toString());
-        CloudNet.getLogger().debug("PlayerDatabase getPlayer document null: " + (document == null));
+        DatabaseDocument document = database.getDocument(uniqueId.toString());
+        CloudNet.getLogger().finest("PlayerDatabase getPlayer document null: " + (document == null));
         if (document == null) {
             return null;
         }
-        CloudNet.getLogger().debug("PlayerDatabase getPlayer offlinePlayer contained: " + document.contains("offlinePlayer"));
+        CloudNet.getLogger().finest("PlayerDatabase getPlayer offlinePlayer contained: " + document.contains("offlinePlayer"));
         return document.getObject("offlinePlayer", OfflinePlayer.TYPE);
     }
 
@@ -84,8 +99,8 @@ public class PlayerDatabase extends DatabaseUsable {
 
         Map<UUID, OfflinePlayer> map = new HashMap<>();
 
-        for (Document document : database.getDocs()) {
-            OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
+        for (DatabaseDocument document : database.getDocuments().values()) {
+            final OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
             map.put(offlinePlayer.getUniqueId(), offlinePlayer);
         }
 

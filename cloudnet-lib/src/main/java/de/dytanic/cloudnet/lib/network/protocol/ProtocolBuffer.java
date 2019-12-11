@@ -6,7 +6,6 @@ package de.dytanic.cloudnet.lib.network.protocol;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufProcessor;
 import io.netty.buffer.Unpooled;
 import io.netty.util.ByteProcessor;
 
@@ -20,6 +19,7 @@ import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * Created by Tareko on 09.09.2017.
@@ -60,6 +60,8 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     public ProtocolBuffer writeVarInt(int value) {
+        // Keep duplicates because of different data types (int and long)
+        //noinspection DuplicatedCode
         do {
             byte temp = (byte) (value & 0b01111111);
             // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
@@ -79,6 +81,8 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     public ProtocolBuffer writeVarLong(long value) {
+        // Keep duplicates because of different data types (int and long)
+        //noinspection DuplicatedCode
         do {
             byte temp = (byte) (value & 0b01111111);
             // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
@@ -139,11 +143,13 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     }
 
     @Override
+    @Deprecated
     public ByteOrder order() {
         return byteBuf.order();
     }
 
     @Override
+    @Deprecated
     public ByteBuf order(ByteOrder byteOrder) {
         return byteBuf.order(byteOrder);
     }
@@ -980,17 +986,24 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
 
     @Override
     public int hashCode() {
-        return byteBuf.hashCode();
+        return Objects.hash(byteBuf);
     }
 
     @Override
-    public boolean equals(Object o) {
-        return byteBuf.equals(o);
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProtocolBuffer)) {
+            return false;
+        }
+        final ProtocolBuffer that = (ProtocolBuffer) o;
+        return Objects.equals(byteBuf, that.byteBuf);
     }
 
     @Override
     public int compareTo(ByteBuf byteBuf) {
-        return byteBuf.compareTo(byteBuf);
+        return this.byteBuf.compareTo(byteBuf);
     }
 
     @Override
@@ -1016,22 +1029,6 @@ public final class ProtocolBuffer extends ByteBuf implements Cloneable {
     @Override
     public ByteBuf touch(Object o) {
         return byteBuf.touch(o);
-    }
-
-    public int forEachByte(ByteBufProcessor byteBufProcessor) {
-        return byteBuf.forEachByte(byteBufProcessor);
-    }
-
-    public int forEachByte(int i, int i1, ByteBufProcessor byteBufProcessor) {
-        return byteBuf.forEachByte(i, i1, byteBufProcessor);
-    }
-
-    public int forEachByteDesc(ByteBufProcessor byteBufProcessor) {
-        return byteBuf.forEachByteDesc(byteBufProcessor);
-    }
-
-    public int forEachByteDesc(int i, int i1, ByteBufProcessor byteBufProcessor) {
-        return byteBuf.forEachByteDesc(i, i1, byteBufProcessor);
     }
 
     @Override

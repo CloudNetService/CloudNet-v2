@@ -11,7 +11,7 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 public class CommandStop extends Command {
 
     public CommandStop() {
-        super("stop", "cloudnet.command.stop", "exit");
+        super("stop", "cloudnet.command.stop", "end", "exit");
     }
 
     @Override

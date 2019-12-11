@@ -5,18 +5,17 @@
 package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import jline.console.completer.Completer;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class that manages commands for the interfaces of CloudNet.
  */
 public final class CommandManager implements Completer {
 
-    private final Map<String, Command> commands = NetworkUtils.newConcurrentHashMap();
+    private final Map<String, Command> commands = new ConcurrentHashMap<>();
     private ConsoleCommandSender consoleSender = new ConsoleCommandSender();
 
     /**
@@ -156,17 +155,16 @@ public final class CommandManager implements Completer {
             Command command = getCommand(input[0]);
 
             if (command instanceof TabCompletable) {
+                TabCompletable tabCompletable = (TabCompletable) command;
                 String[] args = buffer.split(" ");
                 String testString = args[args.length - 1];
 
-                responses.addAll(CollectionWrapper.filterMany(((TabCompletable) command).onTab(input.length - 1, input[input.length - 1]),
-                                                              new Acceptable<String>() {
-                                                                  @Override
-                                                                  public boolean isAccepted(String s) {
-                                                                      return s != null && (testString.isEmpty() || s.toLowerCase().contains(
-                                                                          testString.toLowerCase()));
-                                                                  }
-                                                              }));
+                tabCompletable.onTab(input.length - 1, input[input.length - 1])
+                              .stream()
+                              .filter(s -> s != null && (
+                                  testString.isEmpty() || s.toLowerCase().contains(testString.toLowerCase())))
+                              .forEach(responses::add);
+
             }
         }
 

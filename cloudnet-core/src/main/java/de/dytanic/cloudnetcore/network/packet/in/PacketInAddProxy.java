@@ -4,29 +4,27 @@
 
 package de.dytanic.cloudnetcore.network.packet.in;
 
-import com.google.gson.reflect.TypeToken;
+import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 
-public final class PacketInAddProxy extends PacketInHandler {
+public final class PacketInAddProxy implements PacketInHandler {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
+    public void handleInput(Packet packet, PacketSender packetSender) {
         if (!(packetSender instanceof Wrapper)) {
             return;
         }
-        Wrapper cn = ((Wrapper) packetSender);
-        ProxyInfo nullServerInfo = data.getObject("proxyInfo", new TypeToken<ProxyInfo>() {}.getType());
-        ProxyProcessMeta proxyProcessMeta = data.getObject("proxyProcess", new TypeToken<ProxyProcessMeta>() {}.getType());
-        ProxyServer minecraftServer = new ProxyServer(proxyProcessMeta, cn, nullServerInfo);
-        cn.getProxys().put(proxyProcessMeta.getServiceId().getServerId(), minecraftServer);
-        cn.getWaitingServices().remove(minecraftServer.getServerId());
+        Wrapper wrapper = (Wrapper) packetSender;
+        ProxyInfo nullServerInfo = packet.getData().getObject("proxyInfo", ProxyInfo.TYPE);
+        ProxyProcessMeta proxyProcessMeta = packet.getData().getObject("proxyProcess", ProxyProcessMeta.TYPE);
+        ProxyServer minecraftServer = new ProxyServer(proxyProcessMeta, wrapper, nullServerInfo);
+        wrapper.getProxys().put(proxyProcessMeta.getServiceId().getServerId(), minecraftServer);
+        wrapper.getWaitingServices().remove(minecraftServer.getServerId());
 
         CloudNet.getInstance().getNetworkManager().handleProxyAdd(minecraftServer);
     }
