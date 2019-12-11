@@ -4,11 +4,8 @@
 
 package de.dytanic.cloudnet.command;
 
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.UUID;
+import java.util.Arrays;
 
 /**
  * Class that defines a command sender in a terminal.
@@ -24,7 +21,7 @@ public class ConsoleCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String... message) {
-        CollectionWrapper.iterator(message, System.out::println);
+        Arrays.asList(message).forEach(System.out::println);
     }
 
     @Override

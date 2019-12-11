@@ -1,8 +1,6 @@
 package de.dytanic.cloudnet.lib.database;
 
 import com.google.gson.reflect.TypeToken;
-import de.dytanic.cloudnet.lib.serverselectors.sign.Position;
-import de.dytanic.cloudnet.lib.serverselectors.sign.Sign;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.junit.Assert;
 import org.junit.Test;
@@ -92,27 +90,4 @@ public class DatabaseDocumentTest {
                             "Test");
     }
 
-    @Test
-    public void constructorDocument() {
-        Document document = new Document("CloudNet Document");
-        document.append("primitive", 1);
-        document.append("array", Collections.singletonList(2));
-        document.append("object", new Sign("test",
-                                           new Position("test", "world", 0.0D, 0.0D, 0.0D)));
-
-        //noinspection MismatchedQueryAndUpdateOfCollection
-        DatabaseDocument databaseDocument = new DatabaseDocument(document);
-        Assert.assertEquals("Primitive is not equal",
-                            (int) document.getObject("primitive", Integer.class),
-                            databaseDocument.getInt("primitive"));
-        final Type INT_LIST_TYPE = TypeToken.getParameterized(List.class, Integer.class).getType();
-
-        Assert.assertEquals("Array is not equal",
-                            document.<List<Integer>>getObject("array", INT_LIST_TYPE),
-                            databaseDocument.<List<Integer>>getObject("array", INT_LIST_TYPE));
-        Assert.assertEquals("Object is not equal",
-                            document.<Sign>getObject("object", Sign.TYPE),
-                            databaseDocument.<Sign>getObject("object", Sign.TYPE));
-
-    }
 }

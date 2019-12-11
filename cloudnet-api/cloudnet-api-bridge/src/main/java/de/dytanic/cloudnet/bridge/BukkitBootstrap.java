@@ -9,21 +9,14 @@ import de.dytanic.cloudnet.api.config.CloudConfigLoader;
 import de.dytanic.cloudnet.api.config.ConfigTypeLoader;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudServerInitEvent;
 import de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry;
-import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandCloudServer;
 import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandResource;
 import de.dytanic.cloudnet.bridge.internal.listener.bukkit.BukkitListener;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.SignSelector;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.in.PacketInMobSelector;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.in.PacketInSignSelector;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.nio.file.Paths;
 
@@ -37,8 +30,6 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         CloudAPI cloudAPI = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"),
                                                                Paths.get("CLOUD/config.json"),
                                                                ConfigTypeLoader.INTERNAL), this);
-        cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 1, PacketInSignSelector.class);
-        cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInMobSelector.class);
 
         cloudAPI.setLogger(getLogger());
     }
@@ -54,14 +45,6 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         }
 
         CloudAPI.getInstance().getNetworkHandlerProvider().clear();
-
-        if (SignSelector.getInstance() != null && SignSelector.getInstance().getWorker() != null) {
-            SignSelector.getInstance().getWorker().interrupt();
-        }
-
-        if (MobSelector.getInstance() != null) {
-            MobSelector.getInstance().shutdown();
-        }
 
         Bukkit.getScheduler().cancelTasks(this);
     }
@@ -86,11 +69,6 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
     private void enableTasks() {
         Bukkit.getScheduler().runTask(this, () -> {
             if (CloudServer.getInstance().getGroupData() != null) {
-                CommandCloudServer commandCloudServer = new CommandCloudServer();
-
-                getCommand("cloudserver").setExecutor(commandCloudServer);
-                getCommand("cloudserver").setPermission("cloudnet.command.cloudserver");
-                getCommand("cloudserver").setTabCompleter(commandCloudServer);
 
                 Bukkit.getPluginManager().callEvent(new BukkitCloudServerInitEvent(CloudServer.getInstance()));
                 CloudServer.getInstance().update();
@@ -130,16 +108,6 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
                         ex.printStackTrace();
                     }
                 }, 0, 5);
-            }
-
-            if (CloudAPI.getInstance().getPermissionPool() != null &&
-                (getServer().getPluginManager().isPluginEnabled("VaultAPI") ||
-                    getServer().getPluginManager().isPluginEnabled("Vault"))) {
-                try {
-                    Class.forName("de.dytanic.cloudnet.bridge.vault.VaultInvoker").getMethod("invoke").invoke(null);
-                } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
             }
         });
     }
