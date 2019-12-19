@@ -33,6 +33,7 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import net.md_5.bungee.api.ProxyServer;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Type;
@@ -116,7 +117,13 @@ public final class CloudAPI implements MetaObj {
         this.networkConnection.tryConnect(config.getBoolean("ssl"),
                                           new NetDispatcher(networkConnection, false),
                                           new Auth(serviceId),
-                                          Bukkit::shutdown);
+                                          () -> {
+                                              if (this.cloudService.isProxyInstance()) {
+                                                  ProxyServer.getInstance().stop("CloudNet-Stop!");
+                                              } else {
+                                                  Bukkit.shutdown();
+                                              }
+                                          });
         NetworkUtils.header();
     }
 
@@ -352,6 +359,7 @@ public final class CloudAPI implements MetaObj {
      * If no wrapper with the given id can be found, this returns null
      *
      * @param wrapperId the case-insensitive wrapper id of the wrapper to get
+     *
      * @return the {@link WrapperInfo} instance of the wrapper with the given wrapper id or {@code null}
      */
     public WrapperInfo getWrapper(String wrapperId) {

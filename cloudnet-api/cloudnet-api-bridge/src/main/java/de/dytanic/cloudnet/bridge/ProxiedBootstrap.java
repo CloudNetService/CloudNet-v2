@@ -39,8 +39,7 @@ public class ProxiedBootstrap extends Plugin {
     public void onLoad() {
         this.api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
                                                       Paths.get("CLOUD", "config.json"),
-                                                      ConfigTypeLoader.INTERNAL),
-                                () -> getProxy().stop("CloudNet-Stop!"));
+                                                      ConfigTypeLoader.INTERNAL));
         getLogger().setLevel(Level.INFO);
         this.api.setLogger(this.getLogger());
     }
