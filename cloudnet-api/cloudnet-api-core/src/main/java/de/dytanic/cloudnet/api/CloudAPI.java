@@ -13,7 +13,6 @@ import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.interfaces.MetaObj;
 import de.dytanic.cloudnet.lib.network.NetDispatcher;
 import de.dytanic.cloudnet.lib.network.NetworkConnection;
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
@@ -43,7 +42,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public final class CloudAPI implements MetaObj {
+public final class CloudAPI {
 
     private static final Type SERVER_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ServerInfo.class).getType();
     private static final String[] EMPTY_STRING_ARRAY = {};
