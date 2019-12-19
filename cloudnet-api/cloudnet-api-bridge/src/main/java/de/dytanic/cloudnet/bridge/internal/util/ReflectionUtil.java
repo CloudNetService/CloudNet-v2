@@ -22,6 +22,8 @@ public final class ReflectionUtil {
             try {
                 return Class.forName("org.bukkit.craftbukkit" + suffix);
             } catch (ClassNotFoundException e) {
+                ex.printStackTrace();
+                e.printStackTrace();
             }
         }
         return null;
@@ -31,6 +33,7 @@ public final class ReflectionUtil {
         try {
             return Class.forName(path);
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -43,6 +46,8 @@ public final class ReflectionUtil {
             try {
                 return Class.forName("net.minecraft.server" + suffix);
             } catch (ClassNotFoundException e) {
+                ex.printStackTrace();
+                e.printStackTrace();
             }
         }
         return null;
