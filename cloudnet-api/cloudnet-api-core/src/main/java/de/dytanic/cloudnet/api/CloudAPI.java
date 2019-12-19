@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 public final class CloudAPI implements MetaObj {
 
     private static final Type SERVER_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ServerInfo.class).getType();
-    public static final String[] EMPTY_STRING_ARRAY = {};
+    private static final String[] EMPTY_STRING_ARRAY = {};
     private static CloudAPI instance;
 
     private Document config;

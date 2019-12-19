@@ -51,7 +51,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                                                                 Arrays.toString(args)));
         if (args.length > 2) {
             if (args[0].equalsIgnoreCase("cmds") && commandSender.hasPermission("cloudnet.command.cloud.commandserver")) {
-                if (CloudProxy.getInstance().getCachedServers().containsKey(args[1])) {
+                if (CloudProxy.getInstance().getServers().containsKey(args[1])) {
                     StringBuilder builder = new StringBuilder();
 
                     for (short i = 2; i < args.length; i++) {
@@ -169,7 +169,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                     return;
                 } else if (args[0].equalsIgnoreCase("listServers") && commandSender.hasPermission("cloudnet.command.cloud.listservers")) {
                     commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "Server:"));
-                    for (ServerInfo server : CloudProxy.getInstance().getCachedServers().values()) {
+                    for (ServerInfo server : CloudProxy.getInstance().getServers().values()) {
                         TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText("§7- " + (server.isOnline() ? "§e" : "§c") + server
                             .getServiceId()
                             .getServerId() + "§8(" + server.getOnlineCount() + "§8) §7State: " + server.getServerState()));
@@ -234,13 +234,13 @@ public final class CommandCloud extends Command implements TabExecutor {
                     }
                     return;
                 } else if (args[0].equalsIgnoreCase("log") && commandSender.hasPermission("cloudnet.command.cloud.log")) {
-                    if (CloudProxy.getInstance().getCachedServers().containsKey(args[1]) || CloudAPI.getInstance()
-                                                                                                    .getProxys()
-                                                                                                    .stream()
-                                                                                                    .anyMatch(proxyInfo -> proxyInfo.getServiceId()
-                                                                                                                                    .getServerId()
-                                                                                                                                    .equalsIgnoreCase(
-                                                                                                                                        args[1]))) {
+                    if (CloudProxy.getInstance().getServers().containsKey(args[1]) || CloudAPI.getInstance()
+                                                                                              .getProxys()
+                                                                                              .stream()
+                                                                                              .anyMatch(proxyInfo -> proxyInfo.getServiceId()
+                                                                                                                              .getServerId()
+                                                                                                                              .equalsIgnoreCase(
+                                                                                                                                  args[1]))) {
                         String url = CloudAPI.getInstance().createServerLogUrl(args[1]);
                         TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText("§n§l§b" + url));
                         textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
@@ -294,7 +294,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                     }
                     return;
                 } else if (args[0].equalsIgnoreCase("stop") && commandSender.hasPermission("cloudnet.command.cloud.stop")) {
-                    if (CloudProxy.getInstance().getCachedServers().containsKey(args[1])) {
+                    if (CloudProxy.getInstance().getServers().containsKey(args[1])) {
                         CloudAPI.getInstance().stopServer(args[1]);
                         commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                        .getPrefix() + "The information was sent to the cloud"));
@@ -340,8 +340,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 } else if (args[0].equalsIgnoreCase("ustopGroup") && commandSender.hasPermission("cloudnet.command.cloud.useless-stopgroup")) {
                     if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1])) {
 
-                        CloudProxy.getInstance()
-                                  .getCachedServers()
+                        CloudProxy.getInstance().getServers()
                                   .values()
                                   .stream()
                                   .filter(serverInfo -> serverInfo.getServiceId()
@@ -379,13 +378,13 @@ public final class CommandCloud extends Command implements TabExecutor {
                 break;
             case 3:
                 if (args[0].equalsIgnoreCase("copy")) {
-                    if (!CloudProxy.getInstance().getCachedServers().containsKey(args[1])) {
+                    if (!CloudProxy.getInstance().getServers().containsKey(args[1])) {
                         commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                        .getPrefix() + "The server doesn't exists"));
                         return;
                     }
 
-                    CloudAPI.getInstance().copyDirectory(CloudProxy.getInstance().getCachedServers().get(args[1]), args[2]);
+                    CloudAPI.getInstance().copyDirectory(CloudProxy.getInstance().getServers().get(args[1]), args[2]);
                     commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                    .getPrefix() + "The wrapper tried to copy the directory..."));
 
@@ -595,7 +594,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         return getProxiesAndServers();
                     }
                     case "log": {
-                        return ImmutableList.copyOf(CloudProxy.getInstance().getCachedServers().keySet());
+                        return ImmutableList.copyOf(CloudProxy.getInstance().getServers().keySet());
                     }
                     case "cmds": {
                         return CloudAPI.getInstance()

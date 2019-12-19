@@ -9,7 +9,6 @@ import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.api.network.packet.out.PacketOutUpdateServerInfo;
-import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.bridge.event.bukkit.*;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.CloudNetwork;
@@ -29,6 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
@@ -51,10 +51,12 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Cloud-Server represents
  */
+@SuppressWarnings("unused")
 public class CloudServer implements ICloudService {
 
     private static CloudServer instance;
@@ -84,6 +86,9 @@ public class CloudServer implements ICloudService {
     /*=================================================*/
 
     public CloudServer(BukkitBootstrap bukkitBootstrap, CloudAPI cloudAPI) {
+        if (instance != null) {
+            throw new IllegalStateException("CloudServer already initialized, use the instance!");
+        }
         instance = this;
         cloudAPI.setCloudService(this);
 
@@ -197,10 +202,9 @@ public class CloudServer implements ICloudService {
      * Updates the ServerInfo
      */
     public void update() {
-        List<String> list = new CopyOnWriteArrayList<>();
-        for (Player all : Bukkit.getOnlinePlayers()) {
-            list.add(all.getName());
-        }
+        List<String> list = Bukkit.getOnlinePlayers().stream()
+                                  .map(HumanEntity::getName)
+                                  .collect(Collectors.toList());
 
         ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(),
                                                hostAdress,
@@ -224,15 +228,6 @@ public class CloudServer implements ICloudService {
      */
     public void setAllowAutoStart(boolean allowAutoStart) {
         this.allowAutoStart = allowAutoStart;
-    }
-
-    @Deprecated
-    public void getPlayerAndCache(UUID uniqueId) {
-        CloudPlayer cloudPlayer = CloudAPI.getInstance().getOnlinePlayer(uniqueId);
-        if (cloudPlayer != null) {
-            cloudPlayer.setPlayerExecutor(new PlayerExecutorBridge());
-            this.cloudPlayers.put(uniqueId, cloudPlayer);
-        }
     }
 
     public void setServerStateAndUpdate(ServerState serverStateAndUpdate) {

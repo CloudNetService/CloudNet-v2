@@ -20,21 +20,29 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 
 /**
- * Created by Tareko on 17.08.2017.
+ * Bootstrapping class of the proxy service.
+ * This acts as the entry point into the CloudNet API.
  */
 public class ProxiedBootstrap extends Plugin {
 
+    /**
+     * The constructed CloudNet API instance.
+     */
     private CloudAPI api;
+
+    /**
+     * The proxy instance that is using this plugin context.
+     */
     private CloudProxy cloudProxy;
 
     @Override
     public void onLoad() {
-        api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"),
-                                                 Paths.get("CLOUD/config.json"),
-                                                 ConfigTypeLoader.INTERNAL),
-                           () -> getProxy().stop("CloudNet-Stop!"));
+        this.api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
+                                                      Paths.get("CLOUD", "config.json"),
+                                                      ConfigTypeLoader.INTERNAL),
+                                () -> getProxy().stop("CloudNet-Stop!"));
         getLogger().setLevel(Level.INFO);
-        api.setLogger(this.getLogger());
+        this.api.setLogger(this.getLogger());
     }
 
     @Override

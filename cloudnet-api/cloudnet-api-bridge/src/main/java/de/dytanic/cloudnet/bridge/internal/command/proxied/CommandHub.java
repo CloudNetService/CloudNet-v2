@@ -36,7 +36,7 @@ public final class CommandHub extends Command {
             return;
         }
 
-        ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(
+        ServerInfo serverInfo = CloudProxy.getInstance().getServers().get(
             ((ProxiedPlayer) commandSender).getServer().getInfo().getName());
 
         if (serverInfo != null) {

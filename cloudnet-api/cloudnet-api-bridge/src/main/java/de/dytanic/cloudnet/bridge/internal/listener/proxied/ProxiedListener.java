@@ -160,13 +160,13 @@ public class ProxiedListener implements Listener {
                                                                                                         .replace("%group%",
                                                                                                                  (proxiedPlayer.getServer() != null && CloudProxy
                                                                                                                      .getInstance()
-                                                                                                                     .getCachedServers()
+                                                                                                                     .getServers()
                                                                                                                      .containsKey(
                                                                                                                          proxiedPlayer.getServer()
                                                                                                                                       .getInfo()
                                                                                                                                       .getName()) ? CloudProxy
                                                                                                                      .getInstance()
-                                                                                                                     .getCachedServers()
+                                                                                                                     .getServers()
                                                                                                                      .get(proxiedPlayer.getServer()
                                                                                                                                        .getInfo()
                                                                                                                                        .getName())
@@ -199,13 +199,13 @@ public class ProxiedListener implements Listener {
                                                                                                         .replace("%group%",
                                                                                                                  (proxiedPlayer.getServer() != null && CloudProxy
                                                                                                                      .getInstance()
-                                                                                                                     .getCachedServers()
+                                                                                                                     .getServers()
                                                                                                                      .containsKey(
                                                                                                                          proxiedPlayer.getServer()
                                                                                                                                       .getInfo()
                                                                                                                                       .getName()) ? CloudProxy
                                                                                                                      .getInstance()
-                                                                                                                     .getCachedServers()
+                                                                                                                     .getServers()
                                                                                                                      .get(proxiedPlayer.getServer()
                                                                                                                                        .getInfo()
                                                                                                                                        .getName())
@@ -395,7 +395,7 @@ public class ProxiedListener implements Listener {
     @EventHandler
     public void handleServerKick(ServerKickEvent e) {
         if (e.getCancelServer() != null) {
-            ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(e.getKickedFrom().getName());
+            ServerInfo serverInfo = CloudProxy.getInstance().getServers().get(e.getKickedFrom().getName());
             String fallback;
             if (CloudAPI.getInstance().getServerGroupData(serverInfo.getServiceId().getGroup()) != null &&
                 CloudAPI.getInstance().getServerGroupData(serverInfo.getServiceId().getGroup()).isKickedForceFallback()) {
