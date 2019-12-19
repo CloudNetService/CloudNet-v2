@@ -27,7 +27,6 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
@@ -40,7 +39,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Tareko on 23.08.2017.
  */
-public final class CommandCloudServer implements CommandExecutor, TabExecutor {
+public final class CommandCloudServer implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {

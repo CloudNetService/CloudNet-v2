@@ -30,13 +30,18 @@ import java.nio.file.Paths;
 /**
  * Created by Tareko on 17.08.2017.
  */
-public final class BukkitBootstrap extends JavaPlugin implements Runnable {
+public final class BukkitBootstrap extends JavaPlugin {
+
+    /**
+     * The cloud server instance that is constructed by this bootstrapping plugin.
+     */
+    private CloudServer cloudServer;
 
     @Override
     public void onLoad() {
-        CloudAPI cloudAPI = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"),
-                                                               Paths.get("CLOUD/config.json"),
-                                                               ConfigTypeLoader.INTERNAL), this);
+        CloudAPI cloudAPI = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
+                                                               Paths.get("CLOUD", "config.json"),
+                                                               ConfigTypeLoader.INTERNAL));
         cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 1, PacketInSignSelector.class);
         cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInMobSelector.class);
 
@@ -49,11 +54,11 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
 
         if (CloudAPI.getInstance() != null) {
-            CloudServer.getInstance().updateDisable();
+            this.cloudServer.updateDisable();
             CloudAPI.getInstance().shutdown();
+            CloudAPI.getInstance().getNetworkHandlerProvider().clear();
         }
 
-        CloudAPI.getInstance().getNetworkHandlerProvider().clear();
 
         if (SignSelector.getInstance() != null && SignSelector.getInstance().getWorker() != null) {
             SignSelector.getInstance().getWorker().interrupt();
@@ -68,14 +73,14 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
 
     @Override
     public void onEnable() {
-        new CloudServer(this, CloudAPI.getInstance());
+        cloudServer = new CloudServer(this, CloudAPI.getInstance());
 
         CloudAPI.getInstance().bootstrap();
         DocumentRegistry.fire();
 
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
 
-        CloudServer.getInstance().registerCommand(new CommandResource());
+        this.cloudServer.registerCommand(new CommandResource());
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerOutgoingPluginChannel(this, "cloudnet:main");
 
@@ -83,78 +88,100 @@ public final class BukkitBootstrap extends JavaPlugin implements Runnable {
         loadPlayers();
     }
 
+    /**
+     * Initializes and launches required tasks for Bukkit.
+     * This method also disables auto-save on all worlds, if configured.
+     * If Vault-API or Vault is present, this method also registers the Vault services implemented by CloudNet.
+     */
     private void enableTasks() {
-        Bukkit.getScheduler().runTask(this, () -> {
-            if (CloudServer.getInstance().getGroupData() != null) {
-                CommandCloudServer commandCloudServer = new CommandCloudServer();
+        if (this.cloudServer.getGroupData() != null) {
+            CommandCloudServer commandCloudServer = new CommandCloudServer();
 
-                getCommand("cloudserver").setExecutor(commandCloudServer);
-                getCommand("cloudserver").setPermission("cloudnet.command.cloudserver");
-                getCommand("cloudserver").setTabCompleter(commandCloudServer);
+            getCommand("cloudserver").setExecutor(commandCloudServer);
+            getCommand("cloudserver").setTabCompleter(commandCloudServer);
+            getCommand("cloudserver").setPermission("cloudnet.command.cloudserver");
 
-                Bukkit.getPluginManager().callEvent(new BukkitCloudServerInitEvent(CloudServer.getInstance()));
-                CloudServer.getInstance().update();
+            Bukkit.getPluginManager().callEvent(new BukkitCloudServerInitEvent(this.cloudServer));
+            this.cloudServer.update();
 
-                if (CloudAPI.getInstance()
-                            .getServerGroupData(CloudAPI.getInstance().getGroup())
-                            .getAdvancedServerConfig()
-                            .isDisableAutoSavingForWorlds()) {
-                    for (World world : Bukkit.getWorlds()) {
-                        world.setAutoSave(false);
-                    }
+            if (CloudAPI.getInstance()
+                        .getServerGroupData(CloudAPI.getInstance().getGroup())
+                        .getAdvancedServerConfig()
+                        .isDisableAutoSavingForWorlds()) {
+                for (World world : Bukkit.getWorlds()) {
+                    world.setAutoSave(false);
                 }
             }
+        }
 
-            if (CloudServer.getInstance().getGroupData() != null) {
-                getServer().getScheduler().runTaskTimer(BukkitBootstrap.this, () -> {
-                    try {
-                        ServerListPingEvent serverListPingEvent = new ServerListPingEvent(
-                            new InetSocketAddress(0).getAddress(),
-                            CloudServer.getInstance().getMotd(),
-                            Bukkit.getOnlinePlayers().size(),
-                            CloudServer.getInstance().getMaxPlayers());
+        if (this.cloudServer.getGroupData() != null) {
+            startUpdateTask();
+        }
 
-                        Bukkit.getPluginManager().callEvent(serverListPingEvent);
-                        if (!serverListPingEvent.getMotd().equalsIgnoreCase(CloudServer.getInstance().getMotd()) ||
-                            serverListPingEvent.getMaxPlayers() != CloudServer.getInstance().getMaxPlayers()) {
-                            CloudServer.getInstance().setMotd(serverListPingEvent.getMotd());
-                            CloudServer.getInstance().setMaxPlayers(serverListPingEvent.getMaxPlayers());
-                            if (serverListPingEvent.getMotd().toLowerCase().contains("running") ||
-                                serverListPingEvent.getMotd().toLowerCase().contains("ingame")) {
-                                CloudServer.getInstance().changeToIngame();
-                            } else {
-                                CloudServer.getInstance().update();
-                            }
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }, 0, 5);
+        if (CloudAPI.getInstance().getPermissionPool() != null &&
+            (getServer().getPluginManager().isPluginEnabled("VaultAPI") ||
+                getServer().getPluginManager().isPluginEnabled("Vault"))) {
+            try {
+                Class.forName("de.dytanic.cloudnet.bridge.vault.VaultInvoker").getMethod("invoke").invoke(null);
+            } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
+                e.printStackTrace();
             }
-
-            if (CloudAPI.getInstance().getPermissionPool() != null &&
-                (getServer().getPluginManager().isPluginEnabled("VaultAPI") ||
-                    getServer().getPluginManager().isPluginEnabled("Vault"))) {
-                try {
-                    Class.forName("de.dytanic.cloudnet.bridge.vault.VaultInvoker").getMethod("invoke").invoke(null);
-                } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        }
     }
 
+    /**
+     * If players are joined on the Bukkit server prior to this plugin being enabled (ie. a reload just happened),
+     * loads all players from the cloud into the cache.
+     */
     private void loadPlayers() {
         for (Player all : getServer().getOnlinePlayers()) {
             CloudAPI.getInstance().getOnlinePlayer(all.getUniqueId());
         }
     }
 
-    @Deprecated
-    @Override
-    public void run() {
-        getServer().getPluginManager().disablePlugin(this);
-        Bukkit.shutdown();
+    /**
+     * Starts the update task for this server.
+     */
+    private void startUpdateTask() {
+        final ServerListPingEvent serverListPingEvent = new ServerListPingEvent(
+            new InetSocketAddress(0).getAddress(),
+            this.cloudServer.getMotd(),
+            Bukkit.getOnlinePlayers().size(),
+            this.cloudServer.getMaxPlayers());
+        if (serverListPingEvent.isAsynchronous()) {
+            getServer().getScheduler().runTaskTimerAsynchronously(this, updateServer(serverListPingEvent), 0, 5);
+        } else {
+            getServer().getScheduler().runTaskTimer(this, updateServer(serverListPingEvent), 0, 5);
+        }
+    }
+
+    /**
+     * Returns the runnable to be executed when updating the server instance.
+     *
+     * @param serverListPingEvent the server ping event, that will be called and used for updating
+     *                            the server instance.
+     *
+     * @return the runnable task for a task timer.
+     */
+    private Runnable updateServer(final ServerListPingEvent serverListPingEvent) {
+        return () -> {
+            try {
+                Bukkit.getPluginManager().callEvent(serverListPingEvent);
+                if (!serverListPingEvent.getMotd().equalsIgnoreCase(this.cloudServer.getMotd()) ||
+                    serverListPingEvent.getMaxPlayers() != this.cloudServer.getMaxPlayers()) {
+                    this.cloudServer.setMotd(serverListPingEvent.getMotd());
+                    this.cloudServer.setMaxPlayers(serverListPingEvent.getMaxPlayers());
+                    if (serverListPingEvent.getMotd().toLowerCase().contains("running") ||
+                        serverListPingEvent.getMotd().toLowerCase().contains("ingame")) {
+                        this.cloudServer.changeToIngame();
+                    } else {
+                        this.cloudServer.update();
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        };
     }
 
 }

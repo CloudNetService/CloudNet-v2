@@ -171,12 +171,12 @@ public class CloudServer implements ICloudService {
      * Changed the State to INGAME and Start a gameserver
      */
     public void changeToIngame() {
-        setServerState(ServerState.INGAME);
+        serverState = ServerState.INGAME;
 
-        if (isAllowAutoStart()) {
+        if (allowAutoStart) {
             SimpleServerGroup simpleServerGroup = CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup());
             CloudAPI.getInstance().startGameServer(simpleServerGroup, template);
-            setAllowAutoStart(false);
+            allowAutoStart = false;
 
             Bukkit.getScheduler().runTaskLater(bukkitBootstrap, new Runnable() {
                 @Override
@@ -401,7 +401,7 @@ public class CloudServer implements ICloudService {
             return;
         }
 
-        PermissionGroup playerPermissionGroup = playerPermissionGroupFunction != null ? playerPermissionGroupFunction.apply(player) : getCloudPlayers()
+        PermissionGroup playerPermissionGroup = playerPermissionGroupFunction != null ? playerPermissionGroupFunction.apply(player) : cloudPlayers
             .get(player.getUniqueId())
             .getPermissionEntity()
             .getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());

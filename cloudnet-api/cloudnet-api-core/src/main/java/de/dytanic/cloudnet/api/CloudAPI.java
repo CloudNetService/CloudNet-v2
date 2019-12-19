@@ -33,6 +33,7 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import org.bukkit.Bukkit;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -53,7 +54,6 @@ public final class CloudAPI implements MetaObj {
 
     private NetworkConnection networkConnection;
     private int memory;
-    private Runnable shutdownTask;
 
     private ICloudService cloudService = null;
 
@@ -68,14 +68,13 @@ public final class CloudAPI implements MetaObj {
      */
     private Logger logger;
 
-    public CloudAPI(CloudConfigLoader loader, Runnable cancelTask) {
+    public CloudAPI(CloudConfigLoader loader) {
         instance = this;
         this.cloudConfigLoader = loader;
         this.config = loader.loadConfig();
         this.networkConnection = new NetworkConnection(loader.loadConnnection(),
                                                        new ConnectableAddress("0.0.0.0", 0));
         this.serviceId = config.getObject("serviceId", ServiceId.TYPE);
-        this.shutdownTask = cancelTask;
         this.memory = config.getInt("memory");
 
         initDefaultHandlers();
@@ -117,7 +116,7 @@ public final class CloudAPI implements MetaObj {
         this.networkConnection.tryConnect(config.getBoolean("ssl"),
                                           new NetDispatcher(networkConnection, false),
                                           new Auth(serviceId),
-                                          shutdownTask);
+                                          Bukkit::shutdown);
         NetworkUtils.header();
     }
 
@@ -232,13 +231,6 @@ public final class CloudAPI implements MetaObj {
      */
     public int getMemory() {
         return memory;
-    }
-
-    /**
-     * Returns the shutdownTask which is default init
-     */
-    public Runnable getShutdownTask() {
-        return shutdownTask;
     }
 
     /**
