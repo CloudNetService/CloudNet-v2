@@ -40,7 +40,7 @@ public class YamlConfiguration extends ConfigurationProvider {
 
     @Override
     public void save(Configuration config, File file) throws IOException {
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             save(config, writer);
         }
     }
@@ -57,8 +57,8 @@ public class YamlConfiguration extends ConfigurationProvider {
 
     @Override
     public Configuration load(File file, Configuration defaults) throws IOException {
-        try (Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-            return load(reader, defaults);
+        try (FileInputStream is = new FileInputStream(file)) {
+            return load(is, defaults);
         }
     }
 

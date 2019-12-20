@@ -177,7 +177,7 @@ public class ConfigPermissions {
                                                                   group.getBoolean("defaultGroup"),
                                                                   permissions,
                                                                   permissionsGroups,
-                                                                  group.getSection("options").self,
+                                                                  group.getSection("options").getSelf(),
                                                                   group.getStringList("implements"));
             maps.put(permissionGroup.getName(), permissionGroup);
         }

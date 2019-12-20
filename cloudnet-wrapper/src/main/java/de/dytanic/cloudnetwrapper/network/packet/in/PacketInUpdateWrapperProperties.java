@@ -22,7 +22,13 @@ public class PacketInUpdateWrapperProperties implements PacketInHandler {
 
     public void handleInput(Packet packet, PacketSender packetSender) {
         Configuration configuration = packet.getData().getObject("configuration", CONFIGURATION_TYPE);
-        CloudNetWrapper.getInstance().getWrapperConfig().getConfiguration().self.putAll(configuration.self);
+
+        // Merge configurations
+        final Configuration wrapperConfig = CloudNetWrapper.getInstance().getWrapperConfig().getConfiguration();
+        configuration.getKeys().forEach(key -> {
+            wrapperConfig.set(key, configuration.get(key));
+        });
+
         CloudNetWrapper.getInstance().getWrapperConfig().save();
         CloudNetWrapper.getInstance().getWrapperConfig().load();
     }
