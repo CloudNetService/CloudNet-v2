@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.bridge.event.proxied.*;
-import de.dytanic.cloudnet.bridge.internal.chat.PlayerChatExecutor;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
@@ -38,7 +37,7 @@ import java.util.stream.Collectors;
  * This class is a singleton, use the {@link #getInstance()} method for accessing this
  * class' methods.
  */
-public class CloudProxy implements ICloudService, PlayerChatExecutor {
+public class CloudProxy implements ICloudService {
 
     /**
      * The singleton instance of this cloud proxy class.
@@ -643,7 +642,9 @@ public class CloudProxy implements ICloudService, PlayerChatExecutor {
                             title.subTitle(TextComponent.fromLegacyText(document.getString("subTitle")));
                         }
 
-                        title.fadeIn(document.getInt("fadeIn")).fadeOut(document.getInt("fadeOut")).stay(document.getInt("stay"));
+                        title.fadeIn(document.getInt("fadeIn"))
+                             .fadeOut(document.getInt("fadeOut"))
+                             .stay(document.getInt("stay"));
 
                         proxiedPlayer.sendTitle(title);
                     }

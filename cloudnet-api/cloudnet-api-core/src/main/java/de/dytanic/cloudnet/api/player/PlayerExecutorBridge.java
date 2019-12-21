@@ -9,10 +9,12 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.PlayerExecutor;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
+import java.util.Objects;
+
 /**
  * Created by Tareko on 27.08.2017.
  */
-public class PlayerExecutorBridge extends PlayerExecutor {
+public class PlayerExecutorBridge implements PlayerExecutor {
 
     public static final PlayerExecutorBridge INSTANCE = new PlayerExecutorBridge(CloudAPI.getInstance());
 
@@ -39,9 +41,8 @@ public class PlayerExecutorBridge extends PlayerExecutor {
 
     @Override
     public void sendPlayer(CloudPlayer cloudPlayer, String server) {
-        if (cloudPlayer == null || server == null) {
-            return;
-        }
+        Objects.requireNonNull(cloudPlayer, "the provided player is null");
+        Objects.requireNonNull(server, "the provided server is null");
 
         this.cloudAPI.sendCustomSubProxyMessage(CHANNEL_NAME, "sendPlayer",
                                                 new Document("uniqueId", cloudPlayer.getUniqueId())
@@ -51,9 +52,8 @@ public class PlayerExecutorBridge extends PlayerExecutor {
 
     @Override
     public void kickPlayer(CloudPlayer cloudPlayer, String reason) {
-        if (cloudPlayer == null || reason == null) {
-            return;
-        }
+        Objects.requireNonNull(cloudPlayer, "the provided player is null");
+        Objects.requireNonNull(reason, "the provided reason is null");
 
         this.cloudAPI.sendCustomSubProxyMessage(CHANNEL_NAME, "kickPlayer",
                                                 new Document("uniqueId", cloudPlayer.getUniqueId())
@@ -63,9 +63,8 @@ public class PlayerExecutorBridge extends PlayerExecutor {
 
     @Override
     public void sendMessage(CloudPlayer cloudPlayer, String message) {
-        if (cloudPlayer == null || message == null) {
-            return;
-        }
+        Objects.requireNonNull(cloudPlayer, "the provided player is null");
+        Objects.requireNonNull(message, "the provided message is null");
 
         this.cloudAPI.sendCustomSubProxyMessage(CHANNEL_NAME, "sendMessage",
                                                 new Document("message", message)
@@ -75,9 +74,8 @@ public class PlayerExecutorBridge extends PlayerExecutor {
 
     @Override
     public void sendActionbar(CloudPlayer cloudPlayer, String message) {
-        if (cloudPlayer == null || message == null) {
-            return;
-        }
+        Objects.requireNonNull(cloudPlayer, "the provided player is null");
+        Objects.requireNonNull(message, "the provided message is null");
 
         this.cloudAPI.sendCustomSubProxyMessage(CHANNEL_NAME, "sendActionbar",
                                                 new Document("message", message)
@@ -86,6 +84,9 @@ public class PlayerExecutorBridge extends PlayerExecutor {
 
     @Override
     public void sendTitle(CloudPlayer cloudPlayer, String title, String subTitle, int fadeIn, int stay, int fadeOut) {
+        Objects.requireNonNull(cloudPlayer, "the provided player is null");
+        Objects.requireNonNull(title, "the provided title is null");
+        Objects.requireNonNull(subTitle, "the provided subtitle is null");
         this.cloudAPI.sendCustomSubProxyMessage(CHANNEL_NAME, "sendTitle",
                                                 new Document("uniqueId", cloudPlayer.getUniqueId())
                                                     .append("title", title)
