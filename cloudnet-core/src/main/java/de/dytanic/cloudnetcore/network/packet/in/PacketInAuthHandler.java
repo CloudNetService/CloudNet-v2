@@ -72,7 +72,6 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                             Channel channel = client.getChannel();
                             channel.pipeline().remove("client");
                             channel.pipeline().addLast(new CloudNetClient(minecraftServer, channel));
-                            return;
                         }
                     } else if (wrapper.getCloudServers().containsKey(serviceId.getServerId())) {
                         CloudServer minecraftServer = wrapper.getCloudServers().get(serviceId.getServerId());
@@ -81,7 +80,6 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                             Channel channel = client.getChannel();
                             channel.pipeline().remove("client");
                             channel.pipeline().addLast(new CloudNetClient(minecraftServer, channel));
-                            return;
                         }
                     } else if (wrapper.getProxys().containsKey(serviceId.getServerId())) {
                         ProxyServer minecraftServer = wrapper.getProxys().get(serviceId.getServerId());
@@ -90,7 +88,6 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                             Channel channel = client.getChannel();
                             channel.pipeline().remove("client");
                             channel.pipeline().addLast(new CloudNetClient(minecraftServer, channel));
-                            return;
                         }
                     } else {
                         client.getChannel().close().syncUninterruptibly();

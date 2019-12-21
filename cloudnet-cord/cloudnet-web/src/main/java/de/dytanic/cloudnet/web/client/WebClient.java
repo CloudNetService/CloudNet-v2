@@ -5,10 +5,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
@@ -78,7 +75,7 @@ public class WebClient {
      *
      * @return the latest version of the cloud
      */
-    public String getNewstVersion() {
+    public String getLatestVersion() {
         return getString(DEFAULT_URL + "update/config.json", "version");
     }
 
@@ -94,15 +91,13 @@ public class WebClient {
     private String getString(String url, String key) {
         try {
             URLConnection urlConnection = new java.net.URL(url).openConnection();
-            urlConnection.setRequestProperty("User-Agent",
-                                             NetworkUtils.USER_AGENT);
+            urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             urlConnection.setUseCaches(false);
             urlConnection.setConnectTimeout(1000);
             urlConnection.connect();
 
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(),
-                                                                                          StandardCharsets.UTF_8))) {
-                JsonObject jsonObject = JsonParser.parseReader(bufferedReader).getAsJsonObject();
+            try (Reader reader = new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8)) {
+                JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
                 return jsonObject.get(key).getAsString();
             }
         } catch (IOException e) {
