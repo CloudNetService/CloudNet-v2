@@ -11,6 +11,7 @@ import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,6 +19,8 @@ import java.util.UUID;
  * Created by Tareko on 01.09.2017.
  */
 public class MobDatabase extends DatabaseUsable {
+
+    public static final Type MAP_UUID_SERVERMOB_TYPE = TypeToken.getParameterized(Map.class, UUID.class, ServerMob.TYPE).getType();
 
     public MobDatabase(Database database) {
         super(database);
@@ -49,8 +52,7 @@ public class MobDatabase extends DatabaseUsable {
 
     public Map<UUID, ServerMob> loadAll() {
         boolean injectable = false;
-        Map<UUID, ServerMob> mobMap = database.getDocument("server_selector_mobs").getObject("mobs",
-                                                                                             new TypeToken<Map<UUID, ServerMob>>() {}.getType());
+        Map<UUID, ServerMob> mobMap = database.getDocument("server_selector_mobs").getObject("mobs", MAP_UUID_SERVERMOB_TYPE);
 
         for (ServerMob serverMob : mobMap.values()) {
             if (serverMob.getItemId() == null) {

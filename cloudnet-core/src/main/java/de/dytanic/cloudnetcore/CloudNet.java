@@ -92,11 +92,12 @@ public final class CloudNet implements Executable, Reloadable {
     private DatabaseBasicHandlers dbHandlers;
     private Collection<User> users;
     private long startupTime = System.currentTimeMillis();
-    public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) throws
-        Exception {
-        if (instance == null) {
-            instance = this;
+
+    public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) throws Exception {
+        if (instance != null) {
+            throw new IllegalStateException("CloudNet already initialized!");
         }
+        instance = this;
 
         this.config = config;
         this.logger = cloudNetLogging;

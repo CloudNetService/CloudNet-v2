@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class PermissionPool {
 
-    public static final Type TYPE = new TypeToken<PermissionPool>() {}.getType();
+    public static final Type TYPE = TypeToken.get(PermissionPool.class).getType();
 
     private boolean available = true;
 

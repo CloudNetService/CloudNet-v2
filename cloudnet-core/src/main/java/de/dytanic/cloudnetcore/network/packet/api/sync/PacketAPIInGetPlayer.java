@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnetcore.network.packet.api.sync;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
@@ -19,7 +18,7 @@ import java.util.UUID;
 public class PacketAPIInGetPlayer implements PacketAPIIO {
 
     public void handleInput(Packet packet, PacketSender packetSender) {
-        UUID uniqueId = packet.getData().getObject("uniqueId", new TypeToken<UUID>() {}.getType());
+        UUID uniqueId = packet.getData().getObject("uniqueId", UUID.class);
         if (uniqueId != null && CloudNet.getInstance().getNetworkManager().getOnlinePlayers().containsKey(uniqueId)) {
             packetSender.sendPacket(getResult(
                 packet, new Document("player",

@@ -41,8 +41,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CloudConfig {
 
     private static final ConfigurationProvider CONFIGURATION_PROVIDER = ConfigurationProvider.getProvider(YamlConfiguration.class);
-    private static final Type WRAPPER_META_TYPE = TypeToken.getParameterized(Collection.class, WrapperMeta.class).getType();
+    private static final Type WRAPPER_META_TYPE = TypeToken.getParameterized(List.class, WrapperMeta.class).getType();
     private static final Type COLLECTION_PROXY_GROUP_TYPE = TypeToken.getParameterized(Collection.class, ProxyGroup.class).getType();
+    private static final Type COLLECTION_USER_TYPE = TypeToken.getParameterized(Collection.class, User.class).getType();
+    private static final Type COLLECTION_SERVERGROUP_TYPE = TypeToken.getParameterized(Collection.class, ServerGroup.TYPE).getType();
 
     private final Path configPath = Paths.get("config.yml"), servicePath = Paths.get("services.json"), usersPath = Paths.get("users.json");
 
@@ -200,7 +202,7 @@ public class CloudConfig {
 
         this.serviceDocument = Document.loadDocument(servicePath);
 
-        this.wrappers = this.serviceDocument.getObject("wrapper", new TypeToken<List<WrapperMeta>>() {}.getType());
+        this.wrappers = this.serviceDocument.getObject("wrapper", WRAPPER_META_TYPE);
 
         this.userDocument = Document.loadDocument(usersPath);
 
@@ -230,7 +232,7 @@ public class CloudConfig {
         if (this.userDocument == null) {
             return null;
         }
-        return userDocument.getObject("users", new TypeToken<Collection<User>>() {}.getType());
+        return userDocument.getObject("users", COLLECTION_USER_TYPE);
     }
 
     public CloudConfig save(Collection<User> users) {
@@ -262,8 +264,7 @@ public class CloudConfig {
 
         if (serviceDocument.contains("serverGroups")) {
 
-            Collection<ServerGroup> collection = serviceDocument.getObject("serverGroups",
-                                                                           new TypeToken<Collection<ServerGroup>>() {}.getType());
+            Collection<ServerGroup> collection = serviceDocument.getObject("serverGroups", COLLECTION_SERVERGROUP_TYPE);
 
             for (ServerGroup serverGroup : collection) {
                 createGroup(serverGroup);

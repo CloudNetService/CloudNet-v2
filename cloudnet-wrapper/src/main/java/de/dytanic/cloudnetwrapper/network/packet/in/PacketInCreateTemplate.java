@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnetwrapper.network.packet.in;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
@@ -58,7 +57,7 @@ public final class PacketInCreateTemplate implements PacketInHandler {
                 createGlowstoneTemplate(serverGroup, serverGroup.getGlobalTemplate());
             }
         } else {
-            ProxyGroup proxyGroup = packet.getData().getObject("proxyGroup", new TypeToken<ProxyGroup>() {}.getType());
+            ProxyGroup proxyGroup = packet.getData().getObject("proxyGroup", ProxyGroup.TYPE);
             try {
                 if (!Files.exists(Paths.get("local/templates/" + proxyGroup.getName()))) {
                     System.out.println("Creating GroupTemplate for " + proxyGroup.getName() + " DEFAULT...");

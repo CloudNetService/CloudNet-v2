@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class CloudFlareDatabase extends DatabaseUsable {
 
-    private static final Type MAP_STRING_POST_RESPONSE_TYPE = TypeToken.getParameterized(Map.class, String.class, PostResponse.class)
+    private static final Type MAP_STRING_POST_RESPONSE_TYPE = TypeToken.getParameterized(MultiValue.class, String.class, PostResponse.class)
                                                                        .getType();
     private static final String CLOUDFLARE_CACHE = "cloudflare_cache";
     private static final String CLOUDFLARE_CACHE_REQ = "cloudflare_cache_dnsreq";
@@ -70,7 +70,7 @@ public class CloudFlareDatabase extends DatabaseUsable {
         */
 
         for (String key : document.keySet()) {
-            if (!key.equalsIgnoreCase(Database.UNIQUE_NAME_KEY)) {
+            if (!key.equals(Database.UNIQUE_NAME_KEY)) {
                 MultiValue<PostResponse, String> value = document.getObject(key, MAP_STRING_POST_RESPONSE_TYPE);
 
                 if (value != null && value.getSecond().equalsIgnoreCase(wrapper) &&

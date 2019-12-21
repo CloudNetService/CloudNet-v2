@@ -45,6 +45,9 @@ import java.util.stream.Collectors;
 public final class CloudAPI {
 
     private static final Type SERVER_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ServerInfo.class).getType();
+    public static final Type MAP_UUID_OFFLINEPLAYER_TYPE = TypeToken.getParameterized(Map.class, UUID.class, OfflinePlayer.TYPE).getType();
+    private static final Type PROXY_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ProxyInfo.class).getType();
+    private static final Type COLLECTION_CLOUDPLAYER_TYPE = TypeToken.getParameterized(Collection.class, CloudPlayer.TYPE).getType();
     private static final String[] EMPTY_STRING_ARRAY = {};
     private static CloudAPI instance;
 
@@ -1368,7 +1371,7 @@ public final class CloudAPI {
      */
     public Collection<ProxyInfo> getProxys() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(), networkConnection);
-        return result.getResult().getObject("proxyInfos", new TypeToken<Collection<ProxyInfo>>() {}.getType());
+        return result.getResult().getObject("proxyInfos", PROXY_INFO_COLLECTION_TYPE);
     }
 
     /**
@@ -1378,7 +1381,7 @@ public final class CloudAPI {
      */
     public Collection<ProxyInfo> getProxys(String group) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(group), networkConnection);
-        return result.getResult().getObject("proxyInfos", new TypeToken<Collection<ProxyInfo>>() {}.getType());
+        return result.getResult().getObject("proxyInfos", PROXY_INFO_COLLECTION_TYPE);
     }
 
     /**
@@ -1386,8 +1389,7 @@ public final class CloudAPI {
      */
     public Collection<CloudPlayer> getOnlinePlayers() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayers(), networkConnection);
-        Collection<CloudPlayer> cloudPlayers = result.getResult().getObject("players",
-                                                                            new TypeToken<Collection<CloudPlayer>>() {}.getType());
+        Collection<CloudPlayer> cloudPlayers = result.getResult().getObject("players", COLLECTION_CLOUDPLAYER_TYPE);
 
         if (cloudPlayers == null) {
             return new ArrayList<>();
@@ -1434,7 +1436,7 @@ public final class CloudAPI {
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(uniqueId), networkConnection);
-        return result.getResult().getObject("player", new TypeToken<OfflinePlayer>() {}.getType());
+        return result.getResult().getObject("player", OfflinePlayer.TYPE);
     }
 
     /**
@@ -1463,7 +1465,7 @@ public final class CloudAPI {
      */
     public ServerGroup getServerGroup(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServerGroup(name), networkConnection);
-        return result.getResult().getObject("serverGroup", new TypeToken<ServerGroup>() {}.getType());
+        return result.getResult().getObject("serverGroup", ServerGroup.TYPE);
     }
 
     /**
@@ -1471,7 +1473,7 @@ public final class CloudAPI {
      */
     public UUID getPlayerUniqueId(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutNameUUID(name), networkConnection);
-        return result.getResult().getObject("uniqueId", new TypeToken<UUID>() {}.getType());
+        return result.getResult().getObject("uniqueId", UUID.class);
     }
 
     /**
@@ -1487,7 +1489,7 @@ public final class CloudAPI {
      */
     public ServerInfo getServerInfo(String serverName) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServer(serverName), networkConnection);
-        return result.getResult().getObject("serverInfo", new TypeToken<ServerInfo>() {}.getType());
+        return result.getResult().getObject("serverInfo", ServerInfo.TYPE);
     }
 
     /**
@@ -1521,7 +1523,7 @@ public final class CloudAPI {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetRegisteredPlayers(), networkConnection);
 
         if (result.getResult() != null) {
-            return result.getResult().getObject("players", new TypeToken<Map<UUID, OfflinePlayer>>() {}.getType());
+            return result.getResult().getObject("players", MAP_UUID_OFFLINEPLAYER_TYPE);
         }
 
         return new HashMap<>();

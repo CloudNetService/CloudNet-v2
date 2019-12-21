@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnetcore.network.packet.api.sync;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
@@ -20,7 +19,7 @@ public class PacketAPIInNameUUID implements PacketAPIIO {
 
     public void handleInput(Packet packet, PacketSender packetSender) {
         if (packet.getData().contains("uniqueId")) {
-            UUID uniqueId = packet.getData().getObject("uniqueId", new TypeToken<UUID>() {}.getType());
+            UUID uniqueId = packet.getData().getObject("uniqueId", UUID.class);
             String name = CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().get(uniqueId);
             packetSender.sendPacket(getResult(packet, new Document("name", name)));
         } else {
