@@ -74,20 +74,20 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                             channel.pipeline().addLast(new CloudNetClient(minecraftServer, channel));
                         }
                     } else if (wrapper.getCloudServers().containsKey(serviceId.getServerId())) {
-                        CloudServer minecraftServer = wrapper.getCloudServers().get(serviceId.getServerId());
-                        if (minecraftServer.getChannel() == null && minecraftServer.getServerInfo().getServiceId().getUniqueId().equals(
+                        CloudServer cloudServer = wrapper.getCloudServers().get(serviceId.getServerId());
+                        if (cloudServer.getChannel() == null && cloudServer.getServerInfo().getServiceId().getUniqueId().equals(
                             serviceId.getUniqueId())) {
                             Channel channel = client.getChannel();
                             channel.pipeline().remove("client");
-                            channel.pipeline().addLast(new CloudNetClient(minecraftServer, channel));
+                            channel.pipeline().addLast(new CloudNetClient(cloudServer, channel));
                         }
                     } else if (wrapper.getProxys().containsKey(serviceId.getServerId())) {
-                        ProxyServer minecraftServer = wrapper.getProxys().get(serviceId.getServerId());
-                        if (minecraftServer.getChannel() == null && minecraftServer.getProxyInfo().getServiceId().getUniqueId().equals(
+                        ProxyServer proxyServer = wrapper.getProxys().get(serviceId.getServerId());
+                        if (proxyServer.getChannel() == null && proxyServer.getProxyInfo().getServiceId().getUniqueId().equals(
                             serviceId.getUniqueId())) {
                             Channel channel = client.getChannel();
                             channel.pipeline().remove("client");
-                            channel.pipeline().addLast(new CloudNetClient(minecraftServer, channel));
+                            channel.pipeline().addLast(new CloudNetClient(proxyServer, channel));
                         }
                     } else {
                         client.getChannel().close().syncUninterruptibly();

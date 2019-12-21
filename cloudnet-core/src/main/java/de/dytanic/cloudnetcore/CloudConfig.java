@@ -78,7 +78,7 @@ public class CloudConfig {
         NetworkUtils.writeWrapperKey();
 
         defaultInit(consoleReader);
-        defaultInitDoc(consoleReader);
+        defaultInitDoc();
         defaultInitUsers(consoleReader);
         load();
     }
@@ -119,7 +119,7 @@ public class CloudConfig {
         }
     }
 
-    private void defaultInitDoc(ConsoleReader consoleReader) throws Exception {
+    private void defaultInitDoc() throws Exception {
         if (Files.exists(servicePath)) {
             return;
         }

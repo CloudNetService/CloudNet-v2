@@ -15,9 +15,9 @@ public interface PlayerChatExecutor {
 
     default void sendMessage(CloudPlayer cloudPlayer, BaseComponent baseComponent) {
         if (cloudPlayer != null) {
-            final Document messageValue = new Document("baseComponent", baseComponent).append("uniqueId", cloudPlayer.getUniqueId()).append(
-                "name",
-                cloudPlayer.getName());
+            final Document messageValue = new Document("baseComponent", baseComponent)
+                .append("uniqueId", cloudPlayer.getUniqueId())
+                .append("name", cloudPlayer.getName());
             CloudAPI.getInstance().sendCustomSubProxyMessage("cloudnet_internal", "sendMessage_basecomponent", messageValue);
         }
     }
