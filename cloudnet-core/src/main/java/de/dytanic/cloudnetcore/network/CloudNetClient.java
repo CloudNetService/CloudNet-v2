@@ -22,6 +22,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.nio.channels.ClosedChannelException;
 import java.util.UUID;
 
 /**
@@ -111,7 +112,9 @@ public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        if (!(cause instanceof ClosedChannelException)) {
+            cause.printStackTrace();
+        }
     }
 
     @Override
