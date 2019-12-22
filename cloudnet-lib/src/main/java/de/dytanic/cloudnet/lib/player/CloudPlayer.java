@@ -17,6 +17,7 @@ public class CloudPlayer extends OfflinePlayer {
     private String proxy;
     private String server;
     private Timestamp loginTimeStamp;
+    private PlayerExecutor playerExecutor;
 
     public CloudPlayer(OfflinePlayer player, PlayerConnection onlineConnection, String proxy) {
         super(player.getUniqueId(),
@@ -81,7 +82,7 @@ public class CloudPlayer extends OfflinePlayer {
             "playerConnection=" + playerConnection +
             ", proxy='" + proxy + '\'' +
             ", server='" + server + '\'' +
-            ", loginTimeStamp=" + loginTimeStamp +
+        ", loginTimeStamp=" + loginTimeStamp +
             '}';
     }
 
@@ -103,5 +104,13 @@ public class CloudPlayer extends OfflinePlayer {
     @Override
     public int hashCode() {
         return Objects.hash(getPlayerConnection(), getProxy(), getServer(), getLoginTimeStamp());
+    }
+
+    public PlayerExecutor getPlayerExecutor() {
+        return playerExecutor;
+    }
+
+    public void setPlayerExecutor(final PlayerExecutor playerExecutor) {
+        this.playerExecutor = playerExecutor;
     }
 }
