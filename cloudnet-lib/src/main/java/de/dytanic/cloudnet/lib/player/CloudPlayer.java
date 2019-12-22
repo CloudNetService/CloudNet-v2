@@ -77,7 +77,7 @@ public class CloudPlayer extends OfflinePlayer {
         this.playerConnection = onlineConnection;
         this.proxy = proxy;
         this.server = null;
-        this.playerExecutor = new PlayerExecutor();
+        this.playerExecutor = null;
         this.loginTimeStamp = new Timestamp(System.currentTimeMillis());
     }
 
