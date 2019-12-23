@@ -102,8 +102,7 @@ public class CloudConfig {
         configuration.set("general.haste.server",
                           Arrays.asList("https://hastebin.com",
                                         "https://hasteb.in",
-                                        "https://haste.llamacloud.io",
-                                        "https://pastes.cf"));
+                                        "https://haste.llamacloud.io"));
 
         configuration.set("server.hostaddress", hostName);
         configuration.set("server.ports", Collections.singletonList(1410));

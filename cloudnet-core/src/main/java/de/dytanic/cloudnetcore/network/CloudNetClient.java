@@ -35,8 +35,6 @@ public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
 
     public CloudNetClient(INetworkComponent iNetworkComponent, Channel channel) {
         this.networkComponent = iNetworkComponent;
-        this.networkComponent.setChannel(channel);
-        this.channel = channel;
 
         System.out.println("Channel connected [" + channel.remoteAddress() + "/serverId=" + networkComponent.getServerId() + ']');
 
@@ -75,6 +73,7 @@ public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         this.channel = ctx.channel();
+        this.networkComponent.setChannel(ctx.channel());
     }
 
     @Override
@@ -90,12 +89,10 @@ public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
             }
             if (networkComponent instanceof Wrapper) {
                 try {
-                    ((Wrapper) networkComponent).disconnct();
+                    ((Wrapper) networkComponent).disconnect();
                 } catch (Exception ex) {
-
                     ((Wrapper) networkComponent).getServers().clear();
                     ((Wrapper) networkComponent).getProxys().clear();
-
                 }
 
                 CloudNet.getInstance().getEventManager().callEvent(new WrapperChannelDisconnectEvent(((Wrapper) networkComponent)));
@@ -114,6 +111,11 @@ public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (!(cause instanceof ClosedChannelException)) {
             cause.printStackTrace();
+            CloudNet.getInstance().getWrappers().forEach((name, wrapper) -> {
+                if (wrapper.getChannel() == ctx.channel()) {
+                    wrapper.setChannel(null);
+                }
+            });
         }
     }
 
@@ -126,7 +128,4 @@ public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
         CloudNet.getInstance().getPacketManager().dispatchPacket(packet, networkComponent);
     }
 
-    public INetworkComponent getNetworkComponent() {
-        return networkComponent;
-    }
 }

@@ -22,8 +22,8 @@ import java.net.InetSocketAddress;
 public final class CloudNetServer extends ChannelInitializer<Channel> implements AutoCloseable {
 
     private SslContext sslContext;
-    private EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
-    private EventLoopGroup bossGroup = NetworkUtils.eventLoopGroup();
+    private final EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
+    private final EventLoopGroup bossGroup = NetworkUtils.eventLoopGroup();
 
     public CloudNetServer(OptionSet optionSet, ConnectableAddress connectableAddress) {
         try {
@@ -33,6 +33,8 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
                 sslContext = SslContextBuilder
                     .forServer(ssc.certificate(), ssc.privateKey())
                     .build();
+            } else {
+                sslContext = null;
             }
 
             ServerBootstrap serverBootstrap = new ServerBootstrap()
@@ -50,36 +52,29 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
             CloudNet.getLogger().finest("Using " + (Epoll.isAvailable() ? "Epoll native transport" : "NIO transport"));
             CloudNet.getLogger().finest("Try to bind to " + connectableAddress.getHostName() + ':' + connectableAddress.getPort() + "...");
 
-            ChannelFuture channelFuture = serverBootstrap.bind(connectableAddress.getHostName(), connectableAddress.getPort()).addListener(
-                new ChannelFutureListener() {
-                    @Override
-                    public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                        if (channelFuture.isSuccess()) {
-                            System.out.println("CloudNet is listening @" + connectableAddress.getHostName() + ':' + connectableAddress.getPort());
-                            CloudNet.getInstance().getCloudServers().add(CloudNetServer.this);
+            serverBootstrap.bind(connectableAddress.getHostName(), connectableAddress.getPort())
+                           .addListener(
+                               (ChannelFutureListener) channelFuture -> {
+                                   if (channelFuture.isSuccess()) {
+                                       System.out.printf("CloudNet is listening @%s:%d%n",
+                                                         connectableAddress.getHostName(),
+                                                         connectableAddress.getPort());
+                                       CloudNet.getInstance().getCloudServers().add(this);
 
-                        } else {
-                            System.out.println("Failed to bind @" + connectableAddress.getHostName() + ':' + connectableAddress.getPort());
-                        }
-                    }
-                }).addListener(ChannelFutureListener.CLOSE_ON_FAILURE).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-
-            channelFuture.sync().channel().closeFuture();
+                                   } else {
+                                       System.out.printf("Failed to bind @%s:%d%n",
+                                                         connectableAddress.getHostName(),
+                                                         connectableAddress.getPort());
+                                   }
+                               })
+                           .addListener(ChannelFutureListener.CLOSE_ON_FAILURE)
+                           .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE)
+                           .sync()
+                           .channel()
+                           .closeFuture();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    public SslContext getSslContext() {
-        return sslContext;
-    }
-
-    public EventLoopGroup getWorkerGroup() {
-        return workerGroup;
-    }
-
-    public EventLoopGroup getBossGroup() {
-        return bossGroup;
     }
 
     @Override
@@ -102,8 +97,10 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
         if (channel.remoteAddress() instanceof InetSocketAddress) {
             InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
 
-            for (Wrapper cn : CloudNet.getInstance().getWrappers().values()) {
-                if (cn.getChannel() == null && cn.getNetworkInfo().getHostName().equalsIgnoreCase(address.getAddress().getHostAddress())) {
+            for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
+                if (wrapper.getChannel() == null &&
+                    wrapper.getNetworkInfo().getHostName().equalsIgnoreCase(address.getAddress().getHostAddress())) {
+
                     if (sslContext != null) {
                         channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
                     }
@@ -112,21 +109,10 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
                     channel.pipeline().addLast("client", new CloudNetClientAuth(channel, this));
                     return;
                 }
-
-                if (cn.getNetworkInfo().getHostName().equals(address.getAddress().getHostAddress())) {
-                    if (sslContext != null) {
-                        channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
-                    }
-
-                    NetworkUtils.initChannel(channel);
-                    CloudNetClientAuth cloudNetProxyClientAuth = new CloudNetClientAuth(channel, this);
-                    channel.pipeline().addLast("client", cloudNetProxyClientAuth);
-                    return;
-                }
             }
         }
 
-        channel.close().addListener(ChannelFutureListener.CLOSE_ON_FAILURE).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+        channel.close().addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
 
     }
 }

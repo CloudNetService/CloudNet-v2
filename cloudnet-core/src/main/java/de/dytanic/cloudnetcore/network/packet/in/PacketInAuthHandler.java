@@ -58,6 +58,7 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
                     }
                 } else {
                     client.getChannel().writeAndFlush(new PacketOutAuthResult(new AuthLoginResult(false))).syncUninterruptibly();
+                    client.getChannel().close().syncUninterruptibly();
                 }
             }
             return;

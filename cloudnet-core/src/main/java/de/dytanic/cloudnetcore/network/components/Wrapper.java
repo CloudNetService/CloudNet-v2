@@ -140,7 +140,7 @@ public final class Wrapper implements INetworkComponent {
         sendPacket(new PacketOutExecuteCommand(commandLine));
     }
 
-    public void disconnct() {
+    public void disconnect() {
         this.wrapperInfo = null;
         this.maxMemory = 0;
         for (MinecraftServer minecraftServer : servers.values()) {
