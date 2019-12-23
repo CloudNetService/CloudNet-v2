@@ -33,8 +33,6 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
                 sslContext = SslContextBuilder
                     .forServer(ssc.certificate(), ssc.privateKey())
                     .build();
-            } else {
-                sslContext = null;
             }
 
             ServerBootstrap serverBootstrap = new ServerBootstrap()
@@ -98,15 +96,14 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
             InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
 
             for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
-                if (wrapper.getChannel() == null &&
-                    wrapper.getNetworkInfo().getHostName().equalsIgnoreCase(address.getAddress().getHostAddress())) {
+                if (wrapper.getNetworkInfo().getHostName().equalsIgnoreCase(address.getAddress().getHostAddress())) {
 
                     if (sslContext != null) {
                         channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
                     }
 
                     NetworkUtils.initChannel(channel);
-                    channel.pipeline().addLast("client", new CloudNetClientAuth(channel, this));
+                    channel.pipeline().addLast("client", new CloudNetClientAuth(channel));
                     return;
                 }
             }

@@ -44,10 +44,7 @@ import de.dytanic.cloudnetcore.network.packet.in.*;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
 import de.dytanic.cloudnetcore.serverlog.ServerLogManager;
 import de.dytanic.cloudnetcore.util.FileCopy;
-import de.dytanic.cloudnetcore.web.api.v1.WebsiteAuthorization;
-import de.dytanic.cloudnetcore.web.api.v1.WebsiteDocumentation;
-import de.dytanic.cloudnetcore.web.api.v1.WebsiteDownloadService;
-import de.dytanic.cloudnetcore.web.api.v1.WebsiteUtils;
+import de.dytanic.cloudnetcore.web.api.v1.*;
 import de.dytanic.cloudnetcore.web.log.WebsiteLog;
 import de.dytanic.cloudnetcore.wrapper.local.LocalCloudWrapper;
 import joptsimple.OptionSet;
@@ -428,6 +425,7 @@ public final class CloudNet implements Executable, Reloadable {
         webServer.getWebServerProvider().registerHandler(new WebsiteUtils());
         webServer.getWebServerProvider().registerHandler(new WebsiteDocumentation());
         webServer.getWebServerProvider().registerHandler(new WebsiteAuthorization());
+        webServer.getWebServerProvider().registerHandler(new WebsiteDeployment());
         webServer.getWebServerProvider().registerHandler(new WebsiteDownloadService());
 
         webServer.getWebServerProvider().registerHandler(new WebsiteLog());

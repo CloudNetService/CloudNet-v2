@@ -20,16 +20,10 @@ import io.netty.channel.SimpleChannelInboundHandler;
  */
 public class CloudNetClientAuth extends SimpleChannelInboundHandler<Packet> implements PacketSender {
 
-    private Channel channel;
-    private CloudNetServer cloudNetProxyServer;
+    private final Channel channel;
 
-    public CloudNetClientAuth(Channel channel, CloudNetServer cloudNetProxyServer) {
+    public CloudNetClientAuth(Channel channel) {
         this.channel = channel;
-        this.cloudNetProxyServer = cloudNetProxyServer;
-    }
-
-    public CloudNetServer getCloudNetProxyServer() {
-        return cloudNetProxyServer;
     }
 
     @Override

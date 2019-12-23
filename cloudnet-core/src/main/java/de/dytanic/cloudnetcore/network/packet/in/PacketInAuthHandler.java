@@ -7,8 +7,9 @@ package de.dytanic.cloudnetcore.network.packet.in;
 import de.dytanic.cloudnet.lib.network.auth.Auth;
 import de.dytanic.cloudnet.lib.network.auth.AuthLoginResult;
 import de.dytanic.cloudnet.lib.network.auth.AuthType;
-import de.dytanic.cloudnet.lib.network.auth.packetio.PacketInAuthReader;
 import de.dytanic.cloudnet.lib.network.auth.packetio.PacketOutAuthResult;
+import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
+import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -24,10 +25,14 @@ import io.netty.channel.Channel;
 /**
  * Created by Tareko on 25.07.2017.
  */
-public final class PacketInAuthHandler extends PacketInAuthReader {
+public final class PacketInAuthHandler implements PacketInHandler {
 
-    @Override
-    public void handleAuth(Auth auth, AuthType authType, Document authData, PacketSender packetSender) {
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        Auth auth = packet.getData().getObject("auth", Auth.TYPE);
+        handleAuth(auth.getType(), auth.getAuthData(), packetSender);
+    }
+
+    public static void handleAuth(AuthType authType, Document authData, PacketSender packetSender) {
         if (!(packetSender instanceof CloudNetClientAuth)) {
             return;
         }
@@ -99,5 +104,4 @@ public final class PacketInAuthHandler extends PacketInAuthReader {
             }
         }
     }
-
 }

@@ -1,14 +1,18 @@
 package de.dytanic.cloudnet.lib.network.auth;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.user.User;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+
+import java.lang.reflect.Type;
 
 /**
  * Created by Tareko on 22.07.2017.
  */
 public final class Auth {
 
+    public static final Type TYPE = TypeToken.get(Auth.class).getType();
     private AuthType type;
     private Document authData = new Document();
 

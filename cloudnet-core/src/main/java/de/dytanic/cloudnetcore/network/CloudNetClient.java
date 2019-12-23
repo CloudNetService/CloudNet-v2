@@ -35,6 +35,8 @@ public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
 
     public CloudNetClient(INetworkComponent iNetworkComponent, Channel channel) {
         this.networkComponent = iNetworkComponent;
+        this.networkComponent.setChannel(channel);
+        this.channel = channel;
 
         System.out.println("Channel connected [" + channel.remoteAddress() + "/serverId=" + networkComponent.getServerId() + ']');
 
@@ -64,10 +66,6 @@ public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
         CloudNet.getExecutor().submit(() -> {
             CloudNet.getInstance().getNetworkManager().sendAll(new PacketOutCloudNetwork(cloudNetwork));
         });
-    }
-
-    public Channel getChannel() {
-        return channel;
     }
 
     @Override
@@ -117,6 +115,10 @@ public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
                 }
             });
         }
+    }
+
+    public Channel getChannel() {
+        return channel;
     }
 
     @Override
