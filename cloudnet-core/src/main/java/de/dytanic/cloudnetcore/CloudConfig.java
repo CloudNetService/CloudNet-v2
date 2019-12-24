@@ -62,7 +62,7 @@ public class CloudConfig {
 
     private Document serviceDocument, userDocument;
 
-    private List<String> disabledModules, cloudServerWrapperList;
+    private List<String> cloudServerWrapperList;
 
     private Map<String, Object> networkProperties;
 
@@ -196,7 +196,6 @@ public class CloudConfig {
 
             this.hasteServer = configuration.getStringList("general.haste.server");
 
-            this.disabledModules = configuration.getStringList("general.disabled-modules");
             this.cloudServerWrapperList = configuration.getStringList("general.cloudGameServer-wrapperList");
         }
 
@@ -373,10 +372,6 @@ public class CloudConfig {
 
     public Document getUserDocument() {
         return this.userDocument;
-    }
-
-    public List<String> getDisabledModules() {
-        return this.disabledModules;
     }
 
     public List<String> getCloudServerWrapperList() {
