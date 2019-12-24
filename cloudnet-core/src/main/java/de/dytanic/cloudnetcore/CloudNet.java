@@ -130,8 +130,6 @@ public final class CloudNet implements Executable, Reloadable {
         dbHandlers = new DatabaseBasicHandlers(databaseManager);
         dbHandlers.getStatisticManager().addStartup();
 
-        this.moduleManager.setDisabledModuleList(config.getDisabledModules());
-
         if (!optionSet.has("disable-modules")) {
             System.out.println("Loading Modules...");
             moduleManager.loadModules();

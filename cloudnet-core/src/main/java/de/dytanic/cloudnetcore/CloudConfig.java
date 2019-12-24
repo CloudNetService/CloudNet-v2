@@ -60,7 +60,7 @@ public class CloudConfig {
 
     private Document serviceDocument, userDocument;
 
-    private List<String> disabledModules, cloudServerWrapperList;
+    private List<String> cloudServerWrapperList;
 
     private Map<String, Object> networkProperties;
 
@@ -106,7 +106,6 @@ public class CloudConfig {
         configuration.set("general.dynamicservices", false);
         configuration.set("general.server-name-splitter", "-");
         configuration.set("general.notify-service", true);
-        configuration.set("general.disabled-modules", new ArrayList<>());
         configuration.set("general.cloudGameServer-wrapperList", Collections.singletonList("Wrapper-1"));
 
         configuration.set("general.haste.server",
@@ -227,7 +226,6 @@ public class CloudConfig {
 
             this.hasteServer = configuration.getStringList("general.haste.server");
 
-            this.disabledModules = configuration.getStringList("general.disabled-modules");
             this.cloudServerWrapperList = configuration.getStringList("general.cloudGameServer-wrapperList");
         }
 
@@ -406,10 +404,6 @@ public class CloudConfig {
 
     public Document getUserDocument() {
         return this.userDocument;
-    }
-
-    public List<String> getDisabledModules() {
-        return this.disabledModules;
     }
 
     public List<String> getCloudServerWrapperList() {

@@ -19,7 +19,6 @@ public class ModuleManager {
     private final Collection<Module> modules = new ConcurrentLinkedQueue<>();
     private ModuleDetector moduleDetector = new ModuleDetector();
     private File directory = new File("modules");
-    private Collection<String> disabledModuleList = new ArrayList<>();
 
     public ModuleManager() {
         directory.mkdir();
@@ -29,13 +28,6 @@ public class ModuleManager {
         return modules;
     }
 
-    public Collection<String> getDisabledModuleList() {
-        return disabledModuleList;
-    }
-
-    public void setDisabledModuleList(Collection<String> disabledModuleList) {
-        this.disabledModuleList = disabledModuleList;
-    }
 
     public File getDirectory() {
         return directory;
@@ -62,15 +54,13 @@ public class ModuleManager {
         Collection<ModuleConfig> configs = detect(directory);
 
         for (ModuleConfig config : configs) {
-            if (!disabledModuleList.contains(config.getName())) {
-                System.out.println("Loading module \"" + config.getName() + "\" version: " + config.getVersion() + "...");
+            System.out.println("Loading module \"" + config.getName() + "\" version: " + config.getVersion() + "...");
 
-                ModuleLoader moduleLoader = new ModuleClassLoader(config);
-                Module module = moduleLoader.loadModule();
-                module.setModuleLoader(moduleLoader);
-                module.setDataFolder(directory);
-                this.modules.add(module);
-            }
+            ModuleLoader moduleLoader = new ModuleClassLoader(config);
+            Module module = moduleLoader.loadModule();
+            module.setModuleLoader(moduleLoader);
+            module.setDataFolder(directory);
+            this.modules.add(module);
         }
         return this;
     }
