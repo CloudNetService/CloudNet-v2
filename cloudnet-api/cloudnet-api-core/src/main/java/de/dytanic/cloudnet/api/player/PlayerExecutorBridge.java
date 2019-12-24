@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * Created by Tareko on 27.08.2017.
  */
-public class PlayerExecutorBridge implements PlayerExecutor {
+public class PlayerExecutorBridge extends PlayerExecutor {
 
     public static final PlayerExecutorBridge INSTANCE = new PlayerExecutorBridge(CloudAPI.getInstance());
 

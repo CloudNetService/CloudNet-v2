@@ -18,7 +18,7 @@ import java.util.Objects;
  * <p>
  * Use the {@link #INSTANCE} to use this class.
  */
-public final class CorePlayerExecutor implements PlayerExecutor {
+public final class CorePlayerExecutor extends PlayerExecutor {
 
     public static final PlayerExecutor INSTANCE = new CorePlayerExecutor();
 

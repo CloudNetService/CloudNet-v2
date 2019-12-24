@@ -15,7 +15,12 @@ import java.util.*;
  */
 public class Document {
 
-    public static Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
+    public static Gson GSON = new GsonBuilder()
+        .serializeNulls()
+        .setPrettyPrinting()
+        .disableHtmlEscaping()
+        .create();
+
     private static final JsonParser JSON_PARSER = new JsonParser();
     protected String name;
     private JsonObject dataCatcher;

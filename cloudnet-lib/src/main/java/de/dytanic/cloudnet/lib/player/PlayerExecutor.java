@@ -9,7 +9,7 @@ package de.dytanic.cloudnet.lib.player;
  * These actions succeed, as long as the player is connected to any proxy.
  */
 @SuppressWarnings("unused")
-public interface PlayerExecutor {
+public class PlayerExecutor {
 
     /**
      * Sends the player to another server.
@@ -18,7 +18,8 @@ public interface PlayerExecutor {
      * @param cloudPlayer the player to send to the given server.
      * @param server      the server-id to send the player to.
      */
-    void sendPlayer(CloudPlayer cloudPlayer, String server);
+    public void sendPlayer(CloudPlayer cloudPlayer, String server) {
+    }
 
     /**
      * Kicks the player with the given reason from the network.
@@ -26,7 +27,8 @@ public interface PlayerExecutor {
      * @param cloudPlayer the player to kick.
      * @param reason      the reason to display the player that is kicked.
      */
-    void kickPlayer(CloudPlayer cloudPlayer, String reason);
+    public void kickPlayer(CloudPlayer cloudPlayer, String reason) {
+    }
 
     /**
      * Sends a simple legacy text message to the given player.
@@ -34,7 +36,8 @@ public interface PlayerExecutor {
      * @param cloudPlayer the player to send the message to.
      * @param message     the message to send.
      */
-    void sendMessage(CloudPlayer cloudPlayer, String message);
+    public void sendMessage(CloudPlayer cloudPlayer, String message) {
+    }
 
     /**
      * Displays an action bar for the given player.
@@ -43,7 +46,8 @@ public interface PlayerExecutor {
      * @param cloudPlayer the player to send the action bar to.
      * @param message     the message to send to the player.
      */
-    void sendActionbar(CloudPlayer cloudPlayer, String message);
+    public void sendActionbar(CloudPlayer cloudPlayer, String message) {
+    }
 
     /**
      * Sends a title to the given player.
@@ -56,6 +60,7 @@ public interface PlayerExecutor {
      * @param stay        time in ticks the title should stay.
      * @param fadeOut     time in ticks for the title to fade out.
      */
-    void sendTitle(CloudPlayer cloudPlayer, String title, String subTitle, int fadeIn, int stay, int fadeOut);
+    public void sendTitle(CloudPlayer cloudPlayer, String title, String subTitle, int fadeIn, int stay, int fadeOut) {
+    }
 
 }
