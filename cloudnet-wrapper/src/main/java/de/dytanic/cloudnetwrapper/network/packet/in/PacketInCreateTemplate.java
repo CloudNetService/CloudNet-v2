@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnetwrapper.network.packet.in;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;

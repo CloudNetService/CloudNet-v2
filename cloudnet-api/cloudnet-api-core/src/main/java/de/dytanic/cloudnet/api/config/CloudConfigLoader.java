@@ -4,7 +4,6 @@
 
 package de.dytanic.cloudnet.api.config;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
@@ -41,7 +40,7 @@ public class CloudConfigLoader {
     }
 
     public ConnectableAddress loadConnnection() {
-        return Document.loadDocument(pathConnectionJson).getObject("connection", TypeToken.get(ConnectableAddress.class).getType());
+        return Document.loadDocument(pathConnectionJson).getObject("connection", ConnectableAddress.TYPE);
     }
 
 }

@@ -4,18 +4,17 @@
 
 package de.dytanic.cloudnet.bridge;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.ICloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.api.network.packet.out.PacketOutUpdateServerInfo;
-import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.bridge.event.bukkit.*;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
+import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnet.lib.server.ServerState;
@@ -28,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
@@ -50,10 +50,12 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Cloud-Server represents
  */
+@SuppressWarnings("unused")
 public class CloudServer implements ICloudService {
 
     private static CloudServer instance;
@@ -83,6 +85,9 @@ public class CloudServer implements ICloudService {
     /*=================================================*/
 
     public CloudServer(BukkitBootstrap bukkitBootstrap, CloudAPI cloudAPI) {
+        if (instance != null) {
+            throw new IllegalStateException("CloudServer already initialized, use the instance!");
+        }
         instance = this;
         cloudAPI.setCloudService(this);
 
@@ -165,12 +170,12 @@ public class CloudServer implements ICloudService {
      * Changed the State to INGAME and Start a gameserver
      */
     public void changeToIngame() {
-        setServerState(ServerState.INGAME);
+        serverState = ServerState.INGAME;
 
-        if (isAllowAutoStart()) {
+        if (allowAutoStart) {
             SimpleServerGroup simpleServerGroup = CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup());
             CloudAPI.getInstance().startGameServer(simpleServerGroup, template);
-            setAllowAutoStart(false);
+            allowAutoStart = false;
 
             Bukkit.getScheduler().runTaskLater(bukkitBootstrap, new Runnable() {
                 @Override
@@ -196,10 +201,9 @@ public class CloudServer implements ICloudService {
      * Updates the ServerInfo
      */
     public void update() {
-        List<String> list = new CopyOnWriteArrayList<>();
-        for (Player all : Bukkit.getOnlinePlayers()) {
-            list.add(all.getName());
-        }
+        List<String> list = Bukkit.getOnlinePlayers().stream()
+                                  .map(HumanEntity::getName)
+                                  .collect(Collectors.toList());
 
         ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(),
                                                hostAdress,
@@ -223,15 +227,6 @@ public class CloudServer implements ICloudService {
      */
     public void setAllowAutoStart(boolean allowAutoStart) {
         this.allowAutoStart = allowAutoStart;
-    }
-
-    @Deprecated
-    public void getPlayerAndCache(UUID uniqueId) {
-        CloudPlayer cloudPlayer = CloudAPI.getInstance().getOnlinePlayer(uniqueId);
-        if (cloudPlayer != null) {
-            cloudPlayer.setPlayerExecutor(new PlayerExecutorBridge());
-            this.cloudPlayers.put(uniqueId, cloudPlayer);
-        }
     }
 
     public void setServerStateAndUpdate(ServerState serverStateAndUpdate) {
@@ -387,7 +382,53 @@ public class CloudServer implements ICloudService {
         return CloudAPI.getInstance().getConfig().getObject("serverProcess", ServerProcessMeta.TYPE);
     }
 
+    /**
+     * @param player
+     */
+    public void updateNameTags(Player player) {
+        this.updateNameTags(player, null);
+    }
 
+    public void updateNameTags(Player player, Function<Player, PermissionGroup> playerPermissionGroupFunction) {
+        this.updateNameTags(player, playerPermissionGroupFunction, null);
+    }
+
+    public void updateNameTags(Player player,
+                               Function<Player, PermissionGroup> playerPermissionGroupFunction,
+                               Function<Player, PermissionGroup> allOtherPlayerPermissionGroupFunction) {
+        if (CloudAPI.getInstance().getPermissionPool() == null || !CloudAPI.getInstance().getPermissionPool().isAvailable()) {
+            return;
+        }
+
+        PermissionGroup playerPermissionGroup = playerPermissionGroupFunction != null ? playerPermissionGroupFunction.apply(player) : cloudPlayers
+            .get(player.getUniqueId())
+            .getPermissionEntity()
+            .getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
+
+        initScoreboard(player);
+
+        for (Player all : player.getServer().getOnlinePlayers()) {
+            initScoreboard(all);
+
+            if (playerPermissionGroup != null) {
+                addTeamEntry(player, all, playerPermissionGroup);
+            }
+
+            PermissionGroup targetPermissionGroup = allOtherPlayerPermissionGroupFunction != null ? allOtherPlayerPermissionGroupFunction.apply(
+                all) : null;
+
+            if (targetPermissionGroup == null) {
+                targetPermissionGroup = getCachedPlayer(all.getUniqueId()).getPermissionEntity()
+                                                                          .getHighestPermissionGroup(CloudAPI.getInstance()
+                                                                                                             .getPermissionPool());
+            }
+
+            if (targetPermissionGroup != null) {
+                addTeamEntry(all, player, targetPermissionGroup);
+            }
+
+        }
+    }
 
     /**
      * Returns the cached CloudPlayer Objectives
@@ -404,6 +445,64 @@ public class CloudServer implements ICloudService {
         }
     }
 
+    private void addTeamEntry(Player target, Player all, PermissionGroup permissionGroup) {
+        String teamName = permissionGroup.getTagId() + permissionGroup.getName();
+        if (teamName.length() > 16) {
+            teamName = teamName.substring(0, 16);
+            CloudAPI.getInstance()
+                    .dispatchConsoleMessage("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
+            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the name of the group in your perms.yml");
+            Bukkit.broadcast("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!",
+                             "cloudnet.notify");
+            Bukkit.broadcast("Please fix this issue by changing the name of the group in your perms.yml", "cloudnet.notify");
+        }
+        Team team = all.getScoreboard().getTeam(teamName);
+        if (team == null) {
+            team = all.getScoreboard().registerNewTeam(teamName);
+        }
+
+        if (permissionGroup.getPrefix().length() > 16) {
+            permissionGroup.setPrefix(permissionGroup.getPrefix().substring(0, 16));
+            CloudAPI.getInstance()
+                    .dispatchConsoleMessage("In order to prevent issues, the prefix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
+            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the prefix in your perms.yml");
+            Bukkit.broadcast("In order to prevent issues, the prefix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!",
+                             "cloudnet.notify");
+            Bukkit.broadcast("Please fix this issue by changing the prefix in your perms.yml", "cloudnet.notify");
+        }
+        if (permissionGroup.getSuffix().length() > 16) {
+            permissionGroup.setSuffix(permissionGroup.getSuffix().substring(0, 16));
+            CloudAPI.getInstance()
+                    .dispatchConsoleMessage("In order to prevent issues, the suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
+            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the suffix in your perms.yml");
+            Bukkit.broadcast("In order to prevent issues, the suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!",
+                             "cloudnet.notify");
+            Bukkit.broadcast("Please fix this issue by changing the suffix in your perms.yml", "cloudnet.notify");
+        }
+
+        try {
+            Method setColor = team.getClass().getDeclaredMethod("setColor", ChatColor.class);
+            setColor.setAccessible(true);
+            if (permissionGroup.getColor().length() != 0) {
+                setColor.invoke(team, ChatColor.getByChar(permissionGroup.getColor().replaceAll("&", "").replaceAll("§", "")));
+            } else {
+                setColor.invoke(team, ChatColor.getByChar(ChatColor.getLastColors(permissionGroup.getPrefix().replace('&', '§'))
+                                                                   .replaceAll("&", "")
+                                                                   .replaceAll("§", "")));
+            }
+        } catch (NoSuchMethodException ignored) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+
+        team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
+        team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
+
+        team.addEntry(target.getName());
+
+        target.setDisplayName(ChatColor.translateAlternateColorCodes('&', permissionGroup.getDisplay() + target.getName()));
+    }
 
     public CloudPlayer getCachedPlayer(UUID uniqueId) {
         return cloudPlayers.get(uniqueId);

@@ -92,11 +92,12 @@ public final class CloudNet implements Executable, Reloadable {
     private DatabaseBasicHandlers dbHandlers;
     private Collection<User> users;
     private long startupTime = System.currentTimeMillis();
-    public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) throws
-        Exception {
-        if (instance == null) {
-            instance = this;
+
+    public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) throws Exception {
+        if (instance != null) {
+            throw new IllegalStateException("CloudNet already initialized!");
         }
+        instance = this;
 
         this.config = config;
         this.logger = cloudNetLogging;
@@ -337,7 +338,7 @@ public final class CloudNet implements Executable, Reloadable {
             return;
         }
 
-        String version = webClient.getNewstVersion();
+        String version = webClient.getLatestVersion();
 
         if (version != null) {
             if (!version.equals(CloudNet.class.getPackage().getImplementationVersion())) {
@@ -357,25 +358,23 @@ public final class CloudNet implements Executable, Reloadable {
     public void setupGroup(ServerGroup serverGroup) {
         Path path;
         for (Template template : serverGroup.getTemplates()) {
-            path = Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName());
+            path = Paths.get("local", "templates", serverGroup.getName(), template.getName());
             if (!Files.exists(path)) {
                 try {
                     Files.createDirectories(path);
-                    Files.createDirectories(Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/plugins"));
-                    FileCopy.insertData("files/server.properties",
-                                        "local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/server.properties");
+                    Files.createDirectories(path.resolve("plugins"));
+                    FileCopy.insertData("files/server.properties", path.resolve("server.properties").toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-        path = Paths.get("local/templates/" + serverGroup.getName() + "/globaltemplate");
+        path = Paths.get("local", "templates", serverGroup.getName(), "globaltemplate");
         if (!Files.exists(path)) {
             try {
                 Files.createDirectories(path);
-                Files.createDirectories(Paths.get("local/templates/" + serverGroup.getName() + "/globaltemplate/plugins"));
-                FileCopy.insertData("files/server.properties",
-                                    "local/templates/" + serverGroup.getName() + "/globaltemplate/server.properties");
+                Files.createDirectories(path.resolve("plugins"));
+                FileCopy.insertData("files/server.properties", path.resolve("server.properties").toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -388,8 +387,8 @@ public final class CloudNet implements Executable, Reloadable {
         if (!Files.exists(path)) {
             try {
                 Files.createDirectories(path);
-                Files.createDirectories(Paths.get("local/templates/" + proxyGroup.getName() + "/plugins"));
-                FileCopy.insertData("files/server.properties", "local/templates/" + proxyGroup.getName() + "/server.properties");
+                Files.createDirectories(Paths.get("local", "templates", proxyGroup.getName(), "plugins"));
+                FileCopy.insertData("files/server.properties", path.resolve("server.properties").toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }

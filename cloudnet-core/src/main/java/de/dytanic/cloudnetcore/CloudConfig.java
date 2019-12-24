@@ -23,9 +23,9 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -41,8 +41,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CloudConfig {
 
     private static final ConfigurationProvider CONFIGURATION_PROVIDER = ConfigurationProvider.getProvider(YamlConfiguration.class);
-    private static final Type WRAPPER_META_TYPE = TypeToken.getParameterized(Collection.class, WrapperMeta.class).getType();
+    private static final Type WRAPPER_META_TYPE = TypeToken.getParameterized(List.class, WrapperMeta.class).getType();
     private static final Type COLLECTION_PROXY_GROUP_TYPE = TypeToken.getParameterized(Collection.class, ProxyGroup.class).getType();
+    private static final Type COLLECTION_USER_TYPE = TypeToken.getParameterized(Collection.class, User.class).getType();
+    private static final Type COLLECTION_SERVERGROUP_TYPE = TypeToken.getParameterized(Collection.class, ServerGroup.TYPE).getType();
 
     private final Path configPath = Paths.get("config.yml"), servicePath = Paths.get("services.json"), usersPath = Paths.get("users.json");
 
@@ -60,7 +62,7 @@ public class CloudConfig {
 
     private Document serviceDocument, userDocument;
 
-    private List<String> cloudServerWrapperList;
+    private List<String> disabledModules, cloudServerWrapperList;
 
     private Map<String, Object> networkProperties;
 
@@ -76,7 +78,7 @@ public class CloudConfig {
         NetworkUtils.writeWrapperKey();
 
         defaultInit(consoleReader);
-        defaultInitDoc(consoleReader);
+        defaultInitDoc();
         defaultInitUsers(consoleReader);
         load();
     }
@@ -87,18 +89,6 @@ public class CloudConfig {
         }
 
         String hostName = NetworkUtils.getHostName();
-        if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4) {
-            String input;
-            System.out.println("Your IP address where located is 127.0.0.1 please write your service ip");
-            while ((input = consoleReader.readLine()) != null) {
-                if ((input.equals("127.0.0.1") || input.equals("127.0.1.1")) || input.split("\\.").length != 4) {
-                    System.out.println("Please write your real ip address :)");
-                    continue;
-                }
-                hostName = input;
-                break;
-            }
-        }
 
         Configuration configuration = new Configuration();
 
@@ -106,6 +96,7 @@ public class CloudConfig {
         configuration.set("general.dynamicservices", false);
         configuration.set("general.server-name-splitter", "-");
         configuration.set("general.notify-service", true);
+        configuration.set("general.disabled-modules", new ArrayList<>());
         configuration.set("general.cloudGameServer-wrapperList", Collections.singletonList("Wrapper-1"));
 
         configuration.set("general.haste.server",
@@ -128,29 +119,14 @@ public class CloudConfig {
         }
     }
 
-    private void defaultInitDoc(ConsoleReader consoleReader) throws Exception {
+    private void defaultInitDoc() throws Exception {
         if (Files.exists(servicePath)) {
             return;
         }
 
         String hostName = NetworkUtils.getHostName();
-        if (hostName.equals("127.0.0.1") || hostName.equalsIgnoreCase("127.0.1.1") || hostName.split("\\.").length != 4) {
-            String input;
-            System.out.println("Please write the first Wrapper IP address:");
-            while ((input = consoleReader.readLine()) != null) {
-                if ((input.equals("127.0.0.1") || input.equalsIgnoreCase("127.0.1.1") || input.split("\\.").length != 4)) {
-                    System.out.println("Please write the real ip address :)");
-                    continue;
-                }
-
-                hostName = input;
-                break;
-            }
-        }
-        new Document("wrapper", Collections.singletonList(new WrapperMeta("Wrapper-1", hostName, "admin"))).append("proxyGroups",
-                                                                                                                   Collections.singletonList(
-                                                                                                                       new BungeeGroup()))
-                                                                                                           .saveAsConfig(servicePath);
+        new Document("wrapper", Collections.singletonList(new WrapperMeta("Wrapper-1", hostName, "admin")))
+            .append("proxyGroups", Collections.singletonList(new BungeeGroup())).saveAsConfig(servicePath);
 
         new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
     }
@@ -161,18 +137,16 @@ public class CloudConfig {
         }
 
         String password = NetworkUtils.randomString(32);
-        System.out.println("\"admin\" Password: " + password);
+        System.out.printf("\"admin\" Password: %s%n", password);
         System.out.println(NetworkUtils.SPACE_STRING);
-        new Document().append("users", Collections.singletonList(new BasicUser("admin", password, Collections.singletonList("*"))))
-                      .saveAsConfig(usersPath);
+        new Document("users", Collections.singletonList(new BasicUser("admin", password, Collections.singletonList("*"))))
+            .saveAsConfig(usersPath);
     }
 
     public CloudConfig load() throws Exception {
 
-        try (InputStream inputStream = Files.newInputStream(configPath); InputStreamReader inputStreamReader = new InputStreamReader(
-            inputStream,
-            StandardCharsets.UTF_8)) {
-            Configuration configuration = CONFIGURATION_PROVIDER.load(inputStreamReader);
+        try (Reader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
+            Configuration configuration = CONFIGURATION_PROVIDER.load(reader);
             this.config = configuration;
 
             String host = configuration.getString("server.hostaddress");
@@ -192,46 +166,43 @@ public class CloudConfig {
                                                        configuration.getString("server.webservice.hostaddress"),
                                                        configuration.getInt("server.webservice.port"));
             this.formatSplitter = configuration.getString("general.server-name-splitter");
-            this.networkProperties = configuration.getSection("networkproperties").self;
+            this.networkProperties = configuration.getSection("networkproperties").getSelf();
 
-            if (!configuration.getSection("general").self.containsKey("disabled-modules")) {
+            if (!configuration.getSection("general").contains("disabled-modules")) {
                 configuration.set("general.disabled-modules", new ArrayList<>());
 
-                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath),
-                                                                                    StandardCharsets.UTF_8)) {
-                    CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
+                try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+                    CONFIGURATION_PROVIDER.save(configuration, writer);
                 }
             }
-            if (!configuration.getSection("general").self.containsKey("haste")) {
-                configuration.set("general.haste.server",
-                                  Arrays.asList("https://hastebin.com",
-                                                "https://hasteb.in",
-                                                "https://haste.llamacloud.io",
-                                                "https://pastes.cf"));
+            if (!configuration.getSection("general").contains("haste")) {
+                configuration.set("general.haste.server", Arrays.asList("https://hastebin.com",
+                                                                        "https://hasteb.in",
+                                                                        "https://haste.llamacloud.io",
+                                                                        "https://pastes.cf"));
 
-                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath),
-                                                                                    StandardCharsets.UTF_8)) {
-                    CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
+                try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+                    CONFIGURATION_PROVIDER.save(configuration, writer);
                 }
             }
 
-            if (!configuration.getSection("general").self.containsKey("cloudGameServer-wrapperList")) {
+            if (!configuration.getSection("general").contains("cloudGameServer-wrapperList")) {
                 configuration.set("general.cloudGameServer-wrapperList", Collections.singletonList("Wrapper-1"));
 
-                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath),
-                                                                                    StandardCharsets.UTF_8)) {
-                    CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
+                try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+                    CONFIGURATION_PROVIDER.save(configuration, writer);
                 }
             }
 
             this.hasteServer = configuration.getStringList("general.haste.server");
 
+            this.disabledModules = configuration.getStringList("general.disabled-modules");
             this.cloudServerWrapperList = configuration.getStringList("general.cloudGameServer-wrapperList");
         }
 
         this.serviceDocument = Document.loadDocument(servicePath);
 
-        this.wrappers = this.serviceDocument.getObject("wrapper", TypeToken.getParameterized(List.class,WrapperMeta.class).getType());
+        this.wrappers = this.serviceDocument.getObject("wrapper", WRAPPER_META_TYPE);
 
         this.userDocument = Document.loadDocument(usersPath);
 
@@ -261,7 +232,7 @@ public class CloudConfig {
         if (this.userDocument == null) {
             return null;
         }
-        return userDocument.getObject("users", TypeToken.getParameterized(Collection.class,User.class).getType());
+        return userDocument.getObject("users", COLLECTION_USER_TYPE);
     }
 
     public CloudConfig save(Collection<User> users) {
@@ -293,9 +264,7 @@ public class CloudConfig {
 
         if (serviceDocument.contains("serverGroups")) {
 
-
-            Collection<ServerGroup> collection = serviceDocument.getObject("serverGroups",
-                                                                           TypeToken.getParameterized(Collection.class,ServerGroup.TYPE).getType());
+            Collection<ServerGroup> collection = serviceDocument.getObject("serverGroups", COLLECTION_SERVERGROUP_TYPE);
 
             for (ServerGroup serverGroup : collection) {
                 createGroup(serverGroup);
@@ -404,6 +373,10 @@ public class CloudConfig {
 
     public Document getUserDocument() {
         return this.userDocument;
+    }
+
+    public List<String> getDisabledModules() {
+        return this.disabledModules;
     }
 
     public List<String> getCloudServerWrapperList() {

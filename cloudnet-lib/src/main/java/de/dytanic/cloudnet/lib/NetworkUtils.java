@@ -166,17 +166,12 @@ public final class NetworkUtils {
             return null;
         }
 
-        StringBuilder builder = new StringBuilder();
-
         try {
-            for (String string : Files.readAllLines(path, StandardCharsets.UTF_8)) {
-                builder.append(string);
-            }
-            return builder.substring(0);
+            return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-        return builder.substring(0);
     }
 
     public static void sleepUninterruptedly(long time) {

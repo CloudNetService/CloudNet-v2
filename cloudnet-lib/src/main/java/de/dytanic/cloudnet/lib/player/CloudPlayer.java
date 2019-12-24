@@ -12,52 +12,6 @@ import java.util.Objects;
 public class CloudPlayer extends OfflinePlayer {
     public static final Type TYPE = TypeToken.get(CloudPlayer.class).getType();
 
-    @Override
-    public int hashCode() {
-        int result = playerConnection != null ? playerConnection.hashCode() : 0;
-        result = 31 * result + (proxy != null ? proxy.hashCode() : 0);
-        result = 31 * result + (server != null ? server.hashCode() : 0);
-        result = 31 * result + (loginTimeStamp != null ? loginTimeStamp.hashCode() : 0);
-        result = 31 * result + (playerExecutor != null ? playerExecutor.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof CloudPlayer)) {
-            return false;
-        }
-
-        final CloudPlayer that = (CloudPlayer) o;
-
-        if (!Objects.equals(playerConnection, that.playerConnection)) {
-            return false;
-        }
-        if (!Objects.equals(proxy, that.proxy)) {
-            return false;
-        }
-        if (!Objects.equals(server, that.server)) {
-            return false;
-        }
-        if (!Objects.equals(loginTimeStamp, that.loginTimeStamp)) {
-            return false;
-        }
-        return Objects.equals(playerExecutor, that.playerExecutor);
-    }
-
-    @Override
-    public String toString() {
-        return "de.dytanic.cloudnet.lib.player.CloudPlayer{" +
-            "playerConnection=" + playerConnection +
-            ", proxy='" + proxy + '\'' +
-            ", server='" + server + '\'' +
-            ", loginTimeStamp=" + loginTimeStamp +
-            ", playerExecutor=" + playerExecutor +
-            "} " + super.toString();
-    }
 
     private PlayerConnection playerConnection;
     private String proxy;
@@ -76,7 +30,6 @@ public class CloudPlayer extends OfflinePlayer {
         this.playerConnection = onlineConnection;
         this.proxy = proxy;
         this.server = null;
-        this.playerExecutor = new PlayerExecutor();
         this.loginTimeStamp = new Timestamp(System.currentTimeMillis());
     }
 
@@ -121,11 +74,41 @@ public class CloudPlayer extends OfflinePlayer {
         this.loginTimeStamp = loginTimeStamp;
     }
 
+    @Override
+    public String toString() {
+        return "CloudPlayer{" +
+            "playerConnection=" + playerConnection +
+            ", proxy='" + proxy + '\'' +
+            ", server='" + server + '\'' +
+        ", loginTimeStamp=" + loginTimeStamp +
+            '}';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CloudPlayer that = (CloudPlayer) o;
+        return Objects.equals(getPlayerConnection(), that.getPlayerConnection()) &&
+            Objects.equals(getProxy(), that.getProxy()) &&
+            Objects.equals(getServer(), that.getServer()) &&
+            Objects.equals(getLoginTimeStamp(), that.getLoginTimeStamp());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPlayerConnection(), getProxy(), getServer(), getLoginTimeStamp());
+    }
+
     public PlayerExecutor getPlayerExecutor() {
         return playerExecutor;
     }
 
-    public void setPlayerExecutor(PlayerExecutor playerExecutor) {
+    public void setPlayerExecutor(final PlayerExecutor playerExecutor) {
         this.playerExecutor = playerExecutor;
     }
 }

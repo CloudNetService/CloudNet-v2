@@ -10,6 +10,7 @@ import de.dytanic.cloudnet.api.config.ConfigTypeLoader;
 import de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandCloud;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandHub;
+import de.dytanic.cloudnet.bridge.internal.command.proxied.CommandPermissions;
 import de.dytanic.cloudnet.bridge.internal.command.proxied.defaults.CommandIp;
 import de.dytanic.cloudnet.bridge.internal.listener.proxied.ProxiedListener;
 import net.md_5.bungee.api.ProxyServer;
@@ -19,16 +20,28 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 
 /**
- * Created by Tareko on 17.08.2017.
+ * Bootstrapping class of the proxy service.
+ * This acts as the entry point into the CloudNet API.
  */
 public class ProxiedBootstrap extends Plugin {
 
+    /**
+     * The constructed CloudNet API instance.
+     */
+    private CloudAPI api;
+
+    /**
+     * The proxy instance that is using this plugin context.
+     */
+    private CloudProxy cloudProxy;
+
     @Override
     public void onLoad() {
-        new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD/connection.json"), Paths.get("CLOUD/config.json"), ConfigTypeLoader.INTERNAL),
-                     () -> getProxy().stop("CloudNet-Stop!"));
+        this.api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
+                                                      Paths.get("CLOUD", "config.json"),
+                                                      ConfigTypeLoader.INTERNAL));
         getLogger().setLevel(Level.INFO);
-        CloudAPI.getInstance().setLogger(this.getLogger());
+        this.api.setLogger(this.getLogger());
     }
 
     @Override
@@ -37,7 +50,7 @@ public class ProxiedBootstrap extends Plugin {
         DocumentRegistry.fire();
 
         getProxy().registerChannel("cloudnet:main");
-        CloudAPI.getInstance().bootstrap();
+        api.bootstrap();
 
         ProxyServer.getInstance().getConfig().getListeners().forEach(listenerInfo -> listenerInfo.getServerPriority().clear());
 
@@ -49,24 +62,23 @@ public class ProxiedBootstrap extends Plugin {
         //Alternate Commands
         getProxy().getPluginManager().registerCommand(this, new CommandIp());
 
-        new CloudProxy(this, CloudAPI.getInstance());
-        CloudProxy.getInstance().updateAsync();
+        cloudProxy = new CloudProxy(this, api);
+        cloudProxy.updateAsync();
 
-        if (CloudProxy.getInstance().getProxyGroup() != null &&
-            CloudProxy.getInstance().getProxyGroup().getProxyConfig().getCustomPayloadFixer()) {
+        if (api.getPermissionPool() != null && api.getPermissionPool().isAvailable()) {
+            getProxy().getPluginManager().registerCommand(this, new CommandPermissions());
+        }
+
+        if (cloudProxy.getProxyGroup() != null && cloudProxy.getProxyGroup().getProxyConfig().getCustomPayloadFixer()) {
             getProxy().registerChannel("MC|BSign");
             getProxy().registerChannel("MC|BEdit");
         }
-
-
-        //        getProxy().getScheduler().schedule(this, () ->
-        //            CloudProxy.getInstance().update(), 0, 1, TimeUnit.SECONDS);
     }
 
     @Override
     public void onDisable() {
-        if (CloudAPI.getInstance() != null) {
-            CloudAPI.getInstance().shutdown();
+        if (api != null) {
+            api.shutdown();
         }
     }
 }

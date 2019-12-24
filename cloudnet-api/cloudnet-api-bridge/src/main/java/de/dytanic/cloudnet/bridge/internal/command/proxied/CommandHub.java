@@ -23,7 +23,7 @@ import java.util.Arrays;
 public final class CommandHub extends Command {
 
     public CommandHub() {
-        super("hub");
+        super("hub", null, "lobby", "l", "leave", "game");
     }
 
     @Override
@@ -36,7 +36,7 @@ public final class CommandHub extends Command {
             return;
         }
 
-        ServerInfo serverInfo = CloudProxy.getInstance().getCachedServers().get(
+        ServerInfo serverInfo = CloudProxy.getInstance().getServers().get(
             ((ProxiedPlayer) commandSender).getServer().getInfo().getName());
 
         if (serverInfo != null) {
@@ -81,10 +81,5 @@ public final class CommandHub extends Command {
         } else {
             ((ProxiedPlayer) commandSender).connect(ProxyServer.getInstance().getServerInfo(fallback));
         }
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[] {"lobby", "leave", "game", "l"};
     }
 }

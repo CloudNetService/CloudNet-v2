@@ -15,7 +15,7 @@ public class PacketInOnlineServer implements PacketInHandler {
 
     public void handleInput(Packet packet, PacketSender packetSender) {
         /*
-        ServerInfo serverInfo = data.getObject("serverInfo", new TypeToken<ServerInfo>(){}.getType());
+        ServerInfo serverInfo = data.getObject("serverInfo", ServerInfo.TYPE);
         GameServer gameServer = CloudNetWrapper.getInstance().getServers().get(serverInfo.getServiceId().getServerId());
         if(gameServer != null)
         CloudNetWrapper.getInstance().getServerProcessQueue().getStartups().remove(gameServer);

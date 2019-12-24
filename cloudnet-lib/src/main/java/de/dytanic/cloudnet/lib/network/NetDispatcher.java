@@ -9,7 +9,7 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 
 public class NetDispatcher extends SimpleChannelInboundHandler<Packet> {
 
@@ -51,7 +51,7 @@ public class NetDispatcher extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (!(cause instanceof IOException)) {
+        if (!(cause instanceof ClosedChannelException)) {
             cause.printStackTrace();
         }
     }
@@ -59,9 +59,11 @@ public class NetDispatcher extends SimpleChannelInboundHandler<Packet> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet packet) throws Exception {
         if (packet != null) {
-            NetworkUtils.getExecutor().submit(() -> {
-                networkConnection.getPacketManager().dispatchPacket(packet, networkConnection);
-            });
+            if (!NetworkUtils.getExecutor().isShutdown()) {
+                NetworkUtils.getExecutor().submit(() -> {
+                    networkConnection.getPacketManager().dispatchPacket(packet, networkConnection);
+                });
+            }
         }
     }
 }

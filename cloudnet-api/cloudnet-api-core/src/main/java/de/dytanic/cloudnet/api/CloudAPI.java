@@ -13,7 +13,6 @@ import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.interfaces.MetaObj;
 import de.dytanic.cloudnet.lib.network.NetDispatcher;
 import de.dytanic.cloudnet.lib.network.NetworkConnection;
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
@@ -23,6 +22,8 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
+import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
+import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.server.*;
 import de.dytanic.cloudnet.lib.server.defaults.BasicServerConfig;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
@@ -31,6 +32,8 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.utility.document.Document;
+import net.md_5.bungee.api.ProxyServer;
+import org.bukkit.Bukkit;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -39,10 +42,13 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public final class CloudAPI implements MetaObj {
+public final class CloudAPI {
 
     private static final Type SERVER_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ServerInfo.class).getType();
-    public static final String[] EMPTY_STRING_ARRAY = {};
+    public static final Type MAP_UUID_OFFLINEPLAYER_TYPE = TypeToken.getParameterized(Map.class, UUID.class, OfflinePlayer.TYPE).getType();
+    private static final Type PROXY_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ProxyInfo.class).getType();
+    private static final Type COLLECTION_CLOUDPLAYER_TYPE = TypeToken.getParameterized(Collection.class, CloudPlayer.TYPE).getType();
+    private static final String[] EMPTY_STRING_ARRAY = {};
     private static CloudAPI instance;
 
     private Document config;
@@ -51,7 +57,6 @@ public final class CloudAPI implements MetaObj {
 
     private NetworkConnection networkConnection;
     private int memory;
-    private Runnable shutdownTask;
 
     private ICloudService cloudService = null;
 
@@ -66,14 +71,13 @@ public final class CloudAPI implements MetaObj {
      */
     private Logger logger;
 
-    public CloudAPI(CloudConfigLoader loader, Runnable cancelTask) {
+    public CloudAPI(CloudConfigLoader loader) {
         instance = this;
         this.cloudConfigLoader = loader;
         this.config = loader.loadConfig();
         this.networkConnection = new NetworkConnection(loader.loadConnnection(),
                                                        new ConnectableAddress("0.0.0.0", 0));
         this.serviceId = config.getObject("serviceId", ServiceId.TYPE);
-        this.shutdownTask = cancelTask;
         this.memory = config.getInt("memory");
 
         initDefaultHandlers();
@@ -115,7 +119,13 @@ public final class CloudAPI implements MetaObj {
         this.networkConnection.tryConnect(config.getBoolean("ssl"),
                                           new NetDispatcher(networkConnection, false),
                                           new Auth(serviceId),
-                                          shutdownTask);
+                                          () -> {
+                                              if (this.cloudService.isProxyInstance()) {
+                                                  ProxyServer.getInstance().stop("CloudNet-Stop!");
+                                              } else {
+                                                  Bukkit.shutdown();
+                                              }
+                                          });
         NetworkUtils.header();
     }
 
@@ -233,13 +243,6 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns the shutdownTask which is default init
-     */
-    public Runnable getShutdownTask() {
-        return shutdownTask;
-    }
-
-    /**
      * Returns the ServiceId from this instance
      */
     public ServiceId getServiceId() {
@@ -330,6 +333,13 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
+     * Returns the permissionPool of the cloudnetwork
+     */
+    public PermissionPool getPermissionPool() {
+        return cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE);
+    }
+
+    /**
      * Returns all active wrappers on cloudnet
      */
     public Collection<WrapperInfo> getWrappers() {
@@ -337,10 +347,21 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
+     * Returns the permission group from the permissions-system
+     */
+    public PermissionGroup getPermissionGroup(String group) {
+        if (cloudNetwork.getModules().contains("permissionPool")) {
+            return ((PermissionPool) cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE)).getGroups().get(group);
+        }
+        return null;
+    }
+
+    /**
      * Finds the first wrapper with the given case-insensitive name.
      * If no wrapper with the given id can be found, this returns null
      *
      * @param wrapperId the case-insensitive wrapper id of the wrapper to get
+     *
      * @return the {@link WrapperInfo} instance of the wrapper with the given wrapper id or {@code null}
      */
     public WrapperInfo getWrapper(String wrapperId) {
@@ -384,6 +405,17 @@ public final class CloudAPI implements MetaObj {
      */
     public void updateServerGroup(ServerGroup serverGroup) {
         networkConnection.sendPacket(new PacketOutUpdateServerGroup(serverGroup));
+    }
+
+    /**
+     * Update the permission group
+     */
+    public void updatePermissionGroup(PermissionGroup permissionGroup) {
+        this.logger.logp(Level.FINEST,
+                         this.getClass().getSimpleName(),
+                         "updatePermissionGroup",
+                         String.format("Updating permission group: %s%n", permissionGroup));
+        networkConnection.sendPacket(new PacketOutUpdatePermissionGroup(permissionGroup));
     }
 
     /**
@@ -1337,10 +1369,9 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns all proxyInfos on network
      */
-    public Collection<ProxyInfo> getProxies() {
+    public Collection<ProxyInfo> getProxys() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(), networkConnection);
-
-        return result.getResult().getObject("proxyInfos", TypeToken.getParameterized(Collection.class,ProxyInfo.TYPE).getType());
+        return result.getResult().getObject("proxyInfos", PROXY_INFO_COLLECTION_TYPE);
     }
 
     /**
@@ -1348,9 +1379,9 @@ public final class CloudAPI implements MetaObj {
      *
      * @param group
      */
-    public Collection<ProxyInfo> getProxies(String group) {
+    public Collection<ProxyInfo> getProxys(String group) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(group), networkConnection);
-        return result.getResult().getObject("proxyInfos", TypeToken.getParameterized(Collection.class,ProxyInfo.TYPE).getType());
+        return result.getResult().getObject("proxyInfos", PROXY_INFO_COLLECTION_TYPE);
     }
 
     /**
@@ -1358,9 +1389,7 @@ public final class CloudAPI implements MetaObj {
      */
     public Collection<CloudPlayer> getOnlinePlayers() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayers(), networkConnection);
-
-        Collection<CloudPlayer> cloudPlayers = result.getResult().getObject("players",
-                                                                            TypeToken.getParameterized(Collection.class,CloudPlayer.TYPE).getType());
+        Collection<CloudPlayer> cloudPlayers = result.getResult().getObject("players", COLLECTION_CLOUDPLAYER_TYPE);
 
         if (cloudPlayers == null) {
             return new ArrayList<>();
@@ -1444,7 +1473,7 @@ public final class CloudAPI implements MetaObj {
      */
     public UUID getPlayerUniqueId(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutNameUUID(name), networkConnection);
-        return result.getResult().getObject("uniqueId", TypeToken.get(UUID.class).getType());
+        return result.getResult().getObject("uniqueId", UUID.class);
     }
 
     /**
@@ -1494,8 +1523,7 @@ public final class CloudAPI implements MetaObj {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetRegisteredPlayers(), networkConnection);
 
         if (result.getResult() != null) {
-
-            return result.getResult().getObject("players", TypeToken.getParameterized(Map.class,UUID.class,OfflinePlayer.TYPE).getType());
+            return result.getResult().getObject("players", MAP_UUID_OFFLINEPLAYER_TYPE);
         }
 
         return new HashMap<>();

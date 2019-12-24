@@ -251,7 +251,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             return;
         }
 
-        String version = webClient.getNewstVersion();
+        String version = webClient.getLatestVersion();
 
         if (version != null) {
             if (!version.equals(CloudNetWrapper.class.getPackage().getImplementationVersion())) {

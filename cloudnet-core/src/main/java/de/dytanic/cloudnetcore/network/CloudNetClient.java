@@ -22,13 +22,13 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 import java.util.UUID;
 
 /**
  * This is the SimpleChannelInboundHandler of netty handled for a networkComponent
  */
-public class CloudNetClient extends SimpleChannelInboundHandler {
+public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
 
     private Channel channel;
     private INetworkComponent networkComponent;
@@ -112,21 +112,16 @@ public class CloudNetClient extends SimpleChannelInboundHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-
-        if (!(cause instanceof IOException)) {
+        if (!(cause instanceof ClosedChannelException)) {
             cause.printStackTrace();
         }
-        //TODO:
-
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object obj) throws Exception {
-        if (!(obj instanceof Packet)) {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet packet) throws Exception {
+        if (packet == null) {
             return;
         }
-
-        Packet packet = (Packet) obj;
         CloudNet.getLogger().finest(String.format("Receiving packet %s from %s%n", packet, networkComponent.getServerId()));
         CloudNet.getInstance().getPacketManager().dispatchPacket(packet, networkComponent);
     }

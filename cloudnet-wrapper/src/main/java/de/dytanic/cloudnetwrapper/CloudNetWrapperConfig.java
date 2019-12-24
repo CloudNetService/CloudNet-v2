@@ -149,7 +149,7 @@ public class CloudNetWrapperConfig {
             this.percentOfCPUForANewCloudServer = configuration.getDouble("general.percentOfCPUForANewCloudServer");
             this.devServicePath = configuration.getString("general.devservicePath");
 
-            if (!configuration.getSection("general").self.containsKey("proxy-config-host")) {
+            if (!configuration.getSection("general").contains("proxy-config-host")) {
                 configuration.set("general.proxy-config-host", this.internalIP);
                 save();
             }
