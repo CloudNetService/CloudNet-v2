@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.wrapper.local;
 
 import de.dytanic.cloudnet.lib.ConnectableAddress;

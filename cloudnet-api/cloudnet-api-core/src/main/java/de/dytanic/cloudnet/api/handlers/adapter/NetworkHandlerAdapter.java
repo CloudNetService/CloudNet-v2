@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.api.handlers.adapter;
 
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;

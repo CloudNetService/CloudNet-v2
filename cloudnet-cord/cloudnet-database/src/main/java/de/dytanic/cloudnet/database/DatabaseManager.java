@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.database;
 
 import de.dytanic.cloudnet.database.nitrite.NitriteDatabase;

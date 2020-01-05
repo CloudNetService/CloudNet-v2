@@ -59,6 +59,7 @@
         <module>cloudnet-api</module>
         <module>cloudnet-tools</module>
         <module>cloudnet-modules</module>
+        <module>cloudnet-examples</module>
     </modules>
 
     <build>

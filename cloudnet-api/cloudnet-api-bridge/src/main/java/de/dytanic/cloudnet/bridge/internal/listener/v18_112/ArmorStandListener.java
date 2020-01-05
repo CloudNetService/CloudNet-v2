@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.internal.listener.v18_112;
 
 import de.dytanic.cloudnet.bridge.internal.serverselectors.Mob;

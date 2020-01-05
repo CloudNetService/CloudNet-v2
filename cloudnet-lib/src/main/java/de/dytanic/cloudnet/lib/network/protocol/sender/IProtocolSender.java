@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.lib.network.protocol.sender;
 
 import de.dytanic.cloudnet.lib.network.protocol.IProtocol;

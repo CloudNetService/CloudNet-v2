@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetwrapper.server.process;
 
 import de.dytanic.cloudnet.lib.interfaces.Executable;

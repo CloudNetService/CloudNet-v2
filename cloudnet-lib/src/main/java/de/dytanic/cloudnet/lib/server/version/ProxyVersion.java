@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.lib.server.version;
 
 import de.dytanic.cloudnet.lib.MultiValue;

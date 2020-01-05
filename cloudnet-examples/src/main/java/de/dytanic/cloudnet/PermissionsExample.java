@@ -1,10 +1,7 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet;
 
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.api.player.PermissionProvider;
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
@@ -20,8 +17,9 @@ public class PermissionsExample {
     }
 
     //More options
-    public void handlePermissions() {
-        PermissionPool permissionPool = CloudAPI.getInstance().getPermissionPool(); //Returns the permission pool with all permissions groups etc.
+    public void handlePermissionsOld() {
+        PermissionPool permissionPool = CloudAPI.getInstance()
+                                                .getPermissionPool(); //Returns the permission pool with all permissions groups etc.
         PermissionGroup permissionGroup = permissionPool.getGroups().get("Admin"); //Options for got the permission group
         permissionGroup.getOptions(); //custom api options
         permissionGroup.getJoinPower(); //returns the joinpower

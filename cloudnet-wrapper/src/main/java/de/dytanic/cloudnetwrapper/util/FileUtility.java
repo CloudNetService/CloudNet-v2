@@ -1,8 +1,4 @@
 
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetwrapper.util;
 
 import org.yaml.snakeyaml.DumperOptions;

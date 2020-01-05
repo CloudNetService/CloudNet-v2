@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.internal.util;
 
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;

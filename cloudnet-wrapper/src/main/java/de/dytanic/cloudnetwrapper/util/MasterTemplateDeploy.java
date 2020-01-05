@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetwrapper.util;
 
 import de.dytanic.cloudnet.lib.ConnectableAddress;
@@ -86,7 +82,7 @@ public class MasterTemplateDeploy {
         Path dir = Paths.get("local/cache/" + NetworkUtils.randomString(10));
         try {
             FileUtility.copyFilesInDirectory(new File(this.dir), dir.toFile());
-            new File(dir.toString() + "/plugins/CloudNetAPI.jar").delete();
+            new File(dir + "/plugins/CloudNetAPI.jar").delete();
         } catch (Exception ex) {
         }
         HttpURLConnection urlConnection = (HttpURLConnection) new URL((ssl ? "https" : "http") + "://" + connectableAddress.getHostName() + ':' + connectableAddress
@@ -113,7 +109,6 @@ public class MasterTemplateDeploy {
             StandardCharsets.UTF_8))) {
             String input;
             while ((input = bufferedReader.readLine()) != null) {
-                ;
             }
         }
         System.out.println("Successfully deploy template [" + template.getName() + ']');

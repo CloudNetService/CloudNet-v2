@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.api.database.packet.out;
 
 import de.dytanic.cloudnet.lib.database.Database;

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge;
 
 import de.dytanic.cloudnet.api.CloudAPI;
@@ -101,8 +97,10 @@ public final class BukkitBootstrap extends JavaPlugin {
             getCommand("cloudserver").setTabCompleter(commandCloudServer);
             getCommand("cloudserver").setPermission("cloudnet.command.cloudserver");
 
-            Bukkit.getPluginManager().callEvent(new BukkitCloudServerInitEvent(this.cloudServer));
-            this.cloudServer.update();
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                Bukkit.getPluginManager().callEvent(new BukkitCloudServerInitEvent(this.cloudServer));
+                this.cloudServer.update();
+            }, 1);
 
             if (CloudAPI.getInstance()
                         .getServerGroupData(CloudAPI.getInstance().getGroup())

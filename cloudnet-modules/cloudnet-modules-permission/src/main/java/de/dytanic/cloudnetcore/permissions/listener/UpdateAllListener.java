@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.permissions.listener;
 
 import de.dytanic.cloudnet.event.IEventListener;

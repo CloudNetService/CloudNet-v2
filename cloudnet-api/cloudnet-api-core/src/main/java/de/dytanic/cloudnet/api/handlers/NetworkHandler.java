@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.api.handlers;
 
 import de.dytanic.cloudnet.lib.CloudNetwork;
@@ -100,7 +96,7 @@ public interface NetworkHandler {
     /**
      * Called if a Player Disconnect to the network from cloudnet
      *
-     * @param cloudPlayer
+     * @param uniqueId
      */
     void onPlayerDisconnectNetwork(UUID uniqueId);
 

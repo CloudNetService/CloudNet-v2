@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.help;
 
 import de.dytanic.cloudnet.lib.map.Maps;
@@ -17,7 +13,7 @@ public final class HelpService {
      * Print the help directly to {@link System#out}
      */
     public void describe() {
-        System.out.println(toString());
+        System.out.println(this);
     }
 
     @Override

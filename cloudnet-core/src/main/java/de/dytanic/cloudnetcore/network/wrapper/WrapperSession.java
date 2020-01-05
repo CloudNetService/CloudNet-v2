@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.network.wrapper;
 
 import de.dytanic.cloudnetcore.network.components.WrapperMeta;
