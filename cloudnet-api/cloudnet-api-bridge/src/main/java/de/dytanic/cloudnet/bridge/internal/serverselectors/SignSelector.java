@@ -764,7 +764,7 @@ public final class SignSelector implements Listener {
                         } else {
                             newSign.setServerInfo(null);
                             SignLayout signLayout = getSearchingLayout(((ThreadImpl) worker).animationTick);
-                            String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), sign);
+                            String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), newSign);
                             for (Player all : Bukkit.getOnlinePlayers()) {
                                 sendUpdate(all, location, layout);
                             }
