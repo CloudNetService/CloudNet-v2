@@ -4,7 +4,7 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import org.bukkit.event.HandlerList;
 
 /**
- * Created by Tareko on 18.08.2017.
+ * This event is called whenever a player leaves the network.
  */
 public class BukkitPlayerDisconnectEvent extends BukkitCloudEvent {
 
@@ -20,6 +20,9 @@ public class BukkitPlayerDisconnectEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * @return the player that just left the network.
+     */
     public CloudPlayer getCloudPlayer() {
         return cloudPlayer;
     }

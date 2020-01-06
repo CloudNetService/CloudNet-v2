@@ -12,8 +12,7 @@ public final class PacketInUpdateOfflinePlayer implements PacketInHandlerDefault
         OfflinePlayer offlinePlayer = packet.getData().getObject("player", OfflinePlayer.TYPE);
 
         if (CloudAPI.getInstance() != null) {
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(
-                obj -> obj.onOfflinePlayerUpdate(offlinePlayer));
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(obj -> obj.onOfflinePlayerUpdate(offlinePlayer));
         }
     }
 }

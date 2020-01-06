@@ -14,8 +14,7 @@ public class PacketInLoginPlayer implements PacketInHandlerDefault {
     public void handleInput(Packet packet, PacketSender packetSender) {
         if (CloudAPI.getInstance() != null) {
             CloudPlayer cloudPlayer = packet.getData().getObject("player", CloudPlayer.TYPE);
-            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(
-                obj -> obj.onPlayerLoginNetwork(cloudPlayer));
+            CloudAPI.getInstance().getNetworkHandlerProvider().iterator(obj -> obj.onPlayerLoginNetwork(cloudPlayer));
         }
     }
 }

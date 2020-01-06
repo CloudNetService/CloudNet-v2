@@ -439,8 +439,8 @@ public final class CommandPermissions extends Command {
     private void updatePlayer(OfflinePlayer offlinePlayer) {
         CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(offlinePlayer);
         if (CloudNet.getInstance().getNetworkManager().getOnlinePlayers().containsKey(offlinePlayer.getUniqueId())) {
-            CloudNet.getInstance().getNetworkManager().getOnlinePlayers().get(offlinePlayer.getUniqueId()).setPermissionEntity(offlinePlayer
-                                                                                                                                   .getPermissionEntity());
+            CloudNet.getInstance().getNetworkManager().getOnlinePlayers().get(offlinePlayer.getUniqueId())
+                    .setPermissionEntity(offlinePlayer.getPermissionEntity());
             CloudNet.getInstance().getNetworkManager().handlePlayerUpdate(CloudNet.getInstance()
                                                                                   .getNetworkManager()
                                                                                   .getOnlinePlayers()

@@ -6,6 +6,7 @@ import org.bukkit.event.Event;
 /**
  * This class defines an abstract Bukkit CloudNet Event.
  * All events called in context of CloudNet are derived from this class.
+ * These events are only ever called on Bukkit servers.
  */
 public abstract class BukkitCloudEvent extends Event {
 
