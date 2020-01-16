@@ -4,7 +4,8 @@ import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import org.bukkit.event.HandlerList;
 
 /**
- * Calls if a proxy server is removed from the network
+ * This event is called whenever a proxy has been removed from the CloudNet network.
+ * The proxy is <b>not</b> connected to the network anymore.
  */
 public class BukkitProxyRemoveEvent extends BukkitCloudEvent {
 
@@ -20,6 +21,11 @@ public class BukkitProxyRemoveEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * The proxy information about the proxy that has been removed from the network.
+     *
+     * @return the proxy information about the removed proxy.
+     */
     public ProxyInfo getProxyInfo() {
         return serverInfo;
     }

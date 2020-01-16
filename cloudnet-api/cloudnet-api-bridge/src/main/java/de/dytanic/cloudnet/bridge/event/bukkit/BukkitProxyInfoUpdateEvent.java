@@ -4,7 +4,8 @@ import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import org.bukkit.event.HandlerList;
 
 /**
- * Calls if the proxyInfo from one proxy was updated
+ * This event is called whenever the proxy information for a proxy on the
+ * network has been updated.
  */
 public class BukkitProxyInfoUpdateEvent extends BukkitCloudEvent {
 
@@ -20,6 +21,11 @@ public class BukkitProxyInfoUpdateEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * The updated proxy information object.
+     *
+     * @return the updated proxy information.
+     */
     public ProxyInfo getProxyInfo() {
         return serverInfo;
     }

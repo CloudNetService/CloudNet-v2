@@ -4,7 +4,7 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import org.bukkit.event.HandlerList;
 
 /**
- * Calls if a server was updated
+ * This event is called whenever server information is updated on the network.
  */
 public class BukkitServerInfoUpdateEvent extends BukkitCloudEvent {
 
@@ -20,6 +20,11 @@ public class BukkitServerInfoUpdateEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * The updated server information object.
+     *
+     * @return the updated server information.
+     */
     public ServerInfo getServerInfo() {
         return serverInfo;
     }

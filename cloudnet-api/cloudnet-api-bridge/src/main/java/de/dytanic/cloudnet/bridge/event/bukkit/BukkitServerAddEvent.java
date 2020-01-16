@@ -4,7 +4,8 @@ import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import org.bukkit.event.HandlerList;
 
 /**
- * Calls if a server was add into the network
+ * This event is called whenever a server has been added to the CloudNet network.
+ * When receiving this event, the server might not be done with starting up.
  */
 public class BukkitServerAddEvent extends BukkitCloudEvent {
 
@@ -20,6 +21,11 @@ public class BukkitServerAddEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * The server information object about the server that has been added to the network.
+     *
+     * @return the server information of the added server.
+     */
     public ServerInfo getServerInfo() {
         return serverInfo;
     }
