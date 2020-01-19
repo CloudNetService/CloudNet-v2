@@ -3,7 +3,7 @@ package de.dytanic.cloudnet.bridge.event.proxied;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 
 /**
- * Created by Tareko on 19.01.2018.
+ * This event is called whenever a player has switched their current server.
  */
 public class ProxiedPlayerServerSwitchEvent extends ProxiedCloudEvent {
 
@@ -16,10 +16,16 @@ public class ProxiedPlayerServerSwitchEvent extends ProxiedCloudEvent {
         this.server = server;
     }
 
+    /**
+     * @return the player that just switched to another server.
+     */
     public CloudPlayer getCloudPlayer() {
         return cloudPlayer;
     }
 
+    /**
+     * @return the server-id the player switched to.
+     */
     public String getServer() {
         return server;
     }

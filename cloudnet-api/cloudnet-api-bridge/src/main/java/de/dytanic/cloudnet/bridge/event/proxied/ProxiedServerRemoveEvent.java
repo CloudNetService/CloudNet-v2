@@ -3,7 +3,8 @@ package de.dytanic.cloudnet.bridge.event.proxied;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 
 /**
- * Calls if one server was removed from the network
+ * This event is called when a server has been removed from the CloudNet network.
+ * When receiving this event, the server has already been stopped.
  */
 public class ProxiedServerRemoveEvent extends ProxiedCloudEvent {
 
@@ -13,6 +14,11 @@ public class ProxiedServerRemoveEvent extends ProxiedCloudEvent {
         this.serverInfo = serverInfo;
     }
 
+    /**
+     * The server information object of the removed server.
+     *
+     * @return the information of the removed server.
+     */
     public ServerInfo getServerInfo() {
         return serverInfo;
     }

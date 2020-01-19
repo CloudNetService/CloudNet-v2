@@ -3,7 +3,8 @@ package de.dytanic.cloudnet.bridge.event.proxied;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 
 /**
- * Calls if a proxy server updates the proxyInfo
+ * This event is called whenever the proxy information for a proxy on the
+ * network has been updated.
  */
 public class ProxiedProxyInfoUpdateEvent extends ProxiedCloudEvent {
 
@@ -13,6 +14,11 @@ public class ProxiedProxyInfoUpdateEvent extends ProxiedCloudEvent {
         this.proxyInfo = proxyInfo;
     }
 
+    /**
+     * The updated proxy information object.
+     *
+     * @return the updated proxy information.
+     */
     public ProxyInfo getProxyInfo() {
         return proxyInfo;
     }

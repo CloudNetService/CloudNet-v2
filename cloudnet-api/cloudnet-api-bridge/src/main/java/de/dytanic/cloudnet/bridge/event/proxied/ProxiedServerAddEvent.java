@@ -3,7 +3,8 @@ package de.dytanic.cloudnet.bridge.event.proxied;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 
 /**
- * Calls if a game server was add into the network
+ * This event is called whenever a server has been added to the CloudNet network.
+ * When receiving this event, the server might not be done with starting up.
  */
 public class ProxiedServerAddEvent extends ProxiedCloudEvent {
 
@@ -13,6 +14,11 @@ public class ProxiedServerAddEvent extends ProxiedCloudEvent {
         this.serverInfo = serverInfo;
     }
 
+    /**
+     * The server information object about the server that has been added to the network.
+     *
+     * @return the server information of the added server.
+     */
     public ServerInfo getServerInfo() {
         return serverInfo;
     }

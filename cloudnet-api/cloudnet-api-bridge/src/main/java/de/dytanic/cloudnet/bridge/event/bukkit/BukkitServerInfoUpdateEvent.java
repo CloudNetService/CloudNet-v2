@@ -21,8 +21,6 @@ public class BukkitServerInfoUpdateEvent extends BukkitCloudEvent {
     }
 
     /**
-     * The updated server information object.
-     *
      * @return the updated server information.
      */
     public ServerInfo getServerInfo() {

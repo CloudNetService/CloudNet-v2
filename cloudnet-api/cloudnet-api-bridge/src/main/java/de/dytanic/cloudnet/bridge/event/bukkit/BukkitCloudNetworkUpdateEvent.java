@@ -7,6 +7,7 @@ import org.bukkit.event.HandlerList;
  * This event is called when the CloudNetwork is updated.
  * <p>
  * {@link de.dytanic.cloudnet.api.handlers.NetworkHandler#onCloudNetworkUpdate(CloudNetwork)}
+ * </p>
  */
 public class BukkitCloudNetworkUpdateEvent extends BukkitCloudEvent {
 

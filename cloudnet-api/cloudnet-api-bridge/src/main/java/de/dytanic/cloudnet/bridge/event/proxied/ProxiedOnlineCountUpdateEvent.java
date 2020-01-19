@@ -3,7 +3,8 @@ package de.dytanic.cloudnet.bridge.event.proxied;
 import net.md_5.bungee.api.plugin.Event;
 
 /**
- * Created by Tareko on 11.10.2017.
+ * The event is called whenever the amount of players currently online changes.
+ * This change can be due to a login, logout or any other connection state change.
  */
 public class ProxiedOnlineCountUpdateEvent extends Event {
 
@@ -13,6 +14,9 @@ public class ProxiedOnlineCountUpdateEvent extends Event {
         this.onlineCount = onlineCount;
     }
 
+    /**
+     * @return the most recent online count.
+     */
     public int getOnlineCount() {
         return onlineCount;
     }

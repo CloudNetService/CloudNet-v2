@@ -54,18 +54,15 @@ public final class CommandHub extends Command {
                                                                          CloudAPI.getInstance().getGroup(),
                                                                          ((ProxiedPlayer) commandSender).getServer().getInfo().getName());
 
-        ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent((ProxiedPlayer) commandSender,
-                                                                                               CloudAPI.getInstance()
-                                                                                                       .getOnlinePlayer(((ProxiedPlayer) commandSender)
-                                                                                                                            .getUniqueId()),
-                                                                                               ProxiedPlayerFallbackEvent.FallbackType.HUB_COMMAND,
-                                                                                               fallback);
+        ProxiedPlayerFallbackEvent proxiedPlayerFallbackEvent = new ProxiedPlayerFallbackEvent(
+            (ProxiedPlayer) commandSender,
+            CloudAPI.getInstance().getOnlinePlayer(((ProxiedPlayer) commandSender).getUniqueId()),
+            ProxiedPlayerFallbackEvent.FallbackType.HUB_COMMAND,
+            fallback);
 
         ProxyServer.getInstance().getPluginManager().callEvent(proxiedPlayerFallbackEvent);
 
         fallback = proxiedPlayerFallbackEvent.getFallback();
-
-        ProxyServer.getInstance().getPluginManager().callEvent(proxiedPlayerFallbackEvent);
 
         if (fallback == null) {
             commandSender.sendMessage(TextComponent.fromLegacyText(

@@ -3,7 +3,7 @@ package de.dytanic.cloudnet.bridge.event.proxied;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 /**
- * Created by Tareko on 24.08.2017.
+ * This event is called when a sub channel message has been received by this proxy server.
  */
 public class ProxiedSubChannelMessageEvent extends ProxiedCloudEvent {
 
@@ -19,14 +19,23 @@ public class ProxiedSubChannelMessageEvent extends ProxiedCloudEvent {
         this.document = document;
     }
 
+    /**
+     * @return the channel through which this message was sent.
+     */
     public String getChannel() {
         return channel;
     }
 
+    /**
+     * @return the attached document to the message.
+     */
     public Document getDocument() {
         return document;
     }
 
+    /**
+     * @return the message that was sent.
+     */
     public String getMessage() {
         return message;
     }

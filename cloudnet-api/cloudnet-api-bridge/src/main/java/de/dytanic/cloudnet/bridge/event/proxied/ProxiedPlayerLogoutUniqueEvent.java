@@ -3,7 +3,9 @@ package de.dytanic.cloudnet.bridge.event.proxied;
 import java.util.UUID;
 
 /**
- * Created by Tareko on 07.09.2017.
+ * This event is called whenever a player logs out from the cloud network.
+ * This event may be called for players which are <b>not</b> registered on CloudNet.
+ * When handling this event, the player may already be disconnected.
  */
 public class ProxiedPlayerLogoutUniqueEvent extends ProxiedCloudEvent {
 
@@ -13,6 +15,9 @@ public class ProxiedPlayerLogoutUniqueEvent extends ProxiedCloudEvent {
         this.uniqueId = uniqueId;
     }
 
+    /**
+     * @return the unique ID of the player that just logged out.
+     */
     public UUID getUniqueId() {
         return uniqueId;
     }
