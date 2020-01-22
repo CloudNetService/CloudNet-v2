@@ -120,7 +120,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         maxMemory = maxMemory + cnsInfo.getMemory();
                     }
                     commandSender.sendMessage(TextComponent.fromLegacyText(NetworkUtils.SPACE_STRING));
-                    for (ProxyInfo simpleProxyInfo : CloudAPI.getInstance().getProxys()) {
+                    for (ProxyInfo simpleProxyInfo : CloudAPI.getInstance().getProxies()) {
                         commandSender.sendMessage(TextComponent.fromLegacyText("§8[§c" + simpleProxyInfo.getServiceId()
                                                                                                         .getServerId() + "§8] §8(§e" + simpleProxyInfo
                             .getOnlineCount() + "§8) : §7" + simpleProxyInfo.getMemory() + "MB"));
@@ -157,7 +157,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                     commandSender.sendMessage(TextComponent.fromLegacyText("§7Memory in use: " + usedMemory + "§8/§7" + maxMemory + "MB"));
                 } else if (args[0].equalsIgnoreCase("listProxys") && commandSender.hasPermission("cloudnet.command.listproxys")) {
                     commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance().getPrefix() + "Proxys:"));
-                    for (ProxyInfo proxy : CloudAPI.getInstance().getProxys()) {
+                    for (ProxyInfo proxy : CloudAPI.getInstance().getProxies()) {
                         commandSender.sendMessage(TextComponent.fromLegacyText("§7- " + (proxy.isOnline() ? "§e" : "§c") + proxy.getServiceId()
                                                                                                                                 .getServerId() + " §8(§e" + proxy
                             .getOnlineCount() + "§8) "));
@@ -231,7 +231,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                     return;
                 } else if (args[0].equalsIgnoreCase("log") && commandSender.hasPermission("cloudnet.command.cloud.log")) {
                     if (CloudProxy.getInstance().getServers().containsKey(args[1]) || CloudAPI.getInstance()
-                                                                                              .getProxys()
+                                                                                              .getProxies()
                                                                                               .stream()
                                                                                               .anyMatch(proxyInfo -> proxyInfo.getServiceId()
                                                                                                                               .getServerId()
@@ -294,9 +294,9 @@ public final class CommandCloud extends Command implements TabExecutor {
                         CloudAPI.getInstance().stopServer(args[1]);
                         commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                        .getPrefix() + "The information was sent to the cloud"));
-                    } else if (CloudAPI.getInstance().getProxys().stream().anyMatch(proxyInfo -> proxyInfo.getServiceId()
-                                                                                                          .getServerId()
-                                                                                                          .equalsIgnoreCase(args[1]))) {
+                    } else if (CloudAPI.getInstance().getProxies().stream().anyMatch(proxyInfo -> proxyInfo.getServiceId()
+                                                                                                           .getServerId()
+                                                                                                           .equalsIgnoreCase(args[1]))) {
                         CloudAPI.getInstance().stopProxy(args[1]);
                         commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                        .getPrefix() + "The information was sent to the cloud"));
@@ -319,7 +319,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                     }
 
                     if (CloudAPI.getInstance().getProxyGroupMap().containsKey(args[1])) {
-                        Collection<ProxyInfo> servers = CloudAPI.getInstance().getProxys();
+                        Collection<ProxyInfo> servers = CloudAPI.getInstance().getProxies();
 
                         for (ProxyInfo proxyInfo : servers) {
                             if (proxyInfo.getServiceId().getGroup().equalsIgnoreCase(args[1])) {
@@ -351,7 +351,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         return;
                     }
                     if (CloudAPI.getInstance().getProxyGroupMap().containsKey(args[1])) {
-                        Collection<ProxyInfo> servers = CloudAPI.getInstance().getProxys();
+                        Collection<ProxyInfo> servers = CloudAPI.getInstance().getProxies();
 
                         for (ProxyInfo proxyInfo : servers) {
                             if (proxyInfo.getServiceId().getGroup().equalsIgnoreCase(args[1]) && proxyInfo.getOnlineCount() == 0) {
@@ -601,8 +601,13 @@ public final class CommandCloud extends Command implements TabExecutor {
                                        .collect(Collectors.toList());
                     }
                     case "cmdp": {
-                        return CloudAPI.getInstance().getProxys().stream().map(ProxyInfo::getServiceId).map(ServiceId::getServerId).collect(
-                            Collectors.toList());
+                        return CloudAPI.getInstance()
+                                       .getProxies()
+                                       .stream()
+                                       .map(ProxyInfo::getServiceId)
+                                       .map(ServiceId::getServerId)
+                                       .collect(
+                                           Collectors.toList());
                     }
 
                 }
@@ -630,7 +635,7 @@ public final class CommandCloud extends Command implements TabExecutor {
 
     private List<String> getProxiesAndServers() {
         LinkedList<String> groups = CloudAPI.getInstance()
-                                            .getProxys()
+                                            .getProxies()
                                             .stream()
                                             .map(ProxyInfo::getServiceId)
                                             .map(ServiceId::getServerId)

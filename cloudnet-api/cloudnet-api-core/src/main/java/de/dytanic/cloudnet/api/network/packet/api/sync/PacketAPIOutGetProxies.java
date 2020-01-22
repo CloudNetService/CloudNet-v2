@@ -7,13 +7,13 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 /**
  * Created by Tareko on 17.08.2017.
  */
-public class PacketAPIOutGetProxys extends Packet {
+public class PacketAPIOutGetProxies extends Packet {
 
-    public PacketAPIOutGetProxys() {
+    public PacketAPIOutGetProxies() {
         super(PacketRC.API + 4, new Document());
     }
 
-    public PacketAPIOutGetProxys(String group) {
+    public PacketAPIOutGetProxies(String group) {
         super(PacketRC.API + 4, new Document("group", group));
     }
 }

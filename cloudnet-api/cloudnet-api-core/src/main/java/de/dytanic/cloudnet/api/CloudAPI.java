@@ -1315,9 +1315,9 @@ public final class CloudAPI {
     }
 
     /**
-     * Update the CloudPlayer objective
+     * Updates a player on the master.
      *
-     * @param cloudPlayer
+     * @param cloudPlayer the player to update.
      */
     public void updatePlayer(CloudPlayer cloudPlayer) {
         this.logger.logp(Level.FINEST,
@@ -1328,9 +1328,9 @@ public final class CloudAPI {
     }
 
     /**
-     * Updates a offlinePlayer Objective on the database
+     * Updates an offline player on the master.
      *
-     * @param offlinePlayer
+     * @param offlinePlayer the offline player to update.
      */
     public void updatePlayer(OfflinePlayer offlinePlayer) {
         this.logger.logp(Level.FINEST,
@@ -1341,11 +1341,15 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns all servers on network
+     * Collects and returns all currently running servers on the network.
+     * When calling this function on a proxy, the cache is used.
+     * On servers this queries the master.
+     *
+     * @return a collection containing all currently running servers.
      */
     public Collection<ServerInfo> getServers() {
         if (cloudService != null && cloudService.isProxyInstance()) {
-            return new LinkedList<>(cloudService.getServers().values());
+            return new ArrayList<>(cloudService.getServers().values());
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(), networkConnection);
@@ -1353,7 +1357,10 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns the ServerInfo from all CloudGameServers
+     * Queries the master for all running cloud servers on the network.
+     * Cloud servers are servers, which do not belong to any server group.
+     *
+     * @return a collection containing all running cloud servers.
      */
     public Collection<ServerInfo> getCloudServers() {
         if (cloudService != null && cloudService.isProxyInstance()) {
@@ -1367,32 +1374,39 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns all proxyInfos on network
-     */
-    public Collection<ProxyInfo> getProxys() {
-        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(), networkConnection);
-        return result.getResult().getObject("proxyInfos", PROXY_INFO_COLLECTION_TYPE);
-    }
-
-    /**
-     * Returns the ProxyInfos from all proxys in the group #group
+     * Queries the master for all running proxies.
      *
-     * @param group
+     * @return a collection containing all running proxies.
      */
-    public Collection<ProxyInfo> getProxys(String group) {
-        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(group), networkConnection);
+    public Collection<ProxyInfo> getProxies() {
+        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxies(), networkConnection);
         return result.getResult().getObject("proxyInfos", PROXY_INFO_COLLECTION_TYPE);
     }
 
     /**
-     * Returns all OnlinePlayers on Network
+     * Queries the master for all running proxies in the given group.
+     *
+     * @param group the name of the proxy group to get the proxies for.
+     *
+     * @return a collection containing all running proxies of the given proxy group.
+     */
+    public Collection<ProxyInfo> getProxies(String group) {
+        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxies(group), networkConnection);
+        return result.getResult().getObject("proxyInfos", PROXY_INFO_COLLECTION_TYPE);
+    }
+
+    /**
+     * Returns all players currently online on the network.
+     * This methods queries the master so it may take a short moment.
+     *
+     * @return all players currently online.
      */
     public Collection<CloudPlayer> getOnlinePlayers() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayers(), networkConnection);
         Collection<CloudPlayer> cloudPlayers = result.getResult().getObject("players", COLLECTION_CLOUDPLAYER_TYPE);
 
         if (cloudPlayers == null) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         for (CloudPlayer cloudPlayer : cloudPlayers) {
@@ -1403,12 +1417,19 @@ public final class CloudAPI {
     }
 
     /**
-     * Retuns a online CloudPlayer on network or null if the player isn't online
+     * Returns an online player by their UUID.
+     * If the player is not cached, the master is queried.
+     *
+     * @param uniqueId the UUID of the player.
+     *
+     * @return the online player or null, if the player is not currently online on the network.
      */
     public CloudPlayer getOnlinePlayer(UUID uniqueId) {
-        CloudPlayer instance = checkAndGet(uniqueId);
-        if (instance != null) {
-            return instance;
+        if (cloudService != null) {
+            CloudPlayer cloudPlayer = cloudService.getCachedPlayer(uniqueId);
+            if (cloudPlayer != null) {
+                return cloudPlayer;
+            }
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayer(uniqueId), networkConnection);
@@ -1420,19 +1441,20 @@ public final class CloudAPI {
         return cloudPlayer;
     }
 
-    private CloudPlayer checkAndGet(UUID uniqueId) {
-        return cloudService != null ? cloudService.getCachedPlayer(uniqueId) : null;
-    }
-
     /**
-     * Returns a offline player which registerd or null
+     * Returns an offline player by their UUID.
+     * If the player is not cached, the master is queried.
      *
-     * @param uniqueId
+     * @param uniqueId the UUID of the player.
+     *
+     * @return the offline player or null, if the player is not registered on the network.
      */
     public OfflinePlayer getOfflinePlayer(UUID uniqueId) {
-        CloudPlayer cloudPlayer = checkAndGet(uniqueId);
-        if (cloudPlayer != null) {
-            return cloudPlayer;
+        if (cloudService != null) {
+            CloudPlayer cloudPlayer = cloudService.getCachedPlayer(uniqueId);
+            if (cloudPlayer != null) {
+                return cloudPlayer;
+            }
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(uniqueId), networkConnection);
@@ -1440,28 +1462,31 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns a offline player which registerd or null
+     * Returns an offline player by their exact name.
+     * If the player is not cached, the master is queried.
      *
-     * @param name
+     * @param name the exact name of the player.
+     *
+     * @return the offline player or null, if the player is not registered on the network.
      */
     public OfflinePlayer getOfflinePlayer(String name) {
-        CloudPlayer cloudPlayer = checkAndGet(name);
-        if (cloudPlayer != null) {
-            return cloudPlayer;
+        if (cloudService != null) {
+            CloudPlayer cloudPlayer = cloudService.getCachedPlayer(name);
+            if (cloudPlayer != null) {
+                return cloudPlayer;
+            }
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(name), networkConnection);
         return result.getResult().getObject("player", OfflinePlayer.TYPE);
     }
 
-    private CloudPlayer checkAndGet(String name) {
-        return cloudService != null ? cloudService.getCachedPlayer(name) : null;
-    }
-
     /**
-     * Returns the ServerGroup from the name or null
+     * Queries the master for a server group based on the given name.
      *
-     * @param name
+     * @param name the name of the server group.
+     *
+     * @return the server group object.
      */
     public ServerGroup getServerGroup(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServerGroup(name), networkConnection);
@@ -1469,7 +1494,12 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns from a registerd Player the uniqueId or null if the player doesn't exists
+     * Queries the unique id of the player with the given name.
+     *
+     * @param name the unique id of the player.
+     *
+     * @return the unique id of the player with the given name or {@code null},
+     * if the player is not registered on the network.
      */
     public UUID getPlayerUniqueId(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutNameUUID(name), networkConnection);
@@ -1477,7 +1507,12 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns from a registerd Player the name or null if the player doesn't exists
+     * Queries the name of the player with the given unique id.
+     *
+     * @param uniqueId the unique id of the player.
+     *
+     * @return the name of the player with the given unique id or {@code null},
+     * if the player is not registered on the network.
      */
     public String getPlayerName(UUID uniqueId) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutNameUUID(uniqueId), networkConnection);
@@ -1485,17 +1520,22 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns the ServerInfo from one gameServer where serverName = serverId
+     * Queries the master for the server information about a specific server.
+     *
+     * @param serverId the server id to query for.
+     *
+     * @return the server information of the server with the given sever id.
      */
-    public ServerInfo getServerInfo(String serverName) {
-        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServer(serverName), networkConnection);
+    public ServerInfo getServerInfo(String serverId) {
+        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServer(serverId), networkConnection);
         return result.getResult().getObject("serverInfo", ServerInfo.TYPE);
     }
 
     /**
-     * Returns a Document with all collected statistics
+     * Returns a document with all collected statistics.
+     * This method queries the master.
      *
-     * @return
+     * @return a document with collected statistics.
      */
     public Document getStatistics() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetStatistic(), networkConnection);
