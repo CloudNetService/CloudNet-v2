@@ -1,7 +1,7 @@
 package de.dytanic.cloudnet.bridge;
 
 import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.api.ICloudService;
+import de.dytanic.cloudnet.api.CloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.api.network.packet.out.PacketOutUpdateServerInfo;
 import de.dytanic.cloudnet.bridge.event.bukkit.*;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  * Cloud-Server represents
  */
 @SuppressWarnings("unused")
-public class CloudServer implements ICloudService {
+public class CloudServer implements CloudService {
 
     private static CloudServer instance;
 

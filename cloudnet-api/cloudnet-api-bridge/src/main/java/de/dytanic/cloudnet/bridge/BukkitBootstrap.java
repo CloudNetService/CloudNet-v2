@@ -32,16 +32,17 @@ public final class BukkitBootstrap extends JavaPlugin {
      * The cloud server instance that is constructed by this bootstrapping plugin.
      */
     private CloudServer cloudServer;
+    private CloudAPI api;
 
     @Override
     public void onLoad() {
-        CloudAPI cloudAPI = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
-                                                               Paths.get("CLOUD", "config.json"),
-                                                               ConfigTypeLoader.INTERNAL));
-        cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 1, PacketInSignSelector.class);
-        cloudAPI.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInMobSelector.class);
+        api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
+                                                 Paths.get("CLOUD", "config.json"),
+                                                 ConfigTypeLoader.INTERNAL));
+        api.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 1, PacketInSignSelector.class);
+        api.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInMobSelector.class);
 
-        cloudAPI.setLogger(getLogger());
+        api.setLogger(getLogger());
     }
 
     @Override
@@ -49,10 +50,10 @@ public final class BukkitBootstrap extends JavaPlugin {
 
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
 
-        if (CloudAPI.getInstance() != null) {
+        if (api != null) {
             this.cloudServer.updateDisable();
-            CloudAPI.getInstance().shutdown();
-            CloudAPI.getInstance().getNetworkHandlerProvider().clear();
+            api.shutdown();
+            api.getNetworkHandlerProvider().clear();
         }
 
 
@@ -69,9 +70,9 @@ public final class BukkitBootstrap extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        cloudServer = new CloudServer(this, CloudAPI.getInstance());
+        cloudServer = new CloudServer(this, api);
 
-        CloudAPI.getInstance().bootstrap();
+        api.bootstrap();
         DocumentRegistry.fire();
 
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
@@ -102,10 +103,10 @@ public final class BukkitBootstrap extends JavaPlugin {
                 this.cloudServer.update();
             }, 1);
 
-            if (CloudAPI.getInstance()
-                        .getServerGroupData(CloudAPI.getInstance().getGroup())
-                        .getAdvancedServerConfig()
-                        .isDisableAutoSavingForWorlds()) {
+            if (api
+                .getServerGroupData(api.getGroup())
+                .getAdvancedServerConfig()
+                .isDisableAutoSavingForWorlds()) {
                 for (World world : Bukkit.getWorlds()) {
                     world.setAutoSave(false);
                 }
@@ -116,7 +117,7 @@ public final class BukkitBootstrap extends JavaPlugin {
             startUpdateTask();
         }
 
-        if (CloudAPI.getInstance().getPermissionPool() != null &&
+        if (api.getPermissionPool() != null &&
             (getServer().getPluginManager().isPluginEnabled("VaultAPI") ||
                 getServer().getPluginManager().isPluginEnabled("Vault"))) {
             try {
@@ -133,7 +134,7 @@ public final class BukkitBootstrap extends JavaPlugin {
      */
     private void loadPlayers() {
         for (Player all : getServer().getOnlinePlayers()) {
-            CloudAPI.getInstance().getOnlinePlayer(all.getUniqueId());
+            api.getOnlinePlayer(all.getUniqueId());
         }
     }
 

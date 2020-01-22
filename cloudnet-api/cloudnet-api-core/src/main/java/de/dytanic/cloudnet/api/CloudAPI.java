@@ -44,8 +44,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class CloudAPI {
 
-    private static final Type SERVER_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ServerInfo.class).getType();
     public static final Type MAP_UUID_OFFLINEPLAYER_TYPE = TypeToken.getParameterized(Map.class, UUID.class, OfflinePlayer.TYPE).getType();
+    private static final Type SERVER_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ServerInfo.class).getType();
     private static final Type PROXY_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ProxyInfo.class).getType();
     private static final Type COLLECTION_CLOUDPLAYER_TYPE = TypeToken.getParameterized(Collection.class, CloudPlayer.TYPE).getType();
     private static final String[] EMPTY_STRING_ARRAY = {};
@@ -58,7 +58,7 @@ public final class CloudAPI {
     private NetworkConnection networkConnection;
     private int memory;
 
-    private ICloudService cloudService = null;
+    private CloudService cloudService = null;
 
     //Init
     private CloudNetwork cloudNetwork = new CloudNetwork();
@@ -72,6 +72,9 @@ public final class CloudAPI {
     private Logger logger;
 
     public CloudAPI(CloudConfigLoader loader) {
+        if (instance != null) {
+            throw new IllegalStateException("CloudAPI already instantiated.");
+        }
         instance = this;
         this.cloudConfigLoader = loader;
         this.config = loader.loadConfig();
@@ -109,12 +112,15 @@ public final class CloudAPI {
     /*================= Internal =====================*/
 
     /**
-     * Returns the instance of the CloudAPI
+     * @return the singleton instance of the cloud API.
      */
     public static CloudAPI getInstance() {
         return instance;
     }
 
+    /**
+     * Bootstraps the API and initiates the connection to the master.
+     */
     public void bootstrap() {
         this.networkConnection.tryConnect(config.getBoolean("ssl"),
                                           new NetDispatcher(networkConnection, false),
@@ -129,10 +135,20 @@ public final class CloudAPI {
         NetworkUtils.header();
     }
 
+    /**
+     * Disconnects the API from the master.
+     */
     public void shutdown() {
         this.networkConnection.tryDisconnect();
     }
 
+    /**
+     * Updates the given server on the master.
+     *
+     * @param serverInfo the new server info.
+     *
+     * @return this.
+     */
     public CloudAPI update(ServerInfo serverInfo) {
         this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "update", String.format("Updating server info: %s%n", serverInfo));
         if (networkConnection.isConnected()) {
@@ -141,8 +157,13 @@ public final class CloudAPI {
         return this;
     }
 
-    /*================= API =====================*/
-
+    /**
+     * Updates the given proxy on the master.
+     *
+     * @param proxyInfo the new proxy info.
+     *
+     * @return this.
+     */
     public CloudAPI update(ProxyInfo proxyInfo) {
         this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "update", String.format("Updating proxy info: %s%n", proxyInfo));
         if (networkConnection.isConnected()) {
@@ -152,7 +173,11 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns synchronized the OnlineCount from the group
+     * Collects all servers from the given server group and sums their currently online players.
+     *
+     * @param group the server group name.
+     *
+     * @return the amount of players currently online on the entire server group.
      */
     public int getOnlineCount(String group) {
         return getServers(group).stream()
@@ -161,9 +186,13 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns all serverInfos from group #group
+     * Collects and returns all currently running servers of the given group on the network.
+     * When calling this function on a proxy, the cache is used.
+     * On servers this queries the master.
      *
-     * @param group
+     * @param group the name of the server group.
+     *
+     * @return a collection containing all currently running servers belonging to the given server group.
      */
     public Collection<ServerInfo> getServers(String group) {
         if (cloudService != null && cloudService.isProxyInstance()) {
@@ -176,11 +205,11 @@ public final class CloudAPI {
         return result.getResult().getObject("serverInfos", SERVER_INFO_COLLECTION_TYPE);
     }
 
-    public ICloudService getCloudService() {
+    public CloudService getCloudService() {
         return cloudService;
     }
 
-    public void setCloudService(ICloudService cloudService) {
+    public void setCloudService(CloudService cloudService) {
         this.cloudService = cloudService;
     }
 

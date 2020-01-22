@@ -7,9 +7,11 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by Tareko on 10.01.2018.
+ * An interface for cloud services.
+ * These include the proxy and the server.
+ * This guarantees a base level of functionality across all services.
  */
-public interface ICloudService {
+public interface CloudService {
 
     /**
      * Gets a player currently connected to this service by its unique ID.

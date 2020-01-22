@@ -1,7 +1,7 @@
 package de.dytanic.cloudnet.bridge;
 
 import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.api.ICloudService;
+import de.dytanic.cloudnet.api.CloudService;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.bridge.event.proxied.*;
 import de.dytanic.cloudnet.lib.CloudNetwork;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * This class is a singleton, use the {@link #getInstance()} method for accessing this
  * class' methods.
  */
-public class CloudProxy implements ICloudService {
+public class CloudProxy implements CloudService {
 
     /**
      * The singleton instance of this cloud proxy class.
