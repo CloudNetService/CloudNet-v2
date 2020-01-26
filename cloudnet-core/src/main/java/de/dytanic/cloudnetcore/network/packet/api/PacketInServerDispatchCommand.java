@@ -5,7 +5,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnetcore.CloudNet;
-import de.dytanic.cloudnetcore.network.components.CloudServer;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 
@@ -24,11 +23,7 @@ public class PacketInServerDispatchCommand implements PacketInHandler {
             if (minecraftServer != null) {
                 minecraftServer.getWrapper().writeServerCommand(commandLine, minecraftServer.getServerInfo());
             }
-            CloudServer cloudServer = CloudNet.getInstance().getCloudGameServer(serverId);
-            if (cloudServer != null) {
-                cloudServer.getWrapper().writeServerCommand(commandLine, cloudServer.getServerInfo());
-            }
-        } else {
+        } else if (defaultType == DefaultType.BUNGEE_CORD) {
             ProxyServer proxyServer = CloudNet.getInstance().getProxy(serverId);
             if (proxyServer != null) {
                 proxyServer.getWrapper().writeProxyCommand(commandLine, proxyServer.getProxyInfo());

@@ -12,7 +12,6 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.CloudNetClient;
 import de.dytanic.cloudnetcore.network.CloudNetClientAuth;
-import de.dytanic.cloudnetcore.network.components.CloudServer;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
@@ -75,16 +74,8 @@ public final class PacketInAuthHandler implements PacketInHandler {
                             channel.pipeline().remove("client");
                             channel.pipeline().addLast(new CloudNetClient(minecraftServer, channel));
                         }
-                    } else if (wrapper.getCloudServers().containsKey(serviceId.getServerId())) {
-                        CloudServer cloudServer = wrapper.getCloudServers().get(serviceId.getServerId());
-                        if (cloudServer.getChannel() == null && cloudServer.getServerInfo().getServiceId().getUniqueId().equals(
-                            serviceId.getUniqueId())) {
-                            Channel channel = client.getChannel();
-                            channel.pipeline().remove("client");
-                            channel.pipeline().addLast(new CloudNetClient(cloudServer, channel));
-                        }
-                    } else if (wrapper.getProxys().containsKey(serviceId.getServerId())) {
-                        ProxyServer proxyServer = wrapper.getProxys().get(serviceId.getServerId());
+                    } else if (wrapper.getProxies().containsKey(serviceId.getServerId())) {
+                        ProxyServer proxyServer = wrapper.getProxies().get(serviceId.getServerId());
                         if (proxyServer.getChannel() == null && proxyServer.getProxyInfo().getServiceId().getUniqueId().equals(
                             serviceId.getUniqueId())) {
                             Channel channel = client.getChannel();

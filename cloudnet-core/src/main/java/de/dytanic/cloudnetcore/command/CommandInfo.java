@@ -90,7 +90,7 @@ public final class CommandInfo extends Command {
                                        NetworkUtils.SPACE_STRING,
                                        "Connection: " + (wrapper.getChannel() != null ? "connected" : "not connected"),
                                        "Servers started: " + wrapper.getServers().size(),
-                                       "Proxys started: " + wrapper.getProxys().size(),
+                                       "Proxys started: " + wrapper.getProxies().size(),
                                        NetworkUtils.SPACE_STRING,
                                        "Address: " + wrapper.getNetworkInfo().getHostName(),
                                        "Memory: " + wrapper.getUsedMemoryAndWaitings() + NetworkUtils.SLASH_STRING + (wrapper.getWrapperInfo() != null ? wrapper

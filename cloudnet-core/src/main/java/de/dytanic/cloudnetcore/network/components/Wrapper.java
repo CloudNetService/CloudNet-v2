@@ -1,7 +1,6 @@
 package de.dytanic.cloudnetcore.network.components;
 
 import de.dytanic.cloudnet.lib.DefaultType;
-import de.dytanic.cloudnet.lib.cloudserver.CloudServerMeta;
 import de.dytanic.cloudnet.lib.network.WrapperExternal;
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
@@ -29,9 +28,8 @@ import java.util.stream.Stream;
  */
 public final class Wrapper implements INetworkComponent {
 
-    private final Map<String, ProxyServer> proxys = new ConcurrentHashMap<>();
+    private final Map<String, ProxyServer> proxies = new ConcurrentHashMap<>();
     private final Map<String, MinecraftServer> servers = new ConcurrentHashMap<>();
-    private final Map<String, CloudServer> cloudServers = new ConcurrentHashMap<>();
     // Group, ServiceId
     private final Map<String, WaitingService> waitingServices = new ConcurrentHashMap<>();
     private Channel channel;
@@ -64,16 +62,12 @@ public final class Wrapper implements INetworkComponent {
         this.cpuUsage = cpuUsage;
     }
 
-    public Map<String, CloudServer> getCloudServers() {
-        return cloudServers;
-    }
-
     public Map<String, MinecraftServer> getServers() {
         return servers;
     }
 
-    public Map<String, ProxyServer> getProxys() {
-        return proxys;
+    public Map<String, ProxyServer> getProxies() {
+        return proxies;
     }
 
     public Map<String, WaitingService> getWaitingServices() {
@@ -121,7 +115,7 @@ public final class Wrapper implements INetworkComponent {
     public int getUsedMemory() {
         int mem = 0;
 
-        for (ProxyServer proxyServer : proxys.values()) {
+        for (ProxyServer proxyServer : proxies.values()) {
             mem += proxyServer.getProxyInfo().getMemory();
         }
 
@@ -147,15 +141,7 @@ public final class Wrapper implements INetworkComponent {
             }
         }
 
-        for (CloudServer cloudServer : cloudServers.values()) {
-            try {
-                cloudServer.disconnect();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        for (ProxyServer minecraftServer : proxys.values()) {
+        for (ProxyServer minecraftServer : proxies.values()) {
             try {
                 minecraftServer.disconnect();
             } catch (Exception ex) {
@@ -165,8 +151,7 @@ public final class Wrapper implements INetworkComponent {
 
         waitingServices.clear();
         servers.clear();
-        cloudServers.clear();
-        proxys.clear();
+        proxies.clear();
     }
 
     public Wrapper updateWrapper() {
@@ -234,9 +219,9 @@ public final class Wrapper implements INetworkComponent {
                           servers.values().stream()
                                  .map(MinecraftServer::getProcessMeta)
                                  .map(ServerProcessMeta::getPort)),
-            proxys.values().stream()
-                  .map(ProxyServer::getProcessMeta)
-                  .map(ProxyProcessMeta::getPort))
+            proxies.values().stream()
+                   .map(ProxyServer::getProcessMeta)
+                   .map(ProxyProcessMeta::getPort))
                      .collect(Collectors.toList());
     }
 
@@ -284,28 +269,6 @@ public final class Wrapper implements INetworkComponent {
                                                     serverProcessMeta.getTemplate()));
     }
 
-    public void startCloudServer(CloudServerMeta cloudServerMeta) {
-        sendPacket(new PacketOutStartCloudServer(cloudServerMeta));
-        System.out.println("CloudServer [" + cloudServerMeta.getServiceId() + "] is now in " + serverId + " queue.");
-
-        this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(),
-                                 new WaitingService(cloudServerMeta.getPort(),
-                                                    cloudServerMeta.getMemory(),
-                                                    cloudServerMeta.getServiceId(),
-                                                    cloudServerMeta.getTemplate()));
-    }
-
-    public void startCloudServerAsync(CloudServerMeta cloudServerMeta) {
-        sendPacket(new PacketOutStartCloudServer(cloudServerMeta, true));
-        System.out.println("CloudServer [" + cloudServerMeta.getServiceId() + "] is now in " + serverId + " queue.");
-
-        this.waitingServices.put(cloudServerMeta.getServiceId().getServerId(),
-                                 new WaitingService(cloudServerMeta.getPort(),
-                                                    cloudServerMeta.getMemory(),
-                                                    cloudServerMeta.getServiceId(),
-                                                    cloudServerMeta.getTemplate()));
-    }
-
     public Wrapper stopServer(MinecraftServer minecraftServer) {
         if (this.servers.containsKey(minecraftServer.getServerId())) {
             sendPacket(new PacketOutStopServer(minecraftServer.getServerInfo()));
@@ -315,17 +278,8 @@ public final class Wrapper implements INetworkComponent {
         return this;
     }
 
-    public Wrapper stopServer(CloudServer cloudServer) {
-        if (this.servers.containsKey(cloudServer.getServerId())) {
-            sendPacket(new PacketOutStopServer(cloudServer.getServerInfo()));
-        }
-
-        this.waitingServices.remove(cloudServer.getServerId());
-        return this;
-    }
-
     public Wrapper stopProxy(ProxyServer proxyServer) {
-        if (this.proxys.containsKey(proxyServer.getServerId())) {
+        if (this.proxies.containsKey(proxyServer.getServerId())) {
             sendPacket(new PacketOutStopProxy(proxyServer.getProxyInfo()));
         }
 

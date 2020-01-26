@@ -26,7 +26,6 @@ import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutUpdateCPUUsage;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutUpdateWrapperInfo;
 import de.dytanic.cloudnetwrapper.network.packet.out.PacketOutWrapperScreen;
 import de.dytanic.cloudnetwrapper.server.BungeeCord;
-import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
 import de.dytanic.cloudnetwrapper.server.process.ServerProcessQueue;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
@@ -54,8 +53,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     private final CommandManager commandManager = new CommandManager();
     private final WebClient webClient = new WebClient();
     private final Map<String, GameServer> servers = new ConcurrentHashMap<>();
-    private final Map<String, BungeeCord> proxys = new ConcurrentHashMap<>();
-    private final Map<String, CloudGameServer> cloudServers = new ConcurrentHashMap<>();
+    private final Map<String, BungeeCord> proxies = new ConcurrentHashMap<>();
     private final Map<String, ServerGroup> serverGroups = new ConcurrentHashMap<>();
     private final Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
     private Auth auth;
@@ -114,16 +112,16 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         }
         canDeployed = false;
         if (serverProcessQueue != null) {
-            serverProcessQueue.getProxys().clear();
-            serverProcessQueue.getServers().clear();
             serverProcessQueue.setRunning(false);
+            serverProcessQueue.getProxies().clear();
+            serverProcessQueue.getServers().clear();
         }
 
         for (GameServer gameServer : servers.values()) {
             gameServer.shutdown();
         }
 
-        for (BungeeCord gameServer : proxys.values()) {
+        for (BungeeCord gameServer : proxies.values()) {
             gameServer.shutdown();
         }
 
@@ -192,10 +190,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 10, PacketInCopyServer.class);
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 11, PacketInOnlineServer.class);
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 12, PacketInUpdateWrapperProperties.class);
-        networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 13, PacketInStartCloudServer.class);
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 14, PacketInCopyDirectory.class);
-
-        networkConnection.getPacketManager().registerHandler(PacketRC.TEST + 1, PacketInTestResult.class);
 
         System.out.println("Trying to connect " + networkConnection.getConnectableAddress()
                                                                    .getHostName() + ':' + networkConnection.getConnectableAddress()
@@ -292,12 +287,8 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             gameServer.shutdown();
         }
 
-        for (BungeeCord bungeeCord : proxys.values()) {
+        for (BungeeCord bungeeCord : proxies.values()) {
             bungeeCord.shutdown();
-        }
-
-        for (CloudGameServer cloudGameServer : cloudServers.values()) {
-            cloudGameServer.shutdown();
         }
 
         if (networkConnection.getChannel() != null) {
@@ -332,7 +323,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             memory += gameServer.getServerProcess().getMeta().getMemory();
         }
 
-        for (BungeeCord bungeeCord : proxys.values()) {
+        for (BungeeCord bungeeCord : proxies.values()) {
             memory += bungeeCord.getProxyProcessMeta().getMemory();
         }
 
@@ -395,12 +386,8 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         return this.servers;
     }
 
-    public Map<String, BungeeCord> getProxys() {
-        return this.proxys;
-    }
-
-    public Map<String, CloudGameServer> getCloudServers() {
-        return this.cloudServers;
+    public Map<String, BungeeCord> getProxies() {
+        return this.proxies;
     }
 
     public Map<String, ServerGroup> getServerGroups() {

@@ -26,8 +26,8 @@ public final class PacketInScreen implements PacketInHandler {
             }
         } else {
             ProxyInfo server = packet.getData().getObject("proxyInfo", ProxyInfo.TYPE);
-            if (CloudNetWrapper.getInstance().getProxys().containsKey(server.getServiceId().getServerId())) {
-                BungeeCord bungee = CloudNetWrapper.getInstance().getProxys().get(server.getServiceId().getServerId());
+            if (CloudNetWrapper.getInstance().getProxies().containsKey(server.getServiceId().getServerId())) {
+                BungeeCord bungee = CloudNetWrapper.getInstance().getProxies().get(server.getServiceId().getServerId());
                 if (packet.getData().getBoolean("enable")) {
                     bungee.enableScreenSystem();
                 } else {

@@ -56,22 +56,13 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         this.serverStage = serverStage;
         this.serverGroup = serverGroup;
 
-        if (this.serverProcess.getMeta().getServerConfig().getProperties().contains(NetworkUtils.DEV_PROPERTY)) {
-            this.path = CloudNetWrapper.getInstance()
-                                       .getWrapperConfig()
-                                       .getDevServicePath() + NetworkUtils.SLASH_STRING + serverProcess.getMeta()
-                                                                                                       .getServiceId()
-                                                                                                       .getServerId();
-            this.custom = this.serverProcess.getMeta().getCustomServerDownload();
+        if (serverGroup.getGroupMode().equals(ServerGroupMode.STATIC) || serverGroup.getGroupMode()
+                                                                                    .equals(ServerGroupMode.STATIC_LOBBY)) {
+            this.path = "local/servers/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + this.serverProcess.getMeta()
+                                                                                                                 .getServiceId()
+                                                                                                                 .getServerId();
         } else {
-            if (serverGroup.getGroupMode().equals(ServerGroupMode.STATIC) || serverGroup.getGroupMode()
-                                                                                        .equals(ServerGroupMode.STATIC_LOBBY)) {
-                this.path = "local/servers/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + this.serverProcess.getMeta()
-                                                                                                                     .getServiceId()
-                                                                                                                     .getServerId();
-            } else {
-                this.path = "temp/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getServiceId();
-            }
+            this.path = "temp/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta().getServiceId();
         }
 
         this.dir = Paths.get(path);

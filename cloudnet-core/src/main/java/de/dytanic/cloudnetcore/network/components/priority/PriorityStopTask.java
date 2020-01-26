@@ -31,7 +31,7 @@ public final class PriorityStopTask implements Runnable {
     public void run() {
 
         if (iNetworkComponent instanceof ProxyServer) {
-            if (!getWrapperInstance().getProxys().containsKey(iNetworkComponent.getServerId()) && future != null) {
+            if (!getWrapperInstance().getProxies().containsKey(iNetworkComponent.getServerId()) && future != null) {
                 future.cancel(true);
             }
         }

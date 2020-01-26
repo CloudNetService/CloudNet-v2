@@ -19,7 +19,7 @@ public final class PacketInAddProxy implements PacketInHandler {
         ProxyInfo nullServerInfo = packet.getData().getObject("proxyInfo", ProxyInfo.TYPE);
         ProxyProcessMeta proxyProcessMeta = packet.getData().getObject("proxyProcess", ProxyProcessMeta.TYPE);
         ProxyServer minecraftServer = new ProxyServer(proxyProcessMeta, wrapper, nullServerInfo);
-        wrapper.getProxys().put(proxyProcessMeta.getServiceId().getServerId(), minecraftServer);
+        wrapper.getProxies().put(proxyProcessMeta.getServiceId().getServerId(), minecraftServer);
         wrapper.getWaitingServices().remove(minecraftServer.getServerId());
 
         CloudNet.getInstance().getNetworkManager().handleProxyAdd(minecraftServer);

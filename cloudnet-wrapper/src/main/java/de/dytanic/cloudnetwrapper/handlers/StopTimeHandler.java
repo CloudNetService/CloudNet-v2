@@ -2,7 +2,6 @@ package de.dytanic.cloudnetwrapper.handlers;
 
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.server.BungeeCord;
-import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
 
 public final class StopTimeHandler implements IWrapperHandler {
@@ -23,17 +22,7 @@ public final class StopTimeHandler implements IWrapperHandler {
             }
         }
 
-        for (CloudGameServer gameServer : CloudNetWrapper.getInstance().getCloudServers().values()) {
-            try {
-                if (!gameServer.isAlive()) {
-                    gameServer.shutdown();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        for (BungeeCord bungeeCord : CloudNetWrapper.getInstance().getProxys().values()) {
+        for (BungeeCord bungeeCord : CloudNetWrapper.getInstance().getProxies().values()) {
             try {
                 if (!bungeeCord.isAlive()) {
                     bungeeCord.shutdown();

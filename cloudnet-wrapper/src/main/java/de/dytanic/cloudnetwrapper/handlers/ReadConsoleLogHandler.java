@@ -3,7 +3,6 @@ package de.dytanic.cloudnetwrapper.handlers;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.BungeeCord;
-import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
 
 import java.io.InputStream;
@@ -17,13 +16,7 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
 
     @Override
     public void accept(CloudNetWrapper obj) {
-        for (CloudGameServer cloudGameServer : obj.getCloudServers().values()) {
-            if (cloudGameServer.isAlive() && cloudGameServer.getInstance() != null) {
-                readConsoleLog(cloudGameServer);
-            }
-        }
-
-        for (BungeeCord bungeeCord : obj.getProxys().values()) {
+        for (BungeeCord bungeeCord : obj.getProxies().values()) {
             if (bungeeCord.isAlive() && bungeeCord.getInstance() != null) {
                 readConsoleLog(bungeeCord);
             }

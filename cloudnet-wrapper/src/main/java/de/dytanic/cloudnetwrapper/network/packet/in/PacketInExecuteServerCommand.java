@@ -20,8 +20,8 @@ public class PacketInExecuteServerCommand implements PacketInHandler {
             }
         } else {
             ProxyInfo serverInfo = packet.getData().getObject("proxyInfo", ProxyInfo.TYPE);
-            if (CloudNetWrapper.getInstance().getProxys().containsKey(serverInfo.getServiceId().getServerId())) {
-                CloudNetWrapper.getInstance().getProxys().get(
+            if (CloudNetWrapper.getInstance().getProxies().containsKey(serverInfo.getServiceId().getServerId())) {
+                CloudNetWrapper.getInstance().getProxies().get(
                     serverInfo.getServiceId().getServerId()).executeCommand(
                     packet.getData().getString("commandLine"));
             }

@@ -34,7 +34,7 @@ public final class CommandList extends Command {
             }
 
             sender.sendMessage(" ", "Proxys:");
-            for (ProxyServer proxyServer : wrapper.getProxys().values()) {
+            for (ProxyServer proxyServer : wrapper.getProxies().values()) {
                 sender.sendMessage("Proxy [" + proxyServer.getServerId() + "] @" + proxyServer.getNetworkInfo()
                                                                                               .getHostName() + " | " + proxyServer.getProxyInfo()
                                                                                                                                   .getOnlineCount() + NetworkUtils.SLASH_STRING + CloudNet

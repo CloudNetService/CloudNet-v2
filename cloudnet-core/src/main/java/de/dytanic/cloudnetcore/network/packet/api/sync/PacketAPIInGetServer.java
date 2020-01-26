@@ -5,7 +5,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
-import de.dytanic.cloudnetcore.network.components.CloudServer;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 
 /**
@@ -18,12 +17,7 @@ public class PacketAPIInGetServer implements PacketAPIIO {
         if (minecraftServer != null) {
             packetSender.sendPacket(getResult(packet, new Document("serverInfo", minecraftServer.getServerInfo())));
         } else {
-            CloudServer cloudServer = CloudNet.getInstance().getCloudGameServer(packet.getData().getString("server"));
-            if (cloudServer != null) {
-                packetSender.sendPacket(getResult(packet, new Document("serverInfo", cloudServer.getServerInfo())));
-            } else {
-                packetSender.sendPacket(getResult(packet, new Document()));
-            }
+            packetSender.sendPacket(getResult(packet, new Document()));
         }
     }
 

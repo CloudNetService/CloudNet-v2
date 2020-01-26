@@ -18,13 +18,13 @@ public final class PacketInRemoveProxy implements PacketInHandler {
         Wrapper wrapper = (Wrapper) packetSender;
         ProxyInfo proxyInfo = packet.getData().getObject("proxyInfo", ProxyInfo.TYPE);
 
-        if (wrapper.getProxys().containsKey(proxyInfo.getServiceId().getServerId())) {
-            ProxyServer minecraftServer = wrapper.getProxys().get(proxyInfo.getServiceId().getServerId());
+        if (wrapper.getProxies().containsKey(proxyInfo.getServiceId().getServerId())) {
+            ProxyServer minecraftServer = wrapper.getProxies().get(proxyInfo.getServiceId().getServerId());
             if (minecraftServer.getChannel() != null) {
                 minecraftServer.getChannel().close();
             }
 
-            wrapper.getProxys().remove(proxyInfo.getServiceId().getServerId());
+            wrapper.getProxies().remove(proxyInfo.getServiceId().getServerId());
             CloudNet.getInstance().getNetworkManager().handleProxyRemove(minecraftServer);
             CloudNet.getInstance().getScreenProvider().handleDisableScreen(proxyInfo.getServiceId());
         }

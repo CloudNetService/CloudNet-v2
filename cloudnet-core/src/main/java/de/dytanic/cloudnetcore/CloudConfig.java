@@ -46,7 +46,7 @@ public class CloudConfig {
 
     private Collection<ConnectableAddress> addresses;
 
-    private boolean autoUpdate, notifyService, cloudDynamicServices, cloudDevServices;
+    private boolean autoUpdate, notifyService, cloudDynamicServices;
 
     private String formatSplitter, wrapperKey;
 
@@ -58,7 +58,7 @@ public class CloudConfig {
 
     private Document serviceDocument, userDocument;
 
-    private List<String> disabledModules, cloudServerWrapperList;
+    private List<String> disabledModules;
 
     private Map<String, Object> networkProperties;
 
@@ -93,7 +93,6 @@ public class CloudConfig {
         configuration.set("general.server-name-splitter", "-");
         configuration.set("general.notify-service", true);
         configuration.set("general.disabled-modules", new ArrayList<>());
-        configuration.set("general.cloudGameServer-wrapperList", Collections.singletonList("Wrapper-1"));
 
         configuration.set("general.haste.server",
                           Arrays.asList("https://hastebin.com",
@@ -155,7 +154,6 @@ public class CloudConfig {
             this.wrapperKey = NetworkUtils.readWrapperKey();
             this.autoUpdate = configuration.getBoolean("general.auto-update");
             this.notifyService = configuration.getBoolean("general.notify-service");
-            this.cloudDevServices = configuration.getBoolean("general.devservices");
             this.cloudDynamicServices = configuration.getBoolean("general.dynamicservices");
             this.webServerConfig = new WebServerConfig(true,
                                                        configuration.getString("server.webservice.hostaddress"),
@@ -181,18 +179,9 @@ public class CloudConfig {
                 }
             }
 
-            if (!configuration.getSection("general").contains("cloudGameServer-wrapperList")) {
-                configuration.set("general.cloudGameServer-wrapperList", Collections.singletonList("Wrapper-1"));
-
-                try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-                    CONFIGURATION_PROVIDER.save(configuration, writer);
-                }
-            }
-
             this.hasteServer = configuration.getStringList("general.haste.server");
 
             this.disabledModules = configuration.getStringList("general.disabled-modules");
-            this.cloudServerWrapperList = configuration.getStringList("general.cloudGameServer-wrapperList");
         }
 
         this.serviceDocument = Document.loadDocument(servicePath);
@@ -338,10 +327,6 @@ public class CloudConfig {
         return this.cloudDynamicServices;
     }
 
-    public boolean isCloudDevServices() {
-        return this.cloudDevServices;
-    }
-
     public String getFormatSplitter() {
         return this.formatSplitter;
     }
@@ -372,10 +357,6 @@ public class CloudConfig {
 
     public List<String> getDisabledModules() {
         return this.disabledModules;
-    }
-
-    public List<String> getCloudServerWrapperList() {
-        return this.cloudServerWrapperList;
     }
 
     public Map<String, Object> getNetworkProperties() {

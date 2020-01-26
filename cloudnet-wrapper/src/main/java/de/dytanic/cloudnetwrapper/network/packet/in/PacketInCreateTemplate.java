@@ -9,12 +9,12 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroupType;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.util.FileUtility;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -103,7 +103,7 @@ public final class PacketInCreateTemplate implements PacketInHandler {
                     while (entryEnumeration.hasMoreElements()) {
                         ZipEntry entry = entryEnumeration.nextElement();
                         if (!entry.isDirectory()) {
-                            CloudGameServer.extractEntry(zip, entry, basePath);
+                            extractEntry(zip, entry, basePath);
                         }
                     }
 
@@ -119,9 +119,41 @@ public final class PacketInCreateTemplate implements PacketInHandler {
         }
     }
 
+    public static void extractEntry(ZipFile zipFile, ZipEntry entry, Path destDir) throws IOException {
+        Path outputPath = destDir.resolve(entry.getName());
+
+        if (!outputPath.normalize().startsWith(destDir)) {
+            return;
+        }
+
+        if (entry.isDirectory()) {
+            Files.createDirectories(outputPath);
+        } else {
+            Files.createDirectory(outputPath.getParent());
+            Files.copy(zipFile.getInputStream(entry), outputPath);
+        }
+    }
+
     private static void createGlowstoneTemplate(final ServerGroup serverGroup, final Template template) {
         Path path = Paths.get("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName() + "/glowstone.jar");
-        CloudGameServer.downloadGlowstone(path);
+        downloadGlowstone(path);
+    }
+
+    public static void downloadGlowstone(final Path path) {
+        if (!Files.exists(path)) {
+            try {
+                URLConnection connection = new URL("https://yivesmirror.com/grab/glowstone/Glowstone-latest.jar").openConnection();
+                connection.setUseCaches(false);
+                connection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
+                connection.connect();
+                System.out.println("Downloading glowstone.jar...");
+                Files.copy(connection.getInputStream(), path);
+                System.out.println("Download was completed successfully");
+                ((HttpURLConnection) connection).disconnect();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
 }

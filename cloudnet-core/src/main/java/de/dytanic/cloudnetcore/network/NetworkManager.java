@@ -26,7 +26,10 @@ import de.dytanic.cloudnetcore.api.event.player.*;
 import de.dytanic.cloudnetcore.api.event.server.*;
 import de.dytanic.cloudnetcore.database.PlayerDatabase;
 import de.dytanic.cloudnetcore.database.StatisticManager;
-import de.dytanic.cloudnetcore.network.components.*;
+import de.dytanic.cloudnetcore.network.components.INetworkComponent;
+import de.dytanic.cloudnetcore.network.components.MinecraftServer;
+import de.dytanic.cloudnetcore.network.components.ProxyServer;
+import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.network.components.util.ChannelFilter;
 import de.dytanic.cloudnetcore.network.packet.out.*;
 import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
@@ -83,7 +86,7 @@ public final class NetworkManager {
         cloudNetwork.setModules(moduleProperties);
         //cloudNetwork.setNotifySystem(CloudNet.getInstance().getConfig().isNotifyService());
         cloudNetwork.setWebPort(CloudNet.getInstance().getConfig().getWebServerConfig().getPort());
-        //cloudNetwork.setDevServices(CloudNet.getInstance().getConfig().isCloudDevServices());
+
         Collection<WrapperInfo> wrappers = new LinkedList<>();
         for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
             if (wrapper.getWrapperInfo() != null) {
@@ -140,26 +143,20 @@ public final class NetworkManager {
 
     public NetworkManager sendAll(Packet packet, ChannelFilter filter) {
         NetworkUtils.getExecutor().submit(() -> {
-            for (Wrapper cn : CloudNet.getInstance().getWrappers().values()) {
-                if (cn.getChannel() != null && filter.accept(cn)) {
-                    cn.sendPacket(packet);
+            for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
+                if (wrapper.getChannel() != null && filter.accept(wrapper)) {
+                    wrapper.sendPacket(packet);
                 }
 
-                for (ProxyServer proxyServer : cn.getProxys().values()) {
+                for (ProxyServer proxyServer : wrapper.getProxies().values()) {
                     if (proxyServer.getChannel() != null && filter.accept(proxyServer)) {
                         proxyServer.sendPacket(packet);
                     }
                 }
 
-                for (MinecraftServer minecraftServer : cn.getServers().values()) {
+                for (MinecraftServer minecraftServer : wrapper.getServers().values()) {
                     if (minecraftServer.getChannel() != null && filter.accept(minecraftServer)) {
                         minecraftServer.sendPacket(packet);
-                    }
-                }
-
-                for (CloudServer cloudServer : cn.getCloudServers().values()) {
-                    if (cloudServer.getChannel() != null && filter.accept(cloudServer)) {
-                        cloudServer.sendPacket(packet);
                     }
                 }
 
@@ -319,26 +316,11 @@ public final class NetworkManager {
                                                                                                                      .size());
     }
 
-    public void handleServerAdd(CloudServer minecraftServer) {
-        System.out.println("CloudServer [" + minecraftServer.getServerId() + "] is registered on CloudNet");
-        this.sendAllUpdate(new PacketOutServerAdd(minecraftServer.getServerInfo()));
-        CloudNet.getInstance().getEventManager().callEvent(new CloudServerAddEvent(minecraftServer));
-        StatisticManager.getInstance().addStartedServers();
-        StatisticManager.getInstance().highestServerOnlineCount(CloudNet.getInstance().getServers().size() + CloudNet.getInstance()
-                                                                                                                     .getProxys()
-                                                                                                                     .size());
-    }
-
     public void handleServerInfoUpdate(MinecraftServer minecraftServer, ServerInfo incoming) {
         minecraftServer.setServerInfo(incoming);
         CloudNet.getInstance().getEventManager().callEvent(new ServerInfoUpdateEvent(minecraftServer, incoming));
         this.sendAllUpdate(new PacketOutUpdateServerInfo(incoming));
 
-    }
-
-    public void handleServerInfoUpdate(CloudServer minecraftServer, ServerInfo incoming) {
-        minecraftServer.setServerInfo(incoming);
-        this.sendAllUpdate(new PacketOutUpdateServerInfo(incoming));
     }
 
     public void handleProxyInfoUpdate(ProxyServer proxyServer, ProxyInfo incoming) {
@@ -365,12 +347,6 @@ public final class NetworkManager {
     public void handleServerRemove(MinecraftServer minecraftServer) {
         System.out.println("Server [" + minecraftServer.getServerId() + "] is unregistered on CloudNet");
         CloudNet.getInstance().getEventManager().callEvent(new ServerRemoveEvent(minecraftServer));
-        this.sendAllUpdate(new PacketOutServerRemove(minecraftServer.getServerInfo()));
-    }
-
-    public void handleServerRemove(CloudServer minecraftServer) {
-        System.out.println("CloudServer [" + minecraftServer.getServerId() + "] is unregistered on CloudNet");
-        CloudNet.getInstance().getEventManager().callEvent(new CloudServerRemoveEvent(minecraftServer));
         this.sendAllUpdate(new PacketOutServerRemove(minecraftServer.getServerInfo()));
     }
 

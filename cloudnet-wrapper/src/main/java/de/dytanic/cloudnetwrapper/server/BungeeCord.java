@@ -406,7 +406,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         System.out.println("Proxy " + this + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
 
         this.instance = Runtime.getRuntime().exec(commandBuilder.substring(0).split(NetworkUtils.SPACE_STRING), null, new File(path));
-        CloudNetWrapper.getInstance().getProxys().put(this.proxyProcessMeta.getServiceId().getServerId(), this);
+        CloudNetWrapper.getInstance().getProxies().put(this.proxyProcessMeta.getServiceId().getServerId(), this);
         return true;
     }
 
@@ -452,7 +452,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
             FileUtility.deleteDirectory(new File(path));
         }
 
-        CloudNetWrapper.getInstance().getProxys().remove(getServiceId().getServerId());
+        CloudNetWrapper.getInstance().getProxies().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveProxy(proxyInfo));
         System.out.println("Proxy " + this + " was stopped");
 

@@ -81,11 +81,11 @@ public final class NetworkConnection implements PacketSender {
         return "Network-Connector";
     }
 
-    public boolean tryConnect(boolean ssl, SimpleChannelInboundHandler<Packet> default_handler, Auth auth) {
-        return tryConnect(ssl, default_handler, auth, null);
+    public boolean tryConnect(boolean ssl, SimpleChannelInboundHandler<Packet> channelInboundHandler, Auth auth) {
+        return tryConnect(ssl, channelInboundHandler, auth, null);
     }
 
-    public boolean tryConnect(boolean ssl, SimpleChannelInboundHandler<Packet> default_handler, Auth auth, Runnable cancelTask) {
+    public boolean tryConnect(boolean ssl, SimpleChannelInboundHandler<Packet> channelInboundHandler, Auth auth, Runnable cancelTask) {
         try {
             if (ssl) {
                 sslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
@@ -103,7 +103,7 @@ public final class NetworkConnection implements PacketSender {
                                                                  connectableAddress.getHostName(),
                                                                  connectableAddress.getPort()));
                                                          }
-                                                         NetworkUtils.initChannel(channel).pipeline().addLast(default_handler);
+                                                         NetworkUtils.initChannel(channel).pipeline().addLast(channelInboundHandler);
                                                      }
                                                  })
                                                  .channel(NetworkUtils.socketChannel());
@@ -118,7 +118,7 @@ public final class NetworkConnection implements PacketSender {
             return true;
         } catch (Exception ex) {
             connectionTries++;
-            System.out.println("Failed to connect... [" + connectionTries + ']');
+            System.out.printf("Failed to connect... [%d]", connectionTries);
             ex.printStackTrace();
 
             if (this.channel != null) {
@@ -152,12 +152,7 @@ public final class NetworkConnection implements PacketSender {
         if (channel.eventLoop().inEventLoop()) {
             channel.writeAndFlush(object);
         } else {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run() {
-                    channel.writeAndFlush(object);
-                }
-            });
+            channel.eventLoop().execute(() -> channel.writeAndFlush(object));
         }
     }
 

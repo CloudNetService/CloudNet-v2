@@ -12,8 +12,6 @@ public class PacketInStopServer implements PacketInHandler {
         ServerInfo serverInfo = packet.getData().getObject("serverInfo", ServerInfo.TYPE);
         if (CloudNetWrapper.getInstance().getServers().containsKey(serverInfo.getServiceId().getServerId())) {
             CloudNetWrapper.getInstance().getServers().get(serverInfo.getServiceId().getServerId()).shutdown();
-        } else if (CloudNetWrapper.getInstance().getCloudServers().containsKey(serverInfo.getServiceId().getServerId())) {
-            CloudNetWrapper.getInstance().getCloudServers().get(serverInfo.getServiceId().getServerId()).shutdown();
         }
     }
 }

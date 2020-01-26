@@ -10,8 +10,8 @@ public class PacketInStopProxy implements PacketInHandler {
 
     public void handleInput(Packet packet, PacketSender packetSender) {
         ProxyInfo serverInfo = packet.getData().getObject("proxyInfo", ProxyInfo.TYPE);
-        if (CloudNetWrapper.getInstance().getProxys().containsKey(serverInfo.getServiceId().getServerId())) {
-            CloudNetWrapper.getInstance().getProxys().get(serverInfo.getServiceId().getServerId()).shutdown();
+        if (CloudNetWrapper.getInstance().getProxies().containsKey(serverInfo.getServiceId().getServerId())) {
+            CloudNetWrapper.getInstance().getProxies().get(serverInfo.getServiceId().getServerId()).shutdown();
         }
     }
 }

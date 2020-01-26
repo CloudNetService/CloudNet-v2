@@ -24,8 +24,10 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
-import de.dytanic.cloudnet.lib.server.*;
-import de.dytanic.cloudnet.lib.server.defaults.BasicServerConfig;
+import de.dytanic.cloudnet.lib.server.ProxyGroup;
+import de.dytanic.cloudnet.lib.server.ServerConfig;
+import de.dytanic.cloudnet.lib.server.ServerGroup;
+import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
@@ -1167,7 +1169,7 @@ public final class CloudAPI {
                         priorityStop,
                         properties,
                         null,
-                        new ArrayList<>());
+                        Collections.emptyList());
     }
 
     /**
@@ -1200,7 +1202,7 @@ public final class CloudAPI {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "startGameServer",
-                         String.format("Starting game server: %s, %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s%n",
+                         String.format("Starting game server: %s, %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s",
                                        wrapperInfo,
                                        simpleServerGroup,
                                        serverId,
@@ -1227,120 +1229,6 @@ public final class CloudAPI {
                                                               onlineMode,
                                                               plugins,
                                                               url));
-    }
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(WrapperInfo wrapperInfo, String serverName, int memory, boolean priorityStop) {
-        startCloudServer(wrapperInfo, serverName, new BasicServerConfig(), memory, priorityStop);
-    }
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(WrapperInfo wrapperInfo, String serverName, ServerConfig serverConfig, int memory, boolean priorityStop) {
-        startCloudServer(wrapperInfo,
-                         serverName,
-                         serverConfig,
-                         memory,
-                         priorityStop,
-                         CloudAPI.EMPTY_STRING_ARRAY,
-                         new ArrayList<>(),
-                         new Properties(),
-                         ServerGroupType.BUKKIT);
-    }
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(WrapperInfo wrapperInfo,
-                                 String serverName,
-                                 ServerConfig serverConfig,
-                                 int memory,
-                                 boolean priorityStop,
-                                 String[] processPreParameters,
-                                 Collection<ServerInstallablePlugin> plugins,
-                                 Properties properties,
-                                 ServerGroupType serverGroupType) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "startCloudServer",
-                         String.format("Starting cloud server: %s, %s, %s, %d, %s, %s, %s, %s, %s%n",
-                                       wrapperInfo,
-                                       serverName,
-                                       serverConfig,
-                                       memory,
-                                       priorityStop,
-                                       Arrays.toString(processPreParameters),
-                                       plugins,
-                                       properties,
-                                       serverGroupType));
-        networkConnection.sendPacket(new PacketOutStartCloudServer(wrapperInfo,
-                                                                   serverName,
-                                                                   serverConfig,
-                                                                   memory,
-                                                                   priorityStop,
-                                                                   processPreParameters,
-                                                                   plugins,
-                                                                   properties,
-                                                                   serverGroupType));
-    }
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(String serverName, int memory, boolean priorityStop) {
-        startCloudServer(serverName, new BasicServerConfig(), memory, priorityStop);
-    }
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(String serverName, ServerConfig serverConfig, int memory, boolean priorityStop) {
-        startCloudServer(serverName,
-                         serverConfig,
-                         memory,
-                         priorityStop,
-                         CloudAPI.EMPTY_STRING_ARRAY,
-                         new ArrayList<>(),
-                         new Properties(),
-                         ServerGroupType.BUKKIT);
-    }
-
-    /*==========================================================================*/
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(String serverName,
-                                 ServerConfig serverConfig,
-                                 int memory,
-                                 boolean priorityStop,
-                                 String[] processPreParameters,
-                                 Collection<ServerInstallablePlugin> plugins,
-                                 Properties properties,
-                                 ServerGroupType serverGroupType) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "startCloudServer",
-                         String.format("Starting cloud server: %s, %s, %d, %s, %s, %s, %s, %s%n",
-                                       serverName,
-                                       serverConfig,
-                                       memory,
-                                       priorityStop,
-                                       Arrays.toString(processPreParameters),
-                                       plugins,
-                                       properties,
-                                       serverGroupType));
-        networkConnection.sendPacket(new PacketOutStartCloudServer(serverName,
-                                                                   serverConfig,
-                                                                   memory,
-                                                                   priorityStop,
-                                                                   processPreParameters,
-                                                                   plugins,
-                                                                   properties,
-                                                                   serverGroupType));
     }
 
     /**
@@ -1382,23 +1270,6 @@ public final class CloudAPI {
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(), networkConnection);
-        return result.getResult().getObject("serverInfos", SERVER_INFO_COLLECTION_TYPE);
-    }
-
-    /**
-     * Queries the master for all running cloud servers on the network.
-     * Cloud servers are servers, which do not belong to any server group.
-     *
-     * @return a collection containing all running cloud servers.
-     */
-    public Collection<ServerInfo> getCloudServers() {
-        if (cloudService != null && cloudService.isProxyInstance()) {
-            return cloudService.getServers().values().stream()
-                               .filter(serverInfo -> serverInfo.getServiceId().getGroup() == null)
-                               .collect(Collectors.toList());
-        }
-
-        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetCloudServers(), networkConnection);
         return result.getResult().getObject("serverInfos", SERVER_INFO_COLLECTION_TYPE);
     }
 

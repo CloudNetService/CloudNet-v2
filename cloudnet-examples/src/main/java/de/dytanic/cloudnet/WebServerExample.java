@@ -27,9 +27,8 @@ public class WebServerExample
                                 QueryDecoder queryDecoder,
                                 PathProvider pathProvider,
                                 HttpRequest httpRequest) throws Exception {
-        return newResponse(httpRequest.getProtocolVersion(),
-                           Unpooled.wrappedBuffer(pathProvider.getPathParameters()
-                                                              .getString("myCustomPattern")
-                                                              .getBytes(StandardCharsets.UTF_8)));
+        return newResponse(httpRequest.protocolVersion(),
+                           Unpooled.copiedBuffer(pathProvider.getPathParameters().getString("myCustomPattern"),
+                                                 StandardCharsets.UTF_8));
     }
 }

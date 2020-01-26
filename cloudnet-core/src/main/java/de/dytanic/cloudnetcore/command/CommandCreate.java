@@ -77,10 +77,6 @@ public final class CommandCreate extends Command {
                     startServersOnWrapper(sender, args);
                     break;
                 }
-                if (args[0].equalsIgnoreCase("cloudserver") || args[0].equalsIgnoreCase("cs")) {
-                    startCloudServer(sender, args);
-                    break;
-                }
                 if (args[0].equalsIgnoreCase("template")) {
                     if (CloudNet.getInstance().getServerGroups().containsKey(args[2])) {
                         if (args[3].equalsIgnoreCase("local")) {
@@ -110,7 +106,6 @@ public final class CommandCreate extends Command {
                                    "create PROXY <proxyGroup> <count> <wrapper> | Creates a proxy server of a proxy group. <count> is not mandatory",
                                    "create SERVER <serverGroup> <count> | Creates a game server of a server group. <count> is not mandatory",
                                    "create SERVER <serverGroup> <count> <wrapper> | Creates a game server of a server group. <count> is not mandatory",
-                                   "create CLOUDSERVER <name> <memory> <priorityStop>",
                                    "create PROXYGROUP <name> | Creates a completely new proxy group for BungeeCord with its own configurations, etc.",
                                    "create SERVERGROUP <name> | Creates a completely new server group for Minecraft servers with its own configurations, etc.",
                                    "create DISPATCHCOMMAND <main-command> <command> | Creates a simple command alias",
@@ -182,15 +177,6 @@ public final class CommandCreate extends Command {
             sender.sendMessage("Trying to startup a game server...");
         } else {
             sender.sendMessage("The server group or wrapper doesn't exists");
-        }
-    }
-
-    private static void startCloudServer(final CommandSender sender, final String[] args) {
-        if (NetworkUtils.checkIsNumber(args[2])) {
-            CloudNet.getInstance().startCloudServer(args[1], Integer.parseInt(args[2]), args[3].equalsIgnoreCase("true"));
-            sender.sendMessage("Trying to startup a cloud server...");
-        } else {
-            sender.sendMessage("Invalid argument!");
         }
     }
 

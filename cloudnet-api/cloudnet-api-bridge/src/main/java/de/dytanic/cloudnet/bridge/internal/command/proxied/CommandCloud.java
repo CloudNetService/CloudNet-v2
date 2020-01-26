@@ -475,17 +475,6 @@ public final class CommandCloud extends Command implements TabExecutor {
                     }
                 }
                 break;
-            case 4:
-                if (args[0].equalsIgnoreCase("startcs") && commandSender.hasPermission("cloudnet.command.cloud.startcs")) {
-                    if (NetworkUtils.checkIsNumber(args[2]) && Integer.parseInt(args[2]) > 128) {
-                        CloudAPI.getInstance().startCloudServer(args[1], Integer.parseInt(args[2]), args[3].equalsIgnoreCase("true"));
-                        commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
-                                                                                       .getPrefix() + "The information was sent to the cloud"));
-                    } else {
-                        commandSender.sendMessage(TextComponent.fromLegacyText("Invalid arguments!"));
-                    }
-                }
-                break;
             default:
             	Lists.newArrayList(NetworkUtils.SPACE_STRING,
                         CloudAPI.getInstance().getPrefix() + "All command arguments",
@@ -497,7 +486,6 @@ public final class CommandCloud extends Command implements TabExecutor {
                         CloudAPI.getInstance().getPrefix() + "§7/cloud whitelist <add : remove> <name>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud start <group> <count>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud start <group> <template>",
-                        CloudAPI.getInstance().getPrefix() + "§7/cloud startcs <name> <memory> <priorityStop>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud cmds (command server) <server> <command>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud cmdp (command proxy) <proxy> <command>",
                         CloudAPI.getInstance().getPrefix() + "§7/cloud stop <server>",
@@ -553,7 +541,6 @@ public final class CommandCloud extends Command implements TabExecutor {
                                         "setMaxPlayers",
                                         "whitelist",
                                         "start",
-                                        "startcs",
                                         "cmds",
                                         "cmdp",
                                         "stop",

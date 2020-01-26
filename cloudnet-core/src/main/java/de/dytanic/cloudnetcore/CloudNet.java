@@ -6,7 +6,6 @@ import de.dytanic.cloudnet.event.EventManager;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.cloudserver.CloudServerMeta;
 import de.dytanic.cloudnet.lib.hash.DyHash;
 import de.dytanic.cloudnet.lib.interfaces.Executable;
 import de.dytanic.cloudnet.lib.interfaces.Reloadable;
@@ -14,7 +13,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.server.*;
-import de.dytanic.cloudnet.lib.server.defaults.BasicServerConfig;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
@@ -449,9 +447,6 @@ public final class CloudNet implements Executable, Reloadable {
         packetManager.registerHandler(PacketRC.CN_WRAPPER + 11, PacketInUpdateCPUUsage.class);
         packetManager.registerHandler(PacketRC.CN_WRAPPER + 12, PacketInWrapperScreen.class);
 
-        packetManager.registerHandler(PacketRC.CN_WRAPPER + 13, PacketInAddCloudServer.class);
-        packetManager.registerHandler(PacketRC.CN_WRAPPER + 14, PacketInRemoveCloudServer.class);
-
         packetManager.registerHandler(PacketRC.SERVER_HANDLE + 1, PacketInUpdateServerInfo.class);
         packetManager.registerHandler(PacketRC.SERVER_HANDLE + 2, PacketInUpdateProxyInfo.class);
         packetManager.registerHandler(PacketRC.SERVER_HANDLE + 3, PacketInCustomChannelMessage.class);
@@ -460,7 +455,6 @@ public final class CloudNet implements Executable, Reloadable {
         packetManager.registerHandler(PacketRC.SERVER_HANDLE + 6, PacketInStartProxy.class);
         packetManager.registerHandler(PacketRC.SERVER_HANDLE + 7, PacketInStopProxy.class);
         packetManager.registerHandler(PacketRC.SERVER_HANDLE + 8, PacketInCustomSubChannelMessage.class);
-        packetManager.registerHandler(PacketRC.SERVER_HANDLE + 9, PacketInStartCloudServer.class);
         packetManager.registerHandler(PacketRC.SERVER_HANDLE + 10, PacketInCopyDirectory.class);
 
         packetManager.registerHandler(PacketRC.PLAYER_HANDLE + 1, PacketInPlayerLoginRequest.class);
@@ -478,7 +472,6 @@ public final class CloudNet implements Executable, Reloadable {
         packetManager.registerHandler(PacketRC.API + 6, PacketAPIInGetServerGroup.class);
         packetManager.registerHandler(PacketRC.API + 7, PacketAPIInNameUUID.class);
         packetManager.registerHandler(PacketRC.API + 8, PacketAPIInGetServer.class);
-        packetManager.registerHandler(PacketRC.API + 9, PacketAPIInGetCloudServers.class);
         packetManager.registerHandler(PacketRC.API + 10, PacketAPIInGetStatistic.class);
         packetManager.registerHandler(PacketRC.API + 11, PacketAPIInGetRegisteredPlayers.class);
 
@@ -711,31 +704,6 @@ public final class CloudNet implements Executable, Reloadable {
                        .sum();
     }
 
-    public CloudServer getCloudGameServer(String serverId) {
-        return getCloudGameServers().get(serverId);
-    }
-
-    public Map<String, CloudServer> getCloudGameServers() {
-        Map<String, CloudServer> cloudServerMap = new HashMap<>();
-
-        for (Wrapper wrapper : wrappers.values()) {
-            cloudServerMap.putAll(wrapper.getCloudServers());
-        }
-
-        return cloudServerMap;
-    }
-
-    public Collection<CloudServer> getCloudGameServers(String group) {
-        Collection<CloudServer> minecraftServers = new LinkedList<>();
-
-        for (CloudServer minecraftServer : getCloudGameServers().values()) {
-            if (minecraftServer.getServiceId().getGroup().equalsIgnoreCase(group)) {
-                minecraftServers.add(minecraftServer);
-            }
-        }
-        return minecraftServers;
-    }
-
     public Collection<String> getServersAndWaitings(String group) {
         List<String> serverIds = getServers(group).stream()
                                                   .map(MinecraftServer::getServerId)
@@ -792,7 +760,7 @@ public final class CloudNet implements Executable, Reloadable {
         Map<String, ProxyServer> minecraftServerMap = new HashMap<>();
 
         for (Wrapper wrapper : wrappers.values()) {
-            for (ProxyServer minecraftServer : wrapper.getProxys().values()) {
+            for (ProxyServer minecraftServer : wrapper.getProxies().values()) {
                 minecraftServerMap.put(minecraftServer.getServerId(), minecraftServer);
             }
         }
@@ -864,7 +832,7 @@ public final class CloudNet implements Executable, Reloadable {
     public Collection<String> getProxysByName() {
         Collection<String> x = new LinkedList<>();
         for (Wrapper wrapper : wrappers.values()) {
-            for (ProxyServer minecraftServer : wrapper.getProxys().values()) {
+            for (ProxyServer minecraftServer : wrapper.getProxies().values()) {
                 x.add(minecraftServer.getServerId());
             }
         }
@@ -958,7 +926,7 @@ public final class CloudNet implements Executable, Reloadable {
 
     public ProxyServer getProxy(String serverId) {
         for (Wrapper wrapper : wrappers.values()) {
-            for (ProxyServer minecraftServer : wrapper.getProxys().values()) {
+            for (ProxyServer minecraftServer : wrapper.getProxies().values()) {
                 if (minecraftServer.getServerId().equals(serverId)) {
                     return minecraftServer;
                 }
@@ -1182,74 +1150,6 @@ public final class CloudNet implements Executable, Reloadable {
                         serverProperties);
     }
 
-    public void startCloudServer(String serverName, int memory, boolean priorityStop) {
-        startCloudServer(serverName, new BasicServerConfig(), memory, priorityStop);
-    }
-
-    public void startCloudServer(String serverName, ServerConfig serverConfig, int memory, boolean priorityStop) {
-        startCloudServer(serverName,
-                         serverConfig,
-                         memory,
-                         priorityStop,
-                         EMPTY_STRING_ARRAY,
-                         new ArrayList<>(),
-                         new Properties(),
-                         ServerGroupType.BUKKIT);
-    }
-
-    public void startCloudServer(String serverName,
-                                 ServerConfig serverConfig,
-                                 int memory,
-                                 boolean priorityStop,
-                                 String[] processPreParameters,
-                                 Collection<ServerInstallablePlugin> plugins,
-                                 Properties properties,
-                                 ServerGroupType serverGroupType) {
-        Collection<Wrapper> wrappers = toWrapperInstances(config.getCloudServerWrapperList());
-        if (wrappers.size() == 0) {
-            return;
-        }
-        Wrapper wrapper = fetchPerformanceWrapper(memory, wrappers);
-        if (wrapper == null) {
-            return;
-        }
-        startCloudServer(wrapper,
-                         serverName,
-                         serverConfig,
-                         memory,
-                         priorityStop,
-                         processPreParameters,
-                         plugins,
-                         properties,
-                         serverGroupType);
-    }
-
-    public void startCloudServer(Wrapper wrapper,
-                                 String serverName,
-                                 ServerConfig serverConfig,
-                                 int memory,
-                                 boolean priorityStop,
-                                 String[] processPreParameters,
-                                 Collection<ServerInstallablePlugin> plugins,
-                                 Properties properties,
-                                 ServerGroupType serverGroupType) {
-        List<Integer> ports = wrapper.getServers().values().stream()
-                                     .map(MinecraftServer::getProcessMeta)
-                                     .map(ServerProcessMeta::getPort)
-                                     .collect(Collectors.toList());
-        int startPort = getStartPort(wrapper);
-        startCloudServer(wrapper,
-                         serverName,
-                         serverConfig,
-                         memory,
-                         priorityStop,
-                         processPreParameters,
-                         plugins,
-                         properties,
-                         serverGroupType,
-                         startPort);
-    }
-
     private static int getStartPort(final Wrapper wrapper) {
         List<Integer> ports = wrapper.getBoundPorts();
         int startport = wrapper.getWrapperInfo().getStartPort();
@@ -1257,62 +1157,6 @@ public final class CloudNet implements Executable, Reloadable {
             startport = (startport + NetworkUtils.RANDOM.nextInt(20) + 1);
         } while (ports.contains(startport));
         return startport;
-    }
-
-    public void startCloudServer(Wrapper wrapper,
-                                 String serverName,
-                                 ServerConfig serverConfig,
-                                 int memory,
-                                 boolean priorityStop,
-                                 String[] processPreParameters,
-                                 Collection<ServerInstallablePlugin> plugins,
-                                 Properties properties,
-                                 ServerGroupType serverGroupType,
-                                 int port) {
-        startCloudServer(wrapper,
-                         serverName,
-                         serverConfig,
-                         memory,
-                         priorityStop,
-                         processPreParameters,
-                         plugins,
-                         properties,
-                         serverGroupType,
-                         port,
-                         false);
-    }
-
-    public void startCloudServer(Wrapper wrapper,
-                                 String serverName,
-                                 ServerConfig serverConfig,
-                                 int memory,
-                                 boolean priorityStop,
-                                 String[] processPreParameters,
-                                 Collection<ServerInstallablePlugin> plugins,
-                                 Properties properties,
-                                 ServerGroupType serverGroupType,
-                                 int port,
-                                 boolean async) {
-        CloudServerMeta cloudServerMeta = new CloudServerMeta(new ServiceId("_null_",
-                                                                            -1,
-                                                                            UUID.randomUUID(),
-                                                                            wrapper.getServerId(),
-                                                                            serverName),
-                                                              memory,
-                                                              priorityStop,
-                                                              processPreParameters,
-                                                              plugins,
-                                                              serverConfig,
-                                                              port,
-                                                              //port
-                                                              serverName,
-                                                              properties,
-                                                              serverGroupType);
-        if (async) {
-            wrapper.startCloudServer(cloudServerMeta);
-        } else {
-            wrapper.startCloudServerAsync(cloudServerMeta);
-        }
     }
 
     public void startGameServer(ServerGroup serverGroup,

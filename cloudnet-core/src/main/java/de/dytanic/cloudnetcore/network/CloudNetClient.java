@@ -86,7 +86,7 @@ public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
                     ((Wrapper) networkComponent).disconnect();
                 } catch (Exception ex) {
                     ((Wrapper) networkComponent).getServers().clear();
-                    ((Wrapper) networkComponent).getProxys().clear();
+                    ((Wrapper) networkComponent).getProxies().clear();
                 }
 
                 CloudNet.getInstance().getEventManager().callEvent(new WrapperChannelDisconnectEvent(((Wrapper) networkComponent)));

@@ -4,7 +4,6 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnetcore.CloudNet;
-import de.dytanic.cloudnetcore.network.components.CloudServer;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
@@ -14,7 +13,7 @@ public final class CommandShutdown extends Command {
     public CommandShutdown() {
         super("shutdown", "cloudnet.command.shutdown");
 
-        description = "Stops all wrappers, proxys, servers or proxy/server groups";
+        description = "Stops all wrappers, proxies, servers or proxy/server groups";
 
     }
 
@@ -55,17 +54,12 @@ public final class CommandShutdown extends Command {
                 return;
             }
             if (args[0].equalsIgnoreCase("server") || args[0].equalsIgnoreCase("-s")) {
-                MinecraftServer proxyServer = CloudNet.getInstance().getServer(args[1]);
-                if (proxyServer != null) {
-                    proxyServer.getWrapper().stopServer(proxyServer);
+                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[1]);
+                if (minecraftServer != null) {
+                    minecraftServer.getWrapper().stopServer(minecraftServer);
                     sender.sendMessage("Server " + args[1] + " was stopped!");
                 } else {
-                    CloudServer proxyServers = CloudNet.getInstance().getCloudGameServer(args[1]);
-                    if (proxyServers != null) {
-                        proxyServers.getWrapper().stopServer(proxyServers);
-                    } else {
-                        sender.sendMessage("The server doesn't exist");
-                    }
+                    sender.sendMessage("The server doesn't exist");
                 }
                 return;
             }

@@ -6,7 +6,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
-import de.dytanic.cloudnetcore.network.components.CloudServer;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutCustomSubChannelMessage;
@@ -26,17 +25,10 @@ public class PacketInCustomSubChannelMessage implements PacketInHandler {
                 MinecraftServer minecraftServer = CloudNet.getInstance().getServer(packet.getData().getString("serverId"));
                 if (minecraftServer != null) {
                     minecraftServer.sendPacket(new PacketOutCustomSubChannelMessage(channel, message, document));
-                    return;
-                }
-
-                CloudServer cloudServer = CloudNet.getInstance().getCloudGameServer(packet.getData().getString("serverId"));
-                if (cloudServer != null) {
-                    cloudServer.sendPacket(new PacketOutCustomSubChannelMessage(channel, message, document));
                 }
             } else {
                 CloudNet.getInstance().getNetworkManager().sendAll(new PacketOutCustomSubChannelMessage(channel, message, document),
-                                                                   networkComponent -> networkComponent instanceof MinecraftServer ||
-                                                                       networkComponent instanceof CloudServer);
+                                                                   MinecraftServer.class::isInstance);
             }
         } else {
             if (packet.getData().contains("serverId")) {
