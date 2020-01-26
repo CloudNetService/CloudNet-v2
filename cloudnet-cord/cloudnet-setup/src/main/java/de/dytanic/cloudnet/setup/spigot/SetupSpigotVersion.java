@@ -68,12 +68,10 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
 
     private boolean installSpigot(ConsoleReader reader) {
         System.out.println(
-            "Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\", \"1.14\", \"1.14.1\", \"1.14.2\", \"1.14.3\", \"1.14.4\"]");
+            "Choose a Spigot version [\"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\", \"1.14\", \"1.14.1\", \"1.14.2\", \"1.14.3\", \"1.14.4\"]");
         while (true) {
             try {
                 switch (reader.readLine().toLowerCase()) {
-                    case "1.7.10":
-                        return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
                     case "1.8.8":
                         return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
                     case "1.9.4":

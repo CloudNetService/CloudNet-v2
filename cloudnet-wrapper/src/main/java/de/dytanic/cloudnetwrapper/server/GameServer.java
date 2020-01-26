@@ -488,7 +488,9 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         if (instance.isAlive()) {
             executeCommand("stop");
             try {
-                instance.waitFor(60, TimeUnit.SECONDS);
+                if (!instance.waitFor(60, TimeUnit.SECONDS)) {
+                    instance.destroyForcibly();
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 instance.destroyForcibly();

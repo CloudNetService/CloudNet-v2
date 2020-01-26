@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.dizitart</groupId>
             <artifactId>nitrite</artifactId>
-            <version>3.3.0</version>
+            <version>${dependency.nitrite.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
