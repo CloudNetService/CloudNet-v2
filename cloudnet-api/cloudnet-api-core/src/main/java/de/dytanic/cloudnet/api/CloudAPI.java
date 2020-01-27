@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class CloudAPI {
 
-    public static final Type MAP_UUID_OFFLINEPLAYER_TYPE = TypeToken.getParameterized(Map.class, UUID.class, OfflinePlayer.TYPE).getType();
+    private static final Type MAP_UUID_OFFLINEPLAYER_TYPE = TypeToken.getParameterized(Map.class, UUID.class, OfflinePlayer.TYPE).getType();
     private static final Type SERVER_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ServerInfo.class).getType();
     private static final Type PROXY_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ProxyInfo.class).getType();
     private static final Type COLLECTION_CLOUDPLAYER_TYPE = TypeToken.getParameterized(Collection.class, CloudPlayer.TYPE).getType();
@@ -80,8 +80,7 @@ public final class CloudAPI {
         instance = this;
         this.cloudConfigLoader = loader;
         this.config = loader.loadConfig();
-        this.networkConnection = new NetworkConnection(loader.loadConnnection(),
-                                                       new ConnectableAddress("0.0.0.0", 0));
+        this.networkConnection = new NetworkConnection(loader.loadConnnection(), new ConnectableAddress("0.0.0.0", 0));
         this.serviceId = config.getObject("serviceId", ServiceId.TYPE);
         this.memory = config.getInt("memory");
 
@@ -1445,7 +1444,11 @@ public final class CloudAPI {
     /*================================================================================*/
 
     /**
+     * Copies the given directory from the currently running server to its template.
+     * This is done by requesting the master to handle the instructions for the wrapper.
      *
+     * @param serverInfo the information about the currently running server.
+     * @param directory  the directory which will be copied to the running server's template.
      */
     public void copyDirectory(ServerInfo serverInfo, String directory) {
         if (serverInfo == null || directory == null) {
