@@ -1172,13 +1172,14 @@ public final class CloudAPI {
     }
 
     /**
-     * Start a new game server with full parameters
-     *
+     * @param wrapperInfo
      * @param simpleServerGroup
+     * @param serverId
      * @param serverConfig
      * @param memory
      * @param processParameters
      * @param template
+     * @param customServerName
      * @param onlineMode
      * @param priorityStop
      * @param properties

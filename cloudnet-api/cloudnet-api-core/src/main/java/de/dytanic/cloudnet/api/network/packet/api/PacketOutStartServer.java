@@ -23,16 +23,21 @@ public class PacketOutStartServer extends Packet {
                                 boolean priorityStop,
                                 String[] processParameters,
                                 Template template,
-                                String customServr,
+                                String customServer,
                                 boolean onlineMode,
                                 Collection<ServerInstallablePlugin> plugins,
                                 String urlTemplate) {
-        super(PacketRC.SERVER_HANDLE + 4, new Document("group", group).append("memory", memory).append("priorityStop", priorityStop).append(
-            "serverConfig",
-            serverConfig).append("properties", properties).append("processParameters", processParameters).append("customServer",
-                                                                                                                 customServr).append(
-            "onlineMode",
-            onlineMode).append("plugins", plugins).append("url", urlTemplate));
+        super(PacketRC.SERVER_HANDLE + 4,
+              new Document("group", group)
+                  .append("memory", memory)
+                  .append("serverConfig", serverConfig)
+                  .append("properties", properties)
+                  .append("priorityStop", priorityStop)
+                  .append("processParameters", processParameters)
+                  .append("customServer", customServer)
+                  .append("onlineMode", onlineMode)
+                  .append("plugins", plugins)
+                  .append("url", urlTemplate));
         if (template != null) {
             data.append("template", template);
         }
@@ -45,17 +50,23 @@ public class PacketOutStartServer extends Packet {
                                 boolean priorityStop,
                                 String[] processParameters,
                                 Template template,
-                                String customServr,
+                                String customServer,
                                 boolean onlineMode,
                                 Collection<ServerInstallablePlugin> plugins,
                                 String urlTemplate,
                                 String serverId) {
-        super(PacketRC.SERVER_HANDLE + 4, new Document("group", group).append("memory", memory).append("priorityStop", priorityStop).append(
-            "serverConfig",
-            serverConfig).append("properties", properties).append("processParameters", processParameters).append("customServer",
-                                                                                                                 customServr).append(
-            "onlineMode",
-            onlineMode).append("plugins", plugins).append("url", urlTemplate).append("serviceId", serverId));
+        super(PacketRC.SERVER_HANDLE + 4,
+              new Document("group", group)
+                  .append("memory", memory)
+                  .append("serverConfig", serverConfig)
+                  .append("properties", properties)
+                  .append("priorityStop", priorityStop)
+                  .append("processParameters", processParameters)
+                  .append("customServer", customServer)
+                  .append("onlineMode", onlineMode)
+                  .append("plugins", plugins)
+                  .append("url", urlTemplate)
+                  .append("customServer", serverId));
         if (template != null) {
             data.append("template", template);
         }
@@ -69,20 +80,22 @@ public class PacketOutStartServer extends Packet {
                                 boolean priorityStop,
                                 String[] processParameters,
                                 Template template,
-                                String customServr,
+                                String customServer,
                                 boolean onlineMode,
                                 Collection<ServerInstallablePlugin> plugins,
                                 String urlTemplate) {
-        super(PacketRC.SERVER_HANDLE + 4, new Document("group", group).append("wrapper", wrapper.getServerId())
-                                                                      .append("memory", memory)
-                                                                      .append("priorityStop", priorityStop)
-                                                                      .append("serverConfig", serverConfig)
-                                                                      .append("properties", properties)
-                                                                      .append("processParameters", processParameters)
-                                                                      .append("customServer", customServr)
-                                                                      .append("onlineMode", onlineMode)
-                                                                      .append("plugins", plugins)
-                                                                      .append("url", urlTemplate));
+        super(PacketRC.SERVER_HANDLE + 4,
+              new Document("group", group)
+                  .append("wrapper", wrapper.getServerId())
+                  .append("memory", memory)
+                  .append("serverConfig", serverConfig)
+                  .append("properties", properties)
+                  .append("priorityStop", priorityStop)
+                  .append("processParameters", processParameters)
+                  .append("customServer", customServer)
+                  .append("onlineMode", onlineMode)
+                  .append("plugins", plugins)
+                  .append("url", urlTemplate));
         if (template != null) {
             data.append("template", template);
         }
@@ -97,22 +110,23 @@ public class PacketOutStartServer extends Packet {
                                 boolean priorityStop,
                                 String[] processParameters,
                                 Template template,
-                                String customServr,
+                                String customServer,
                                 boolean onlineMode,
                                 Collection<ServerInstallablePlugin> plugins,
                                 String urlTemplate) {
-        super(PacketRC.SERVER_HANDLE + 4, new Document("group", group).append("wrapper", wrapperInfo.getServerId())
-                                                                      .append("priorityStop",
-                                                                              priorityStop)
-                                                                      .append("serviceId", serviceId)
-                                                                      .append("memory", memory)
-                                                                      .append("serverConfig", serverConfig)
-                                                                      .append("properties", properties)
-                                                                      .append("processParameters", processParameters)
-                                                                      .append("customServer", customServr)
-                                                                      .append("onlineMode", onlineMode)
-                                                                      .append("plugins", plugins)
-                                                                      .append("url", urlTemplate));
+        super(PacketRC.SERVER_HANDLE + 4,
+              new Document("group", group)
+                  .append("wrapper", wrapperInfo.getServerId())
+                  .append("serviceId", serviceId)
+                  .append("memory", memory)
+                  .append("serverConfig", serverConfig)
+                  .append("properties", properties)
+                  .append("priorityStop", priorityStop)
+                  .append("processParameters", processParameters)
+                  .append("customServer", customServer)
+                  .append("onlineMode", onlineMode)
+                  .append("plugins", plugins)
+                  .append("url", urlTemplate));
         if (template != null) {
             data.append("template", template);
         }
