@@ -151,14 +151,14 @@ public final class CloudNet implements Executable, Reloadable {
             setupProxy(proxyGroup);
         });
 
-        webServer = new WebServer(optionSet.has("ssl"), config.getWebServerConfig().getAddress(), config.getWebServerConfig().getPort());
+        webServer = new WebServer(config.getWebServerConfig().getAddress(), config.getWebServerConfig().getPort());
 
         this.initialCommands();
         this.initWebHandlers();
         this.initPacketHandlers();
 
         for (ConnectableAddress connectableAddress : config.getAddresses()) {
-            new CloudNetServer(optionSet, connectableAddress);
+            new CloudNetServer(connectableAddress);
         }
 
         webServer.bind();

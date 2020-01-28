@@ -9,10 +9,6 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
-import joptsimple.OptionSet;
 
 import java.net.InetSocketAddress;
 
@@ -21,20 +17,11 @@ import java.net.InetSocketAddress;
  */
 public final class CloudNetServer extends ChannelInitializer<Channel> implements AutoCloseable {
 
-    private SslContext sslContext;
     private final EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
     private final EventLoopGroup bossGroup = NetworkUtils.eventLoopGroup();
 
-    public CloudNetServer(OptionSet optionSet, ConnectableAddress connectableAddress) {
+    public CloudNetServer(ConnectableAddress connectableAddress) {
         try {
-            if (optionSet.has("ssl")) {
-                CloudNet.getLogger().finest("Enabling SSL Context for service requests");
-                SelfSignedCertificate ssc = new SelfSignedCertificate();
-                sslContext = SslContextBuilder
-                    .forServer(ssc.certificate(), ssc.privateKey())
-                    .build();
-            }
-
             ServerBootstrap serverBootstrap = new ServerBootstrap()
                 .group(bossGroup, workerGroup)
                 .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
@@ -97,10 +84,6 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
 
             for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
                 if (wrapper.getNetworkInfo().getHostName().equalsIgnoreCase(address.getAddress().getHostAddress())) {
-
-                    if (sslContext != null) {
-                        channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
-                    }
 
                     NetworkUtils.initChannel(channel);
                     channel.pipeline().addLast("client", new CloudNetClientAuth(channel));

@@ -8,12 +8,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
 
-import javax.net.ssl.SSLException;
-import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,13 +42,6 @@ public class WebServer {
     private EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
 
     /**
-     * The SSL context with certificate and private key, when SSL is enabled.
-     *
-     * @see #ssl
-     */
-    protected SslContext sslContext;
-
-    /**
      * The web handler provider of this web server.
      */
     protected WebServerProvider webServerProvider;
@@ -66,25 +54,13 @@ public class WebServer {
     /**
      * Constructs a new web server with the given configuration.
      *
-     * @param ssl  whether to use SSL with a self-signed certificate
      * @param host the host this web server is bound to.
      * @param port the port this web server is bound to.
-     *
-     * @throws CertificateException thrown when the certificate could not
-     *                              be generated.
-     * @throws SSLException         thrown when an error during the creation of the
-     *                              ssl context occurred.
      */
-    public WebServer(boolean ssl, String host, int port) throws CertificateException, SSLException {
-        this.ssl = ssl;
+    public WebServer(String host, int port) {
         this.address = host;
         this.port = port;
         this.webServerProvider = new WebServerProvider();
-
-        if (ssl) {
-            SelfSignedCertificate ssc = new SelfSignedCertificate();
-            sslContext = SslContextBuilder.forServer(ssc.key(), ssc.cert()).build();
-        }
 
         serverBootstrap = new ServerBootstrap()
             .group(acceptorGroup, workerGroup)
@@ -95,9 +71,6 @@ public class WebServer {
             .childHandler(new ChannelInitializer<Channel>() {
                 @Override
                 protected void initChannel(Channel channel) {
-                    if (sslContext != null) {
-                        channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
-                    }
                     channel.pipeline().addLast(new HttpServerCodec(),
                                                new HttpObjectAggregator(Integer.MAX_VALUE),
                                                new WebServerHandler(WebServer.this));
@@ -119,10 +92,6 @@ public class WebServer {
 
     public ServerBootstrap getServerBootstrap() {
         return serverBootstrap;
-    }
-
-    public SslContext getSslContext() {
-        return sslContext;
     }
 
     public String getAddress() {

@@ -69,16 +69,16 @@ public final class CloudAPI {
 
     /**
      * Logger instance set by the respective bootstrap.
-     * Don't use in constructor!
      */
-    private Logger logger;
+    private final Logger logger;
 
-    public CloudAPI(CloudConfigLoader loader) {
+    public CloudAPI(CloudConfigLoader loader, final Logger logger) {
         if (instance != null) {
             throw new IllegalStateException("CloudAPI already instantiated.");
         }
         instance = this;
         this.cloudConfigLoader = loader;
+        this.logger = logger;
         this.config = loader.loadConfig();
         this.networkConnection = new NetworkConnection(loader.loadConnnection(), new ConnectableAddress("0.0.0.0", 0));
         this.serviceId = config.getObject("serviceId", ServiceId.TYPE);
@@ -123,8 +123,7 @@ public final class CloudAPI {
      * Bootstraps the API and initiates the connection to the master.
      */
     public void bootstrap() {
-        this.networkConnection.tryConnect(config.getBoolean("ssl"),
-                                          new NetDispatcher(networkConnection, false),
+        this.networkConnection.tryConnect(new NetDispatcher(networkConnection, false),
                                           new Auth(serviceId),
                                           () -> {
                                               if (this.cloudService.isProxyInstance()) {
@@ -206,6 +205,9 @@ public final class CloudAPI {
         return result.getResult().getObject("serverInfos", SERVER_INFO_COLLECTION_TYPE);
     }
 
+    /**
+     * @return the cloud service backing this API, may be a proxy or a server.
+     */
     public CloudService getCloudService() {
         return cloudService;
     }
@@ -539,12 +541,7 @@ public final class CloudAPI {
         String rnd = NetworkUtils.randomString(10);
         networkConnection.sendPacket(new PacketOutCreateServerLog(rnd, serverId));
         ConnectableAddress connectableAddress = cloudConfigLoader.loadConnnection();
-        return new StringBuilder(config.getBoolean("ssl") ? "https://" : "http://").append(connectableAddress.getHostName())
-                                                                                   .append(':')
-                                                                                   .append(cloudNetwork.getWebPort())
-                                                                                   .append("/cloudnet/log?server=")
-                                                                                   .append(rnd)
-                                                                                   .substring(0);
+        return String.format("http://%s:%d/cloudnet/log?server=%s", connectableAddress.getHostName(), cloudNetwork.getWebPort(), rnd);
     }
 
     /**
@@ -1475,10 +1472,6 @@ public final class CloudAPI {
 
     public Logger getLogger() {
         return logger;
-    }
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
     }
 
     public boolean isDebug() {

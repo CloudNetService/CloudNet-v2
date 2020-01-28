@@ -134,7 +134,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         new File("temp").mkdir();
 
         while (networkConnection.getChannel() == null) {
-            networkConnection.tryConnect(optionSet.has("ssl"), new NetDispatcher(networkConnection, false), auth);
+            networkConnection.tryConnect(new NetDispatcher(networkConnection, false), auth);
             if (networkConnection.getChannel() != null) {
                 networkConnection.sendPacketSynchronized(new PacketOutUpdateWrapperInfo());
                 break;
@@ -196,7 +196,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
                                                                    .getHostName() + ':' + networkConnection.getConnectableAddress()
                                                                                                            .getPort());
         while (networkConnection.getConnectionTries() < 5 && networkConnection.getChannel() == null) {
-            networkConnection.tryConnect(optionSet.has("ssl"), new NetDispatcher(networkConnection, false), auth);
+            networkConnection.tryConnect(new NetDispatcher(networkConnection, false), auth);
             if (networkConnection.getChannel() != null) {
                 networkConnection.sendPacketSynchronized(new PacketOutUpdateWrapperInfo());
                 break;

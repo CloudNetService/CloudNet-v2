@@ -11,9 +11,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 import java.net.InetSocketAddress;
 
@@ -29,7 +26,6 @@ public final class NetworkConnection implements PacketSender {
     private ConnectableAddress connectableAddress;
     private long connectionTries = 0;
     private Runnable task;
-    private SslContext sslContext;
 
     public NetworkConnection(ConnectableAddress connectableAddress, final ConnectableAddress localAddress) {
         this.connectableAddress = connectableAddress;
@@ -56,16 +52,8 @@ public final class NetworkConnection implements PacketSender {
         this.channel = channel;
     }
 
-    public SslContext getSslContext() {
-        return sslContext;
-    }
-
     public ConnectableAddress getConnectableAddress() {
         return connectableAddress;
-    }
-
-    public EventLoopGroup getEventLoopGroup() {
-        return eventLoopGroup;
     }
 
     public long getConnectionTries() {
@@ -81,56 +69,23 @@ public final class NetworkConnection implements PacketSender {
         return "Network-Connector";
     }
 
-    public boolean tryConnect(boolean ssl, SimpleChannelInboundHandler<Packet> channelInboundHandler, Auth auth) {
-        return tryConnect(ssl, channelInboundHandler, auth, null);
-    }
+    @Override
+    public void sendPacket(Packet... packets) {
 
-    public boolean tryConnect(boolean ssl, SimpleChannelInboundHandler<Packet> channelInboundHandler, Auth auth, Runnable cancelTask) {
-        try {
-            if (ssl) {
-                sslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+        if (channel == null) {
+            return;
+        }
+
+        if (channel.eventLoop().inEventLoop()) {
+            for (Packet packet : packets) {
+                channel.writeAndFlush(packet);
             }
-
-            Bootstrap bootstrap = new Bootstrap().option(ChannelOption.AUTO_READ, true)
-                                                 .group(eventLoopGroup)
-                                                 .handler(new ChannelInitializer<Channel>() {
-
-                                                     @Override
-                                                     protected void initChannel(Channel channel) throws Exception {
-                                                         if (sslContext != null) {
-                                                             channel.pipeline().addLast(sslContext.newHandler(
-                                                                 channel.alloc(),
-                                                                 connectableAddress.getHostName(),
-                                                                 connectableAddress.getPort()));
-                                                         }
-                                                         NetworkUtils.initChannel(channel).pipeline().addLast(channelInboundHandler);
-                                                     }
-                                                 })
-                                                 .channel(NetworkUtils.socketChannel());
-            this.channel = bootstrap.connect(new InetSocketAddress(connectableAddress.getHostName(), connectableAddress.getPort()),
-                                             new InetSocketAddress(localAddress.getHostName(), localAddress.getPort()))
-                                    .sync()
-                                    .channel()
-                                    .writeAndFlush(new PacketOutAuth(auth))
-                                    .syncUninterruptibly()
-                                    .channel();
-
-            return true;
-        } catch (Exception ex) {
-            connectionTries++;
-            System.out.printf("Failed to connect... [%d]%n", connectionTries);
-            ex.printStackTrace();
-
-            if (this.channel != null) {
-                this.channel.close();
-                this.channel = null;
-            }
-
-            if (cancelTask != null) {
-                cancelTask.run();
-            }
-
-            return false;
+        } else {
+            channel.eventLoop().execute(() -> {
+                for (Packet packet : packets) {
+                    channel.writeAndFlush(packet);
+                }
+            });
         }
     }
 
@@ -199,29 +154,6 @@ public final class NetworkConnection implements PacketSender {
     }
 
     @Override
-    public void sendPacket(Packet... packets) {
-
-        if (channel == null) {
-            return;
-        }
-
-        if (channel.eventLoop().inEventLoop()) {
-            for (Packet packet : packets) {
-                channel.writeAndFlush(packet);
-            }
-        } else {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run() {
-                    for (Packet packet : packets) {
-                        channel.writeAndFlush(packet);
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
     public void sendPacket(Packet packet) {
         if (channel == null) {
             return;
@@ -230,13 +162,12 @@ public final class NetworkConnection implements PacketSender {
         if (channel.eventLoop().inEventLoop()) {
             channel.writeAndFlush(packet);
         } else {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run() {
-                    channel.writeAndFlush(packet);
-                }
-            });
+            channel.eventLoop().execute(() -> channel.writeAndFlush(packet));
         }
+    }
+
+    public void tryConnect(final NetDispatcher netDispatcher, final Auth auth) {
+        tryConnect(netDispatcher, auth, null);
     }
 
     @Override
@@ -259,5 +190,43 @@ public final class NetworkConnection implements PacketSender {
 
     public boolean isConnected() {
         return channel != null;
+    }
+
+    public boolean tryConnect(SimpleChannelInboundHandler<Packet> channelInboundHandler, Auth auth, Runnable cancelTask) {
+        try {
+            Bootstrap bootstrap = new Bootstrap().option(ChannelOption.AUTO_READ, true)
+                                                 .group(eventLoopGroup)
+                                                 .handler(new ChannelInitializer<Channel>() {
+                                                     @Override
+                                                     protected void initChannel(Channel channel) throws Exception {
+                                                         NetworkUtils.initChannel(channel).pipeline().addLast(channelInboundHandler);
+                                                     }
+                                                 })
+                                                 .channel(NetworkUtils.socketChannel());
+            this.channel = bootstrap.connect(new InetSocketAddress(connectableAddress.getHostName(), connectableAddress.getPort()),
+                                             new InetSocketAddress(localAddress.getHostName(), localAddress.getPort()))
+                                    .sync()
+                                    .channel()
+                                    .writeAndFlush(new PacketOutAuth(auth))
+                                    .syncUninterruptibly()
+                                    .channel();
+
+            return true;
+        } catch (Exception ex) {
+            connectionTries++;
+            System.out.printf("Failed to connect... [%d]%n", connectionTries);
+            ex.printStackTrace();
+
+            if (this.channel != null) {
+                this.channel.close();
+                this.channel = null;
+            }
+
+            if (cancelTask != null) {
+                cancelTask.run();
+            }
+
+            return false;
+        }
     }
 }

@@ -31,7 +31,6 @@ public final class CloudBootstrap {
         optionParser.accepts("disable-autoupdate");
         optionParser.accepts("debug");
         optionParser.accepts("noconsole");
-        optionParser.accepts("ssl");
         optionParser.accepts("systemTimer");
         optionParser.accepts("disable-statistics");
         optionParser.accepts("disable-modules");
@@ -45,9 +44,6 @@ public final class CloudBootstrap {
             helpService.getDescriptions().put("help",
                                               new ServiceDescription[] {new ServiceDescription("--help | --?",
                                                                                                "This is the main argument to get all information about other parameters")});
-            helpService.getDescriptions().put("ssl",
-                                              new ServiceDescription[] {new ServiceDescription("--ssl",
-                                                                                               "Allows SSL encryption via a system-contained certificate or an open SSL certificate")});
             helpService.getDescriptions().put("debug",
                                               new ServiceDescription[] {new ServiceDescription("--debug",
                                                                                                "Enables the debug mode, for extra consoles issues with more information, nothing is for people with interest in alto many consoles issues")});

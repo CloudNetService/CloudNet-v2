@@ -96,7 +96,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         for (ServerInstallablePlugin url : proxyProcessMeta.getDownloadablePlugins()) {
             if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"))) {
                 try {
-                    URLConnection urlConnection = new java.net.URL(url.getUrl()).openConnection();
+                    URLConnection urlConnection = new URL(url.getUrl()).openConnection();
                     urlConnection.setRequestProperty("User-Agent",
                                                      NetworkUtils.USER_AGENT);
                     Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
@@ -112,7 +112,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                 case URL: {
                     if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"))) {
                         try {
-                            URLConnection urlConnection = new java.net.URL(url.getUrl()).openConnection();
+                            URLConnection urlConnection = new URL(url.getUrl()).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
                                                              NetworkUtils.USER_AGENT);
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
@@ -126,18 +126,10 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                     if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar")) && CloudNetWrapper.getInstance()
                                                                                                                         .getSimpledUser() != null) {
                         try {
-                            URLConnection urlConnection = new java.net.URL(new StringBuilder(CloudNetWrapper.getInstance()
-                                                                                                            .getOptionSet()
-                                                                                                            .has("ssl") ? "https://" : "http://")
-                                                                               .append(CloudNetWrapper.getInstance()
-                                                                                                      .getWrapperConfig()
-                                                                                                      .getCloudnetHost())
-                                                                               .append(':')
-                                                                               .append(CloudNetWrapper.getInstance()
-                                                                                                      .getWrapperConfig()
-                                                                                                      .getWebPort())
-                                                                               .append("/cloudnet/api/v1/download")
-                                                                               .substring(0)).openConnection();
+                            URLConnection urlConnection = new URL(
+                                String.format("http://%s:%d/cloudnet/api/v1/download",
+                                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                              CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
                                                              NetworkUtils.USER_AGENT);
 
@@ -201,23 +193,15 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                         String groupTemplates = "local/cache/web_templates/" + proxyGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
                         if (!Files.exists(Paths.get(groupTemplates))) {
                             Files.createDirectories(Paths.get(groupTemplates));
-                            MasterTemplateLoader templateLoader = new MasterTemplateLoader(new StringBuilder(CloudNetWrapper.getInstance()
-                                                                                                                            .getOptionSet()
-                                                                                                                            .has("ssl") ? "https://" : "http://")
-                                                                                               .append(CloudNetWrapper.getInstance()
-                                                                                                                      .getWrapperConfig()
-                                                                                                                      .getCloudnetHost())
-                                                                                               .append(':')
-                                                                                               .append(CloudNetWrapper.getInstance()
-                                                                                                                      .getWrapperConfig()
-                                                                                                                      .getWebPort())
-                                                                                               .append("/cloudnet/api/v1/download")
-                                                                                               .substring(0),
-                                                                                           groupTemplates + "/template.zip",
-                                                                                           CloudNetWrapper.getInstance().getSimpledUser(),
-                                                                                           template,
-                                                                                           proxyGroup.getName(),
-                                                                                           null);
+                            MasterTemplateLoader templateLoader = new MasterTemplateLoader(
+                                String.format("http://%s:%d/cloudnet/api/v1/download",
+                                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                              CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
+                                groupTemplates + "/template.zip",
+                                CloudNetWrapper.getInstance().getSimpledUser(),
+                                template,
+                                proxyGroup.getName(),
+                                null);
                             System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getGroup());
                             templateLoader.load();
                             templateLoader.unZip(groupTemplates);
@@ -274,23 +258,15 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                     String groupTemplates = "local/cache/web_templates/" + proxyGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
                     if (!Files.exists(Paths.get(groupTemplates))) {
                         Files.createDirectories(Paths.get(groupTemplates));
-                        MasterTemplateLoader templateLoader = new MasterTemplateLoader(new StringBuilder(CloudNetWrapper.getInstance()
-                                                                                                                        .getOptionSet()
-                                                                                                                        .has("ssl") ? "https://" : "http://")
-                                                                                           .append(CloudNetWrapper.getInstance()
-                                                                                                                  .getWrapperConfig()
-                                                                                                                  .getCloudnetHost())
-                                                                                           .append(':')
-                                                                                           .append(CloudNetWrapper.getInstance()
-                                                                                                                  .getWrapperConfig()
-                                                                                                                  .getWebPort())
-                                                                                           .append("/cloudnet/api/v1/download")
-                                                                                           .substring(0),
-                                                                                       groupTemplates + "/template.zip",
-                                                                                       CloudNetWrapper.getInstance().getSimpledUser(),
-                                                                                       template,
-                                                                                       proxyGroup.getName(),
-                                                                                       null);
+                        MasterTemplateLoader templateLoader = new MasterTemplateLoader(
+                            String.format("http://%s:%d/cloudnet/api/v1/download",
+                                          CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                          CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
+                            groupTemplates + "/template.zip",
+                            CloudNetWrapper.getInstance().getSimpledUser(),
+                            template,
+                            proxyGroup.getName(),
+                            null);
                         System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getGroup());
                         templateLoader.load();
                         templateLoader.unZip(groupTemplates);
@@ -373,12 +349,10 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
 
         new Document().append("serviceId", proxyProcessMeta.getServiceId())
                       .append("proxyProcess", proxyProcessMeta)
-                      .append("host",
-                              CloudNetWrapper.getInstance()
-                                             .getWrapperConfig()
-                                             .getProxyConfigHost() + ':' + this.proxyProcessMeta.getPort())
+                      .append("host", String.format("%s:%d",
+                                                    CloudNetWrapper.getInstance().getWrapperConfig().getProxyConfigHost(),
+                                                    this.proxyProcessMeta.getPort()))
                       .append("proxyInfo", proxyInfo)
-                      .append("ssl", CloudNetWrapper.getInstance().getOptionSet().has("ssl"))
                       .append("memory", proxyProcessMeta.getMemory())
                       .saveAsConfig(Paths.get(path + "/CLOUD/config.json"));
         new Document().append("connection",

@@ -30,7 +30,6 @@ public class CloudBootstrap {
         optionParser.acceptsAll(Arrays.asList("version", "v"));
         optionParser.acceptsAll(Arrays.asList("help", "?"));
         optionParser.accepts("disable-queue");
-        optionParser.accepts("ssl");
         optionParser.accepts("systemTimer");
         optionParser.accepts("noconsole");
         optionParser.accepts("systemTimer");
@@ -45,9 +44,6 @@ public class CloudBootstrap {
             helpService.getDescriptions().put("help",
                                               new ServiceDescription[] {new ServiceDescription("--help | --?",
                                                                                                "This is the main argument to get all information about other parameters")});
-            helpService.getDescriptions().put("ssl",
-                                              new ServiceDescription[] {new ServiceDescription("--ssl",
-                                                                                               "Allows SSL encryption via a system-contained certificate or an open SSL certificate")});
             helpService.getDescriptions().put("noconsole",
                                               new ServiceDescription[] {new ServiceDescription("--noconsole",
                                                                                                "Disables the console, for the rest of the service run time")});

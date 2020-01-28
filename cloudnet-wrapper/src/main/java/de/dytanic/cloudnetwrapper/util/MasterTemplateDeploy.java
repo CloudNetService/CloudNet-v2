@@ -25,8 +25,6 @@ public class MasterTemplateDeploy {
 
     private SimpledUser simpledUser;
 
-    private boolean ssl;
-
     private Template template;
 
     private String group;
@@ -36,14 +34,12 @@ public class MasterTemplateDeploy {
     public MasterTemplateDeploy(String dir,
                                 ConnectableAddress connectableAddress,
                                 SimpledUser simpledUser,
-                                boolean ssl,
                                 Template template,
                                 String group,
                                 String customName) {
         this.dir = dir;
         this.connectableAddress = connectableAddress;
         this.simpledUser = simpledUser;
-        this.ssl = ssl;
         this.template = template;
         this.group = group;
         this.customName = customName;
@@ -59,10 +55,6 @@ public class MasterTemplateDeploy {
 
     public SimpledUser getSimpledUser() {
         return simpledUser;
-    }
-
-    public boolean isSsl() {
-        return ssl;
     }
 
     public Template getTemplate() {
@@ -85,8 +77,11 @@ public class MasterTemplateDeploy {
             new File(dir + "/plugins/CloudNetAPI.jar").delete();
         } catch (Exception ex) {
         }
-        HttpURLConnection urlConnection = (HttpURLConnection) new URL((ssl ? "https" : "http") + "://" + connectableAddress.getHostName() + ':' + connectableAddress
-            .getPort() + "/cloudnet/api/v1/deployment").openConnection();
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL(
+            String.format("http://%s:%d/cloudnet/api/v1/deployment",
+                          connectableAddress.getHostName(),
+                          connectableAddress.getPort()))
+            .openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
         urlConnection.setRequestProperty("-Xcloudnet-token", simpledUser.getApiToken());

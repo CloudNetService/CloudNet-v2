@@ -28,6 +28,7 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.*;
+import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -153,7 +154,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                 case URL: {
                     if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"))) {
                         try {
-                            URLConnection urlConnection = new java.net.URL(url.getUrl()).openConnection();
+                            URLConnection urlConnection = new URL(url.getUrl()).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
                                                              NetworkUtils.USER_AGENT);
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
@@ -167,20 +168,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                     if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar")) && CloudNetWrapper.getInstance()
                                                                                                                         .getSimpledUser() != null) {
                         try {
-                            URLConnection urlConnection = new java.net.URL(new StringBuilder(CloudNetWrapper.getInstance()
-                                                                                                            .getOptionSet()
-                                                                                                            .has("ssl") ? "https://" : "http://")
-                                                                               .append(CloudNetWrapper.getInstance()
-                                                                                                      .getWrapperConfig()
-                                                                                                      .getCloudnetHost())
-                                                                               .append(':')
-                                                                               .append(CloudNetWrapper.getInstance()
-                                                                                                      .getWrapperConfig()
-                                                                                                      .getWebPort())
-                                                                               .append("/cloudnet/api/v1/download")
-                                                                               .substring(0)).openConnection();
-                            urlConnection.setRequestProperty("User-Agent",
-                                                             NetworkUtils.USER_AGENT);
+                            URLConnection urlConnection = new URL(
+                                String.format("http://%s:%d/cloudnet/api/v1/download",
+                                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                              CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())).openConnection();
+                            urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
 
                             SimpledUser simpledUser = CloudNetWrapper.getInstance().getSimpledUser();
                             urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
@@ -208,7 +200,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                 case URL: {
                     if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"))) {
                         try {
-                            URLConnection urlConnection = new java.net.URL(url.getUrl()).openConnection();
+                            URLConnection urlConnection = new URL(url.getUrl()).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
                                                              NetworkUtils.USER_AGENT);
                             Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
@@ -222,18 +214,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                     if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar")) && CloudNetWrapper.getInstance()
                                                                                                                         .getSimpledUser() != null) {
                         try {
-                            URLConnection urlConnection = new java.net.URL(new StringBuilder(CloudNetWrapper.getInstance()
-                                                                                                            .getOptionSet()
-                                                                                                            .has("ssl") ? "https://" : "http://")
-                                                                               .append(CloudNetWrapper.getInstance()
-                                                                                                      .getWrapperConfig()
-                                                                                                      .getCloudnetHost())
-                                                                               .append(':')
-                                                                               .append(CloudNetWrapper.getInstance()
-                                                                                                      .getWrapperConfig()
-                                                                                                      .getWebPort())
-                                                                               .append("/cloudnet/api/v1/download")
-                                                                               .substring(0)).openConnection();
+                            URLConnection urlConnection = new URL(
+                                String.format("http://%s:%d/cloudnet/api/v1/download",
+                                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                              CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()))
+                                .openConnection();
                             urlConnection.setRequestProperty("User-Agent",
                                                              NetworkUtils.USER_AGENT);
 
@@ -403,11 +388,8 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
         new Document().append("serviceId", serverProcess.getMeta().getServiceId())
                       .append("serverProcess", serverProcess.getMeta())
-                      .append("serverInfo",
-                              serverInfo)
-                      .append("ssl", CloudNetWrapper.getInstance().getOptionSet().has("ssl"))
-                      .append("memory",
-                              serverProcess.getMeta().getMemory())
+                      .append("serverInfo", serverInfo)
+                      .append("memory", serverProcess.getMeta().getMemory())
                       .saveAsConfig(Paths.get(path + "/CLOUD/config.json"));
 
         new Document().append("connection",
@@ -541,7 +523,6 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                                          new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
                                                                 CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
                                          CloudNetWrapper.getInstance().getSimpledUser(),
-                                         CloudNetWrapper.getInstance().getOptionSet().has("ssl"),
                                          template,
                                          serverGroup.getName(),
                                          custom);
@@ -582,9 +563,9 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             Template template = this.serverGroup.getGlobalTemplate();
             if (custom != null) {
                 MasterTemplateLoader templateLoader = new MasterTemplateLoader(
-                    (CloudNetWrapper.getInstance().getOptionSet().has("ssl") ? "https://" : "http://") +
-                        CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost() +
-                        ':' + CloudNetWrapper.getInstance().getWrapperConfig().getWebPort() + "/cloudnet/api/v1/download",
+                    String.format("http://%s:%d/cloudnet/api/v1/download",
+                                  CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                  CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
                     dir + "/template.zip",
                     CloudNetWrapper.getInstance().getSimpledUser(),
                     template,
@@ -719,23 +700,15 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
         if (!Files.exists(Paths.get(groupTemplates))) {
             Files.createDirectories(Paths.get(groupTemplates));
-            MasterTemplateLoader templateLoader = new MasterTemplateLoader(new StringBuilder(CloudNetWrapper.getInstance()
-                                                                                                            .getOptionSet()
-                                                                                                            .has("ssl") ? "https://" : "http://")
-                                                                               .append(CloudNetWrapper.getInstance()
-                                                                                                      .getWrapperConfig()
-                                                                                                      .getCloudnetHost())
-                                                                               .append(':')
-                                                                               .append(CloudNetWrapper.getInstance()
-                                                                                                      .getWrapperConfig()
-                                                                                                      .getWebPort())
-                                                                               .append("/cloudnet/api/v1/download")
-                                                                               .substring(0),
-                                                                           groupTemplates + "/template.zip",
-                                                                           CloudNetWrapper.getInstance().getSimpledUser(),
-                                                                           template,
-                                                                           serverGroup.getName(),
-                                                                           custom);
+            MasterTemplateLoader templateLoader = new MasterTemplateLoader(
+                String.format("http://%s:%d/cloudnet/api/v1/download",
+                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                              CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
+                groupTemplates + "/template.zip",
+                CloudNetWrapper.getInstance().getSimpledUser(),
+                template,
+                serverGroup.getName(),
+                custom);
             System.out.println("Downloading template for " + this.serverProcess.getMeta()
                                                                                .getServiceId()
                                                                                .getGroup() + ' ' + template.getName());
