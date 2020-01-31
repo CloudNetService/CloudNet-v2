@@ -11,7 +11,7 @@ public class NetDispatcher extends SimpleChannelInboundHandler<Packet> {
 
     private final NetworkConnection networkConnection;
 
-    private boolean shutdownOnInactive;
+    private final boolean shutdownOnInactive;
 
     public NetDispatcher(NetworkConnection networkConnection, boolean shutdownOnInactive) {
         this.networkConnection = networkConnection;

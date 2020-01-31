@@ -53,24 +53,21 @@ public final class CloudAPI {
     private static final String[] EMPTY_STRING_ARRAY = {};
     private static CloudAPI instance;
 
-    private Document config;
-    private ServiceId serviceId;
-    private CloudConfigLoader cloudConfigLoader;
+    private final Document config;
+    private final ServiceId serviceId;
+    private final CloudConfigLoader cloudConfigLoader;
 
-    private NetworkConnection networkConnection;
-    private int memory;
-
-    private CloudService cloudService = null;
-
-    //Init
-    private CloudNetwork cloudNetwork = new CloudNetwork();
-    private NetworkHandlerProvider networkHandlerProvider = new NetworkHandlerProvider();
-    private DatabaseManager databaseManager = new DatabaseManager();
-
+    private final NetworkConnection networkConnection;
+    private final int memory;
+    private final NetworkHandlerProvider networkHandlerProvider = new NetworkHandlerProvider();
+    private final DatabaseManager databaseManager = new DatabaseManager();
     /**
      * Logger instance set by the respective bootstrap.
      */
     private final Logger logger;
+    private CloudService cloudService = null;
+    //Init
+    private CloudNetwork cloudNetwork = new CloudNetwork();
 
     public CloudAPI(CloudConfigLoader loader, final Logger logger) {
         if (instance != null) {
@@ -109,8 +106,6 @@ public final class CloudAPI {
         packetManager.registerHandler(PacketRC.PLAYER_HANDLE + 4, PacketInUpdateOnlineCount.class);
         packetManager.registerHandler(PacketRC.PLAYER_HANDLE + 5, PacketInUpdateOfflinePlayer.class);
     }
-
-    /*================= Internal =====================*/
 
     /**
      * @return the singleton instance of the cloud API.
@@ -212,6 +207,12 @@ public final class CloudAPI {
         return cloudService;
     }
 
+    /**
+     * Sets the cloud service for the API to use.
+     * Internal use only!
+     *
+     * @param cloudService the cloud service that should back this API.
+     */
     public void setCloudService(CloudService cloudService) {
         this.cloudService = cloudService;
     }
@@ -224,86 +225,87 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns the wingui Config
+     * @return the configuration for the running cloud service.
      */
     public Document getConfig() {
         return config;
     }
 
     /**
-     * Returns a simple cloudnetwork information base
+     * @return basic information about the running cloud network.
      */
     public CloudNetwork getCloudNetwork() {
         return cloudNetwork;
     }
 
     /**
-     * Internal CloudNetwork update set
+     * Updates the cloud network information available to this API.
+     * Internal use only!
      *
-     * @param cloudNetwork
+     * @param cloudNetwork the new information about the cloud network.
      */
     public void setCloudNetwork(CloudNetwork cloudNetwork) {
         this.cloudNetwork = cloudNetwork;
     }
 
     /**
-     * Returns the network server manager from cloudnet
+     * @return the network handler provider for this API instance.
      */
     public NetworkHandlerProvider getNetworkHandlerProvider() {
         return networkHandlerProvider;
     }
 
     /**
-     * Returns the internal network connection to the cloudnet root
+     * @return the network connection to the master.
      */
     public NetworkConnection getNetworkConnection() {
         return networkConnection;
     }
 
     /**
-     * Returns the cloud prefix
+     * @return the cloud prefix used for messages.
      */
     public String getPrefix() {
         return cloudNetwork.getMessages().getString("prefix");
     }
 
     /**
-     * Returns the memory from this instance calc by Wrapper
+     * @return the memory configured to be used by this service.
      */
     public int getMemory() {
         return memory;
     }
 
     /**
-     * Returns the ServiceId from this instance
+     * @return the service id of this service.
      */
     public ServiceId getServiceId() {
         return serviceId;
     }
 
     /**
-     * Returns the Database Manager for the CloudNetDB functions
+     * @return the database manager on this service. Usually queries the master.
      */
     public DatabaseManager getDatabaseManager() {
         return databaseManager;
     }
 
     /**
-     * Returns the group name from this instance
+     * @return the name of the group this service belongs to.
      */
     public String getGroup() {
         return serviceId.getGroup();
     }
 
     /**
-     * Returns the UUID from this instance
+     * @return the UUID of this service.
      */
     public UUID getUniqueId() {
         return serviceId.getUniqueId();
     }
 
     /**
-     * Returns the serverId (Lobby-1)
+     * @return the server id of this service (e.g. Lobby-1).
      */
     public String getServerId() {
         return serviceId.getServerId();
@@ -317,62 +319,53 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns the wrapperid from this instance
+     * @return the id of wrapper that this service runs on.
      */
     public String getWrapperId() {
         return serviceId.getWrapperId();
     }
 
     /**
-     * Returns the SimpleServerGroup of the parameter
+     * Returns a simple version of the server group of the given server group name.
      *
-     * @param group
+     * @param serverGroupName the name of the server group.
      */
-    public SimpleServerGroup getServerGroupData(String group) {
-        return cloudNetwork.getServerGroups().get(group);
+    public SimpleServerGroup getServerGroupData(String serverGroupName) {
+        return cloudNetwork.getServerGroups().get(serverGroupName);
     }
 
     /**
-     * Returns the ProxyGroup of the parameter
+     * Returns the proxy group with the given name.
      *
-     * @param group
+     * @param proxyGroupName the name of the proxy group to get.
      */
-    public ProxyGroup getProxyGroupData(String group) {
-        return cloudNetwork.getProxyGroups().get(group);
+    public ProxyGroup getProxyGroupData(String proxyGroupName) {
+        return cloudNetwork.getProxyGroups().get(proxyGroupName);
     }
 
     /**
-     * Returns the global onlineCount
+     * @return the amount of players currently online on the entire cloud network.
      */
     public int getOnlineCount() {
         return cloudNetwork.getOnlineCount();
     }
 
     /**
-     * Returns the amount of players that are registered in the Cloud
+     * @return the amount of players currently registered on the cloud.
      */
     public int getRegisteredPlayerCount() {
         return cloudNetwork.getRegisteredPlayerCount();
     }
 
     /**
-     * Returns all the module properties
-     *
-     * @return
+     * @return the merged properties of all modules for this service.
      */
     public Document getModuleProperties() {
         return cloudNetwork.getModules();
     }
 
     /**
-     * Returns the permissionPool of the cloudnetwork
-     */
-    public PermissionPool getPermissionPool() {
-        return cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE);
-    }
-
-    /**
-     * Returns all active wrappers on cloudnet
+     * @return all running wrappers on the cloud network.
      */
     public Collection<WrapperInfo> getWrappers() {
         return cloudNetwork.getWrappers();
@@ -383,14 +376,21 @@ public final class CloudAPI {
      */
     public PermissionGroup getPermissionGroup(String group) {
         if (cloudNetwork.getModules().contains("permissionPool")) {
-            return ((PermissionPool) cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE)).getGroups().get(group);
+            return this.getPermissionPool().getGroups().get(group);
         }
         return null;
     }
 
     /**
+     * @return the pool of permissions including all permission groups and the default group for the cloud network.
+     */
+    public PermissionPool getPermissionPool() {
+        return cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE);
+    }
+
+    /**
      * Finds the first wrapper with the given case-insensitive name.
-     * If no wrapper with the given id can be found, this returns null
+     * If no wrapper with the given id can be found, this returns null.
      *
      * @param wrapperId the case-insensitive wrapper id of the wrapper to get
      *
@@ -403,31 +403,49 @@ public final class CloudAPI {
     }
 
     /**
-     * Sends the data of the custom channel message to all proxys
+     * Sends the  custom channel message to all proxy instances.
+     *
+     * @param channel the channel to send the message on.
+     * @param message the message to send.
+     * @param value the document attached to the message.
      */
     public void sendCustomSubProxyMessage(String channel, String message, Document value) {
         networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUNGEE_CORD, channel, message, value));
     }
 
     /**
-     * Sends the data of the custom channel message to all server
+     * Sends the custom channel message to all server instances.
+     *
+     * @param channel the channel to send the message on.
+     * @param message the message to send.
+     * @param value the document attached to the message.
      */
     public void sendCustomSubServerMessage(String channel, String message, Document value) {
         networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUKKIT, channel, message, value));
     }
 
     /**
-     * Sends the data of the custom channel message to one server
+     * Sends the custom channel message to the specified server.
+     *
+     * @param channel the channel to send the message on.
+     * @param message the message to send.
+     * @param value the document attached to the message.
+     * @param serverName the name of the server that this message is going to be sent to.
      */
     public void sendCustomSubServerMessage(String channel, String message, Document value, String serverName) {
         networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUKKIT, serverName, channel, message, value));
     }
 
     /**
-     * Sends the data of the custom channel message to proxy server
+     * Sends the custom channel message to the specified server.
+     *
+     * @param channel the channel to send the message on.
+     * @param message the message to send.
+     * @param value the document attached to the message.
+     * @param proxyName the name of the proxy that this message is going to be sent to.
      */
-    public void sendCustomSubProxyMessage(String channel, String message, Document value, String serverName) {
-        networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUNGEE_CORD, serverName, channel, message, value));
+    public void sendCustomSubProxyMessage(String channel, String message, Document value, String proxyName) {
+        networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUNGEE_CORD, proxyName, channel, message, value));
     }
 
     /**
@@ -603,8 +621,6 @@ public final class CloudAPI {
     public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup) {
         startProxy(wrapperInfo, proxyGroup, proxyGroup.getMemory(), EMPTY_STRING_ARRAY);
     }
-
-    /*=====================================================================================*/
 
     /**
      * Start a proxy server with a group
@@ -833,8 +849,6 @@ public final class CloudAPI {
                         serverId);
     }
 
-    /*==================================================================*/
-
     /**
      * Start a new game server with full parameters
      *
@@ -962,8 +976,6 @@ public final class CloudAPI {
     public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, Template template, String serverId) {
         startGameServer(simpleServerGroup, serverConfig, false, template, serverId);
     }
-
-    /*==================================================================*/
 
     /**
      * Start a game server
@@ -1169,8 +1181,10 @@ public final class CloudAPI {
     }
 
     /**
-     * @param wrapperInfo
-     * @param simpleServerGroup
+     * Formally requests the master to instruct a wrapper to start a game server.
+     *
+     * @param wrapperInfo       the wrapper to start the server on
+     * @param simpleServerGroup the server group to launch the server from
      * @param serverId
      * @param serverConfig
      * @param memory
@@ -1383,7 +1397,7 @@ public final class CloudAPI {
      *
      * @param name the name of the server group.
      *
-     * @return the server group object.
+     * @return the server group object or null, if it doesn't exist.
      */
     public ServerGroup getServerGroup(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServerGroup(name), networkConnection);
@@ -1393,7 +1407,7 @@ public final class CloudAPI {
     /**
      * Queries the unique id of the player with the given name.
      *
-     * @param name the unique id of the player.
+     * @param name the name of the player; case-insensitive.
      *
      * @return the unique id of the player with the given name or {@code null},
      * if the player is not registered on the network.
@@ -1439,8 +1453,6 @@ public final class CloudAPI {
         return result.getResult();
     }
 
-    /*================================================================================*/
-
     /**
      * Copies the given directory from the currently running server to its template.
      * This is done by requesting the master to handle the instructions for the wrapper.
@@ -1470,14 +1482,31 @@ public final class CloudAPI {
         return new HashMap<>();
     }
 
+    /**
+     * The clouds private logger. Only use this in internal CloudNet code, plugin developers
+     * should use their own plugin's logger.
+     *
+     * @return the logger for CloudNet's plugin.
+     */
     public Logger getLogger() {
         return logger;
     }
 
+    /**
+     * This method determines, whether debug messages can be logged.
+     *
+     * @return whether or not the debug mode is enabled.
+     */
     public boolean isDebug() {
         return logger.isLoggable(Level.FINEST);
     }
 
+    /**
+     * Enable or disable debugging output on the cloud logger instance.
+     * This modifies the logger.
+     *
+     * @param debug whether to output debug information.
+     */
     public void setDebug(boolean debug) {
         if (debug) {
             logger.setLevel(Level.ALL);

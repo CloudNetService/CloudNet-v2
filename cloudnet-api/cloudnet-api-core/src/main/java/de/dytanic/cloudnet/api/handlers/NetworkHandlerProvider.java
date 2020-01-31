@@ -1,7 +1,7 @@
 package de.dytanic.cloudnet.api.handlers;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /**
@@ -9,7 +9,7 @@ import java.util.function.Consumer;
  */
 public class NetworkHandlerProvider {
 
-    private Collection<NetworkHandler> handlers = new CopyOnWriteArrayList<>();
+    private final Collection<NetworkHandler> handlers = new ArrayList<>();
 
     /**
      * Registerd a network Handler

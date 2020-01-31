@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DatabaseManager {
 
-    private Map<String, Database> databaseMap = new ConcurrentHashMap<>();
+    private final Map<String, Database> databaseMap = new ConcurrentHashMap<>();
 
     public DatabaseManager() {
 

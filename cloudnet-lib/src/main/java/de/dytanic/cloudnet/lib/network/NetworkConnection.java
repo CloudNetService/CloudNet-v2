@@ -13,6 +13,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 
 import java.net.InetSocketAddress;
+import java.util.Collections;
 
 /**
  * Created by Tareko on 22.07.2017.
@@ -23,7 +24,7 @@ public final class NetworkConnection implements PacketSender {
     private final EventLoopGroup eventLoopGroup = NetworkUtils.eventLoopGroup(2);
     private final ConnectableAddress localAddress;
     private Channel channel;
-    private ConnectableAddress connectableAddress;
+    private final ConnectableAddress connectableAddress;
     private long connectionTries = 0;
     private Runnable task;
 
@@ -117,7 +118,24 @@ public final class NetworkConnection implements PacketSender {
     }
 
     @Override
-    public void sendAsynchronized(Object object) {
+    public void sendPacketSynchronized(Packet packet) {
+        if (channel == null) {
+            return;
+        }
+
+        if (channel.eventLoop().inEventLoop()) {
+            channel.writeAndFlush(packet).syncUninterruptibly();
+        } else {
+            try {
+                channel.eventLoop().invokeAll(Collections.singletonList(() -> channel.writeAndFlush(packet).syncUninterruptibly()));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void sendAsynchronous(Object object) {
         NetworkUtils.getExecutor().submit(() -> {
             channel.writeAndFlush(object);
         });
@@ -134,13 +152,13 @@ public final class NetworkConnection implements PacketSender {
     }
 
     @Override
-    public void sendAsynchronized(int id, Object element) {
-        sendAsynchronized(new ProtocolRequest(id, element));
+    public void sendAsynchronous(int id, Object element) {
+        sendAsynchronous(new ProtocolRequest(id, element));
     }
 
     @Override
-    public void sendAsynchronized(IProtocol iProtocol, Object element) {
-        sendAsynchronized(new ProtocolRequest(iProtocol.getId(), element));
+    public void sendAsynchronous(IProtocol iProtocol, Object element) {
+        sendAsynchronous(new ProtocolRequest(iProtocol.getId(), element));
     }
 
     @Override
@@ -170,23 +188,7 @@ public final class NetworkConnection implements PacketSender {
         tryConnect(netDispatcher, auth, null);
     }
 
-    @Override
-    public void sendPacketSynchronized(Packet packet) {
-        if (channel == null) {
-            return;
-        }
 
-        if (channel.eventLoop().inEventLoop()) {
-            channel.writeAndFlush(packet).syncUninterruptibly();
-        } else {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run() {
-                    channel.writeAndFlush(packet).syncUninterruptibly();
-                }
-            });
-        }
-    }
 
     public boolean isConnected() {
         return channel != null;

@@ -1,9 +1,6 @@
 package de.dytanic.cloudnet.lib.player.permission;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Calls
@@ -29,7 +26,7 @@ public class PermissionEntity {
         this.permissions = permissions;
         this.prefix = prefix;
         this.suffix = suffix;
-        this.groups = groups;
+        this.groups = new HashSet<>(groups);
     }
 
     public UUID getUniqueId() {

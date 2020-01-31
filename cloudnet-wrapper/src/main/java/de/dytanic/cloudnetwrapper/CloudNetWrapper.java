@@ -82,8 +82,8 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
                     onShutdownCentral();
                 } catch (Exception e) {
                     e.printStackTrace();
-            }
-        });
+                }
+            });
 
         String key = NetworkUtils.readWrapperKey();
 
@@ -130,8 +130,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
         System.out.println("Wrapper try to connect to the CloudNet-Master");
         FileUtility.deleteDirectory(new File("temp"));
-
-        new File("temp").mkdir();
+        Files.createDirectories(Paths.get("temp"));
 
         while (networkConnection.getChannel() == null) {
             networkConnection.tryConnect(new NetDispatcher(networkConnection, false), auth);
@@ -139,6 +138,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
                 networkConnection.sendPacketSynchronized(new PacketOutUpdateWrapperInfo());
                 break;
             }
+            //noinspection BusyWait
             Thread.sleep(2000);
         }
 
@@ -192,15 +192,17 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 12, PacketInUpdateWrapperProperties.class);
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 14, PacketInCopyDirectory.class);
 
-        System.out.println("Trying to connect " + networkConnection.getConnectableAddress()
-                                                                   .getHostName() + ':' + networkConnection.getConnectableAddress()
-                                                                                                           .getPort());
+        System.out.printf("Trying to connect %s:%d%n",
+                          networkConnection.getConnectableAddress().getHostName(),
+                          networkConnection.getConnectableAddress().getPort());
+
         while (networkConnection.getConnectionTries() < 5 && networkConnection.getChannel() == null) {
             networkConnection.tryConnect(new NetDispatcher(networkConnection, false), auth);
             if (networkConnection.getChannel() != null) {
                 networkConnection.sendPacketSynchronized(new PacketOutUpdateWrapperInfo());
                 break;
             }
+            //noinspection BusyWait
             Thread.sleep(2000);
 
             if (networkConnection.getConnectionTries() == 5) {
@@ -222,7 +224,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             getExecutor().scheduleWithFixedDelay(readConsoleLogWrapperHandler.toExecutor(), 0, 1, TimeUnit.SECONDS);
 
             getExecutor().scheduleWithFixedDelay(
-                () -> networkConnection.sendPacket(new PacketOutUpdateCPUUsage(getCpuUsage())), 0, 5, TimeUnit.SECONDS);
+                () -> networkConnection.sendPacket(new PacketOutUpdateCPUUsage(NetworkUtils.cpuUsage())), 0, 5, TimeUnit.SECONDS);
         }
 
         cloudNetLogging.getHandler().add(input -> {
@@ -259,8 +261,8 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
     }
 
-    public double getCpuUsage() {
-        return NetworkUtils.cpuUsage();
+    public static ScheduledExecutorService getExecutor() {
+        return NetworkUtils.getExecutor();
     }
 
     @Override
@@ -400,9 +402,5 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
     public boolean isCanDeployed() {
         return this.canDeployed;
-    }
-
-    public static ScheduledExecutorService getExecutor() {
-        return NetworkUtils.getExecutor();
     }
 }

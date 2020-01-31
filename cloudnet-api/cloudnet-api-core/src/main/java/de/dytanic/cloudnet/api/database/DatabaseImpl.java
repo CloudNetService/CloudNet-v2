@@ -19,7 +19,7 @@ public class DatabaseImpl implements Database {
 
     private static final Type MAP_STRING_DOCUMENT_TYPE = TypeToken.getParameterized(Map.class, String.class, Document.class).getType();
     private Map<String, DatabaseDocument> documents = new ConcurrentHashMap<>();
-    private String name;
+    private final String name;
 
     DatabaseImpl(String name) {
         this.name = name;

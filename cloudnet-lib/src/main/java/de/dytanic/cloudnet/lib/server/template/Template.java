@@ -15,11 +15,12 @@ public class Template {
 
     public static final Type TYPE = TypeToken.get(Template.class).getType();
 
-    private String name;
-    private TemplateResource backend;
-    private String url;
-    private String[] processPreParameters;
-    private Collection<ServerInstallablePlugin> installablePlugins;
+    private final String name;
+    private final TemplateResource backend;
+    private final String url;
+    private final String[] processPreParameters;
+    private final Collection<ServerInstallablePlugin> installablePlugins;
+
     public Template(String name,
                     TemplateResource backend,
                     String url,
@@ -82,7 +83,6 @@ public class Template {
         if (!Objects.equals(url, template.url)) {
             return false;
         }
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
         if (!Arrays.equals(processPreParameters, template.processPreParameters)) {
             return false;
         }

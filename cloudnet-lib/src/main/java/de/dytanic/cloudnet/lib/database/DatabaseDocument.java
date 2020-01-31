@@ -68,8 +68,7 @@ public class DatabaseDocument implements org.dizitart.no2.mapper.Mappable {
         if (Database.UNIQUE_NAME_KEY.equals(name) && object instanceof String) {
             this._database_id_unique = (String) object;
         }
-        // We ignore the deprecation message here, because we need to store the object
-        // in the document
+
         this.backingDocument.append(name, object);
         return this;
     }

@@ -80,7 +80,7 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
     }
 
     @Override
-    default void sendAsynchronized(Object object) {
+    default void sendAsynchronous(Object object) {
         getChannel().writeAndFlush(object);
     }
 
@@ -95,13 +95,13 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
     }
 
     @Override
-    default void sendAsynchronized(int id, Object element) {
-        sendAsynchronized(new ProtocolRequest(id, element));
+    default void sendAsynchronous(int id, Object element) {
+        sendAsynchronous(new ProtocolRequest(id, element));
     }
 
     @Override
-    default void sendAsynchronized(IProtocol iProtocol, Object element) {
-        sendAsynchronized(new ProtocolRequest(iProtocol.getId(), element));
+    default void sendAsynchronous(IProtocol iProtocol, Object element) {
+        sendAsynchronous(new ProtocolRequest(iProtocol.getId(), element));
     }
 
     @Override

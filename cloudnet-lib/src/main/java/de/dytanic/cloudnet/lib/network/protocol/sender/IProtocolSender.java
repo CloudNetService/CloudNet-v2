@@ -11,15 +11,15 @@ public interface IProtocolSender {
 
     void sendSynchronized(Object object);
 
-    void sendAsynchronized(Object object);
+    void sendAsynchronous(Object object);
 
     void send(IProtocol iProtocol, Object element);
 
     void send(int id, Object element);
 
-    void sendAsynchronized(int id, Object element);
+    void sendAsynchronous(int id, Object element);
 
-    void sendAsynchronized(IProtocol iProtocol, Object element);
+    void sendAsynchronous(IProtocol iProtocol, Object element);
 
     void sendSynchronized(int id, Object element);
 

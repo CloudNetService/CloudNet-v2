@@ -100,7 +100,7 @@ public class CloudNetClientAuth extends SimpleChannelInboundHandler<Packet> impl
     }
 
     @Override
-    public void sendAsynchronized(Object object) {
+    public void sendAsynchronous(Object object) {
         channel.writeAndFlush(object);
     }
 
@@ -115,13 +115,13 @@ public class CloudNetClientAuth extends SimpleChannelInboundHandler<Packet> impl
     }
 
     @Override
-    public void sendAsynchronized(int id, Object element) {
-        sendAsynchronized(new ProtocolRequest(id, element));
+    public void sendAsynchronous(int id, Object element) {
+        sendAsynchronous(new ProtocolRequest(id, element));
     }
 
     @Override
-    public void sendAsynchronized(IProtocol iProtocol, Object element) {
-        sendAsynchronized(new ProtocolRequest(iProtocol.getId(), element));
+    public void sendAsynchronous(IProtocol iProtocol, Object element) {
+        sendAsynchronous(new ProtocolRequest(iProtocol.getId(), element));
     }
 
     @Override
