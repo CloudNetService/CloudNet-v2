@@ -10,6 +10,7 @@ import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
+import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,24 +35,23 @@ public final class BukkitListener implements Listener {
     private final Collection<UUID> requests = new CopyOnWriteArrayList<>(), kicks = new HashSet<>(256);
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void handle0(AsyncPlayerPreLoginEvent e) {
+    public void handle0(AsyncPlayerPreLoginEvent event) {
         CloudAPI.getInstance().getLogger().logp(Level.FINEST,
                                                 this.getClass().getSimpleName(),
                                                 "handle0",
-                                                String.format("Handling async player pre login event: %s%n", e));
+                                                String.format("Handling async player pre login event: %s%n", event));
         for (Player all : Bukkit.getOnlinePlayers()) {
-            if (all.getUniqueId().equals(e.getUniqueId())) {
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
-                           ChatColor.translateAlternateColorCodes('&',
-                                                                  CloudAPI.getInstance()
-                                                                          .getCloudNetwork()
-                                                                          .getMessages()
-                                                                          .getString("server-kick-proxy-disallow")));
+            if (all.getUniqueId().equals(event.getUniqueId())) {
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
+                               ChatColor.translateAlternateColorCodes('&',
+                                                                      CloudAPI.getInstance()
+                                                                              .getCloudNetwork()
+                                                                              .getMessages()
+                                                                              .getString("server-kick-proxy-disallow")));
                 return;
             }
         }
-
-        CloudAPI.getInstance().getOnlinePlayer(e.getUniqueId());
+        CloudServer.getInstance().getCloudPlayers().put(event.getUniqueId(), CloudAPI.getInstance().getOnlinePlayer(event.getUniqueId()));
     }
 
     @EventHandler
@@ -64,12 +64,7 @@ public final class BukkitListener implements Listener {
             UUID uniqueId = event.getDocument().getObject("uniqueId", UUID.class);
             if (uniqueId != null) {
                 requests.add(uniqueId);
-                Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        requests.remove(uniqueId);
-                    }
-                }, 20L);
+                Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(), () -> requests.remove(uniqueId), 20L);
             }
         }
     }
@@ -84,11 +79,8 @@ public final class BukkitListener implements Listener {
             this.kicks.remove(event.getPlayer().getUniqueId());
 
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED,
-                           ChatColor.translateAlternateColorCodes('&',
-                                                                  CloudAPI.getInstance()
-                                                                          .getCloudNetwork()
-                                                                          .getMessages()
-                                                                          .getString("server-kick-proxy-disallow")));
+                           ChatColor.translateAlternateColorCodes(
+                               '&', CloudAPI.getInstance().getCloudNetwork().getMessages().getString("server-kick-proxy-disallow")));
         }
     }
 
@@ -98,8 +90,8 @@ public final class BukkitListener implements Listener {
                                                 this.getClass().getSimpleName(),
                                                 "handleFirst",
                                                 String.format("Handling player login event: %s%n", event));
-        if (CloudServer.getInstance().getCloudPlayers().containsKey(event.getPlayer().getUniqueId()) && requests.contains(event.getPlayer()
-                                                                                                                               .getUniqueId())) {
+        if (CloudServer.getInstance().getCloudPlayers().containsKey(event.getPlayer().getUniqueId()) &&
+            requests.contains(event.getPlayer().getUniqueId())) {
             requests.remove(event.getPlayer().getUniqueId());
             if (CloudAPI.getInstance().getPermissionPool() != null && CloudAPI.getInstance().getPermissionPool().isAvailable()) {
                 try {
@@ -126,7 +118,9 @@ public final class BukkitListener implements Listener {
         }
 
         if (CloudServer.getInstance().getGroupData() != null) {
-            if (CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).isMaintenance()) {
+            final SimpleServerGroup serverGroupData = CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup());
+
+            if (serverGroupData.isMaintenance()) {
                 if (!event.getPlayer().hasPermission("cloudnet.group.maintenance")) {
                     event.disallow(PlayerLoginEvent.Result.KICK_BANNED,
                                    ChatColor.translateAlternateColorCodes('&',
@@ -138,19 +132,11 @@ public final class BukkitListener implements Listener {
                 }
             }
 
-            if (CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getJoinPower() > 0 && (!CloudAPI.getInstance()
-                                                                                                                             .getServerGroupData(
-                                                                                                                                 CloudAPI.getInstance()
-                                                                                                                                         .getGroup())
-                                                                                                                             .getMode()
-                                                                                                                             .equals(
-                                                                                                                                 ServerGroupMode.LOBBY) || !CloudAPI
-                .getInstance()
-                .getServerGroupData(CloudAPI.getInstance().getGroup())
-                .getMode()
-                .equals(ServerGroupMode.STATIC_LOBBY))) {
+            if (serverGroupData.getJoinPower() > 0 &&
+                !serverGroupData.getMode().equals(ServerGroupMode.LOBBY) &&
+                !serverGroupData.getMode().equals(ServerGroupMode.STATIC_LOBBY)) {
                 CloudPlayer cloudPlayer = CloudServer.getInstance().getCloudPlayers().get(event.getPlayer().getUniqueId());
-                int joinPower = CloudAPI.getInstance().getServerGroupData(CloudAPI.getInstance().getGroup()).getJoinPower();
+                int joinPower = serverGroupData.getJoinPower();
 
                 boolean acceptLogin = false;
 
@@ -193,27 +179,19 @@ public final class BukkitListener implements Listener {
 
         if (CloudServer.getInstance().getPercentOfPlayerNowOnline() >= CloudServer.getInstance()
                                                                                   .getGroupData()
-                                                                                  .getPercentForNewServerAutomatically() && CloudServer.getInstance()
-                                                                                                                                       .getServerProcessMeta()
-                                                                                                                                       .getCustomServerDownload() == null && !CloudServer
-            .getInstance()
-            .getGroupData()
-            .getMode()
-            .equals(ServerGroupMode.STATIC) && CloudServer.getInstance().isAllowAutoStart() && CloudServer.getInstance()
-                                                                                                          .getGroupData()
-                                                                                                          .getPercentForNewServerAutomatically() > 0) {
+                                                                                  .getPercentForNewServerAutomatically() &&
+            CloudServer.getInstance().getServerProcessMeta().getCustomServerDownload() == null &&
+            !CloudServer.getInstance().getGroupData().getMode().equals(ServerGroupMode.STATIC) &&
+            CloudServer.getInstance().isAllowAutoStart() &&
+            CloudServer.getInstance().getGroupData().getPercentForNewServerAutomatically() > 0) {
             CloudAPI.getInstance().startGameServer(CloudServer.getInstance().getGroupData(),
                                                    new ServerConfig(false, "null", new Document(), System.currentTimeMillis()),
                                                    true,
                                                    CloudServer.getInstance().getTemplate());
             CloudServer.getInstance().setAllowAutoStart(false);
 
-            Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    CloudServer.getInstance().setAllowAutoStart(true);
-                }
-            }, 6000);
+            Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(),
+                                               () -> CloudServer.getInstance().setAllowAutoStart(true), 6000);
         }
 
     }

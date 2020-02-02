@@ -68,7 +68,7 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
 
     private boolean installSpigot(ConsoleReader reader) {
         System.out.println(
-            "Choose a Spigot version [\"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\", \"1.14\", \"1.14.1\", \"1.14.2\", \"1.14.3\", \"1.14.4\"]");
+            "Choose a Spigot version [\"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\", \"1.14\", \"1.14.1\", \"1.14.2\", \"1.14.3\", \"1.14.4\", \"1.15\", \"1.15.1\", \"1.15.2\"]");
         while (true) {
             try {
                 switch (reader.readLine().toLowerCase()) {
@@ -98,6 +98,12 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
                         return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.14.3.jar");
                     case "1.14.4":
                         return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.14.4.jar");
+                    case "1.15":
+                        return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.15.jar");
+                    case "1.15.1":
+                        return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.15.1.jar");
+                    case "1.15.2":
+                        return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.15.2.jar");
                     default:
                         System.out.println("This version is not supported!");
                         break;

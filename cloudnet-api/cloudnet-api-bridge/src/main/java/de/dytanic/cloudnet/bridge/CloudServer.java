@@ -39,7 +39,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -56,26 +55,26 @@ public class CloudServer implements CloudService {
 
     private static CloudServer instance;
 
-    private BukkitBootstrap bukkitBootstrap;
+    private final BukkitBootstrap bukkitBootstrap;
 
-    private Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
+    private final Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
 
     /*=================================================*/
     private int maxPlayers;
 
     private String motd;
 
-    private String hostAdress;
+    private final String hostAdress;
 
-    private int port;
+    private final int port;
 
     private ServerState serverState;
 
     private ServerConfig serverConfig;
 
-    private Template template;
+    private final Template template;
 
-    private int memory;
+    private final int memory;
 
     private boolean allowAutoStart = true;
     /*=================================================*/
@@ -137,28 +136,25 @@ public class CloudServer implements CloudService {
      * Updates the ServerInfo on a asynchronized BukkitScheduler Task
      */
     public void updateAsync() {
-        bukkitBootstrap.getServer().getScheduler().runTaskAsynchronously(bukkitBootstrap, new Runnable() {
-            @Override
-            public void run() {
-                List<String> list = new CopyOnWriteArrayList<>();
-                for (Player all : Bukkit.getOnlinePlayers()) {
-                    list.add(all.getName());
-                }
-
-                ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(),
-                                                       hostAdress,
-                                                       port,
-                                                       true,
-                                                       list,
-                                                       memory,
-                                                       motd,
-                                                       Bukkit.getOnlinePlayers().size(),
-                                                       maxPlayers,
-                                                       serverState,
-                                                       serverConfig,
-                                                       template);
-                CloudAPI.getInstance().update(serverInfo);
+        bukkitBootstrap.getServer().getScheduler().runTaskAsynchronously(bukkitBootstrap, () -> {
+            List<String> list = new CopyOnWriteArrayList<>();
+            for (Player all : Bukkit.getOnlinePlayers()) {
+                list.add(all.getName());
             }
+
+            ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(),
+                                                   hostAdress,
+                                                   port,
+                                                   true,
+                                                   list,
+                                                   memory,
+                                                   motd,
+                                                   Bukkit.getOnlinePlayers().size(),
+                                                   maxPlayers,
+                                                   serverState,
+                                                   serverConfig,
+                                                   template);
+            CloudAPI.getInstance().update(serverInfo);
         });
     }
 
@@ -173,12 +169,7 @@ public class CloudServer implements CloudService {
             CloudAPI.getInstance().startGameServer(simpleServerGroup, template);
             allowAutoStart = false;
 
-            Bukkit.getScheduler().runTaskLater(bukkitBootstrap, new Runnable() {
-                @Override
-                public void run() {
-                    setAllowAutoStart(true);
-                }
-            }, 6000);
+            Bukkit.getScheduler().runTaskLater(bukkitBootstrap, () -> allowAutoStart = true, 6000);
         }
 
         update();
@@ -521,10 +512,6 @@ public class CloudServer implements CloudService {
     @Override
     public Map<String, ServerInfo> getServers() {
         throw new UnsupportedOperationException();
-    }
-
-    public Map<UUID, CloudPlayer> getClonedCloudPlayers() {
-        return new HashMap<>(this.cloudPlayers);
     }
 
     //API Handler
