@@ -42,7 +42,7 @@ public final class MobSelector {
 
     private MobConfig mobConfig;
 
-    private Map<String, ServerInfo> servers = new ConcurrentHashMap<>();
+    private final Map<String, ServerInfo> servers = new ConcurrentHashMap<>();
 
     public MobSelector(MobConfig mobConfig) {
         instance = this;
@@ -107,7 +107,7 @@ public final class MobSelector {
             serverMob,
             entity,
             createInventory(mobConfig, serverMob),
-            Collections.emptyMap(),
+            new HashMap<>(),
             armorStand
         );
 

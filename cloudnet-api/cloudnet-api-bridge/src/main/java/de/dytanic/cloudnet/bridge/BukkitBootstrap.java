@@ -3,9 +3,7 @@ package de.dytanic.cloudnet.bridge;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.config.CloudConfigLoader;
 import de.dytanic.cloudnet.api.config.ConfigTypeLoader;
-import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudServerInitEvent;
 import de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry;
-import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandCloudServer;
 import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandResource;
 import de.dytanic.cloudnet.bridge.internal.listener.bukkit.BukkitListener;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
@@ -14,7 +12,6 @@ import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.in.PacketInMob
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.in.PacketInSignSelector;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -80,41 +77,14 @@ public final class BukkitBootstrap extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "cloudnet:main");
 
         enableTasks();
+        startUpdateTask();
         loadPlayers();
     }
 
     /**
-     * Initializes and launches required tasks for Bukkit.
-     * This method also disables auto-save on all worlds, if configured.
-     * If Vault-API or Vault is present, this method also registers the Vault services implemented by CloudNet.
+     * If Vault-API or Vault is present, this method registers the Vault services implemented by CloudNet.
      */
     private void enableTasks() {
-        if (this.cloudServer.getGroupData() != null) {
-            CommandCloudServer commandCloudServer = new CommandCloudServer();
-
-            getCommand("cloudserver").setExecutor(commandCloudServer);
-            getCommand("cloudserver").setTabCompleter(commandCloudServer);
-            getCommand("cloudserver").setPermission("cloudnet.command.cloudserver");
-
-            Bukkit.getScheduler().runTaskLater(this, () -> {
-                Bukkit.getPluginManager().callEvent(new BukkitCloudServerInitEvent(this.cloudServer));
-                this.cloudServer.update();
-            }, 1);
-
-            if (api
-                .getServerGroupData(api.getGroup())
-                .getAdvancedServerConfig()
-                .isDisableAutoSavingForWorlds()) {
-                for (World world : Bukkit.getWorlds()) {
-                    world.setAutoSave(false);
-                }
-            }
-        }
-
-        if (this.cloudServer.getGroupData() != null) {
-            startUpdateTask();
-        }
-
         if (api.getPermissionPool() != null &&
             (getServer().getPluginManager().isPluginEnabled("VaultAPI") ||
                 getServer().getPluginManager().isPluginEnabled("Vault"))) {

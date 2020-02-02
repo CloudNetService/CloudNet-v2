@@ -2,7 +2,10 @@ package de.dytanic.cloudnet.bridge.internal.listener.bukkit;
 
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.bridge.CloudServer;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudNetworkUpdateEvent;
+import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudServerInitEvent;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitSubChannelMessageEvent;
+import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandCloudServer;
 import de.dytanic.cloudnet.bridge.internal.util.CloudPermissible;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
@@ -14,17 +17,16 @@ import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -32,7 +34,9 @@ import java.util.logging.Level;
  */
 public final class BukkitListener implements Listener {
 
-    private final Collection<UUID> requests = new CopyOnWriteArrayList<>(), kicks = new HashSet<>(256);
+    private final List<UUID> requests = new ArrayList<>();
+    private final Set<UUID> kicks = new HashSet<>();
+    private boolean enabledGameServerFunctions;
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void handle0(AsyncPlayerPreLoginEvent event) {
@@ -206,5 +210,43 @@ public final class BukkitListener implements Listener {
     public void handle(PlayerQuitEvent e) {
         CloudServer.getInstance().getCloudPlayers().remove(e.getPlayer().getUniqueId());
         CloudServer.getInstance().updateAsync();
+    }
+
+    /**
+     * Initializes and launches required tasks for Bukkit.
+     * This method also disables auto-save on all worlds, if configured.
+     *
+     * @param event the event containing the cloud network necessary for making decisions.
+     */
+    @EventHandler
+    public void enableGameServerFunctions(BukkitCloudNetworkUpdateEvent event) {
+
+        if (this.enabledGameServerFunctions) {
+            return;
+        }
+
+        CloudServer cloudServer = CloudServer.getInstance();
+
+        final SimpleServerGroup serverGroup = event.getCloudNetwork().getServerGroups().get(CloudAPI.getInstance().getGroup());
+        if (serverGroup != null) {
+            CommandCloudServer commandCloudServer = new CommandCloudServer();
+
+            final JavaPlugin plugin = CloudServer.getInstance().getPlugin();
+            plugin.getCommand("cloudserver").setExecutor(commandCloudServer);
+            plugin.getCommand("cloudserver").setTabCompleter(commandCloudServer);
+            plugin.getCommand("cloudserver").setPermission("cloudnet.command.cloudserver");
+
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                Bukkit.getPluginManager().callEvent(new BukkitCloudServerInitEvent(cloudServer));
+                cloudServer.update();
+            }, 1);
+
+            if (serverGroup.getAdvancedServerConfig().isDisableAutoSavingForWorlds()) {
+                for (World world : Bukkit.getWorlds()) {
+                    world.setAutoSave(false);
+                }
+            }
+            this.enabledGameServerFunctions = true;
+        }
     }
 }
