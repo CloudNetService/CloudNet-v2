@@ -115,7 +115,6 @@ public final class CommandInfo extends Command {
                                        "ServerType: " + group.getServerType().name(),
                                        "JoinPower: " + group.getJoinPower(),
                                        "MaxHeapSize: " + group.getMemory() + "MB",
-                                       "DynamicFixMaxHeapSize: " + group.getDynamicMemory() + "MB",
                                        "MinOnlineServers: " + group.getMinOnlineServers(),
                                        "MaxOnlineServers: " + group.getMaxOnlineServers(),
                                        "Wrappers: " + Arrays.toString(group.getWrapper().toArray(EMPTY_STRING_ARRAY)),

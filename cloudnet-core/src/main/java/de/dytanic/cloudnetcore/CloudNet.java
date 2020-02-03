@@ -1137,10 +1137,7 @@ public final class CloudNet implements Executable, Reloadable {
     public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig, Properties serverProperties) {
         startGameServer(serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1206,22 +1203,6 @@ public final class CloudNet implements Executable, Reloadable {
                                       template);
             wrapper.startGameServer(serverProcessMeta);
         });
-    }
-
-    public int calcMemory(int groupMemory, int groupDynamicMemory, int onlineFromGroup, int globalUse) {
-        if (groupMemory < 0 || groupDynamicMemory < 0) {
-            return groupMemory < 0 ? 512 : groupMemory;
-        }
-        if (groupDynamicMemory <= groupMemory) {
-            return groupMemory;
-        }
-        if (onlineFromGroup > 9) {
-            return groupMemory;
-        }
-        if (onlineFromGroup == 0) {
-            return groupDynamicMemory;
-        }
-        return ((groupDynamicMemory - groupMemory) / 100) * (((10 - onlineFromGroup) * 10)) + groupMemory;
     }
 
     public void startGameServer(ServerGroup serverGroup) {
@@ -1290,10 +1271,7 @@ public final class CloudNet implements Executable, Reloadable {
         startGameServer(wrapper,
                         serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1358,10 +1336,7 @@ public final class CloudNet implements Executable, Reloadable {
     public void startGameServer(ServerGroup serverGroup, Document properties, String[] processProperties, Properties serverProperties) {
         startGameServer(serverGroup,
                         new ServerConfig(false, "extra", properties, System.currentTimeMillis()),
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         null,
                         processProperties,
@@ -1375,10 +1350,7 @@ public final class CloudNet implements Executable, Reloadable {
         startGameServer(wrapper,
                         serverGroup,
                         new ServerConfig(false, "extra", properties, System.currentTimeMillis()),
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1395,10 +1367,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 Properties serverProperties) {
         startGameServer(serverGroup,
                         new ServerConfig(hideServer, "extra", properties, System.currentTimeMillis()),
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         null,
                         processProperties,
@@ -1416,10 +1385,7 @@ public final class CloudNet implements Executable, Reloadable {
         startGameServer(wrapper,
                         serverGroup,
                         new ServerConfig(hideServer, "extra", properties, System.currentTimeMillis()),
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1435,10 +1401,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 Properties serverProperties) {
         startGameServer(serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         null,
                         processProperties,
@@ -1456,10 +1419,7 @@ public final class CloudNet implements Executable, Reloadable {
         startGameServer(wrapper,
                         serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         null,
                         processProperties,
@@ -1472,10 +1432,7 @@ public final class CloudNet implements Executable, Reloadable {
     public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig, boolean priorityStop) {
         startGameServer(serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         priorityStop,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1489,10 +1446,7 @@ public final class CloudNet implements Executable, Reloadable {
         startGameServer(wrapper,
                         serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         priorityStop,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1505,10 +1459,7 @@ public final class CloudNet implements Executable, Reloadable {
     public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig, boolean priorityStop, String[] processProperties) {
         startGameServer(serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         priorityStop,
                         null,
                         processProperties,
@@ -1526,10 +1477,7 @@ public final class CloudNet implements Executable, Reloadable {
         startGameServer(wrapper,
                         serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         priorityStop,
                         null,
                         processProperties,
@@ -1547,10 +1495,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 boolean onlinemode) {
         startGameServer(serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         priorityStop,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1570,10 +1515,7 @@ public final class CloudNet implements Executable, Reloadable {
         startGameServer(wrapper,
                         serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         priorityStop,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1586,10 +1528,7 @@ public final class CloudNet implements Executable, Reloadable {
     public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig) {
         startGameServer(serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1603,10 +1542,7 @@ public final class CloudNet implements Executable, Reloadable {
         startGameServer(wrapper,
                         serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1619,10 +1555,7 @@ public final class CloudNet implements Executable, Reloadable {
     public void startGameServer(ServerGroup serverGroup, Document document, boolean priorityStop) {
         startGameServer(serverGroup,
                         new ServerConfig(false, "extra", document, System.currentTimeMillis()),
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         priorityStop,
                         null,
                         EMPTY_STRING_ARRAY,
@@ -1638,10 +1571,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 Collection<ServerInstallablePlugin> plugins) {
         startGameServer(serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         url,
                         EMPTY_STRING_ARRAY,
@@ -1659,10 +1589,7 @@ public final class CloudNet implements Executable, Reloadable {
         startGameServer(wrapper,
                         serverGroup,
                         serverConfig,
-                        calcMemory(serverGroup.getMemory(),
-                                   serverGroup.getDynamicMemory(),
-                                   getServers(serverGroup.getName()).size(),
-                                   (int) globalUsedMemory()),
+                        serverGroup.getMemory(),
                         false,
                         url,
                         EMPTY_STRING_ARRAY,

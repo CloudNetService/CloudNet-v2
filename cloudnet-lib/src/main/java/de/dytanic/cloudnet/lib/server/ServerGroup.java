@@ -28,7 +28,6 @@ public class ServerGroup implements Nameable {
     protected Collection<Template> templates;
 
     protected int memory;
-    protected int dynamicMemory;
     protected int joinPower;
     protected boolean maintenance;
     protected int minOnlineServers;
@@ -44,7 +43,6 @@ public class ServerGroup implements Nameable {
                        Collection<String> wrapper,
                        boolean kickedForceFallback,
                        int memory,
-                       int dynamicMemory,
                        int joinPower,
                        boolean maintenance,
                        int startup,
@@ -63,7 +61,6 @@ public class ServerGroup implements Nameable {
         this.kickedForceFallback = kickedForceFallback;
         this.wrapper = wrapper;
         this.memory = memory;
-        this.dynamicMemory = dynamicMemory;
         this.joinPower = joinPower;
         this.maintenance = maintenance;
         this.minOnlineServers = startup;
@@ -154,14 +151,6 @@ public class ServerGroup implements Nameable {
 
     public void setTemplates(Collection<Template> templates) {
         this.templates = templates;
-    }
-
-    public int getDynamicMemory() {
-        return dynamicMemory;
-    }
-
-    public void setDynamicMemory(int dynamicMemory) {
-        this.dynamicMemory = dynamicMemory;
     }
 
     public int getMaxOnlineServers() {
