@@ -11,7 +11,4 @@ public class PacketOutStartProxy extends Packet {
         super(PacketRC.CN_CORE + 1, new Document("proxyProcess", proxyProcessMeta));
     }
 
-    public PacketOutStartProxy(ProxyProcessMeta proxyProcessMeta, boolean async) {
-        super(PacketRC.CN_CORE + 1, new Document("proxyProcess", proxyProcessMeta).append("async", async));
-    }
 }

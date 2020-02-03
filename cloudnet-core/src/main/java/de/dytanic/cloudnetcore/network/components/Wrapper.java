@@ -34,12 +34,12 @@ public final class Wrapper implements INetworkComponent {
     private final Map<String, WaitingService> waitingServices = new ConcurrentHashMap<>();
     private Channel channel;
     private WrapperInfo wrapperInfo;
-    private WrapperMeta networkInfo;
+    private final WrapperMeta networkInfo;
     private boolean ready;
     private double cpuUsage = -1;
     private int maxMemory = 0;
 
-    private String serverId;
+    private final String serverId;
 
     public Wrapper(WrapperMeta networkInfo) {
         this.serverId = networkInfo.getId();
@@ -236,30 +236,8 @@ public final class Wrapper implements INetworkComponent {
                                                     null));
     }
 
-    public void startProxyAsync(ProxyProcessMeta proxyProcessMeta) {
-        sendPacket(new PacketOutStartProxy(proxyProcessMeta, true));
-        System.out.println("Proxy [" + proxyProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
-
-        this.waitingServices.put(proxyProcessMeta.getServiceId().getServerId(),
-                                 new WaitingService(proxyProcessMeta.getPort(),
-                                                    proxyProcessMeta.getMemory(),
-                                                    proxyProcessMeta.getServiceId(),
-                                                    null));
-    }
-
     public void startGameServer(ServerProcessMeta serverProcessMeta) {
         sendPacket(new PacketOutStartServer(serverProcessMeta));
-        System.out.println("Server [" + serverProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
-
-        this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(),
-                                 new WaitingService(serverProcessMeta.getPort(),
-                                                    serverProcessMeta.getMemory(),
-                                                    serverProcessMeta.getServiceId(),
-                                                    serverProcessMeta.getTemplate()));
-    }
-
-    public void startGameServerAsync(ServerProcessMeta serverProcessMeta) {
-        sendPacket(new PacketOutStartServer(serverProcessMeta, true));
         System.out.println("Server [" + serverProcessMeta.getServiceId() + "] is now in " + serverId + " queue.");
 
         this.waitingServices.put(serverProcessMeta.getServiceId().getServerId(),

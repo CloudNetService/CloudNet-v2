@@ -13,7 +13,4 @@ public class PacketOutStartServer extends Packet {
         super(PacketRC.CN_CORE + 3, new Document("serverProcess", serverProcessMeta));
     }
 
-    public PacketOutStartServer(ServerProcessMeta serverProcessMeta, boolean async) {
-        super(PacketRC.CN_CORE + 3, new Document("serverProcess", serverProcessMeta).append("async", async));
-    }
 }

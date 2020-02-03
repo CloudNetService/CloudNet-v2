@@ -15,28 +15,34 @@ public class PacketOutStartProxy extends Packet {
 
     public PacketOutStartProxy(ProxyGroup proxyGroup,
                                int memory,
-                               String[] paramters,
+                               Collection<String> parameters,
                                String url,
                                Collection<ServerInstallablePlugin> plugins,
                                Document document) {
-        super(PacketRC.SERVER_HANDLE + 6, new Document("group", proxyGroup.getName()).append("memory", memory).append("url", url).append(
-            "processParameters",
-            paramters).append("plugins", plugins).append("properties", document));
+        super(PacketRC.SERVER_HANDLE + 6,
+              new Document("group", proxyGroup.getName())
+                  .append("memory", memory)
+                  .append("url", url)
+                  .append("processParameters", parameters)
+                  .append("plugins", plugins)
+                  .append("properties", document));
     }
 
     public PacketOutStartProxy(String wrapper,
                                ProxyGroup proxyGroup,
                                int memory,
-                               String[] paramters,
+                               Collection<String> parameters,
                                String url,
                                Collection<ServerInstallablePlugin> plugins,
                                Document document) {
-        super(PacketRC.SERVER_HANDLE + 6, new Document("group", proxyGroup.getName()).append("wrapper", wrapper)
-                                                                                     .append("memory", memory)
-                                                                                     .append("url", url)
-                                                                                     .append("processParameters", paramters)
-                                                                                     .append("plugins", plugins)
-                                                                                     .append("properties", document));
+        super(PacketRC.SERVER_HANDLE + 6,
+              new Document("group", proxyGroup.getName())
+                  .append("wrapper", wrapper)
+                  .append("memory", memory)
+                  .append("url", url)
+                  .append("processParameters", parameters)
+                  .append("plugins", plugins)
+                  .append("properties", document));
     }
 
 }

@@ -330,7 +330,8 @@ public final class CloudAPI {
      *
      * @param serverGroupName the name of the server group.
      */
-    public SimpleServerGroup getServerGroupData(String serverGroupName) {
+    public SimpleServerGroup
+    getServerGroupData(String serverGroupName) {
         return cloudNetwork.getServerGroups().get(serverGroupName);
     }
 
@@ -449,16 +450,18 @@ public final class CloudAPI {
     }
 
     /**
-     * Update the server group
+     * Updates the given server group across the network.
      *
-     * @param serverGroup
+     * @param serverGroup the server group to update.
      */
     public void updateServerGroup(ServerGroup serverGroup) {
         networkConnection.sendPacket(new PacketOutUpdateServerGroup(serverGroup));
     }
 
     /**
-     * Update the permission group
+     * Updates the given permission group.
+     *
+     * @param permissionGroup the permission group to update.
      */
     public void updatePermissionGroup(PermissionGroup permissionGroup) {
         this.logger.logp(Level.FINEST,
@@ -469,9 +472,9 @@ public final class CloudAPI {
     }
 
     /**
-     * Update the proxy group
+     * Updates the given proxy group across the network.
      *
-     * @param proxyGroup
+     * @param proxyGroup the proxy group to update.
      */
     public void updateProxyGroup(ProxyGroup proxyGroup) {
         this.logger.logp(Level.FINEST,
@@ -482,7 +485,9 @@ public final class CloudAPI {
     }
 
     /**
-     * Dispatch a command on cloudnet-core
+     * Dispatch a command on the CloudNet master.
+     *
+     * @param commandLine the entire command line with space-separated arguments.
      */
     public void sendCloudCommand(String commandLine) {
         this.logger.logp(Level.FINEST,
@@ -493,24 +498,24 @@ public final class CloudAPI {
     }
 
     /**
-     * Dispatch a console message
+     * Dispatches a console message to the CloudNet master.
      *
-     * @param output
+     * @param message the message to dispatch.
      */
-    public void dispatchConsoleMessage(String output) {
+    public void dispatchConsoleMessage(String message) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "dispatchConsoleMessage",
-                         String.format("Dispatching console message: %s%n", output));
-        networkConnection.sendPacket(new PacketOutDispatchConsoleMessage(output));
+                         String.format("Dispatching console message: %s%n", message));
+        networkConnection.sendPacket(new PacketOutDispatchConsoleMessage(message));
     }
 
     /**
-     * Writes into the console of the server/proxy the command line
+     * Sends the given command line to the console of the given server or proxy.
      *
-     * @param defaultType
-     * @param serverId
-     * @param commandLine
+     * @param defaultType the type of service (server or proxy) to send the command line to.
+     * @param serverId    the server id of the service.
+     * @param commandLine the command line to send.
      */
     public void sendConsoleMessage(DefaultType defaultType, String serverId, String commandLine) {
         this.logger.logp(Level.FINEST,
@@ -520,28 +525,34 @@ public final class CloudAPI {
         networkConnection.sendPacket(new PacketOutServerDispatchCommand(defaultType, serverId, commandLine));
     }
 
+    /**
+     * @return a map containing all server groups mapped to their names.
+     */
     public Map<String, SimpleServerGroup> getServerGroupMap() {
         return cloudNetwork.getServerGroups();
     }
 
+    /**
+     * @return a map containing all proxy groups mapped to their names.
+     */
     public Map<String, ProxyGroup> getProxyGroupMap() {
         return cloudNetwork.getProxyGroups();
     }
 
     /**
-     * Stop a game server with the parameter of the serverId
+     * Stops a game server with the given server id
      *
-     * @param serverId the server-id to stop
+     * @param serverId the server id of the server to stop.
      */
     public void stopServer(String serverId) {
         this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopServer", String.format("Stopping server: %s%n", serverId));
         networkConnection.sendPacket(new PacketOutStopServer(serverId));
     }
 
-    /*=====================================================================================*/
-
     /**
-     * Stop a BungeeCord proxy server with the id @proxyId
+     * Stops the proxy server with the given proxy id.
+     *
+     * @param proxyId the proxy id of the proxy server to stop.
      */
     public void stopProxy(String proxyId) {
         this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopProxy", String.format("Stopping proxy: %s%n", proxyId));
@@ -549,7 +560,9 @@ public final class CloudAPI {
     }
 
     /**
-     * Creates a custom server log url for one server screen
+     * Creates a custom server log url for a service screen.
+     *
+     * @param serverId the id of the service.
      */
     public String createServerLogUrl(String serverId) {
         this.logger.logp(Level.FINEST,
@@ -568,7 +581,7 @@ public final class CloudAPI {
      * @param proxyGroup
      */
     public void startProxy(ProxyGroup proxyGroup) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), EMPTY_STRING_ARRAY);
+        startProxy(proxyGroup, proxyGroup.getMemory(), Collections.emptyList());
     }
 
     /**
@@ -576,7 +589,7 @@ public final class CloudAPI {
      *
      * @param proxyGroup
      */
-    public void startProxy(ProxyGroup proxyGroup, int memory, String[] processParameters) {
+    public void startProxy(ProxyGroup proxyGroup, int memory, Collection<String> processParameters) {
         startProxy(proxyGroup, memory, processParameters, null, new ArrayList<>(), new Document());
     }
 
@@ -584,10 +597,11 @@ public final class CloudAPI {
      * Start a proxy server with a group
      *
      * @param proxyGroup
+     * @param processParameters
      */
     public void startProxy(ProxyGroup proxyGroup,
                            int memory,
-                           String[] processParameters,
+                           Collection<String> processParameters,
                            String url,
                            Collection<ServerInstallablePlugin> plugins,
                            Document properties) {
@@ -597,7 +611,7 @@ public final class CloudAPI {
                          String.format("Starting proxy: %s, %d, %s, %s, %s, %s%n",
                                        proxyGroup,
                                        memory,
-                                       Arrays.toString(processParameters),
+                                       processParameters,
                                        url,
                                        plugins,
                                        properties));
@@ -609,7 +623,7 @@ public final class CloudAPI {
      *
      * @param proxyGroup
      */
-    public void startProxy(ProxyGroup proxyGroup, int memory, String[] processParameters, Document document) {
+    public void startProxy(ProxyGroup proxyGroup, int memory, Collection<String> processParameters, Document document) {
         startProxy(proxyGroup, memory, processParameters, null, new ArrayList<>(), document);
     }
 
@@ -619,7 +633,7 @@ public final class CloudAPI {
      * @param proxyGroup
      */
     public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup) {
-        startProxy(wrapperInfo, proxyGroup, proxyGroup.getMemory(), EMPTY_STRING_ARRAY);
+        startProxy(wrapperInfo, proxyGroup, proxyGroup.getMemory(), Collections.emptyList());
     }
 
     /**
@@ -627,7 +641,7 @@ public final class CloudAPI {
      *
      * @param proxyGroup
      */
-    public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters) {
+    public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, Collection<String> processParameters) {
         startProxy(wrapperInfo, proxyGroup, memory, processParameters, null, new ArrayList<>(), new Document());
     }
 
@@ -639,7 +653,7 @@ public final class CloudAPI {
     public void startProxy(WrapperInfo wrapperInfo,
                            ProxyGroup proxyGroup,
                            int memory,
-                           String[] processParameters,
+                           Collection<String> processParameters,
                            String url,
                            Collection<ServerInstallablePlugin> plugins,
                            Document properties) {
@@ -650,7 +664,7 @@ public final class CloudAPI {
                                        wrapperInfo,
                                        proxyGroup,
                                        memory,
-                                       Arrays.toString(processParameters),
+                                       processParameters,
                                        url,
                                        plugins,
                                        properties));
@@ -668,7 +682,11 @@ public final class CloudAPI {
      *
      * @param proxyGroup
      */
-    public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters, Document document) {
+    public void startProxy(WrapperInfo wrapperInfo,
+                           ProxyGroup proxyGroup,
+                           int memory,
+                           Collection<String> processParameters,
+                           Document document) {
         startProxy(wrapperInfo, proxyGroup, memory, processParameters, null, new ArrayList<>(), document);
     }
 

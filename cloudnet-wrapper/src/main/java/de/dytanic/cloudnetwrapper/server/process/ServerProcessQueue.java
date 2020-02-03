@@ -141,41 +141,4 @@ public class ServerProcessQueue implements Runnable {
         }
     }
 
-    public void patchAsync(ServerProcessMeta process) {
-        if (!CloudNetWrapper.getInstance().getServerGroups().containsKey(process.getServiceId().getGroup())) {
-            this.servers.add(new ServerProcess(process, ServerStage.SETUP));
-            return;
-        }
-        GameServer gameServer = new GameServer(new ServerProcess(process, ServerStage.SETUP),
-                                               ServerStage.SETUP,
-                                               CloudNetWrapper.getInstance().getServerGroups().get(process.getServiceId().getGroup()));
-        NetworkUtils.getExecutor().submit(() -> {
-            try {
-                gameServer.bootstrap();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    public void patchAsync(ProxyProcessMeta proxyProcessMeta) {
-        BungeeCord bungeeCord = new BungeeCord(proxyProcessMeta,
-                                               CloudNetWrapper.getInstance()
-                                                              .getProxyGroups()
-                                                              .get(proxyProcessMeta.getServiceId().getGroup()));
-
-        if (!CloudNetWrapper.getInstance().getProxyGroups().containsKey(proxyProcessMeta.getServiceId().getGroup())) {
-            this.proxies.add(proxyProcessMeta);
-            return;
-        }
-
-        NetworkUtils.getExecutor().submit(() -> {
-            try {
-                bungeeCord.bootstrap();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
 }

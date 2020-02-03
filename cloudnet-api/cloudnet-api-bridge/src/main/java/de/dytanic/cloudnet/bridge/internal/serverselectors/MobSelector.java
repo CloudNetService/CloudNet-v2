@@ -221,8 +221,7 @@ public final class MobSelector {
                 int index = 0;
                 for (ServerInfo server : serverInfos) {
                     if (server.isOnline() && server.getServerState().equals(ServerState.LOBBY) &&
-                        !server.getServerConfig().isHideServer() &&
-                        !server.getServerConfig().getProperties().contains(NetworkUtils.DEV_PROPERTY)) {
+                        !server.getServerConfig().isHideServer()) {
                         while (mobConfig.getDefaultItemInventory().containsKey(index + 1)) {
                             ++index;
                         }

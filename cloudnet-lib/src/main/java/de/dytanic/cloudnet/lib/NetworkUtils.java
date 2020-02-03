@@ -39,7 +39,6 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class NetworkUtils {
 
-    public static final String DEV_PROPERTY = "_CLOUDNET_DEV_SERVICE_UNIQUEID_";
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36";
     public static final Gson GSON = new Gson();
     public static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
