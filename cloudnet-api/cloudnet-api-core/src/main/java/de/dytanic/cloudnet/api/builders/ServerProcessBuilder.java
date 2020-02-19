@@ -7,7 +7,6 @@ import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -57,7 +56,7 @@ public class ServerProcessBuilder {
         return this;
     }
 
-    public ServerProcessBuilder properties(Document properties) {
+    public ServerProcessBuilder properties(Properties properties) {
         this.serverProcessData.setProperties(properties);
         return this;
     }
@@ -89,7 +88,7 @@ public class ServerProcessBuilder {
 
     public CompletableFuture<ServerProcessMeta> startServer() {
         final UUID uuid = UUID.randomUUID();
-        this.serverProcessData.getProperties().append("cloudnet:requestId", uuid);
+        this.serverProcessData.getServerConfig().getProperties().append("cloudnet:requestId", uuid);
         CloudAPI.getInstance().getNetworkConnection().sendAsynchronous(
             new PacketOutStartServer(this.serverProcessData)
         );
@@ -124,7 +123,7 @@ public class ServerProcessBuilder {
         return serverProcessData.getPlugins();
     }
 
-    public Document getProperties() {
+    public Properties getProperties() {
         return serverProcessData.getProperties();
     }
 

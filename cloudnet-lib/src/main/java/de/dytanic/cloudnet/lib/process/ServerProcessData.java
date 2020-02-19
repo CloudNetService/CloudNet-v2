@@ -22,13 +22,14 @@ public class ServerProcessData {
     private List<String> serverProcessParameters;
     private String templateUrl;
     private Set<ServerInstallablePlugin> plugins;
-    private Document properties;
+    private Properties properties;
 
     public ServerProcessData() {
+        this.serverConfig = new ServerConfig(false, "", new Document(), System.currentTimeMillis());
         this.javaProcessParameters = new ArrayList<>();
         this.serverProcessParameters = new ArrayList<>();
         this.plugins = new HashSet<>();
-        this.properties = new Document();
+        this.properties = new Properties();
     }
 
     public ServerProcessData(final String wrapper,
@@ -38,7 +39,9 @@ public class ServerProcessData {
                              final Template template,
                              final List<String> javaProcessParameters,
                              final List<String> serverProcessParameters,
-                             final String templateUrl, final Set<ServerInstallablePlugin> plugins, final Document properties) {
+                             final String templateUrl,
+                             final Set<ServerInstallablePlugin> plugins,
+                             final Properties properties) {
         this.wrapper = wrapper;
         this.serverGroupName = serverGroupName;
         this.memory = memory;
@@ -179,11 +182,11 @@ public class ServerProcessData {
         this.plugins = plugins;
     }
 
-    public Document getProperties() {
+    public Properties getProperties() {
         return properties;
     }
 
-    public void setProperties(final Document properties) {
+    public void setProperties(final Properties properties) {
         this.properties = properties;
     }
 
