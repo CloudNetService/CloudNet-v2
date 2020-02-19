@@ -1,6 +1,7 @@
 package de.dytanic.cloudnet;
 
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.api.builders.ServerProcessBuilder;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
@@ -28,7 +29,7 @@ public class UtilExample {
             System.out.println("Is a maintenance group");
         }
 
-        CloudAPI.getInstance().startGameServer(CloudAPI.getInstance().getServerGroupData("Lobby")); //start a simple game server
+        ServerProcessBuilder.create("Lobby").startServer(); //start a simple game server
 
     }
 

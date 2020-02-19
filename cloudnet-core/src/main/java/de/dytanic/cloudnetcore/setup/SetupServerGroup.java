@@ -24,7 +24,7 @@ public class SetupServerGroup {
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final Pattern WRAPPER_SPLITTER = Pattern.compile("\\s?+,\\s?+");
-    private String name;
+    private final String name;
     private final Setup setup;
 
     public SetupServerGroup(CommandSender commandSender, String name) {
@@ -50,7 +50,6 @@ public class SetupServerGroup {
                                ServerGroup serverGroup = new ServerGroup(name,
                                                                          wrappers,
                                                                          serverGroupMode.equals(ServerGroupMode.LOBBY),
-                                                                         data.getInt("memory"),
                                                                          data.getInt("memory"),
                                                                          0,
                                                                          true,

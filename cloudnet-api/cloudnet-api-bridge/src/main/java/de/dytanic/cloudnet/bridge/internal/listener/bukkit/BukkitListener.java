@@ -1,6 +1,7 @@
 package de.dytanic.cloudnet.bridge.internal.listener.bukkit;
 
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.api.builders.ServerProcessBuilder;
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudNetworkUpdateEvent;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudServerInitEvent;
@@ -188,10 +189,10 @@ public final class BukkitListener implements Listener {
             !CloudServer.getInstance().getGroupData().getMode().equals(ServerGroupMode.STATIC) &&
             CloudServer.getInstance().isAllowAutoStart() &&
             CloudServer.getInstance().getGroupData().getPercentForNewServerAutomatically() > 0) {
-            CloudAPI.getInstance().startGameServer(CloudServer.getInstance().getGroupData(),
-                                                   new ServerConfig(false, "null", new Document(), System.currentTimeMillis()),
-                                                   true,
-                                                   CloudServer.getInstance().getTemplate());
+            ServerProcessBuilder.create(CloudAPI.getInstance().getGroup())
+                                .serverConfig(new ServerConfig(false, "null", new Document(), System.currentTimeMillis()))
+                                .template(CloudServer.getInstance().getTemplate())
+                                .startServer();
             CloudServer.getInstance().setAllowAutoStart(false);
 
             Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(),

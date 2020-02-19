@@ -165,10 +165,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             new SetupSpigotVersion().accept(cloudNetLogging.getReader());
         }
 
-        Thread processQueueThread = new Thread(serverProcessQueue);
-        processQueueThread.setPriority(Thread.MIN_PRIORITY);
-        processQueueThread.setDaemon(true);
-        processQueueThread.start();
+        getExecutor().scheduleWithFixedDelay(serverProcessQueue, 500, 500, TimeUnit.MILLISECONDS);
 
         commandManager.registerCommand(new CommandHelp())
                       .registerCommand(new CommandClear())

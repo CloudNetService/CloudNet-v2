@@ -12,6 +12,7 @@ import de.dytanic.cloudnet.lib.proxylayout.ServerFallback;
 import de.dytanic.cloudnet.lib.proxylayout.TabList;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
+import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -25,6 +26,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -33,7 +35,7 @@ import java.util.stream.Collectors;
  * This class is a singleton, use the {@link #getInstance()} method for accessing this
  * class' methods.
  */
-public class CloudProxy implements CloudService {
+public class CloudProxy implements CloudService, NetworkHandler {
 
     /**
      * The singleton instance of this cloud proxy class.
@@ -68,6 +70,16 @@ public class CloudProxy implements CloudService {
     private final Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
 
     /**
+     * A map of all proxies which are requested to be launched.
+     */
+    private final Map<UUID, CompletableFuture<ProxyProcessMeta>> waitingProxies = new ConcurrentHashMap<>();
+
+    /**
+     * A map of all servers which are requested to be launched.
+     */
+    private final Map<UUID, CompletableFuture<ServerProcessMeta>> waitingServers = new ConcurrentHashMap<>();
+
+    /**
      * Initializes a new proxy instance.
      * This method should only be called once and only by the bootstrapping class.
      * Subsequent construction attempts are going to fail!
@@ -86,7 +98,7 @@ public class CloudProxy implements CloudService {
         this.proxiedBootstrap = proxiedBootstrap;
         this.cloudAPI = cloudAPI;
         this.proxyProcessMeta = this.cloudAPI.getConfig().getObject("proxyProcess", ProxyProcessMeta.TYPE);
-        this.cloudAPI.getNetworkHandlerProvider().registerHandler(new NetworkHandlerImpl(cloudAPI));
+        this.cloudAPI.getNetworkHandlerProvider().registerHandler(this);
         this.cloudAPI.getServers().forEach(server -> {
             final String serverId = server.getServiceId().getServerId();
             ProxyServer.getInstance().getServers().put(
@@ -105,6 +117,12 @@ public class CloudProxy implements CloudService {
             cachedServers.put(serverId, server);
         });
         this.cloudAPI.setCloudService(this);
+
+        final String channel = "cloudnet_internal";
+        final String message = "startedProxy";
+        final Document document = new Document("proxyProcessMeta", this.proxyProcessMeta);
+        this.cloudAPI.sendCustomSubProxyMessage(channel, message, document);
+        this.cloudAPI.sendCustomSubServerMessage(channel, message, document);
     }
 
     /**
@@ -127,15 +145,6 @@ public class CloudProxy implements CloudService {
      */
     public String fallback(ProxiedPlayer cloudPlayer) {
         return fallback(cloudPlayer, null);
-    }
-
-    /**
-     * Returns the instance of this {@link CloudProxy}.
-     *
-     * @return the singleton instance of this class.
-     */
-    public static CloudProxy getInstance() {
-        return instance;
     }
 
     /**
@@ -217,6 +226,13 @@ public class CloudProxy implements CloudService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public CompletableFuture<ProxyProcessMeta> waitForProxy(final UUID uuid) {
+        final CompletableFuture<ProxyProcessMeta> future = new CompletableFuture<>();
+        this.waitingProxies.put(uuid, future);
+        return future;
     }
 
     /**
@@ -340,336 +356,338 @@ public class CloudProxy implements CloudService {
         return this.cachedServers;
     }
 
-    private class NetworkHandlerImpl implements NetworkHandler {
+    @Override
+    public CompletableFuture<ServerProcessMeta> waitForServer(final UUID uuid) {
+        final CompletableFuture<ServerProcessMeta> future = new CompletableFuture<>();
+        this.waitingServers.put(uuid, future);
+        return future;
+    }
 
-        private final CloudAPI cloudAPI;
-
-        public NetworkHandlerImpl(final CloudAPI cloudAPI) {
-            this.cloudAPI = cloudAPI;
+    @Override
+    public void onServerAdd(ServerInfo serverInfo) {
+        if (serverInfo == null) {
+            return;
         }
 
-        @Override
-        public void onServerAdd(ServerInfo serverInfo) {
-            if (serverInfo == null) {
-                return;
-            }
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerAddEvent(serverInfo));
+        ProxyServer.getInstance().getServers().put(serverInfo.getServiceId().getServerId(),
+                                                   ProxyServer.getInstance().constructServerInfo(
+                                                       serverInfo.getServiceId().getServerId(),
+                                                       new InetSocketAddress(serverInfo.getHost(), serverInfo.getPort()),
+                                                       "CloudNet2 Game-Server",
+                                                       false));
+        // Add default fallback to server priority of Bungeecord
+        if (serverInfo.getServiceId().getGroup().equals(
+            getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
+            ProxyServer.getInstance().getConfig().getListeners()
+                       .forEach(listener ->
+                                    listener.getServerPriority().add(serverInfo.getServiceId().getServerId()));
+        }
+        cachedServers.put(serverInfo.getServiceId().getServerId(), serverInfo);
 
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerAddEvent(serverInfo));
-            ProxyServer.getInstance().getServers().put(serverInfo.getServiceId().getServerId(),
-                                                       ProxyServer.getInstance().constructServerInfo(
-                                                           serverInfo.getServiceId().getServerId(),
-                                                           new InetSocketAddress(serverInfo.getHost(), serverInfo.getPort()),
-                                                           "CloudNet2 Game-Server",
-                                                           false));
-            // Add default fallback to server priority of Bungeecord
-            if (serverInfo.getServiceId().getGroup().equals(
-                getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
-                ProxyServer.getInstance().getConfig().getListeners()
-                           .forEach(listener ->
-                                        listener.getServerPriority().add(serverInfo.getServiceId().getServerId()));
-            }
-            cachedServers.put(serverInfo.getServiceId().getServerId(), serverInfo);
-
-            if (this.cloudAPI.getModuleProperties().contains("notifyService") &&
-                this.cloudAPI.getModuleProperties().getBoolean("notifyService")) {
-                for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
-                    if (proxiedPlayer.hasPermission("cloudnet.notify")) {
-                        proxiedPlayer.sendMessage(
-                            TextComponent.fromLegacyText(
-                                ChatColor.translateAlternateColorCodes('&',
-                                                                       this.cloudAPI
-                                                                           .getCloudNetwork()
-                                                                           .getMessages()
-                                                                           .getString("notify-message-server-add")
-                                                                           .replace("%server%",
-                                                                                    serverInfo.getServiceId()
-                                                                                              .getServerId()))));
-                    }
+        if (this.cloudAPI.getModuleProperties().contains("notifyService") &&
+            this.cloudAPI.getModuleProperties().getBoolean("notifyService")) {
+            for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
+                if (proxiedPlayer.hasPermission("cloudnet.notify")) {
+                    proxiedPlayer.sendMessage(
+                        TextComponent.fromLegacyText(
+                            ChatColor.translateAlternateColorCodes('&',
+                                                                   this.cloudAPI
+                                                                       .getCloudNetwork()
+                                                                       .getMessages()
+                                                                       .getString("notify-message-server-add")
+                                                                       .replace("%server%",
+                                                                                serverInfo.getServiceId()
+                                                                                          .getServerId()))));
                 }
-            }
-
-        }
-
-        @Override
-        public void onServerInfoUpdate(ServerInfo serverInfo) {
-            if (serverInfo == null) {
-                return;
-            }
-
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerInfoUpdateEvent(serverInfo));
-            cachedServers.put(serverInfo.getServiceId().getServerId(), serverInfo);
-        }
-
-        @Override
-        public void onServerRemove(ServerInfo serverInfo) {
-            if (serverInfo == null) {
-                return;
-            }
-
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerRemoveEvent(serverInfo));
-            ProxyServer.getInstance().getServers().remove(serverInfo.getServiceId().getServerId());
-            cachedServers.remove(serverInfo.getServiceId().getServerId());
-
-            // Remove default fallback to server priority of Bungeecord
-            if (serverInfo.getServiceId().getGroup().equals(
-                getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
-                ProxyServer.getInstance().getConfig().getListeners().forEach(
-                    listener -> listener.getServerPriority().remove(serverInfo.getServiceId().getServerId()));
-            }
-
-            if (this.cloudAPI.getModuleProperties().getBoolean("notifyService")) {
-                for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
-                    if (proxiedPlayer.hasPermission("cloudnet.notify")) {
-                        proxiedPlayer.sendMessage(
-                            TextComponent.fromLegacyText(
-                                ChatColor.translateAlternateColorCodes(
-                                    '&', this.cloudAPI.getCloudNetwork().getMessages().getString("notify-message-server-remove")
-                                                      .replace("%server%", serverInfo.getServiceId().getServerId()))));
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onProxyAdd(ProxyInfo proxyInfo) {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyAddEvent(proxyInfo));
-        }
-
-        @Override
-        public void onProxyInfoUpdate(ProxyInfo proxyInfo) {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyInfoUpdateEvent(proxyInfo));
-        }
-
-        @Override
-        public void onProxyRemove(ProxyInfo proxyInfo) {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyRemoveEvent(proxyInfo));
-        }
-
-        @Override
-        public void onCloudNetworkUpdate(CloudNetwork cloudNetwork) {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedCloudNetworkUpdateEvent(cloudNetwork));
-
-            if (cloudNetwork.getProxyGroups().containsKey(this.cloudAPI.getGroup())) {
-                ProxyGroup proxyGroup = cloudNetwork.getProxyGroups().get(this.cloudAPI.getGroup());
-                if (proxyGroup.getProxyConfig().isEnabled() && proxyGroup.getProxyConfig().isMaintenance()) {
-                    for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
-                        if (!proxyGroup.getProxyConfig().getWhitelist().contains(proxiedPlayer.getName()) &&
-                            !proxiedPlayer.hasPermission("cloudnet.maintenance")) {
-                            proxiedPlayer.disconnect(
-                                TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes(
-                                    '&', this.cloudAPI.getCloudNetwork().getMessages().getString("kick-maintenance"))));
-                        }
-                    }
-                }
-            }
-
-            if (CloudProxy.getInstance().getProxyGroup() != null &&
-                CloudProxy.getInstance().getProxyGroup().getProxyConfig().getTabList().isEnabled()) {
-                TabList tabList = CloudProxy.getInstance().getProxyGroup().getProxyConfig().getTabList();
-
-                final String proxyId = this.cloudAPI.getServerId();
-                final String proxyGroup = CloudProxy.getInstance()
-                                                    .getProxyGroup()
-                                                    .getName();
-                final String onlinePlayers = this.cloudAPI.getOnlineCount() + NetworkUtils.EMPTY_STRING;
-                final String maxPlayers = CloudProxy.getInstance()
-                                                    .getProxyGroup()
-                                                    .getProxyConfig()
-                                                    .getMaxPlayers() + NetworkUtils.EMPTY_STRING;
-
-                for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
-                    final String serverName = proxiedPlayer.getServer() != null ?
-                        proxiedPlayer.getServer().getInfo().getName() : proxyGroup;
-                    final String groupName = proxiedPlayer.getServer() != null &&
-                        CloudProxy.getInstance().getServers().containsKey(proxiedPlayer.getServer().getInfo().getName()) ?
-                        CloudProxy.getInstance().getServers()
-                                  .get(proxiedPlayer.getServer().getInfo().getName())
-                                  .getServiceId()
-                                  .getGroup() : "Hub";
-                    proxiedPlayer.setTabHeader(
-                        new TextComponent(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes(
-                            '&', tabList.getHeader()
-                                        .replace("%proxy%", proxyId)
-                                        .replace("%server%", serverName)
-                                        .replace("%online_players%", onlinePlayers)
-                                        .replace("%max_players%", maxPlayers)
-                                        .replace("%group%", groupName)
-                                        .replace("%proxy_group%", proxyGroup)))),
-                        new TextComponent(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes(
-                            '&', tabList.getFooter()
-                                        .replace("%proxy%", proxyId)
-                                        .replace("%server%", serverName)
-                                        .replace("%online_players%", onlinePlayers)
-                                        .replace("%max_players%", maxPlayers)
-                                        .replace("%group%", groupName)
-                                        .replace("%proxy_group%", proxyGroup)))));
-                }
-            }
-
-        }
-
-        @Override
-        public void onCustomChannelMessageReceive(String channel, String message, Document document) {
-            if (handle(channel, message, document)) {
-                return;
-            }
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedCustomChannelMessageReceiveEvent(channel, message, document));
-        }
-
-        @Override
-        public void onCustomSubChannelMessageReceive(String channel, String message, Document document) {
-            if (handle(channel, message, document)) {
-                return;
-            }
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedSubChannelMessageEvent(channel, message, document));
-        }
-
-        @Override
-        public void onPlayerLoginNetwork(CloudPlayer cloudPlayer) {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLoginEvent(cloudPlayer));
-        }
-
-        @Override
-        public void onPlayerDisconnectNetwork(CloudPlayer cloudPlayer) {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLogoutEvent(cloudPlayer));
-            cloudPlayers.remove(cloudPlayer.getUniqueId());
-        }
-
-        @Override
-        public void onPlayerDisconnectNetwork(UUID uniqueId) {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLogoutUniqueEvent(uniqueId));
-            cloudPlayers.remove(uniqueId);
-        }
-
-        @Override
-        public void onPlayerUpdate(CloudPlayer cloudPlayer) {
-            if (cloudPlayers.containsKey(cloudPlayer.getUniqueId())) {
-                cloudPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
-            }
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerUpdateEvent(cloudPlayer));
-        }
-
-        @Override
-        public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer) {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOfflinePlayerUpdateEvent(offlinePlayer));
-        }
-
-        @Override
-        public void onUpdateOnlineCount(int onlineCount) {
-            ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOnlineCountUpdateEvent(onlineCount));
-        }
-
-        private boolean handle(String channel, String message, Document document) {
-
-            if (channel.equalsIgnoreCase("cloudnet_internal")) {
-
-                if (message == null) {
-                    return false;
-                }
-
-                if (message.equalsIgnoreCase("sendMessage")) {
-                    UUID uniqueId = document.getObject("uniqueId", UUID.class);
-                    if (uniqueId != null) {
-                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
-
-                        if (proxiedPlayer != null) {
-                            proxiedPlayer.sendMessage(TextComponent.fromLegacyText(document.getString("message")));
-                        }
-                    }
-                    return true;
-                }
-
-
-                if (message.equalsIgnoreCase("sendMessage_basecomponent")) {
-                    UUID uniqueId = document.getObject("uniqueId", UUID.class);
-                    if (uniqueId != null) {
-                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
-
-                        if (proxiedPlayer != null) {
-                            proxiedPlayer.sendMessage(document.getObject("baseComponent", BaseComponent.class));
-                        }
-                    }
-                }
-
-                if (message.equalsIgnoreCase("kickPlayer")) {
-                    UUID uniqueId = document.getObject("uniqueId", UUID.class);
-                    if (uniqueId != null) {
-                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
-
-                        if (proxiedPlayer != null) {
-                            proxiedPlayer.disconnect(TextComponent.fromLegacyText(document.getString("reason")));
-                        }
-                    }
-                    return true;
-                }
-
-                if (message.equalsIgnoreCase("sendActionbar")) {
-                    UUID uniqueId = document.getObject("uniqueId", UUID.class);
-                    if (uniqueId != null) {
-                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
-
-                        if (proxiedPlayer != null) {
-                            proxiedPlayer.sendMessage(ChatMessageType.ACTION_BAR,
-                                                      TextComponent.fromLegacyText(document.getString("message")));
-                        }
-                    }
-                    return true;
-                }
-
-                if (message.equalsIgnoreCase("sendTitle")) {
-                    if (!document.contains("stay") ||
-                        !document.contains("fadeIn") ||
-                        !document.contains("fadeOut") ||
-                        !document.contains("uniqueId")) {
-                        return true;
-                    }
-
-                    UUID uniqueId = document.getObject("uniqueId", UUID.class);
-                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
-
-                    if (proxiedPlayer != null) {
-                        Title title = ProxyServer.getInstance().createTitle();
-
-                        if (document.contains("title")) {
-                            title.title(TextComponent.fromLegacyText(document.getString("title")));
-                        }
-
-                        if (document.contains("subTitle")) {
-                            title.subTitle(TextComponent.fromLegacyText(document.getString("subTitle")));
-                        }
-
-                        title.fadeIn(document.getInt("fadeIn"))
-                             .fadeOut(document.getInt("fadeOut"))
-                             .stay(document.getInt("stay"));
-
-                        proxiedPlayer.sendTitle(title);
-                    }
-                    return true;
-                }
-
-                if (message.equalsIgnoreCase("sendPlayer")) {
-                    net.md_5.bungee.api.config.ServerInfo serverInfo = ProxyServer.getInstance()
-                                                                                  .getServerInfo(document.getString("server"));
-                    if (serverInfo != null) {
-                        ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(document.getObject("uniqueId", UUID.class));
-                        if (proxiedPlayer != null) {
-                            proxiedPlayer.connect(serverInfo);
-                        }
-                    }
-                    return true;
-                }
-
-                if (message.equalsIgnoreCase("player_server_switch")) {
-                    ProxyServer.getInstance().getPluginManager().callEvent(
-                        new ProxiedPlayerServerSwitchEvent(document.getObject("player", CloudPlayer.TYPE), document.getString("server")));
-                    return true;
-                }
-
-                return true;
-            } else {
-                return false;
             }
         }
 
     }
+
+    @Override
+    public void onServerInfoUpdate(ServerInfo serverInfo) {
+        if (serverInfo == null) {
+            return;
+        }
+
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerInfoUpdateEvent(serverInfo));
+        cachedServers.put(serverInfo.getServiceId().getServerId(), serverInfo);
+    }
+
+    @Override
+    public void onServerRemove(ServerInfo serverInfo) {
+        if (serverInfo == null) {
+            return;
+        }
+
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedServerRemoveEvent(serverInfo));
+        ProxyServer.getInstance().getServers().remove(serverInfo.getServiceId().getServerId());
+        cachedServers.remove(serverInfo.getServiceId().getServerId());
+
+        // Remove default fallback to server priority of Bungeecord
+        if (serverInfo.getServiceId().getGroup().equals(
+            getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
+            ProxyServer.getInstance().getConfig().getListeners().forEach(
+                listener -> listener.getServerPriority().remove(serverInfo.getServiceId().getServerId()));
+        }
+
+        if (this.cloudAPI.getModuleProperties().getBoolean("notifyService")) {
+            for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
+                if (proxiedPlayer.hasPermission("cloudnet.notify")) {
+                    proxiedPlayer.sendMessage(
+                        TextComponent.fromLegacyText(
+                            ChatColor.translateAlternateColorCodes(
+                                '&', this.cloudAPI.getCloudNetwork().getMessages().getString("notify-message-server-remove")
+                                                  .replace("%server%", serverInfo.getServiceId().getServerId()))));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onProxyAdd(ProxyInfo proxyInfo) {
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyAddEvent(proxyInfo));
+    }
+
+    @Override
+    public void onProxyInfoUpdate(ProxyInfo proxyInfo) {
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyInfoUpdateEvent(proxyInfo));
+    }
+
+    @Override
+    public void onProxyRemove(ProxyInfo proxyInfo) {
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedProxyRemoveEvent(proxyInfo));
+    }
+
+    @Override
+    public void onCloudNetworkUpdate(CloudNetwork cloudNetwork) {
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedCloudNetworkUpdateEvent(cloudNetwork));
+
+        if (cloudNetwork.getProxyGroups().containsKey(this.cloudAPI.getGroup())) {
+            ProxyGroup proxyGroup = cloudNetwork.getProxyGroups().get(this.cloudAPI.getGroup());
+            if (proxyGroup.getProxyConfig().isEnabled() && proxyGroup.getProxyConfig().isMaintenance()) {
+                for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
+                    if (!proxyGroup.getProxyConfig().getWhitelist().contains(proxiedPlayer.getName()) &&
+                        !proxiedPlayer.hasPermission("cloudnet.maintenance")) {
+                        proxiedPlayer.disconnect(
+                            TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes(
+                                '&', this.cloudAPI.getCloudNetwork().getMessages().getString("kick-maintenance"))));
+                    }
+                }
+            }
+        }
+
+        if (CloudProxy.getInstance().getProxyGroup() != null &&
+            CloudProxy.getInstance().getProxyGroup().getProxyConfig().getTabList().isEnabled()) {
+            TabList tabList = CloudProxy.getInstance().getProxyGroup().getProxyConfig().getTabList();
+
+            final String proxyId = this.cloudAPI.getServerId();
+            final String proxyGroup = CloudProxy.getInstance()
+                                                .getProxyGroup()
+                                                .getName();
+            final String onlinePlayers = this.cloudAPI.getOnlineCount() + NetworkUtils.EMPTY_STRING;
+            final String maxPlayers = CloudProxy.getInstance()
+                                                .getProxyGroup()
+                                                .getProxyConfig()
+                                                .getMaxPlayers() + NetworkUtils.EMPTY_STRING;
+
+            for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
+                final String serverName = proxiedPlayer.getServer() != null ?
+                    proxiedPlayer.getServer().getInfo().getName() : proxyGroup;
+                final String groupName = proxiedPlayer.getServer() != null &&
+                    CloudProxy.getInstance().getServers().containsKey(proxiedPlayer.getServer().getInfo().getName()) ?
+                    CloudProxy.getInstance().getServers()
+                              .get(proxiedPlayer.getServer().getInfo().getName())
+                              .getServiceId()
+                              .getGroup() : "Hub";
+                proxiedPlayer.setTabHeader(
+                    new TextComponent(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes(
+                        '&', tabList.getHeader()
+                                    .replace("%proxy%", proxyId)
+                                    .replace("%server%", serverName)
+                                    .replace("%online_players%", onlinePlayers)
+                                    .replace("%max_players%", maxPlayers)
+                                    .replace("%group%", groupName)
+                                    .replace("%proxy_group%", proxyGroup)))),
+                    new TextComponent(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes(
+                        '&', tabList.getFooter()
+                                    .replace("%proxy%", proxyId)
+                                    .replace("%server%", serverName)
+                                    .replace("%online_players%", onlinePlayers)
+                                    .replace("%max_players%", maxPlayers)
+                                    .replace("%group%", groupName)
+                                    .replace("%proxy_group%", proxyGroup)))));
+            }
+        }
+
+    }
+
+    /**
+     * Returns the instance of this {@link CloudProxy}.
+     *
+     * @return the singleton instance of this class.
+     */
+    public static CloudProxy getInstance() {
+        return instance;
+    }
+
+    @Override
+    public void onCustomChannelMessageReceive(String channel, String message, Document document) {
+        if (handle(channel, message, document)) {
+            return;
+        }
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedCustomChannelMessageReceiveEvent(channel, message, document));
+    }
+
+    @Override
+    public void onCustomSubChannelMessageReceive(String channel, String message, Document document) {
+        if (handle(channel, message, document)) {
+            return;
+        }
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedSubChannelMessageEvent(channel, message, document));
+    }
+
+    @Override
+    public void onPlayerLoginNetwork(CloudPlayer cloudPlayer) {
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLoginEvent(cloudPlayer));
+    }
+
+    @Override
+    public void onPlayerDisconnectNetwork(CloudPlayer cloudPlayer) {
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLogoutEvent(cloudPlayer));
+        cloudPlayers.remove(cloudPlayer.getUniqueId());
+    }
+
+    @Override
+    public void onPlayerDisconnectNetwork(UUID uniqueId) {
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerLogoutUniqueEvent(uniqueId));
+        cloudPlayers.remove(uniqueId);
+    }
+
+    @Override
+    public void onPlayerUpdate(CloudPlayer cloudPlayer) {
+        if (cloudPlayers.containsKey(cloudPlayer.getUniqueId())) {
+            cloudPlayers.put(cloudPlayer.getUniqueId(), cloudPlayer);
+        }
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedPlayerUpdateEvent(cloudPlayer));
+    }
+
+    @Override
+    public void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer) {
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOfflinePlayerUpdateEvent(offlinePlayer));
+    }
+
+    @Override
+    public void onUpdateOnlineCount(int onlineCount) {
+        ProxyServer.getInstance().getPluginManager().callEvent(new ProxiedOnlineCountUpdateEvent(onlineCount));
+    }
+
+    private boolean handle(String channel, String message, Document document) {
+
+        if (channel.equals("cloudnet_internal")) {
+
+            if (message == null) {
+                return false;
+            } else if (message.equals("sendMessage")) {
+                UUID uniqueId = document.getObject("uniqueId", UUID.class);
+                if (uniqueId != null) {
+                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+
+                    if (proxiedPlayer != null) {
+                        proxiedPlayer.sendMessage(TextComponent.fromLegacyText(document.getString("message")));
+                    }
+                }
+            } else if (message.equals("sendMessage_basecomponent")) {
+                UUID uniqueId = document.getObject("uniqueId", UUID.class);
+                if (uniqueId != null) {
+                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+
+                    if (proxiedPlayer != null) {
+                        proxiedPlayer.sendMessage(document.getObject("baseComponent", BaseComponent.class));
+                    }
+                }
+            } else if (message.equals("kickPlayer")) {
+                UUID uniqueId = document.getObject("uniqueId", UUID.class);
+                if (uniqueId != null) {
+                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+
+                    if (proxiedPlayer != null) {
+                        proxiedPlayer.disconnect(TextComponent.fromLegacyText(document.getString("reason")));
+                    }
+                }
+            } else if (message.equals("sendActionbar")) {
+                UUID uniqueId = document.getObject("uniqueId", UUID.class);
+                if (uniqueId != null) {
+                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+
+                    if (proxiedPlayer != null) {
+                        proxiedPlayer.sendMessage(ChatMessageType.ACTION_BAR,
+                                                  TextComponent.fromLegacyText(document.getString("message")));
+                    }
+                }
+            } else if (message.equals("sendTitle")) {
+                if (!document.contains("stay") ||
+                    !document.contains("fadeIn") ||
+                    !document.contains("fadeOut") ||
+                    !document.contains("uniqueId")) {
+                    return true;
+                }
+
+                UUID uniqueId = document.getObject("uniqueId", UUID.class);
+                ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(uniqueId);
+
+                if (proxiedPlayer != null) {
+                    Title title = ProxyServer.getInstance().createTitle();
+
+                    if (document.contains("title")) {
+                        title.title(TextComponent.fromLegacyText(document.getString("title")));
+                    }
+
+                    if (document.contains("subTitle")) {
+                        title.subTitle(TextComponent.fromLegacyText(document.getString("subTitle")));
+                    }
+
+                    title.fadeIn(document.getInt("fadeIn"))
+                         .fadeOut(document.getInt("fadeOut"))
+                         .stay(document.getInt("stay"));
+
+                    proxiedPlayer.sendTitle(title);
+                }
+            } else if (message.equals("sendPlayer")) {
+                net.md_5.bungee.api.config.ServerInfo serverInfo = ProxyServer.getInstance()
+                                                                              .getServerInfo(document.getString("server"));
+                if (serverInfo != null) {
+                    ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(document.getObject("uniqueId", UUID.class));
+                    if (proxiedPlayer != null) {
+                        proxiedPlayer.connect(serverInfo);
+                    }
+                }
+            } else if (message.equals("player_server_switch")) {
+                ProxyServer.getInstance().getPluginManager().callEvent(
+                    new ProxiedPlayerServerSwitchEvent(document.getObject("player", CloudPlayer.TYPE), document.getString("server")));
+            } else if (message.equals("startedProxy")) {
+                ProxyProcessMeta meta = document.getObject("proxyProcessMeta", ProxyProcessMeta.TYPE);
+                UUID uuid = meta.getProperties().getObject("cloudnet:requestId", UUID.class);
+                this.waitingProxies.forEach((proxyProcessUuid, future) -> {
+                    if (proxyProcessUuid.equals(uuid)) {
+                        future.complete(meta);
+                    }
+                });
+            } else if (message.equals("startedServer")) {
+                ServerProcessMeta meta = document.getObject("serverProcessMeta", ServerProcessMeta.TYPE);
+                UUID uuid = meta.getServerConfig().getProperties().getObject("cloudnet:requestId", UUID.class);
+                this.waitingServers.forEach((proxyProcessUuid, future) -> {
+                    if (proxyProcessUuid.equals(uuid)) {
+                        future.complete(meta);
+                    }
+                });
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

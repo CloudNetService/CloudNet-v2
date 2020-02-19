@@ -27,7 +27,6 @@ public class DefaultServerGroup extends ServerGroup {
               false,
               memory,
               memory,
-              0,
               true,
               startup,
               0,

@@ -14,14 +14,14 @@ public class ProxyInfo {
 
     public static final Type TYPE = TypeToken.get(ProxyInfo.class).getType();
 
-    private ServiceId serviceId;
+    private final ServiceId serviceId;
 
-    private String host;
-    private int port;
-    private boolean online;
-    private Map<UUID, String> players;
-    private int memory;
-    private int onlineCount;
+    private final String host;
+    private final int port;
+    private final boolean online;
+    private final Map<UUID, String> players;
+    private final int memory;
+    private final int onlineCount;
 
     public ProxyInfo(ServiceId serviceId,
                      String host,

@@ -1,10 +1,13 @@
 package de.dytanic.cloudnet.api;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
+import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
+import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * An interface for cloud services.
@@ -47,5 +50,25 @@ public interface CloudService {
      * @return a map of all currently connected servers.
      */
     Map<String, ServerInfo> getServers();
+
+    /**
+     * Returns a future that will be completed once the proxy in the proxy process has been started
+     * and has connected to the cloud network.
+     *
+     * @param uuid the unique id of the process to wait for.
+     *
+     * @return a future that completes once the process of the proxy has been started.
+     */
+    CompletableFuture<ProxyProcessMeta> waitForProxy(UUID uuid);
+
+    /**
+     * Returns a future that will be completed once the server in the server process has been started
+     * and has connected to the cloud network.
+     *
+     * @param uuid the unique id of the process to wait for.
+     *
+     * @return a future that completes once the process of the server has been started.
+     */
+    CompletableFuture<ServerProcessMeta> waitForServer(UUID uuid);
 
 }

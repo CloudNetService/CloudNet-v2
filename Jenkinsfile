@@ -15,7 +15,7 @@ pipeline {
     }
     stage('Version') {
       steps {
-        sh 'mvn versions:set -DnewVersion=2.1.17'
+        sh 'mvn versions:set -DnewVersion=2.2.0-SNAPSHOT'
       }
     }
     stage('Compile') {
@@ -53,6 +53,16 @@ pipeline {
     stage('Archive') {
       steps {
         archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/CloudNet-Wrapper.jar,**/target/CloudNet-Master.jar,**/target/CloudNetAPI.jar,target/cloudnet-*-javadoc.jar,cloudnet-tools/**/target/cloudnet-tools-*.jar', fingerprint: true, onlyIfSuccessful: true
+      }
+    }
+    stage('Deploy') {
+      when {
+        branch 'master'
+      }
+      steps {
+        withMaven(mavenSettingsConfig: '3878f406-e3fa-4923-bdcc-931101ac18ea') {
+          sh 'mvn deploy'
+        }
       }
     }
   }

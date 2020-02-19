@@ -21,7 +21,6 @@ public final class LobbyGroup extends ServerGroup {
               true,
               356,
               512,
-              0,
               false,
               0,
               1,

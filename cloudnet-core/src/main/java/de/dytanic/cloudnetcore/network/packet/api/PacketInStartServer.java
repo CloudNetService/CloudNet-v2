@@ -1,16 +1,15 @@
 package de.dytanic.cloudnetcore.network.packet.api;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
+import de.dytanic.cloudnet.lib.process.ServerProcessData;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
+import de.dytanic.cloudnet.lib.utility.CommonTypes;
 import de.dytanic.cloudnetcore.CloudNet;
 
-import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.Properties;
 
 /**
@@ -18,11 +17,9 @@ import java.util.Properties;
  */
 public class PacketInStartServer implements PacketInHandler {
 
-    private static final Type STRING_ARRAY_TYPE = TypeToken.getArray(String.class).getType();
-    private static final Type SERVER_INSTALLABLE_PLUGIN_COLLECTION_TYPE =
-        TypeToken.getParameterized(Collection.class, ServerInstallablePlugin.class).getType();
-
     public void handleInput(Packet packet, PacketSender packetSender) {
+        // TODO
+        ServerProcessData processData = packet.getData().getObject("serverProcess", ServerProcessData.TYPE);
         CloudNet.getExecutor().submit(() -> {
             if (packet.getData().contains("customServer")) {
                 startCustomServer(packet);
@@ -40,10 +37,11 @@ public class PacketInStartServer implements PacketInHandler {
                                                                packet.getData().getInt("memory"),
                                                                packet.getData().getBoolean("priorityStop"),
                                                                packet.getData().getString("url"),
-                                                               packet.getData().getObject("processParameters", STRING_ARRAY_TYPE),
+                                                               packet.getData()
+                                                                     .getObject("processParameters", CommonTypes.LIST_STRING_TYPE),
                                                                packet.getData().getBoolean("onlinemode"),
                                                                packet.getData()
-                                                                     .getObject("plugins", SERVER_INSTALLABLE_PLUGIN_COLLECTION_TYPE),
+                                                                     .getObject("plugins", ServerInstallablePlugin.SET_TYPE),
                                                                packet.getData().getString("customServer"),
                                                                packet.getData().getObject("properties", Properties.class));
                     } else {
@@ -55,10 +53,11 @@ public class PacketInStartServer implements PacketInHandler {
                                                                packet.getData().getInt("memory"),
                                                                packet.getData().getBoolean("priorityStop"),
                                                                packet.getData().getString("url"),
-                                                               packet.getData().getObject("processParameters", STRING_ARRAY_TYPE),
+                                                               packet.getData()
+                                                                     .getObject("processParameters", CommonTypes.LIST_STRING_TYPE),
                                                                packet.getData().getBoolean("onlinemode"),
                                                                packet.getData()
-                                                                     .getObject("plugins", SERVER_INSTALLABLE_PLUGIN_COLLECTION_TYPE),
+                                                                     .getObject("plugins", ServerInstallablePlugin.SET_TYPE),
                                                                packet.getData().getString("customServer"),
                                                                packet.getData().getObject("properties", Properties.class));
                     }
@@ -72,10 +71,11 @@ public class PacketInStartServer implements PacketInHandler {
                                                                packet.getData().getInt("memory"),
                                                                packet.getData().getBoolean("priorityStop"),
                                                                packet.getData().getString("url"),
-                                                               packet.getData().getObject("processParameters", STRING_ARRAY_TYPE),
+                                                               packet.getData()
+                                                                     .getObject("processParameters", CommonTypes.LIST_STRING_TYPE),
                                                                packet.getData().getBoolean("onlinemode"),
                                                                packet.getData()
-                                                                     .getObject("plugins", SERVER_INSTALLABLE_PLUGIN_COLLECTION_TYPE),
+                                                                     .getObject("plugins", ServerInstallablePlugin.SET_TYPE),
                                                                packet.getData().getString("customServer"),
                                                                packet.getData().getObject("properties", Properties.class));
                     } else {
@@ -92,9 +92,9 @@ public class PacketInStartServer implements PacketInHandler {
                                                packet.getData().getInt("memory"),
                                                packet.getData().getBoolean("priorityStop"),
                                                packet.getData().getString("url"),
-                                               packet.getData().getObject("processParameters", STRING_ARRAY_TYPE),
+                                               packet.getData().getObject("processParameters", CommonTypes.LIST_STRING_TYPE),
                                                packet.getData().getBoolean("onlinemode"),
-                                               packet.getData().getObject("plugins", SERVER_INSTALLABLE_PLUGIN_COLLECTION_TYPE),
+                                               packet.getData().getObject("plugins", ServerInstallablePlugin.SET_TYPE),
                                                packet.getData().getString("customServer"),
                                                packet.getData().getObject("properties", Properties.class));
     }

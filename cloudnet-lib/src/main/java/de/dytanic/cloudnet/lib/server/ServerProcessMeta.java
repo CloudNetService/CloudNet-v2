@@ -17,6 +17,7 @@ import java.util.Properties;
 public class ServerProcessMeta {
 
     public static final Type TYPE = TypeToken.get(ServerProcessMeta.class).getType();
+
     private ServiceId serviceId;
     private int memory;
     private boolean priorityStop;

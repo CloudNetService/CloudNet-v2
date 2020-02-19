@@ -17,13 +17,13 @@ public class ProxyProcessMeta {
 
     public static final Type TYPE = TypeToken.get(ProxyProcessMeta.class).getType();
 
-    private ServiceId serviceId;
-    private int memory;
-    private int port;
-    private String[] processParameters;
-    private String url;
-    private Collection<ServerInstallablePlugin> downloadablePlugins;
-    private Document properties;
+    private final ServiceId serviceId;
+    private final int memory;
+    private final int port;
+    private final String[] processParameters;
+    private final String url;
+    private final Collection<ServerInstallablePlugin> downloadablePlugins;
+    private final Document properties;
 
     public ProxyProcessMeta(ServiceId serviceId,
                             int memory,

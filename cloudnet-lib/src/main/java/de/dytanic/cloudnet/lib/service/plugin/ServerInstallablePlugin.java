@@ -1,6 +1,14 @@
 package de.dytanic.cloudnet.lib.service.plugin;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.Set;
+
 public class ServerInstallablePlugin {
+
+    public static final Type TYPE = TypeToken.get(ServerInstallablePlugin.class).getType();
+    public static final Type SET_TYPE = TypeToken.getParameterized(Set.class, ServerInstallablePlugin.class).getType();
 
     private final String name;
     private final PluginResourceType pluginResourceType;

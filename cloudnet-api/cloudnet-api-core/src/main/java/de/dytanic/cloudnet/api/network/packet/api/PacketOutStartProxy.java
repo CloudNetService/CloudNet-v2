@@ -2,47 +2,23 @@ package de.dytanic.cloudnet.api.network.packet.api;
 
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
-import de.dytanic.cloudnet.lib.server.ProxyGroup;
-import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
+import de.dytanic.cloudnet.lib.process.ProxyProcessData;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-
-import java.util.Collection;
 
 /**
  * Created by Tareko on 21.08.2017.
  */
 public class PacketOutStartProxy extends Packet {
 
-    public PacketOutStartProxy(ProxyGroup proxyGroup,
-                               int memory,
-                               Collection<String> parameters,
-                               String url,
-                               Collection<ServerInstallablePlugin> plugins,
-                               Document document) {
+    public PacketOutStartProxy(final ProxyProcessData proxyProcessData) {
         super(PacketRC.SERVER_HANDLE + 6,
-              new Document("group", proxyGroup.getName())
-                  .append("memory", memory)
-                  .append("url", url)
-                  .append("processParameters", parameters)
-                  .append("plugins", plugins)
-                  .append("properties", document));
+              new Document("group", proxyProcessData.getProxyGroupName())
+                  .append("wrapper", proxyProcessData.getWrapper())
+                  .append("memory", proxyProcessData.getMemory())
+                  .append("url", proxyProcessData.getTemplateUrl())
+                  .append("javaProcessParameters", proxyProcessData.getJavaProcessParameters())
+                  .append("proxyProcessParameters", proxyProcessData.getProxyProcessParameters())
+                  .append("plugins", proxyProcessData.getPlugins())
+                  .append("properties", proxyProcessData.getProperties()));
     }
-
-    public PacketOutStartProxy(String wrapper,
-                               ProxyGroup proxyGroup,
-                               int memory,
-                               Collection<String> parameters,
-                               String url,
-                               Collection<ServerInstallablePlugin> plugins,
-                               Document document) {
-        super(PacketRC.SERVER_HANDLE + 6,
-              new Document("group", proxyGroup.getName())
-                  .append("wrapper", wrapper)
-                  .append("memory", memory)
-                  .append("url", url)
-                  .append("processParameters", parameters)
-                  .append("plugins", plugins)
-                  .append("properties", document));
-    }
-
 }
