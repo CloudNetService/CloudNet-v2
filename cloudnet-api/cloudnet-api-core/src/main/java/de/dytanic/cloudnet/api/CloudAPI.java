@@ -8,7 +8,6 @@ import de.dytanic.cloudnet.api.network.packet.api.*;
 import de.dytanic.cloudnet.api.network.packet.api.sync.*;
 import de.dytanic.cloudnet.api.network.packet.in.*;
 import de.dytanic.cloudnet.api.network.packet.out.*;
-import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.DefaultType;
@@ -646,10 +645,6 @@ public final class CloudAPI {
             return Collections.emptyList();
         }
 
-        for (CloudPlayer cloudPlayer : cloudPlayers) {
-            cloudPlayer.setPlayerExecutor(PlayerExecutorBridge.INSTANCE);
-        }
-
         return cloudPlayers;
     }
 
@@ -670,12 +665,7 @@ public final class CloudAPI {
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayer(uniqueId), networkConnection);
-        CloudPlayer cloudPlayer = result.getResult().getObject("player", CloudPlayer.TYPE);
-        if (cloudPlayer == null) {
-            return null;
-        }
-        cloudPlayer.setPlayerExecutor(PlayerExecutorBridge.INSTANCE);
-        return cloudPlayer;
+        return result.getResult().getObject("player", CloudPlayer.TYPE);
     }
 
     /**

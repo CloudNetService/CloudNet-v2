@@ -16,7 +16,6 @@ public class CloudPlayer extends OfflinePlayer {
     private String proxy;
     private String server;
     private Timestamp loginTimeStamp;
-    private PlayerExecutor playerExecutor;
 
     public CloudPlayer(OfflinePlayer player, PlayerConnection onlineConnection, String proxy) {
         super(player.getUniqueId(),
@@ -30,7 +29,6 @@ public class CloudPlayer extends OfflinePlayer {
         this.playerConnection = onlineConnection;
         this.proxy = proxy;
         this.server = null;
-        this.playerExecutor = null;
         this.loginTimeStamp = new Timestamp(System.currentTimeMillis());
     }
 
@@ -50,7 +48,6 @@ public class CloudPlayer extends OfflinePlayer {
         result = 31 * result + (proxy != null ? proxy.hashCode() : 0);
         result = 31 * result + (server != null ? server.hashCode() : 0);
         result = 31 * result + (loginTimeStamp != null ? loginTimeStamp.hashCode() : 0);
-        result = 31 * result + (playerExecutor != null ? playerExecutor.hashCode() : 0);
         return result;
     }
 
@@ -74,10 +71,7 @@ public class CloudPlayer extends OfflinePlayer {
         if (!Objects.equals(server, that.server)) {
             return false;
         }
-        if (!Objects.equals(loginTimeStamp, that.loginTimeStamp)) {
-            return false;
-        }
-        return Objects.equals(playerExecutor, that.playerExecutor);
+        return Objects.equals(loginTimeStamp, that.loginTimeStamp);
     }
 
     @Override
@@ -87,8 +81,7 @@ public class CloudPlayer extends OfflinePlayer {
             ", proxy='" + proxy + '\'' +
             ", server='" + server + '\'' +
             ", loginTimeStamp=" + loginTimeStamp +
-            ", playerExecutor=" + playerExecutor +
-            '}';
+            "} " + super.toString();
     }
 
     public String getServer() {
@@ -123,11 +116,4 @@ public class CloudPlayer extends OfflinePlayer {
         this.loginTimeStamp = loginTimeStamp;
     }
 
-    public PlayerExecutor getPlayerExecutor() {
-        return playerExecutor;
-    }
-
-    public void setPlayerExecutor(PlayerExecutor playerExecutor) {
-        this.playerExecutor = playerExecutor;
-    }
 }

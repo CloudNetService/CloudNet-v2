@@ -32,7 +32,6 @@ import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.network.components.util.ChannelFilter;
 import de.dytanic.cloudnetcore.network.packet.out.*;
-import de.dytanic.cloudnetcore.player.CorePlayerExecutor;
 import de.dytanic.cloudnetcore.util.MessageConfig;
 
 import java.util.*;
@@ -198,7 +197,6 @@ public final class NetworkManager {
 
         CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " create CloudPlayer");
         CloudPlayer cloudPlayer = new CloudPlayer(offlinePlayer, cloudPlayerConnection, proxyServer.getServerId());
-        cloudPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
         if (cloudPlayer.getFirstLogin() == null) {
             CloudNet.getLogger().finest("player login request " + cloudPlayerConnection.getName() + '#' + uniqueId + " set firstLogin");
@@ -231,7 +229,6 @@ public final class NetworkManager {
     }
 
     public void handlePlayerLogin(CloudPlayer loginPlayer) {
-        loginPlayer.setPlayerExecutor(CorePlayerExecutor.INSTANCE);
 
         CloudNet.getInstance().getEventManager().callEvent(new LoginEvent(loginPlayer));
         System.out.println("Player [" + loginPlayer.getName() + NetworkUtils.SLASH_STRING + loginPlayer.getUniqueId() + NetworkUtils.SLASH_STRING + loginPlayer

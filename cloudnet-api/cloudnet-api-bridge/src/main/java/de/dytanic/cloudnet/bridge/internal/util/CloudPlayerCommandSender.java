@@ -1,5 +1,6 @@
 package de.dytanic.cloudnet.bridge.internal.util;
 
+import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -31,8 +32,8 @@ public class CloudPlayerCommandSender implements CommandSender {
     }
 
     @Override
-    public void sendMessage(String s) {
-        cloudPlayer.getPlayerExecutor().sendMessage(cloudPlayer, s);
+    public void sendMessage(String message) {
+        PlayerExecutorBridge.INSTANCE.sendMessage(cloudPlayer, message);
     }
 
     @Override
