@@ -1,12 +1,8 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.database;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.database.Database;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
+import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.io.File;
@@ -14,20 +10,31 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.FutureTask;
 
 /**
  * Implementation of {@link Database}.
  */
 public class DatabaseImpl implements Database {
 
+    /**
+     * The name of this database.
+     * Used for determining the directory to use.
+     */
     private final String name;
-    private final java.util.Map<String, Document> documents;
+
+    /**
+     * The currently loaded documents.
+     * In this implementation, many database accesses try to access this map first.
+     */
+    private final Map<String, DatabaseDocument> documents;
+
+    /**
+     * Directory where all the files of this database are stored.
+     */
     private final File backendDir;
 
-    public DatabaseImpl(String name, Map<String, Document> documents, File backendDir) {
+    public DatabaseImpl(String name, Map<String, DatabaseDocument> documents, File backendDir) {
         this.name = name;
         this.documents = documents;
         this.backendDir = backendDir;
@@ -41,7 +48,8 @@ public class DatabaseImpl implements Database {
         return backendDir;
     }
 
-    public Map<String, Document> getDocuments() {
+    @Override
+    public Map<String, DatabaseDocument> getDocuments() {
         return documents;
     }
 
@@ -53,7 +61,7 @@ public class DatabaseImpl implements Database {
         }
         for (File file : files) {
             if (!this.documents.containsKey(file.getName())) {
-                Document document = Document.loadDocument(file);
+                DatabaseDocument document = new DatabaseDocument(Document.loadDocument(file));
                 if (document.contains(UNIQUE_NAME_KEY)) {
                     this.documents.put(file.getName(), document);
                 }
@@ -63,23 +71,18 @@ public class DatabaseImpl implements Database {
     }
 
     @Override
-    public Collection<Document> getDocs() {
-        return documents.values();
-    }
-
-    @Override
-    public Document getDocument(String name) {
+    public DatabaseDocument getDocument(String name) {
         if (name == null) {
             return null;
         }
 
-        Document document = documents.get(name);
+        DatabaseDocument document = documents.get(name);
 
         if (document == null) {
-            File doc = new File("database/" + this.name + NetworkUtils.SLASH_STRING + name);
-            if (doc.exists()) {
-                document = Document.loadDocument(doc);
-                this.documents.put(doc.getName(), document);
+            Path doc = Paths.get(this.backendDir.getAbsolutePath(), name);
+            if (Files.exists(doc)) {
+                document = new DatabaseDocument(Document.loadDocument(doc));
+                this.documents.put(document.getString(Database.UNIQUE_NAME_KEY), document);
                 return document;
             }
         }
@@ -87,8 +90,8 @@ public class DatabaseImpl implements Database {
     }
 
     @Override
-    public Database insert(Document... documents) {
-        for (Document document : documents) {
+    public Database insert(DatabaseDocument... documents) {
+        for (DatabaseDocument document : documents) {
             if (document.contains(UNIQUE_NAME_KEY)) {
                 this.documents.put(document.getString(UNIQUE_NAME_KEY), document);
                 Path path = Paths.get("database/" + this.name + '/' + document.getString(UNIQUE_NAME_KEY));
@@ -111,7 +114,7 @@ public class DatabaseImpl implements Database {
             return this;
         }
 
-        Document document = getDocument(name);
+        DatabaseDocument document = getDocument(name);
         if (document != null) {
             documents.remove(name);
         }
@@ -124,7 +127,7 @@ public class DatabaseImpl implements Database {
     }
 
     @Override
-    public Database delete(Document document) {
+    public Database delete(DatabaseDocument document) {
         if (document.contains(UNIQUE_NAME_KEY)) {
             delete(document.getString(UNIQUE_NAME_KEY));
         }
@@ -132,12 +135,12 @@ public class DatabaseImpl implements Database {
     }
 
     @Override
-    public Document load(String name) {
-        return Document.loadDocument(new File("database/" + this.name + NetworkUtils.SLASH_STRING + name));
+    public DatabaseDocument load(String name) {
+        return new DatabaseDocument(Document.loadDocument(Paths.get("database", this.name, name)));
     }
 
     @Override
-    public boolean contains(Document document) {
+    public boolean contains(DatabaseDocument document) {
         return contains(document.getString(UNIQUE_NAME_KEY));
     }
 
@@ -153,48 +156,27 @@ public class DatabaseImpl implements Database {
     }
 
     @Override
-    public boolean containsDoc(String name) {
-        if (name == null) {
-            return false;
-        }
-        return new File("database/" + this.name + NetworkUtils.SLASH_STRING + name).exists();
-    }
-
-    @Override
-    public Database insertAsync(Document... documents) {
-        TaskScheduler.runtimeScheduler().schedule(() -> {
-            insert(documents);
-        });
+    public Database insertAsync(DatabaseDocument... documents) {
+        NetworkUtils.getExecutor().submit(() -> insert(documents));
         return this;
     }
 
     @Override
     public Database deleteAsync(String name) {
-        TaskScheduler.runtimeScheduler().schedule(() -> {
-            delete(name);
-        });
+        NetworkUtils.getExecutor().submit(() -> delete(name));
         return this;
     }
 
     @Override
-    public FutureTask<Document> getDocumentAsync(String name) {
-        return new FutureTask<>(() -> getDocument(name));
-    }
-
-    /**
-     * Saves the currently loaded documents to their files.
-     */
     public void save() {
-        for (Document document : documents.values()) {
+        for (DatabaseDocument document : documents.values()) {
             if (document.contains(UNIQUE_NAME_KEY)) {
                 document.saveAsConfig(Paths.get("database", this.name, document.getString(UNIQUE_NAME_KEY)));
             }
         }
     }
 
-    /**
-     * Clears the currently loaded documents.
-     */
+    @Override
     public void clear() {
         this.documents.clear();
     }

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.event.interfaces;
 
 import de.dytanic.cloudnet.event.Event;
@@ -33,7 +29,7 @@ public interface IEventManager {
      *
      * @see #registerListener(EventKey, IEventListener)
      */
-    <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>... eventListeners);
+    <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>[] eventListeners);
 
     /**
      * Removes all listener from a specific {@link EventKey} from this event manager.

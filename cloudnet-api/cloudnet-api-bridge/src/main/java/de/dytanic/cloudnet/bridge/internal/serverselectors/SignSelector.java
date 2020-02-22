@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.internal.serverselectors;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -14,10 +10,6 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.sign.*;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -34,6 +26,8 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 /**
@@ -45,7 +39,7 @@ public final class SignSelector implements Listener {
     private Map<UUID, Sign> signs;
     private volatile SignLayoutConfig signLayoutConfig;
     private Thread worker;
-    private Map<String, ServerInfo> servers = NetworkUtils.newConcurrentHashMap();
+    private Map<String, ServerInfo> servers = new ConcurrentHashMap<>();
 
     public SignSelector(Map<UUID, Sign> signs, SignLayoutConfig signLayoutConfig) {
         instance = this;
@@ -91,26 +85,15 @@ public final class SignSelector implements Listener {
         this.signLayoutConfig = signLayoutConfig;
     }
 
-    @Deprecated
     public void start() {
         CloudAPI.getInstance().getNetworkHandlerProvider().registerHandler(new NetworkHandlerAdapterImpl());
         worker = new ThreadImpl();
         worker.setDaemon(true);
         worker.start();
 
-        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                NetworkUtils.addAll(servers,
-                                    MapWrapper.collectionCatcherHashMap(CloudAPI.getInstance().getServers(),
-                                                                        new Catcher<String, ServerInfo>() {
-                                                                            @Override
-                                                                            public String doCatch(ServerInfo key) {
-                                                                                return key.getServiceId().getServerId();
-                                                                            }
-                                                                        }));
-            }
-        });
+        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () ->
+            CloudAPI.getInstance().getServers().forEach(
+                server -> this.servers.put(server.getServiceId().getServerId(), server)));
     }
 
     @EventHandler
@@ -121,7 +104,7 @@ public final class SignSelector implements Listener {
                 Sign sign = getSignByPosition(e.getClickedBlock().getLocation());
                 if (sign.getServerInfo() != null) {
                     String s = sign.getServerInfo().getServiceId().getServerId();
-                    ByteArrayDataOutput output = ByteStreams.newDataOutput();
+                    @SuppressWarnings("UnstableApiUsage") ByteArrayDataOutput output = ByteStreams.newDataOutput();
                     output.writeUTF("Connect");
                     output.writeUTF(s);
                     e.getPlayer().sendPluginMessage(CloudServer.getInstance().getPlugin(), "BungeeCord", output.toByteArray());
@@ -141,15 +124,16 @@ public final class SignSelector implements Listener {
     }
 
     public Sign getSignByPosition(Location location) {
-        return CollectionWrapper.filter(signs.values(), new Acceptable<Sign>() {
-            @Override
-            public boolean isAccepted(Sign value) {
-                return value.getPosition().equals(toPosition(location));
+        Position position = toPosition(location);
+        for (final Sign sign : signs.values()) {
+            if (sign.getPosition().equals(position)) {
+                return sign;
             }
-        });
+        }
+        return null;
     }
 
-    public Position toPosition(Location location) {
+    public static Position toPosition(Location location) {
         return new Position(CloudAPI.getInstance().getGroup(),
                             location.getWorld().getName(),
                             location.getX(),
@@ -168,46 +152,34 @@ public final class SignSelector implements Listener {
     }
 
     private Sign findFreeSign(String group) {
-        return CollectionWrapper.filter(this.signs.values(), new Acceptable<Sign>() {
-            @Override
-            public boolean isAccepted(Sign value) {
-                return value.getTargetGroup().equals(group) && value.getServerInfo() == null;
+        for (final Sign sign : signs.values()) {
+            if (sign.getTargetGroup().equals(group)) {
+                return sign;
             }
-        });
+        }
+        return null;
     }
 
     public Collection<String> freeServers(String group) {
-        List<String> servers = new ArrayList<>();
+        List<String> servers = new LinkedList<>();
 
+        // Get all servers from the given group except those
+        // which should not be displayed (ie. offline, ingame/running etc)
         for (ServerInfo serverInfo : getServers(group)) {
-            servers.add(serverInfo.getServiceId().getServerId());
+            if (serverInfo.isOnline() &&
+                serverInfo.getServerState().equals(ServerState.LOBBY) &&
+                !serverInfo.getMotd().contains("INGAME") &&
+                !serverInfo.getMotd().contains("RUNNING") &&
+                !serverInfo.getServerConfig().isHideServer()) {
+                servers.add(serverInfo.getServiceId().getServerId());
+            }
         }
 
+        // Remove all servers which have signs for them from the list
         for (Sign sign : signs.values()) {
-            if (sign.getServerInfo() != null && servers.contains(sign.getServerInfo().getServiceId().getServerId())) {
+            if (sign.getServerInfo() != null) {
                 servers.remove(sign.getServerInfo().getServiceId().getServerId());
             }
-        }
-
-        List<String> x = new ArrayList<>();
-
-        ServerInfo serverInfo;
-        for (short i = 0; i < servers.size(); i++) {
-            serverInfo = this.servers.get(servers.get(i));
-            if (serverInfo != null) {
-                if (!serverInfo.isOnline() || !serverInfo.getServerState().equals(ServerState.LOBBY) || serverInfo.getServerConfig()
-                                                                                                                  .isHideServer() || serverInfo
-                    .getMotd()
-                    .contains("INGAME") || serverInfo.getMotd().contains("RUNNING") || serverInfo.getServerConfig().isHideServer()) {
-                    x.add(serverInfo.getServiceId().getServerId());
-                }
-            } else {
-                x.add(servers.get(i));
-            }
-        }
-
-        for (String b : x) {
-            servers.remove(b);
         }
 
         Collections.sort(servers);
@@ -215,22 +187,29 @@ public final class SignSelector implements Listener {
     }
 
     private Collection<ServerInfo> getServers(String group) {
-        return CollectionWrapper.filterMany(servers.values(), new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo value) {
-                return value.getServiceId().getGroup().equals(group);
-            }
-        });
+        return servers.values().stream()
+                      .filter(serverInfo -> serverInfo.getServiceId().getGroup().equals(group))
+                      .collect(Collectors.toList());
     }
 
-    public Sign filter(ServerInfo serverInfo) {
-        return CollectionWrapper.filter(signs.values(), new Acceptable<Sign>() {
-            @Override
-            public boolean isAccepted(Sign value) {
-                return value.getServerInfo() != null && value.getServerInfo().getServiceId().getServerId().equals(serverInfo.getServiceId()
-                                                                                                                            .getServerId());
+    /**
+     * Finds the first sign that is assigned to the given server info's
+     * server id.
+     *
+     * @param serverInfo the server info to search for
+     *
+     * @return the sign that is assigned to the given server info or null, if no
+     * such sign could be found.
+     */
+    public Sign getSign(ServerInfo serverInfo) {
+        String serverId = serverInfo.getServiceId().getServerId();
+        for (final Sign sign : signs.values()) {
+            if (sign.getServerInfo() != null &&
+                sign.getServerInfo().getServiceId().getServerId().equals(serverId)) {
+                return sign;
             }
-        });
+        }
+        return null;
     }
 
     public void sendUpdateSynchronized(Location location, String[] layout) {
@@ -240,16 +219,6 @@ public final class SignSelector implements Listener {
         sign.setLine(2, layout[2]);
         sign.setLine(3, layout[3]);
         sign.update();
-    }
-
-    public Sign getSign(ServerInfo serverInfo) {
-        return CollectionWrapper.filter(signs.values(), new Acceptable<Sign>() {
-            @Override
-            public boolean isAccepted(Sign value) {
-                return value.getServerInfo() != null && value.getServerInfo().getServiceId().getServerId().equals(serverInfo.getServiceId()
-                                                                                                                            .getServerId());
-            }
-        });
     }
 
     public boolean containsGroup(String group) {
@@ -285,7 +254,6 @@ public final class SignSelector implements Listener {
                                                                                                                                 .isHideServer()) {
                 sign.setServerInfo(null);
                 String[] layout = updateOfflineAndMaintenance(searchLayer.getSignLayout().clone(), sign);
-                layout = updateOfflineAndMaintenance(layout, sign);
                 for (Player all : Bukkit.getOnlinePlayers()) {
                     sendUpdate(all, location, layout);
                 }
@@ -361,12 +329,12 @@ public final class SignSelector implements Listener {
         if (signGroupLayouts == null) {
             signGroupLayouts = getGroupLayout("default");
         }
-        return CollectionWrapper.filter(signGroupLayouts.getLayouts(), new Acceptable<SignLayout>() {
-            @Override
-            public boolean isAccepted(SignLayout value) {
-                return value.getName().equals(name);
+        for (final SignLayout layout : signGroupLayouts.getLayouts()) {
+            if (layout.getName().equals(name)) {
+                return layout;
             }
-        });
+        }
+        return null;
     }
 
     public String[] updateOfflineAndMaintenance(String[] value, Sign sign) {
@@ -429,6 +397,7 @@ public final class SignSelector implements Listener {
         });
     }
 
+    @SuppressWarnings("deprecation")
     public void changeBlock(Location location, String blockName, int blockId, int subId) {
         Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
             Material material = ItemStackBuilder.getMaterialIgnoreVersion(blockName, blockId);
@@ -452,12 +421,10 @@ public final class SignSelector implements Listener {
     }
 
     public SignGroupLayouts getGroupLayout(String group) {
-        return CollectionWrapper.filter(signLayoutConfig.getGroupLayouts(), new Acceptable<SignGroupLayouts>() {
-            @Override
-            public boolean isAccepted(SignGroupLayouts value) {
-                return value.getName().equals(group);
-            }
-        });
+        return signLayoutConfig.getGroupLayouts().stream()
+                               .filter(layout -> layout.getName().equals(group))
+                               .findFirst()
+                               .orElse(null);
     }
 
     private class ThreadImpl extends Thread {
@@ -502,7 +469,7 @@ public final class SignSelector implements Listener {
                             }
                         }
                     } catch (Exception ex) {
-
+                        ex.printStackTrace();
                     }
                 }
 
@@ -541,7 +508,6 @@ public final class SignSelector implements Listener {
                                     if (serverInfo != null && serverInfo.isOnline() && !serverInfo.isIngame()) {
                                         if (signLayoutConfig.isFullServerHide() && serverInfo.getOnlineCount() >= serverInfo.getMaxPlayers()) {
                                             String[] layout = updateOfflineAndMaintenance(searchLayer.getSignLayout().clone(), sign);
-                                            layout = updateOfflineAndMaintenance(layout, sign);
                                             sendUpdateSynchronized(location, layout);
                                             changeBlock(location,
                                                         searchLayer.getBlockName(),
@@ -657,7 +623,7 @@ public final class SignSelector implements Listener {
         @Override
         public void onServerAdd(ServerInfo serverInfo) {
             servers.put(serverInfo.getServiceId().getServerId(), serverInfo);
-            Sign sign = filter(serverInfo);
+            Sign sign = getSign(serverInfo);
 
             if (sign != null) {
                 if (exists(sign)) {
@@ -670,7 +636,6 @@ public final class SignSelector implements Listener {
                             sign.setServerInfo(null);
                             SignLayout signLayout = getSearchingLayout(((ThreadImpl) worker).animationTick);
                             String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), sign);
-                            layout = updateOfflineAndMaintenance(layout, sign);
                             for (Player all : Bukkit.getOnlinePlayers()) {
                                 sendUpdate(all, location, layout);
                             }
@@ -799,7 +764,7 @@ public final class SignSelector implements Listener {
                         } else {
                             newSign.setServerInfo(null);
                             SignLayout signLayout = getSearchingLayout(((ThreadImpl) worker).animationTick);
-                            String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), sign);
+                            String[] layout = updateOfflineAndMaintenance(signLayout.getSignLayout().clone(), newSign);
                             for (Player all : Bukkit.getOnlinePlayers()) {
                                 sendUpdate(all, location, layout);
                             }
@@ -814,7 +779,7 @@ public final class SignSelector implements Listener {
         @Override
         public void onServerInfoUpdate(ServerInfo serverInfo) {
             servers.put(serverInfo.getServiceId().getServerId(), serverInfo);
-            Sign sign = filter(serverInfo);
+            Sign sign = getSign(serverInfo);
 
             if (sign != null) {
                 if (CloudServer.getInstance().getPlugin() != null && CloudServer.getInstance().getPlugin().isEnabled()) {
@@ -945,7 +910,7 @@ public final class SignSelector implements Listener {
         public void onServerRemove(ServerInfo serverInfo) {
             servers.remove(serverInfo.getServiceId().getServerId(), serverInfo);
 
-            Sign sign = filter(serverInfo);
+            Sign sign = getSign(serverInfo);
             if (sign != null) {
                 sign.setServerInfo(null);
                 if (!exists(sign)) {

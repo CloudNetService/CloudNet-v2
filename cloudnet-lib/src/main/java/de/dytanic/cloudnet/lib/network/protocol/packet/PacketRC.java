@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.lib.network.protocol.packet;
 
 /**
@@ -9,7 +5,6 @@ package de.dytanic.cloudnet.lib.network.protocol.packet;
  */
 public final class PacketRC {
 
-    public static final int TEST = -100;
     public static final int INTERNAL = 0;
     public static final int CN_WRAPPER = 100;
     public static final int CN_CORE = 200;

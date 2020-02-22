@@ -1,14 +1,11 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.bridge.CloudServer;
 import org.bukkit.event.HandlerList;
 
 /**
- * Calls before the first init update of the serverInfo for a online state
+ * This event is called right before the first (initial) update of the current cloud server is being done.
+ * This event can be used to determine, when the server is ready to accept connections.
  */
 public class BukkitCloudServerInitEvent extends BukkitCloudEvent {
 
@@ -17,6 +14,7 @@ public class BukkitCloudServerInitEvent extends BukkitCloudEvent {
     private CloudServer cloudServer;
 
     public BukkitCloudServerInitEvent(CloudServer cloudServer) {
+        super();
         this.cloudServer = cloudServer;
     }
 
@@ -24,12 +22,15 @@ public class BukkitCloudServerInitEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
-    public CloudServer getCloudServer() {
-        return cloudServer;
-    }
-
     @Override
     public HandlerList getHandlers() {
         return handlerList;
+    }
+
+    /**
+     * @return the server that has been initialized.
+     */
+    public CloudServer getCloudServer() {
+        return cloudServer;
     }
 }

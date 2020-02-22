@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.network.components;
 
 import de.dytanic.cloudnet.lib.network.ChannelUser;
@@ -28,13 +24,7 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
     String getServerId();
 
     default void sendPacket(Packet packet) {
-        CloudNet.getLogger().debug("Sending Packet " + packet.getClass().getSimpleName() + " (id=" + CloudNet.getInstance()
-                                                                                                             .getPacketManager()
-                                                                                                             .packetId(packet) + ";dataLength=" + CloudNet
-            .getInstance()
-            .getPacketManager()
-            .packetData(packet)
-            .size() + ") to " + getServerId());
+        CloudNet.getLogger().finest(String.format("Sending packet %s to %s%n", packet, getServerId()));
 
         if (getChannel() == null) {
             return;
@@ -61,13 +51,8 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
         if (getChannel() == null) {
             return;
         }
-        CloudNet.getLogger().debug("Sending Packet " + packet.getClass().getSimpleName() + " (id=" + CloudNet.getInstance()
-                                                                                                             .getPacketManager()
-                                                                                                             .packetId(packet) + ";dataLength=" + CloudNet
-            .getInstance()
-            .getPacketManager()
-            .packetData(packet)
-            .size() + ") to " + getServerId());
+        CloudNet.getLogger().finest(String.format("Sending packet %s to %s%n", packet, getServerId()));
+
         getChannel().writeAndFlush(packet).syncUninterruptibly();
     }
 
@@ -95,7 +80,7 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
     }
 
     @Override
-    default void sendAsynchronized(Object object) {
+    default void sendAsynchronous(Object object) {
         getChannel().writeAndFlush(object);
     }
 
@@ -110,13 +95,13 @@ public interface INetworkComponent extends PacketSender, ChannelUser {
     }
 
     @Override
-    default void sendAsynchronized(int id, Object element) {
-        sendAsynchronized(new ProtocolRequest(id, element));
+    default void sendAsynchronous(int id, Object element) {
+        sendAsynchronous(new ProtocolRequest(id, element));
     }
 
     @Override
-    default void sendAsynchronized(IProtocol iProtocol, Object element) {
-        sendAsynchronized(new ProtocolRequest(iProtocol.getId(), element));
+    default void sendAsynchronous(IProtocol iProtocol, Object element) {
+        sendAsynchronous(new ProtocolRequest(iProtocol.getId(), element));
     }
 
     @Override

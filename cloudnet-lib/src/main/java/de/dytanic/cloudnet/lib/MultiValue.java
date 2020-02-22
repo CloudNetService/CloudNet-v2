@@ -30,13 +30,21 @@ public class MultiValue<F, S> {
         if (!(o instanceof MultiValue)) {
             return false;
         }
+
         final MultiValue<?, ?> that = (MultiValue<?, ?>) o;
-        return Objects.equals(first, that.first) && Objects.equals(second, that.second);
+
+        if (!Objects.equals(first, that.first)) {
+            return false;
+        }
+        return Objects.equals(second, that.second);
     }
 
     @Override
     public String toString() {
-        return "MultiValue{" + "first=" + first + ", second=" + second + '}';
+        return "de.dytanic.cloudnet.lib.MultiValue{" +
+            "first=" + first +
+            ", second=" + second +
+            '}';
     }
 
     public S getSecond() {

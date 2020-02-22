@@ -1,20 +1,15 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.cloudflare;
 
 import de.dytanic.cloudnet.cloudflare.CloudFlareService;
 import de.dytanic.cloudnet.cloudflare.database.CloudFlareDatabase;
-import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
+import de.dytanic.cloudnet.lib.service.SimpleWrapperInfo;
 import de.dytanic.cloudnetcore.api.CoreModule;
 import de.dytanic.cloudnetcore.cloudflare.config.ConfigCloudFlare;
 import de.dytanic.cloudnetcore.cloudflare.listener.ProxyAddListener;
 import de.dytanic.cloudnetcore.cloudflare.listener.ProxyRemoveListener;
-import de.dytanic.cloudnetcore.network.components.Wrapper;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -56,17 +51,12 @@ public class CloudFlareModule extends CoreModule {
         try {
 
             CloudFlareService cloudFlareAPI = new CloudFlareService(configCloudFlare.load());
-            cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), new Catcher<String, String>() {
-                @Override
-                public String doCatch(String key) {
-                    return key;
-                }
-            }, new Catcher<SimpledWrapperInfo, Wrapper>() {
-                @Override
-                public SimpledWrapperInfo doCatch(Wrapper key) {
-                    return new SimpledWrapperInfo(key.getServerId(), key.getNetworkInfo().getHostName());
-                }
-            }), getCloud().getProxyGroups(), cloudFlareDatabase);
+
+            final Map<String, SimpleWrapperInfo> wrapperInfo = new HashMap<>();
+            getCloud().getWrappers().forEach((wrapperId, wrapper) -> {
+                wrapperInfo.put(wrapperId, new SimpleWrapperInfo(wrapper.getServerId(), wrapper.getNetworkInfo().getHostName()));
+            });
+            cloudFlareAPI.bootstrap(wrapperInfo, getCloud().getProxyGroups(), cloudFlareDatabase);
 
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out;
 
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;

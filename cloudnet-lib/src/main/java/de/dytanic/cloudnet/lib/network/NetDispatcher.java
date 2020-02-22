@@ -1,22 +1,17 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.lib.network;
 
-import de.dytanic.cloudnet.lib.network.protocol.file.FileDeploy;
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 
-public class NetDispatcher extends SimpleChannelInboundHandler {
+public class NetDispatcher extends SimpleChannelInboundHandler<Packet> {
 
     private final NetworkConnection networkConnection;
 
-    private boolean shutdownOnInactive;
+    private final boolean shutdownOnInactive;
 
     public NetDispatcher(NetworkConnection networkConnection, boolean shutdownOnInactive) {
         this.networkConnection = networkConnection;
@@ -52,28 +47,17 @@ public class NetDispatcher extends SimpleChannelInboundHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (!(cause instanceof IOException)) {
+        if (!(cause instanceof ClosedChannelException)) {
             cause.printStackTrace();
         }
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
-        if (o instanceof Packet) {
-            TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-                @Override
-                public void run() {
-                    networkConnection.getPacketManager().dispatchPacket(((Packet) o), networkConnection);
-                }
-            });
-        } else {
-            if (o instanceof FileDeploy) {
-                FileDeploy deploy = ((FileDeploy) o);
-                TaskScheduler.runtimeScheduler().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        deploy.toWrite();
-                    }
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet packet) throws Exception {
+        if (packet != null) {
+            if (!NetworkUtils.getExecutor().isShutdown()) {
+                NetworkUtils.getExecutor().submit(() -> {
+                    networkConnection.getPacketManager().dispatchPacket(packet, networkConnection);
                 });
             }
         }

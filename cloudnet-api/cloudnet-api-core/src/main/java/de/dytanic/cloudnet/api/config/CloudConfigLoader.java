@@ -1,10 +1,5 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.api.config;
 
-import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
@@ -41,7 +36,7 @@ public class CloudConfigLoader {
     }
 
     public ConnectableAddress loadConnnection() {
-        return Document.loadDocument(pathConnectionJson).getObject("connection", new TypeToken<ConnectableAddress>() {}.getType());
+        return Document.loadDocument(pathConnectionJson).getObject("connection", ConnectableAddress.TYPE);
     }
 
 }

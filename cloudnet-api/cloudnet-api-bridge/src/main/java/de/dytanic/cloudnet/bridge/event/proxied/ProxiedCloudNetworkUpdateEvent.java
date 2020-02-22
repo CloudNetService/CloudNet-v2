@@ -1,13 +1,9 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.CloudNetwork;
 
 /**
- * Called if the cloudnetwork objective was updated
+ * This event is called when the CloudNetwork is updated.
  */
 public class ProxiedCloudNetworkUpdateEvent extends ProxiedCloudEvent {
 
@@ -17,6 +13,9 @@ public class ProxiedCloudNetworkUpdateEvent extends ProxiedCloudEvent {
         this.cloudNetwork = cloudNetwork;
     }
 
+    /**
+     * @return the new updated state of the cloud network.
+     */
     public CloudNetwork getCloudNetwork() {
         return cloudNetwork;
     }

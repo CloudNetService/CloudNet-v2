@@ -1,5 +1,8 @@
 package de.dytanic.cloudnet.lib.player;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.UUID;
 
 /**
@@ -7,18 +10,14 @@ import java.util.UUID;
  */
 public class PlayerConnection {
 
+    public static final Type TYPE = TypeToken.get(PlayerConnection.class).getType();
+
     private UUID uniqueId;
-
     private String name;
-
     private int version;
-
     private String host;
-
     private int port;
-
     private boolean onlineMode;
-
     private boolean legacy;
 
     public PlayerConnection(UUID uniqueId, String name, int version, String host, int port, boolean onlineMode, boolean legacy) {

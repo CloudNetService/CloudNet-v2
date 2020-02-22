@@ -10,7 +10,8 @@ import java.util.Objects;
  *
  */
 public class CloudPlayer extends OfflinePlayer {
-    public static final Type TYPE = new TypeToken<CloudPlayer>() {}.getType();
+    public static final Type TYPE = TypeToken.get(CloudPlayer.class).getType();
+
     private PlayerConnection playerConnection;
     private String proxy;
     private String server;
@@ -29,7 +30,7 @@ public class CloudPlayer extends OfflinePlayer {
         this.playerConnection = onlineConnection;
         this.proxy = proxy;
         this.server = null;
-        this.playerExecutor = new PlayerExecutor();
+        this.playerExecutor = null;
         this.loginTimeStamp = new Timestamp(System.currentTimeMillis());
     }
 
@@ -58,19 +59,36 @@ public class CloudPlayer extends OfflinePlayer {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof CloudPlayer)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         final CloudPlayer that = (CloudPlayer) o;
-        return Objects.equals(playerConnection, that.playerConnection) && Objects.equals(proxy, that.proxy) && Objects.equals(server,
-                                                                                                                              that.server) && Objects
-            .equals(loginTimeStamp, that.loginTimeStamp) && Objects.equals(playerExecutor, that.playerExecutor);
+
+        if (!Objects.equals(playerConnection, that.playerConnection)) {
+            return false;
+        }
+        if (!Objects.equals(proxy, that.proxy)) {
+            return false;
+        }
+        if (!Objects.equals(server, that.server)) {
+            return false;
+        }
+        if (!Objects.equals(loginTimeStamp, that.loginTimeStamp)) {
+            return false;
+        }
+        return Objects.equals(playerExecutor, that.playerExecutor);
     }
 
     @Override
     public String toString() {
-        return "CloudPlayer{" + "playerConnection=" + playerConnection + ", proxy='" + proxy + '\'' + ", server='" + server + '\'' + ", loginTimeStamp=" + loginTimeStamp + ", playerExecutor=" + playerExecutor + "} " + super
-            .toString();
+        return "CloudPlayer{" +
+            "playerConnection=" + playerConnection +
+            ", proxy='" + proxy + '\'' +
+            ", server='" + server + '\'' +
+            ", loginTimeStamp=" + loginTimeStamp +
+            ", playerExecutor=" + playerExecutor +
+            '}';
     }
 
     public String getServer() {

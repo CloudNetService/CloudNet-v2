@@ -1,5 +1,8 @@
 package de.dytanic.cloudnet.lib.service;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -7,6 +10,9 @@ import java.util.UUID;
  * Created by Tareko on 18.07.2017.
  */
 public final class ServiceId {
+
+    public static final Type TYPE = TypeToken.get(ServiceId.class).getType();
+
     private String group;
     private int id;
     private UUID uniqueId;
@@ -45,26 +51,6 @@ public final class ServiceId {
         return result;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ServiceId)) {
-            return false;
-        }
-        final ServiceId serviceId = (ServiceId) o;
-        return id == serviceId.id && Objects.equals(group, serviceId.group) && Objects.equals(uniqueId,
-                                                                                              serviceId.uniqueId) && Objects.equals(
-            wrapperId,
-            serviceId.wrapperId) && Objects.equals(serverId, serviceId.serverId) && Objects.equals(gameId, serviceId.gameId);
-    }
-
-    @Override
-    public String toString() {
-        return this.serverId + '#' + this.uniqueId.toString();
-    }
-
     public String getServerId() {
         return serverId;
     }
@@ -89,4 +75,37 @@ public final class ServiceId {
         return gameId;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ServiceId)) {
+            return false;
+        }
+
+        final ServiceId serviceId = (ServiceId) o;
+
+        if (id != serviceId.id) {
+            return false;
+        }
+        if (!Objects.equals(group, serviceId.group)) {
+            return false;
+        }
+        if (!Objects.equals(uniqueId, serviceId.uniqueId)) {
+            return false;
+        }
+        if (!Objects.equals(wrapperId, serviceId.wrapperId)) {
+            return false;
+        }
+        if (!Objects.equals(serverId, serviceId.serverId)) {
+            return false;
+        }
+        return Objects.equals(gameId, serviceId.gameId);
+    }
+
+    @Override
+    public String toString() {
+        return this.serverId + '#' + this.uniqueId;
+    }
 }

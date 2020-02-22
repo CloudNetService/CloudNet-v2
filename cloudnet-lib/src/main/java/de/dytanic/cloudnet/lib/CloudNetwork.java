@@ -13,12 +13,47 @@ import java.util.*;
 public class CloudNetwork {
     private int registeredPlayerCount = 0;
     private int onlineCount = 0;
-    private java.util.Map<String, SimpleServerGroup> serverGroups = new HashMap<>();
-    private java.util.Map<String, ProxyGroup> proxyGroups = new HashMap<>();
-    private java.util.Collection<WrapperInfo> wrappers = new LinkedList<>();
+    private Map<String, SimpleServerGroup> serverGroups = new HashMap<>();
+    private Map<String, ProxyGroup> proxyGroups = new HashMap<>();
+    private Collection<WrapperInfo> wrappers = new LinkedList<>();
     private Document messages = new Document();
     private Document modules = new Document();
     private int webPort = 1420;
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CloudNetwork)) {
+            return false;
+        }
+
+        final CloudNetwork that = (CloudNetwork) o;
+
+        if (registeredPlayerCount != that.registeredPlayerCount) {
+            return false;
+        }
+        if (onlineCount != that.onlineCount) {
+            return false;
+        }
+        if (webPort != that.webPort) {
+            return false;
+        }
+        if (!Objects.equals(serverGroups, that.serverGroups)) {
+            return false;
+        }
+        if (!Objects.equals(proxyGroups, that.proxyGroups)) {
+            return false;
+        }
+        if (!Objects.equals(wrappers, that.wrappers)) {
+            return false;
+        }
+        if (!Objects.equals(messages, that.messages)) {
+            return false;
+        }
+        return Objects.equals(modules, that.modules);
+    }
 
     @Override
     public int hashCode() {
@@ -34,25 +69,17 @@ public class CloudNetwork {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof CloudNetwork)) {
-            return false;
-        }
-        final CloudNetwork that = (CloudNetwork) o;
-        return registeredPlayerCount == that.registeredPlayerCount && onlineCount == that.onlineCount && webPort == that.webPort && Objects.equals(
-            serverGroups,
-            that.serverGroups) && Objects.equals(proxyGroups, that.proxyGroups) && Objects.equals(wrappers,
-                                                                                                  that.wrappers) && Objects.equals(messages,
-                                                                                                                                   that.messages) && Objects
-            .equals(modules, that.modules);
-    }
-
-    @Override
     public String toString() {
-        return "CloudNetwork{" + "registeredPlayerCount=" + registeredPlayerCount + ", onlineCount=" + onlineCount + ", serverGroups=" + serverGroups + ", proxyGroups=" + proxyGroups + ", wrappers=" + wrappers + ", messages=" + messages + ", modules=" + modules + ", webPort=" + webPort + '}';
+        return "de.dytanic.cloudnet.lib.CloudNetwork{" +
+            "registeredPlayerCount=" + registeredPlayerCount +
+            ", onlineCount=" + onlineCount +
+            ", serverGroups=" + serverGroups +
+            ", proxyGroups=" + proxyGroups +
+            ", wrappers=" + wrappers +
+            ", messages=" + messages +
+            ", modules=" + modules +
+            ", webPort=" + webPort +
+            '}';
     }
 
     public int getOnlineCount() {

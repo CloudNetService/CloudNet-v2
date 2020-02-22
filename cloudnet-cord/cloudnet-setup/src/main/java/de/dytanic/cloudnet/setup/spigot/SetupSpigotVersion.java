@@ -1,9 +1,6 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.setup.spigot;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import jline.console.ConsoleReader;
 
 import java.io.IOException;
@@ -28,8 +25,7 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
         try {
             System.out.println("Downloading spigot.jar...");
             URLConnection connection = new URL(url).openConnection();
-            connection.setRequestProperty("User-Agent",
-                                          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            connection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             connection.connect();
             try (InputStream inputStream = connection.getInputStream()) {
                 Files.copy(inputStream, SetupSpigotVersion.this.getTarget(), StandardCopyOption.REPLACE_EXISTING);
@@ -72,12 +68,10 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
 
     private boolean installSpigot(ConsoleReader reader) {
         System.out.println(
-            "Choose a Spigot version [\"1.7.10\", \"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\", \"1.14\", \"1.14.1\", \"1.14.2\", \"1.14.3\", \"1.14.4\"]");
+            "Choose a Spigot version [\"1.8.8\", \"1.9.4\", \"1.10.2\", \"1.11.2\", \"1.12.2\", \"1.13\", \"1.13.1\", \"1.13.2\", \"1.14\", \"1.14.1\", \"1.14.2\", \"1.14.3\", \"1.14.4\", \"1.15\", \"1.15.1\", \"1.15.2\"]");
         while (true) {
             try {
                 switch (reader.readLine().toLowerCase()) {
-                    case "1.7.10":
-                        return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.7.10-SNAPSHOT-b1657.jar");
                     case "1.8.8":
                         return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar");
                     case "1.9.4":
@@ -104,6 +98,12 @@ public class SetupSpigotVersion implements Consumer<ConsoleReader> {
                         return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.14.3.jar");
                     case "1.14.4":
                         return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.14.4.jar");
+                    case "1.15":
+                        return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.15.jar");
+                    case "1.15.1":
+                        return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.15.1.jar");
+                    case "1.15.2":
+                        return this.download.test("https://cdn.getbukkit.org/spigot/spigot-1.15.2.jar");
                     default:
                         System.out.println("This version is not supported!");
                         break;

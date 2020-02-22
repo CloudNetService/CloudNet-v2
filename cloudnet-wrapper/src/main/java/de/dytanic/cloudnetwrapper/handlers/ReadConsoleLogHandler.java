@@ -3,7 +3,6 @@ package de.dytanic.cloudnetwrapper.handlers;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.screen.AbstractScreenService;
 import de.dytanic.cloudnetwrapper.server.BungeeCord;
-import de.dytanic.cloudnetwrapper.server.CloudGameServer;
 import de.dytanic.cloudnetwrapper.server.GameServer;
 
 import java.io.InputStream;
@@ -16,14 +15,8 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
     private final byte[] buffer = new byte[1024];
 
     @Override
-    public void run(CloudNetWrapper obj) {
-        for (CloudGameServer cloudGameServer : obj.getCloudServers().values()) {
-            if (cloudGameServer.isAlive() && cloudGameServer.getInstance() != null) {
-                readConsoleLog(cloudGameServer);
-            }
-        }
-
-        for (BungeeCord bungeeCord : obj.getProxys().values()) {
+    public void accept(CloudNetWrapper obj) {
+        for (BungeeCord bungeeCord : obj.getProxies().values()) {
             if (bungeeCord.isAlive() && bungeeCord.getInstance() != null) {
                 readConsoleLog(bungeeCord);
             }
@@ -70,8 +63,4 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
         }
     }
 
-    @Override
-    public int getTicks() {
-        return 40;
-    }
 }

@@ -9,74 +9,57 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
-import joptsimple.OptionSet;
+
+import java.net.InetSocketAddress;
 
 /**
  * Created by Tareko on 26.05.2017.
  */
 public final class CloudNetServer extends ChannelInitializer<Channel> implements AutoCloseable {
 
-    private SslContext sslContext;
-    private EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup(), bossGroup = NetworkUtils.eventLoopGroup();
+    private final EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
+    private final EventLoopGroup bossGroup = NetworkUtils.eventLoopGroup();
 
-    public CloudNetServer(OptionSet optionSet, ConnectableAddress connectableAddress) {
+    public CloudNetServer(ConnectableAddress connectableAddress) {
         try {
-            if (optionSet.has("ssl")) {
-                CloudNet.getLogger().debug("Enabling SSL Context for service requests");
-                SelfSignedCertificate ssc = new SelfSignedCertificate();
-                sslContext = SslContext.newServerContext(ssc.certificate(), ssc.privateKey());
-            }
+            ServerBootstrap serverBootstrap = new ServerBootstrap()
+                .group(bossGroup, workerGroup)
+                .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
+                .option(ChannelOption.AUTO_READ, true)
+                .channel(NetworkUtils.serverSocketChannel())
+                .childOption(ChannelOption.IP_TOS, 24)
+                .childOption(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.AUTO_READ, true)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childHandler(this);
 
-            ServerBootstrap serverBootstrap = new ServerBootstrap().group(bossGroup, workerGroup)
+            CloudNet.getLogger().finest("Using " + (Epoll.isAvailable() ? "Epoll native transport" : "NIO transport"));
+            CloudNet.getLogger().finest("Try to bind to " + connectableAddress.getHostName() + ':' + connectableAddress.getPort() + "...");
 
-                                                                   .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                                                                   .option(ChannelOption.AUTO_READ,
-                                                                           true)
+            serverBootstrap.bind(connectableAddress.getHostName(), connectableAddress.getPort())
+                           .addListener(
+                               (ChannelFutureListener) channelFuture -> {
+                                   if (channelFuture.isSuccess()) {
+                                       System.out.printf("CloudNet is listening @%s:%d%n",
+                                                         connectableAddress.getHostName(),
+                                                         connectableAddress.getPort());
+                                       CloudNet.getInstance().getCloudServers().add(this);
 
-                                                                   .channel(NetworkUtils.serverSocketChannel())
-
-                                                                   .childOption(ChannelOption.IP_TOS, 24)
-                                                                   .childOption(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-                                                                   .childOption(ChannelOption.TCP_NODELAY, true)
-                                                                   .childOption(ChannelOption.AUTO_READ, true)
-                                                                   .childOption(ChannelOption.SO_KEEPALIVE, true)
-                                                                   .childHandler(this);
-
-            CloudNet.getLogger().debug("Using " + (Epoll.isAvailable() ? "Epoll native transport" : "NIO transport"));
-            CloudNet.getLogger().debug("Try to bind to " + connectableAddress.getHostName() + ':' + connectableAddress.getPort() + "...");
-
-            ChannelFuture channelFuture = serverBootstrap.bind(connectableAddress.getHostName(), connectableAddress.getPort()).addListener(
-                new ChannelFutureListener() {
-                    @Override
-                    public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                        if (channelFuture.isSuccess()) {
-                            System.out.println("CloudNet is listening @" + connectableAddress.getHostName() + ':' + connectableAddress.getPort());
-                            CloudNet.getInstance().getCloudServers().add(CloudNetServer.this);
-
-                        } else {
-                            System.out.println("Failed to bind @" + connectableAddress.getHostName() + ':' + connectableAddress.getPort());
-                        }
-                    }
-                }).addListener(ChannelFutureListener.CLOSE_ON_FAILURE).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-
-            channelFuture.sync().channel().closeFuture();
+                                   } else {
+                                       System.out.printf("Failed to bind @%s:%d%n",
+                                                         connectableAddress.getHostName(),
+                                                         connectableAddress.getPort());
+                                   }
+                               })
+                           .addListener(ChannelFutureListener.CLOSE_ON_FAILURE)
+                           .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE)
+                           .sync()
+                           .channel()
+                           .closeFuture();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    public SslContext getSslContext() {
-        return sslContext;
-    }
-
-    public EventLoopGroup getWorkerGroup() {
-        return workerGroup;
-    }
-
-    public EventLoopGroup getBossGroup() {
-        return bossGroup;
     }
 
     @Override
@@ -87,7 +70,7 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
 
     @Override
     protected void initChannel(Channel channel) {
-        System.out.println("Channel [" + channel.remoteAddress().toString() + "] connecting...");
+        System.out.println("Channel [" + channel.remoteAddress() + "] connecting...");
 
         ChannelConnectEvent channelConnectEvent = new ChannelConnectEvent(false, channel);
         CloudNet.getInstance().getEventManager().callEvent(channelConnectEvent);
@@ -96,32 +79,20 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
             return;
         }
 
-        String[] address = channel.remoteAddress().toString().split(":");
-        String host = address[0].replaceFirst(NetworkUtils.SLASH_STRING, NetworkUtils.EMPTY_STRING);
-        for (Wrapper cn : CloudNet.getInstance().getWrappers().values()) {
-            if (cn.getChannel() == null && cn.getNetworkInfo().getHostName().equalsIgnoreCase(host)) {
-                if (sslContext != null) {
-                    channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
+        if (channel.remoteAddress() instanceof InetSocketAddress) {
+            InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
+
+            for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
+                if (wrapper.getNetworkInfo().getHostName().equalsIgnoreCase(address.getAddress().getHostAddress())) {
+
+                    NetworkUtils.initChannel(channel);
+                    channel.pipeline().addLast("client", new CloudNetClientAuth(channel));
+                    return;
                 }
-
-                NetworkUtils.initChannel(channel);
-                channel.pipeline().addLast("client", new CloudNetClientAuth(channel, this));
-                return;
-            }
-
-            if (cn.getNetworkInfo().getHostName().equals(host)) {
-                if (sslContext != null) {
-                    channel.pipeline().addLast(sslContext.newHandler(channel.alloc()));
-                }
-
-                NetworkUtils.initChannel(channel);
-                CloudNetClientAuth cloudNetProxyClientAuth = new CloudNetClientAuth(channel, this);
-                channel.pipeline().addLast("client", cloudNetProxyClientAuth);
-                return;
             }
         }
 
-        channel.close().addListener(ChannelFutureListener.CLOSE_ON_FAILURE).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+        channel.close().addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
 
     }
 }

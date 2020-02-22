@@ -1,7 +1,6 @@
 package de.dytanic.cloudnet.bridge.vault;
 
 import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import net.milkbowl.vault.chat.Chat;
@@ -10,6 +9,7 @@ import net.milkbowl.vault.permission.Permission;
 /**
  * Created by Tareko on 21.12.2017.
  */
+@SuppressWarnings("deprecation")
 public class VaultChatImpl extends Chat {
 
     public VaultChatImpl(Permission perms) {
@@ -27,44 +27,44 @@ public class VaultChatImpl extends Chat {
     }
 
     @Override
-    public String getPlayerPrefix(String s, String s1) {
-        OfflinePlayer offlinePlayer = getPlayer(s1);
-        return offlinePlayer.getPermissionEntity().getPrefix() != null ? offlinePlayer.getPermissionEntity()
-                                                                                      .getPrefix() : offlinePlayer.getPermissionEntity()
-                                                                                                                  .getHighestPermissionGroup(
-                                                                                                                      CloudAPI.getInstance()
-                                                                                                                              .getPermissionPool())
-                                                                                                                  .getPrefix();
+    public String getPlayerPrefix(String world, String player) {
+        OfflinePlayer offlinePlayer = CloudAPI.getInstance().getOfflinePlayer(player);
+        final String prefix = offlinePlayer.getPermissionEntity().getPrefix();
+        if (prefix != null) {
+            return prefix;
+        } else {
+            return offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool()).getPrefix();
+        }
     }
 
     @Override
-    public void setPlayerPrefix(String s, String s1, String s2) {
-        OfflinePlayer offlinePlayer = getPlayer(s1);
-        offlinePlayer.getPermissionEntity().setPrefix(s2);
-        update(offlinePlayer);
+    public void setPlayerPrefix(String world, String player, String prefix) {
+        OfflinePlayer offlinePlayer = CloudAPI.getInstance().getOfflinePlayer(player);
+        offlinePlayer.getPermissionEntity().setPrefix(prefix);
+        CloudAPI.getInstance().updatePlayer(offlinePlayer);
     }
 
     @Override
-    public String getPlayerSuffix(String s, String s1) {
-        OfflinePlayer offlinePlayer = getPlayer(s1);
-        return offlinePlayer.getPermissionEntity().getSuffix() != null ? offlinePlayer.getPermissionEntity()
-                                                                                      .getSuffix() : offlinePlayer.getPermissionEntity()
-                                                                                                                  .getHighestPermissionGroup(
-                                                                                                                      CloudAPI.getInstance()
-                                                                                                                              .getPermissionPool())
-                                                                                                                  .getSuffix();
+    public String getPlayerSuffix(String world, String player) {
+        OfflinePlayer offlinePlayer = CloudAPI.getInstance().getOfflinePlayer(player);
+        final String suffix = offlinePlayer.getPermissionEntity().getSuffix();
+        if (suffix != null) {
+            return suffix;
+        } else {
+            return offlinePlayer.getPermissionEntity().getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool()).getSuffix();
+        }
     }
 
     @Override
-    public void setPlayerSuffix(String s, String s1, String s2) {
-        OfflinePlayer offlinePlayer = getPlayer(s1);
-        offlinePlayer.getPermissionEntity().setSuffix(s2);
-        update(offlinePlayer);
+    public void setPlayerSuffix(String world, String player, String suffix) {
+        OfflinePlayer offlinePlayer = CloudAPI.getInstance().getOfflinePlayer(player);
+        offlinePlayer.getPermissionEntity().setSuffix(suffix);
+        CloudAPI.getInstance().updatePlayer(offlinePlayer);
     }
 
     @Override
-    public String getGroupPrefix(String s, String s1) {
-        PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(s1);
+    public String getGroupPrefix(String world, String group) {
+        PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(group);
         if (permissionGroup != null) {
             return permissionGroup.getPrefix();
         } else {
@@ -73,17 +73,17 @@ public class VaultChatImpl extends Chat {
     }
 
     @Override
-    public void setGroupPrefix(String s, String s1, String s2) {
-        PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(s1);
+    public void setGroupPrefix(String world, String group, String prefix) {
+        PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(group);
         if (permissionGroup != null) {
-            permissionGroup.setPrefix(s2);
+            permissionGroup.setPrefix(prefix);
             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
         }
     }
 
     @Override
-    public String getGroupSuffix(String s, String s1) {
-        PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(s1);
+    public String getGroupSuffix(String world, String group) {
+        PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(group);
         if (permissionGroup != null) {
             return permissionGroup.getSuffix();
         } else {
@@ -92,106 +92,92 @@ public class VaultChatImpl extends Chat {
     }
 
     @Override
-    public void setGroupSuffix(String s, String s1, String s2) {
-        PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(s1);
+    public void setGroupSuffix(String world, String group, String suffix) {
+        PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionPool().getGroups().get(group);
         if (permissionGroup != null) {
-            permissionGroup.setSuffix(s2);
+            permissionGroup.setSuffix(suffix);
             CloudAPI.getInstance().updatePermissionGroup(permissionGroup);
         }
     }
 
     @Override
-    public int getPlayerInfoInteger(String s, String s1, String s2, int i) {
-        return 0;
+    public int getPlayerInfoInteger(String world, String player, String node, int defaultValue) {
+        return defaultValue;
     }
 
     @Override
-    public void setPlayerInfoInteger(String s, String s1, String s2, int i) {
-
-    }
-
-    @Override
-    public int getGroupInfoInteger(String s, String s1, String s2, int i) {
-        return 0;
-    }
-
-    @Override
-    public void setGroupInfoInteger(String s, String s1, String s2, int i) {
+    public void setPlayerInfoInteger(String world, String player, String node, int value) {
 
     }
 
     @Override
-    public double getPlayerInfoDouble(String s, String s1, String s2, double v) {
-        return 0;
+    public int getGroupInfoInteger(String world, String group, String node, int defaultValue) {
+        return defaultValue;
     }
 
     @Override
-    public void setPlayerInfoDouble(String s, String s1, String s2, double v) {
-
-    }
-
-    @Override
-    public double getGroupInfoDouble(String s, String s1, String s2, double v) {
-        return 0;
-    }
-
-    @Override
-    public void setGroupInfoDouble(String s, String s1, String s2, double v) {
+    public void setGroupInfoInteger(String world, String group, String node, int value) {
 
     }
 
     @Override
-    public boolean getPlayerInfoBoolean(String s, String s1, String s2, boolean b) {
-        return false;
+    public double getPlayerInfoDouble(String world, String player, String node, double defaultValue) {
+        return defaultValue;
     }
 
     @Override
-    public void setPlayerInfoBoolean(String s, String s1, String s2, boolean b) {
-
-    }
-
-    @Override
-    public boolean getGroupInfoBoolean(String s, String s1, String s2, boolean b) {
-        return false;
-    }
-
-    @Override
-    public void setGroupInfoBoolean(String s, String s1, String s2, boolean b) {
+    public void setPlayerInfoDouble(String world, String player, String node, double value) {
 
     }
 
     @Override
-    public String getPlayerInfoString(String s, String s1, String s2, String s3) {
-        return null;
+    public double getGroupInfoDouble(String world, String group, String node, double defaultValue) {
+        return defaultValue;
     }
 
     @Override
-    public void setPlayerInfoString(String s, String s1, String s2, String s3) {
+    public void setGroupInfoDouble(String world, String group, String node, double value) {
 
     }
 
     @Override
-    public String getGroupInfoString(String s, String s1, String s2, String s3) {
-        return null;
+    public boolean getPlayerInfoBoolean(String world, String player, String node, boolean defaultValue) {
+        return defaultValue;
     }
 
     @Override
-    public void setGroupInfoString(String s, String s1, String s2, String s3) {
+    public void setPlayerInfoBoolean(String world, String player, String node, boolean value) {
 
     }
 
-    private void update(OfflinePlayer offlinePlayer) {
-        CloudAPI.getInstance().updatePlayer(offlinePlayer);
+    @Override
+    public boolean getGroupInfoBoolean(String world, String group, String node, boolean defaultValue) {
+        return defaultValue;
     }
 
-    private OfflinePlayer getPlayer(String name) {
-        OfflinePlayer offlinePlayer = CloudServer.getInstance().getCachedPlayer(name);
+    @Override
+    public void setGroupInfoBoolean(String world, String group, String node, boolean value) {
 
-        if (offlinePlayer == null) {
-            offlinePlayer = CloudAPI.getInstance().getOfflinePlayer(name);
-        }
+    }
 
-        return offlinePlayer;
+    @Override
+    public String getPlayerInfoString(String world, String player, String node, String defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public void setPlayerInfoString(String world, String player, String node, String value) {
+
+    }
+
+    @Override
+    public String getGroupInfoString(String world, String group, String node, String defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public void setGroupInfoString(String world, String group, String node, String value) {
+
     }
 
 }

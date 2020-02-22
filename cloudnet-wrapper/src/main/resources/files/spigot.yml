@@ -22,7 +22,7 @@ settings:
   bungeecord: true
   timeout-time: 60
   restart-on-crash: false
-  restart-script: ./scheisse.sh
+  restart-script: ./start.sh
   attribute:
     maxHealth:
       max: 2048.0

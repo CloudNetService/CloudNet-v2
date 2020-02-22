@@ -33,6 +33,18 @@
             <artifactId>cloudnet-lib</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${dependency.gson.version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

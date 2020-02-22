@@ -1,7 +1,10 @@
 package de.dytanic.cloudnet.lib.serverselectors.sign;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 
+import java.lang.reflect.Type;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -9,11 +12,12 @@ import java.util.UUID;
  */
 public class Sign {
 
+    public static final Type TYPE = TypeToken.get(Sign.class).getType();
     private UUID uniqueId;
     private String targetGroup;
     private Position position;
 
-    private volatile ServerInfo serverInfo;
+    private transient ServerInfo serverInfo;
 
     public Sign(String targetGroup, Position signPosition) {
         this.uniqueId = UUID.randomUUID();
@@ -31,6 +35,48 @@ public class Sign {
 
     public UUID getUniqueId() {
         return uniqueId;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = uniqueId != null ? uniqueId.hashCode() : 0;
+        result = 31 * result + (targetGroup != null ? targetGroup.hashCode() : 0);
+        result = 31 * result + (position != null ? position.hashCode() : 0);
+        result = 31 * result + (serverInfo != null ? serverInfo.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Sign)) {
+            return false;
+        }
+
+        final Sign sign = (Sign) o;
+
+        if (!Objects.equals(uniqueId, sign.uniqueId)) {
+            return false;
+        }
+        if (!Objects.equals(targetGroup, sign.targetGroup)) {
+            return false;
+        }
+        if (!Objects.equals(position, sign.position)) {
+            return false;
+        }
+        return Objects.equals(serverInfo, sign.serverInfo);
+    }
+
+    @Override
+    public String toString() {
+        return "de.dytanic.cloudnet.lib.serverselectors.sign.Sign{" +
+            "uniqueId=" + uniqueId +
+            ", targetGroup='" + targetGroup + '\'' +
+            ", position=" + position +
+            ", serverInfo=" + serverInfo +
+            '}';
     }
 
     public Position getPosition() {

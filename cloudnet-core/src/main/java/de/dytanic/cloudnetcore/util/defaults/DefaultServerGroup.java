@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.util.defaults;
 
 import de.dytanic.cloudnet.lib.server.ServerGroup;
@@ -11,11 +7,12 @@ import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 public class DefaultServerGroup extends ServerGroup {
+
+    public static final String[] EMPTY_STRING_ARRAY = new String[] {};
 
     public DefaultServerGroup(String name,
                               Collection<String> wrapper,
@@ -30,7 +27,6 @@ public class DefaultServerGroup extends ServerGroup {
               false,
               memory,
               memory,
-              0,
               true,
               startup,
               0,
@@ -41,7 +37,8 @@ public class DefaultServerGroup extends ServerGroup {
               percentForNewServerAutomatically,
               serverType,
               groupMode,
-              Arrays.asList(new Template("default", TemplateResource.LOCAL, null, new String[] {}, new ArrayList<>())),
+              new Template("globaltemplate", TemplateResource.LOCAL, null, EMPTY_STRING_ARRAY, Collections.emptyList()),
+              Collections.singletonList(new Template("default", TemplateResource.LOCAL, null, EMPTY_STRING_ARRAY, Collections.emptyList())),
               advancedServerConfig);
     }
 }

@@ -1,5 +1,8 @@
 package de.dytanic.cloudnet.lib.serverselectors.mob;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
@@ -7,6 +10,7 @@ import java.util.Map;
  */
 public class MobConfig {
 
+    public static final Type TYPE = TypeToken.get(MobConfig.class).getType();
     private int inventorySize;
 
     private int startPoint;

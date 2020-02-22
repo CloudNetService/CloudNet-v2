@@ -1,14 +1,10 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.event.HandlerList;
 
 /**
- * Calls if a subChannelMessage was send
+ * This event is called when a sub channel message has been received by this Bukkit server.
  */
 public class BukkitSubChannelMessageEvent extends BukkitCloudEvent {
 
@@ -30,14 +26,23 @@ public class BukkitSubChannelMessageEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * @return the message that was sent.
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * @return the attached document to the message.
+     */
     public Document getDocument() {
         return document;
     }
 
+    /**
+     * @return the channel through which this message was sent.
+     */
     public String getChannel() {
         return channel;
     }

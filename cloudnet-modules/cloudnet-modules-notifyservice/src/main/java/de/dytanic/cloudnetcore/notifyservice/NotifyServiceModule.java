@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.notifyservice;
 
 import de.dytanic.cloudnetcore.api.CoreModule;

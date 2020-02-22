@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.permissions.command;
 
 import de.dytanic.cloudnet.command.Command;
@@ -12,14 +8,15 @@ import de.dytanic.cloudnet.lib.player.permission.DefaultPermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutUpdateOfflinePlayer;
 import de.dytanic.cloudnetcore.permissions.PermissionModule;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -61,20 +58,13 @@ public final class CommandPermissions extends Command {
                         sender.sendMessage("Implementations: " + permissionGroup.getImplementGroups());
                         sender.sendMessage("TagId: " + permissionGroup.getTagId());
                         sender.sendMessage("JoinPower: " + permissionGroup.getJoinPower());
-                        for (Map.Entry<String, Boolean> x : permissionGroup.getPermissions().entrySet()) {
-                            sender.sendMessage("- " + x.getKey() + ':' + x.getValue());
-                        }
+                        permissionGroup.getPermissions().forEach((key, value) -> sender.sendMessage("- " + key + ':' + value));
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                         sender.sendMessage("Permissions for server groups:");
-                        for (Map.Entry<String, List<String>> x : permissionGroup.getServerGroupPermissions().entrySet()) {
-                            sender.sendMessage(x.getKey() + ':');
-                            CollectionWrapper.iterator(x.getValue(), new Runnabled<String>() {
-                                @Override
-                                public void run(String obj) {
-                                    sender.sendMessage("- " + obj);
-                                }
-                            });
-                        }
+                        permissionGroup.getServerGroupPermissions().forEach((key, value) -> {
+                            sender.sendMessage(key + ':');
+                            value.forEach(permission -> sender.sendMessage("- " + permission));
+                        });
                         sender.sendMessage(NetworkUtils.SPACE_STRING);
                     } else {
                         sender.sendMessage("The specified permission group doesn't exist");
@@ -266,8 +256,11 @@ public final class CommandPermissions extends Command {
                             StringBuilder stringBuilder = new StringBuilder();
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy-HH:mm:ss");
                             for (GroupEntityData groupEntityData : offlinePlayer.getPermissionEntity().getGroups()) {
-                                stringBuilder.append(groupEntityData.getGroup() + '@' + (groupEntityData.getTimeout() == 0 || groupEntityData
-                                    .getTimeout() == -1 ? "LIFETIME" : simpleDateFormat.format(groupEntityData.getTimeout())) + NetworkUtils.SPACE_STRING);
+                                stringBuilder.append(groupEntityData.getGroup())
+                                             .append('@')
+                                             .append(groupEntityData.getTimeout() == 0 || groupEntityData
+                                                 .getTimeout() == -1 ? "LIFETIME" : simpleDateFormat.format(groupEntityData.getTimeout()))
+                                             .append(NetworkUtils.SPACE_STRING);
                             }
 
                             sender.sendMessage(NetworkUtils.SPACE_STRING,
@@ -446,8 +439,8 @@ public final class CommandPermissions extends Command {
     private void updatePlayer(OfflinePlayer offlinePlayer) {
         CloudNet.getInstance().getDbHandlers().getPlayerDatabase().updatePlayer(offlinePlayer);
         if (CloudNet.getInstance().getNetworkManager().getOnlinePlayers().containsKey(offlinePlayer.getUniqueId())) {
-            CloudNet.getInstance().getNetworkManager().getOnlinePlayers().get(offlinePlayer.getUniqueId()).setPermissionEntity(offlinePlayer
-                                                                                                                                   .getPermissionEntity());
+            CloudNet.getInstance().getNetworkManager().getOnlinePlayers().get(offlinePlayer.getUniqueId())
+                    .setPermissionEntity(offlinePlayer.getPermissionEntity());
             CloudNet.getInstance().getNetworkManager().handlePlayerUpdate(CloudNet.getInstance()
                                                                                   .getNetworkManager()
                                                                                   .getOnlinePlayers()
@@ -456,7 +449,7 @@ public final class CommandPermissions extends Command {
         CloudNet.getInstance().getNetworkManager().sendAllUpdate(new PacketOutUpdateOfflinePlayer(offlinePlayer));
     }
 
-    private long calcDays(int value) {
+    private static long calcDays(int value) {
         return (System.currentTimeMillis() + ((TimeUnit.DAYS.toMillis(value))));
     }
 }

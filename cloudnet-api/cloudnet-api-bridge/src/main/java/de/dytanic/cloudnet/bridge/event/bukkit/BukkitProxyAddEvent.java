@@ -1,14 +1,11 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called if a proxy server was add into network
+ * This event is called when a new proxy is added to the CloudNet network.
+ * The proxy may not be done with its initialization when receiving this event.
  */
 public class BukkitProxyAddEvent extends BukkitCloudEvent {
 
@@ -24,6 +21,11 @@ public class BukkitProxyAddEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * The proxy information object of the proxy that has been added to the network.
+     *
+     * @return the information about the newly added proxy.
+     */
     public ProxyInfo getProxyInfo() {
         return serverInfo;
     }

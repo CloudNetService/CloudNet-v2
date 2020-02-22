@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetwrapper.command;
 
 import de.dytanic.cloudnet.command.Command;
@@ -11,7 +7,7 @@ import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 public class CommandStop extends Command {
 
     public CommandStop() {
-        super("stop", "cloudnet.command.stop", "exit");
+        super("stop", "cloudnet.command.stop", "end", "exit");
     }
 
     @Override

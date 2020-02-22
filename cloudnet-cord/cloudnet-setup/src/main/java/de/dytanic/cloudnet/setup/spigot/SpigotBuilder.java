@@ -1,5 +1,6 @@
 package de.dytanic.cloudnet.setup.spigot;
 
+import de.dytanic.cloudnet.lib.NetworkUtils;
 import jline.console.ConsoleReader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -129,8 +130,7 @@ public final class SpigotBuilder {
             Files.createDirectories(buildFolder.toPath());
             System.out.println("Downloading BuildTools.jar...");
             URLConnection connection = new URL(buildToolsUrl).openConnection();
-            connection.setRequestProperty("User-Agent",
-                                          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            connection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             connection.connect();
             try (InputStream inputStream = connection.getInputStream()) {
                 Files.copy(inputStream, Paths.get(buildTools.toURI()), StandardCopyOption.REPLACE_EXISTING);
@@ -147,7 +147,7 @@ public final class SpigotBuilder {
                 long endTime = System.currentTimeMillis();
                 long minutes = ((endTime - startTime) / 1000) / 60;
                 long seconds = ((endTime - startTime) / 1000) % 60;
-                System.out.printf("Total Build Time %dMin %dSec\n", minutes, seconds);
+                System.out.println(String.format("Total Build Time %dMin %dSec%n", minutes, seconds));
                 return true;
             } else {
                 deleteBuildFolder(buildFolder);

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.command;
 
 import de.dytanic.cloudnet.command.Command;
@@ -18,7 +14,7 @@ public final class CommandInstallPlugin extends Command {
     public CommandInstallPlugin() {
         super("installplugin", "cloudnet.command.installplugin");
 
-        description = "Installs plugin for one server";
+        description = "Installs plugin onto a server";
 
     }
 

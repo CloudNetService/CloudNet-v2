@@ -1,13 +1,9 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 
 /**
- * Called if the server info from one server was updated
+ * This event is called whenever server information is updated on the network.
  */
 public class ProxiedServerInfoUpdateEvent extends ProxiedCloudEvent {
 
@@ -17,6 +13,9 @@ public class ProxiedServerInfoUpdateEvent extends ProxiedCloudEvent {
         this.serverInfo = serverInfo;
     }
 
+    /**
+     * @return the updated server information.
+     */
     public ServerInfo getServerInfo() {
         return serverInfo;
     }

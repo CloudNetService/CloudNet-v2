@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetwrapper.util;
 
 import de.dytanic.cloudnet.lib.ConnectableAddress;
@@ -29,8 +25,6 @@ public class MasterTemplateDeploy {
 
     private SimpledUser simpledUser;
 
-    private boolean ssl;
-
     private Template template;
 
     private String group;
@@ -40,14 +34,12 @@ public class MasterTemplateDeploy {
     public MasterTemplateDeploy(String dir,
                                 ConnectableAddress connectableAddress,
                                 SimpledUser simpledUser,
-                                boolean ssl,
                                 Template template,
                                 String group,
                                 String customName) {
         this.dir = dir;
         this.connectableAddress = connectableAddress;
         this.simpledUser = simpledUser;
-        this.ssl = ssl;
         this.template = template;
         this.group = group;
         this.customName = customName;
@@ -63,10 +55,6 @@ public class MasterTemplateDeploy {
 
     public SimpledUser getSimpledUser() {
         return simpledUser;
-    }
-
-    public boolean isSsl() {
-        return ssl;
     }
 
     public Template getTemplate() {
@@ -86,11 +74,14 @@ public class MasterTemplateDeploy {
         Path dir = Paths.get("local/cache/" + NetworkUtils.randomString(10));
         try {
             FileUtility.copyFilesInDirectory(new File(this.dir), dir.toFile());
-            new File(dir.toString() + "/plugins/CloudNetAPI.jar").delete();
+            new File(dir + "/plugins/CloudNetAPI.jar").delete();
         } catch (Exception ex) {
         }
-        HttpURLConnection urlConnection = (HttpURLConnection) new URL((ssl ? "https" : "http") + "://" + connectableAddress.getHostName() + ':' + connectableAddress
-            .getPort() + "/cloudnet/api/v1/deployment").openConnection();
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL(
+            String.format("http://%s:%d/cloudnet/api/v1/deployment",
+                          connectableAddress.getHostName(),
+                          connectableAddress.getPort()))
+            .openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
         urlConnection.setRequestProperty("-Xcloudnet-token", simpledUser.getApiToken());
@@ -113,7 +104,6 @@ public class MasterTemplateDeploy {
             StandardCharsets.UTF_8))) {
             String input;
             while ((input = bufferedReader.readLine()) != null) {
-                ;
             }
         }
         System.out.println("Successfully deploy template [" + template.getName() + ']');

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.web.api.v1;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
@@ -38,7 +34,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                                 QueryDecoder queryDecoder,
                                 PathProvider path,
                                 HttpRequest httpRequest) throws Exception {
-        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), HttpResponseStatus.UNAUTHORIZED);
+        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.UNAUTHORIZED);
         fullHttpResponse.headers().set("Content-Type", "application/json");
 
         Document dataDocument = new Document("success", false).append("reason", new ArrayList<>()).append("response", new Document());
@@ -164,12 +160,8 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
 
                 if (httpRequest.headers().contains("-Xvalue")) {
                     String group = httpRequest.headers().get("-Xvalue");
-                    CloudNet.getInstance().getScheduler().runTaskSync(new Runnable() {
-                        @Override
-                        public void run() {
-                            CloudNet.getInstance().startGameServer(CloudNet.getInstance().getServerGroup(group));
-                        }
-                    });
+                    CloudNet.getExecutor().submit(
+                        () -> CloudNet.getInstance().startGameServer(CloudNet.getInstance().getServerGroup(group)));
                 }
 
                 return fullHttpResponse;
@@ -188,12 +180,8 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
 
                 if (httpRequest.headers().contains("-Xvalue")) {
                     String group = httpRequest.headers().get("-Xvalue");
-                    CloudNet.getInstance().getScheduler().runTaskSync(new Runnable() {
-                        @Override
-                        public void run() {
-                            CloudNet.getInstance().startProxy(CloudNet.getInstance().getProxyGroup(group));
-                        }
-                    });
+                    CloudNet.getExecutor().submit(
+                        () -> CloudNet.getInstance().startProxy(CloudNet.getInstance().getProxyGroup(group)));
                 }
 
                 return fullHttpResponse;

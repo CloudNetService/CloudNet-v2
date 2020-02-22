@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.command;
 
 import de.dytanic.cloudnet.command.Command;
@@ -16,7 +12,7 @@ import de.dytanic.cloudnetcore.CloudNet;
 public final class CommandModules extends Command {
 
     public CommandModules() {
-        super("modules", "cloudnet.command.modules", "m");
+        super("modules", "cloudnet.cowmmand.modules", "m");
 
         description = "Lists all modules, versions and authors";
 

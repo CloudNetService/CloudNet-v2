@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetwrapper;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
@@ -22,20 +18,27 @@ public class CloudNetWrapperConfig {
 
     private Configuration configuration;
 
-    private String internalIP, wrapperId, cloudnetHost, devServicePath, proxy_config_host;
+    private String internalIP, wrapperId, cloudnetHost, proxyConfigHost;
 
     private boolean savingRecords, viaVersion, autoUpdate, maintenance_copy;
 
     private int cloudnetPort, startPort, processQueueSize, maxMemory, webPort;
 
-    private double percentOfCPUForANewServer, percentOfCPUForANewCloudServer, percentOfCPUForANewProxy;
+    private double percentOfCPUForANewServer;
+    private double percentOfCPUForANewProxy;
 
     public CloudNetWrapperConfig(ConsoleReader reader) throws Exception {
 
-        for (File directory : new File[] {new File("local/servers"), new File("local/templates"), new File("local/cache/web_templates"), new File(
-            "local/cache/web_plugins"), new File("local/records"), new File("local/plugins"), new File("local/records"), new File(
-            "local/global_cloudserver"), new File("local/global/plugins"), new File("local/proxy_versions"), new File("temp"), new File(
-            "temp/cloudserver"), new File("modules")}) {
+        for (File directory : new File[] {
+            new File("local/servers"),
+            new File("local/templates"),
+            new File("local/cache/web_templates"),
+            new File("local/cache/web_plugins"),
+            new File("local/records"),
+            new File("local/global/plugins"),
+            new File("local/plugins"),
+            new File("local/proxy_versions"),
+            new File("temp")}) {
             directory.mkdirs();
         }
 
@@ -113,10 +116,8 @@ public class CloudNetWrapperConfig {
             configuration.set("general.saving-records", false);
             configuration.set("general.viaversion", false);
             configuration.set("general.maintenance-copyFileToDirectory", false);
-            configuration.set("general.devservicePath", new File("Development").getAbsolutePath());
             configuration.set("general.processQueueSize", (Runtime.getRuntime().availableProcessors() / 2));
             configuration.set("general.percentOfCPUForANewServer", 100D);
-            configuration.set("general.percentOfCPUForANewCloudServer", 100D);
             configuration.set("general.percentOfCPUForANewProxy", 100D);
 
             try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
@@ -146,21 +147,15 @@ public class CloudNetWrapperConfig {
             this.cloudnetHost = configuration.getString("connection.cloudnet-host");
             this.cloudnetPort = configuration.getInt("connection.cloudnet-port");
             this.webPort = configuration.getInt("connection.cloudnet-web");
-            this.percentOfCPUForANewCloudServer = configuration.getDouble("general.percentOfCPUForANewCloudServer");
-            this.devServicePath = configuration.getString("general.devservicePath");
 
-            if (!configuration.getSection("general").self.containsKey("proxy-config-host")) {
+            if (!configuration.getSection("general").contains("proxy-config-host")) {
                 configuration.set("general.proxy-config-host", this.internalIP);
                 save();
             }
 
             //generatated configurations
 
-            this.proxy_config_host = configuration.getString("general.proxy-config-host");
-
-            if (!Files.exists(Paths.get(devServicePath))) {
-                Files.createDirectories(Paths.get(devServicePath));
-            }
+            this.proxyConfigHost = configuration.getString("general.proxy-config-host");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -205,24 +200,16 @@ public class CloudNetWrapperConfig {
         return cloudnetHost;
     }
 
-    public String getDevServicePath() {
-        return devServicePath;
-    }
-
     public String getInternalIP() {
         return internalIP;
     }
 
-    public String getProxy_config_host() {
-        return proxy_config_host;
+    public String getProxyConfigHost() {
+        return proxyConfigHost;
     }
 
     public String getWrapperId() {
         return wrapperId;
-    }
-
-    public double getPercentOfCPUForANewCloudServer() {
-        return percentOfCPUForANewCloudServer;
     }
 
     public double getPercentOfCPUForANewProxy() {

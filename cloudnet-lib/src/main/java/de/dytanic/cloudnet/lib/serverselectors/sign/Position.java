@@ -1,8 +1,6 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.lib.serverselectors.sign;
+
+import java.util.Objects;
 
 /**
  * Created by Tareko on 26.05.2017.
@@ -44,18 +42,43 @@ public class Position {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public int hashCode() {
+        int result;
+        long temp;
+        result = group != null ? group.hashCode() : 0;
+        result = 31 * result + (world != null ? world.hashCode() : 0);
+        temp = Double.doubleToLongBits(x);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(z);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 
-        if (!(obj instanceof Position)) {
-            return false;
-        }
-        Position signPosition = (Position) obj;
-
-        if (signPosition.x == x && signPosition.y == y && signPosition.z == z && signPosition.world.equals(world) && signPosition.group.equals(
-            group)) {
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
+        if (!(o instanceof Position)) {
+            return false;
+        }
 
-        return false;
+        final Position position = (Position) o;
+
+        if (Double.compare(position.x, x) != 0) {
+            return false;
+        }
+        if (Double.compare(position.y, y) != 0) {
+            return false;
+        }
+        if (Double.compare(position.z, z) != 0) {
+            return false;
+        }
+        if (!Objects.equals(group, position.group)) {
+            return false;
+        }
+        return Objects.equals(world, position.world);
     }
 }

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.network.packet.out;
 
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
@@ -17,7 +13,4 @@ public class PacketOutStartServer extends Packet {
         super(PacketRC.CN_CORE + 3, new Document("serverProcess", serverProcessMeta));
     }
 
-    public PacketOutStartServer(ServerProcessMeta serverProcessMeta, boolean async) {
-        super(PacketRC.CN_CORE + 3, new Document("serverProcess", serverProcessMeta).append("async", async));
-    }
 }

@@ -1,14 +1,10 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import org.bukkit.event.HandlerList;
 
 /**
- * Calls if a player logins to the network successfully
+ * This event is called whenever a player successfully logs on to the cloud network.
  */
 public class BukkitPlayerLoginNetworkEvent extends BukkitCloudEvent {
 
@@ -24,6 +20,9 @@ public class BukkitPlayerLoginNetworkEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * @return the player that has just logged on to the network.
+     */
     public CloudPlayer getCloudPlayer() {
         return cloudPlayer;
     }

@@ -1,13 +1,9 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 
 /**
- * Calls if a player login into the network successfully
+ * This event is called whenever a player successfully logs on to the cloud network.
  */
 public class ProxiedPlayerLoginEvent extends ProxiedCloudEvent {
 
@@ -17,6 +13,9 @@ public class ProxiedPlayerLoginEvent extends ProxiedCloudEvent {
         this.cloudPlayer = cloudPlayer;
     }
 
+    /**
+     * @return the player that has just logged on to the network.
+     */
     public CloudPlayer getCloudPlayer() {
         return cloudPlayer;
     }

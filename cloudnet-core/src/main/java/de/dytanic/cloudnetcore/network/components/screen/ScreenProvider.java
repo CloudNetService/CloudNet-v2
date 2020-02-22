@@ -1,10 +1,5 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.network.components.screen;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
@@ -12,6 +7,7 @@ import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -19,7 +15,7 @@ import java.util.Map;
  */
 public class ScreenProvider {
 
-    private Map<String, EnabledScreen> screens = NetworkUtils.newConcurrentHashMap();
+    private Map<String, EnabledScreen> screens = new ConcurrentHashMap<>();
 
     private ServiceId mainServiceId;
 

@@ -7,19 +7,16 @@ import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
 import de.dytanic.cloudnet.lib.server.priority.PriorityConfig;
 import de.dytanic.cloudnet.lib.server.priority.PriorityService;
 import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Created by Tareko on 21.05.2017.
  */
 public class ServerGroup implements Nameable {
 
-    public static final Type TYPE = new TypeToken<ServerGroup>() {}.getType();
+    public static final Type TYPE = TypeToken.get(ServerGroup.class).getType();
 
     protected String name;
     protected Collection<String> wrapper;
@@ -31,7 +28,6 @@ public class ServerGroup implements Nameable {
     protected Collection<Template> templates;
 
     protected int memory;
-    protected int dynamicMemory;
     protected int joinPower;
     protected boolean maintenance;
     protected int minOnlineServers;
@@ -47,7 +43,6 @@ public class ServerGroup implements Nameable {
                        Collection<String> wrapper,
                        boolean kickedForceFallback,
                        int memory,
-                       int dynamicMemory,
                        int joinPower,
                        boolean maintenance,
                        int startup,
@@ -59,13 +54,13 @@ public class ServerGroup implements Nameable {
                        int percentForNewServerAutomatically,
                        ServerGroupType serverType,
                        ServerGroupMode groupMode,
+                       Template globalTemplate,
                        Collection<Template> templates,
                        AdvancedServerConfig advancedServerConfig) {
         this.name = name;
         this.kickedForceFallback = kickedForceFallback;
         this.wrapper = wrapper;
         this.memory = memory;
-        this.dynamicMemory = dynamicMemory;
         this.joinPower = joinPower;
         this.maintenance = maintenance;
         this.minOnlineServers = startup;
@@ -73,7 +68,7 @@ public class ServerGroup implements Nameable {
         this.serverType = serverType;
         this.groupMode = groupMode;
         this.advancedServerConfig = advancedServerConfig;
-        this.globalTemplate = new Template("globaltemplate", TemplateResource.LOCAL, null, new String[] {}, new ArrayList<>());
+        this.globalTemplate = globalTemplate;
         this.templates = templates;
 
         this.settings = new WrappedMap();
@@ -83,12 +78,6 @@ public class ServerGroup implements Nameable {
         this.priorityService = new PriorityService(priorityStopTime,
                                                    new PriorityConfig(priority, onlineCountForPriority),
                                                    new PriorityConfig(groupPriority, priorityForGroupOnlineCount));
-
-        this.templates = new ArrayList<>(Collections.singletonList(new Template("default",
-                                                                                TemplateResource.LOCAL,
-                                                                                null,
-                                                                                new String[] {},
-                                                                                new ArrayList<>())));
     }
 
     public int getMemory() {
@@ -162,14 +151,6 @@ public class ServerGroup implements Nameable {
 
     public void setTemplates(Collection<Template> templates) {
         this.templates = templates;
-    }
-
-    public int getDynamicMemory() {
-        return dynamicMemory;
-    }
-
-    public void setDynamicMemory(int dynamicMemory) {
-        this.dynamicMemory = dynamicMemory;
     }
 
     public int getMaxOnlineServers() {

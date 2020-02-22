@@ -1,5 +1,8 @@
 package de.dytanic.cloudnet.lib.player.permission;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -8,6 +11,8 @@ import java.util.Objects;
  * Created by Tareko on 01.06.2017.
  */
 public class PermissionGroup {
+
+    public static final Type TYPE = TypeToken.get(PermissionGroup.class).getType();
 
     protected String name;
     protected String color;
@@ -45,47 +50,6 @@ public class PermissionGroup {
         this.serverGroupPermissions = serverGroupPermissions;
         this.options = options;
         this.implementGroups = implementGroups;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (color != null ? color.hashCode() : 0);
-        result = 31 * result + (prefix != null ? prefix.hashCode() : 0);
-        result = 31 * result + (suffix != null ? suffix.hashCode() : 0);
-        result = 31 * result + (display != null ? display.hashCode() : 0);
-        result = 31 * result + tagId;
-        result = 31 * result + joinPower;
-        result = 31 * result + (defaultGroup ? 1 : 0);
-        result = 31 * result + (permissions != null ? permissions.hashCode() : 0);
-        result = 31 * result + (serverGroupPermissions != null ? serverGroupPermissions.hashCode() : 0);
-        result = 31 * result + (options != null ? options.hashCode() : 0);
-        result = 31 * result + (implementGroups != null ? implementGroups.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof PermissionGroup)) {
-            return false;
-        }
-        final PermissionGroup that = (PermissionGroup) o;
-        return tagId == that.tagId && joinPower == that.joinPower && defaultGroup == that.defaultGroup && Objects.equals(name,
-                                                                                                                         that.name) && Objects
-            .equals(color, that.color) && Objects.equals(prefix, that.prefix) && Objects.equals(suffix, that.suffix) && Objects.equals(
-            display,
-            that.display) && Objects.equals(permissions, that.permissions) && Objects.equals(serverGroupPermissions,
-                                                                                             that.serverGroupPermissions) && Objects.equals(
-            options,
-            that.options) && Objects.equals(implementGroups, that.implementGroups);
-    }
-
-    @Override
-    public String toString() {
-        return "PermissionGroup{" + "name='" + name + '\'' + ", color='" + color + '\'' + ", prefix='" + prefix + '\'' + ", suffix='" + suffix + '\'' + ", display='" + display + '\'' + ", tagId=" + tagId + ", joinPower=" + joinPower + ", defaultGroup=" + defaultGroup + ", permissions=" + permissions + ", serverGroupPermissions=" + serverGroupPermissions + ", options=" + options + ", implementGroups=" + implementGroups + '}';
     }
 
     public String getName() {
@@ -182,5 +146,87 @@ public class PermissionGroup {
 
     public void setDefaultGroup(boolean defaultGroup) {
         this.defaultGroup = defaultGroup;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (color != null ? color.hashCode() : 0);
+        result = 31 * result + (prefix != null ? prefix.hashCode() : 0);
+        result = 31 * result + (suffix != null ? suffix.hashCode() : 0);
+        result = 31 * result + (display != null ? display.hashCode() : 0);
+        result = 31 * result + tagId;
+        result = 31 * result + joinPower;
+        result = 31 * result + (defaultGroup ? 1 : 0);
+        result = 31 * result + (permissions != null ? permissions.hashCode() : 0);
+        result = 31 * result + (serverGroupPermissions != null ? serverGroupPermissions.hashCode() : 0);
+        result = 31 * result + (options != null ? options.hashCode() : 0);
+        result = 31 * result + (implementGroups != null ? implementGroups.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PermissionGroup)) {
+            return false;
+        }
+
+        final PermissionGroup that = (PermissionGroup) o;
+
+        if (tagId != that.tagId) {
+            return false;
+        }
+        if (joinPower != that.joinPower) {
+            return false;
+        }
+        if (defaultGroup != that.defaultGroup) {
+            return false;
+        }
+        if (!Objects.equals(name, that.name)) {
+            return false;
+        }
+        if (!Objects.equals(color, that.color)) {
+            return false;
+        }
+        if (!Objects.equals(prefix, that.prefix)) {
+            return false;
+        }
+        if (!Objects.equals(suffix, that.suffix)) {
+            return false;
+        }
+        if (!Objects.equals(display, that.display)) {
+            return false;
+        }
+        if (!Objects.equals(permissions, that.permissions)) {
+            return false;
+        }
+        if (!Objects.equals(serverGroupPermissions, that.serverGroupPermissions)) {
+            return false;
+        }
+        if (!Objects.equals(options, that.options)) {
+            return false;
+        }
+        return Objects.equals(implementGroups, that.implementGroups);
+    }
+
+    @Override
+    public String toString() {
+        return "de.dytanic.cloudnet.lib.player.permission.PermissionGroup{" +
+            "name='" + name + '\'' +
+            ", color='" + color + '\'' +
+            ", prefix='" + prefix + '\'' +
+            ", suffix='" + suffix + '\'' +
+            ", display='" + display + '\'' +
+            ", tagId=" + tagId +
+            ", joinPower=" + joinPower +
+            ", defaultGroup=" + defaultGroup +
+            ", permissions=" + permissions +
+            ", serverGroupPermissions=" + serverGroupPermissions +
+            ", options=" + options +
+            ", implementGroups=" + implementGroups +
+            '}';
     }
 }

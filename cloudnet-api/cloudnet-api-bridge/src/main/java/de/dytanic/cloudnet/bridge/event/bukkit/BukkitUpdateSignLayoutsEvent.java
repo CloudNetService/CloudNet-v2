@@ -1,14 +1,10 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig;
 import org.bukkit.event.HandlerList;
 
 /**
- * Created by Tareko on 19.08.2017.
+ * This event is called when the sign layouts are updated.
  */
 public class BukkitUpdateSignLayoutsEvent extends BukkitCloudEvent {
 
@@ -24,6 +20,9 @@ public class BukkitUpdateSignLayoutsEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * @return the new sign layout.
+     */
     public SignLayoutConfig getSignLayoutConfig() {
         return signLayoutConfig;
     }

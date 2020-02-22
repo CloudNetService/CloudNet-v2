@@ -1,19 +1,14 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.logging;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.logging.handler.ICloudLoggerHandler;
 import jline.console.ConsoleReader;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -28,15 +23,14 @@ import java.util.logging.*;
  */
 public class CloudLogger extends Logger {
 
-    private final String separator = System.getProperty("line.separator");
-    private final LoggingFormatter formatter = new LoggingFormatter();
+    private static final String SEPARATOR = System.lineSeparator();
     private final ConsoleReader reader;
     private final String name = System.getProperty("user.name");
 
     private final List<ICloudLoggerHandler> handler = new LinkedList<>();
 
-    private boolean debugging = false;
     private boolean showPrompt = !Boolean.getBoolean("cloudnet.logging.prompt.disabled");
+    private final Handler loggingHandler;
 
     /**
      * Constructs a new cloud logger instance that handles logging messages from
@@ -44,14 +38,9 @@ public class CloudLogger extends Logger {
      *
      * @throws IOException            when creating directories or files in {@code local/}
      *                                was not possible
-     * @throws NoSuchFieldException   when the default charset could not be set
-     * @throws IllegalAccessException when the default charset could not be set
      */
-    public CloudLogger() throws IOException, NoSuchFieldException, IllegalAccessException {
+    public CloudLogger() throws IOException {
         super("CloudNetServerLogger", null);
-        Field field = Charset.class.getDeclaredField("defaultCharset");
-        field.setAccessible(true);
-        field.set(null, StandardCharsets.UTF_8);
 
         if (!Files.exists(Paths.get("local"))) {
             Files.createDirectory(Paths.get("local"));
@@ -65,27 +54,24 @@ public class CloudLogger extends Logger {
         this.reader = new ConsoleReader(System.in, System.out);
         this.reader.setExpandEvents(false);
 
+        final LoggingFormatter formatter = new LoggingFormatter();
         FileHandler fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, true);
         fileHandler.setEncoding(StandardCharsets.UTF_8.name());
-        fileHandler.setFormatter(new LoggingFormatter());
+        fileHandler.setFormatter(formatter);
 
         addHandler(fileHandler);
 
-        LoggingHandler loggingHandler = new LoggingHandler();
+        loggingHandler = new LoggingHandler(reader, this);
         loggingHandler.setFormatter(formatter);
         loggingHandler.setEncoding(StandardCharsets.UTF_8.name());
         loggingHandler.setLevel(Level.INFO);
         addHandler(loggingHandler);
 
-        System.setOut(new AsyncPrintStream(new LoggingOutputStream(Level.INFO)));
-        System.setErr(new AsyncPrintStream(new LoggingOutputStream(Level.SEVERE)));
+        System.setOut(new AsyncPrintStream(new LoggingOutputStream(this, Level.INFO)));
+        System.setErr(new AsyncPrintStream(new LoggingOutputStream(this, Level.SEVERE)));
 
         this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
         this.reader.resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
-    }
-
-    public LoggingFormatter getFormatter() {
-        return formatter;
     }
 
     public boolean isShowPrompt() {
@@ -97,20 +83,20 @@ public class CloudLogger extends Logger {
     }
 
     public boolean isDebugging() {
-        return debugging;
+        return loggingHandler.getLevel().intValue() <= Level.ALL.intValue();
     }
 
     public void setDebugging(boolean debugging) {
-        this.debugging = debugging;
+        if (debugging) {
+            loggingHandler.setLevel(Level.ALL);
+        } else {
+            loggingHandler.setLevel(Level.INFO);
+        }
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    public String getSeparator() {
-        return separator;
     }
 
     public ConsoleReader getReader() {
@@ -119,17 +105,6 @@ public class CloudLogger extends Logger {
 
     public List<ICloudLoggerHandler> getHandler() {
         return handler;
-    }
-
-    /**
-     * This posts a new debug message, if {@link #debugging} is true.
-     *
-     * @param message the message to send to the log
-     */
-    public void debug(String message) {
-        if (debugging) {
-            log(Level.WARNING, "[DEBUG] " + message);
-        }
     }
 
     public String readLine(String prompt) {
@@ -161,29 +136,65 @@ public class CloudLogger extends Logger {
      * Output stream that sends the last message in the buffer to the log handlers
      * when flushed.
      */
-    private class LoggingOutputStream extends ByteArrayOutputStream {
-        private final Level level;
+    private static class LoggingOutputStream extends OutputStream {
+        private static final int LINE_FEED = '\n';
 
-        public LoggingOutputStream(Level level) {
+        private final Logger logger;
+        private final Level level;
+        private final ByteBuffer byteBuffer;
+
+        private boolean newLine = false;
+
+        LoggingOutputStream(final Logger logger, Level level) {
+            this.logger = logger;
             this.level = level;
+            this.byteBuffer = ByteBuffer.allocate(8192);
         }
 
         @Override
-        public void flush() throws IOException {
-            String contents = toString(StandardCharsets.UTF_8.name());
-            super.reset();
-            if (!contents.isEmpty() && !contents.equals(separator)) {
-                logp(level, NetworkUtils.EMPTY_STRING, NetworkUtils.EMPTY_STRING, contents);
+        public void write(final int b) {
+            this.byteBuffer.put((byte) b);
+            if (b == LINE_FEED) {
+                this.newLine = true;
+                flush();
+                this.newLine = false;
             }
+        }
+
+        @Override
+        public void flush() {
+            if (this.newLine) {
+                String message = new String(this.byteBuffer.array(), 0, this.byteBuffer.position());
+                logger.log(level, message);
+                this.byteBuffer.position(0);
+            }
+            //            String contents = toString(StandardCharsets.UTF_8.name());
+            //            int linebreakIndex = contents.indexOf('\n');
+            //            if (linebreakIndex != -1) {
+            //                byte[] line = new byte[linebreakIndex];
+            //                System.arraycopy(this.buf, 0, line, 0, linebreakIndex);
+            //                super.reset();
+            //                if (!contents.isEmpty() && !contents.equals(separator)) {
+            //                    logp(level, NetworkUtils.EMPTY_STRING, NetworkUtils.EMPTY_STRING, contents);
+            //                }
+            //            }
         }
     }
 
     /**
      * Handler class that forwards all records to {@link CloudLogger#handler}.
      */
-    private class LoggingHandler extends Handler {
+    private static class LoggingHandler extends Handler {
 
-        private boolean closed;
+        private final ConsoleReader reader;
+        private final CloudLogger logger;
+
+        private boolean closed = false;
+
+        private LoggingHandler(final ConsoleReader reader, final CloudLogger logger) {
+            this.reader = reader;
+            this.logger = logger;
+        }
 
         @Override
         public void publish(LogRecord record) {
@@ -192,7 +203,7 @@ public class CloudLogger extends Logger {
             }
 
             String formatMessage = getFormatter().formatMessage(record);
-            for (ICloudLoggerHandler handler : CloudLogger.this.getHandler()) {
+            for (ICloudLoggerHandler handler : logger.getHandler()) {
                 handler.handleConsole(formatMessage);
             }
 
@@ -201,7 +212,8 @@ public class CloudLogger extends Logger {
                     reader.print(ConsoleReader.RESET_LINE + getFormatter().format(record));
                     reader.drawLine();
                     reader.flush();
-                } catch (Throwable ignored) {
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -216,22 +228,36 @@ public class CloudLogger extends Logger {
         }
     }
 
-    private class LoggingFormatter extends Formatter {
+    private static class LoggingFormatter extends Formatter {
 
-        private final DateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        private final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
         @Override
         public String format(LogRecord record) {
             StringBuilder builder = new StringBuilder();
-            if (record.getThrown() != null) {
-                StringWriter writer = new StringWriter();
-                record.getThrown().printStackTrace(new PrintWriter(writer));
-                builder.append(writer).append('\n');
+            final String message = formatMessage(record);
+            builder.append(ConsoleReader.RESET_LINE)
+                   .append('[')
+                   .append(dateFormat.format(record.getMillis()))
+                   .append("] ")
+                   .append(record.getLevel().getName())
+                   .append(": ")
+                   .append(message);
+
+            if (!message.endsWith(SEPARATOR)) {
+                builder.append(SEPARATOR);
             }
 
-            return ConsoleReader.RESET_LINE + "[" + format.format(record.getMillis()) + "] " + record.getLevel()
-                                                                                                     .getName() + ": " + formatMessage(
-                record) + '\n' + builder.toString();
+            if (record.getThrown() != null) {
+                try (StringWriter writer = new StringWriter()) {
+                    record.getThrown().printStackTrace(new PrintWriter(writer));
+                    builder.append(writer).append(SEPARATOR);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return builder.toString();
         }
     }
 }

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.network;
 
 import de.dytanic.cloudnet.lib.network.protocol.IProtocol;
@@ -20,16 +16,10 @@ import io.netty.channel.SimpleChannelInboundHandler;
  */
 public class CloudNetClientAuth extends SimpleChannelInboundHandler<Packet> implements PacketSender {
 
-    private Channel channel;
-    private CloudNetServer cloudNetProxyServer;
+    private final Channel channel;
 
-    public CloudNetClientAuth(Channel channel, CloudNetServer cloudNetProxyServer) {
+    public CloudNetClientAuth(Channel channel) {
         this.channel = channel;
-        this.cloudNetProxyServer = cloudNetProxyServer;
-    }
-
-    public CloudNetServer getCloudNetProxyServer() {
-        return cloudNetProxyServer;
     }
 
     @Override
@@ -76,10 +66,8 @@ public class CloudNetClientAuth extends SimpleChannelInboundHandler<Packet> impl
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet packet) throws Exception {
-        CloudNet.getLogger().debug("Receiving Packet [" + CloudNet.getInstance()
-                                                                  .getPacketManager()
-                                                                  .packetId(packet) + "] on " + getChannel().remoteAddress().toString());
-        if (CloudNet.getInstance().getPacketManager().packetId(packet) == (PacketRC.INTERNAL - 1)) {
+        CloudNet.getLogger().finest(String.format("Receiving packet %s from %s%n", packet, channel.remoteAddress()));
+        if (packet.getId() == (PacketRC.INTERNAL - 1)) {
             CloudNet.getInstance().getPacketManager().dispatchPacket(packet, this);
         }
     }
@@ -112,7 +100,7 @@ public class CloudNetClientAuth extends SimpleChannelInboundHandler<Packet> impl
     }
 
     @Override
-    public void sendAsynchronized(Object object) {
+    public void sendAsynchronous(Object object) {
         channel.writeAndFlush(object);
     }
 
@@ -127,13 +115,13 @@ public class CloudNetClientAuth extends SimpleChannelInboundHandler<Packet> impl
     }
 
     @Override
-    public void sendAsynchronized(int id, Object element) {
-        sendAsynchronized(new ProtocolRequest(id, element));
+    public void sendAsynchronous(int id, Object element) {
+        sendAsynchronous(new ProtocolRequest(id, element));
     }
 
     @Override
-    public void sendAsynchronized(IProtocol iProtocol, Object element) {
-        sendAsynchronized(new ProtocolRequest(iProtocol.getId(), element));
+    public void sendAsynchronous(IProtocol iProtocol, Object element) {
+        sendAsynchronous(new ProtocolRequest(iProtocol.getId(), element));
     }
 
     @Override

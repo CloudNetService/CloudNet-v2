@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetwrapper.command;
 
 import de.dytanic.cloudnet.command.Command;
@@ -24,6 +20,7 @@ public class CommandClear extends Command {
         try {
             CloudNetWrapper.getInstance().getCloudNetLogging().getReader().clearScreen();
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

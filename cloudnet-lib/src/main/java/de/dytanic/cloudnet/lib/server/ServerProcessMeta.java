@@ -1,10 +1,14 @@
 package de.dytanic.cloudnet.lib.server;
 
+import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -12,28 +16,19 @@ import java.util.Properties;
  */
 public class ServerProcessMeta {
 
+    public static final Type TYPE = TypeToken.get(ServerProcessMeta.class).getType();
+
     private ServiceId serviceId;
-
     private int memory;
-
     private boolean priorityStop;
-
     private String url;
-
     private String[] processParameters;
-
     private boolean onlineMode;
-
     private Collection<ServerInstallablePlugin> downloadablePlugins;
-
     private ServerConfig serverConfig;
-
     private String customServerDownload;
-
     private int port;
-
     private Properties serverProperties;
-
     private Template template;
 
     public ServerProcessMeta(ServiceId serviceId,
@@ -60,6 +55,88 @@ public class ServerProcessMeta {
         this.port = port;
         this.serverProperties = serverProperties;
         this.template = template;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = serviceId != null ? serviceId.hashCode() : 0;
+        result = 31 * result + memory;
+        result = 31 * result + (priorityStop ? 1 : 0);
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + Arrays.hashCode(processParameters);
+        result = 31 * result + (onlineMode ? 1 : 0);
+        result = 31 * result + (downloadablePlugins != null ? downloadablePlugins.hashCode() : 0);
+        result = 31 * result + (serverConfig != null ? serverConfig.hashCode() : 0);
+        result = 31 * result + (customServerDownload != null ? customServerDownload.hashCode() : 0);
+        result = 31 * result + port;
+        result = 31 * result + (serverProperties != null ? serverProperties.hashCode() : 0);
+        result = 31 * result + (template != null ? template.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ServerProcessMeta)) {
+            return false;
+        }
+
+        final ServerProcessMeta that = (ServerProcessMeta) o;
+
+        if (memory != that.memory) {
+            return false;
+        }
+        if (priorityStop != that.priorityStop) {
+            return false;
+        }
+        if (onlineMode != that.onlineMode) {
+            return false;
+        }
+        if (port != that.port) {
+            return false;
+        }
+        if (!Objects.equals(serviceId, that.serviceId)) {
+            return false;
+        }
+        if (!Objects.equals(url, that.url)) {
+            return false;
+        }
+        if (!Arrays.equals(processParameters, that.processParameters)) {
+            return false;
+        }
+        if (!Objects.equals(downloadablePlugins, that.downloadablePlugins)) {
+            return false;
+        }
+        if (!Objects.equals(serverConfig, that.serverConfig)) {
+            return false;
+        }
+        if (!Objects.equals(customServerDownload, that.customServerDownload)) {
+            return false;
+        }
+        if (!Objects.equals(serverProperties, that.serverProperties)) {
+            return false;
+        }
+        return Objects.equals(template, that.template);
+    }
+
+    @Override
+    public String toString() {
+        return "de.dytanic.cloudnet.lib.server.ServerProcessMeta{" +
+            "serviceId=" + serviceId +
+            ", memory=" + memory +
+            ", priorityStop=" + priorityStop +
+            ", url='" + url + '\'' +
+            ", processParameters=" + Arrays.toString(processParameters) +
+            ", onlineMode=" + onlineMode +
+            ", downloadablePlugins=" + downloadablePlugins +
+            ", serverConfig=" + serverConfig +
+            ", customServerDownload='" + customServerDownload + '\'' +
+            ", port=" + port +
+            ", serverProperties=" + serverProperties +
+            ", template=" + template +
+            '}';
     }
 
     public String getUrl() {

@@ -19,7 +19,8 @@ public class CommandIp extends Command {
     @Override
     public void execute(CommandSender commandSender, String[] args) {
         if (args.length < 1) {
-            commandSender.sendMessage(new TextComponent(TextComponent.fromLegacyText(ChatColor.RED + "Please follow this command by a user name")));
+            commandSender.sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "Please follow this command by a user name"));
+            commandSender.sendMessage(TextComponent.fromLegacyText("Usage: /ip <player name>"));
             return;
         }
 
@@ -28,8 +29,10 @@ public class CommandIp extends Command {
         if (user == null) {
             commandSender.sendMessage(new TextComponent(TextComponent.fromLegacyText(ChatColor.RED + "That user is not registered!")));
         } else {
-            commandSender.sendMessage(TextComponent.fromLegacyText(ChatColor.BLUE + "IP of " + args[0] + " is " + user.getLastPlayerConnection()
-                                                                                                                      .getHost()));
+            commandSender.sendMessage(TextComponent.fromLegacyText(String.format("%sIP of %s is %s",
+                                                                                 ChatColor.BLUE,
+                                                                                 args[0],
+                                                                                 user.getLastPlayerConnection().getHost())));
         }
 
     }

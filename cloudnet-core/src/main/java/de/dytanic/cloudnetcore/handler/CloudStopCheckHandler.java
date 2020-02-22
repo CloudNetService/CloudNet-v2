@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.handler;
 
 import de.dytanic.cloudnetcore.CloudNet;
@@ -23,10 +19,10 @@ public class CloudStopCheckHandler implements ICloudHandler {
             }
         }
 
-        for (ProxyServer minecraftServer : cloudNet.getProxys().values()) {
-            if (minecraftServer.getChannelLostTime() != 0L && minecraftServer.getChannel() == null) {
-                if ((minecraftServer.getChannelLostTime() + 5000L) < System.currentTimeMillis()) {
-                    minecraftServer.getWrapper().stopProxy(minecraftServer);
+        for (ProxyServer proxyServer : cloudNet.getProxys().values()) {
+            if (proxyServer.getChannelLostTime() != 0L && proxyServer.getChannel() == null) {
+                if ((proxyServer.getChannelLostTime() + 5000L) < System.currentTimeMillis()) {
+                    proxyServer.getWrapper().stopProxy(proxyServer);
                 }
             }
         }

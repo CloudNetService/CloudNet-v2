@@ -5,23 +5,17 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 
-@Deprecated
-public final class PacketAPIInGetRegisteredPlayers extends PacketAPIIO {
+public final class PacketAPIInGetRegisteredPlayers implements PacketAPIIO {
 
-    public PacketAPIInGetRegisteredPlayers() {
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        packetSender.sendPacket(getResult(packet,
+                                          new Document("players",
+                                                       CloudNet.getInstance().getDbHandlers()
+                                                               .getPlayerDatabase()
+                                                               .getRegisteredPlayers())));
     }
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        packetSender.sendPacket(getResult(new Document().append("players",
-                                                                CloudNet.getInstance()
-                                                                        .getDbHandlers()
-                                                                        .getPlayerDatabase()
-                                                                        .getRegisteredPlayers())));
-    }
-
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, -5426, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), -5426, value);
     }
 }

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.network.packet.api.sync;
 
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
@@ -13,16 +9,15 @@ import de.dytanic.cloudnetcore.CloudNet;
 /**
  * Created by Tareko on 19.08.2017.
  */
-public class PacketAPIInGetPlayers extends PacketAPIIO {
+public class PacketAPIInGetPlayers implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        Packet packet = getResult(new Document().append("players", CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values()));
-        packetSender.sendPacket(packet);
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        packetSender.sendPacket(getResult(
+            packet,
+            new Document("players", CloudNet.getInstance().getNetworkManager().getOnlinePlayers().values())));
     }
 
-    @Override
-    protected Packet getResult(Document result) {
-        return new Packet(packetUniqueId, PacketRC.PLAYER_HANDLE, result);
+    public Packet getResult(Packet packet, Document result) {
+        return new Packet(packet.getUniqueId(), PacketRC.PLAYER_HANDLE, result);
     }
 }

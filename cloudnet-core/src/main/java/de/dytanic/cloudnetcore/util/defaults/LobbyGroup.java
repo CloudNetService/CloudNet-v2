@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.util.defaults;
 
 import de.dytanic.cloudnet.lib.server.ServerGroup;
@@ -13,15 +9,18 @@ import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public final class LobbyGroup extends ServerGroup {
+
+    public static final String[] EMPTY_STRING_ARRAY = {};
+
     public LobbyGroup() {
         super("Lobby",
               Arrays.asList("Wrapper-1"),
               true,
               356,
               512,
-              0,
               false,
               0,
               1,
@@ -32,7 +31,8 @@ public final class LobbyGroup extends ServerGroup {
               50,
               ServerGroupType.BUKKIT,
               ServerGroupMode.LOBBY,
-              Arrays.asList(new Template("default", TemplateResource.LOCAL, null, new String[] {}, new ArrayList<>())),
+              new Template("globaltemplate", TemplateResource.LOCAL, null, EMPTY_STRING_ARRAY, Collections.emptyList()),
+              Collections.singletonList(new Template("default", TemplateResource.LOCAL, null, EMPTY_STRING_ARRAY, new ArrayList<>())),
               new AdvancedServerConfig(true, true, true, true));
     }
 }
