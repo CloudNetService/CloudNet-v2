@@ -30,6 +30,8 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -211,11 +213,16 @@ public class ProxiedListener implements Listener {
                                                 this.getClass().getSimpleName(),
                                                 "handleLogin",
                                                 String.format("Handling login event: %s%n", e));
+        final SocketAddress socketAddress = e.getConnection().getSocketAddress();
+        if (!(socketAddress instanceof InetSocketAddress)) {
+            e.setCancelled(true);
+            return;
+        }
         PlayerConnection playerConnection = new PlayerConnection(e.getConnection().getUniqueId(),
                                                                  e.getConnection().getName(),
                                                                  e.getConnection().getVersion(),
-                                                                 e.getConnection().getAddress().getAddress().getHostAddress(),
-                                                                 e.getConnection().getAddress().getPort(),
+                                                                 ((InetSocketAddress) socketAddress).getAddress().getHostAddress(),
+                                                                 ((InetSocketAddress) socketAddress).getPort(),
                                                                  e.getConnection().isOnlineMode(),
                                                                  e.getConnection().isLegacy());
 

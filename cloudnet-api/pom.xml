@@ -24,6 +24,17 @@
             <id>cloudnet-repo</id>
             <url>https://cloudnetservice.eu/repositories</url>
         </repository>
+        <repository>
+            <id>cloudnet</id>
+            <name>CloudNet Snapshot Repository</name>
+            <url>https://repo.cloudnetservice.eu/repository/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
         <!-- SpigotMC repository -->
         <repository>
             <id>spigot-repo</id>
@@ -49,6 +60,10 @@
                 <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.md-5</groupId>
+                    <artifactId>bungeecord-chat</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
