@@ -11,81 +11,210 @@ import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Builder for a server process.
+ * Uses {@link ServerProcessData} for storing the data.
+ */
 public class ServerProcessBuilder {
     private final ServerProcessData serverProcessData = new ServerProcessData();
 
     private ServerProcessBuilder() {
     }
 
+    /**
+     * Creates a new server process builder for a server of the specified server group.
+     * This value is mandatory as servers cannot be started without belonging to a group.
+     *
+     * @param serverGroupName the name of the server group that the server will be started from.
+     *
+     * @return the newly created server process builder.
+     */
     public static ServerProcessBuilder create(String serverGroupName) {
         return new ServerProcessBuilder().serverGroupName(serverGroupName);
     }
 
+    /**
+     * Sets the name of the server group.
+     *
+     * @param serverGroupName the name of the server group. Must not be null.
+     *
+     * @return the server process builder.
+     */
     public ServerProcessBuilder serverGroupName(String serverGroupName) {
+        Objects.requireNonNull(serverGroupName);
         this.serverProcessData.setServerGroupName(serverGroupName);
         return this;
     }
 
-    public ServerProcessBuilder wrapper(String wrapper) {
-        this.serverProcessData.setWrapper(wrapper);
+    /**
+     * Sets the name of the wrapper that the server will be started on.
+     * Set to {@code null} to not specify a wrapper.
+     *
+     * @param wrapperName the name of the wrapper to start the server on.
+     *
+     * @return the server process builder.
+     */
+    public ServerProcessBuilder wrapperName(String wrapperName) {
+        this.serverProcessData.setWrapperName(wrapperName);
         return this;
     }
 
+    /**
+     * Sets the amount of memory for the heap of the server process in megabytes.
+     *
+     * @param memory the amount of memory the server process should get allocated in megabytes.
+     *
+     * @return the server process builder.
+     */
     public ServerProcessBuilder memory(int memory) {
         this.serverProcessData.setMemory(memory);
         return this;
     }
 
+    /**
+     * Sets the parameters being passed to the Java runtime for starting the server process.
+     *
+     * @param javaProcessParameters a list containing all the parameters that will be passed onto the Java runtime. Must not be null.
+     *
+     * @return the server process builder.
+     *
+     * @see #serverProcessParameters(List)
+     */
     public ServerProcessBuilder javaProcessParameters(List<String> javaProcessParameters) {
-        this.serverProcessData.setJavaProcessParameters(new ArrayList<>(javaProcessParameters));
+        this.serverProcessData.getJavaProcessParameters().clear();
+        this.serverProcessData.getJavaProcessParameters().addAll(javaProcessParameters);
         return this;
     }
 
-    public ServerProcessBuilder proxyProcessBuilder(List<String> proxyProcessParameters) {
-        this.serverProcessData.setServerProcessParameters(new ArrayList<>(proxyProcessParameters));
+    /**
+     * Sets the parameters being passed to the server executable.
+     *
+     * @param serverProcessParameters a list containing all the parameters that will be passed to the server executable. Must not be null.
+     *
+     * @return the server process builder.
+     *
+     * @see #javaProcessParameters(List)
+     */
+    public ServerProcessBuilder serverProcessParameters(List<String> serverProcessParameters) {
+        this.serverProcessData.getServerProcessParameters().clear();
+        this.serverProcessData.getServerProcessParameters().addAll(serverProcessParameters);
         return this;
     }
 
+    /**
+     * Sets the URL to download the template from.
+     * Setting this to not {@code null} overrides the template of the server.
+     *
+     * @param templateUrl the url to download the template from.
+     *
+     * @return the server process builder.
+     */
     public ServerProcessBuilder templateUrl(String templateUrl) {
         this.serverProcessData.setTemplateUrl(templateUrl);
         return this;
     }
 
+    /**
+     * Sets the plugins that will be installed to this server prior to it starting.
+     *
+     * @param plugins a set of plugins that will be installed.
+     *
+     * @return the server process builder.
+     */
     public ServerProcessBuilder plugins(Set<ServerInstallablePlugin> plugins) {
-        this.serverProcessData.setPlugins(new HashSet<>(plugins));
+        this.serverProcessData.getPlugins().clear();
+        this.serverProcessData.getPlugins().addAll(plugins);
         return this;
     }
 
+    /**
+     * Sets the properties to override the default settings in the {@code server.properties} file.
+     *
+     * @param properties the overrides for the properties file.
+     *
+     * @return the server process builder.
+     */
     public ServerProcessBuilder properties(Properties properties) {
         this.serverProcessData.setProperties(properties);
         return this;
     }
 
+    /**
+     * Sets the template that the server will be started from.
+     * If this is set to {@code null}, then a random template will be chosen.
+     *
+     * @param template the template the server will start from.
+     *
+     * @return the server process builder.
+     */
     public ServerProcessBuilder template(Template template) {
         this.serverProcessData.setTemplate(template);
         return this;
     }
 
+    /**
+     * Sets the server process' additional configuration regarding additional information
+     * and when to start the server process.
+     *
+     * @param serverConfig additional process configuration.
+     *
+     * @return the server process builder.
+     */
     public ServerProcessBuilder serverConfig(ServerConfig serverConfig) {
         this.serverProcessData.setServerConfig(serverConfig);
         return this;
     }
 
+    /**
+     * Adds a parameter for the Java runtime.
+     *
+     * @param parameter the parameter to add.
+     *
+     * @return the server process builder.
+     */
     public ServerProcessBuilder addJavaProcessParameter(String parameter) {
         this.serverProcessData.getJavaProcessParameters().add(parameter);
         return this;
     }
 
+    /**
+     * Adds a parameter for the server executable.
+     *
+     * @param parameter the parameter to add.
+     *
+     * @return the server process builder.
+     */
     public ServerProcessBuilder addProxyProcessParameter(String parameter) {
         this.serverProcessData.getServerProcessParameters().add(parameter);
         return this;
     }
 
+    /**
+     * Adds a plugin that will be installed prior to the server starting.
+     *
+     * @param plugin the plugin to install.
+     *
+     * @return the server process builder.
+     */
     public ServerProcessBuilder addPlugin(ServerInstallablePlugin plugin) {
         this.serverProcessData.getPlugins().add(plugin);
         return this;
     }
 
+    /**
+     * Requests the master to initiate this server startup.
+     * This will trigger a sequence of messages to be passed between the calling service,
+     * the master and the wrapper that will start the server.
+     * <p>
+     * Once the server is started, the returned future will be completed and contains the
+     * process metadata that was valid at the time of starting up.
+     * <p>
+     * Note that the delay between requesting the start (ie. this method) and the actual
+     * completion of the returned future is indefinite and the future may not actually
+     * be completed at all-
+     *
+     * @return a future that will be completed once the server is connected to the cloud network.
+     */
     public CompletableFuture<ServerProcessMeta> startServer() {
         final UUID uuid = UUID.randomUUID();
         this.serverProcessData.getServerConfig().getProperties().append("cloudnet:requestId", uuid);
@@ -95,8 +224,8 @@ public class ServerProcessBuilder {
         return CloudAPI.getInstance().getCloudService().waitForServer(uuid);
     }
 
-    public String getWrapper() {
-        return serverProcessData.getWrapper();
+    public String getWrapperName() {
+        return serverProcessData.getWrapperName();
     }
 
     public String getProxyGroup() {

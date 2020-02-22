@@ -9,21 +9,71 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import java.lang.reflect.Type;
 import java.util.*;
 
+/**
+ * Data class for storing and transferring information about a server process that is yet to be started.
+ */
 public class ServerProcessData {
 
     public static final Type TYPE = TypeToken.get(ServerProcessData.class).getType();
 
-    private String wrapper;
+    /**
+     * The name of the wrapper to start the server on.
+     * {@code null}, if none is specified.
+     */
+    private String wrapperName;
+
+    /**
+     * The name of the server group to start the server from.
+     */
     private String serverGroupName;
+
+    /**
+     * The amount of memory the server will be started with.
+     * This setting is done in megabytes.
+     */
     private int memory;
+
+    /**
+     * The server configuration the server will be started with.
+     */
     private ServerConfig serverConfig;
+
+    /**
+     * The template the server will be started with.
+     * {@code null}, if none is specified.
+     */
     private Template template;
+
+    /**
+     * A list of all parameters that will be passed to the Java process.
+     */
     private List<String> javaProcessParameters;
+
+    /**
+     * A list of all parameters that will be passed to the server executable.
+     */
     private List<String> serverProcessParameters;
+
+    /**
+     * The URL of the template that will be used instead of the specified template.
+     */
     private String templateUrl;
+
+    /**
+     * A set of plugins that will be installed on the server prior to starting it.
+     */
     private Set<ServerInstallablePlugin> plugins;
+
+    /**
+     * Additional overrides for the {@code server.properties} file.
+     */
     private Properties properties;
 
+    /**
+     * Creates a new data holder for server process data with default values.
+     * The server configuration will be set to not hide the server, an empty string for the extra,
+     * an empty document for properties and immediate (ie. now) startup time.
+     */
     public ServerProcessData() {
         this.serverConfig = new ServerConfig(false, "", new Document(), System.currentTimeMillis());
         this.javaProcessParameters = new ArrayList<>();
@@ -32,7 +82,21 @@ public class ServerProcessData {
         this.properties = new Properties();
     }
 
-    public ServerProcessData(final String wrapper,
+    /**
+     * Creates a new data holder for server process data.
+     *
+     * @param wrapperName             the wrapper id of the wrapper to start the server on.
+     * @param serverGroupName         the name of the server group.
+     * @param memory                  the amount of memory in megabytes.
+     * @param serverConfig            the server configuration.
+     * @param template                the template the server will be started with.
+     * @param javaProcessParameters   parameters for the Java process.
+     * @param serverProcessParameters parameters for the server process.
+     * @param templateUrl             the url of the template to download.
+     * @param plugins                 the set of plugins that will be downloaded prior to starting the server.
+     * @param properties              modifications done to the {@code server.properties} file.
+     */
+    public ServerProcessData(final String wrapperName,
                              final String serverGroupName,
                              final int memory,
                              final ServerConfig serverConfig,
@@ -42,7 +106,7 @@ public class ServerProcessData {
                              final String templateUrl,
                              final Set<ServerInstallablePlugin> plugins,
                              final Properties properties) {
-        this.wrapper = wrapper;
+        this.wrapperName = wrapperName;
         this.serverGroupName = serverGroupName;
         this.memory = memory;
         this.serverConfig = serverConfig;
@@ -56,7 +120,7 @@ public class ServerProcessData {
 
     @Override
     public int hashCode() {
-        int result = wrapper != null ? wrapper.hashCode() : 0;
+        int result = wrapperName != null ? wrapperName.hashCode() : 0;
         result = 31 * result + (serverGroupName != null ? serverGroupName.hashCode() : 0);
         result = 31 * result + memory;
         result = 31 * result + (serverConfig != null ? serverConfig.hashCode() : 0);
@@ -83,7 +147,7 @@ public class ServerProcessData {
         if (memory != that.memory) {
             return false;
         }
-        if (!Objects.equals(wrapper, that.wrapper)) {
+        if (!Objects.equals(wrapperName, that.wrapperName)) {
             return false;
         }
         if (!Objects.equals(serverGroupName, that.serverGroupName)) {
@@ -112,9 +176,9 @@ public class ServerProcessData {
 
     @Override
     public String toString() {
-        return "ServerProcess{" +
-            "wrapper='" + wrapper + '\'' +
-            ", serverGroup=" + serverGroupName +
+        return "ServerProcessData{" +
+            "wrapperName='" + wrapperName + '\'' +
+            ", serverGroupName='" + serverGroupName + '\'' +
             ", memory=" + memory +
             ", serverConfig=" + serverConfig +
             ", template=" + template +
@@ -126,12 +190,12 @@ public class ServerProcessData {
             '}';
     }
 
-    public String getWrapper() {
-        return wrapper;
+    public String getWrapperName() {
+        return wrapperName;
     }
 
-    public void setWrapper(final String wrapper) {
-        this.wrapper = wrapper;
+    public void setWrapperName(final String wrapperName) {
+        this.wrapperName = wrapperName;
     }
 
     public String getServerGroupName() {

@@ -7,17 +7,53 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import java.lang.reflect.Type;
 import java.util.*;
 
+/**
+ * Data class for storing and transferring information about a proxy process that is yet to be started.
+ */
 public class ProxyProcessData {
 
     public static final Type TYPE = TypeToken.get(ProxyProcessData.class).getType();
 
-    private String wrapper;
+    /**
+     * The name of the wrapper to start the server on.
+     * {@code null}, if none is specified.
+     */
+    private String wrapperName;
+
+    /**
+     * The name of the proxy group to start the proxy from.
+     */
     private String proxyGroupName;
+
+    /**
+     * The amount of memory the proxy will be started with.
+     * This setting is done in megabytes.
+     */
     private int memory;
+
+    /**
+     * A list of all parameters that will be passed to the Java process.
+     */
     private List<String> javaProcessParameters;
+
+    /**
+     * A list of all parameters that will be passed to the proxy executable.
+     */
     private List<String> proxyProcessParameters;
+
+    /**
+     * The URL of the template that will be used instead of the specified template.
+     */
     private String templateUrl;
+
+    /**
+     * A set of plugins that will be installed on the proxy prior to starting it.
+     */
     private Set<ServerInstallablePlugin> plugins;
+
+    /**
+     * Additional properties to store in the proxy process for custom usage.
+     */
     private Document properties;
 
     public ProxyProcessData() {
@@ -27,14 +63,14 @@ public class ProxyProcessData {
         this.properties = new Document();
     }
 
-    public ProxyProcessData(final String wrapper,
+    public ProxyProcessData(final String wrapperName,
                             final String proxyGroupName,
                             final int memory,
                             final List<String> javaProcessParameters,
                             final List<String> proxyProcessParameters,
                             final String templateUrl,
                             final Set<ServerInstallablePlugin> plugins, final Document properties) {
-        this.wrapper = wrapper;
+        this.wrapperName = wrapperName;
         this.proxyGroupName = proxyGroupName;
         this.memory = memory;
         this.javaProcessParameters = javaProcessParameters;
@@ -46,7 +82,7 @@ public class ProxyProcessData {
 
     @Override
     public int hashCode() {
-        int result = wrapper != null ? wrapper.hashCode() : 0;
+        int result = wrapperName != null ? wrapperName.hashCode() : 0;
         result = 31 * result + (proxyGroupName != null ? proxyGroupName.hashCode() : 0);
         result = 31 * result + memory;
         result = 31 * result + (javaProcessParameters != null ? javaProcessParameters.hashCode() : 0);
@@ -71,7 +107,7 @@ public class ProxyProcessData {
         if (memory != that.memory) {
             return false;
         }
-        if (!Objects.equals(wrapper, that.wrapper)) {
+        if (!Objects.equals(wrapperName, that.wrapperName)) {
             return false;
         }
         if (!Objects.equals(proxyGroupName, that.proxyGroupName)) {
@@ -95,7 +131,7 @@ public class ProxyProcessData {
     @Override
     public String toString() {
         return "ProxyProcessData{" +
-            "wrapper='" + wrapper + '\'' +
+            "wrapper='" + wrapperName + '\'' +
             ", proxyGroup=" + proxyGroupName +
             ", memory=" + memory +
             ", javaProcessParameters=" + javaProcessParameters +
@@ -106,12 +142,12 @@ public class ProxyProcessData {
             '}';
     }
 
-    public String getWrapper() {
-        return wrapper;
+    public String getWrapperName() {
+        return wrapperName;
     }
 
-    public void setWrapper(final String wrapper) {
-        this.wrapper = wrapper;
+    public void setWrapperName(final String wrapperName) {
+        this.wrapperName = wrapperName;
     }
 
     public String getProxyGroupName() {

@@ -33,7 +33,7 @@ public class PacketInStartServer implements PacketInHandler {
             final List<String> javaProcessParameters = processData.getJavaProcessParameters();
             final Set<ServerInstallablePlugin> plugins = processData.getPlugins();
             final Properties properties = processData.getProperties();
-            final Wrapper wrapper = CloudNet.getInstance().getWrappers().get(processData.getWrapper());
+            final Wrapper wrapper = CloudNet.getInstance().getWrappers().get(processData.getWrapperName());
             final Template template = processData.getTemplate();
             if (template != null) {
                 if (wrapper != null) {

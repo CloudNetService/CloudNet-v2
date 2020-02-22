@@ -13,7 +13,7 @@ public class PacketOutStartProxy extends Packet {
     public PacketOutStartProxy(final ProxyProcessData proxyProcessData) {
         super(PacketRC.SERVER_HANDLE + 6,
               new Document("group", proxyProcessData.getProxyGroupName())
-                  .append("wrapper", proxyProcessData.getWrapper())
+                  .append("wrapper", proxyProcessData.getWrapperName())
                   .append("memory", proxyProcessData.getMemory())
                   .append("url", proxyProcessData.getTemplateUrl())
                   .append("javaProcessParameters", proxyProcessData.getJavaProcessParameters())
