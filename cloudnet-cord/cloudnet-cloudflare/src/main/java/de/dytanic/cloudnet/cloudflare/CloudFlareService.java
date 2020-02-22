@@ -17,8 +17,8 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collection;
@@ -32,8 +32,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CloudFlareService {
 
     private static final String PREFIX_URL = "https://api.cloudflare.com/client/v4/";
-    private static CloudFlareService instance;
     private static final String PREFIX = "[CLOUDFLARE] | ";
+    private static CloudFlareService instance;
     // WrapperId DNSRecord
     private final Map<String, MultiValue<PostResponse, String>> ipARecords = new ConcurrentHashMap<>();
     private final Map<String, MultiValue<PostResponse, String>> bungeeSRVRecords = new ConcurrentHashMap<>();
@@ -99,25 +99,6 @@ public class CloudFlareService {
     }
 
     /**
-     * Removes a proxy and its DNS records from CloudFlare.
-     *
-     * @param proxyServer        the proxy server to remove
-     * @param cloudFlareDatabase the database to remove the proxy server from
-     */
-    public void removeProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase) {
-        bungeeSRVRecords.values().stream()
-                        .filter(value -> value.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId()))
-                        .forEach(postResponse -> {
-                            bungeeSRVRecords.remove(postResponse.getSecond());
-                            cloudFlareDatabase.remove(postResponse.getFirst().getId());
-                            deleteRecord(postResponse.getFirst());
-
-                            NetworkUtils.sleepUninterruptedly(500);
-                        });
-
-    }
-
-    /**
      * Creates a new DNS record in the configured zone.
      *
      * @param dnsRecord the record to create
@@ -143,8 +124,8 @@ public class CloudFlareService {
                 dataOutputStream.flush();
             }
 
-            try (InputStream inputStream = httpPost.getResponseCode() < 400 ? httpPost.getInputStream() : httpPost.getErrorStream()) {
-                JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
+            try (Reader reader = new InputStreamReader(httpPost.getResponseCode() < 400 ? httpPost.getInputStream() : httpPost.getErrorStream())) {
+                JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
                 if (jsonObject.get("success").getAsBoolean()) {
                     System.out.println(PREFIX + "DNSRecord [" + dnsRecord.getName() + '/' + dnsRecord.getType() + "] was created");
                 } else {
@@ -159,6 +140,60 @@ public class CloudFlareService {
         }
 
         return null;
+    }
+
+    /**
+     * Removes a proxy and its DNS records from CloudFlare.
+     *
+     * @param proxyServer        the proxy server to remove
+     * @param cloudFlareDatabase the database to remove the proxy server from
+     */
+    public void removeProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase) {
+        bungeeSRVRecords.values().stream()
+                        .filter(value -> value.getSecond().equalsIgnoreCase(proxyServer.getServiceId().getServerId()))
+                        .forEach(postResponse -> {
+                            bungeeSRVRecords.remove(postResponse.getSecond());
+                            cloudFlareDatabase.remove(postResponse.getFirst().getId());
+                            deleteRecord(postResponse.getFirst());
+
+                            NetworkUtils.sleepUninterruptedly(500);
+                        });
+
+    }
+
+    /**
+     * Deletes a DNSRecord with the id of the DNS record
+     *
+     * @param postResponse the cached information about the dns record
+     */
+    public void deleteRecord(PostResponse postResponse) {
+
+        try {
+            HttpURLConnection delete = (HttpURLConnection) new URL(PREFIX_URL + "zones/" +
+                                                                       postResponse.getCloudFlareConfig()
+                                                                                   .getZoneId() + "/dns_records/" + postResponse.getId())
+                .openConnection();
+
+            delete.setRequestMethod("DELETE");
+            delete.setRequestProperty("X-Auth-Email", postResponse.getCloudFlareConfig().getEmail());
+            delete.setRequestProperty("X-Auth-Key", postResponse.getCloudFlareConfig().getToken());
+            delete.setRequestProperty("Accept", "application/json");
+            delete.setRequestProperty("Content-Type", "application/json");
+            delete.connect();
+
+            try (Reader reader = new InputStreamReader(delete.getResponseCode() < 400 ? delete.getInputStream() : delete.getErrorStream())) {
+                JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+                if (jsonObject.get("success").getAsBoolean()) {
+                    System.out.println(PREFIX + "DNSRecord [" + postResponse.getId() + "] was removed");
+                } else {
+                    throw new CloudFlareDNSRecordException("Failed to delete DNSRecord \n " + jsonObject);
+                }
+            }
+
+            delete.disconnect();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public boolean shutdown(CloudFlareDatabase cloudFlareDatabase) {
@@ -241,40 +276,5 @@ public class CloudFlareService {
                                .filter(cloudFlareProxyGroup -> cloudFlareProxyGroup.getName().equals(group))
                                .findFirst()
                                .orElse(null);
-    }
-
-    /**
-     * Deletes a DNSRecord with the id of the DNS record
-     *
-     * @param postResponse the cached information about the dns record
-     */
-    public void deleteRecord(PostResponse postResponse) {
-
-        try {
-            HttpURLConnection delete = (HttpURLConnection) new URL(PREFIX_URL + "zones/" +
-                                                                       postResponse.getCloudFlareConfig()
-                                                                                   .getZoneId() + "/dns_records/" + postResponse.getId())
-                .openConnection();
-
-            delete.setRequestMethod("DELETE");
-            delete.setRequestProperty("X-Auth-Email", postResponse.getCloudFlareConfig().getEmail());
-            delete.setRequestProperty("X-Auth-Key", postResponse.getCloudFlareConfig().getToken());
-            delete.setRequestProperty("Accept", "application/json");
-            delete.setRequestProperty("Content-Type", "application/json");
-            delete.connect();
-
-            try (InputStream inputStream = delete.getResponseCode() < 400 ? delete.getInputStream() : delete.getErrorStream()) {
-                JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
-                if (jsonObject.get("success").getAsBoolean()) {
-                    System.out.println(PREFIX + "DNSRecord [" + postResponse.getId() + "] was removed");
-                } else {
-                    throw new CloudFlareDNSRecordException("Failed to delete DNSRecord \n " + jsonObject);
-                }
-            }
-
-            delete.disconnect();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 }
