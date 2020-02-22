@@ -61,7 +61,7 @@ pipeline {
       }
       steps {
         withMaven(mavenSettingsConfig: '3878f406-e3fa-4923-bdcc-931101ac18ea') {
-          sh 'mvn deploy'
+          sh 'mvn deploy -P deployment'
         }
       }
     }
