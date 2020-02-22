@@ -329,7 +329,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                 }
             }
 
-            Enumeration enumeration = this.serverProcess.getMeta().getServerProperties().keys();
+            Enumeration<Object> enumeration = this.serverProcess.getMeta().getServerProperties().keys();
             while (enumeration.hasMoreElements()) {
                 String x = enumeration.nextElement().toString();
                 properties.setProperty(x, this.serverProcess.getMeta().getServerProperties().getProperty(x));
@@ -371,7 +371,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         }
         this.serverInfo = new ServerInfo(serverProcess.getMeta().getServiceId(),
                                          CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP(),
-                                         this.getServerProcess().getMeta().getPort(),
+                                         this.serverProcess.getMeta().getPort(),
                                          false,
                                          new ArrayList<>(),
                                          serverProcess.getMeta().getMemory(),
@@ -498,55 +498,41 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     }
 
     /**
-     * Copy the template to the temporary folder
+     * Start the java process
      *
-     * @param template The template with information
+     * @throws Exception
      */
-    public void copy(Template template) {
-
-        if (!serverGroup.getTemplates().contains(template)) {
-            return;
+    private void startProcess() throws Exception {
+        StringBuilder commandBuilder = new StringBuilder();
+        commandBuilder.append("java ");
+        for (String command : serverProcess.getMeta().getProcessParameters()) {
+            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
         }
 
-        if (instance != null && instance.isAlive()) {
-            executeCommand("save-all");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        for (String command : serverProcess.getMeta().getTemplate().getProcessPreParameters()) {
+            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
         }
 
-        if (custom != null || (template != null && template.getBackend().equals(TemplateResource.MASTER))) {
-            MasterTemplateDeploy masterTemplateDeploy =
-                new MasterTemplateDeploy(path,
-                                         new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
-                                                                CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
-                                         CloudNetWrapper.getInstance().getSimpledUser(),
-                                         template,
-                                         serverGroup.getName(),
-                                         custom);
-            try {
-                masterTemplateDeploy.deploy();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("Copying template from " + this.serverProcess.getMeta().getServiceId() + " to local directory...");
+        commandBuilder.append("-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx")
+                      .append(serverProcess.getMeta().getMemory())
+                      .append("M -jar ");
 
-            try {
-                FileUtility.copyFilesInDirectory(new File(this.path),
-                                                 new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName()));
-                FileUtility.deleteDirectory(new File("local/templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + serverProcess.getMeta()
-                                                                                                                                           .getTemplate()
-                                                                                                                                           .getName() + "/CLOUD"));
-                Files.deleteIfExists(Paths.get("local", "templates", serverGroup.getName(), serverProcess.getMeta().getTemplate().getName(),
-                                               "plugins", "CloudNetAPI.jar"));
-            } catch (Exception e) {
-            }
-
-            System.out.println("Template " + template.getName() + " was copied!");
+        switch (serverGroup.getServerType()) {
+            case CAULDRON:
+                commandBuilder.append("cauldron.jar nogui");
+                break;
+            case GLOWSTONE:
+                commandBuilder.append("glowstone.jar nogui");
+                break;
+            case CUSTOM:
+                commandBuilder.append("minecraft_server.jar nogui");
+                break;
+            default:
+                commandBuilder.append("spigot.jar nogui");
+                break;
         }
+
+        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, new File(path));
     }
 
     /**
@@ -631,41 +617,59 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     }
 
     /**
-     * Start the java process
+     * Copy the template to the temporary folder
      *
-     * @throws Exception
+     * @param template The template with information
      */
-    private void startProcess() throws Exception {
-        StringBuilder commandBuilder = new StringBuilder();
-        commandBuilder.append("java ");
-        for (String command : serverProcess.getMeta().getProcessParameters()) {
-            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
+    public void copy(Template template) {
+
+        if (!serverGroup.getTemplates().contains(template)) {
+            return;
         }
 
-        for (String command : serverProcess.getMeta().getTemplate().getProcessPreParameters()) {
-            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
+        if (instance != null && instance.isAlive()) {
+            executeCommand("save-all");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
-        commandBuilder.append(
-            "-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx"
-                + serverProcess.getMeta().getMemory() + "M -jar ");
+        if (custom != null || (template != null && template.getBackend().equals(TemplateResource.MASTER))) {
+            MasterTemplateDeploy masterTemplateDeploy =
+                new MasterTemplateDeploy(path,
+                                         new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                                                CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
+                                         CloudNetWrapper.getInstance().getSimpledUser(),
+                                         template,
+                                         serverGroup.getName(),
+                                         custom);
+            try {
+                masterTemplateDeploy.deploy();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (template != null) {
+            System.out.println("Copying template from " + this.serverProcess.getMeta().getServiceId() + " to local directory...");
 
-        switch (serverGroup.getServerType()) {
-            case CAULDRON:
-                commandBuilder.append("cauldron.jar nogui");
-                break;
-            case GLOWSTONE:
-                commandBuilder.append("glowstone.jar nogui");
-                break;
-            case CUSTOM:
-                commandBuilder.append("minecraft_server.jar nogui");
-                break;
-            default:
-                commandBuilder.append("spigot.jar nogui");
-                break;
+            try {
+                FileUtility.copyFilesInDirectory(Paths.get(this.path),
+                                                 Paths.get("local", "templates", serverGroup.getName(), template.getName()));
+                FileUtility.deleteDirectory(Paths.get("local",
+                                                      "templates",
+                                                      serverGroup.getName(),
+                                                      serverProcess.getMeta().getTemplate().getName(),
+                                                      "CLOUD"));
+
+                Files.deleteIfExists(Paths.get("local", "templates", serverGroup.getName(), serverProcess.getMeta().getTemplate().getName(),
+                                               "plugins", "CloudNetAPI.jar"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("Template " + template.getName() + " was copied!");
         }
-
-        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, new File(path));
     }
 
     /**
@@ -750,6 +754,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                                                      .getTemplate()
                                                      .getName() + NetworkUtils.SLASH_STRING + name));
             } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

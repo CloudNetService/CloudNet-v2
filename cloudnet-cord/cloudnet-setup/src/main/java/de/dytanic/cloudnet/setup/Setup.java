@@ -56,7 +56,9 @@ public class Setup implements ISetup {
                 input = consoleReader.readLine();
             } catch (Exception ex) {
                 System.out.println("Error while reading input: " + ex.getLocalizedMessage());
-                setupCancel.run();
+                if (setupCancel != null) {
+                    setupCancel.run();
+                }
                 return;
             }
 

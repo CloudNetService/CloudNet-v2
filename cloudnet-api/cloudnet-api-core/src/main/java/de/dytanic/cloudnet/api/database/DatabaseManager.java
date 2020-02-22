@@ -23,6 +23,6 @@ public class DatabaseManager {
     }
 
     public Database getDatabase(String name) {
-        return new DatabaseImpl(name);
+        return databaseMap.computeIfAbsent(name, DatabaseImpl::new);
     }
 }

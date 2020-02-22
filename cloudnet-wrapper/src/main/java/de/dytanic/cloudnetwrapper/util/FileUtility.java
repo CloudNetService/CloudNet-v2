@@ -58,6 +58,10 @@ public final class FileUtility {
     public static void copyFilesInDirectory(File from, File to) throws IOException {
         final Path sourcePath = from.toPath();
         final Path targetPath = to.toPath();
+        copyFilesInDirectory(sourcePath, targetPath);
+    }
+
+    public static void copyFilesInDirectory(Path sourcePath, Path targetPath) throws IOException {
         if (!Files.isDirectory(sourcePath)) {
             return;
         }
@@ -94,12 +98,16 @@ public final class FileUtility {
         }
     }
 
-    public static void deleteDirectory(File file) {
-        if (Files.notExists(file.toPath())) {
+    public static void deleteDirectory(File directory) {
+        deleteDirectory(directory.toPath());
+    }
+
+    public static void deleteDirectory(Path directory) {
+        if (Files.notExists(directory)) {
             return;
         }
         try {
-            Files.walkFileTree(file.toPath(), new DeletingFileVisitor());
+            Files.walkFileTree(directory, new DeletingFileVisitor());
         } catch (IOException e) {
             e.printStackTrace();
         }
