@@ -21,7 +21,6 @@ public class Document {
         .disableHtmlEscaping()
         .create();
 
-    private static final JsonParser JSON_PARSER = new JsonParser();
     protected String name;
     private JsonObject dataCatcher;
     private File file;
@@ -210,7 +209,7 @@ public class Document {
 
     public static Document load(String input) {
         try {
-            return new Document(JSON_PARSER.parse(input).getAsJsonObject());
+            return new Document(JsonParser.parseString(input).getAsJsonObject());
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
             return new Document();
@@ -219,7 +218,7 @@ public class Document {
 
     public Document loadToExistingDocument(Path path) {
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            this.dataCatcher = JSON_PARSER.parse(reader).getAsJsonObject();
+            this.dataCatcher = JsonParser.parseReader(reader).getAsJsonObject();
             return this;
         } catch (Exception ex) {
             ex.getStackTrace();
@@ -339,13 +338,12 @@ public class Document {
 
     public Document loadToExistingDocument(File file) {
         try (Reader reader = new FileReader(file)) {
-            this.dataCatcher = JSON_PARSER.parse(reader).getAsJsonObject();
+            this.dataCatcher = JsonParser.parseReader(reader).getAsJsonObject();
             this.file = file;
-            return this;
         } catch (Exception ex) {
             ex.getStackTrace();
         }
-        return new Document();
+        return this;
     }
 
     @Override
@@ -369,11 +367,8 @@ public class Document {
         return this.dataCatcher.has(key);
     }
 
-    public byte[] toBytesAsUTF_8() {
+    public byte[] toBytes() {
         return convertToJsonString().getBytes(StandardCharsets.UTF_8);
     }
 
-    public byte[] toBytes() {
-        return convertToJsonString().getBytes();
-    }
 }

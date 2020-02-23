@@ -60,7 +60,7 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
             .getInstance()
             .authorizationPassword(httpRequest.headers().get("-Xcloudnet-user"), httpRequest.headers().get("-Xcloudnet-password"))) {
             dataDocument.append("reason", Collections.singletonList("failed authorization!"));
-            fullHttpResponse.content().writeBytes(dataDocument.toBytesAsUTF_8());
+            fullHttpResponse.content().writeBytes(dataDocument.toBytes());
             return fullHttpResponse;
         }
 
@@ -79,7 +79,7 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                     fullHttpResponse.headers().set("Content-Type", "application/json");
                     dataDocument.append("reason",
                                         Collections.singletonList("cannot find file \"" + httpRequest.headers().get("-Xvalue") + '"'));
-                    fullHttpResponse.content().writeBytes(dataDocument.toBytesAsUTF_8());
+                    fullHttpResponse.content().writeBytes(dataDocument.toBytes());
                 }
             }
             break;
@@ -110,7 +110,7 @@ public class WebsiteDownloadService extends MethodWebHandlerAdapter {
                     fullHttpResponse.headers().set("Content-Type", "application/json");
                     dataDocument.append("reason",
                                         Collections.singletonList("cannot find file \"" + httpRequest.headers().get("-Xvalue") + '"'));
-                    fullHttpResponse.content().writeBytes(dataDocument.toBytesAsUTF_8());
+                    fullHttpResponse.content().writeBytes(dataDocument.toBytes());
                 }
             }
             break;

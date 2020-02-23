@@ -38,7 +38,7 @@ public class ServerGetExample implements Listener, org.bukkit.event.Listener {
 
     public void start() {
         ServerProcessBuilder.create("Lobby")
-                            .serverConfig(new ServerConfig(true, "4820", new Document("myUUID", "test"), System.currentTimeMillis()))
+                            .serverConfig(new ServerConfig(true, new Document("myUUID", "test"), System.currentTimeMillis()))
                             .startServer();
     }
 

@@ -262,7 +262,6 @@ public final class MobSelector {
                 .replace("%motd%", ChatColor.translateAlternateColorCodes('&', serverInfo.getMotd()))
                 .replace("%state%", serverInfo.getServerState().name() + NetworkUtils.EMPTY_STRING)
                 .replace("%wrapper%", serverInfo.getServiceId().getWrapperId() + NetworkUtils.EMPTY_STRING)
-                .replace("%extra%", serverInfo.getServerConfig().getExtra())
                 .replace("%template%", serverInfo.getTemplate().getName())
                 .replace("%group%", serverInfo.getServiceId().getGroup());
     }

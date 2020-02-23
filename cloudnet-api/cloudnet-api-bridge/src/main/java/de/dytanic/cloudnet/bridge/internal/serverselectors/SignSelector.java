@@ -370,7 +370,6 @@ public final class SignSelector implements Listener {
                                                                     .replace("%wrapper%",
                                                                              serverInfo.getServiceId()
                                                                                        .getWrapperId() + NetworkUtils.EMPTY_STRING)
-                                                                    .replace("%extra%", serverInfo.getServerConfig().getExtra())
                                                                     .replace("%template%", serverInfo.getTemplate().getName())
                                                                     .replace("%group%", serverInfo.getServiceId().getGroup()));
             i++;

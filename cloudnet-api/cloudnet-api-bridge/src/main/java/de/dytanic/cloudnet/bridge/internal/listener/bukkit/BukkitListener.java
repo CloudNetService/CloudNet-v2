@@ -15,7 +15,6 @@ import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -190,7 +189,7 @@ public final class BukkitListener implements Listener {
             CloudServer.getInstance().isAllowAutoStart() &&
             CloudServer.getInstance().getGroupData().getPercentForNewServerAutomatically() > 0) {
             ServerProcessBuilder.create(CloudAPI.getInstance().getGroup())
-                                .serverConfig(new ServerConfig(false, "null", new Document(), System.currentTimeMillis()))
+                                .serverConfig(new ServerConfig())
                                 .template(CloudServer.getInstance().getTemplate())
                                 .startServer();
             CloudServer.getInstance().setAllowAutoStart(false);

@@ -266,7 +266,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                 } else if (args[0].equalsIgnoreCase("start") && commandSender.hasPermission("cloudnet.command.cloud.start")) {
                     if (CloudAPI.getInstance().getCloudNetwork().getServerGroups().containsKey(args[1])) {
                         ServerProcessBuilder.create(args[1])
-                                            .serverConfig(new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()))
+                                            .serverConfig(new ServerConfig())
                                             .startServer();
                         commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                        .getPrefix() + "The information was sent to the cloud"));
@@ -414,7 +414,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                             for (short i = 0; i < Integer.parseInt(args[2]); i++) {
                                 ServerProcessBuilder.create(args[1])
                                                     .serverConfig(
-                                                        new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()))
+                                                        new ServerConfig())
                                                     .startServer();
                             }
                             commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
@@ -429,7 +429,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                             template.ifPresent(value -> {
                                 ServerProcessBuilder.create(args[1])
                                                     .serverConfig(
-                                                        new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()))
+                                                        new ServerConfig())
                                                     .template(value)
                                                     .startServer();
                                 commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()

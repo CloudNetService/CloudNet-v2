@@ -14,13 +14,17 @@ public class ServerConfig {
     public static final Type TYPE = TypeToken.get(ServerConfig.class).getType();
 
     private boolean hideServer;
-    private String extra;
     private Document properties;
     private long startup;
 
-    public ServerConfig(boolean hideServer, String extra, Document properties, long startup) {
+    public ServerConfig() {
+        this.hideServer = false;
+        this.properties = new Document();
+        this.startup = System.currentTimeMillis();
+    }
+
+    public ServerConfig(boolean hideServer, Document properties, long startup) {
         this.hideServer = hideServer;
-        this.extra = extra;
         this.properties = properties;
         this.startup = startup;
     }
@@ -28,7 +32,6 @@ public class ServerConfig {
     @Override
     public int hashCode() {
         int result = (hideServer ? 1 : 0);
-        result = 31 * result + (extra != null ? extra.hashCode() : 0);
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
         result = 31 * result + (int) (startup ^ (startup >>> 32));
         return result;
@@ -51,9 +54,6 @@ public class ServerConfig {
         if (startup != that.startup) {
             return false;
         }
-        if (!Objects.equals(extra, that.extra)) {
-            return false;
-        }
         return Objects.equals(properties, that.properties);
     }
 
@@ -61,7 +61,6 @@ public class ServerConfig {
     public String toString() {
         return "ServerConfig{" +
             "hideServer=" + hideServer +
-            ", extra='" + extra + '\'' +
             ", properties=" + properties +
             ", startup=" + startup +
             '}';
@@ -81,14 +80,6 @@ public class ServerConfig {
 
     public void setStartup(final long startup) {
         this.startup = startup;
-    }
-
-    public String getExtra() {
-        return extra;
-    }
-
-    public void setExtra(String extra) {
-        this.extra = extra;
     }
 
     public boolean isHideServer() {

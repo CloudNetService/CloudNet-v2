@@ -4,7 +4,6 @@ import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -75,7 +74,7 @@ public class ServerProcessData {
      * an empty document for properties and immediate (ie. now) startup time.
      */
     public ServerProcessData() {
-        this.serverConfig = new ServerConfig(false, "", new Document(), System.currentTimeMillis());
+        this.serverConfig = new ServerConfig();
         this.javaProcessParameters = new ArrayList<>();
         this.serverProcessParameters = new ArrayList<>();
         this.plugins = new HashSet<>();

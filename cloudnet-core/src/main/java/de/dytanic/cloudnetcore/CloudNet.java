@@ -1206,35 +1206,35 @@ public final class CloudNet implements Executable, Reloadable {
     }
 
     public void startGameServer(ServerGroup serverGroup) {
-        startGameServer(serverGroup, new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()));
+        startGameServer(serverGroup, new ServerConfig());
     }
 
     public void startGameServer(Wrapper wrapper, ServerGroup serverGroup) {
-        startGameServer(wrapper, serverGroup, new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()));
+        startGameServer(wrapper, serverGroup, new ServerConfig());
     }
 
     public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, Document properties) {
-        startGameServer(wrapper, serverGroup, new ServerConfig(false, "extra", properties, System.currentTimeMillis()));
+        startGameServer(wrapper, serverGroup, new ServerConfig(false, properties, System.currentTimeMillis()));
     }
 
     public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, String extra, Document properties) {
-        startGameServer(wrapper, serverGroup, new ServerConfig(false, extra, properties, System.currentTimeMillis()));
+        startGameServer(wrapper, serverGroup, new ServerConfig(false, properties, System.currentTimeMillis()));
     }
 
     public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, boolean hideServer, Document properties) {
-        startGameServer(wrapper, serverGroup, new ServerConfig(hideServer, "extra", properties, System.currentTimeMillis()));
+        startGameServer(wrapper, serverGroup, new ServerConfig(hideServer, properties, System.currentTimeMillis()));
     }
 
     public void startGameServer(ServerGroup serverGroup, Document properties) {
-        startGameServer(serverGroup, new ServerConfig(false, "extra", properties, System.currentTimeMillis()));
+        startGameServer(serverGroup, new ServerConfig(false, properties, System.currentTimeMillis()));
     }
 
     public void startGameServer(ServerGroup serverGroup, String extra, Document properties) {
-        startGameServer(serverGroup, new ServerConfig(false, extra, properties, System.currentTimeMillis()));
+        startGameServer(serverGroup, new ServerConfig(false, properties, System.currentTimeMillis()));
     }
 
     public void startGameServer(ServerGroup serverGroup, boolean hideServer, Document properties) {
-        startGameServer(serverGroup, new ServerConfig(hideServer, "extra", properties, System.currentTimeMillis()));
+        startGameServer(serverGroup, new ServerConfig(hideServer, properties, System.currentTimeMillis()));
     }
 
     public long globalUsedMemory() {
@@ -1335,7 +1335,7 @@ public final class CloudNet implements Executable, Reloadable {
 
     public void startGameServer(ServerGroup serverGroup, Document properties, String[] processProperties, Properties serverProperties) {
         startGameServer(serverGroup,
-                        new ServerConfig(false, "extra", properties, System.currentTimeMillis()),
+                        new ServerConfig(false, properties, System.currentTimeMillis()),
                         serverGroup.getMemory(),
                         false,
                         null,
@@ -1349,7 +1349,7 @@ public final class CloudNet implements Executable, Reloadable {
     public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, Document properties, Properties serverProperties) {
         startGameServer(wrapper,
                         serverGroup,
-                        new ServerConfig(false, "extra", properties, System.currentTimeMillis()),
+                        new ServerConfig(false, properties, System.currentTimeMillis()),
                         serverGroup.getMemory(),
                         false,
                         null,
@@ -1366,7 +1366,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 String[] processProperties,
                                 Properties serverProperties) {
         startGameServer(serverGroup,
-                        new ServerConfig(hideServer, "extra", properties, System.currentTimeMillis()),
+                        new ServerConfig(hideServer, properties, System.currentTimeMillis()),
                         serverGroup.getMemory(),
                         false,
                         null,
@@ -1384,7 +1384,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 Properties serverProperties) {
         startGameServer(wrapper,
                         serverGroup,
-                        new ServerConfig(hideServer, "extra", properties, System.currentTimeMillis()),
+                        new ServerConfig(hideServer, properties, System.currentTimeMillis()),
                         serverGroup.getMemory(),
                         false,
                         null,
@@ -1554,7 +1554,7 @@ public final class CloudNet implements Executable, Reloadable {
 
     public void startGameServer(ServerGroup serverGroup, Document document, boolean priorityStop) {
         startGameServer(serverGroup,
-                        new ServerConfig(false, "extra", document, System.currentTimeMillis()),
+                        new ServerConfig(false, document, System.currentTimeMillis()),
                         serverGroup.getMemory(),
                         priorityStop,
                         null,
