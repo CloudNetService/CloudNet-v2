@@ -69,7 +69,8 @@ public class ProxyProcessData {
                             final List<String> javaProcessParameters,
                             final List<String> proxyProcessParameters,
                             final String templateUrl,
-                            final Set<ServerInstallablePlugin> plugins, final Document properties) {
+                            final Set<ServerInstallablePlugin> plugins,
+                            final Document properties) {
         this.wrapperName = wrapperName;
         this.proxyGroupName = proxyGroupName;
         this.memory = memory;

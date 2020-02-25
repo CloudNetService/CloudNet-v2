@@ -81,6 +81,11 @@
                             <pattern>com.google.gson.reflect.TypeToken</pattern>
                             <shadedPattern>de.dytanic.cloudnet.relocation.gson.reflect.TypeToken</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <!-- Fixes issues with deprecated JsonParser methods -->
+                            <pattern>com.google.gson.JsonParser</pattern>
+                            <shadedPattern>de.dytanic.cloudnet.relocation.gson.JsonParser</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
             </plugin>

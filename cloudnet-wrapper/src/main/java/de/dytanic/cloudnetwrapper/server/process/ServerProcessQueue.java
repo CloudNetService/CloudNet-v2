@@ -110,14 +110,14 @@ public class ServerProcessQueue implements Runnable {
 
                 if ((memory + serverProcess.getMemory()) < CloudNetWrapper.getInstance().getMaxMemory()) {
 
-                    BungeeCord gameServer = new BungeeCord(serverProcess,
+                    BungeeCord bungeeCord = new BungeeCord(serverProcess,
                                                            CloudNetWrapper.getInstance()
                                                                           .getProxyGroups()
                                                                           .get(serverProcess.getServiceId().getGroup()));
 
                     try {
-                        System.out.println("Fetching entry [" + gameServer.getServiceId() + ']');
-                        if (!gameServer.bootstrap()) {
+                        System.out.println("Fetching entry [" + bungeeCord.getServiceId() + ']');
+                        if (!bungeeCord.bootstrap()) {
                             this.proxies.add(serverProcess);
                         }
                     } catch (Exception e) {

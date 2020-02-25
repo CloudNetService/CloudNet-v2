@@ -6,8 +6,8 @@ import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -22,7 +22,7 @@ public class ServerProcessMeta {
     private int memory;
     private boolean priorityStop;
     private String url;
-    private String[] processParameters;
+    private List<String> processParameters;
     private boolean onlineMode;
     private Collection<ServerInstallablePlugin> downloadablePlugins;
     private ServerConfig serverConfig;
@@ -35,7 +35,7 @@ public class ServerProcessMeta {
                              int memory,
                              boolean priorityStop,
                              String url,
-                             String[] processParameters,
+                             List<String> processParameters,
                              boolean onlineMode,
                              Collection<ServerInstallablePlugin> downloadablePlugins,
                              ServerConfig serverConfig,
@@ -63,7 +63,7 @@ public class ServerProcessMeta {
         result = 31 * result + memory;
         result = 31 * result + (priorityStop ? 1 : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);
-        result = 31 * result + Arrays.hashCode(processParameters);
+        result = 31 * result + (processParameters != null ? processParameters.hashCode() : 0);
         result = 31 * result + (onlineMode ? 1 : 0);
         result = 31 * result + (downloadablePlugins != null ? downloadablePlugins.hashCode() : 0);
         result = 31 * result + (serverConfig != null ? serverConfig.hashCode() : 0);
@@ -79,7 +79,7 @@ public class ServerProcessMeta {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ServerProcessMeta)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
@@ -103,7 +103,7 @@ public class ServerProcessMeta {
         if (!Objects.equals(url, that.url)) {
             return false;
         }
-        if (!Arrays.equals(processParameters, that.processParameters)) {
+        if (!Objects.equals(processParameters, that.processParameters)) {
             return false;
         }
         if (!Objects.equals(downloadablePlugins, that.downloadablePlugins)) {
@@ -123,12 +123,12 @@ public class ServerProcessMeta {
 
     @Override
     public String toString() {
-        return "de.dytanic.cloudnet.lib.server.ServerProcessMeta{" +
+        return "ServerProcessMeta{" +
             "serviceId=" + serviceId +
             ", memory=" + memory +
             ", priorityStop=" + priorityStop +
             ", url='" + url + '\'' +
-            ", processParameters=" + Arrays.toString(processParameters) +
+            ", processParameters=" + processParameters +
             ", onlineMode=" + onlineMode +
             ", downloadablePlugins=" + downloadablePlugins +
             ", serverConfig=" + serverConfig +
@@ -143,7 +143,7 @@ public class ServerProcessMeta {
         return url;
     }
 
-    public String[] getProcessParameters() {
+    public List<String> getProcessParameters() {
         return processParameters;
     }
 

@@ -93,7 +93,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         if (proxyGroup.getTemplate().getBackend().equals(TemplateResource.URL)) {
         }
 
-        for (ServerInstallablePlugin url : proxyProcessMeta.getDownloadablePlugins()) {
+        for (ServerInstallablePlugin url : proxyProcessMeta.getPlugins()) {
             if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"))) {
                 try {
                     URLConnection urlConnection = new URL(url.getUrl()).openConnection();
@@ -156,21 +156,21 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         if (proxyGroup.getProxyGroupMode().equals(ProxyGroupMode.STATIC)) {
             if (!Files.exists(dir)) {
                 Files.createDirectories(dir);
-                if (proxyProcessMeta.getUrl() != null) {
+                if (proxyProcessMeta.getTemplateUrl() != null) {
                     Files.createDirectory(Paths.get(path, "plugins"));
-                    for (ServerInstallablePlugin plugin : proxyProcessMeta.getDownloadablePlugins()) {
+                    for (ServerInstallablePlugin plugin : proxyProcessMeta.getPlugins()) {
                         FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"),
                                                         new File(path + "/plugins"));
                     }
 
-                    TemplateLoader templateLoader = new TemplateLoader(proxyProcessMeta.getUrl(), path + "/template.zip");
+                    TemplateLoader templateLoader = new TemplateLoader(proxyProcessMeta.getTemplateUrl(), path + "/template.zip");
                     System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getServerId());
                     templateLoader.load();
                     templateLoader.unZip(path);
                 } else {
 
                     Files.createDirectory(Paths.get(path + "/plugins"));
-                    for (ServerInstallablePlugin plugin : proxyProcessMeta.getDownloadablePlugins()) {
+                    for (ServerInstallablePlugin plugin : proxyProcessMeta.getPlugins()) {
                         FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"),
                                                         new File(path + "/plugins"));
                     }
@@ -219,10 +219,10 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
             FileUtility.deleteDirectory(new File(path));
             Files.createDirectories(dir);
 
-            if (proxyProcessMeta.getUrl() != null) {
+            if (proxyProcessMeta.getTemplateUrl() != null) {
 
                 Files.createDirectory(Paths.get(path + "/plugins"));
-                for (ServerInstallablePlugin plugin : proxyProcessMeta.getDownloadablePlugins()) {
+                for (ServerInstallablePlugin plugin : proxyProcessMeta.getPlugins()) {
                     FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"),
                                                     new File(path + "/plugins"));
                 }
@@ -232,7 +232,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                                     new File(path + "/plugins"));
                 }
 
-                TemplateLoader templateLoader = new TemplateLoader(proxyProcessMeta.getUrl(),
+                TemplateLoader templateLoader = new TemplateLoader(proxyProcessMeta.getTemplateUrl(),
                                                                    "local/templates/" + proxyGroup.getName() + "/template.zip");
                 System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getServerId());
                 templateLoader.load();
@@ -240,7 +240,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
             } else {
 
                 Files.createDirectory(Paths.get(path + "/plugins"));
-                for (ServerInstallablePlugin plugin : proxyProcessMeta.getDownloadablePlugins()) {
+                for (ServerInstallablePlugin plugin : proxyProcessMeta.getPlugins()) {
                     FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"),
                                                     new File(path + "/plugins"));
                 }
@@ -364,7 +364,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         StringBuilder commandBuilder = new StringBuilder();
         commandBuilder.append("java ");
 
-        for (String command : proxyProcessMeta.getProcessParameters()) {
+        for (String command : proxyProcessMeta.getJavaProcessParameters()) {
             commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
         }
 

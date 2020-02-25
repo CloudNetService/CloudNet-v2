@@ -57,7 +57,6 @@ import java.util.stream.Stream;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class CloudNet implements Executable, Reloadable {
 
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
     public static volatile boolean RUNNING = false;
 
     private static CloudNet instance;
@@ -77,15 +76,15 @@ public final class CloudNet implements Executable, Reloadable {
     private final LocalCloudWrapper localCloudWrapper = new LocalCloudWrapper();
     private final Collection<CloudNetServer> cloudServers = new CopyOnWriteArrayList<>();
     private final WebClient webClient = new WebClient();
-    private WebServer webServer;
     private final CloudConfig config;
     private final CloudLogger logger;
     private final OptionSet optionSet;
     private final DefaultModuleManager defaultModuleManager;
     private final List<String> arguments;
+    private final long startupTime = System.currentTimeMillis();
+    private WebServer webServer;
     private DatabaseBasicHandlers dbHandlers;
     private Collection<User> users;
-    private final long startupTime = System.currentTimeMillis();
 
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) throws Exception {
         if (instance != null) {
@@ -175,7 +174,7 @@ public final class CloudNet implements Executable, Reloadable {
                 getExecutor().scheduleWithFixedDelay(cloudStartupHandler, 0, 1, TimeUnit.SECONDS);
                 getExecutor().scheduleWithFixedDelay(cloudPriorityGroupStartupHandler, 0, 1, TimeUnit.SECONDS);
                 getExecutor().scheduleWithFixedDelay(cloudPriorityStartupHandler, 0, 1, TimeUnit.SECONDS);
-                getExecutor().scheduleWithFixedDelay(cloudPriorityStartupHandler, 0, 200, TimeUnit.MILLISECONDS);
+                getExecutor().scheduleWithFixedDelay(cloudPlayerRemoverHandler, 0, 200, TimeUnit.MILLISECONDS);
             }
 
             CloudStopCheckHandler cloudStopCheck = new CloudStopCheckHandler();
@@ -247,86 +246,6 @@ public final class CloudNet implements Executable, Reloadable {
         }
         System.exit(0);
         return true;
-    }
-
-    public NetworkManager getNetworkManager() {
-        return networkManager;
-    }
-
-    public WebClient getWebClient() {
-        return webClient;
-    }
-
-    public CommandManager getCommandManager() {
-        return commandManager;
-    }
-
-    public Collection<CloudNetServer> getCloudServers() {
-        return cloudServers;
-    }
-
-    public DatabaseManager getDatabaseManager() {
-        return databaseManager;
-    }
-
-    public EventManager getEventManager() {
-        return eventManager;
-    }
-
-    public ModuleManager getModuleManager() {
-        return moduleManager;
-    }
-
-    public OptionSet getOptionSet() {
-        return optionSet;
-    }
-
-    public CloudConfig getConfig() {
-        return config;
-    }
-
-    public PacketManager getPacketManager() {
-        return packetManager;
-    }
-
-    public ScreenProvider getScreenProvider() {
-        return screenProvider;
-    }
-
-    public ServerLogManager getServerLogManager() {
-        return serverLogManager;
-    }
-
-    public Map<String, ServerGroup> getServerGroups() {
-        return serverGroups;
-    }
-
-    public Map<String, ProxyGroup> getProxyGroups() {
-        return proxyGroups;
-    }
-
-    public Collection<User> getUsers() {
-        return users;
-    }
-
-    public WebServer getWebServer() {
-        return webServer;
-    }
-
-    public DatabaseBasicHandlers getDbHandlers() {
-        return dbHandlers;
-    }
-
-    public DefaultModuleManager getDefaultModuleManager() {
-        return defaultModuleManager;
-    }
-
-    public List<String> getArguments() {
-        return arguments;
-    }
-
-    public LocalCloudWrapper getLocalCloudWrapper() {
-        return localCloudWrapper;
     }
 
     public void checkForUpdates() {
@@ -483,6 +402,114 @@ public final class CloudNet implements Executable, Reloadable {
         packetManager.registerHandler(PacketRC.DB + 6, PacketDBInSelectDatabase.class);
 
         packetManager.registerHandler(PacketRC.CN_INTERNAL_CHANNELS + 1, PacketInCreateServerLog.class);
+    }
+
+    public NetworkManager getNetworkManager() {
+        return networkManager;
+    }
+
+    public WebClient getWebClient() {
+        return webClient;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public Collection<CloudNetServer> getCloudServers() {
+        return cloudServers;
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public EventManager getEventManager() {
+        return eventManager;
+    }
+
+    public ModuleManager getModuleManager() {
+        return moduleManager;
+    }
+
+    public OptionSet getOptionSet() {
+        return optionSet;
+    }
+
+    public CloudConfig getConfig() {
+        return config;
+    }
+
+    public PacketManager getPacketManager() {
+        return packetManager;
+    }
+
+    public ScreenProvider getScreenProvider() {
+        return screenProvider;
+    }
+
+    public ServerLogManager getServerLogManager() {
+        return serverLogManager;
+    }
+
+    public Map<String, ServerGroup> getServerGroups() {
+        return serverGroups;
+    }
+
+    public Map<String, ProxyGroup> getProxyGroups() {
+        return proxyGroups;
+    }
+
+    public Collection<User> getUsers() {
+        return users;
+    }
+
+    public WebServer getWebServer() {
+        return webServer;
+    }
+
+    public DatabaseBasicHandlers getDbHandlers() {
+        return dbHandlers;
+    }
+
+    public DefaultModuleManager getDefaultModuleManager() {
+        return defaultModuleManager;
+    }
+
+    public List<String> getArguments() {
+        return arguments;
+    }
+
+    public LocalCloudWrapper getLocalCloudWrapper() {
+        return localCloudWrapper;
+    }
+
+    public void startProxy(Wrapper wrapper,
+                           ProxyGroup proxyGroup,
+                           int memory,
+                           List<String> parameters,
+                           String url,
+                           Set<ServerInstallablePlugin> plugins,
+                           Document document) {
+        if (wrapper == null) {
+            return;
+        }
+        List<Integer> ports = wrapper.getBoundPorts();
+        int startPort = proxyGroup.getStartPort();
+        while (ports.contains(startPort)) {
+            startPort++;
+        }
+        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
+                                                                 proxyGroup.getName(),
+                                                                 memory,
+                                                                 parameters,
+                                                                 Collections.emptyList(),
+                                                                 url,
+                                                                 plugins,
+                                                                 document,
+                                                                 newServiceId(proxyGroup, wrapper),
+                                                                 startPort);
+        wrapper.startProxy(proxyProcessMeta);
     }
 
     public long getStartupTime() {
@@ -768,53 +795,67 @@ public final class CloudNet implements Executable, Reloadable {
         return minecraftServerMap;
     }
 
-    public void startProxy(Wrapper wrapper,
-                           ProxyGroup proxyGroup,
-                           int memory,
-                           String[] parameters,
-                           String url,
-                           Collection<ServerInstallablePlugin> plugins,
-                           Document document) {
-        if (wrapper == null) {
-            return;
+    public ServiceId newServiceId(ProxyGroup proxyGroup, Wrapper wrapper) {
+        Collection<ServiceId> serviceIds = getProxysServiceIdsAndWaitings(proxyGroup.getName());
+        List<Integer> collection = serviceIds.stream()
+                                             .map(ServiceId::getId)
+                                             .collect(Collectors.toList());
+        int id = 1;
+        while (collection.contains(id)) {
+            id++;
         }
-        List<Integer> ports = wrapper.getBoundPorts();
-        int startPort = proxyGroup.getStartPort();
-        while (ports.contains(startPort)) {
-            startPort++;
-        }
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(newServiceId(proxyGroup, wrapper),
-                                                                 memory,
-                                                                 startPort,
-                                                                 parameters,
-                                                                 url,
-                                                                 plugins,
-                                                                 document);
-        wrapper.startProxy(proxyProcessMeta);
-    }
 
-    public ServiceId newServiceId(ProxyGroup proxyGroup, Wrapper wrapper, int id, UUID uuid) {
         return new ServiceId(proxyGroup.getName(),
                              id,
-                             uuid,
+                             UUID.randomUUID(),
                              wrapper.getNetworkInfo().getId(),
                              proxyGroup.getName() + config.getFormatSplitter() + id);
     }
 
-    public void startProxy(Wrapper wrapper, ProxyGroup proxyGroup) {
+    public Collection<ServiceId> getProxysServiceIdsAndWaitings(String group) {
+        List<ServiceId> serviceIds = getProxys(group).stream()
+                                                     .map(ProxyServer::getServiceId)
+                                                     .collect(Collectors.toList());
+
+        wrappers.values().stream()
+                .flatMap(wrapper -> wrapper.getWaitingServices().values().stream())
+                .filter(entry -> entry.getServiceId().getGroup().equals(group))
+                .map(WaitingService::getServiceId)
+                .forEach(serviceIds::add);
+
+        return serviceIds;
+    }
+
+    public void startProxy(Wrapper wrapper,
+                           ProxyGroup proxyGroup,
+                           int memory,
+                           List<String> parameters,
+                           String url,
+                           Set<ServerInstallablePlugin> plugins,
+                           Document document,
+                           int id,
+                           UUID uniqueId) {
+        if (wrapper == null) {
+            return;
+        }
+
         List<Integer> ports = wrapper.getBoundPorts();
         int startPort = proxyGroup.getStartPort();
         while (ports.contains(startPort)) {
             startPort++;
         }
 
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(newServiceId(proxyGroup, wrapper),
-                                                                 proxyGroup.getMemory(),
-                                                                 startPort,
-                                                                 EMPTY_STRING_ARRAY,
-                                                                 null,
+        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
+                                                                 proxyGroup.getName(),
+                                                                 memory,
+                                                                 parameters,
                                                                  Collections.emptyList(),
-                                                                 new Document());
+                                                                 url,
+                                                                 plugins,
+                                                                 document,
+                                                                 newServiceId(proxyGroup, wrapper, id, uniqueId),
+                                                                 startPort);
+
         wrapper.startProxy(proxyProcessMeta);
     }
 
@@ -840,49 +881,32 @@ public final class CloudNet implements Executable, Reloadable {
         return x;
     }
 
-    public void startProxy(Wrapper wrapper,
-                           ProxyGroup proxyGroup,
-                           int memory,
-                           String[] parameters,
-                           String url,
-                           Collection<ServerInstallablePlugin> plugins,
-                           Document document,
-                           int id,
-                           UUID uniqueId) {
-        if (wrapper == null) {
-            return;
-        }
+    public ServiceId newServiceId(ProxyGroup proxyGroup, Wrapper wrapper, int id, UUID uuid) {
+        return new ServiceId(proxyGroup.getName(),
+                             id,
+                             uuid,
+                             wrapper.getNetworkInfo().getId(),
+                             proxyGroup.getName() + config.getFormatSplitter() + id);
+    }
 
+    public void startProxy(Wrapper wrapper, ProxyGroup proxyGroup) {
         List<Integer> ports = wrapper.getBoundPorts();
         int startPort = proxyGroup.getStartPort();
         while (ports.contains(startPort)) {
             startPort++;
         }
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(newServiceId(proxyGroup, wrapper, id, uniqueId),
-                                                                 memory,
-                                                                 startPort,
-                                                                 parameters,
-                                                                 url,
-                                                                 plugins,
-                                                                 document);
+
+        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
+                                                                 proxyGroup.getName(),
+                                                                 proxyGroup.getMemory(),
+                                                                 Collections.emptyList(),
+                                                                 Collections.emptyList(),
+                                                                 null,
+                                                                 Collections.emptySet(),
+                                                                 new Document(),
+                                                                 newServiceId(proxyGroup, wrapper),
+                                                                 startPort);
         wrapper.startProxy(proxyProcessMeta);
-    }
-
-    public ServiceId newServiceId(ProxyGroup proxyGroup, Wrapper wrapper) {
-        Collection<ServiceId> serviceIds = getProxysServiceIdsAndWaitings(proxyGroup.getName());
-        List<Integer> collection = serviceIds.stream()
-                                             .map(ServiceId::getId)
-                                             .collect(Collectors.toList());
-        int id = 1;
-        while (collection.contains(id)) {
-            id++;
-        }
-
-        return new ServiceId(proxyGroup.getName(),
-                             id,
-                             UUID.randomUUID(),
-                             wrapper.getNetworkInfo().getId(),
-                             proxyGroup.getName() + config.getFormatSplitter() + id);
     }
 
     public void updateNetwork() {
@@ -986,33 +1010,19 @@ public final class CloudNet implements Executable, Reloadable {
         return wrappers1;
     }
 
-    public Collection<ServiceId> getProxysServiceIdsAndWaitings(String group) {
-        List<ServiceId> serviceIds = getProxys(group).stream()
-                                                     .map(ProxyServer::getServiceId)
-                                                     .collect(Collectors.toList());
-
-        wrappers.values().stream()
-                .flatMap(wrapper -> wrapper.getWaitingServices().values().stream())
-                .filter(entry -> entry.getServiceId().getGroup().equals(group))
-                .map(WaitingService::getServiceId)
-                .forEach(serviceIds::add);
-
-        return serviceIds;
-    }
-
     public void startProxy(ProxyGroup proxyGroup, int memory) {
-        startProxy(proxyGroup, memory, null, Collections.emptyList(), new Document());
+        startProxy(proxyGroup, memory, null, Collections.emptySet(), new Document());
     }
 
-    public void startProxy(ProxyGroup proxyGroup, int memory, String url, Collection<ServerInstallablePlugin> plugins, Document document) {
-        startProxy(proxyGroup, memory, EMPTY_STRING_ARRAY, url, plugins, document);
+    public void startProxy(ProxyGroup proxyGroup, int memory, String url, Set<ServerInstallablePlugin> plugins, Document document) {
+        startProxy(proxyGroup, memory, Collections.emptyList(), url, plugins, document);
     }
 
     public void startProxy(ProxyGroup proxyGroup,
                            int memory,
-                           String[] parameters,
+                           List<String> parameters,
                            String url,
-                           Collection<ServerInstallablePlugin> plugins,
+                           Set<ServerInstallablePlugin> plugins,
                            Document document) {
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
         if (wrapper == null) {
@@ -1024,33 +1034,36 @@ public final class CloudNet implements Executable, Reloadable {
         while (ports.contains(startport)) {
             startport++;
         }
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(newServiceId(proxyGroup, wrapper),
+        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
+                                                                 proxyGroup.getName(),
                                                                  memory,
-                                                                 startport,
                                                                  parameters,
+                                                                 Collections.emptyList(),
                                                                  url,
                                                                  plugins,
-                                                                 document);
+                                                                 document,
+                                                                 newServiceId(proxyGroup, wrapper),
+                                                                 startport);
         wrapper.startProxy(proxyProcessMeta);
     }
 
     public void startProxy(ProxyGroup proxyGroup, String urlTemplate) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), urlTemplate, Collections.emptyList(), new Document());
+        startProxy(proxyGroup, proxyGroup.getMemory(), urlTemplate, Collections.emptySet(), new Document());
     }
 
     public void startProxy(ProxyGroup proxyGroup, String urlTemplate, Document document) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), urlTemplate, Collections.emptyList(), document);
+        startProxy(proxyGroup, proxyGroup.getMemory(), urlTemplate, Collections.emptySet(), document);
     }
 
     public void startProxy(ProxyGroup proxyGroup, int memory, UUID uniqueId) {
-        startProxy(proxyGroup, memory, EMPTY_STRING_ARRAY, null, Collections.emptyList(), new Document(), uniqueId);
+        startProxy(proxyGroup, memory, Collections.emptyList(), null, Collections.emptySet(), new Document(), uniqueId);
     }
 
     public void startProxy(ProxyGroup proxyGroup,
                            int memory,
-                           String[] parameters,
+                           List<String> parameters,
                            String url,
-                           Collection<ServerInstallablePlugin> plugins,
+                           Set<ServerInstallablePlugin> plugins,
                            Document document,
                            UUID uniqueId) {
         Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
@@ -1063,14 +1076,21 @@ public final class CloudNet implements Executable, Reloadable {
         while (ports.contains(startPort)) {
             startPort++;
         }
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(newServiceId(proxyGroup, wrapper, uniqueId),
+        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
+                                                                 proxyGroup.getName(),
                                                                  memory,
-                                                                 startPort,
                                                                  parameters,
+                                                                 Collections.emptyList(),
                                                                  url,
                                                                  plugins,
-                                                                 document);
+                                                                 document,
+                                                                 newServiceId(proxyGroup, wrapper, uniqueId),
+                                                                 startPort);
         wrapper.startProxy(proxyProcessMeta);
+    }
+
+    public void startProxy(ProxyGroup proxyGroup, Set<ServerInstallablePlugin> plugins) {
+        startProxy(proxyGroup, proxyGroup.getMemory(), null, plugins, new Document());
     }
 
     public ServiceId newServiceId(ProxyGroup proxyGroup, Wrapper wrapper, UUID uuid) {
@@ -1090,19 +1110,15 @@ public final class CloudNet implements Executable, Reloadable {
                              proxyGroup.getName() + config.getFormatSplitter() + id);
     }
 
-    public void startProxy(ProxyGroup proxyGroup, Collection<ServerInstallablePlugin> plugins) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), null, plugins, new Document());
-    }
-
     public void startProxy(ProxyGroup proxyGroup, int memory, int id, UUID uniqueId) {
-        startProxy(proxyGroup, memory, EMPTY_STRING_ARRAY, null, Collections.emptyList(), new Document(), id, uniqueId);
+        startProxy(proxyGroup, memory, Collections.emptyList(), null, Collections.emptySet(), new Document(), id, uniqueId);
     }
 
     public void startProxy(ProxyGroup proxyGroup,
                            int memory,
-                           String[] parameters,
+                           List<String> parameters,
                            String url,
-                           Collection<ServerInstallablePlugin> plugins,
+                           Set<ServerInstallablePlugin> plugins,
                            Document document,
                            int id,
                            UUID uniqueId) {
@@ -1116,22 +1132,25 @@ public final class CloudNet implements Executable, Reloadable {
         while (ports.contains(startPort)) {
             startPort++;
         }
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(newServiceId(proxyGroup, wrapper, id, uniqueId),
+        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
+                                                                 proxyGroup.getName(),
                                                                  memory,
-                                                                 startPort,
                                                                  parameters,
+                                                                 Collections.emptyList(),
                                                                  url,
                                                                  plugins,
-                                                                 document);
+                                                                 document,
+                                                                 newServiceId(proxyGroup, wrapper, id, uniqueId),
+                                                                 startPort);
         wrapper.startProxy(proxyProcessMeta);
     }
 
     public void startProxy(ProxyGroup proxyGroup, int memory, String urlTemplate, int id, UUID uniqueId) {
-        startProxy(proxyGroup, memory, EMPTY_STRING_ARRAY, urlTemplate, Collections.emptyList(), new Document(), id, uniqueId);
+        startProxy(proxyGroup, memory, Collections.emptyList(), urlTemplate, Collections.emptySet(), new Document(), id, uniqueId);
     }
 
-    public void startProxy(ProxyGroup proxyGroup, String url, Collection<ServerInstallablePlugin> collection, int id, UUID uniqueId) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), EMPTY_STRING_ARRAY, url, collection, new Document(), id, uniqueId);
+    public void startProxy(ProxyGroup proxyGroup, String url, Set<ServerInstallablePlugin> plugins, int id, UUID uniqueId) {
+        startProxy(proxyGroup, proxyGroup.getMemory(), Collections.emptyList(), url, plugins, new Document(), id, uniqueId);
     }
 
     public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig, Properties serverProperties) {
@@ -1140,20 +1159,11 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         false,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         Collections.emptyList(),
                         null,
                         serverProperties);
-    }
-
-    private static int getStartPort(final Wrapper wrapper) {
-        List<Integer> ports = wrapper.getBoundPorts();
-        int startport = wrapper.getWrapperInfo().getStartPort();
-        do {
-            startport = (startport + NetworkUtils.RANDOM.nextInt(20) + 1);
-        } while (ports.contains(startport));
-        return startport;
     }
 
     public void startGameServer(ServerGroup serverGroup,
@@ -1161,7 +1171,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 int memory,
                                 boolean priorityStop,
                                 String url,
-                                String[] processParameters,
+                                List<String> processParameters,
                                 boolean onlineMode,
                                 Collection<ServerInstallablePlugin> plugins,
                                 String customServerName,
@@ -1203,6 +1213,15 @@ public final class CloudNet implements Executable, Reloadable {
                                       template);
             wrapper.startGameServer(serverProcessMeta);
         });
+    }
+
+    private static int getStartPort(final Wrapper wrapper) {
+        List<Integer> ports = wrapper.getBoundPorts();
+        int startport = wrapper.getWrapperInfo().getStartPort();
+        do {
+            startport = (startport + NetworkUtils.RANDOM.nextInt(20) + 1);
+        } while (ports.contains(startport));
+        return startport;
     }
 
     public void startGameServer(ServerGroup serverGroup) {
@@ -1274,7 +1293,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         false,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         Collections.emptyList(),
                         null,
@@ -1287,7 +1306,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 int memory,
                                 boolean priorityStop,
                                 String url,
-                                String[] processParameters,
+                                List<String> processParameters,
                                 boolean onlineMode,
                                 Collection<ServerInstallablePlugin> plugins,
                                 String customServerName,
@@ -1333,7 +1352,7 @@ public final class CloudNet implements Executable, Reloadable {
         });
     }
 
-    public void startGameServer(ServerGroup serverGroup, Document properties, String[] processProperties, Properties serverProperties) {
+    public void startGameServer(ServerGroup serverGroup, Document properties, List<String> processProperties, Properties serverProperties) {
         startGameServer(serverGroup,
                         new ServerConfig(false, properties, System.currentTimeMillis()),
                         serverGroup.getMemory(),
@@ -1353,7 +1372,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         false,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         Collections.emptyList(),
                         null,
@@ -1363,14 +1382,14 @@ public final class CloudNet implements Executable, Reloadable {
     public void startGameServer(ServerGroup serverGroup,
                                 boolean hideServer,
                                 Document properties,
-                                String[] processProperties,
+                                List<String> processParameters,
                                 Properties serverProperties) {
         startGameServer(serverGroup,
                         new ServerConfig(hideServer, properties, System.currentTimeMillis()),
                         serverGroup.getMemory(),
                         false,
                         null,
-                        processProperties,
+                        processParameters,
                         false,
                         Collections.emptyList(),
                         null,
@@ -1388,7 +1407,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         false,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         Collections.emptyList(),
                         null,
@@ -1397,14 +1416,14 @@ public final class CloudNet implements Executable, Reloadable {
 
     public void startGameServer(ServerGroup serverGroup,
                                 ServerConfig serverConfig,
-                                String[] processProperties,
+                                List<String> processParameters,
                                 Properties serverProperties) {
         startGameServer(serverGroup,
                         serverConfig,
                         serverGroup.getMemory(),
                         false,
                         null,
-                        processProperties,
+                        processParameters,
                         false,
                         Collections.emptyList(),
                         null,
@@ -1414,7 +1433,7 @@ public final class CloudNet implements Executable, Reloadable {
     public void startGameServer(Wrapper wrapper,
                                 ServerGroup serverGroup,
                                 ServerConfig serverConfig,
-                                String[] processProperties,
+                                List<String> processParameters,
                                 Properties serverProperties) {
         startGameServer(wrapper,
                         serverGroup,
@@ -1422,7 +1441,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         false,
                         null,
-                        processProperties,
+                        processParameters,
                         false,
                         Collections.emptyList(),
                         null,
@@ -1435,7 +1454,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         priorityStop,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         Collections.emptyList(),
                         null,
@@ -1449,20 +1468,20 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         priorityStop,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         Collections.emptyList(),
                         null,
                         new Properties());
     }
 
-    public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig, boolean priorityStop, String[] processProperties) {
+    public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig, boolean priorityStop, List<String> processParameters) {
         startGameServer(serverGroup,
                         serverConfig,
                         serverGroup.getMemory(),
                         priorityStop,
                         null,
-                        processProperties,
+                        processParameters,
                         false,
                         Collections.emptyList(),
                         null,
@@ -1473,14 +1492,14 @@ public final class CloudNet implements Executable, Reloadable {
                                 ServerGroup serverGroup,
                                 ServerConfig serverConfig,
                                 boolean priorityStop,
-                                String[] processProperties) {
+                                List<String> processParameters) {
         startGameServer(wrapper,
                         serverGroup,
                         serverConfig,
                         serverGroup.getMemory(),
                         priorityStop,
                         null,
-                        processProperties,
+                        processParameters,
                         false,
                         Collections.emptyList(),
                         null,
@@ -1498,7 +1517,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         priorityStop,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         onlinemode,
                         plugins,
                         customServerName,
@@ -1518,7 +1537,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         priorityStop,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         onlineMode,
                         plugins,
                         customServerName,
@@ -1531,7 +1550,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         false,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         Collections.emptyList(),
                         null,
@@ -1545,7 +1564,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         false,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         Collections.emptyList(),
                         null,
@@ -1558,7 +1577,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         priorityStop,
                         null,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         Collections.emptyList(),
                         null,
@@ -1574,7 +1593,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         false,
                         url,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         plugins,
                         null,
@@ -1592,7 +1611,7 @@ public final class CloudNet implements Executable, Reloadable {
                         serverGroup.getMemory(),
                         false,
                         url,
-                        EMPTY_STRING_ARRAY,
+                        Collections.emptyList(),
                         false,
                         plugins,
                         null,
@@ -1605,7 +1624,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 int memory,
                                 boolean priorityStop,
                                 String url,
-                                String[] processParameters,
+                                List<String> processParameters,
                                 boolean onlineMode,
                                 Collection<ServerInstallablePlugin> plugins,
                                 String customServerName,
@@ -1655,7 +1674,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 int memory,
                                 boolean priorityStop,
                                 String url,
-                                String[] processParameters,
+                                List<String> processParameters,
                                 boolean onlineMode,
                                 Collection<ServerInstallablePlugin> plugins,
                                 String customServerName,
@@ -1702,7 +1721,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 int memory,
                                 boolean priorityStop,
                                 String url,
-                                String[] processParameters,
+                                List<String> processParameters,
                                 boolean onlineMode,
                                 Collection<ServerInstallablePlugin> plugins,
                                 String customServerName,
@@ -1764,7 +1783,7 @@ public final class CloudNet implements Executable, Reloadable {
                                 int memory,
                                 boolean priorityStop,
                                 String url,
-                                String[] processParameters,
+                                List<String> processParameters,
                                 boolean onlineMode,
                                 Collection<ServerInstallablePlugin> plugins,
                                 String customServerName,
