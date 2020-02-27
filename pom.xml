@@ -31,7 +31,7 @@
         <dependency.bungeecord.version>1.15-SNAPSHOT</dependency.bungeecord.version>
         <dependency.spigot.version>1.8.8-R0.1-SNAPSHOT</dependency.spigot.version>
         <dependency.vaultapi.version>1.7</dependency.vaultapi.version>
-        <dependency.typetools.version>0.6.1</dependency.typetools.version>
+        <dependency.typetools.version>0.6.2</dependency.typetools.version>
         <!-- test dependencies -->
         <test.junit.version>4.13</test.junit.version>
         <!-- Plugins -->
