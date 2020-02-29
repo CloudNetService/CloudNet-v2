@@ -1,6 +1,6 @@
 package de.dytanic.cloudnetcore.signs;
 
-import de.dytanic.cloudnet.event.IEventListener;
+import de.dytanic.cloudnet.event.EventListener;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnetcore.api.CoreModule;
@@ -17,7 +17,7 @@ import de.dytanic.cloudnetcore.signs.packet.out.PacketOutSignSelector;
 /**
  * Created by Tareko on 16.10.2017.
  */
-public class SignsModule extends CoreModule implements IEventListener<UpdateAllEvent> {
+public class SignsModule extends CoreModule implements EventListener<UpdateAllEvent> {
 
     private static SignsModule instance;
     private ConfigSignLayout configSignLayout;
@@ -64,7 +64,7 @@ public class SignsModule extends CoreModule implements IEventListener<UpdateAllE
         }
     }
 
-    private class ListenerImpl implements IEventListener<ChannelInitEvent> {
+    private class ListenerImpl implements EventListener<ChannelInitEvent> {
 
         @Override
         public void onCall(ChannelInitEvent event) {

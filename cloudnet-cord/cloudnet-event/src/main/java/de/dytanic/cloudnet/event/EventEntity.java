@@ -8,7 +8,7 @@ public class EventEntity<E extends Event> {
     /**
      * The event listener that is called for events of the class {@link #eventClazz}
      */
-    private IEventListener<E> eventListener;
+    private EventListener<E> eventListener;
 
     private EventKey eventKey;
 
@@ -17,7 +17,7 @@ public class EventEntity<E extends Event> {
      */
     private Class<? extends Event> eventClazz;
 
-    public EventEntity(IEventListener<E> eventListener, EventKey eventKey, Class<? extends Event> eventClazz) {
+    public EventEntity(EventListener<E> eventListener, EventKey eventKey, Class<? extends Event> eventClazz) {
         this.eventListener = eventListener;
         this.eventKey = eventKey;
         this.eventClazz = eventClazz;
@@ -31,7 +31,7 @@ public class EventEntity<E extends Event> {
         return eventKey;
     }
 
-    public IEventListener<E> getEventListener() {
+    public EventListener<E> getEventListener() {
         return eventListener;
     }
 }

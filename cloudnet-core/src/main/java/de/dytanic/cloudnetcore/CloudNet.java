@@ -2,6 +2,7 @@ package de.dytanic.cloudnetcore;
 
 import de.dytanic.cloudnet.command.CommandManager;
 import de.dytanic.cloudnet.database.DatabaseManager;
+import de.dytanic.cloudnet.event.EventKey;
 import de.dytanic.cloudnet.event.EventManager;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
@@ -36,6 +37,7 @@ import de.dytanic.cloudnetcore.network.packet.api.sync.*;
 import de.dytanic.cloudnetcore.network.packet.dbsync.*;
 import de.dytanic.cloudnetcore.network.packet.in.*;
 import de.dytanic.cloudnetcore.network.packet.out.PacketOutCloudNetwork;
+import de.dytanic.cloudnetcore.process.ProcessStartListener;
 import de.dytanic.cloudnetcore.serverlog.ServerLogManager;
 import de.dytanic.cloudnetcore.util.FileCopy;
 import de.dytanic.cloudnetcore.web.api.v1.*;
@@ -55,7 +57,7 @@ import java.util.stream.Stream;
 // Because this is an API class, we can and should suppress warnings about
 // unused methods and weaker access.
 @SuppressWarnings({"unused", "WeakerAccess"})
-public final class CloudNet implements Executable, Reloadable {
+public final class CloudNet extends EventKey implements Executable, Reloadable {
 
     public static volatile boolean RUNNING = false;
 
@@ -68,7 +70,7 @@ public final class CloudNet implements Executable, Reloadable {
     private final EventManager eventManager = new EventManager();
     private final ScreenProvider screenProvider = new ScreenProvider();
     private final ServerLogManager serverLogManager = new ServerLogManager();
-
+    private final ProcessStartListener processStartListener = new ProcessStartListener();
     private final NetworkManager networkManager = new NetworkManager();
     private final Map<String, Wrapper> wrappers = new ConcurrentHashMap<>();
     private final Map<String, ServerGroup> serverGroups = new ConcurrentHashMap<>();
@@ -85,7 +87,6 @@ public final class CloudNet implements Executable, Reloadable {
     private WebServer webServer;
     private DatabaseBasicHandlers dbHandlers;
     private Collection<User> users;
-
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) throws Exception {
         if (instance != null) {
             throw new IllegalStateException("CloudNet already initialized!");
@@ -115,6 +116,19 @@ public final class CloudNet implements Executable, Reloadable {
         return instance;
     }
 
+    private static int getStartPort(final Wrapper wrapper) {
+        List<Integer> ports = wrapper.getBoundPorts();
+        int startport = wrapper.getWrapperInfo().getStartPort();
+        do {
+            startport = (startport + NetworkUtils.RANDOM.nextInt(20) + 1);
+        } while (ports.contains(startport));
+        return startport;
+    }
+
+    public ProcessStartListener getProcessStartListener() {
+        return processStartListener;
+    }
+
     @Override
     public boolean bootstrap() throws Exception {
         if (!optionSet.has("disable-autoupdate")) {
@@ -123,6 +137,8 @@ public final class CloudNet implements Executable, Reloadable {
 
         dbHandlers = new DatabaseBasicHandlers(databaseManager);
         dbHandlers.getStatisticManager().addStartup();
+
+        this.eventManager.registerListener(this, processStartListener);
 
         this.moduleManager.setDisabledModuleList(config.getDisabledModules());
 
@@ -199,10 +215,6 @@ public final class CloudNet implements Executable, Reloadable {
         this.localCloudWrapper.accept(optionSet);
 
         return true;
-    }
-
-    public static ScheduledExecutorService getExecutor() {
-        return NetworkUtils.getExecutor();
     }
 
     @Override
@@ -404,6 +416,10 @@ public final class CloudNet implements Executable, Reloadable {
         packetManager.registerHandler(PacketRC.CN_INTERNAL_CHANNELS + 1, PacketInCreateServerLog.class);
     }
 
+    public static ScheduledExecutorService getExecutor() {
+        return NetworkUtils.getExecutor();
+    }
+
     public NetworkManager getNetworkManager() {
         return networkManager;
     }
@@ -484,32 +500,41 @@ public final class CloudNet implements Executable, Reloadable {
         return localCloudWrapper;
     }
 
-    public void startProxy(Wrapper wrapper,
-                           ProxyGroup proxyGroup,
-                           int memory,
-                           List<String> parameters,
-                           String url,
-                           Set<ServerInstallablePlugin> plugins,
-                           Document document) {
-        if (wrapper == null) {
-            return;
+    public Collection<ServiceId> getProxyServiceIdsAndWaitingServices(String group) {
+        List<ServiceId> serviceIds = getProxys(group).stream()
+                                                     .map(ProxyServer::getServiceId)
+                                                     .collect(Collectors.toList());
+
+        wrappers.values().stream()
+                .flatMap(wrapper -> wrapper.getWaitingServices().values().stream())
+                .filter(entry -> entry.getServiceId().getGroup().equals(group))
+                .map(WaitingService::getServiceId)
+                .forEach(serviceIds::add);
+
+        return serviceIds;
+    }
+
+    public Collection<ProxyServer> getProxys(String group) {
+        Collection<ProxyServer> minecraftServers = new LinkedList<>();
+
+        for (ProxyServer minecraftServer : getProxys().values()) {
+            if (minecraftServer.getServiceId().getGroup().equalsIgnoreCase(group)) {
+                minecraftServers.add(minecraftServer);
+            }
         }
-        List<Integer> ports = wrapper.getBoundPorts();
-        int startPort = proxyGroup.getStartPort();
-        while (ports.contains(startPort)) {
-            startPort++;
+        return minecraftServers;
+    }
+
+    public Map<String, ProxyServer> getProxys() {
+        Map<String, ProxyServer> minecraftServerMap = new HashMap<>();
+
+        for (Wrapper wrapper : wrappers.values()) {
+            for (ProxyServer minecraftServer : wrapper.getProxies().values()) {
+                minecraftServerMap.put(minecraftServer.getServerId(), minecraftServer);
+            }
         }
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
-                                                                 proxyGroup.getName(),
-                                                                 memory,
-                                                                 parameters,
-                                                                 Collections.emptyList(),
-                                                                 url,
-                                                                 plugins,
-                                                                 document,
-                                                                 newServiceId(proxyGroup, wrapper),
-                                                                 startPort);
-        wrapper.startProxy(proxyProcessMeta);
+
+        return minecraftServerMap;
     }
 
     public long getStartupTime() {
@@ -772,93 +797,6 @@ public final class CloudNet implements Executable, Reloadable {
         return proxyIds;
     }
 
-    public Collection<ProxyServer> getProxys(String group) {
-        Collection<ProxyServer> minecraftServers = new LinkedList<>();
-
-        for (ProxyServer minecraftServer : getProxys().values()) {
-            if (minecraftServer.getServiceId().getGroup().equalsIgnoreCase(group)) {
-                minecraftServers.add(minecraftServer);
-            }
-        }
-        return minecraftServers;
-    }
-
-    public Map<String, ProxyServer> getProxys() {
-        Map<String, ProxyServer> minecraftServerMap = new HashMap<>();
-
-        for (Wrapper wrapper : wrappers.values()) {
-            for (ProxyServer minecraftServer : wrapper.getProxies().values()) {
-                minecraftServerMap.put(minecraftServer.getServerId(), minecraftServer);
-            }
-        }
-
-        return minecraftServerMap;
-    }
-
-    public ServiceId newServiceId(ProxyGroup proxyGroup, Wrapper wrapper) {
-        Collection<ServiceId> serviceIds = getProxysServiceIdsAndWaitings(proxyGroup.getName());
-        List<Integer> collection = serviceIds.stream()
-                                             .map(ServiceId::getId)
-                                             .collect(Collectors.toList());
-        int id = 1;
-        while (collection.contains(id)) {
-            id++;
-        }
-
-        return new ServiceId(proxyGroup.getName(),
-                             id,
-                             UUID.randomUUID(),
-                             wrapper.getNetworkInfo().getId(),
-                             proxyGroup.getName() + config.getFormatSplitter() + id);
-    }
-
-    public Collection<ServiceId> getProxysServiceIdsAndWaitings(String group) {
-        List<ServiceId> serviceIds = getProxys(group).stream()
-                                                     .map(ProxyServer::getServiceId)
-                                                     .collect(Collectors.toList());
-
-        wrappers.values().stream()
-                .flatMap(wrapper -> wrapper.getWaitingServices().values().stream())
-                .filter(entry -> entry.getServiceId().getGroup().equals(group))
-                .map(WaitingService::getServiceId)
-                .forEach(serviceIds::add);
-
-        return serviceIds;
-    }
-
-    public void startProxy(Wrapper wrapper,
-                           ProxyGroup proxyGroup,
-                           int memory,
-                           List<String> parameters,
-                           String url,
-                           Set<ServerInstallablePlugin> plugins,
-                           Document document,
-                           int id,
-                           UUID uniqueId) {
-        if (wrapper == null) {
-            return;
-        }
-
-        List<Integer> ports = wrapper.getBoundPorts();
-        int startPort = proxyGroup.getStartPort();
-        while (ports.contains(startPort)) {
-            startPort++;
-        }
-
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
-                                                                 proxyGroup.getName(),
-                                                                 memory,
-                                                                 parameters,
-                                                                 Collections.emptyList(),
-                                                                 url,
-                                                                 plugins,
-                                                                 document,
-                                                                 newServiceId(proxyGroup, wrapper, id, uniqueId),
-                                                                 startPort);
-
-        wrapper.startProxy(proxyProcessMeta);
-    }
-
     public Collection<String> getServersByName() {
         Collection<String> x = new LinkedList<>();
         for (Wrapper wrapper : wrappers.values()) {
@@ -879,34 +817,6 @@ public final class CloudNet implements Executable, Reloadable {
         }
 
         return x;
-    }
-
-    public ServiceId newServiceId(ProxyGroup proxyGroup, Wrapper wrapper, int id, UUID uuid) {
-        return new ServiceId(proxyGroup.getName(),
-                             id,
-                             uuid,
-                             wrapper.getNetworkInfo().getId(),
-                             proxyGroup.getName() + config.getFormatSplitter() + id);
-    }
-
-    public void startProxy(Wrapper wrapper, ProxyGroup proxyGroup) {
-        List<Integer> ports = wrapper.getBoundPorts();
-        int startPort = proxyGroup.getStartPort();
-        while (ports.contains(startPort)) {
-            startPort++;
-        }
-
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
-                                                                 proxyGroup.getName(),
-                                                                 proxyGroup.getMemory(),
-                                                                 Collections.emptyList(),
-                                                                 Collections.emptyList(),
-                                                                 null,
-                                                                 Collections.emptySet(),
-                                                                 new Document(),
-                                                                 newServiceId(proxyGroup, wrapper),
-                                                                 startPort);
-        wrapper.startProxy(proxyProcessMeta);
     }
 
     public void updateNetwork() {
@@ -960,17 +870,9 @@ public final class CloudNet implements Executable, Reloadable {
         return null;
     }
 
-    public void startProxy(ProxyProcessMeta proxyProcessMeta, Wrapper wrapper) {
+    public CompletableFuture<ProxyProcessMeta> startProxy(ProxyProcessMeta proxyProcessMeta, Wrapper wrapper, UUID uuid) {
         wrapper.startProxy(proxyProcessMeta);
-    }
-
-    public void startProxy(ProxyGroup proxyGroup) {
-        Wrapper wrapper = fetchPerformanceWrapper(proxyGroup.getMemory(), toWrapperInstances(proxyGroup.getWrapper()));
-        if (wrapper == null) {
-            return;
-        }
-
-        this.startProxy(wrapper, proxyGroup);
+        return this.processStartListener.waitForProxy(uuid);
     }
 
     public Wrapper fetchPerformanceWrapper(int memory, Collection<Wrapper> wrappers) {
@@ -1008,149 +910,6 @@ public final class CloudNet implements Executable, Reloadable {
             }
         }
         return wrappers1;
-    }
-
-    public void startProxy(ProxyGroup proxyGroup, int memory) {
-        startProxy(proxyGroup, memory, null, Collections.emptySet(), new Document());
-    }
-
-    public void startProxy(ProxyGroup proxyGroup, int memory, String url, Set<ServerInstallablePlugin> plugins, Document document) {
-        startProxy(proxyGroup, memory, Collections.emptyList(), url, plugins, document);
-    }
-
-    public void startProxy(ProxyGroup proxyGroup,
-                           int memory,
-                           List<String> parameters,
-                           String url,
-                           Set<ServerInstallablePlugin> plugins,
-                           Document document) {
-        Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
-        if (wrapper == null) {
-            return;
-        }
-
-        List<Integer> ports = wrapper.getBoundPorts();
-        int startport = proxyGroup.getStartPort();
-        while (ports.contains(startport)) {
-            startport++;
-        }
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
-                                                                 proxyGroup.getName(),
-                                                                 memory,
-                                                                 parameters,
-                                                                 Collections.emptyList(),
-                                                                 url,
-                                                                 plugins,
-                                                                 document,
-                                                                 newServiceId(proxyGroup, wrapper),
-                                                                 startport);
-        wrapper.startProxy(proxyProcessMeta);
-    }
-
-    public void startProxy(ProxyGroup proxyGroup, String urlTemplate) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), urlTemplate, Collections.emptySet(), new Document());
-    }
-
-    public void startProxy(ProxyGroup proxyGroup, String urlTemplate, Document document) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), urlTemplate, Collections.emptySet(), document);
-    }
-
-    public void startProxy(ProxyGroup proxyGroup, int memory, UUID uniqueId) {
-        startProxy(proxyGroup, memory, Collections.emptyList(), null, Collections.emptySet(), new Document(), uniqueId);
-    }
-
-    public void startProxy(ProxyGroup proxyGroup,
-                           int memory,
-                           List<String> parameters,
-                           String url,
-                           Set<ServerInstallablePlugin> plugins,
-                           Document document,
-                           UUID uniqueId) {
-        Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
-        if (wrapper == null) {
-            return;
-        }
-
-        List<Integer> ports = wrapper.getBoundPorts();
-        int startPort = proxyGroup.getStartPort();
-        while (ports.contains(startPort)) {
-            startPort++;
-        }
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
-                                                                 proxyGroup.getName(),
-                                                                 memory,
-                                                                 parameters,
-                                                                 Collections.emptyList(),
-                                                                 url,
-                                                                 plugins,
-                                                                 document,
-                                                                 newServiceId(proxyGroup, wrapper, uniqueId),
-                                                                 startPort);
-        wrapper.startProxy(proxyProcessMeta);
-    }
-
-    public void startProxy(ProxyGroup proxyGroup, Set<ServerInstallablePlugin> plugins) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), null, plugins, new Document());
-    }
-
-    public ServiceId newServiceId(ProxyGroup proxyGroup, Wrapper wrapper, UUID uuid) {
-        int id = 1;
-        Collection<ServiceId> serviceIds = getProxysServiceIdsAndWaitings(proxyGroup.getName());
-        List<Integer> serverIds = serviceIds.stream()
-                                            .map(ServiceId::getId)
-                                            .collect(Collectors.toList());
-        while (serverIds.contains(id)) {
-            id++;
-        }
-
-        return new ServiceId(proxyGroup.getName(),
-                             id,
-                             uuid,
-                             wrapper.getNetworkInfo().getId(),
-                             proxyGroup.getName() + config.getFormatSplitter() + id);
-    }
-
-    public void startProxy(ProxyGroup proxyGroup, int memory, int id, UUID uniqueId) {
-        startProxy(proxyGroup, memory, Collections.emptyList(), null, Collections.emptySet(), new Document(), id, uniqueId);
-    }
-
-    public void startProxy(ProxyGroup proxyGroup,
-                           int memory,
-                           List<String> parameters,
-                           String url,
-                           Set<ServerInstallablePlugin> plugins,
-                           Document document,
-                           int id,
-                           UUID uniqueId) {
-        Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(proxyGroup.getWrapper()));
-        if (wrapper == null) {
-            return;
-        }
-
-        List<Integer> ports = wrapper.getBoundPorts();
-        int startPort = proxyGroup.getStartPort();
-        while (ports.contains(startPort)) {
-            startPort++;
-        }
-        ProxyProcessMeta proxyProcessMeta = new ProxyProcessMeta(wrapper.getName(),
-                                                                 proxyGroup.getName(),
-                                                                 memory,
-                                                                 parameters,
-                                                                 Collections.emptyList(),
-                                                                 url,
-                                                                 plugins,
-                                                                 document,
-                                                                 newServiceId(proxyGroup, wrapper, id, uniqueId),
-                                                                 startPort);
-        wrapper.startProxy(proxyProcessMeta);
-    }
-
-    public void startProxy(ProxyGroup proxyGroup, int memory, String urlTemplate, int id, UUID uniqueId) {
-        startProxy(proxyGroup, memory, Collections.emptyList(), urlTemplate, Collections.emptySet(), new Document(), id, uniqueId);
-    }
-
-    public void startProxy(ProxyGroup proxyGroup, String url, Set<ServerInstallablePlugin> plugins, int id, UUID uniqueId) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), Collections.emptyList(), url, plugins, new Document(), id, uniqueId);
     }
 
     public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig, Properties serverProperties) {
@@ -1213,15 +972,6 @@ public final class CloudNet implements Executable, Reloadable {
                                       template);
             wrapper.startGameServer(serverProcessMeta);
         });
-    }
-
-    private static int getStartPort(final Wrapper wrapper) {
-        List<Integer> ports = wrapper.getBoundPorts();
-        int startport = wrapper.getWrapperInfo().getStartPort();
-        do {
-            startport = (startport + NetworkUtils.RANDOM.nextInt(20) + 1);
-        } while (ports.contains(startport));
-        return startport;
     }
 
     public void startGameServer(ServerGroup serverGroup) {

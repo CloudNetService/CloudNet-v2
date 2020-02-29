@@ -2,7 +2,7 @@ package de.dytanic.cloudnet;
 
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.event.IEventListener;
+import de.dytanic.cloudnet.event.EventListener;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.CoreModule;
@@ -37,7 +37,7 @@ public class CloudCoreExample extends CoreModule { //extend the CoreModule class
 
     }
 
-    private class EventListenerExample implements IEventListener<ServerAddEvent> {
+    private class EventListenerExample implements EventListener<ServerAddEvent> {
 
         @Override
         public void onCall(ServerAddEvent event) {

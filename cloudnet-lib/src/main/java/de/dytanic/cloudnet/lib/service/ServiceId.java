@@ -18,16 +18,14 @@ public final class ServiceId {
     private UUID uniqueId;
     private String wrapperId;
     private String serverId;
-    private String gameId;
 
-    public ServiceId(String group, int id, UUID uniqueId, String wrapperId) {
-        this.group = group;
+    public ServiceId(String groupName, int id, String wrapperName) {
+        this.group = groupName;
         this.id = id;
-        this.uniqueId = uniqueId;
-        this.wrapperId = wrapperId;
+        this.uniqueId = UUID.randomUUID();
+        this.wrapperId = wrapperName;
 
         this.serverId = group + '-' + id;
-        this.gameId = uniqueId.toString().split("-")[0];
     }
 
     public ServiceId(String group, int id, UUID uniqueId, String wrapperId, String serverId) {
@@ -37,18 +35,6 @@ public final class ServiceId {
         this.wrapperId = wrapperId;
 
         this.serverId = serverId;
-        this.gameId = uniqueId.toString().split("-")[0];
-    }
-
-    @Override
-    public int hashCode() {
-        int result = group != null ? group.hashCode() : 0;
-        result = 31 * result + id;
-        result = 31 * result + (uniqueId != null ? uniqueId.hashCode() : 0);
-        result = 31 * result + (wrapperId != null ? wrapperId.hashCode() : 0);
-        result = 31 * result + (serverId != null ? serverId.hashCode() : 0);
-        result = 31 * result + (gameId != null ? gameId.hashCode() : 0);
-        return result;
     }
 
     public String getServerId() {
@@ -71,8 +57,14 @@ public final class ServiceId {
         return id;
     }
 
-    public String getGameId() {
-        return gameId;
+    @Override
+    public int hashCode() {
+        int result = group != null ? group.hashCode() : 0;
+        result = 31 * result + id;
+        result = 31 * result + (uniqueId != null ? uniqueId.hashCode() : 0);
+        result = 31 * result + (wrapperId != null ? wrapperId.hashCode() : 0);
+        result = 31 * result + (serverId != null ? serverId.hashCode() : 0);
+        return result;
     }
 
     @Override
@@ -80,7 +72,7 @@ public final class ServiceId {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ServiceId)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
@@ -98,10 +90,7 @@ public final class ServiceId {
         if (!Objects.equals(wrapperId, serviceId.wrapperId)) {
             return false;
         }
-        if (!Objects.equals(serverId, serviceId.serverId)) {
-            return false;
-        }
-        return Objects.equals(gameId, serviceId.gameId);
+        return Objects.equals(serverId, serviceId.serverId);
     }
 
     @Override

@@ -8,6 +8,7 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
+import de.dytanic.cloudnetcore.process.CoreProxyProcessBuilder;
 import de.dytanic.cloudnetcore.setup.SetupProxyGroup;
 import de.dytanic.cloudnetcore.setup.SetupServerGroup;
 import de.dytanic.cloudnetcore.setup.SetupWrapper;
@@ -131,7 +132,7 @@ public final class CommandCreate extends Command {
     private static void startProxies(final CommandSender sender, final String proxyGroup, int count) {
         if (CloudNet.getInstance().getProxyGroups().containsKey(proxyGroup)) {
             for (int i = 0; i < count; i++) {
-                CloudNet.getInstance().startProxy(CloudNet.getInstance().getProxyGroups().get(proxyGroup));
+                CoreProxyProcessBuilder.create(proxyGroup).startProxy();
                 NetworkUtils.sleepUninterruptedly(2000L);
             }
             sender.sendMessage("Trying to startup a proxy server...");
@@ -155,9 +156,9 @@ public final class CommandCreate extends Command {
     private static void startProxiesOnWrapper(final CommandSender sender, final String[] args) {
         if (CloudNet.getInstance().getProxyGroups().containsKey(args[1]) && CloudNet.getInstance().getWrappers().containsKey(args[3])) {
             for (short i = 0; i < Integer.parseInt(args[2]); i++) {
-                CloudNet.getInstance().startProxy(
-                    CloudNet.getInstance().getWrappers().get(args[3]),
-                    CloudNet.getInstance().getProxyGroups().get(args[1]));
+                CoreProxyProcessBuilder.create(args[1])
+                                       .wrapperName(args[3])
+                                       .startProxy();
                 NetworkUtils.sleepUninterruptedly(2000L);
             }
             sender.sendMessage("Trying to startup a proxy server...");

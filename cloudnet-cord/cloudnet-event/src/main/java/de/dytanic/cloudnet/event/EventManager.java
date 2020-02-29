@@ -27,8 +27,8 @@ public final class EventManager implements IEventManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Event> void registerListener(EventKey eventKey, IEventListener<T> eventListener) {
-        Class eventClazz = TypeResolver.resolveRawArgument(IEventListener.class, eventListener.getClass());
+    public <T extends Event> void registerListener(EventKey eventKey, EventListener<T> eventListener) {
+        Class eventClazz = TypeResolver.resolveRawArgument(EventListener.class, eventListener.getClass());
         if (!registeredListeners.containsKey(eventClazz)) {
             registeredListeners.put(eventClazz, new LinkedList<>());
         }
@@ -36,8 +36,8 @@ public final class EventManager implements IEventManager {
     }
 
     @Override
-    public final <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>[] eventListeners) {
-        for (IEventListener<T> eventListener : eventListeners) {
+    public final <T extends Event> void registerListeners(EventKey eventKey, EventListener<T>[] eventListeners) {
+        for (EventListener<T> eventListener : eventListeners) {
             registerListener(eventKey, eventListener);
         }
     }
@@ -54,7 +54,7 @@ public final class EventManager implements IEventManager {
     }
 
     @Override
-    public void unregisterListener(IEventListener<? extends Event> eventListener) {
+    public void unregisterListener(EventListener<? extends Event> eventListener) {
         try {
             Class clazz = getClazz(eventListener);
             if (registeredListeners.containsKey(clazz)) {
@@ -99,7 +99,7 @@ public final class EventManager implements IEventManager {
         return false;
     }
 
-    private Class getClazz(IEventListener<?> eventListener) throws Exception {
+    private Class getClazz(EventListener<?> eventListener) throws Exception {
         return eventListener.getClass().getMethod("onCall", Event.class).getParameters()[0].getType();
     }
 

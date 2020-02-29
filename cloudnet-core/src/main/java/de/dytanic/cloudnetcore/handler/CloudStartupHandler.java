@@ -3,6 +3,7 @@ package de.dytanic.cloudnetcore.handler;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnetcore.CloudNet;
+import de.dytanic.cloudnetcore.process.CoreProxyProcessBuilder;
 
 import java.util.Collection;
 
@@ -22,10 +23,10 @@ public class CloudStartupHandler implements ICloudHandler {
             }
         }
 
-        for (ProxyGroup serverGroup : cloudNet.getProxyGroups().values()) {
-            Collection<String> servers = cloudNet.getProxysAndWaitings(serverGroup.getName());
-            if (servers.size() < serverGroup.getStartup()) {
-                cloudNet.startProxy(serverGroup);
+        for (ProxyGroup proxyGroup : cloudNet.getProxyGroups().values()) {
+            Collection<String> servers = cloudNet.getProxysAndWaitings(proxyGroup.getName());
+            if (servers.size() < proxyGroup.getStartup()) {
+                CoreProxyProcessBuilder.create(proxyGroup.getName()).startProxy();
             }
         }
     }

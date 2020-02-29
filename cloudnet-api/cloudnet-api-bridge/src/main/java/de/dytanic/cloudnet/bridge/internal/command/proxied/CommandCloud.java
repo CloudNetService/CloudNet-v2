@@ -3,7 +3,7 @@ package de.dytanic.cloudnet.bridge.internal.command.proxied;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.api.builders.ProxyProcessBuilder;
+import de.dytanic.cloudnet.api.builders.ApiProxyProcessBuilder;
 import de.dytanic.cloudnet.api.builders.ServerProcessBuilder;
 import de.dytanic.cloudnet.bridge.CloudProxy;
 import de.dytanic.cloudnet.lib.DefaultType;
@@ -271,7 +271,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                         commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                        .getPrefix() + "The information was sent to the cloud"));
                     } else if (CloudAPI.getInstance().getCloudNetwork().getProxyGroups().containsKey(args[1])) {
-                        ProxyProcessBuilder.create(args[1]).startProxy();
+                        ApiProxyProcessBuilder.create(args[1]).startProxy();
                         commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                        .getPrefix() + "The information was sent to the cloud"));
                     } else {
@@ -439,12 +439,12 @@ public final class CommandCloud extends Command implements TabExecutor {
                     } else if (CloudAPI.getInstance().getProxyGroupMap().containsKey(args[1])) {
                         if (NetworkUtils.checkIsNumber(args[2])) {
                             for (short i = 0; i < Integer.parseInt(args[2]); i++) {
-                                ProxyProcessBuilder.create(args[1]).startProxy();
+                                ApiProxyProcessBuilder.create(args[1]).startProxy();
                             }
                             commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                            .getPrefix() + "The information was sent to the cloud"));
                         } else {
-                            ProxyProcessBuilder.create(args[1]).startProxy();
+                            ApiProxyProcessBuilder.create(args[1]).startProxy();
                             commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                            .getPrefix() + "The information was sent to the cloud"));
                         }

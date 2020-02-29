@@ -1,8 +1,5 @@
-package de.dytanic.cloudnet.api.builders;
+package de.dytanic.cloudnet.lib.process;
 
-import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.api.network.packet.api.PacketOutStartProxy;
-import de.dytanic.cloudnet.lib.process.ProxyProcessData;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -10,29 +7,16 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
  * Builder for a proxy process.
  * Uses {@link ProxyProcessData} for storing the data.
  */
-public class ProxyProcessBuilder {
+public abstract class ProxyProcessBuilder {
     private final ProxyProcessData proxyProcessData = new ProxyProcessData();
 
-    private ProxyProcessBuilder() {
-    }
-
-    /**
-     * Creates a new proxy process builder for a proxy of the specified proxy group.
-     * This value is mandatory as proxies cannot be started without belonging to a group.
-     *
-     * @param proxyGroupName the name of the proxy group that the proxy will be started from.
-     *
-     * @return the newly created proxy process builder.
-     */
-    public static ProxyProcessBuilder create(String proxyGroupName) {
-        return new ProxyProcessBuilder().proxyGroupName(proxyGroupName);
+    protected ProxyProcessBuilder() {
     }
 
     /**
@@ -190,14 +174,7 @@ public class ProxyProcessBuilder {
      *
      * @return a future that will be completed once the proxy is connected to the cloud network.
      */
-    public CompletableFuture<ProxyProcessMeta> startProxy() {
-        final UUID uuid = UUID.randomUUID();
-        this.proxyProcessData.getProperties().append("cloudnet:requestId", uuid);
-        CloudAPI.getInstance().getNetworkConnection().sendAsynchronous(
-            new PacketOutStartProxy(this.proxyProcessData)
-        );
-        return CloudAPI.getInstance().getCloudService().waitForProxy(uuid);
-    }
+    public abstract CompletableFuture<ProxyProcessMeta> startProxy();
 
     public String getWrapperName() {
         return proxyProcessData.getWrapperName();

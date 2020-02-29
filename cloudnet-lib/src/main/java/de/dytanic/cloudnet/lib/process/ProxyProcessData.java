@@ -81,6 +81,17 @@ public class ProxyProcessData {
         this.properties = properties;
     }
 
+    public ProxyProcessData(final ProxyProcessData proxyProcessData) {
+        this.wrapperName = proxyProcessData.wrapperName;
+        this.proxyGroupName = proxyProcessData.proxyGroupName;
+        this.memory = proxyProcessData.memory;
+        this.javaProcessParameters = proxyProcessData.javaProcessParameters;
+        this.proxyProcessParameters = proxyProcessData.proxyProcessParameters;
+        this.templateUrl = proxyProcessData.templateUrl;
+        this.plugins = proxyProcessData.plugins;
+        this.properties = proxyProcessData.properties;
+    }
+
     @Override
     public int hashCode() {
         int result = wrapperName != null ? wrapperName.hashCode() : 0;

@@ -2,7 +2,7 @@ package de.dytanic.cloudnet.event.interfaces;
 
 import de.dytanic.cloudnet.event.Event;
 import de.dytanic.cloudnet.event.EventKey;
-import de.dytanic.cloudnet.event.IEventListener;
+import de.dytanic.cloudnet.event.EventListener;
 
 /**
  * Interface for event managers
@@ -16,9 +16,9 @@ public interface IEventManager {
      * @param eventListener the actual event listener instance that will be called upon
      * @param <T>           the type of the events to have the event listener be called on
      *
-     * @see #registerListeners(EventKey, IEventListener[])
+     * @see #registerListeners(EventKey, EventListener[])
      */
-    <T extends Event> void registerListener(EventKey eventKey, IEventListener<T> eventListener);
+    <T extends Event> void registerListener(EventKey eventKey, EventListener<T> eventListener);
 
     /**
      * Registers multiple event listeners at once.
@@ -27,9 +27,9 @@ public interface IEventManager {
      * @param eventListeners the event listener instances that will be called upon
      * @param <T>            the type of the events to have the event listeners be called on
      *
-     * @see #registerListener(EventKey, IEventListener)
+     * @see #registerListener(EventKey, EventListener)
      */
-    <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>[] eventListeners);
+    <T extends Event> void registerListeners(EventKey eventKey, EventListener<T>[] eventListeners);
 
     /**
      * Removes all listener from a specific {@link EventKey} from this event manager.
@@ -43,7 +43,7 @@ public interface IEventManager {
      *
      * @param eventListener the event listener to remove
      */
-    void unregisterListener(IEventListener<?> eventListener);
+    void unregisterListener(EventListener<?> eventListener);
 
     /**
      * Removes all event listeners for a specific event class.
@@ -53,13 +53,13 @@ public interface IEventManager {
     void unregisterListener(Class<? extends Event> eventClass);
 
     /**
-     * Call an event and forward it to all {@link IEventListener}s registered
+     * Call an event and forward it to all {@link EventListener}s registered
      * on this event manager.
      *
      * @param event the event to call
-     * @param <T>   the type of the event and {@link IEventListener} to call
+     * @param <T>   the type of the event and {@link EventListener} to call
      *
-     * @return {@code true} when no {@link IEventListener} was called,
+     * @return {@code true} when no {@link EventListener} was called,
      * {@code false} otherwise
      */
     <T extends Event> boolean callEvent(T event);

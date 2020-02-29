@@ -1,6 +1,6 @@
 package de.dytanic.cloudnetcore.permissions.listener;
 
-import de.dytanic.cloudnet.event.IEventListener;
+import de.dytanic.cloudnet.event.EventListener;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnetcore.api.event.network.UpdateAllEvent;
 import de.dytanic.cloudnetcore.permissions.PermissionModule;
@@ -8,7 +8,7 @@ import de.dytanic.cloudnetcore.permissions.PermissionModule;
 /**
  * Created by Tareko on 18.10.2017.
  */
-public final class UpdateAllListener implements IEventListener<UpdateAllEvent> {
+public final class UpdateAllListener implements EventListener<UpdateAllEvent> {
 
     @Override
     public void onCall(UpdateAllEvent event) {

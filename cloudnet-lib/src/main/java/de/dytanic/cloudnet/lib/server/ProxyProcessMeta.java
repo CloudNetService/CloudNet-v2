@@ -36,6 +36,14 @@ public class ProxyProcessMeta extends ProxyProcessData {
         this.port = port;
     }
 
+    public ProxyProcessMeta(final ProxyProcessData proxyProcessData,
+                            final ServiceId serviceId,
+                            final int port) {
+        super(proxyProcessData);
+        this.serviceId = serviceId;
+        this.port = port;
+    }
+
     @Override
     public int hashCode() {
         int result = super.hashCode();

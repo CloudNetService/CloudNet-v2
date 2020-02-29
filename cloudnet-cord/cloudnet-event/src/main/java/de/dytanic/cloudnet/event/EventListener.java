@@ -3,7 +3,7 @@ package de.dytanic.cloudnet.event;
 /**
  * Interface for marking event listeners.
  */
-public interface IEventListener<E extends Event> {
+public interface EventListener<E extends Event> {
 
     /**
      * Method that is called on an event listener to handle an event of type

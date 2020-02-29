@@ -669,19 +669,11 @@ public class CloudProxy implements CloudService, NetworkHandler {
             } else if (message.equals("startedProxy")) {
                 ProxyProcessMeta meta = document.getObject("proxyProcessMeta", ProxyProcessMeta.TYPE);
                 UUID uuid = meta.getProperties().getObject("cloudnet:requestId", UUID.class);
-                this.waitingProxies.forEach((proxyProcessUuid, future) -> {
-                    if (proxyProcessUuid.equals(uuid)) {
-                        future.complete(meta);
-                    }
-                });
+                this.waitingProxies.remove(uuid).complete(meta);
             } else if (message.equals("startedServer")) {
                 ServerProcessMeta meta = document.getObject("serverProcessMeta", ServerProcessMeta.TYPE);
                 UUID uuid = meta.getServerConfig().getProperties().getObject("cloudnet:requestId", UUID.class);
-                this.waitingServers.forEach((proxyProcessUuid, future) -> {
-                    if (proxyProcessUuid.equals(uuid)) {
-                        future.complete(meta);
-                    }
-                });
+                this.waitingServers.remove(uuid).complete(meta);
             }
 
             return true;
