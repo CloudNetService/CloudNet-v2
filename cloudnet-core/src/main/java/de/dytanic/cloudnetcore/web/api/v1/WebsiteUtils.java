@@ -11,6 +11,7 @@ import de.dytanic.cloudnetcore.database.StatisticManager;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
 import de.dytanic.cloudnetcore.network.components.ProxyServer;
 import de.dytanic.cloudnetcore.process.CoreProxyProcessBuilder;
+import de.dytanic.cloudnetcore.process.CoreServerProcessBuilder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -162,7 +163,7 @@ public class WebsiteUtils extends MethodWebHandlerAdapter {
                 if (httpRequest.headers().contains("-Xvalue")) {
                     String group = httpRequest.headers().get("-Xvalue");
                     CloudNet.getExecutor().submit(
-                        () -> CloudNet.getInstance().startGameServer(CloudNet.getInstance().getServerGroup(group)));
+                        () -> CoreServerProcessBuilder.create(group).startServer());
                 }
 
                 return fullHttpResponse;

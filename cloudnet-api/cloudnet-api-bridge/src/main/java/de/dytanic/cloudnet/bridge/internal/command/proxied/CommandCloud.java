@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.builders.ApiProxyProcessBuilder;
-import de.dytanic.cloudnet.api.builders.ServerProcessBuilder;
+import de.dytanic.cloudnet.api.builders.ApiServerProcessBuilder;
 import de.dytanic.cloudnet.bridge.CloudProxy;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
@@ -265,9 +265,9 @@ public final class CommandCloud extends Command implements TabExecutor {
                     return;
                 } else if (args[0].equalsIgnoreCase("start") && commandSender.hasPermission("cloudnet.command.cloud.start")) {
                     if (CloudAPI.getInstance().getCloudNetwork().getServerGroups().containsKey(args[1])) {
-                        ServerProcessBuilder.create(args[1])
-                                            .serverConfig(new ServerConfig())
-                                            .startServer();
+                        ApiServerProcessBuilder.create(args[1])
+                                               .serverConfig(new ServerConfig())
+                                               .startServer();
                         commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                        .getPrefix() + "The information was sent to the cloud"));
                     } else if (CloudAPI.getInstance().getCloudNetwork().getProxyGroups().containsKey(args[1])) {
@@ -412,10 +412,10 @@ public final class CommandCloud extends Command implements TabExecutor {
                     if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1])) {
                         if (NetworkUtils.checkIsNumber(args[2])) {
                             for (short i = 0; i < Integer.parseInt(args[2]); i++) {
-                                ServerProcessBuilder.create(args[1])
-                                                    .serverConfig(
-                                                        new ServerConfig())
-                                                    .startServer();
+                                ApiServerProcessBuilder.create(args[1])
+                                                       .serverConfig(
+                                                           new ServerConfig())
+                                                       .startServer();
                             }
                             commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                            .getPrefix() + "The information was sent to the cloud"));
@@ -427,11 +427,11 @@ public final class CommandCloud extends Command implements TabExecutor {
                                                                                    .equalsIgnoreCase(args[2]))
                                                                      .findFirst();
                             template.ifPresent(value -> {
-                                ServerProcessBuilder.create(args[1])
-                                                    .serverConfig(
-                                                        new ServerConfig())
-                                                    .template(value)
-                                                    .startServer();
+                                ApiServerProcessBuilder.create(args[1])
+                                                       .serverConfig(
+                                                           new ServerConfig())
+                                                       .template(value)
+                                                       .startServer();
                                 commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                                .getPrefix() + "The information was sent to the cloud"));
                             });

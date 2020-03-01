@@ -1,37 +1,26 @@
-package de.dytanic.cloudnet.api.builders;
+package de.dytanic.cloudnet.lib.process;
 
-import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.api.network.packet.api.PacketOutStartServer;
-import de.dytanic.cloudnet.lib.process.ServerProcessData;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 /**
  * Builder for a server process.
  * Uses {@link ServerProcessData} for storing the data.
  */
-public class ServerProcessBuilder {
+public abstract class ServerProcessBuilder {
     private final ServerProcessData serverProcessData = new ServerProcessData();
 
-    private ServerProcessBuilder() {
+    protected ServerProcessBuilder() {
     }
 
-    /**
-     * Creates a new server process builder for a server of the specified server group.
-     * This value is mandatory as servers cannot be started without belonging to a group.
-     *
-     * @param serverGroupName the name of the server group that the server will be started from.
-     *
-     * @return the newly created server process builder.
-     */
-    public static ServerProcessBuilder create(String serverGroupName) {
-        return new ServerProcessBuilder().serverGroupName(serverGroupName);
-    }
 
     /**
      * Sets the name of the server group.
@@ -215,20 +204,13 @@ public class ServerProcessBuilder {
      *
      * @return a future that will be completed once the server is connected to the cloud network.
      */
-    public CompletableFuture<ServerProcessMeta> startServer() {
-        final UUID uuid = UUID.randomUUID();
-        this.serverProcessData.getServerConfig().getProperties().append("cloudnet:requestId", uuid);
-        CloudAPI.getInstance().getNetworkConnection().sendAsynchronous(
-            new PacketOutStartServer(this.serverProcessData)
-        );
-        return CloudAPI.getInstance().getCloudService().waitForServer(uuid);
-    }
+    public abstract CompletableFuture<ServerProcessMeta> startServer();
 
     public String getWrapperName() {
         return serverProcessData.getWrapperName();
     }
 
-    public String getProxyGroup() {
+    public String getServerGroupName() {
         return serverProcessData.getServerGroupName();
     }
 

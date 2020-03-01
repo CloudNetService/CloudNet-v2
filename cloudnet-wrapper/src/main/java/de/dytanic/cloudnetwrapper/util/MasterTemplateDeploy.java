@@ -7,10 +7,10 @@ import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.lib.zip.ZipConverter;
 
-import java.io.*;
+import java.io.File;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -29,20 +29,16 @@ public class MasterTemplateDeploy {
 
     private String group;
 
-    private String customName;
-
     public MasterTemplateDeploy(String dir,
                                 ConnectableAddress connectableAddress,
                                 SimpledUser simpledUser,
                                 Template template,
-                                String group,
-                                String customName) {
+                                String group) {
         this.dir = dir;
         this.connectableAddress = connectableAddress;
         this.simpledUser = simpledUser;
         this.template = template;
         this.group = group;
-        this.customName = customName;
     }
 
     public String getDir() {
@@ -65,10 +61,6 @@ public class MasterTemplateDeploy {
         return group;
     }
 
-    public String getCustomName() {
-        return customName;
-    }
-
     public void deploy() throws Exception {
         System.out.println("Trying to setup the new template... [" + template.getName() + ']');
         Path dir = Paths.get("local/cache/" + NetworkUtils.randomString(10));
@@ -85,10 +77,9 @@ public class MasterTemplateDeploy {
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
         urlConnection.setRequestProperty("-Xcloudnet-token", simpledUser.getApiToken());
-        urlConnection.setRequestProperty("-Xmessage", customName != null ? "custom" : "template");
-        urlConnection.setRequestProperty("-Xvalue", customName != null ? customName : new Document("template", template.getName()).append(
-            "group",
-            group).convertToJsonString());
+        urlConnection.setRequestProperty("-Xmessage", "template");
+        urlConnection.setRequestProperty("-Xvalue", new Document("template", template.getName())
+            .append("group", group).convertToJsonString());
         urlConnection.setUseCaches(false);
         urlConnection.setDoOutput(true);
         urlConnection.connect();
@@ -97,14 +88,6 @@ public class MasterTemplateDeploy {
         try (OutputStream outputStream = urlConnection.getOutputStream()) {
             outputStream.write(ZipConverter.convert(new Path[] {dir}));
             outputStream.flush();
-        }
-
-        try (InputStream inputStream = urlConnection.getInputStream(); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-            inputStream,
-            StandardCharsets.UTF_8))) {
-            String input;
-            while ((input = bufferedReader.readLine()) != null) {
-            }
         }
         System.out.println("Successfully deploy template [" + template.getName() + ']');
         urlConnection.disconnect();

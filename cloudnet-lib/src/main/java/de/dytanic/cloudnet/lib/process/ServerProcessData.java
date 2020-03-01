@@ -117,6 +117,19 @@ public class ServerProcessData {
         this.properties = properties;
     }
 
+    public ServerProcessData(final ServerProcessData serverProcessData) {
+        this.wrapperName = serverProcessData.wrapperName;
+        this.serverGroupName = serverProcessData.serverGroupName;
+        this.serverConfig = serverProcessData.serverConfig;
+        this.template = serverProcessData.template;
+        this.memory = serverProcessData.memory;
+        this.javaProcessParameters = serverProcessData.javaProcessParameters;
+        this.serverProcessParameters = serverProcessData.serverProcessParameters;
+        this.templateUrl = serverProcessData.templateUrl;
+        this.plugins = serverProcessData.plugins;
+        this.properties = serverProcessData.properties;
+    }
+
     @Override
     public int hashCode() {
         int result = wrapperName != null ? wrapperName.hashCode() : 0;

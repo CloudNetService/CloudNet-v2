@@ -1,7 +1,7 @@
 package de.dytanic.cloudnet.bridge.internal.listener.bukkit;
 
 import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.api.builders.ServerProcessBuilder;
+import de.dytanic.cloudnet.api.builders.ApiServerProcessBuilder;
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudNetworkUpdateEvent;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudServerInitEvent;
@@ -184,14 +184,13 @@ public final class BukkitListener implements Listener {
         if (CloudServer.getInstance().getPercentOfPlayerNowOnline() >= CloudServer.getInstance()
                                                                                   .getGroupData()
                                                                                   .getPercentForNewServerAutomatically() &&
-            CloudServer.getInstance().getServerProcessMeta().getCustomServerDownload() == null &&
             !CloudServer.getInstance().getGroupData().getMode().equals(ServerGroupMode.STATIC) &&
             CloudServer.getInstance().isAllowAutoStart() &&
             CloudServer.getInstance().getGroupData().getPercentForNewServerAutomatically() > 0) {
-            ServerProcessBuilder.create(CloudAPI.getInstance().getGroup())
-                                .serverConfig(new ServerConfig())
-                                .template(CloudServer.getInstance().getTemplate())
-                                .startServer();
+            ApiServerProcessBuilder.create(CloudAPI.getInstance().getGroup())
+                                   .serverConfig(new ServerConfig())
+                                   .template(CloudServer.getInstance().getTemplate())
+                                   .startServer();
             CloudServer.getInstance().setAllowAutoStart(false);
 
             Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(),

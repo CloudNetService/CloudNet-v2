@@ -13,12 +13,13 @@ import de.dytanic.cloudnet.lib.interfaces.Reloadable;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketManager;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import de.dytanic.cloudnet.lib.server.*;
+import de.dytanic.cloudnet.lib.server.ProxyGroup;
+import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
+import de.dytanic.cloudnet.lib.server.ServerGroup;
+import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
-import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnet.modules.ModuleManager;
 import de.dytanic.cloudnet.web.client.WebClient;
@@ -51,6 +52,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -87,6 +89,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
     private WebServer webServer;
     private DatabaseBasicHandlers dbHandlers;
     private Collection<User> users;
+
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) throws Exception {
         if (instance != null) {
             throw new IllegalStateException("CloudNet already initialized!");
@@ -114,15 +117,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
     public static CloudNet getInstance() {
         return instance;
-    }
-
-    private static int getStartPort(final Wrapper wrapper) {
-        List<Integer> ports = wrapper.getBoundPorts();
-        int startport = wrapper.getWrapperInfo().getStartPort();
-        do {
-            startport = (startport + NetworkUtils.RANDOM.nextInt(20) + 1);
-        } while (ports.contains(startport));
-        return startport;
     }
 
     public ProcessStartListener getProcessStartListener() {
@@ -641,55 +635,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         return onlineCount;
     }
 
-    public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper) {
-        int id = 1;
-        Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        List<Integer> serverIds = serviceIds.stream()
-                                            .map(ServiceId::getId)
-                                            .collect(Collectors.toList());
-        while (serverIds.contains(id)) {
-            id++;
-        }
-
-        return new ServiceId(serverGroup.getName(),
-                             id,
-                             UUID.randomUUID(),
-                             wrapper.getNetworkInfo().getId(),
-                             serverGroup.getName() + config.getFormatSplitter() + id);
-    }
-
-    public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, int id) {
-        return new ServiceId(serverGroup.getName(),
-                             id,
-                             UUID.randomUUID(),
-                             wrapper.getNetworkInfo().getId(),
-                             serverGroup.getName() + config.getFormatSplitter() + id);
-    }
-
-    public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, int id, UUID uniqueId) {
-        return new ServiceId(serverGroup.getName(),
-                             id,
-                             uniqueId,
-                             wrapper.getNetworkInfo().getId(),
-                             serverGroup.getName() + config.getFormatSplitter() + id);
-    }
-
-    public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, UUID uniqueId) {
-        int id = 0;
-        Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        Collection<Integer> ids = serviceIds.stream()
-                                            .map(ServiceId::getId)
-                                            .collect(Collectors.toList());
-        while (ids.contains(id)) {
-            id++;
-        }
-        return new ServiceId(serverGroup.getName(),
-                             id,
-                             uniqueId,
-                             wrapper.getNetworkInfo().getId(),
-                             serverGroup.getName() + config.getFormatSplitter() + id);
-    }
-
     public Collection<ServiceId> getServerServiceIdsAndWaitings(String group) {
         List<ServiceId> serviceIds = getServers(group).stream()
                                                       .map(MinecraftServer::getServiceId)
@@ -725,29 +670,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         }
 
         return minecraftServerMap;
-    }
-
-    public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, int id, String serverId) {
-        return new ServiceId(serverGroup.getName(), id, UUID.randomUUID(), wrapper.getNetworkInfo().getId(), serverId);
-    }
-
-    public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, int id, UUID uniqueId, String serverId) {
-        return new ServiceId(serverGroup.getName(), id, uniqueId, wrapper.getNetworkInfo().getId(), serverId);
-    }
-
-    public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, UUID uniqueId, String serverId) {
-        Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        List<Integer> ids = serviceIds.stream()
-                                      .map(ServiceId::getId)
-                                      .collect(Collectors.toList());
-        int id = 0;
-        while (ids.contains(id)) {
-            id++;
-        }
-        if (serverId == null) {
-            serverId = serverGroup.getName() + this.config.getFormatSplitter() + id;
-        }
-        return new ServiceId(serverGroup.getName(), id, uniqueId, wrapper.getNetworkInfo().getId(), serverId);
     }
 
     public long globalMaxMemory() {
@@ -872,34 +794,28 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
     public CompletableFuture<ProxyProcessMeta> startProxy(ProxyProcessMeta proxyProcessMeta, Wrapper wrapper, UUID uuid) {
         wrapper.startProxy(proxyProcessMeta);
-        return this.processStartListener.waitForProxy(uuid);
+        return this.processStartListener.waitForProxy(uuid)
+                                        .whenComplete((processMeta, throwable) -> {
+                                            if (throwable != null) {
+                                                this.logger.log(Level.WARNING, String.format("Error starting proxy: %n"), throwable);
+                                            } else {
+                                                this.logger.fine(String.format("Proxy %s started successfully",
+                                                                               processMeta.getServiceId().getServerId()));
+                                            }
+                                        });
     }
 
-    public Wrapper fetchPerformanceWrapper(int memory, Collection<Wrapper> wrappers) {
-        if (wrappers.size() == 0) {
-            return null;
-        }
-
-        Wrapper user = null;
-        int use = 0;
-
-        for (Wrapper wrapper : wrappers) {
-
-            int us = wrapper.getUsedMemoryAndWaitings() + memory;
-
-            if (user == null && wrapper.getChannel() != null && wrapper.getWrapperInfo() != null && wrapper.getWrapperInfo()
-                                                                                                           .getMemory() > us) {
-                user = wrapper;
-                use = wrapper.getUsedMemory() + memory;
-            }
-
-            if (wrapper.getWrapperInfo() != null && wrapper.getChannel() != null && wrapper.getWrapperInfo().getMemory() > us && us < use) {
-                user = wrapper;
-                use = us;
-            }
-        }
-
-        return user;
+    public CompletableFuture<ServerProcessMeta> startServer(ServerProcessMeta serverProcessMeta, Wrapper wrapper, UUID uuid) {
+        wrapper.startGameServer(serverProcessMeta);
+        return this.processStartListener.waitForServer(uuid)
+                                        .whenComplete((processMeta, throwable) -> {
+                                            if (throwable != null) {
+                                                this.logger.log(Level.WARNING, String.format("Error starting server: %n"), throwable);
+                                            } else {
+                                                this.logger.fine(String.format("Server %s started successfully",
+                                                                               processMeta.getServiceId().getServerId()));
+                                            }
+                                        });
     }
 
     public Collection<Wrapper> toWrapperInstances(Collection<String> wrappers) {
@@ -910,100 +826,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
             }
         }
         return wrappers1;
-    }
-
-    public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig, Properties serverProperties) {
-        startGameServer(serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        false,
-                        null,
-                        Collections.emptyList(),
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        serverProperties);
-    }
-
-    public void startGameServer(ServerGroup serverGroup,
-                                ServerConfig config,
-                                int memory,
-                                boolean priorityStop,
-                                String url,
-                                List<String> processParameters,
-                                boolean onlineMode,
-                                Collection<ServerInstallablePlugin> plugins,
-                                String customServerName,
-                                Properties serverProperties) {
-        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 &&
-            CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) {
-            return;
-        }
-
-        Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(serverGroup.getWrapper()));
-        if (wrapper == null) {
-            return;
-        }
-
-        if (serverGroup.getTemplates().size() == 0) {
-            return;
-        }
-        Map<Template, Integer> templateMap = getTemplateStatistics(wrapper, serverGroup);
-
-        Optional<Template> entry = templateMap.entrySet().stream()
-                                              .min(Map.Entry.comparingByValue())
-                                              .map(Map.Entry::getKey);
-
-        entry.ifPresent(template -> {
-            int startPort = getStartPort(wrapper);
-
-            ServerProcessMeta serverProcessMeta =
-                new ServerProcessMeta(newServiceId(serverGroup, wrapper, customServerName),
-                                      memory,
-                                      priorityStop,
-                                      url,
-                                      processParameters,
-                                      onlineMode,
-                                      plugins,
-                                      config,
-                                      customServerName,
-                                      startPort,
-                                      serverProperties,
-                                      template);
-            wrapper.startGameServer(serverProcessMeta);
-        });
-    }
-
-    public void startGameServer(ServerGroup serverGroup) {
-        startGameServer(serverGroup, new ServerConfig());
-    }
-
-    public void startGameServer(Wrapper wrapper, ServerGroup serverGroup) {
-        startGameServer(wrapper, serverGroup, new ServerConfig());
-    }
-
-    public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, Document properties) {
-        startGameServer(wrapper, serverGroup, new ServerConfig(false, properties, System.currentTimeMillis()));
-    }
-
-    public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, String extra, Document properties) {
-        startGameServer(wrapper, serverGroup, new ServerConfig(false, properties, System.currentTimeMillis()));
-    }
-
-    public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, boolean hideServer, Document properties) {
-        startGameServer(wrapper, serverGroup, new ServerConfig(hideServer, properties, System.currentTimeMillis()));
-    }
-
-    public void startGameServer(ServerGroup serverGroup, Document properties) {
-        startGameServer(serverGroup, new ServerConfig(false, properties, System.currentTimeMillis()));
-    }
-
-    public void startGameServer(ServerGroup serverGroup, String extra, Document properties) {
-        startGameServer(serverGroup, new ServerConfig(false, properties, System.currentTimeMillis()));
-    }
-
-    public void startGameServer(ServerGroup serverGroup, boolean hideServer, Document properties) {
-        startGameServer(serverGroup, new ServerConfig(hideServer, properties, System.currentTimeMillis()));
     }
 
     public long globalUsedMemory() {
@@ -1017,7 +839,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
                      .sum();
     }
 
-    private Map<Template, Integer> getTemplateStatistics(final Wrapper wrapper, final ServerGroup serverGroup) {
+    public Map<Template, Integer> getTemplateStatistics(final ServerGroup serverGroup) {
         Map<Template, Integer> templateMap = new HashMap<>();
 
 
@@ -1026,575 +848,15 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
                                          .map(ServerProcessMeta::getTemplate)
                                          .forEach(template -> templateMap.merge(template, 1, Integer::sum));
 
-        wrapper.getWaitingServices().values().stream()
-               .filter(quad -> quad.getServiceId().getGroup().equals(serverGroup.getName()))
-               .map(WaitingService::getTemplate)
-               .forEach(template -> templateMap.merge(template, 1, Integer::sum));
+        wrappers.entrySet().stream().flatMap(wrapper -> wrapper.getValue().getWaitingServices().values().stream())
+                .filter(quad -> quad.getServiceId().getGroup().equals(serverGroup.getName()))
+                .map(WaitingService::getTemplate)
+                .forEach(template -> templateMap.merge(template, 1, Integer::sum));
 
+        // Add 1 to include server groups that are not currently running.
         serverGroup.getTemplates()
                    .forEach(template -> templateMap.merge(template, 1, Integer::sum));
         return templateMap;
     }
 
-    public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, ServerConfig serverConfig, Properties serverProperties) {
-        startGameServer(wrapper,
-                        serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        false,
-                        null,
-                        Collections.emptyList(),
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        serverProperties);
-    }
-
-    public void startGameServer(Wrapper wrapper,
-                                ServerGroup serverGroup,
-                                ServerConfig config,
-                                int memory,
-                                boolean priorityStop,
-                                String url,
-                                List<String> processParameters,
-                                boolean onlineMode,
-                                Collection<ServerInstallablePlugin> plugins,
-                                String customServerName,
-                                Properties serverProperties) {
-        if (serverGroup.getMaxOnlineServers() != -1 &&
-            serverGroup.getMaxOnlineServers() != 0 &&
-            CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) {
-            return;
-        }
-
-        if (wrapper == null) {
-            return;
-        }
-
-        if (serverGroup.getTemplates().size() == 0) {
-            return;
-        }
-        Map<Template, Integer> templateMap = getTemplateStatistics(wrapper, serverGroup);
-
-        Optional<Template> entry = templateMap.entrySet().stream()
-                                              .min(Map.Entry.comparingByValue())
-                                              .map(Map.Entry::getKey);
-
-        entry.ifPresent(template -> {
-
-            int startPort = getStartPort(wrapper);
-
-            ServerProcessMeta serverProcessMeta =
-                new ServerProcessMeta(newServiceId(serverGroup, wrapper, customServerName),
-                                      memory,
-                                      priorityStop,
-                                      url,
-                                      processParameters,
-                                      onlineMode,
-                                      plugins,
-                                      config,
-                                      customServerName,
-                                      startPort,
-                                      serverProperties,
-                                      template);
-
-            wrapper.startGameServer(serverProcessMeta);
-        });
-    }
-
-    public void startGameServer(ServerGroup serverGroup, Document properties, List<String> processProperties, Properties serverProperties) {
-        startGameServer(serverGroup,
-                        new ServerConfig(false, properties, System.currentTimeMillis()),
-                        serverGroup.getMemory(),
-                        false,
-                        null,
-                        processProperties,
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        serverProperties);
-    }
-
-    public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, Document properties, Properties serverProperties) {
-        startGameServer(wrapper,
-                        serverGroup,
-                        new ServerConfig(false, properties, System.currentTimeMillis()),
-                        serverGroup.getMemory(),
-                        false,
-                        null,
-                        Collections.emptyList(),
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        serverProperties);
-    }
-
-    public void startGameServer(ServerGroup serverGroup,
-                                boolean hideServer,
-                                Document properties,
-                                List<String> processParameters,
-                                Properties serverProperties) {
-        startGameServer(serverGroup,
-                        new ServerConfig(hideServer, properties, System.currentTimeMillis()),
-                        serverGroup.getMemory(),
-                        false,
-                        null,
-                        processParameters,
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        serverProperties);
-    }
-
-    public void startGameServer(Wrapper wrapper,
-                                boolean hideServer,
-                                ServerGroup serverGroup,
-                                Document properties,
-                                Properties serverProperties) {
-        startGameServer(wrapper,
-                        serverGroup,
-                        new ServerConfig(hideServer, properties, System.currentTimeMillis()),
-                        serverGroup.getMemory(),
-                        false,
-                        null,
-                        Collections.emptyList(),
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        serverProperties);
-    }
-
-    public void startGameServer(ServerGroup serverGroup,
-                                ServerConfig serverConfig,
-                                List<String> processParameters,
-                                Properties serverProperties) {
-        startGameServer(serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        false,
-                        null,
-                        processParameters,
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        serverProperties);
-    }
-
-    public void startGameServer(Wrapper wrapper,
-                                ServerGroup serverGroup,
-                                ServerConfig serverConfig,
-                                List<String> processParameters,
-                                Properties serverProperties) {
-        startGameServer(wrapper,
-                        serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        false,
-                        null,
-                        processParameters,
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        serverProperties);
-    }
-
-    public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig, boolean priorityStop) {
-        startGameServer(serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        priorityStop,
-                        null,
-                        Collections.emptyList(),
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        new Properties());
-    }
-
-    public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, ServerConfig serverConfig, boolean priorityStop) {
-        startGameServer(wrapper,
-                        serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        priorityStop,
-                        null,
-                        Collections.emptyList(),
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        new Properties());
-    }
-
-    public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig, boolean priorityStop, List<String> processParameters) {
-        startGameServer(serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        priorityStop,
-                        null,
-                        processParameters,
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        new Properties());
-    }
-
-    public void startGameServer(Wrapper wrapper,
-                                ServerGroup serverGroup,
-                                ServerConfig serverConfig,
-                                boolean priorityStop,
-                                List<String> processParameters) {
-        startGameServer(wrapper,
-                        serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        priorityStop,
-                        null,
-                        processParameters,
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        new Properties());
-    }
-
-    public void startGameServer(ServerGroup serverGroup,
-                                ServerConfig serverConfig,
-                                boolean priorityStop,
-                                Collection<ServerInstallablePlugin> plugins,
-                                String customServerName,
-                                boolean onlinemode) {
-        startGameServer(serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        priorityStop,
-                        null,
-                        Collections.emptyList(),
-                        onlinemode,
-                        plugins,
-                        customServerName,
-                        new Properties());
-    }
-
-    public void startGameServer(Wrapper wrapper,
-                                ServerGroup serverGroup,
-                                ServerConfig serverConfig,
-                                boolean priorityStop,
-                                Collection<ServerInstallablePlugin> plugins,
-                                String customServerName,
-                                boolean onlineMode) {
-        startGameServer(wrapper,
-                        serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        priorityStop,
-                        null,
-                        Collections.emptyList(),
-                        onlineMode,
-                        plugins,
-                        customServerName,
-                        new Properties());
-    }
-
-    public void startGameServer(ServerGroup serverGroup, ServerConfig serverConfig) {
-        startGameServer(serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        false,
-                        null,
-                        Collections.emptyList(),
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        new Properties());
-    }
-
-    public void startGameServer(Wrapper wrapper, ServerGroup serverGroup, ServerConfig serverConfig) {
-        startGameServer(wrapper,
-                        serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        false,
-                        null,
-                        Collections.emptyList(),
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        new Properties());
-    }
-
-    public void startGameServer(ServerGroup serverGroup, Document document, boolean priorityStop) {
-        startGameServer(serverGroup,
-                        new ServerConfig(false, document, System.currentTimeMillis()),
-                        serverGroup.getMemory(),
-                        priorityStop,
-                        null,
-                        Collections.emptyList(),
-                        false,
-                        Collections.emptyList(),
-                        null,
-                        new Properties());
-    }
-
-    public void startGameServer(ServerGroup serverGroup,
-                                ServerConfig serverConfig,
-                                String url,
-                                Collection<ServerInstallablePlugin> plugins) {
-        startGameServer(serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        false,
-                        url,
-                        Collections.emptyList(),
-                        false,
-                        plugins,
-                        null,
-                        new Properties());
-    }
-
-    public void startGameServer(Wrapper wrapper,
-                                ServerGroup serverGroup,
-                                ServerConfig serverConfig,
-                                String url,
-                                Collection<ServerInstallablePlugin> plugins) {
-        startGameServer(wrapper,
-                        serverGroup,
-                        serverConfig,
-                        serverGroup.getMemory(),
-                        false,
-                        url,
-                        Collections.emptyList(),
-                        false,
-                        plugins,
-                        null,
-                        new Properties());
-    }
-
-    public void startGameServer(ServerGroup serverGroup,
-                                String serverId,
-                                ServerConfig config,
-                                int memory,
-                                boolean priorityStop,
-                                String url,
-                                List<String> processParameters,
-                                boolean onlineMode,
-                                Collection<ServerInstallablePlugin> plugins,
-                                String customServerName,
-                                Properties serverProperties) {
-        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance()
-                                                                                                         .getServersAndWaitings(serverGroup.getName())
-                                                                                                         .size() >= serverGroup.getMaxOnlineServers()) {
-            return;
-        }
-
-        Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(serverGroup.getWrapper()));
-        if (wrapper == null) {
-            return;
-        }
-
-        if (serverGroup.getTemplates().size() == 0) {
-            return;
-        }
-        Map<Template, Integer> templateMap = getTemplateStatistics(wrapper, serverGroup);
-        Optional<Template> entry = templateMap.entrySet().stream()
-                                              .min(Map.Entry.comparingByValue())
-                                              .map(Map.Entry::getKey);
-
-        entry.ifPresent(template -> {
-
-            int startPort = getStartPort(wrapper);
-
-            ServerProcessMeta serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, serverId),
-                                                                        memory,
-                                                                        priorityStop,
-                                                                        url,
-                                                                        processParameters,
-                                                                        onlineMode,
-                                                                        plugins,
-                                                                        config,
-                                                                        customServerName,
-                                                                        startPort,
-                                                                        serverProperties,
-                                                                        template);
-            wrapper.startGameServer(serverProcessMeta);
-        });
-    }
-
-    public void startGameServer(ServerGroup serverGroup,
-                                ServerConfig config,
-                                Template template,
-                                int memory,
-                                boolean priorityStop,
-                                String url,
-                                List<String> processParameters,
-                                boolean onlineMode,
-                                Collection<ServerInstallablePlugin> plugins,
-                                String customServerName,
-                                Properties serverProperties) {
-        if (serverGroup.getMaxOnlineServers() != -1 && serverGroup.getMaxOnlineServers() != 0 && CloudNet.getInstance()
-                                                                                                         .getServersAndWaitings(serverGroup.getName())
-                                                                                                         .size() >= serverGroup.getMaxOnlineServers()) {
-            return;
-        }
-
-        Wrapper wrapper = fetchPerformanceWrapper(memory, toWrapperInstances(serverGroup.getWrapper()));
-        if (wrapper == null) {
-            return;
-        }
-
-        if (serverGroup.getTemplates().size() == 0) {
-            return;
-        }
-        if (template == null) {
-            return;
-        }
-        int startPort = getStartPort(wrapper);
-
-        ServerProcessMeta serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, customServerName),
-                                                                    memory,
-                                                                    priorityStop,
-                                                                    url,
-                                                                    processParameters,
-                                                                    onlineMode,
-                                                                    plugins,
-                                                                    config,
-                                                                    customServerName,
-                                                                    startPort,
-                                                                    serverProperties,
-                                                                    template);
-
-        wrapper.startGameServer(serverProcessMeta);
-    }
-
-    public void startGameServer(Wrapper wrapper,
-                                ServerGroup serverGroup,
-                                ServerConfig config,
-                                Template template,
-                                int memory,
-                                boolean priorityStop,
-                                String url,
-                                List<String> processParameters,
-                                boolean onlineMode,
-                                Collection<ServerInstallablePlugin> plugins,
-                                String customServerName,
-                                Properties serverProperties) {
-        if (serverGroup.getMaxOnlineServers() != -1 &&
-            serverGroup.getMaxOnlineServers() != 0 &&
-            CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) {
-            return;
-        }
-
-        if (wrapper == null) {
-            return;
-        }
-        if (template == null) {
-            return;
-        }
-
-        if (serverGroup.getTemplates().size() == 0) {
-            return;
-        }
-        int startPort = getStartPort(wrapper);
-
-        ServerProcessMeta serverProcessMeta;
-        if (customServerName != null) {
-            serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, customServerName),
-                                                      memory,
-                                                      priorityStop,
-                                                      url,
-                                                      processParameters,
-                                                      onlineMode,
-                                                      plugins,
-                                                      config,
-                                                      customServerName,
-                                                      startPort,
-                                                      serverProperties,
-                                                      template);
-        } else {
-            serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper),
-                                                      memory,
-                                                      priorityStop,
-                                                      url,
-                                                      processParameters,
-                                                      onlineMode,
-                                                      plugins,
-                                                      config,
-                                                      customServerName,
-                                                      startPort,
-                                                      serverProperties,
-                                                      template);
-        }
-
-        wrapper.startGameServer(serverProcessMeta);
-    }
-
-    public void startGameServer(Wrapper wrapper,
-                                String serverId,
-                                ServerGroup serverGroup,
-                                ServerConfig config,
-                                int memory,
-                                boolean priorityStop,
-                                String url,
-                                List<String> processParameters,
-                                boolean onlineMode,
-                                Collection<ServerInstallablePlugin> plugins,
-                                String customServerName,
-                                Properties serverProperties) {
-        if (serverGroup.getMaxOnlineServers() != -1 &&
-            serverGroup.getMaxOnlineServers() != 0 &&
-            CloudNet.getInstance().getServersAndWaitings(serverGroup.getName()).size() >= serverGroup.getMaxOnlineServers()) {
-            return;
-        }
-
-        if (wrapper == null) {
-            return;
-        }
-
-        if (serverGroup.getTemplates().size() == 0) {
-            return;
-        }
-        Map<Template, Integer> templateMap = getTemplateStatistics(wrapper, serverGroup);
-
-        Optional<Template> entry = templateMap.entrySet().stream()
-                                              .min(Map.Entry.comparingByValue())
-                                              .map(Map.Entry::getKey);
-
-        entry.ifPresent(template -> {
-
-            int startPort = getStartPort(wrapper);
-
-            List<Template> templates = new ArrayList<>(serverGroup.getTemplates());
-            if (templates.size() == 0) {
-                return;
-            }
-
-            ServerProcessMeta serverProcessMeta = new ServerProcessMeta(newServiceId(serverGroup, wrapper, serverId),
-                                                                        memory,
-                                                                        priorityStop,
-                                                                        url,
-                                                                        processParameters,
-                                                                        onlineMode,
-                                                                        plugins,
-                                                                        config,
-                                                                        customServerName,
-                                                                        startPort,
-                                                                        serverProperties,
-                                                                        template);
-            wrapper.startGameServer(serverProcessMeta);
-        });
-    }
-
-    public ServiceId newServiceId(ServerGroup serverGroup, Wrapper wrapper, String serverId) {
-        int id = 1;
-        Collection<ServiceId> serviceIds = getServerServiceIdsAndWaitings(serverGroup.getName());
-        List<Integer> serverIds = serviceIds.stream()
-                                            .map(ServiceId::getId)
-                                            .collect(Collectors.toList());
-        while (serverIds.contains(id)) {
-            id++;
-        }
-        if (serverId == null) {
-            serverId = serverGroup.getName() + this.config.getFormatSplitter() + id;
-        }
-
-        return new ServiceId(serverGroup.getName(), id, UUID.randomUUID(), wrapper.getNetworkInfo().getId(), serverId);
-    }
 }

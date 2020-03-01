@@ -4,9 +4,9 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.event.EventListener;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.CoreModule;
 import de.dytanic.cloudnetcore.api.event.server.ServerAddEvent;
+import de.dytanic.cloudnetcore.process.CoreServerProcessBuilder;
 
 /**
  * Created by Tareko on 15.10.2017.
@@ -53,7 +53,7 @@ public class CloudCoreExample extends CoreModule { //extend the CoreModule class
 
         @Override
         public void onExecuteCommand(CommandSender sender, String[] args) {
-            CloudNet.getInstance().startGameServer(CloudNet.getInstance().getServerGroup("Lobby"));
+            CoreServerProcessBuilder.create("Lobby").startServer();
         }
     }
 }

@@ -47,23 +47,37 @@ public class CoreProxyProcessBuilder extends ProxyProcessBuilder {
      * @return a future that will be completed once the proxy is connected to the cloud network.
      */
     public CompletableFuture<ProxyProcessMeta> startProxy() {
-        final UUID uuid = UUID.randomUUID();
-        this.getProxyProcessData().getProperties().append("cloudnet:requestId", uuid);
-        Wrapper wrapper = CloudNet.getInstance().getWrappers().get(this.getWrapperName());
-        if (wrapper == null) {
-            wrapper = determineWrapper();
+        try {
+            final UUID uuid = UUID.randomUUID();
+            this.getProxyProcessData().getProperties().append("cloudnet:requestId", uuid);
+
+            final ProxyGroup proxyGroup = CloudNet.getInstance().getProxyGroup(this.getProxyGroupName());
+            if (this.getMemory() < proxyGroup.getMemory()) {
+                this.memory(proxyGroup.getMemory());
+            }
+
+            final String wrapperName = this.getWrapperName();
+            Wrapper wrapper = wrapperName == null ? null : CloudNet.getInstance().getWrappers().get(wrapperName);
+            if (wrapper == null) {
+                wrapper = this.determineWrapper(proxyGroup);
+                this.wrapperName(wrapper.getName());
+            }
+
+            int proxyPort = this.determineProxyPort(wrapper);
+
+            return CloudNet.getInstance().startProxy(new ProxyProcessMeta(this.getProxyProcessData(),
+                                                                          this.determineServiceId(wrapper),
+                                                                          proxyPort),
+                                                     wrapper,
+                                                     uuid);
+        } catch (Exception exception) {
+            final CompletableFuture<ProxyProcessMeta> future = new CompletableFuture<>();
+            future.completeExceptionally(exception);
+            return future;
         }
-
-        int proxyPort = determineProxyPort(wrapper);
-
-        return CloudNet.getInstance().startProxy(new ProxyProcessMeta(this.getProxyProcessData(),
-                                                                      this.determineServiceId(wrapper),
-                                                                      proxyPort),
-                                                 wrapper,
-                                                 uuid);
     }
 
-    private Wrapper determineWrapper() {
+    private Wrapper determineWrapper(final ProxyGroup proxyGroup) {
         if (CloudNet.getInstance().getWrappers().isEmpty()) {
             throw new IllegalStateException("Can't start proxy without connected wrappers!");
         }
@@ -73,11 +87,13 @@ public class CoreProxyProcessBuilder extends ProxyProcessBuilder {
         for (Wrapper wrapperInstance : CloudNet.getInstance().getWrappers().values()) {
             if (wrapperInstance.getChannel() != null &&
                 wrapperInstance.getWrapperInfo() != null) {
-                int futureMemory = wrapperInstance.getUsedMemoryAndWaitings() + this.getMemory();
-                int freeMemory = wrapperInstance.getMaxMemory() - futureMemory;
-                if (wrapperInstance.getMaxMemory() > futureMemory &&
-                    freeMemory > highestFreeMemory) {
-                    wrapper = wrapperInstance;
+                if (proxyGroup.getWrapper().contains(wrapperInstance.getName())) {
+                    int futureMemory = wrapperInstance.getUsedMemoryAndWaitings() + this.getMemory();
+                    int freeMemory = wrapperInstance.getMaxMemory() - futureMemory;
+                    if (wrapperInstance.getMaxMemory() > futureMemory &&
+                        freeMemory > highestFreeMemory) {
+                        wrapper = wrapperInstance;
+                    }
                 }
             }
         }

@@ -4,6 +4,7 @@ import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.process.CoreProxyProcessBuilder;
+import de.dytanic.cloudnetcore.process.CoreServerProcessBuilder;
 
 import java.util.Collection;
 
@@ -19,7 +20,7 @@ public class CloudStartupHandler implements ICloudHandler {
             if (servers.size() < serverGroup.getMinOnlineServers()
                 && (serverGroup.getMaxOnlineServers() == -1
                 || serverGroup.getMaxOnlineServers() > servers.size())) {
-                cloudNet.startGameServer(serverGroup);
+                CoreServerProcessBuilder.create(serverGroup.getName()).startServer();
             }
         }
 

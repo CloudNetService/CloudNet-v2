@@ -9,6 +9,7 @@ import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
 import de.dytanic.cloudnetcore.process.CoreProxyProcessBuilder;
+import de.dytanic.cloudnetcore.process.CoreServerProcessBuilder;
 import de.dytanic.cloudnetcore.setup.SetupProxyGroup;
 import de.dytanic.cloudnetcore.setup.SetupServerGroup;
 import de.dytanic.cloudnetcore.setup.SetupWrapper;
@@ -144,7 +145,8 @@ public final class CommandCreate extends Command {
     private static void startServers(final CommandSender sender, final String serverGroup, final int count) {
         if (CloudNet.getInstance().getServerGroups().containsKey(serverGroup)) {
             for (short i = 0; i < count; i++) {
-                CloudNet.getInstance().startGameServer(CloudNet.getInstance().getServerGroups().get(serverGroup));
+                CoreServerProcessBuilder.create(serverGroup)
+                                        .startServer();
                 NetworkUtils.sleepUninterruptedly(2000L);
             }
             sender.sendMessage("Trying to startup a game server...");
@@ -170,9 +172,9 @@ public final class CommandCreate extends Command {
     private static void startServersOnWrapper(final CommandSender sender, final String[] args) {
         if (CloudNet.getInstance().getServerGroups().containsKey(args[1]) && CloudNet.getInstance().getWrappers().containsKey(args[3])) {
             for (short i = 0; i < Integer.parseInt(args[2]); i++) {
-                CloudNet.getInstance().startGameServer(
-                    CloudNet.getInstance().getWrappers().get(args[3]),
-                    CloudNet.getInstance().getServerGroups().get(args[1]));
+                CoreServerProcessBuilder.create(args[1])
+                                        .wrapperName(args[3])
+                                        .startServer();
                 NetworkUtils.sleepUninterruptedly(2000L);
             }
             sender.sendMessage("Trying to startup a game server...");

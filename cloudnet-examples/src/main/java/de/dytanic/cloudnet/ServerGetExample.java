@@ -1,6 +1,6 @@
 package de.dytanic.cloudnet;
 
-import de.dytanic.cloudnet.api.builders.ServerProcessBuilder;
+import de.dytanic.cloudnet.api.builders.ApiServerProcessBuilder;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitServerAddEvent;
 import de.dytanic.cloudnet.bridge.event.proxied.ProxiedServerAddEvent;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
@@ -37,9 +37,9 @@ public class ServerGetExample implements Listener, org.bukkit.event.Listener {
     }
 
     public void start() {
-        ServerProcessBuilder.create("Lobby")
-                            .serverConfig(new ServerConfig(true, new Document("myUUID", "test"), System.currentTimeMillis()))
-                            .startServer();
+        ApiServerProcessBuilder.create("Lobby")
+                               .serverConfig(new ServerConfig(true, new Document("myUUID", "test"), System.currentTimeMillis()))
+                               .startServer();
     }
 
 }

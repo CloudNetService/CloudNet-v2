@@ -50,7 +50,6 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     private long startupTimeStamp = 0;
     private Path dir;
     private String path;
-    private String custom;
 
     public GameServer(ServerProcess serverProcess, ServerStage serverStage, ServerGroup serverGroup) {
         this.serverProcess = serverProcess;
@@ -71,7 +70,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
     @Override
     public int hashCode() {
-        return Objects.hash(serverProcess, serverStage, serverGroup, instance, serverInfo, startupTimeStamp, dir, path, custom);
+        return Objects.hash(serverProcess, serverStage, serverGroup, instance, serverInfo, startupTimeStamp, dir, path);
     }
 
     @Override
@@ -90,8 +89,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             Objects.equals(instance, that.instance) &&
             Objects.equals(serverInfo, that.serverInfo) &&
             Objects.equals(dir, that.dir) &&
-            Objects.equals(path, that.path) &&
-            Objects.equals(custom, that.custom);
+            Objects.equals(path, that.path);
     }
 
     @Override
@@ -105,7 +103,6 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             ", startupTimeStamp=" + startupTimeStamp +
             ", dir=" + dir +
             ", path='" + path + '\'' +
-            ", custom='" + custom + '\'' +
             "} " + super.toString();
     }
 
@@ -133,10 +130,6 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         return dir;
     }
 
-    public String getCustom() {
-        return custom;
-    }
-
     /**
      * Prepare the game server
      *
@@ -149,15 +142,15 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         serverProcess.setServerStage(ServerStage.DOWNLOAD);
         long startupTime = System.currentTimeMillis();
 
-        for (ServerInstallablePlugin url : serverProcess.getMeta().getDownloadablePlugins()) {
-            switch (url.getPluginResourceType()) {
+        for (ServerInstallablePlugin plugin : serverProcess.getMeta().getPlugins()) {
+            switch (plugin.getPluginResourceType()) {
                 case URL: {
-                    if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"))) {
+                    if (!Files.exists(Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"))) {
                         try {
-                            URLConnection urlConnection = new URL(url.getUrl()).openConnection();
+                            URLConnection urlConnection = new URL(plugin.getUrl()).openConnection();
                             urlConnection.setRequestProperty("User-Agent",
                                                              NetworkUtils.USER_AGENT);
-                            Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
+                            Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"));
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
@@ -165,8 +158,8 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                 }
                 break;
                 case MASTER: {
-                    if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar")) && CloudNetWrapper.getInstance()
-                                                                                                                        .getSimpledUser() != null) {
+                    if (!Files.exists(Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar")) && CloudNetWrapper.getInstance()
+                                                                                                                           .getSimpledUser() != null) {
                         try {
                             URLConnection urlConnection = new URL(
                                 String.format("http://%s:%d/cloudnet/api/v1/download",
@@ -178,11 +171,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                             urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
                             urlConnection.setRequestProperty("-Xcloudnet-token", simpledUser.getApiToken());
                             urlConnection.setRequestProperty("-Xmessage", "plugin");
-                            urlConnection.setRequestProperty("-Xvalue", url.getName());
+                            urlConnection.setRequestProperty("-Xvalue", plugin.getName());
 
                             urlConnection.connect();
-                            System.out.println("Downloading " + url.getName() + ".jar");
-                            Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
+                            System.out.println("Downloading " + plugin.getName() + ".jar");
+                            Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"));
                             System.out.println("Download was completed successfully!");
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -243,7 +236,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             }
         }
 
-        if (serverGroup.getTemplates().size() == 0 && serverProcess.getMeta().getUrl() == null) {
+        if (serverGroup.getTemplates().size() == 0 && serverProcess.getMeta().getTemplateUrl() == null) {
             return false;
         }
 
@@ -255,7 +248,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             return false;
         }
 
-        for (ServerInstallablePlugin plugin : serverProcess.getMeta().getDownloadablePlugins()) {
+        for (ServerInstallablePlugin plugin : serverProcess.getMeta().getPlugins()) {
             FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
         }
 
@@ -288,10 +281,8 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             FileUtility.insertData("files/bukkit.yml", path + "/bukkit.yml");
         }
 
-        if (!serverProcess.getMeta().isOnlineMode()) {
-            if (!Files.exists(Paths.get(path + "/spigot.yml"))) {
-                FileUtility.insertData("files/spigot.yml", path + "/spigot.yml");
-            }
+        if (!Files.exists(Paths.get(path + "/spigot.yml"))) {
+            FileUtility.insertData("files/spigot.yml", path + "/spigot.yml");
         }
 
         Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
@@ -329,16 +320,14 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                 }
             }
 
-            Enumeration<Object> enumeration = this.serverProcess.getMeta().getServerProperties().keys();
+            Enumeration<Object> enumeration = this.serverProcess.getMeta().getProperties().keys();
             while (enumeration.hasMoreElements()) {
                 String x = enumeration.nextElement().toString();
-                properties.setProperty(x, this.serverProcess.getMeta().getServerProperties().getProperty(x));
+                properties.setProperty(x, this.serverProcess.getMeta().getProperties().getProperty(x));
             }
 
             properties.setProperty("server-ip", CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP());
             properties.setProperty("server-port", serverProcess.getMeta().getPort() + NetworkUtils.EMPTY_STRING);
-            properties.setProperty("online-mode", serverProcess.getMeta().isOnlineMode() + NetworkUtils.EMPTY_STRING);
-            //properties.setProperty("server-name", serverProcess.getMeta().getServiceId().getServerId());
 
             motd = properties.getProperty("motd");
             try {
@@ -498,44 +487,6 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     }
 
     /**
-     * Start the java process
-     *
-     * @throws Exception
-     */
-    private void startProcess() throws Exception {
-        StringBuilder commandBuilder = new StringBuilder();
-        commandBuilder.append("java ");
-        for (String command : serverProcess.getMeta().getProcessParameters()) {
-            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
-        }
-
-        for (String command : serverProcess.getMeta().getTemplate().getProcessPreParameters()) {
-            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
-        }
-
-        commandBuilder.append("-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx")
-                      .append(serverProcess.getMeta().getMemory())
-                      .append("M -jar ");
-
-        switch (serverGroup.getServerType()) {
-            case CAULDRON:
-                commandBuilder.append("cauldron.jar nogui");
-                break;
-            case GLOWSTONE:
-                commandBuilder.append("glowstone.jar nogui");
-                break;
-            case CUSTOM:
-                commandBuilder.append("minecraft_server.jar nogui");
-                break;
-            default:
-                commandBuilder.append("spigot.jar nogui");
-                break;
-        }
-
-        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, new File(path));
-    }
-
-    /**
      * Download the template from master.
      *
      * @return return true if success the download, else  return false.
@@ -547,23 +498,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
         {
             Template template = this.serverGroup.getGlobalTemplate();
-            if (custom != null) {
-                MasterTemplateLoader templateLoader = new MasterTemplateLoader(
-                    String.format("http://%s:%d/cloudnet/api/v1/download",
-                                  CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
-                                  CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
-                    dir + "/template.zip",
-                    CloudNetWrapper.getInstance().getSimpledUser(),
-                    template,
-                    serverGroup.getName(),
-                    custom);
-                System.out.println("Downloading template for " +
-                                       this.serverProcess.getMeta().getServiceId().getGroup() + ' ' + template.getName());
-                templateLoader.load();
-                templateLoader.unZip(dir.toString());
-                FileUtility.copyFilesInDirectory(new File(dir.toString()), new File(path));
-                return true;
-            } else if (template.getBackend().equals(TemplateResource.URL) && template.getUrl() != null) {
+            if (template.getBackend().equals(TemplateResource.URL) && template.getUrl() != null) {
                 downloadURL(template);
                 return true;
             } else if (template.getBackend().equals(TemplateResource.MASTER) && CloudNetWrapper.getInstance().getSimpledUser() != null) {
@@ -574,15 +509,15 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             }
         }
 
-        if (serverProcess.getMeta().getUrl() != null) {
+        if (serverProcess.getMeta().getTemplateUrl() != null) {
             if (!Files.exists(Paths.get(path + "/plugins"))) {
                 Files.createDirectory(Paths.get(path + "/plugins"));
             }
 
-            TemplateLoader templateLoader = new TemplateLoader(serverProcess.getMeta().getUrl(), path + "/template.zip");
+            TemplateLoader templateLoader = new TemplateLoader(serverProcess.getMeta().getTemplateUrl(), path + "/template.zip");
             System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getServerId() + ' ' + serverProcess
                 .getMeta()
-                .getUrl());
+                .getTemplateUrl());
             templateLoader.load();
             templateLoader.unZip(path);
         } else {
@@ -612,8 +547,95 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         return true;
     }
 
+    /**
+     * Start the java process
+     *
+     * @throws Exception
+     */
+    private void startProcess() throws Exception {
+        StringBuilder commandBuilder = new StringBuilder();
+        commandBuilder.append("java ");
+        for (String command : serverProcess.getMeta().getJavaProcessParameters()) {
+            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
+        }
+
+        for (String command : serverProcess.getMeta().getTemplate().getProcessPreParameters()) {
+            commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
+        }
+
+        commandBuilder.append("-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx")
+                      .append(serverProcess.getMeta().getMemory())
+                      .append("M -jar ");
+
+        switch (serverGroup.getServerType()) {
+            case CAULDRON:
+                commandBuilder.append("cauldron.jar nogui");
+                break;
+            case GLOWSTONE:
+                commandBuilder.append("glowstone.jar nogui");
+                break;
+            case CUSTOM:
+                commandBuilder.append("minecraft_server.jar nogui");
+                break;
+            default:
+                commandBuilder.append("spigot.jar nogui");
+                break;
+        }
+
+        this.instance = Runtime.getRuntime().exec(commandBuilder.toString().split(NetworkUtils.SPACE_STRING), null, new File(path));
+    }
+
     public ServerProcess getServerProcess() {
         return serverProcess;
+    }
+
+    /**
+     * Download the template from template information's.
+     *
+     * @param template The template with the information's.
+     *
+     * @throws IOException Throws is something wrong
+     */
+    private void downloadTemplate(Template template) throws IOException {
+        String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
+        if (!Files.exists(Paths.get(groupTemplates))) {
+            Files.createDirectories(Paths.get(groupTemplates));
+            MasterTemplateLoader templateLoader = new MasterTemplateLoader(
+                String.format("http://%s:%d/cloudnet/api/v1/download",
+                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                              CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
+                groupTemplates + "/template.zip",
+                CloudNetWrapper.getInstance().getSimpledUser(),
+                template,
+                serverGroup.getName());
+            System.out.println("Downloading template for " + this.serverProcess.getMeta()
+                                                                               .getServiceId()
+                                                                               .getGroup() + ' ' + template.getName());
+            templateLoader.load();
+            templateLoader.unZip(groupTemplates);
+        }
+        FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
+    }
+
+    /**
+     * Download the template from url.
+     *
+     * @param template The information about the template.
+     *
+     * @throws IOException Throws is something wrong.
+     */
+    private void downloadURL(Template template) throws IOException {
+        String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
+        if (!Files.exists(Paths.get(groupTemplates))) {
+            Files.createDirectories(Paths.get(groupTemplates));
+            TemplateLoader templateLoader = new TemplateLoader(template.getUrl(), groupTemplates + "/template.zip");
+            System.out.println("Downloading template for " + this.serverProcess.getMeta()
+                                                                               .getServiceId()
+                                                                               .getGroup() + ' ' + template.getName());
+            templateLoader.load();
+            templateLoader.unZip(groupTemplates);
+        }
+        FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
     }
 
     /**
@@ -636,15 +658,14 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             }
         }
 
-        if (custom != null || (template != null && template.getBackend().equals(TemplateResource.MASTER))) {
+        if (template != null && template.getBackend().equals(TemplateResource.MASTER)) {
             MasterTemplateDeploy masterTemplateDeploy =
                 new MasterTemplateDeploy(path,
                                          new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
                                                                 CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
                                          CloudNetWrapper.getInstance().getSimpledUser(),
                                          template,
-                                         serverGroup.getName(),
-                                         custom);
+                                         serverGroup.getName());
             try {
                 masterTemplateDeploy.deploy();
             } catch (Exception e) {
@@ -670,56 +691,6 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
             System.out.println("Template " + template.getName() + " was copied!");
         }
-    }
-
-    /**
-     * Download the template from url.
-     *
-     * @param template The information about the template.
-     *
-     * @throws IOException Throws is something wrong.
-     */
-    private void downloadURL(Template template) throws IOException {
-        String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
-        if (!Files.exists(Paths.get(groupTemplates))) {
-            Files.createDirectories(Paths.get(groupTemplates));
-            TemplateLoader templateLoader = new TemplateLoader(template.getUrl(), groupTemplates + "/template.zip");
-            System.out.println("Downloading template for " + this.serverProcess.getMeta()
-                                                                               .getServiceId()
-                                                                               .getGroup() + ' ' + template.getName());
-            templateLoader.load();
-            templateLoader.unZip(groupTemplates);
-        }
-        FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
-    }
-
-    /**
-     * Download the template from template information's.
-     *
-     * @param template The template with the information's.
-     *
-     * @throws IOException Throws is something wrong
-     */
-    private void downloadTemplate(Template template) throws IOException {
-        String groupTemplates = "local/cache/web_templates/" + serverGroup.getName() + NetworkUtils.SLASH_STRING + template.getName();
-        if (!Files.exists(Paths.get(groupTemplates))) {
-            Files.createDirectories(Paths.get(groupTemplates));
-            MasterTemplateLoader templateLoader = new MasterTemplateLoader(
-                String.format("http://%s:%d/cloudnet/api/v1/download",
-                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
-                              CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
-                groupTemplates + "/template.zip",
-                CloudNetWrapper.getInstance().getSimpledUser(),
-                template,
-                serverGroup.getName(),
-                custom);
-            System.out.println("Downloading template for " + this.serverProcess.getMeta()
-                                                                               .getServiceId()
-                                                                               .getGroup() + ' ' + template.getName());
-            templateLoader.load();
-            templateLoader.unZip(groupTemplates);
-        }
-        FileUtility.copyFilesInDirectory(new File(groupTemplates), new File(path));
     }
 
     /**

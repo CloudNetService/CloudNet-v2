@@ -200,8 +200,8 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                 groupTemplates + "/template.zip",
                                 CloudNetWrapper.getInstance().getSimpledUser(),
                                 template,
-                                proxyGroup.getName(),
-                                null);
+                                proxyGroup.getName()
+                            );
                             System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getGroup());
                             templateLoader.load();
                             templateLoader.unZip(groupTemplates);
@@ -265,8 +265,8 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                             groupTemplates + "/template.zip",
                             CloudNetWrapper.getInstance().getSimpledUser(),
                             template,
-                            proxyGroup.getName(),
-                            null);
+                            proxyGroup.getName()
+                        );
                         System.out.println("Downloading template for " + this.proxyProcessMeta.getServiceId().getGroup());
                         templateLoader.load();
                         templateLoader.unZip(groupTemplates);

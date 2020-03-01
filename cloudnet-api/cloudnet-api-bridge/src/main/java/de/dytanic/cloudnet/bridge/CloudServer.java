@@ -2,7 +2,7 @@ package de.dytanic.cloudnet.bridge;
 
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.CloudService;
-import de.dytanic.cloudnet.api.builders.ServerProcessBuilder;
+import de.dytanic.cloudnet.api.builders.ApiServerProcessBuilder;
 import de.dytanic.cloudnet.api.handlers.NetworkHandler;
 import de.dytanic.cloudnet.api.network.packet.out.PacketOutUpdateServerInfo;
 import de.dytanic.cloudnet.bridge.event.bukkit.*;
@@ -164,9 +164,9 @@ public class CloudServer implements CloudService, NetworkHandler {
         serverState = ServerState.INGAME;
 
         if (allowAutoStart) {
-            ServerProcessBuilder.create(CloudAPI.getInstance().getGroup())
-                                .template(template)
-                                .startServer();
+            ApiServerProcessBuilder.create(CloudAPI.getInstance().getGroup())
+                                   .template(template)
+                                   .startServer();
             allowAutoStart = false;
 
             Bukkit.getScheduler().runTaskLater(bukkitBootstrap, () -> allowAutoStart = true, 6000);
