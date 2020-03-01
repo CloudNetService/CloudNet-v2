@@ -60,9 +60,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     private OptionSet optionSet;
     private ServerProcessQueue serverProcessQueue;
     private SimpledUser simpledUser;
-    //Sytem meta
     private int maxMemory;
-    private boolean canDeployed = false;
 
     public CloudNetWrapper(OptionSet optionSet, CloudNetWrapperConfig cloudNetWrapperConfig, CloudLogger cloudNetLogging) throws Exception {
 
@@ -110,7 +108,6 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         if (PaperBuilder.getExec() != null) {
             PaperBuilder.getExec().destroyForcibly();
         }
-        canDeployed = false;
         if (serverProcessQueue != null) {
             serverProcessQueue.setRunning(false);
             serverProcessQueue.getProxies().clear();
@@ -132,7 +129,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         FileUtility.deleteDirectory(new File("temp"));
         Files.createDirectories(Paths.get("temp"));
 
-        while (networkConnection.getChannel() == null) {
+        while (networkConnection.getChannel() == null && RUNNING) {
             networkConnection.tryConnect(new NetDispatcher(networkConnection, false), auth);
             if (networkConnection.getChannel() != null) {
                 networkConnection.sendPacketSynchronized(new PacketOutUpdateWrapperInfo());
@@ -142,9 +139,8 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             Thread.sleep(2000);
         }
 
-        canDeployed = true;
         if (serverProcessQueue != null) {
-            serverProcessQueue.setRunning(true);
+            serverProcessQueue.setRunning(RUNNING);
         }
 
     }
@@ -230,7 +226,6 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             }
         });
 
-        canDeployed = true;
         RUNNING = true;
 
         return true;
@@ -264,22 +259,26 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
     @Override
     public boolean shutdown() {
+        if (!RUNNING) {
+            return false;
+        } else {
+            RUNNING = false;
 
+        }
+        System.out.println("Wrapper shutdown...");
         if (SpigotBuilder.getExec() != null) {
             SpigotBuilder.getExec().destroyForcibly();
         }
         if (PaperBuilder.getExec() != null) {
             PaperBuilder.getExec().destroyForcibly();
         }
-        if (!RUNNING) {
-            return false;
-        }
-        System.out.println("Wrapper shutdown...");
 
         getExecutor().shutdownNow();
 
         if (serverProcessQueue != null) {
             serverProcessQueue.setRunning(false);
+            serverProcessQueue.getProxies().clear();
+            serverProcessQueue.getServers().clear();
         }
 
         for (GameServer gameServer : servers.values()) {
@@ -305,7 +304,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         System.out.println(" |_  __  _|    | |    | | | | | (_| | | | | | |   <  \\__ \\");
         System.out.println("   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/");
         System.out.println();
-        RUNNING = false;
+
         this.cloudNetLogging.shutdownAll();
         try {
             getExecutor().awaitTermination(10, TimeUnit.SECONDS);
@@ -397,7 +396,4 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         return this.proxyGroups;
     }
 
-    public boolean isCanDeployed() {
-        return this.canDeployed;
-    }
 }

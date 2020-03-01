@@ -14,6 +14,7 @@ import io.netty.channel.*;
 
 import java.net.InetSocketAddress;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 22.07.2017.
@@ -95,7 +96,11 @@ public final class NetworkConnection implements PacketSender {
             channel.close();
         }
 
-        eventLoopGroup.shutdownGracefully();
+        try {
+            eventLoopGroup.shutdownGracefully().await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
@@ -200,7 +205,7 @@ public final class NetworkConnection implements PacketSender {
                                                  .group(eventLoopGroup)
                                                  .handler(new ChannelInitializer<Channel>() {
                                                      @Override
-                                                     protected void initChannel(Channel channel) throws Exception {
+                                                     protected void initChannel(Channel channel) {
                                                          NetworkUtils.initChannel(channel).pipeline().addLast(channelInboundHandler);
                                                      }
                                                  })

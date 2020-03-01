@@ -102,17 +102,11 @@ public class CloudBootstrap {
 
             String commandLine;
             final String prompt = user + '@' + cloudNetWrapper.getWrapperConfig().getWrapperId() + " $ ";
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    while ((commandLine = cloudNetLogging.readLine(prompt)) != null) {
+            while ((commandLine = cloudNetLogging.readLine(prompt)) != null && CloudNetWrapper.RUNNING) {
 
-                        try {
-                            if (!cloudNetWrapper.getCommandManager().dispatchCommand(commandLine)) {
-                                System.out.println("Command not found. Use the command \"help\" for further information!");
-                            }
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                try {
+                    if (!cloudNetWrapper.getCommandManager().dispatchCommand(commandLine)) {
+                        System.out.println("Command not found. Use the command \"help\" for further information!");
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

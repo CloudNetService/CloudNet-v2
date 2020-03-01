@@ -107,10 +107,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         this.logger.getReader().addCompleter(commandManager);
     }
 
-    public static boolean isRUNNING() {
-        return RUNNING;
-    }
-
     public static CloudLogger getLogger() {
         return instance.logger;
     }

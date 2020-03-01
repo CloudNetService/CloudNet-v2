@@ -15,7 +15,7 @@ public final class PacketOutUpdateWrapperInfo extends Packet {
                            new WrapperInfo(CloudNetWrapper.getInstance().getWrapperConfig().getWrapperId(),
                                            NetworkUtils.getHostName(),
                                            NetworkUtils.class.getPackage().getImplementationVersion(),
-                                           CloudNetWrapper.RUNNING,
+                                           true,
                                            Runtime.getRuntime().availableProcessors(),
                                            CloudNetWrapper.getInstance().getWrapperConfig().getStartPort(),
                                            CloudNetWrapper.getInstance().getWrapperConfig().getProcessQueueSize(),
