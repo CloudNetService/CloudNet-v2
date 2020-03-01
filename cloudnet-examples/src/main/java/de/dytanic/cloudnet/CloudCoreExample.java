@@ -37,7 +37,7 @@ public class CloudCoreExample extends CoreModule { //extend the CoreModule class
 
     }
 
-    private class EventListenerExample implements EventListener<ServerAddEvent> {
+    private static class EventListenerExample implements EventListener<ServerAddEvent> {
 
         @Override
         public void onCall(ServerAddEvent event) {
@@ -45,7 +45,7 @@ public class CloudCoreExample extends CoreModule { //extend the CoreModule class
         }
     }
 
-    private class CommandTest extends Command { //Creates a command with the specified constructor
+    private static class CommandTest extends Command { //Creates a command with the specified constructor
 
         public CommandTest() {
             super("test", "cloudnet.command.test", "te");

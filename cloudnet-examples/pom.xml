@@ -36,7 +36,7 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-bootstrap</artifactId>
-            <version>1.8-1.12</version>
+            <version>1.15-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
