@@ -113,7 +113,7 @@ public class CloudBootstrap {
                 }
             }
         } else {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted() && CloudNetWrapper.RUNNING) {
                 NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
             }
         }

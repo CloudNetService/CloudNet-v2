@@ -127,7 +127,8 @@ public class CloudLogger extends Logger {
         }
         try {
             this.reader.killLine();
-            this.reader.close();
+            this.reader.flush();
+            System.out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

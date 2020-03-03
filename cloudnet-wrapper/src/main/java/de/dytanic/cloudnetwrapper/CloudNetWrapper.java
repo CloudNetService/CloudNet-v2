@@ -152,7 +152,9 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     @Override
     public boolean bootstrap() throws Exception {
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHook(this)));
+        final Thread hook = new Thread(new ShutdownHook(this));
+        hook.setDaemon(true);
+        Runtime.getRuntime().addShutdownHook(hook);
         if (!optionSet.has("disable-autoupdate")) {
             checkForUpdates();
         }
@@ -263,17 +265,17 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             return false;
         } else {
             RUNNING = false;
-
         }
         System.out.println("Wrapper shutdown...");
+
+        getExecutor().shutdownNow();
+
         if (SpigotBuilder.getExec() != null) {
             SpigotBuilder.getExec().destroyForcibly();
         }
         if (PaperBuilder.getExec() != null) {
             PaperBuilder.getExec().destroyForcibly();
         }
-
-        getExecutor().shutdownNow();
 
         if (serverProcessQueue != null) {
             serverProcessQueue.setRunning(false);
@@ -295,23 +297,19 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
         FileUtility.deleteDirectory(new File("temp"));
 
-        System.out.println();
+        this.cloudNetLogging.info("    _  _     _______   _                       _          ");
+        this.cloudNetLogging.info("  _| || |_  |__   __| | |                     | |         ");
+        this.cloudNetLogging.info(" |_  __  _|    | |    | |__     __ _   _ __   | | __  ___ ");
+        this.cloudNetLogging.info("  _| || |_     | |    | '_ \\   / _` | | '_ \\  | |/ / / __|");
+        this.cloudNetLogging.info(" |_  __  _|    | |    | | | | | (_| | | | | | |   <  \\__ \\");
+        this.cloudNetLogging.info("   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/");
 
-        System.out.println("    _  _     _______   _                       _          ");
-        System.out.println("  _| || |_  |__   __| | |                     | |         ");
-        System.out.println(" |_  __  _|    | |    | |__     __ _   _ __   | | __  ___ ");
-        System.out.println("  _| || |_     | |    | '_ \\   / _` | | '_ \\  | |/ / / __|");
-        System.out.println(" |_  __  _|    | |    | | | | | (_| | | | | | |   <  \\__ \\");
-        System.out.println("   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/");
-        System.out.println();
-
-        this.cloudNetLogging.shutdownAll();
         try {
             getExecutor().awaitTermination(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.exit(0);
+        this.cloudNetLogging.shutdownAll();
         return true;
     }
 
