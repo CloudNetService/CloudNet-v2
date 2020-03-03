@@ -62,7 +62,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     private SimpledUser simpledUser;
     private int maxMemory;
 
-    public CloudNetWrapper(OptionSet optionSet, CloudNetWrapperConfig cloudNetWrapperConfig, CloudLogger cloudNetLogging) throws Exception {
+    public CloudNetWrapper(OptionSet optionSet, CloudNetWrapperConfig cloudNetWrapperConfig, CloudLogger cloudNetLogging) {
 
         if (instance == null) {
             instance = this;
@@ -102,25 +102,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     @Override
     public void onShutdownCentral() throws Exception {
 
-        if (SpigotBuilder.getExec() != null) {
-            SpigotBuilder.getExec().destroyForcibly();
-        }
-        if (PaperBuilder.getExec() != null) {
-            PaperBuilder.getExec().destroyForcibly();
-        }
-        if (serverProcessQueue != null) {
-            serverProcessQueue.setRunning(false);
-            serverProcessQueue.getProxies().clear();
-            serverProcessQueue.getServers().clear();
-        }
-
-        for (GameServer gameServer : servers.values()) {
-            gameServer.shutdown();
-        }
-
-        for (BungeeCord gameServer : proxies.values()) {
-            gameServer.shutdown();
-        }
+        shutdownProcesses();
 
         proxyGroups.clear();
         serverGroups.clear();
@@ -143,6 +125,28 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             serverProcessQueue.setRunning(RUNNING);
         }
 
+    }
+
+    private void shutdownProcesses() {
+        if (SpigotBuilder.getExec() != null) {
+            SpigotBuilder.getExec().destroyForcibly();
+        }
+        if (PaperBuilder.getExec() != null) {
+            PaperBuilder.getExec().destroyForcibly();
+        }
+        if (serverProcessQueue != null) {
+            serverProcessQueue.setRunning(false);
+            serverProcessQueue.getProxies().clear();
+            serverProcessQueue.getServers().clear();
+        }
+
+        for (GameServer gameServer : servers.values()) {
+            gameServer.shutdown();
+        }
+
+        for (BungeeCord gameServer : proxies.values()) {
+            gameServer.shutdown();
+        }
     }
 
     public static CloudNetWrapper getInstance() {
@@ -270,26 +274,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
         getExecutor().shutdownNow();
 
-        if (SpigotBuilder.getExec() != null) {
-            SpigotBuilder.getExec().destroyForcibly();
-        }
-        if (PaperBuilder.getExec() != null) {
-            PaperBuilder.getExec().destroyForcibly();
-        }
-
-        if (serverProcessQueue != null) {
-            serverProcessQueue.setRunning(false);
-            serverProcessQueue.getProxies().clear();
-            serverProcessQueue.getServers().clear();
-        }
-
-        for (GameServer gameServer : servers.values()) {
-            gameServer.shutdown();
-        }
-
-        for (BungeeCord bungeeCord : proxies.values()) {
-            bungeeCord.shutdown();
-        }
+        shutdownProcesses();
 
         if (networkConnection.getChannel() != null) {
             networkConnection.tryDisconnect();
@@ -356,10 +341,6 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
     public ServerProcessQueue getServerProcessQueue() {
         return this.serverProcessQueue;
-    }
-
-    public void setServerProcessQueue(ServerProcessQueue serverProcessQueue) {
-        this.serverProcessQueue = serverProcessQueue;
     }
 
     public SimpledUser getSimpledUser() {
