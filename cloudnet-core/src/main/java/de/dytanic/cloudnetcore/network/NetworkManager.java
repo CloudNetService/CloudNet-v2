@@ -107,13 +107,60 @@ public final class NetworkManager {
         return cloudNetwork;
     }
 
-    public NetworkManager sendAll(Packet packet) {
-        sendAll(packet, new ChannelFilter() {
-            @Override
-            public boolean accept(INetworkComponent networkComponent) {
+    public void handlePlayerLogout(UUID uniqueId, ProxyServer proxyServer) {
+        CloudNet.getInstance().getEventManager().callEvent(new LogoutEventUnique(uniqueId));
+        String name = CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().get(uniqueId);
+        System.out.println("Player [" + name + NetworkUtils.SLASH_STRING + uniqueId + "/] is disconnected on " + proxyServer.getServerId());
+
+        this.onlinePlayers.remove(uniqueId);
+
+        this.sendAllUpdate(new PacketOutLogoutPlayer(uniqueId));
+        this.sendAll(new PacketOutUpdateOnlineCount(getOnlineCount()));
+    }
+
+    public void sendAllUpdate(Packet packet) {
+        sendAll(packet, networkComponent -> {
+            if (networkComponent instanceof ProxyServer) {
                 return true;
             }
+
+            if (networkComponent instanceof MinecraftServer) {
+                final MinecraftServer minecraftServer = (MinecraftServer) networkComponent;
+                if (minecraftServer.getGroupMode().equals(ServerGroupMode.LOBBY) ||
+                    minecraftServer.getGroupMode().equals(ServerGroupMode.STATIC_LOBBY)) {
+                    return true;
+                }
+
+                ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(minecraftServer.getServiceId().getGroup());
+                if (serverGroup != null) {
+                    if (serverGroup.getAdvancedServerConfig().isNotifyProxyUpdates() &&
+                        (packet instanceof PacketOutUpdateProxyInfo ||
+                            packet instanceof PacketOutProxyAdd ||
+                            packet instanceof PacketOutProxyRemove)) {
+                        return true;
+                    }
+
+                    if (serverGroup.getAdvancedServerConfig().isNotifyServerUpdates() &&
+                        (packet instanceof PacketOutUpdateServerInfo ||
+                            packet instanceof PacketOutServerAdd ||
+                            packet instanceof PacketOutServerRemove)) {
+                        return true;
+                    }
+
+                    return serverGroup.getAdvancedServerConfig().isNotifyPlayerUpdatesFromNoCurrentPlayer() &&
+                        (packet instanceof PacketOutUpdatePlayer ||
+                            packet instanceof PacketOutLoginPlayer ||
+                            packet instanceof PacketOutLogoutPlayer ||
+                            packet instanceof PacketOutUpdateOfflinePlayer);
+
+                }
+            }
+            return false;
         });
+    }
+
+    public NetworkManager sendAll(Packet packet) {
+        sendAll(packet, networkComponent -> true);
         return this;
     }
 
@@ -140,28 +187,11 @@ public final class NetworkManager {
 
     }
 
-    public NetworkManager sendAll(Packet packet, ChannelFilter filter) {
-        NetworkUtils.getExecutor().submit(() -> {
-            for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
-                if (wrapper.getChannel() != null && filter.accept(wrapper)) {
-                    wrapper.sendPacket(packet);
-                }
-
-                for (ProxyServer proxyServer : wrapper.getProxies().values()) {
-                    if (proxyServer.getChannel() != null && filter.accept(proxyServer)) {
-                        proxyServer.sendPacket(packet);
-                    }
-                }
-
-                for (MinecraftServer minecraftServer : wrapper.getServers().values()) {
-                    if (minecraftServer.getChannel() != null && filter.accept(minecraftServer)) {
-                        minecraftServer.sendPacket(packet);
-                    }
-                }
-
-            }
-        });
-        return this;
+    public int getOnlineCount() {
+        return CloudNet.getInstance().getProxys().values()
+                       .stream()
+                       .mapToInt(proxy -> proxy.getProxyInfo().getOnlineCount())
+                       .sum();
     }
 
     public void updateAll0() {
@@ -242,65 +272,28 @@ public final class NetworkManager {
         StatisticManager.getInstance().highestPlayerOnlineCount(getOnlineCount());
     }
 
-    public void sendAllUpdate(Packet packet) {
-        sendAll(packet, new ChannelFilter() {
-            @Override
-            public boolean accept(INetworkComponent networkComponent) {
-                if (networkComponent instanceof ProxyServer) {
-                    return true;
+    public NetworkManager sendAll(Packet packet, ChannelFilter filter) {
+        NetworkUtils.getExecutor().submit(() -> {
+            for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
+                if (wrapper.getChannel() != null && filter.accept(wrapper)) {
+                    wrapper.sendPacket(packet);
                 }
 
-                if (networkComponent instanceof MinecraftServer) {
-                    if (((MinecraftServer) networkComponent).getGroupMode()
-                                                            .equals(ServerGroupMode.LOBBY) || ((MinecraftServer) networkComponent).getGroupMode()
-                                                                                                                                  .equals(
-                                                                                                                                      ServerGroupMode.STATIC_LOBBY)) {
-                        return true;
-                    }
-
-                    ServerGroup serverGroup = CloudNet.getInstance()
-                                                      .getServerGroups()
-                                                      .get(((MinecraftServer) networkComponent).getServiceId().getGroup());
-                    if (serverGroup != null) {
-                        if (serverGroup.getAdvancedServerConfig()
-                                       .isNotifyProxyUpdates() && (packet instanceof PacketOutUpdateProxyInfo || packet instanceof PacketOutProxyAdd || packet instanceof PacketOutProxyRemove)) {
-                            return true;
-                        }
-
-                        if (serverGroup.getAdvancedServerConfig()
-                                       .isNotifyServerUpdates() && (packet instanceof PacketOutUpdateServerInfo || packet instanceof PacketOutServerAdd || packet instanceof PacketOutServerRemove)) {
-                            return true;
-                        }
-
-                        return serverGroup.getAdvancedServerConfig()
-                                          .isNotifyPlayerUpdatesFromNoCurrentPlayer() && (packet instanceof PacketOutUpdatePlayer || packet instanceof PacketOutLoginPlayer || packet instanceof PacketOutLogoutPlayer || packet instanceof PacketOutUpdateOfflinePlayer);
-
+                for (ProxyServer proxyServer : wrapper.getProxies().values()) {
+                    if (proxyServer.getChannel() != null && filter.accept(proxyServer)) {
+                        proxyServer.sendPacket(packet);
                     }
                 }
-                return false;
+
+                for (MinecraftServer minecraftServer : wrapper.getServers().values()) {
+                    if (minecraftServer.getChannel() != null && filter.accept(minecraftServer)) {
+                        minecraftServer.sendPacket(packet);
+                    }
+                }
+
             }
         });
-    }
-
-    public int getOnlineCount() {
-        return CloudNet.getInstance().getProxys().values()
-                       .stream()
-                       .mapToInt(proxy -> proxy.getProxyInfo().getOnlineCount())
-                       .sum();
-    }
-
-    public void handlePlayerLogout(UUID uniqueId, ProxyServer proxyServer) {
-        CloudNet.getInstance().getEventManager().callEvent(new LogoutEventUnique(uniqueId));
-        String name = CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().get(uniqueId);
-        System.out.println("Player [" + name + NetworkUtils.SLASH_STRING + uniqueId + "/] is disconnected on " + proxyServer.getServerId());
-
-        try {
-            this.onlinePlayers.remove(uniqueId);
-        } catch (Exception exception) {
-        }
-
-        this.sendAllUpdate(new PacketOutLogoutPlayer(uniqueId));
-        this.sendAll(new PacketOutUpdateOnlineCount(getOnlineCount()));
+        return this;
     }
 
     public void handleServerAdd(MinecraftServer minecraftServer) {
@@ -352,19 +345,15 @@ public final class NetworkManager {
         this.sendToLobbys(new PacketOutProxyAdd(proxyServer.getProxyInfo()));
         CloudNet.getInstance().getEventManager().callEvent(new ProxyAddEvent(proxyServer));
         StatisticManager.getInstance().addStartedProxys();
-        StatisticManager.getInstance().highestServerOnlineCount(CloudNet.getInstance().getServers().size() + CloudNet.getInstance()
-                                                                                                                     .getProxys()
-                                                                                                                     .size());
+        StatisticManager.getInstance().highestServerOnlineCount(CloudNet.getInstance().getServers().size() +
+                                                                    CloudNet.getInstance().getProxys().size());
     }
 
     public NetworkManager sendToLobbys(Packet packet) {
-        sendAll(packet, new ChannelFilter() {
-            @Override
-            public boolean accept(INetworkComponent networkComponent) {
-                return networkComponent instanceof MinecraftServer && (((MinecraftServer) networkComponent).getGroupMode().equals(
-                    ServerGroupMode.LOBBY) || ((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY));
-            }
-        });
+        sendAll(packet,
+                networkComponent -> networkComponent instanceof MinecraftServer &&
+                    (((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.LOBBY) ||
+                        ((MinecraftServer) networkComponent).getGroupMode().equals(ServerGroupMode.STATIC_LOBBY)));
         return this;
     }
 
@@ -379,9 +368,11 @@ public final class NetworkManager {
 
         CloudPlayer cloudPlayer = getPlayer(playerCommandExecutor.getName());
         if (cloudPlayer != null) {
-            CloudNet.getLogger()
-                    .info("Player [" + playerCommandExecutor.getName() + "] executed command [" + playerCommandExecutor.getCommandLine() + "] on [" + cloudPlayer
-                        .getProxy() + NetworkUtils.SLASH_STRING + cloudPlayer.getServer() + ']');
+            CloudNet.getLogger().info(String.format("Player [%s] executed command [%s] on [%s/%s]",
+                                                    playerCommandExecutor.getName(),
+                                                    playerCommandExecutor.getCommandLine(),
+                                                    cloudPlayer.getProxy(),
+                                                    cloudPlayer.getServer()));
             CloudNet.getInstance().getEventManager().callEvent(new CommandExecutionEvent(playerCommandExecutor));
             StatisticManager.getInstance().playerCommandExecutions();
         }
@@ -425,12 +416,7 @@ public final class NetworkManager {
     }
 
     public NetworkManager sendToProxy(Packet packet) {
-        sendAll(packet, new ChannelFilter() {
-            @Override
-            public boolean accept(INetworkComponent networkComponent) {
-                return networkComponent instanceof ProxyServer;
-            }
-        });
+        sendAll(packet, ProxyServer.class::isInstance);
         return this;
     }
 
@@ -439,12 +425,7 @@ public final class NetworkManager {
     }
 
     public NetworkManager sendWrappers(Packet packet) {
-        sendAll(packet, new ChannelFilter() {
-            @Override
-            public boolean accept(INetworkComponent networkComponent) {
-                return networkComponent instanceof Wrapper;
-            }
-        });
+        sendAll(packet, Wrapper.class::isInstance);
         return this;
     }
 
