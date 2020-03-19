@@ -1,10 +1,5 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.database;
 
-import de.dytanic.cloudnet.database.DatabaseImpl;
 import de.dytanic.cloudnet.database.DatabaseManager;
 import de.dytanic.cloudnet.lib.database.Database;
 
@@ -38,7 +33,7 @@ public class DatabaseBasicHandlers {
 
         nameToUUIDDatabase.handleUpdate(updateConfigurationDatabase);
 
-        ((DatabaseImpl) config).save();
+        config.save();
     }
 
     public StatisticManager getStatisticManager() {

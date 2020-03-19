@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.network.packet.api.sync;
 
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
@@ -16,12 +12,11 @@ import java.util.UUID;
 /**
  * Created by Tareko on 19.08.2017.
  */
-public class PacketAPIInGetOfflinePlayer extends PacketAPIIO {
+public class PacketAPIInGetOfflinePlayer implements PacketAPIIO {
 
-    @Override
-    public void handleInput(Document data, PacketSender packetSender) {
-        if (data.contains("uniqueId")) {
-            UUID uniqueId = data.getObject("uniqueId", UUID.class);
+    public void handleInput(Packet packet, PacketSender packetSender) {
+        if (packet.getData().contains("uniqueId")) {
+            UUID uniqueId = packet.getData().getObject("uniqueId", UUID.class);
 
             OfflinePlayer offlinePlayer = CloudNet.getInstance()
                                                   .getNetworkManager()
@@ -31,27 +26,24 @@ public class PacketAPIInGetOfflinePlayer extends PacketAPIIO {
                 offlinePlayer = CloudNet.getInstance().getDbHandlers().getPlayerDatabase().getPlayer(uniqueId);
             }
 
-            packetSender.sendPacket(getResult(new Document("player", offlinePlayer)));
+            packetSender.sendPacket(getResult(packet, new Document("player", offlinePlayer)));
         } else {
-            String name = data.getString("name");
+            String name = packet.getData().getString("name");
 
             OfflinePlayer offlinePlayer = CloudNet.getInstance()
                                                   .getNetworkManager()
                                                   .getPlayer(name); //use cache for offline player instance
 
             if (offlinePlayer == null) {
-                offlinePlayer = CloudNet.getInstance().getDbHandlers().getPlayerDatabase().getPlayer(CloudNet.getInstance()
-                                                                                                             .getDbHandlers()
-                                                                                                             .getNameToUUIDDatabase()
-                                                                                                             .get(name));
+                offlinePlayer = CloudNet.getInstance().getDbHandlers().getPlayerDatabase().getPlayer(
+                    CloudNet.getInstance().getDbHandlers().getNameToUUIDDatabase().get(name));
             }
 
-            packetSender.sendPacket(getResult(new Document("player", offlinePlayer)));
+            packetSender.sendPacket(getResult(packet, new Document("player", offlinePlayer)));
         }
     }
 
-    @Override
-    protected Packet getResult(Document value) {
-        return new Packet(packetUniqueId, PacketRC.PLAYER_HANDLE, value);
+    public Packet getResult(Packet packet, Document value) {
+        return new Packet(packet.getUniqueId(), PacketRC.PLAYER_HANDLE, value);
     }
 }

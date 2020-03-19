@@ -1,38 +1,26 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.internal.serverselectors;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import de.dytanic.cloudnet.api.CloudAPI;
 import de.dytanic.cloudnet.api.handlers.adapter.NetworkHandlerAdapter;
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitMobInitEvent;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitMobUpdateEvent;
+import de.dytanic.cloudnet.bridge.internal.listener.v18_112.ArmorStandListener;
+import de.dytanic.cloudnet.bridge.internal.serverselectors.listeners.MobListener;
 import de.dytanic.cloudnet.bridge.internal.util.ItemStackBuilder;
 import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.Value;
 import de.dytanic.cloudnet.lib.server.ServerState;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobConfig;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobItemLayout;
 import de.dytanic.cloudnet.lib.serverselectors.mob.MobPosition;
 import de.dytanic.cloudnet.lib.serverselectors.mob.ServerMob;
-import de.dytanic.cloudnet.lib.utility.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -40,6 +28,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tareko on 25.08.2017.
@@ -48,11 +38,11 @@ public final class MobSelector {
 
     private static MobSelector instance;
 
-    private Map<UUID, MobImpl> mobs;
+    private Map<UUID, Mob> mobs;
 
     private MobConfig mobConfig;
 
-    private Map<String, ServerInfo> servers = NetworkUtils.newConcurrentHashMap();
+    private final Map<String, ServerInfo> servers = new ConcurrentHashMap<>();
 
     public MobSelector(MobConfig mobConfig) {
         instance = this;
@@ -63,12 +53,92 @@ public final class MobSelector {
         return instance;
     }
 
-    public Map<UUID, MobImpl> getMobs() {
-        return mobs;
+    public Mob spawnMob(final MobConfig mobConfig, final UUID uuid, final ServerMob serverMob) {
+        Location location = toLocation(serverMob.getPosition());
+
+        if (!location.getChunk().isLoaded()) {
+            location.getChunk().load();
+        }
+
+        Entity entity = location.getWorld().spawnEntity(
+            location,
+            EntityType.valueOf(serverMob.getType())
+        );
+
+        if (!(entity instanceof LivingEntity)) {
+            return null;
+        }
+        entity.setFireTicks(0);
+
+        final LivingEntity livingEntity = (LivingEntity) entity;
+        ArmorStand armorStand = ReflectionUtil.armorStandCreation(
+            location,
+            livingEntity,
+            serverMob
+        );
+
+        if (armorStand == null) {
+            return null;
+        }
+
+        updateCustom(serverMob, armorStand);
+
+        if (armorStand.getPassenger() == null && serverMob.getItemId() != null) {
+            Material material = ItemStackBuilder.getMaterialIgnoreVersion(serverMob.getItemName(), serverMob.getItemId());
+            if (material != null) {
+                Item item = location.getWorld().dropItem(armorStand.getLocation(), new ItemStack(material));
+                item.setTicksLived(Integer.MAX_VALUE);
+                item.setPickupDelay(Integer.MAX_VALUE);
+                armorStand.setPassenger(item);
+            }
+        }
+
+        if (entity instanceof Villager) {
+            ((Villager) entity).setProfession(Villager.Profession.FARMER);
+        }
+
+        unstableEntity(entity);
+        entity.setCustomNameVisible(true);
+        entity.setCustomName(ChatColor.translateAlternateColorCodes('&', serverMob.getDisplay()));
+
+
+        Mob mob = new Mob(
+            uuid,
+            serverMob,
+            entity,
+            createInventory(mobConfig, serverMob),
+            new HashMap<>(),
+            armorStand
+        );
+
+        Bukkit.getPluginManager().callEvent(
+            new BukkitMobInitEvent(mob)
+        );
+        return mob;
     }
 
-    public void setMobs(Map<UUID, MobImpl> mobs) {
-        this.mobs = mobs;
+    public void updateCustom(ServerMob serverMob, ArmorStand armorStand) {
+        OnlineCount onlineCount = getOnlineCount(serverMob.getTargetGroup());
+        if (armorStand != null) {
+
+            armorStand.setCustomName(
+                ChatColor.translateAlternateColorCodes('&', serverMob.getDisplayMessage() + NetworkUtils.EMPTY_STRING)
+                         .replace("%max_players%", onlineCount.getMaxPlayers() + NetworkUtils.EMPTY_STRING)
+                         .replace("%group%", serverMob.getTargetGroup())
+                         .replace("%group_online%", onlineCount.getOnlineCount() + NetworkUtils.EMPTY_STRING));
+        }
+    }
+
+    public OnlineCount getOnlineCount(String group) {
+        int onlineCount = 0;
+        int maxPlayers = 0;
+        for (ServerInfo serverInfo : this.servers.values()) {
+            if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(group)) {
+                onlineCount += serverInfo.getOnlineCount();
+                maxPlayers += serverInfo.getMaxPlayers();
+            }
+        }
+        return new OnlineCount(onlineCount, maxPlayers);
     }
 
     public MobConfig getMobConfig() {
@@ -83,42 +153,55 @@ public final class MobSelector {
         return servers;
     }
 
+    public Map<UUID, Mob> getMobs() {
+        return mobs;
+    }
+
+    public Inventory createInventory(MobConfig mobConfig, ServerMob mob) {
+        Inventory inventory = Bukkit.createInventory(null,
+                                                     mobConfig.getInventorySize(),
+                                                     ChatColor.translateAlternateColorCodes('&',
+                                                                                            mob.getDisplay() + NetworkUtils.SPACE_STRING));
+
+        for (Map.Entry<Integer, MobItemLayout> mobItem : mobConfig.getDefaultItemInventory().entrySet()) {
+            inventory.setItem(mobItem.getKey() - 1, transform(mobItem.getValue()));
+        }
+        return inventory;
+    }
+
     public void init() {
         CloudAPI.getInstance().getNetworkHandlerProvider().registerHandler(new NetworkHandlerAdapterImplx());
 
-        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                NetworkUtils.addAll(servers,
-                                    MapWrapper.collectionCatcherHashMap(CloudAPI.getInstance().getServers(),
-                                                                        new Catcher<String, ServerInfo>() {
-                                                                            @Override
-                                                                            public String doCatch(ServerInfo key) {
-                                                                                return key.getServiceId().getServerId();
-                                                                            }
-                                                                        }));
-                Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        for (ServerInfo serverInfo : servers.values()) {
-                            handleUpdate(serverInfo);
-                        }
-                    }
-                });
-            }
+        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
+            CloudAPI.getInstance().getServers().forEach(
+                serverInfo -> this.servers.put(serverInfo.getServiceId().getServerId(), serverInfo)
+            );
+            Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), () -> {
+                for (ServerInfo serverInfo : this.servers.values()) {
+                    handleUpdate(serverInfo);
+                }
+            });
         });
 
-        if (ReflectionUtil.forName("org.bukkit.entity.ArmorStand") != null) {
-            try {
-                Bukkit.getPluginManager().registerEvents((Listener) ReflectionUtil.forName(
-                    "de.dytanic.cloudnet.bridge.internal.listener.v18_112.ArmorStandListener").newInstance(),
-                                                         CloudServer.getInstance().getPlugin());
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+        Bukkit.getPluginManager().registerEvents(new ArmorStandListener(), CloudServer.getInstance().getPlugin());
+        Bukkit.getPluginManager().registerEvents(new MobListener(this), CloudServer.getInstance().getPlugin());
+    }
 
-        Bukkit.getPluginManager().registerEvents(new ListenrImpl(), CloudServer.getInstance().getPlugin());
+    public void setMobs(Map<UUID, Mob> mobs) {
+        this.mobs = mobs;
+    }
+
+    private ItemStack transform(MobItemLayout mobItemLayout, ServerInfo serverInfo) {
+        Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
+        if (material == null) {
+            return null;
+        } else {
+            return ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId()).lore(
+                mobItemLayout.getLore().stream()
+                             .map(lore -> initPatterns(ChatColor.translateAlternateColorCodes('&', lore), serverInfo))
+                             .collect(Collectors.toList())
+            ).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
+        }
     }
 
     public void handleUpdate(ServerInfo serverInfo) {
@@ -126,103 +209,44 @@ public final class MobSelector {
             return;
         }
 
-        for (MobImpl mob : this.mobs.values()) {
+        for (Mob mob : this.mobs.values()) {
             if (mob.getMob().getTargetGroup().equals(serverInfo.getServiceId().getGroup())) {
                 mob.getEntity().setTicksLived(Integer.MAX_VALUE);
                 updateCustom(mob.getMob(), mob.getDisplayMessage());
                 Bukkit.getPluginManager().callEvent(new BukkitMobUpdateEvent(mob.getMob()));
 
                 mob.getServerPosition().clear();
-                filter(serverInfo.getServiceId().getGroup());
-                Collection<ServerInfo> serverInfos = filter(serverInfo.getServiceId().getGroup());
+                Collection<ServerInfo> serverInfos = getServersOfGroup(serverInfo.getServiceId().getGroup());
 
-                final Value<Integer> index = new Value<>(0);
-
+                int index = 0;
                 for (ServerInfo server : serverInfos) {
-                    if (server.isOnline() && server.getServerState().equals(ServerState.LOBBY) && !server.getServerConfig()
-                                                                                                         .isHideServer() && !server.getServerConfig()
-                                                                                                                                   .getProperties()
-                                                                                                                                   .contains(
-                                                                                                                                       NetworkUtils.DEV_PROPERTY)) {
-                        while (mobConfig.getDefaultItemInventory().containsKey((index.getValue() + 1))) {
-                            index.setValue(index.getValue() + 1);
+                    if (server.isOnline() && server.getServerState().equals(ServerState.LOBBY) &&
+                        !server.getServerConfig().isHideServer()) {
+                        while (mobConfig.getDefaultItemInventory().containsKey(index + 1)) {
+                            ++index;
                         }
 
-                        if ((mobConfig.getInventorySize() - 1) <= index.getValue()) {
+                        if ((mobConfig.getInventorySize() - 1) <= index) {
                             break;
                         }
 
-                        final int value = index.getValue();
-                        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
-                                mob.getInventory().setItem(value, transform(mobConfig.getItemLayout(), server));
-                                mob.getServerPosition().put(value, server.getServiceId().getServerId());
-                            }
+                        final int value = index;
+                        Bukkit.getScheduler().runTask(CloudServer.getInstance().getPlugin(), () -> {
+                            mob.getInventory().setItem(value, transform(mobConfig.getItemLayout(), server));
+                            mob.getServerPosition().put(value, server.getServiceId().getServerId());
                         });
-                        index.setValue(index.getValue() + 1);
+                        ++index;
                     }
                 }
 
-                while (index.getValue() < (mob.getInventory().getSize())) {
-                    if (!mobConfig.getDefaultItemInventory().containsKey(index.getValue() + 1)) {
-                        mob.getInventory().setItem(index.getValue(), new ItemStack(Material.AIR));
+                while (index < mob.getInventory().getSize()) {
+                    if (!mobConfig.getDefaultItemInventory().containsKey(index + 1)) {
+                        mob.getInventory().setItem(index, new ItemStack(Material.AIR));
                     }
-                    index.setValue(index.getValue() + 1);
+                    ++index;
                 }
             }
         }
-    }
-
-    public void updateCustom(ServerMob serverMob, Object armorStand) {
-        Return<Integer, Integer> x = getOnlineCount(serverMob.getTargetGroup());
-        if (armorStand != null) {
-            try {
-
-                armorStand.getClass().getMethod("setCustomName", String.class).invoke(armorStand,
-                                                                                      ChatColor.translateAlternateColorCodes('&',
-                                                                                                                             serverMob.getDisplayMessage() + NetworkUtils.EMPTY_STRING)
-                                                                                               .replace("%max_players%",
-                                                                                                        x.getSecond() + NetworkUtils.EMPTY_STRING)
-                                                                                               .replace("%group%",
-                                                                                                        serverMob.getTargetGroup())
-                                                                                               .replace("%group_online%",
-                                                                                                        x.getFirst() + NetworkUtils.EMPTY_STRING));
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            }
-        }
-    }
-
-    private Collection<ServerInfo> filter(String group) {
-        return CollectionWrapper.filterMany(servers.values(), new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo value) {
-                return value.getServiceId().getGroup().equals(group);
-            }
-        });
-    }
-
-    private ItemStack transform(MobItemLayout mobItemLayout, ServerInfo serverInfo) {
-        Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
-        return material == null ? null : ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId()).lore(new ArrayList<>(
-            CollectionWrapper.transform(mobItemLayout.getLore(), new Catcher<String, String>() {
-                @Override
-                public String doCatch(String key) {
-                    return initPatterns(ChatColor.translateAlternateColorCodes('&', key), serverInfo);
-                }
-            }))).displayName(initPatterns(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay()), serverInfo)).build();
-    }
-
-    public Return<Integer, Integer> getOnlineCount(String group) {
-        int atomicInteger = 0;
-        int atomicInteger1 = 0;
-        for (ServerInfo serverInfo : this.servers.values()) {
-            if (serverInfo.getServiceId().getGroup().equalsIgnoreCase(group)) {
-                atomicInteger = atomicInteger + serverInfo.getOnlineCount();
-                atomicInteger1 = atomicInteger1 + serverInfo.getMaxPlayers();
-            }
-        }
-        return new Return<>(atomicInteger, atomicInteger1);
     }
 
     private String initPatterns(String x, ServerInfo serverInfo) {
@@ -238,31 +262,17 @@ public final class MobSelector {
                 .replace("%motd%", ChatColor.translateAlternateColorCodes('&', serverInfo.getMotd()))
                 .replace("%state%", serverInfo.getServerState().name() + NetworkUtils.EMPTY_STRING)
                 .replace("%wrapper%", serverInfo.getServiceId().getWrapperId() + NetworkUtils.EMPTY_STRING)
-                .replace("%extra%", serverInfo.getServerConfig().getExtra())
                 .replace("%template%", serverInfo.getTemplate().getName())
                 .replace("%group%", serverInfo.getServiceId().getGroup());
     }
 
-    @Deprecated
-    public void shutdown() {
-        for (MobImpl mobImpl : this.mobs.values()) {
-            if (mobImpl.displayMessage != null) {
-                try {
-                    Entity entity = (Entity) mobImpl.displayMessage;
-                    if (entity.getPassenger() != null) {
-                        entity.getPassenger().remove();
-                    }
-                    mobImpl.displayMessage.getClass().getMethod("remove").invoke(mobImpl.displayMessage);
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                }
-            }
-            mobImpl.entity.remove();
-        }
-
-        mobs.clear();
+    private List<ServerInfo> getServersOfGroup(String group) {
+        return servers.values().stream()
+                      .filter(serverInfo -> serverInfo.getServiceId().getGroup().equals(group))
+                      .collect(Collectors.toList());
     }
 
-    public Location toLocation(MobPosition position) {
+    public static Location toLocation(MobPosition position) {
         return new Location(Bukkit.getWorld(position.getWorld()),
                             position.getX(),
                             position.getY(),
@@ -271,7 +281,7 @@ public final class MobSelector {
                             position.getPitch());
     }
 
-    public MobPosition toPosition(String group, Location location) {
+    public static MobPosition toPosition(String group, Location location) {
         return new MobPosition(group,
                                location.getWorld().getName(),
                                location.getX(),
@@ -281,38 +291,36 @@ public final class MobSelector {
                                location.getPitch());
     }
 
-    public Inventory create(MobConfig mobConfig, ServerMob mob) {
-        Inventory inventory = Bukkit.createInventory(null,
-                                                     mobConfig.getInventorySize(),
-                                                     ChatColor.translateAlternateColorCodes('&',
-                                                                                            mob.getDisplay() + NetworkUtils.SPACE_STRING));
-
-        for (Map.Entry<Integer, MobItemLayout> mobItem : mobConfig.getDefaultItemInventory().entrySet()) {
-            inventory.setItem(mobItem.getKey() - 1, transform(mobItem.getValue()));
-        }
-        return inventory;
+    public List<ServerInfo> getServers(String group) {
+        return getServersOfGroup(group);
     }
 
     private ItemStack transform(MobItemLayout mobItemLayout) {
         Material material = ItemStackBuilder.getMaterialIgnoreVersion(mobItemLayout.getItemName(), mobItemLayout.getItemId());
-        return material == null ? null : ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId()).lore(new ArrayList<>(
-            CollectionWrapper.transform(mobItemLayout.getLore(), new Catcher<String, String>() {
-                @Override
-                public String doCatch(String key) {
-                    return ChatColor.translateAlternateColorCodes('&', key);
-                }
-            }))).displayName(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay())).build();
+        if (material == null) {
+            return null;
+        } else {
+            return ItemStackBuilder.builder(material, 1, mobItemLayout.getSubId()).lore(
+                mobItemLayout.getLore().stream()
+                             .map(lore -> ChatColor.translateAlternateColorCodes('&', lore))
+                             .collect(Collectors.toList())
+            ).displayName(ChatColor.translateAlternateColorCodes('&', mobItemLayout.getDisplay())).build();
+        }
     }
 
-    private List<ServerInfo> getServers(String group) {
-        List<ServerInfo> groups = new ArrayList<>(CollectionWrapper.filterMany(this.servers.values(), new Acceptable<ServerInfo>() {
-            @Override
-            public boolean isAccepted(ServerInfo serverInfo) {
-                return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
+    public void shutdown() {
+        for (Mob mobImpl : this.mobs.values()) {
+            if (mobImpl.getDisplayMessage() != null) {
+                Entity entity = mobImpl.getDisplayMessage();
+                if (entity.getPassenger() != null) {
+                    entity.getPassenger().remove();
+                }
+                mobImpl.getDisplayMessage().remove();
             }
-        }));
+            mobImpl.getEntity().remove();
+        }
 
-        return groups;
+        mobs.clear();
     }
 
     @Deprecated
@@ -339,100 +347,15 @@ public final class MobSelector {
         }
     }
 
-    public Collection<Inventory> inventories() {
-        return CollectionWrapper.getCollection(this.mobs, new Catcher<Inventory, MobImpl>() {
-            @Override
-            public Inventory doCatch(MobImpl key) {
-                return key.getInventory();
-            }
-        });
+    public Collection<Inventory> getInventories() {
+        return this.mobs.values().stream().map(Mob::getInventory).collect(Collectors.toList());
     }
 
-    public MobImpl find(Inventory inventory) {
-        return CollectionWrapper.filter(this.mobs.values(), new Acceptable<MobImpl>() {
-            @Override
-            public boolean isAccepted(MobImpl value) {
-                return value.getInventory().equals(inventory);
-            }
-        });
-    }
-
-    //MobImpl
-    public static class MobImpl {
-
-        private UUID uniqueId;
-
-        private ServerMob mob;
-
-        private Entity entity;
-
-        private Inventory inventory;
-
-        private Map<Integer, String> serverPosition;
-
-        private Object displayMessage;
-
-        public MobImpl(UUID uniqueId,
-                       ServerMob mob,
-                       Entity entity,
-                       Inventory inventory,
-                       Map<Integer, String> serverPosition,
-                       Object displayMessage) {
-            this.uniqueId = uniqueId;
-            this.mob = mob;
-            this.entity = entity;
-            this.inventory = inventory;
-            this.serverPosition = serverPosition;
-            this.displayMessage = displayMessage;
-        }
-
-        public UUID getUniqueId() {
-            return uniqueId;
-        }
-
-        public void setUniqueId(UUID uniqueId) {
-            this.uniqueId = uniqueId;
-        }
-
-        public Entity getEntity() {
-            return entity;
-        }
-
-        public void setEntity(Entity entity) {
-            this.entity = entity;
-        }
-
-        public Inventory getInventory() {
-            return inventory;
-        }
-
-        public void setInventory(Inventory inventory) {
-            this.inventory = inventory;
-        }
-
-        public Map<Integer, String> getServerPosition() {
-            return serverPosition;
-        }
-
-        public void setServerPosition(Map<Integer, String> serverPosition) {
-            this.serverPosition = serverPosition;
-        }
-
-        public Object getDisplayMessage() {
-            return displayMessage;
-        }
-
-        public void setDisplayMessage(Object displayMessage) {
-            this.displayMessage = displayMessage;
-        }
-
-        public ServerMob getMob() {
-            return mob;
-        }
-
-        public void setMob(ServerMob mob) {
-            this.mob = mob;
-        }
+    public Mob findByInventory(Inventory inventory) {
+        return this.mobs.values().stream()
+                        .filter(mob -> mob.getInventory().equals(inventory))
+                        .findFirst()
+                        .orElse(null);
     }
 
     private class NetworkHandlerAdapterImplx extends NetworkHandlerAdapter {
@@ -456,169 +379,4 @@ public final class MobSelector {
         }
     }
 
-    private class ListenrImpl implements Listener {
-
-        @EventHandler
-        public void handleRightClick(PlayerInteractEntityEvent e) {
-            MobImpl mobImpl = CollectionWrapper.filter(mobs.values(), new Acceptable<MobImpl>() {
-                @Override
-                public boolean isAccepted(MobImpl value) {
-                    return value.getEntity().getUniqueId().equals(e.getRightClicked().getUniqueId());
-                }
-            });
-
-            if (mobImpl != null) {
-                e.setCancelled(true);
-                if (!CloudAPI.getInstance().getServerGroupData(mobImpl.getMob().getTargetGroup()).isMaintenance()) {
-                    if (mobImpl.getMob().getAutoJoin() != null && mobImpl.getMob().getAutoJoin()) {
-                        ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
-                        byteArrayDataOutput.writeUTF("Connect");
-
-                        List<ServerInfo> serverInfos = getServers(mobImpl.getMob().getTargetGroup());
-
-                        for (ServerInfo serverInfo : serverInfos) {
-                            if (serverInfo.getOnlineCount() < serverInfo.getMaxPlayers() && serverInfo.getServerState()
-                                                                                                      .equals(ServerState.LOBBY)) {
-                                byteArrayDataOutput.writeUTF(serverInfo.getServiceId().getServerId());
-                                e.getPlayer().sendPluginMessage(CloudServer.getInstance().getPlugin(),
-                                                                "BungeeCord",
-                                                                byteArrayDataOutput.toByteArray());
-                                return;
-                            }
-                        }
-                    } else {
-                        e.getPlayer().openInventory(mobImpl.getInventory());
-                    }
-                } else {
-                    e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                                                                     CloudAPI.getInstance()
-                                                                                             .getCloudNetwork()
-                                                                                             .getMessages()
-                                                                                             .getString("mob-selector-maintenance-message")));
-                }
-            }
-        }
-
-        @EventHandler
-        public void entityDamage(EntityDamageEvent e) {
-            MobImpl mob = CollectionWrapper.filter(mobs.values(), new Acceptable<MobImpl>() {
-                @Override
-                public boolean isAccepted(MobImpl value) {
-                    return e.getEntity().getUniqueId().equals(value.getEntity().getUniqueId());
-                }
-            });
-            if (mob != null) {
-                e.getEntity().setFireTicks(0);
-                e.setCancelled(true);
-            }
-        }
-
-        @EventHandler
-        public void handleInventoryClick(InventoryClickEvent e) {
-            if (!(e.getWhoClicked() instanceof Player)) {
-                return;
-            }
-
-            if (inventories().contains(e.getInventory()) && e.getCurrentItem() != null && e.getSlot() == e.getRawSlot()) {
-                e.setCancelled(true);
-                if (ItemStackBuilder.getMaterialIgnoreVersion(mobConfig.getItemLayout().getItemName(),
-                                                              mobConfig.getItemLayout().getItemId()) == e.getCurrentItem().getType()) {
-                    MobImpl mob = find(e.getInventory());
-                    if (mob.getServerPosition().containsKey(e.getSlot())) {
-                        if (CloudAPI.getInstance().getServerId().equalsIgnoreCase(mob.getServerPosition().get(e.getSlot()))) {
-                            return;
-                        }
-                        ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
-                        byteArrayDataOutput.writeUTF("Connect");
-                        byteArrayDataOutput.writeUTF(mob.getServerPosition().get(e.getSlot()));
-                        ((Player) e.getWhoClicked()).sendPluginMessage(CloudServer.getInstance().getPlugin(),
-                                                                       "BungeeCord",
-                                                                       byteArrayDataOutput.toByteArray());
-                    }
-                }
-            }
-        }
-
-        @EventHandler
-        public void onSave(WorldSaveEvent e) {
-            Map<UUID, ServerMob> filteredMobs = MapWrapper.transform(MobSelector.this.mobs, new Catcher<UUID, UUID>() {
-                @Override
-                public UUID doCatch(UUID key) {
-                    return key;
-                }
-            }, new Catcher<ServerMob, MobImpl>() {
-                @Override
-                public ServerMob doCatch(MobImpl key) {
-                    return key.getMob();
-                }
-            });
-
-            MobSelector.getInstance().shutdown();
-
-
-            Bukkit.getScheduler().runTaskLater(CloudServer.getInstance().getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    MobSelector.getInstance().setMobs(MapWrapper.transform(filteredMobs, new Catcher<UUID, UUID>() {
-                        @Override
-                        public UUID doCatch(UUID key) {
-                            return key;
-                        }
-                    }, new Catcher<MobImpl, ServerMob>() {
-                        @Override
-                        public MobImpl doCatch(ServerMob key) {
-                            MobSelector.getInstance().toLocation(key.getPosition()).getChunk().load();
-                            Entity entity = MobSelector.getInstance()
-                                                       .toLocation(key.getPosition())
-                                                       .getWorld()
-                                                       .spawnEntity(MobSelector.getInstance().toLocation(key.getPosition()),
-                                                                    EntityType.valueOf(key.getType()));
-                            Object armorStand = ReflectionUtil.armorstandCreation(MobSelector.getInstance().toLocation(key.getPosition()),
-                                                                                  entity,
-                                                                                  key);
-
-                            if (armorStand != null) {
-                                MobSelector.getInstance().updateCustom(key, armorStand);
-                                Entity armor = (Entity) armorStand;
-                                if (armor.getPassenger() == null && key.getItemId() != null) {
-                                    Material material = ItemStackBuilder.getMaterialIgnoreVersion(key.getItemName(), key.getItemId());
-                                    if (material != null) {
-                                        Item item = Bukkit.getWorld(key.getPosition().getWorld()).dropItem(armor.getLocation(),
-                                                                                                           new ItemStack(material));
-                                        item.setPickupDelay(Integer.MAX_VALUE);
-                                        item.setTicksLived(Integer.MAX_VALUE);
-                                        armor.setPassenger(item);
-                                    }
-                                }
-                            }
-
-                            if (entity instanceof Villager) {
-                                ((Villager) entity).setProfession(Villager.Profession.FARMER);
-                            }
-
-                            MobSelector.getInstance().unstableEntity(entity);
-                            entity.setCustomNameVisible(true);
-                            entity.setCustomName(ChatColor.translateAlternateColorCodes('&', key.getDisplay()));
-                            MobImpl mob = new MobImpl(key.getUniqueId(),
-                                                      key,
-                                                      entity,
-                                                      MobSelector.getInstance().create(mobConfig, key),
-                                                      new HashMap<>(),
-                                                      armorStand);
-                            Bukkit.getPluginManager().callEvent(new BukkitMobInitEvent(mob));
-                            return mob;
-                        }
-                    }));
-                    Bukkit.getScheduler().runTaskAsynchronously(CloudServer.getInstance().getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            for (ServerInfo serverInfo : getServers().values()) {
-                                MobSelector.getInstance().handleUpdate(serverInfo);
-                            }
-                        }
-                    });
-                }
-            }, 40);
-        }
-    }
 }

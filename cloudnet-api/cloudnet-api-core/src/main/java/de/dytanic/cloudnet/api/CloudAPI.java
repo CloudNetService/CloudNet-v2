@@ -8,12 +8,10 @@ import de.dytanic.cloudnet.api.network.packet.api.*;
 import de.dytanic.cloudnet.api.network.packet.api.sync.*;
 import de.dytanic.cloudnet.api.network.packet.in.*;
 import de.dytanic.cloudnet.api.network.packet.out.*;
-import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.DefaultType;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.interfaces.MetaObj;
 import de.dytanic.cloudnet.lib.network.NetDispatcher;
 import de.dytanic.cloudnet.lib.network.NetworkConnection;
 import de.dytanic.cloudnet.lib.network.WrapperInfo;
@@ -25,62 +23,61 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
-import de.dytanic.cloudnet.lib.server.*;
-import de.dytanic.cloudnet.lib.server.defaults.BasicServerConfig;
+import de.dytanic.cloudnet.lib.server.ProxyGroup;
+import de.dytanic.cloudnet.lib.server.ServerGroup;
+import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.ServiceId;
-import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
+import net.md_5.bungee.api.ProxyServer;
+import org.bukkit.Bukkit;
 
+import java.lang.reflect.Type;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-public final class CloudAPI implements MetaObj {
+@SuppressWarnings({"unused", "WeakerAccess"})
+public final class CloudAPI {
 
+    private static final Type MAP_UUID_OFFLINEPLAYER_TYPE = TypeToken.getParameterized(Map.class, UUID.class, OfflinePlayer.TYPE).getType();
+    private static final Type SERVER_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ServerInfo.class).getType();
+    private static final Type PROXY_INFO_COLLECTION_TYPE = TypeToken.getParameterized(Collection.class, ProxyInfo.class).getType();
+    private static final Type COLLECTION_CLOUDPLAYER_TYPE = TypeToken.getParameterized(Collection.class, CloudPlayer.TYPE).getType();
     private static CloudAPI instance;
 
-    private Document config;
-    private ServiceId serviceId;
-    private CloudConfigLoader cloudConfigLoader;
+    private final Document config;
+    private final ServiceId serviceId;
+    private final CloudConfigLoader cloudConfigLoader;
 
-    private NetworkConnection networkConnection;
-    private int memory;
-    private Runnable shutdownTask;
-
-    private ICloudService cloudService = null;
-
-    //Init
-    private CloudNetwork cloudNetwork = new CloudNetwork();
-    private NetworkHandlerProvider networkHandlerProvider = new NetworkHandlerProvider();
-    private DatabaseManager databaseManager = new DatabaseManager();
-
+    private final NetworkConnection networkConnection;
+    private final int memory;
+    private final NetworkHandlerProvider networkHandlerProvider = new NetworkHandlerProvider();
+    private final DatabaseManager databaseManager = new DatabaseManager();
     /**
      * Logger instance set by the respective bootstrap.
-     * Don't use in constructor!
      */
-    private Logger logger;
+    private final Logger logger;
+    private CloudService cloudService = null;
+    //Init
+    private CloudNetwork cloudNetwork = new CloudNetwork();
 
-    public CloudAPI(CloudConfigLoader loader, Runnable cancelTask) {
+    public CloudAPI(CloudConfigLoader loader, final Logger logger) {
+        if (instance != null) {
+            throw new IllegalStateException("CloudAPI already instantiated.");
+        }
         instance = this;
         this.cloudConfigLoader = loader;
+        this.logger = logger;
         this.config = loader.loadConfig();
-        this.networkConnection = new NetworkConnection(loader.loadConnnection());
-        this.serviceId = config.getObject("serviceId", new TypeToken<ServiceId>() {}.getType());
-        this.shutdownTask = cancelTask;
+        this.networkConnection = new NetworkConnection(loader.loadConnnection(), new ConnectableAddress("0.0.0.0", 0));
+        this.serviceId = config.getObject("serviceId", ServiceId.TYPE);
         this.memory = config.getInt("memory");
 
         initDefaultHandlers();
     }
-
-    /*================= Internal =====================*/
 
     private void initDefaultHandlers() {
         PacketManager packetManager = networkConnection.getPacketManager();
@@ -103,42 +100,60 @@ public final class CloudAPI implements MetaObj {
         packetManager.registerHandler(PacketRC.PLAYER_HANDLE + 5, PacketInUpdateOfflinePlayer.class);
     }
 
-    /*================= Internal =====================*/
-
     /**
-     * Returns the instance of the CloudAPI
+     * @return the singleton instance of the cloud API.
      */
     public static CloudAPI getInstance() {
         return instance;
     }
 
-    @Deprecated
+    /**
+     * Bootstraps the API and initiates the connection to the master.
+     */
     public void bootstrap() {
-        this.networkConnection.tryConnect(config.getBoolean("ssl"),
-                                          new NetDispatcher(networkConnection, false),
+        this.networkConnection.tryConnect(new NetDispatcher(networkConnection, false),
                                           new Auth(serviceId),
-                                          shutdownTask);
+                                          () -> {
+                                              if (this.cloudService.isProxyInstance()) {
+                                                  ProxyServer.getInstance().stop("CloudNet-Stop!");
+                                              } else {
+                                                  Bukkit.shutdown();
+                                              }
+                                          });
         NetworkUtils.header();
     }
 
-    @Deprecated
+    /**
+     * Disconnects the API from the master.
+     */
     public void shutdown() {
-        TaskScheduler.runtimeScheduler().shutdown();
         this.networkConnection.tryDisconnect();
     }
 
+    /**
+     * Updates the given server on the master.
+     *
+     * @param serverInfo the new server info.
+     *
+     * @return this.
+     */
     public CloudAPI update(ServerInfo serverInfo) {
-        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "update", String.format("Updating server info: %s", serverInfo));
+        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "update", String.format("Updating server info: %s%n", serverInfo));
         if (networkConnection.isConnected()) {
             networkConnection.sendPacket(new PacketOutUpdateServerInfo(serverInfo));
         }
         return this;
     }
 
-    /*================= API =====================*/
-
+    /**
+     * Updates the given proxy on the master.
+     *
+     * @param proxyInfo the new proxy info.
+     *
+     * @return this.
+     */
     public CloudAPI update(ProxyInfo proxyInfo) {
-        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "update", String.format("Updating proxy info: %s", proxyInfo));
+        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "update", String.format("Updating proxy info: %s%n", proxyInfo));
         if (networkConnection.isConnected()) {
             networkConnection.sendPacket(new PacketOutUpdateProxyInfo(proxyInfo));
         }
@@ -146,45 +161,52 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns synchronized the OnlineCount from the group
+     * Collects all servers from the given server group and sums their currently online players.
+     *
+     * @param group the server group name.
+     *
+     * @return the amount of players currently online on the entire server group.
      */
     public int getOnlineCount(String group) {
-        AtomicInteger integer = new AtomicInteger(0);
-        CollectionWrapper.iterator(getServers(group), new Runnabled<ServerInfo>() {
-            @Override
-            public void run(ServerInfo obj) {
-                integer.addAndGet(obj.getOnlineCount());
-            }
-        });
-        return integer.get();
+        return getServers(group).stream()
+                                .mapToInt(ServerInfo::getOnlineCount)
+                                .sum();
     }
 
     /**
-     * Returns all serverInfos from group #group
+     * Collects and returns all currently running servers of the given group on the network.
+     * When calling this function on a proxy, the cache is used.
+     * On servers this queries the master.
      *
-     * @param group
+     * @param group the name of the server group.
+     *
+     * @return a collection containing all currently running servers belonging to the given server group.
      */
     public Collection<ServerInfo> getServers(String group) {
         if (cloudService != null && cloudService.isProxyInstance()) {
-            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
-                @Override
-                public boolean isAccepted(ServerInfo serverInfo) {
-                    return serverInfo.getServiceId().getGroup() != null && serverInfo.getServiceId().getGroup().equalsIgnoreCase(group);
-                }
-            });
+            return cloudService.getServers().values().stream()
+                               .filter(serverInfo -> serverInfo.getServiceId().getGroup().equals(group))
+                               .collect(Collectors.toList());
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(group), networkConnection);
-        return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {}.getType());
+        return result.getResult().getObject("serverInfos", SERVER_INFO_COLLECTION_TYPE);
     }
 
-    @Deprecated
-    public ICloudService getCloudService() {
+    /**
+     * @return the cloud service backing this API, may be a proxy or a server.
+     */
+    public CloudService getCloudService() {
         return cloudService;
     }
 
-    @Deprecated
-    public void setCloudService(ICloudService cloudService) {
+    /**
+     * Sets the cloud service for the API to use.
+     * Internal use only!
+     *
+     * @param cloudService the cloud service that should back this API.
+     */
+    public void setCloudService(CloudService cloudService) {
         this.cloudService = cloudService;
     }
 
@@ -196,93 +218,87 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns the wingui Config
+     * @return the configuration for the running cloud service.
      */
     public Document getConfig() {
         return config;
     }
 
     /**
-     * Returns a simple cloudnetwork information base
+     * @return basic information about the running cloud network.
      */
     public CloudNetwork getCloudNetwork() {
         return cloudNetwork;
     }
 
     /**
-     * Internal CloudNetwork update set
+     * Updates the cloud network information available to this API.
+     * Internal use only!
      *
-     * @param cloudNetwork
+     * @param cloudNetwork the new information about the cloud network.
      */
     public void setCloudNetwork(CloudNetwork cloudNetwork) {
         this.cloudNetwork = cloudNetwork;
     }
 
     /**
-     * Returns the network server manager from cloudnet
+     * @return the network handler provider for this API instance.
      */
     public NetworkHandlerProvider getNetworkHandlerProvider() {
         return networkHandlerProvider;
     }
 
     /**
-     * Returns the internal network connection to the cloudnet root
+     * @return the network connection to the master.
      */
     public NetworkConnection getNetworkConnection() {
         return networkConnection;
     }
 
     /**
-     * Returns the cloud prefix
+     * @return the cloud prefix used for messages.
      */
     public String getPrefix() {
         return cloudNetwork.getMessages().getString("prefix");
     }
 
     /**
-     * Returns the memory from this instance calc by Wrapper
+     * @return the memory configured to be used by this service.
      */
     public int getMemory() {
         return memory;
     }
 
     /**
-     * Returns the shutdownTask which is default init
-     */
-    public Runnable getShutdownTask() {
-        return shutdownTask;
-    }
-
-    /**
-     * Returns the ServiceId from this instance
+     * @return the service id of this service.
      */
     public ServiceId getServiceId() {
         return serviceId;
     }
 
     /**
-     * Returns the Database Manager for the CloudNetDB functions
+     * @return the database manager on this service. Usually queries the master.
      */
     public DatabaseManager getDatabaseManager() {
         return databaseManager;
     }
 
     /**
-     * Returns the group name from this instance
+     * @return the name of the group this service belongs to.
      */
     public String getGroup() {
         return serviceId.getGroup();
     }
 
     /**
-     * Returns the UUID from this instance
+     * @return the UUID of this service.
      */
     public UUID getUniqueId() {
         return serviceId.getUniqueId();
     }
 
     /**
-     * Returns the serverId (Lobby-1)
+     * @return the server id of this service (e.g. Lobby-1).
      */
     public String getServerId() {
         return serviceId.getServerId();
@@ -296,62 +312,53 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns the wrapperid from this instance
+     * @return the id of wrapper that this service runs on.
      */
     public String getWrapperId() {
         return serviceId.getWrapperId();
     }
 
     /**
-     * Returns the SimpleServerGroup of the parameter
+     * Returns a simple version of the server group of the given server group name.
      *
-     * @param group
+     * @param serverGroupName the name of the server group.
      */
-    public SimpleServerGroup getServerGroupData(String group) {
-        return cloudNetwork.getServerGroups().get(group);
+    public SimpleServerGroup getServerGroupData(String serverGroupName) {
+        return cloudNetwork.getServerGroups().get(serverGroupName);
     }
 
     /**
-     * Returns the ProxyGroup of the parameter
+     * Returns the proxy group with the given name.
      *
-     * @param group
+     * @param proxyGroupName the name of the proxy group to get.
      */
-    public ProxyGroup getProxyGroupData(String group) {
-        return cloudNetwork.getProxyGroups().get(group);
+    public ProxyGroup getProxyGroupData(String proxyGroupName) {
+        return cloudNetwork.getProxyGroups().get(proxyGroupName);
     }
 
     /**
-     * Returns the global onlineCount
+     * @return the amount of players currently online on the entire cloud network.
      */
     public int getOnlineCount() {
         return cloudNetwork.getOnlineCount();
     }
 
     /**
-     * Returns the amount of players that are registered in the Cloud
+     * @return the amount of players currently registered on the cloud.
      */
     public int getRegisteredPlayerCount() {
         return cloudNetwork.getRegisteredPlayerCount();
     }
 
     /**
-     * Returns all the module properties
-     *
-     * @return
+     * @return the merged properties of all modules for this service.
      */
     public Document getModuleProperties() {
         return cloudNetwork.getModules();
     }
 
     /**
-     * Returns the permissionPool of the cloudnetwork
-     */
-    public PermissionPool getPermissionPool() {
-        return cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE);
-    }
-
-    /**
-     * Returns all active wrappers on cloudnet
+     * @return all running wrappers on the cloud network.
      */
     public Collection<WrapperInfo> getWrappers() {
         return cloudNetwork.getWrappers();
@@ -362,1137 +369,377 @@ public final class CloudAPI implements MetaObj {
      */
     public PermissionGroup getPermissionGroup(String group) {
         if (cloudNetwork.getModules().contains("permissionPool")) {
-            return ((PermissionPool) cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE)).getGroups().get(group);
+            return this.getPermissionPool().getGroups().get(group);
         }
         return null;
     }
 
     /**
-     * Returns one of the wrapper infos
-     *
-     * @param wrapperId
+     * @return the pool of permissions including all permission groups and the default group for the cloud network.
      */
-    public WrapperInfo getWrapper(String wrapperId) {
-        return CollectionWrapper.filter(cloudNetwork.getWrappers(), new Acceptable<WrapperInfo>() {
-            @Override
-            public boolean isAccepted(WrapperInfo value) {
-                return value.getServerId().equalsIgnoreCase(wrapperId);
-            }
-        });
+    public PermissionPool getPermissionPool() {
+        return cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE);
     }
 
     /**
-     * Sends the data of the custom channel message to all proxys
+     * Finds the first wrapper with the given case-insensitive name.
+     * If no wrapper with the given id can be found, this returns null.
+     *
+     * @param wrapperId the case-insensitive wrapper id of the wrapper to get
+     *
+     * @return the {@link WrapperInfo} instance of the wrapper with the given wrapper id or {@code null}
+     */
+    public WrapperInfo getWrapper(String wrapperId) {
+        return cloudNetwork.getWrappers().stream()
+                           .filter(wrapperInfo -> wrapperInfo.getServerId().equalsIgnoreCase(wrapperId))
+                           .findFirst().orElse(null);
+    }
+
+    /**
+     * Sends the  custom channel message to all proxy instances.
+     *
+     * @param channel the channel to send the message on.
+     * @param message the message to send.
+     * @param value   the document attached to the message.
      */
     public void sendCustomSubProxyMessage(String channel, String message, Document value) {
         networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUNGEE_CORD, channel, message, value));
     }
 
     /**
-     * Sends the data of the custom channel message to all server
+     * Sends the custom channel message to all server instances.
+     *
+     * @param channel the channel to send the message on.
+     * @param message the message to send.
+     * @param value   the document attached to the message.
      */
     public void sendCustomSubServerMessage(String channel, String message, Document value) {
         networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUKKIT, channel, message, value));
     }
 
     /**
-     * Sends the data of the custom channel message to one server
+     * Sends the custom channel message to the specified server.
+     *
+     * @param channel    the channel to send the message on.
+     * @param message    the message to send.
+     * @param value      the document attached to the message.
+     * @param serverName the name of the server that this message is going to be sent to.
      */
     public void sendCustomSubServerMessage(String channel, String message, Document value, String serverName) {
         networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUKKIT, serverName, channel, message, value));
     }
 
     /**
-     * Sends the data of the custom channel message to proxy server
+     * Sends the custom channel message to the specified server.
+     *
+     * @param channel   the channel to send the message on.
+     * @param message   the message to send.
+     * @param value     the document attached to the message.
+     * @param proxyName the name of the proxy that this message is going to be sent to.
      */
-    public void sendCustomSubProxyMessage(String channel, String message, Document value, String serverName) {
-        networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUNGEE_CORD, serverName, channel, message, value));
+    public void sendCustomSubProxyMessage(String channel, String message, Document value, String proxyName) {
+        networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUNGEE_CORD, proxyName, channel, message, value));
     }
 
     /**
-     * Update the server group
+     * Updates the given server group across the network.
      *
-     * @param serverGroup
+     * @param serverGroup the server group to update.
      */
     public void updateServerGroup(ServerGroup serverGroup) {
         networkConnection.sendPacket(new PacketOutUpdateServerGroup(serverGroup));
     }
 
     /**
-     * Update the permission group
+     * Updates the given permission group.
+     *
+     * @param permissionGroup the permission group to update.
      */
     public void updatePermissionGroup(PermissionGroup permissionGroup) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updatePermissionGroup",
-                         String.format("Updating permission group: %s", permissionGroup));
+                         String.format("Updating permission group: %s%n", permissionGroup));
         networkConnection.sendPacket(new PacketOutUpdatePermissionGroup(permissionGroup));
     }
 
     /**
-     * Update the proxy group
+     * Updates the given proxy group across the network.
      *
-     * @param proxyGroup
+     * @param proxyGroup the proxy group to update.
      */
     public void updateProxyGroup(ProxyGroup proxyGroup) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updateProxyGroup",
-                         String.format("Updating proxy group: %s", proxyGroup));
+                         String.format("Updating proxy group: %s%n", proxyGroup));
         networkConnection.sendPacket(new PacketOutUpdateProxyGroup(proxyGroup));
     }
 
     /**
-     * Dispatch a command on cloudnet-core
+     * Dispatch a command on the CloudNet master.
+     *
+     * @param commandLine the entire command line with space-separated arguments.
      */
     public void sendCloudCommand(String commandLine) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "sendCloudCommand",
-                         String.format("Sending cloud command: %s", commandLine));
+                         String.format("Sending cloud command: %s%n", commandLine));
         networkConnection.sendPacket(new PacketOutExecuteCommand(commandLine));
     }
 
     /**
-     * Dispatch a console message
+     * Dispatches a console message to the CloudNet master.
      *
-     * @param output
+     * @param message the message to dispatch.
      */
-    public void dispatchConsoleMessage(String output) {
+    public void dispatchConsoleMessage(String message) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "dispatchConsoleMessage",
-                         String.format("Dispatching console message: %s", output));
-        networkConnection.sendPacket(new PacketOutDispatchConsoleMessage(output));
+                         String.format("Dispatching console message: %s%n", message));
+        networkConnection.sendPacket(new PacketOutDispatchConsoleMessage(message));
     }
 
     /**
-     * Writes into the console of the server/proxy the command line
+     * Sends the given command line to the console of the given server or proxy.
      *
-     * @param defaultType
-     * @param serverId
-     * @param commandLine
+     * @param defaultType the type of service (server or proxy) to send the command line to.
+     * @param serverId    the server id of the service.
+     * @param commandLine the command line to send.
      */
     public void sendConsoleMessage(DefaultType defaultType, String serverId, String commandLine) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "sendConsoleMessage",
-                         String.format("Sending console message: %s %s %s", defaultType, serverId, commandLine));
+                         String.format("Sending console message: %s %s %s%n", defaultType, serverId, commandLine));
         networkConnection.sendPacket(new PacketOutServerDispatchCommand(defaultType, serverId, commandLine));
     }
 
+    /**
+     * @return a map containing all server groups mapped to their names.
+     */
     public Map<String, SimpleServerGroup> getServerGroupMap() {
         return cloudNetwork.getServerGroups();
     }
 
+    /**
+     * @return a map containing all proxy groups mapped to their names.
+     */
     public Map<String, ProxyGroup> getProxyGroupMap() {
         return cloudNetwork.getProxyGroups();
     }
 
     /**
-     * Stop a game server with the parameter of the serverId
+     * Stops a game server with the given server id
      *
-     * @param serverId the server-id to stop
+     * @param serverId the server id of the server to stop.
      */
     public void stopServer(String serverId) {
-        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopServer", String.format("Stopping server: %s", serverId));
+        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopServer", String.format("Stopping server: %s%n", serverId));
         networkConnection.sendPacket(new PacketOutStopServer(serverId));
     }
 
-    /*=====================================================================================*/
-
     /**
-     * Stop a BungeeCord proxy server with the id @proxyId
+     * Stops the proxy server with the given proxy id.
+     *
+     * @param proxyId the proxy id of the proxy server to stop.
      */
     public void stopProxy(String proxyId) {
-        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopProxy", String.format("Stopping proxy: %s", proxyId));
+        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopProxy", String.format("Stopping proxy: %s%n", proxyId));
         networkConnection.sendPacket(new PacketOutStopProxy(proxyId));
     }
 
     /**
-     * Creates a custom server log url for one server screen
+     * Creates a custom server log url for a service screen.
+     *
+     * @param serverId the id of the service.
      */
     public String createServerLogUrl(String serverId) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "createServerLogUrl",
-                         String.format("Creating server log url: %s", serverId));
+                         String.format("Creating server log url: %s%n", serverId));
         String rnd = NetworkUtils.randomString(10);
         networkConnection.sendPacket(new PacketOutCreateServerLog(rnd, serverId));
         ConnectableAddress connectableAddress = cloudConfigLoader.loadConnnection();
-        return new StringBuilder(config.getBoolean("ssl") ? "https://" : "http://").append(connectableAddress.getHostName())
-                                                                                   .append(':')
-                                                                                   .append(cloudNetwork.getWebPort())
-                                                                                   .append("/cloudnet/log?server=")
-                                                                                   .append(rnd)
-                                                                                   .substring(0);
+        return String.format("http://%s:%d/cloudnet/log?server=%s", connectableAddress.getHostName(), cloudNetwork.getWebPort(), rnd);
     }
 
     /**
-     * Start a proxy server with a group
+     * Updates a player on the master.
      *
-     * @param proxyGroup
-     */
-    public void startProxy(ProxyGroup proxyGroup) {
-        startProxy(proxyGroup, proxyGroup.getMemory(), new String[] {});
-    }
-
-    /**
-     * Start a proxy server with a group
-     *
-     * @param proxyGroup
-     */
-    public void startProxy(ProxyGroup proxyGroup, int memory, String[] processParameters) {
-        startProxy(proxyGroup, memory, processParameters, null, new ArrayList<>(), new Document());
-    }
-
-    /**
-     * Start a proxy server with a group
-     *
-     * @param proxyGroup
-     */
-    public void startProxy(ProxyGroup proxyGroup,
-                           int memory,
-                           String[] processParameters,
-                           String url,
-                           Collection<ServerInstallablePlugin> plugins,
-                           Document properties) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "startProxy",
-                         String.format("Starting proxy: %s, %d, %s, %s, %s, %s",
-                                       proxyGroup,
-                                       memory,
-                                       Arrays.toString(processParameters),
-                                       url,
-                                       plugins,
-                                       properties));
-        networkConnection.sendPacket(new PacketOutStartProxy(proxyGroup, memory, processParameters, url, plugins, properties));
-    }
-
-    /**
-     * Start a proxy server with a group
-     *
-     * @param proxyGroup
-     */
-    public void startProxy(ProxyGroup proxyGroup, int memory, String[] processParameters, Document document) {
-        startProxy(proxyGroup, memory, processParameters, null, new ArrayList<>(), document);
-    }
-
-    /**
-     * Start a proxy server with a group
-     *
-     * @param proxyGroup
-     */
-    public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup) {
-        startProxy(wrapperInfo, proxyGroup, proxyGroup.getMemory(), new String[] {});
-    }
-
-    /*=====================================================================================*/
-
-    /**
-     * Start a proxy server with a group
-     *
-     * @param proxyGroup
-     */
-    public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters) {
-        startProxy(wrapperInfo, proxyGroup, memory, processParameters, null, new ArrayList<>(), new Document());
-    }
-
-    /**
-     * Start a proxy server with a group
-     *
-     * @param proxyGroup
-     */
-    public void startProxy(WrapperInfo wrapperInfo,
-                           ProxyGroup proxyGroup,
-                           int memory,
-                           String[] processParameters,
-                           String url,
-                           Collection<ServerInstallablePlugin> plugins,
-                           Document properties) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "startProxy",
-                         String.format("Starting proxy: %s, %s, %d, %s, %s, %s, %s",
-                                       wrapperInfo,
-                                       proxyGroup,
-                                       memory,
-                                       Arrays.toString(processParameters),
-                                       url,
-                                       plugins,
-                                       properties));
-        networkConnection.sendPacket(new PacketOutStartProxy(wrapperInfo.getServerId(),
-                                                             proxyGroup,
-                                                             memory,
-                                                             processParameters,
-                                                             url,
-                                                             plugins,
-                                                             properties));
-    }
-
-    /**
-     * Start a proxy server with a group
-     *
-     * @param proxyGroup
-     */
-    public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters, Document document) {
-        startProxy(wrapperInfo, proxyGroup, memory, processParameters, null, new ArrayList<>(), document);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup) {
-        startGameServer(simpleServerGroup, new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()));
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig) {
-        startGameServer(simpleServerGroup, serverConfig, false);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, boolean priorityStop) {
-        startGameServer(simpleServerGroup, serverConfig, simpleServerGroup.getMemory(), priorityStop);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, int memory, boolean priorityStop) {
-        startGameServer(simpleServerGroup, serverConfig, memory, priorityStop, new Properties());
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                boolean priorityStop,
-                                Properties properties) {
-        startGameServer(simpleServerGroup,
-                        serverConfig,
-                        memory,
-                        new String[] {},
-                        null,
-                        null,
-                        false,
-                        priorityStop,
-                        properties,
-                        null,
-                        new ArrayList<>());
-    }
-
-    /**
-     * Start a new game server with full parameters
-     *
-     * @param simpleServerGroup
-     * @param serverConfig
-     * @param memory
-     * @param processParameters
-     * @param template
-     * @param onlineMode
-     * @param priorityStop
-     * @param properties
-     * @param url
-     * @param plugins
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                String[] processParameters,
-                                Template template,
-                                String customServerName,
-                                boolean onlineMode,
-                                boolean priorityStop,
-                                Properties properties,
-                                String url,
-                                Collection<ServerInstallablePlugin> plugins) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "startGameServer",
-                         String.format("Starting game server: %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s",
-                                       simpleServerGroup,
-                                       serverConfig,
-                                       memory,
-                                       Arrays.toString(processParameters),
-                                       template,
-                                       customServerName,
-                                       onlineMode,
-                                       priorityStop,
-                                       properties,
-                                       url,
-                                       plugins));
-        networkConnection.sendPacket(new PacketOutStartServer(simpleServerGroup.getName(),
-                                                              memory,
-                                                              serverConfig,
-                                                              properties,
-                                                              priorityStop,
-                                                              processParameters,
-                                                              template,
-                                                              customServerName,
-                                                              onlineMode,
-                                                              plugins,
-                                                              url));
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup, String serverId) {
-        startGameServer(simpleServerGroup, new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()), serverId);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, String serverId) {
-        startGameServer(simpleServerGroup, serverConfig, false, serverId);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, boolean priorityStop, String serverId) {
-        startGameServer(simpleServerGroup, serverConfig, simpleServerGroup.getMemory(), priorityStop, serverId);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                boolean priorityStop,
-                                String serverId) {
-        startGameServer(simpleServerGroup, serverConfig, memory, priorityStop, new Properties(), serverId);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                boolean priorityStop,
-                                Properties properties,
-                                String serverId) {
-        startGameServer(simpleServerGroup,
-                        serverConfig,
-                        memory,
-                        new String[] {},
-                        null,
-                        null,
-                        false,
-                        priorityStop,
-                        properties,
-                        null,
-                        new ArrayList<>(),
-                        serverId);
-    }
-
-    /*==================================================================*/
-
-    /**
-     * Start a new game server with full parameters
-     *
-     * @param simpleServerGroup
-     * @param serverConfig
-     * @param memory
-     * @param processParameters
-     * @param template
-     * @param onlineMode
-     * @param priorityStop
-     * @param properties
-     * @param url
-     * @param plugins
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                String[] processParameters,
-                                Template template,
-                                String customServerName,
-                                boolean onlineMode,
-                                boolean priorityStop,
-                                Properties properties,
-                                String url,
-                                Collection<ServerInstallablePlugin> plugins,
-                                String serverId) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "startGameServer",
-                         String.format("Starting game server: %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s",
-                                       simpleServerGroup,
-                                       serverConfig,
-                                       memory,
-                                       Arrays.toString(processParameters),
-                                       template,
-                                       customServerName,
-                                       onlineMode,
-                                       priorityStop,
-                                       properties,
-                                       url,
-                                       plugins,
-                                       serverId));
-        networkConnection.sendPacket(new PacketOutStartServer(simpleServerGroup.getName(),
-                                                              memory,
-                                                              serverConfig,
-                                                              properties,
-                                                              priorityStop,
-                                                              processParameters,
-                                                              template,
-                                                              customServerName,
-                                                              onlineMode,
-                                                              plugins,
-                                                              url));
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup, Template template) {
-        startGameServer(simpleServerGroup, new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()), template);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, Template template) {
-        startGameServer(simpleServerGroup, serverConfig, false, template);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, boolean priorityStop, Template template) {
-        startGameServer(simpleServerGroup, serverConfig, simpleServerGroup.getMemory(), priorityStop, template);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                boolean priorityStop,
-                                Template template) {
-        startGameServer(simpleServerGroup, serverConfig, memory, priorityStop, new Properties(), template);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                boolean priorityStop,
-                                Properties properties,
-                                Template template) {
-        startGameServer(simpleServerGroup,
-                        serverConfig,
-                        memory,
-                        new String[] {},
-                        template,
-                        null,
-                        false,
-                        priorityStop,
-                        properties,
-                        null,
-                        new ArrayList<>());
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, Template template, String serverId) {
-        startGameServer(simpleServerGroup, serverConfig, false, template, serverId);
-    }
-
-    /*==================================================================*/
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                boolean priorityStop,
-                                Template template,
-                                String serverId) {
-        startGameServer(simpleServerGroup, serverConfig, simpleServerGroup.getMemory(), priorityStop, template, serverId);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                boolean priorityStop,
-                                Template template,
-                                String serverId) {
-        startGameServer(simpleServerGroup, serverConfig, memory, priorityStop, new Properties(), template, serverId);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                boolean priorityStop,
-                                Properties properties,
-                                Template template,
-                                String serverId) {
-        startGameServer(simpleServerGroup,
-                        serverConfig,
-                        memory,
-                        new String[] {},
-                        template,
-                        null,
-                        false,
-                        priorityStop,
-                        properties,
-                        null,
-                        new ArrayList<>(),
-                        serverId);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(WrapperInfo wrapperInfo, SimpleServerGroup simpleServerGroup) {
-        startGameServer(wrapperInfo, simpleServerGroup, new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()));
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(WrapperInfo wrapperInfo, SimpleServerGroup simpleServerGroup, ServerConfig serverConfig) {
-        startGameServer(wrapperInfo, simpleServerGroup, serverConfig, false);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(WrapperInfo wrapperInfo,
-                                SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                boolean priorityStop) {
-        startGameServer(wrapperInfo, simpleServerGroup, serverConfig, simpleServerGroup.getMemory(), priorityStop);
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(WrapperInfo wrapperInfo,
-                                SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                boolean priorityStop) {
-        startGameServer(wrapperInfo, simpleServerGroup, serverConfig, memory, priorityStop, new Properties());
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(WrapperInfo wrapperInfo,
-                                SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                boolean priorityStop,
-                                Properties properties) {
-        startGameServer(wrapperInfo,
-                        simpleServerGroup,
-                        serverConfig,
-                        memory,
-                        new String[] {},
-                        null,
-                        null,
-                        false,
-                        priorityStop,
-                        properties,
-                        null,
-                        new ArrayList<>());
-    }
-
-    /**
-     * Start a new game server with full parameters
-     *
-     * @param simpleServerGroup
-     * @param serverConfig
-     * @param memory
-     * @param processParameters
-     * @param template
-     * @param onlineMode
-     * @param priorityStop
-     * @param properties
-     * @param url
-     * @param plugins
-     */
-    public void startGameServer(WrapperInfo wrapperInfo,
-                                SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                String[] processParameters,
-                                Template template,
-                                String customServerName,
-                                boolean onlineMode,
-                                boolean priorityStop,
-                                Properties properties,
-                                String url,
-                                Collection<ServerInstallablePlugin> plugins) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "startGameServer",
-                         String.format("Starting game server: %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s",
-                                       wrapperInfo,
-                                       simpleServerGroup,
-                                       serverConfig,
-                                       memory,
-                                       Arrays.toString(processParameters),
-                                       template,
-                                       customServerName,
-                                       onlineMode,
-                                       priorityStop,
-                                       properties,
-                                       url,
-                                       plugins));
-        networkConnection.sendPacket(new PacketOutStartServer(wrapperInfo,
-                                                              simpleServerGroup.getName(),
-                                                              memory,
-                                                              serverConfig,
-                                                              properties,
-                                                              priorityStop,
-                                                              processParameters,
-                                                              template,
-                                                              customServerName,
-                                                              onlineMode,
-                                                              plugins,
-                                                              url));
-    }
-
-    /**
-     * Start a game server
-     *
-     * @param simpleServerGroup
-     */
-    public void startGameServer(WrapperInfo wrapperInfo,
-                                SimpleServerGroup simpleServerGroup,
-                                ServerConfig serverConfig,
-                                int memory,
-                                boolean priorityStop,
-                                Properties properties,
-                                Template template) {
-        startGameServer(wrapperInfo,
-                        simpleServerGroup,
-                        serverConfig,
-                        memory,
-                        new String[] {},
-                        template,
-                        null,
-                        false,
-                        priorityStop,
-                        properties,
-                        null,
-                        new ArrayList<>());
-    }
-
-    /**
-     * Start a new game server with full parameters
-     *
-     * @param simpleServerGroup
-     * @param serverConfig
-     * @param memory
-     * @param processParameters
-     * @param template
-     * @param onlineMode
-     * @param priorityStop
-     * @param properties
-     * @param url
-     * @param plugins
-     */
-    public void startGameServer(WrapperInfo wrapperInfo,
-                                SimpleServerGroup simpleServerGroup,
-                                String serverId,
-                                ServerConfig serverConfig,
-                                int memory,
-                                String[] processParameters,
-                                Template template,
-                                String customServerName,
-                                boolean onlineMode,
-                                boolean priorityStop,
-                                Properties properties,
-                                String url,
-                                Collection<ServerInstallablePlugin> plugins) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "startGameServer",
-                         String.format("Starting game server: %s, %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s",
-                                       wrapperInfo,
-                                       simpleServerGroup,
-                                       serverId,
-                                       serverConfig,
-                                       memory,
-                                       Arrays.toString(processParameters),
-                                       template,
-                                       customServerName,
-                                       onlineMode,
-                                       priorityStop,
-                                       properties,
-                                       url,
-                                       plugins));
-        networkConnection.sendPacket(new PacketOutStartServer(wrapperInfo,
-                                                              simpleServerGroup.getName(),
-                                                              serverId,
-                                                              memory,
-                                                              serverConfig,
-                                                              properties,
-                                                              priorityStop,
-                                                              processParameters,
-                                                              template,
-                                                              customServerName,
-                                                              onlineMode,
-                                                              plugins,
-                                                              url));
-    }
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(WrapperInfo wrapperInfo, String serverName, int memory, boolean priorityStop) {
-        startCloudServer(wrapperInfo, serverName, new BasicServerConfig(), memory, priorityStop);
-    }
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(WrapperInfo wrapperInfo, String serverName, ServerConfig serverConfig, int memory, boolean priorityStop) {
-        startCloudServer(wrapperInfo,
-                         serverName,
-                         serverConfig,
-                         memory,
-                         priorityStop,
-                         new String[0],
-                         new ArrayList<>(),
-                         new Properties(),
-                         ServerGroupType.BUKKIT);
-    }
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(WrapperInfo wrapperInfo,
-                                 String serverName,
-                                 ServerConfig serverConfig,
-                                 int memory,
-                                 boolean priorityStop,
-                                 String[] processPreParameters,
-                                 Collection<ServerInstallablePlugin> plugins,
-                                 Properties properties,
-                                 ServerGroupType serverGroupType) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "startCloudServer",
-                         String.format("Starting cloud server: %s, %s, %s, %d, %s, %s, %s, %s, %s",
-                                       wrapperInfo,
-                                       serverName,
-                                       serverConfig,
-                                       memory,
-                                       priorityStop,
-                                       Arrays.toString(processPreParameters),
-                                       plugins,
-                                       properties,
-                                       serverGroupType));
-        networkConnection.sendPacket(new PacketOutStartCloudServer(wrapperInfo,
-                                                                   serverName,
-                                                                   serverConfig,
-                                                                   memory,
-                                                                   priorityStop,
-                                                                   processPreParameters,
-                                                                   plugins,
-                                                                   properties,
-                                                                   serverGroupType));
-    }
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(String serverName, int memory, boolean priorityStop) {
-        startCloudServer(serverName, new BasicServerConfig(), memory, priorityStop);
-    }
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(String serverName, ServerConfig serverConfig, int memory, boolean priorityStop) {
-        startCloudServer(serverName,
-                         serverConfig,
-                         memory,
-                         priorityStop,
-                         new String[0],
-                         new ArrayList<>(),
-                         new Properties(),
-                         ServerGroupType.BUKKIT);
-    }
-
-    /*==========================================================================*/
-
-    /**
-     * Start a Cloud-Server with those Properties
-     */
-    public void startCloudServer(String serverName,
-                                 ServerConfig serverConfig,
-                                 int memory,
-                                 boolean priorityStop,
-                                 String[] processPreParameters,
-                                 Collection<ServerInstallablePlugin> plugins,
-                                 Properties properties,
-                                 ServerGroupType serverGroupType) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "startCloudServer",
-                         String.format("Starting cloud server: %s, %s, %d, %s, %s, %s, %s, %s",
-                                       serverName,
-                                       serverConfig,
-                                       memory,
-                                       priorityStop,
-                                       Arrays.toString(processPreParameters),
-                                       plugins,
-                                       properties,
-                                       serverGroupType));
-        networkConnection.sendPacket(new PacketOutStartCloudServer(serverName,
-                                                                   serverConfig,
-                                                                   memory,
-                                                                   priorityStop,
-                                                                   processPreParameters,
-                                                                   plugins,
-                                                                   properties,
-                                                                   serverGroupType));
-    }
-
-    /**
-     * Update the CloudPlayer objective
-     *
-     * @param cloudPlayer
+     * @param cloudPlayer the player to update.
      */
     public void updatePlayer(CloudPlayer cloudPlayer) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updatePlayer",
-                         String.format(String.format("Updating cloud player: %s", cloudPlayer)));
+                         String.format("Updating cloud player: %s%n", cloudPlayer));
         networkConnection.sendPacket(new PacketOutUpdatePlayer(CloudPlayer.newOfflinePlayer(cloudPlayer)));
     }
 
     /**
-     * Updates a offlinePlayer Objective on the database
+     * Updates an offline player on the master.
      *
-     * @param offlinePlayer
+     * @param offlinePlayer the offline player to update.
      */
     public void updatePlayer(OfflinePlayer offlinePlayer) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updatePlayer",
-                         String.format("Updating offline player: %s", offlinePlayer));
+                         String.format("Updating offline player: %s%n", offlinePlayer));
         networkConnection.sendPacket(new PacketOutUpdatePlayer(offlinePlayer));
     }
 
     /**
-     * Returns all servers on network
+     * Collects and returns all currently running servers on the network.
+     * When calling this function on a proxy, the cache is used.
+     * On servers this queries the master.
+     *
+     * @return a collection containing all currently running servers.
      */
     public Collection<ServerInfo> getServers() {
         if (cloudService != null && cloudService.isProxyInstance()) {
-            return new LinkedList<>(cloudService.getServers().values());
+            return new ArrayList<>(cloudService.getServers().values());
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(), networkConnection);
-        return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {}.getType());
+        return result.getResult().getObject("serverInfos", SERVER_INFO_COLLECTION_TYPE);
     }
 
     /**
-     * Returns the ServerInfo from all CloudGameServers
-     */
-    public Collection<ServerInfo> getCloudServers() {
-        if (cloudService != null && cloudService.isProxyInstance()) {
-            return CollectionWrapper.filterMany(cloudService.getServers().values(), new Acceptable<ServerInfo>() {
-                @Override
-                public boolean isAccepted(ServerInfo serverInfo) {
-                    return serverInfo.getServiceId().getGroup() == null;
-                }
-            });
-        }
-
-        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetCloudServers(), networkConnection);
-        return result.getResult().getObject("serverInfos", new TypeToken<Collection<ServerInfo>>() {}.getType());
-    }
-
-    /**
-     * Returns all proxyInfos on network
-     */
-    public Collection<ProxyInfo> getProxys() {
-        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(), networkConnection);
-        return result.getResult().getObject("proxyInfos", new TypeToken<Collection<ProxyInfo>>() {}.getType());
-    }
-
-    /**
-     * Returns the ProxyInfos from all proxys in the group #group
+     * Queries the master for all running proxies.
      *
-     * @param group
+     * @return a collection containing all running proxies.
      */
-    public Collection<ProxyInfo> getProxys(String group) {
-        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(group), networkConnection);
-        return result.getResult().getObject("proxyInfos", new TypeToken<Collection<ProxyInfo>>() {}.getType());
+    public Collection<ProxyInfo> getProxies() {
+        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxies(), networkConnection);
+        return result.getResult().getObject("proxyInfos", PROXY_INFO_COLLECTION_TYPE);
     }
 
     /**
-     * Returns all OnlinePlayers on Network
+     * Queries the master for all running proxies in the given group.
+     *
+     * @param group the name of the proxy group to get the proxies for.
+     *
+     * @return a collection containing all running proxies of the given proxy group.
+     */
+    public Collection<ProxyInfo> getProxies(String group) {
+        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxies(group), networkConnection);
+        return result.getResult().getObject("proxyInfos", PROXY_INFO_COLLECTION_TYPE);
+    }
+
+    /**
+     * Returns all players currently online on the network.
+     * This methods queries the master so it may take a short moment.
+     *
+     * @return all players currently online.
      */
     public Collection<CloudPlayer> getOnlinePlayers() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayers(), networkConnection);
-        Collection<CloudPlayer> cloudPlayers = result.getResult().getObject("players",
-                                                                            new TypeToken<Collection<CloudPlayer>>() {}.getType());
+        Collection<CloudPlayer> cloudPlayers = result.getResult().getObject("players", COLLECTION_CLOUDPLAYER_TYPE);
 
         if (cloudPlayers == null) {
-            return new ArrayList<>();
-        }
-
-        for (CloudPlayer cloudPlayer : cloudPlayers) {
-            cloudPlayer.setPlayerExecutor(PlayerExecutorBridge.INSTANCE);
+            return Collections.emptyList();
         }
 
         return cloudPlayers;
     }
 
     /**
-     * Retuns a online CloudPlayer on network or null if the player isn't online
+     * Returns an online player by their UUID.
+     * If the player is not cached, the master is queried.
+     *
+     * @param uniqueId the UUID of the player.
+     *
+     * @return the online player or null, if the player is not currently online on the network.
      */
     public CloudPlayer getOnlinePlayer(UUID uniqueId) {
-        CloudPlayer instance = checkAndGet(uniqueId);
-        if (instance != null) {
-            return instance;
+        if (cloudService != null) {
+            CloudPlayer cloudPlayer = cloudService.getCachedPlayer(uniqueId);
+            if (cloudPlayer != null) {
+                return cloudPlayer;
+            }
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayer(uniqueId), networkConnection);
-        CloudPlayer cloudPlayer = result.getResult().getObject("player", CloudPlayer.TYPE);
-        if (cloudPlayer == null) {
-            return null;
-        }
-        cloudPlayer.setPlayerExecutor(PlayerExecutorBridge.INSTANCE);
-        return cloudPlayer;
-    }
-
-    private CloudPlayer checkAndGet(UUID uniqueId) {
-        return cloudService != null ? cloudService.getCachedPlayer(uniqueId) : null;
+        return result.getResult().getObject("player", CloudPlayer.TYPE);
     }
 
     /**
-     * Returns a offline player which registerd or null
+     * Returns an offline player by their UUID.
+     * If the player is not cached, the master is queried.
      *
-     * @param uniqueId
+     * @param uniqueId the UUID of the player.
+     *
+     * @return the offline player or null, if the player is not registered on the network.
      */
     public OfflinePlayer getOfflinePlayer(UUID uniqueId) {
-        CloudPlayer cloudPlayer = checkAndGet(uniqueId);
-        if (cloudPlayer != null) {
-            return cloudPlayer;
+        if (cloudService != null) {
+            CloudPlayer cloudPlayer = cloudService.getCachedPlayer(uniqueId);
+            if (cloudPlayer != null) {
+                return cloudPlayer;
+            }
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(uniqueId), networkConnection);
-        return result.getResult().getObject("player", new TypeToken<OfflinePlayer>() {}.getType());
+        return result.getResult().getObject("player", OfflinePlayer.TYPE);
     }
 
     /**
-     * Returns a offline player which registerd or null
+     * Returns an offline player by their exact name.
+     * If the player is not cached, the master is queried.
      *
-     * @param name
+     * @param name the exact name of the player.
+     *
+     * @return the offline player or null, if the player is not registered on the network.
      */
     public OfflinePlayer getOfflinePlayer(String name) {
-        CloudPlayer cloudPlayer = checkAndGet(name);
-        if (cloudPlayer != null) {
-            return cloudPlayer;
+        if (cloudService != null) {
+            CloudPlayer cloudPlayer = cloudService.getCachedPlayer(name);
+            if (cloudPlayer != null) {
+                return cloudPlayer;
+            }
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetOfflinePlayer(name), networkConnection);
-        return result.getResult().getObject("player", new TypeToken<OfflinePlayer>() {}.getType());
-    }
-
-    private CloudPlayer checkAndGet(String name) {
-        return cloudService != null ? cloudService.getCachedPlayer(name) : null;
+        return result.getResult().getObject("player", OfflinePlayer.TYPE);
     }
 
     /**
-     * Returns the ServerGroup from the name or null
+     * Queries the master for a server group based on the given name.
      *
-     * @param name
+     * @param name the name of the server group.
+     *
+     * @return the server group object or null, if it doesn't exist.
      */
     public ServerGroup getServerGroup(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServerGroup(name), networkConnection);
-        return result.getResult().getObject("serverGroup", new TypeToken<ServerGroup>() {}.getType());
+        return result.getResult().getObject("serverGroup", ServerGroup.TYPE);
     }
 
     /**
-     * Returns from a registerd Player the uniqueId or null if the player doesn't exists
+     * Queries the unique id of the player with the given name.
+     *
+     * @param name the name of the player; case-insensitive.
+     *
+     * @return the unique id of the player with the given name or {@code null},
+     * if the player is not registered on the network.
      */
     public UUID getPlayerUniqueId(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutNameUUID(name), networkConnection);
-        return result.getResult().getObject("uniqueId", new TypeToken<UUID>() {}.getType());
+        return result.getResult().getObject("uniqueId", UUID.class);
     }
 
     /**
-     * Returns from a registerd Player the name or null if the player doesn't exists
+     * Queries the name of the player with the given unique id.
+     *
+     * @param uniqueId the unique id of the player.
+     *
+     * @return the name of the player with the given unique id or {@code null},
+     * if the player is not registered on the network.
      */
     public String getPlayerName(UUID uniqueId) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutNameUUID(uniqueId), networkConnection);
@@ -1500,27 +747,34 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns the ServerInfo from one gameServer where serverName = serverId
+     * Queries the master for the server information about a specific server.
+     *
+     * @param serverId the server id to query for.
+     *
+     * @return the server information of the server with the given sever id.
      */
-    public ServerInfo getServerInfo(String serverName) {
-        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServer(serverName), networkConnection);
-        return result.getResult().getObject("serverInfo", new TypeToken<ServerInfo>() {}.getType());
+    public ServerInfo getServerInfo(String serverId) {
+        Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServer(serverId), networkConnection);
+        return result.getResult().getObject("serverInfo", ServerInfo.TYPE);
     }
 
     /**
-     * Returns a Document with all collected statistics
+     * Returns a document with all collected statistics.
+     * This method queries the master.
      *
-     * @return
+     * @return a document with collected statistics.
      */
     public Document getStatistics() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetStatistic(), networkConnection);
         return result.getResult();
     }
 
-    /*================================================================================*/
-
     /**
+     * Copies the given directory from the currently running server to its template.
+     * This is done by requesting the master to handle the instructions for the wrapper.
      *
+     * @param serverInfo the information about the currently running server.
+     * @param directory  the directory which will be copied to the running server's template.
      */
     public void copyDirectory(ServerInfo serverInfo, String directory) {
         if (serverInfo == null || directory == null) {
@@ -1538,24 +792,37 @@ public final class CloudAPI implements MetaObj {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetRegisteredPlayers(), networkConnection);
 
         if (result.getResult() != null) {
-            return result.getResult().getObject("players", new TypeToken<Map<UUID, OfflinePlayer>>() {}.getType());
+            return result.getResult().getObject("players", MAP_UUID_OFFLINEPLAYER_TYPE);
         }
 
         return new HashMap<>();
     }
 
+    /**
+     * The clouds private logger. Only use this in internal CloudNet code, plugin developers
+     * should use their own plugin's logger.
+     *
+     * @return the logger for CloudNet's plugin.
+     */
     public Logger getLogger() {
         return logger;
     }
 
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-    }
-
+    /**
+     * This method determines, whether debug messages can be logged.
+     *
+     * @return whether or not the debug mode is enabled.
+     */
     public boolean isDebug() {
         return logger.isLoggable(Level.FINEST);
     }
 
+    /**
+     * Enable or disable debugging output on the cloud logger instance.
+     * This modifies the logger.
+     *
+     * @param debug whether to output debug information.
+     */
     public void setDebug(boolean debug) {
         if (debug) {
             logger.setLevel(Level.ALL);

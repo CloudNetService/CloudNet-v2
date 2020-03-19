@@ -1,26 +1,22 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.event.bukkit;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called if a custom channel message was received
+ * This event is called whenever a custom channel message has been received.
+ * This event can be used to receive communication from servers across the entire network.
  */
 public class BukkitCustomChannelMessageReceiveEvent extends BukkitCloudEvent {
 
     private static HandlerList handlerList = new HandlerList();
 
     private String channel;
-
     private String message;
-
     private Document document;
 
     public BukkitCustomChannelMessageReceiveEvent(String channel, String message, Document document) {
+        super();
         this.channel = channel;
         this.message = message;
         this.document = document;
@@ -30,14 +26,23 @@ public class BukkitCustomChannelMessageReceiveEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * @return the message carried by this channel message.
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * @return the document attached to this channel message.
+     */
     public Document getDocument() {
         return document;
     }
 
+    /**
+     * @return the channel this channel message was sent on.
+     */
     public String getChannel() {
         return channel;
     }

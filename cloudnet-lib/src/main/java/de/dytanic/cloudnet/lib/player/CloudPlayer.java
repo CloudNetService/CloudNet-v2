@@ -10,12 +10,12 @@ import java.util.Objects;
  *
  */
 public class CloudPlayer extends OfflinePlayer {
-    public static final Type TYPE = new TypeToken<CloudPlayer>() {}.getType();
+    public static final Type TYPE = TypeToken.get(CloudPlayer.class).getType();
+
     private PlayerConnection playerConnection;
     private String proxy;
     private String server;
     private Timestamp loginTimeStamp;
-    private PlayerExecutor playerExecutor;
 
     public CloudPlayer(OfflinePlayer player, PlayerConnection onlineConnection, String proxy) {
         super(player.getUniqueId(),
@@ -29,7 +29,6 @@ public class CloudPlayer extends OfflinePlayer {
         this.playerConnection = onlineConnection;
         this.proxy = proxy;
         this.server = null;
-        this.playerExecutor = new PlayerExecutor();
         this.loginTimeStamp = new Timestamp(System.currentTimeMillis());
     }
 
@@ -49,7 +48,6 @@ public class CloudPlayer extends OfflinePlayer {
         result = 31 * result + (proxy != null ? proxy.hashCode() : 0);
         result = 31 * result + (server != null ? server.hashCode() : 0);
         result = 31 * result + (loginTimeStamp != null ? loginTimeStamp.hashCode() : 0);
-        result = 31 * result + (playerExecutor != null ? playerExecutor.hashCode() : 0);
         return result;
     }
 
@@ -58,19 +56,32 @@ public class CloudPlayer extends OfflinePlayer {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof CloudPlayer)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         final CloudPlayer that = (CloudPlayer) o;
-        return Objects.equals(playerConnection, that.playerConnection) && Objects.equals(proxy, that.proxy) && Objects.equals(server,
-                                                                                                                              that.server) && Objects
-            .equals(loginTimeStamp, that.loginTimeStamp) && Objects.equals(playerExecutor, that.playerExecutor);
+
+        if (!Objects.equals(playerConnection, that.playerConnection)) {
+            return false;
+        }
+        if (!Objects.equals(proxy, that.proxy)) {
+            return false;
+        }
+        if (!Objects.equals(server, that.server)) {
+            return false;
+        }
+        return Objects.equals(loginTimeStamp, that.loginTimeStamp);
     }
 
     @Override
     public String toString() {
-        return "CloudPlayer{" + "playerConnection=" + playerConnection + ", proxy='" + proxy + '\'' + ", server='" + server + '\'' + ", loginTimeStamp=" + loginTimeStamp + ", playerExecutor=" + playerExecutor + "} " + super
-            .toString();
+        return "CloudPlayer{" +
+            "playerConnection=" + playerConnection +
+            ", proxy='" + proxy + '\'' +
+            ", server='" + server + '\'' +
+            ", loginTimeStamp=" + loginTimeStamp +
+            "} " + super.toString();
     }
 
     public String getServer() {
@@ -105,11 +116,4 @@ public class CloudPlayer extends OfflinePlayer {
         this.loginTimeStamp = loginTimeStamp;
     }
 
-    public PlayerExecutor getPlayerExecutor() {
-        return playerExecutor;
-    }
-
-    public void setPlayerExecutor(PlayerExecutor playerExecutor) {
-        this.playerExecutor = playerExecutor;
-    }
 }

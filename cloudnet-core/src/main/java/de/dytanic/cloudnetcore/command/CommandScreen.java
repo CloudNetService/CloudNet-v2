@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.command;
 
 import de.dytanic.cloudnet.command.Command;
@@ -41,8 +37,8 @@ public final class CommandScreen extends Command implements TabCompletable {
                 if (wrapper.getServers().containsKey(serviceId.getServerId())) {
                     wrapper.writeServerCommand(commandLine, wrapper.getServers().get(serviceId.getServerId()).getServerInfo());
                 }
-                if (wrapper.getProxys().containsKey(serviceId.getServerId())) {
-                    wrapper.writeProxyCommand(commandLine, wrapper.getProxys().get(serviceId.getServerId()).getProxyInfo());
+                if (wrapper.getProxies().containsKey(serviceId.getServerId())) {
+                    wrapper.writeProxyCommand(commandLine, wrapper.getProxies().get(serviceId.getServerId()).getProxyInfo());
                 }
             }
             return;

@@ -18,7 +18,6 @@
     </yaml>
     <codeStyleSettings language="JAVA">
       <option name="RIGHT_MARGIN" value="140" />
-      <option name="KEEP_LINE_BREAKS" value="false" />
       <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
       <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
       <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />

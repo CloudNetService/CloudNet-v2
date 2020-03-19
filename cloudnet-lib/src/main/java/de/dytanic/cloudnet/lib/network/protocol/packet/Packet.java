@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.lib.network.protocol.packet;
 
 import com.google.gson.reflect.TypeToken;
@@ -18,11 +14,32 @@ import java.util.UUID;
  */
 public class Packet extends ProtocolStream {
 
-    private static final Type TYPE = new TypeToken<Packet>() {}.getType();
+    private static final Type TYPE = TypeToken.get(Packet.class).getType();
+
+    public int getId() {
+        return id;
+    }
+
+    public Document getData() {
+        return data;
+    }
+
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
 
     protected int id;
     protected Document data;
     protected UUID uniqueId;
+
+    @Override
+    public String toString() {
+        return "de.dytanic.cloudnet.lib.network.protocol.packet.Packet{" +
+            "id=" + id +
+            ", data=" + data +
+            ", uniqueId=" + uniqueId +
+            "} " + super.toString();
+    }
 
     public Packet() {
     }

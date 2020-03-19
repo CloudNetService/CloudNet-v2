@@ -1,12 +1,10 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.handler;
 
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnetcore.CloudNet;
+import de.dytanic.cloudnetcore.process.CoreProxyProcessBuilder;
+import de.dytanic.cloudnetcore.process.CoreServerProcessBuilder;
 
 import java.util.Collection;
 
@@ -19,16 +17,17 @@ public class CloudStartupHandler implements ICloudHandler {
     public void onHandle(CloudNet cloudNet) {
         for (ServerGroup serverGroup : cloudNet.getServerGroups().values()) {
             Collection<String> servers = cloudNet.getServersAndWaitings(serverGroup.getName());
-            if (servers.size() < serverGroup.getMinOnlineServers() && (serverGroup.getMaxOnlineServers() == -1 || serverGroup.getMaxOnlineServers() > servers
-                .size())) {
-                cloudNet.startGameServer(serverGroup);
+            if (servers.size() < serverGroup.getMinOnlineServers()
+                && (serverGroup.getMaxOnlineServers() == -1
+                || serverGroup.getMaxOnlineServers() > servers.size())) {
+                CoreServerProcessBuilder.create(serverGroup.getName()).startServer();
             }
         }
 
-        for (ProxyGroup serverGroup : cloudNet.getProxyGroups().values()) {
-            Collection<String> servers = cloudNet.getProxysAndWaitings(serverGroup.getName());
-            if (servers.size() < serverGroup.getStartup()) {
-                cloudNet.startProxy(serverGroup);
+        for (ProxyGroup proxyGroup : cloudNet.getProxyGroups().values()) {
+            Collection<String> servers = cloudNet.getProxysAndWaitings(proxyGroup.getName());
+            if (servers.size() < proxyGroup.getStartup()) {
+                CoreProxyProcessBuilder.create(proxyGroup.getName()).startProxy();
             }
         }
     }

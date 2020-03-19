@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.network.components.util;
 
 import de.dytanic.cloudnetcore.network.components.INetworkComponent;

@@ -1,10 +1,7 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.api.database.packet.out;
 
 import de.dytanic.cloudnet.lib.database.Database;
+import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
 import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -14,7 +11,7 @@ import de.dytanic.cloudnet.lib.utility.document.Document;
  */
 public class PacketDBOutDeleteDocument extends Packet {
 
-    public PacketDBOutDeleteDocument(Document document, String db) {
+    public PacketDBOutDeleteDocument(DatabaseDocument document, String db) {
         this(document.getString(Database.UNIQUE_NAME_KEY), db);
     }
 

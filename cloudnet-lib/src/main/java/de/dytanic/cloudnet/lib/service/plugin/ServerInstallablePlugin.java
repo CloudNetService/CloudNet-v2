@@ -1,16 +1,18 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.lib.service.plugin;
+
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.Set;
 
 public class ServerInstallablePlugin {
 
-    private String name;
+    public static final Type TYPE = TypeToken.get(ServerInstallablePlugin.class).getType();
+    public static final Type SET_TYPE = TypeToken.getParameterized(Set.class, ServerInstallablePlugin.class).getType();
 
-    private PluginResourceType pluginResourceType;
-
-    private String url;
+    private final String name;
+    private final PluginResourceType pluginResourceType;
+    private final String url;
 
     public ServerInstallablePlugin(String name, PluginResourceType pluginResourceType, String url) {
         this.name = name;

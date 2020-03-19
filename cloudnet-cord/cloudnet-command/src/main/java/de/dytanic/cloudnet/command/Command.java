@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
@@ -39,14 +35,12 @@ public abstract class Command implements CommandExecutor, Nameable {
      * Appends a new argument to this command
      *
      * @param commandArgument the argument to append
-     * @param <T>             a subclass of {@link Command}
      *
      * @return the command for chaining
      */
-    protected <T extends Command> T appendArgument(CommandArgument commandArgument) {
+    protected Command appendArgument(CommandArgument commandArgument) {
         this.commandArguments.add(commandArgument);
-        //noinspection unchecked
-        return (T) this;
+        return this;
     }
 
     @Override

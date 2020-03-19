@@ -1,17 +1,14 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.network.wrapper;
 
 import de.dytanic.cloudnetcore.network.components.WrapperMeta;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Created by Tareko on 23.09.2017.
  */
-public class WrapperSession {
+public class WrapperSession implements Serializable {
 
     private UUID uniqueId;
 

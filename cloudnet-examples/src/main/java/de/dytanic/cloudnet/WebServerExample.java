@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet;
 
 import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
@@ -31,9 +27,8 @@ public class WebServerExample
                                 QueryDecoder queryDecoder,
                                 PathProvider pathProvider,
                                 HttpRequest httpRequest) throws Exception {
-        return newResponse(httpRequest.getProtocolVersion(),
-                           Unpooled.wrappedBuffer(pathProvider.getPathParameters()
-                                                              .getString("myCustomPattern")
-                                                              .getBytes(StandardCharsets.UTF_8)));
+        return newResponse(httpRequest.protocolVersion(),
+                           Unpooled.copiedBuffer(pathProvider.getPathParameters().getString("myCustomPattern"),
+                                                 StandardCharsets.UTF_8));
     }
 }

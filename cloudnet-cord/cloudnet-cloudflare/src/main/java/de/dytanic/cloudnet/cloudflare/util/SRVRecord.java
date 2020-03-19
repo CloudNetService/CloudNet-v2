@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.cloudflare.util;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;

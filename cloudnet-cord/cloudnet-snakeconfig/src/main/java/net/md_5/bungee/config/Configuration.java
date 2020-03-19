@@ -5,9 +5,8 @@ import java.util.*;
 public final class Configuration {
 
     private static final char SEPARATOR = '.';
-    public final Map<String, Object> self;
+    final Map<String, Object> self;
     private final Configuration defaults;
-
     public Configuration() {
         this(null);
     }
@@ -37,6 +36,10 @@ public final class Configuration {
     }
     // Waterfall end
 
+    public Map<String, Object> getSelf() {
+        return self;
+    }
+
     private Configuration getSectionFor(String path) {
         int index = path.indexOf(SEPARATOR);
         if (index == -1) {
@@ -46,7 +49,7 @@ public final class Configuration {
         String root = path.substring(0, index);
         Object section = self.get(root);
         if (section == null) {
-            section = new Configuration((defaults == null) ? null : defaults.getSection(path));
+            section = new Configuration((defaults == null) ? null : defaults.getSection(root));
             self.put(root, section);
         }
 
@@ -103,10 +106,6 @@ public final class Configuration {
         } else {
             section.set(getChild(path), value);
         }
-    }
-
-    public Map<String, Object> getSelf() {
-        return self;
     }
 
     /*------------------------------------------------------------------------*/

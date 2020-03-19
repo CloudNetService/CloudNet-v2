@@ -8,12 +8,14 @@ import de.dytanic.cloudnet.lib.service.ServiceId;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Tareko on 24.05.2017.
  */
 public class ServerInfo {
-    public static final Type TYPE = new TypeToken<ServerInfo>() {}.getType();
+    public static final Type TYPE = TypeToken.get(ServerInfo.class).getType();
+
     private ServiceId serviceId;
     private String host;
     private int port;
@@ -50,6 +52,70 @@ public class ServerInfo {
         this.serverState = serverState;
         this.serverConfig = serverConfig;
         this.template = template;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = serviceId != null ? serviceId.hashCode() : 0;
+        result = 31 * result + (host != null ? host.hashCode() : 0);
+        result = 31 * result + port;
+        result = 31 * result + (online ? 1 : 0);
+        result = 31 * result + (players != null ? players.hashCode() : 0);
+        result = 31 * result + memory;
+        result = 31 * result + (motd != null ? motd.hashCode() : 0);
+        result = 31 * result + onlineCount;
+        result = 31 * result + maxPlayers;
+        result = 31 * result + (serverState != null ? serverState.hashCode() : 0);
+        result = 31 * result + (serverConfig != null ? serverConfig.hashCode() : 0);
+        result = 31 * result + (template != null ? template.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final ServerInfo that = (ServerInfo) o;
+
+        if (port != that.port) {
+            return false;
+        }
+        if (online != that.online) {
+            return false;
+        }
+        if (memory != that.memory) {
+            return false;
+        }
+        if (onlineCount != that.onlineCount) {
+            return false;
+        }
+        if (maxPlayers != that.maxPlayers) {
+            return false;
+        }
+        if (!Objects.equals(serviceId, that.serviceId)) {
+            return false;
+        }
+        if (!Objects.equals(host, that.host)) {
+            return false;
+        }
+        if (!Objects.equals(players, that.players)) {
+            return false;
+        }
+        if (!Objects.equals(motd, that.motd)) {
+            return false;
+        }
+        if (serverState != that.serverState) {
+            return false;
+        }
+        if (!Objects.equals(serverConfig, that.serverConfig)) {
+            return false;
+        }
+        return Objects.equals(template, that.template);
     }
 
     @Override

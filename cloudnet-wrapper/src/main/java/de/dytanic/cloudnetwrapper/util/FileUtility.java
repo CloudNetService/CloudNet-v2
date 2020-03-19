@@ -1,20 +1,26 @@
 
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetwrapper.util;
 
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.*;
-import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.stream.Stream;
 
 public final class FileUtility {
+
+    private static final Yaml YAML;
+
+    static {
+        // Kept in sync with BungeeCord
+        DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        YAML = new Yaml(dumperOptions);
+    }
 
     private FileUtility() {
     }
@@ -22,14 +28,6 @@ public final class FileUtility {
     public static void copy(InputStream inputStream, OutputStream outputStream) throws IOException {
         byte[] buffer = new byte[8192];
         copy(inputStream, outputStream, buffer);
-
-        try {
-
-            Method method = byte[].class.getMethod("finalize");
-            method.setAccessible(true);
-            method.invoke(buffer);
-        } catch (Exception ex) {
-        }
     }
 
     public static void copy(InputStream inputStream, OutputStream outputStream, byte[] buffer) throws IOException {
@@ -37,129 +35,116 @@ public final class FileUtility {
 
         while ((len = inputStream.read(buffer, 0, buffer.length)) != -1) {
             outputStream.write(buffer, 0, len);
-            outputStream.flush();
         }
+        outputStream.flush();
     }
 
     public static void copyFileToDirectory(File from, File to) throws IOException {
-        copy(from.toPath(), new File(to.getPath(), from.getName()).toPath());
+        copy(from.toPath(), new File(to, from.getName()).toPath());
     }
 
     public static void copy(Path from, Path to) throws IOException {
-        copy(from, to, new byte[16384]);
-    }
-
-    public static void copy(Path from, Path to, byte[] buffer) throws IOException {
         if (from == null || to == null || !Files.exists(from)) {
             return;
         }
 
-        if (!Files.exists(to)) {
-            to.toFile().getParentFile().mkdirs();
-            to.toFile().delete();
-
-            Files.createFile(to);
+        if (!Files.exists(to.getParent())) {
+            Files.createDirectories(to.getParent());
         }
 
-        try (InputStream inputStream = Files.newInputStream(from); OutputStream outputStream = Files.newOutputStream(to)) {
-            copy(inputStream, outputStream, buffer);
-        }
+        Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
     }
 
     public static void copyFilesInDirectory(File from, File to) throws IOException {
-        if (to == null || from == null || !from.exists()) {
-            return;
-        }
-
-        if (!to.exists()) {
-            to.mkdirs();
-        }
-
-        if (!from.isDirectory()) {
-            return;
-        }
-
-        File[] list = from.listFiles();
-        byte[] buffer = new byte[16384];
-        if (list != null) {
-            for (File file : list) {
-                if (file == null) {
-                    continue;
-                }
-
-                if (file.isDirectory()) {
-                    copyFilesInDirectory(file, new File(to.getAbsolutePath() + '/' + file.getName()));
-                } else {
-                    File n = new File(to.getAbsolutePath() + '/' + file.getName());
-                    copy(file.toPath(), n.toPath(), buffer);
-                }
-            }
-        }
+        final Path sourcePath = from.toPath();
+        final Path targetPath = to.toPath();
+        copyFilesInDirectory(sourcePath, targetPath);
     }
 
-    public static void insertData(String paramString1, String paramString2) {
-        File file = new File(paramString2);
-        file.delete();
-
-        try (InputStream localInputStream = FileUtility.class.getClassLoader().getResourceAsStream(paramString1)) {
-            Files.copy(localInputStream, Paths.get(paramString2), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-        }
-    }
-
-    public static void deleteDirectory(File file) {
-        if (file == null) {
+    public static void copyFilesInDirectory(Path sourcePath, Path targetPath) throws IOException {
+        if (!Files.isDirectory(sourcePath)) {
             return;
         }
+        if (Files.notExists(targetPath)) {
+            Files.createDirectories(targetPath);
+        }
 
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-
-            if (files != null) {
-                for (File entry : files) {
-                    if (entry.isDirectory()) {
-                        deleteDirectory(entry);
-                    } else {
-                        entry.delete();
+        try (Stream<Path> sourceFiles = Files.walk(sourcePath)) {
+            sourceFiles.forEach(path -> {
+                try {
+                    final Path absoluteTargetPath = targetPath.resolve(
+                        sourcePath.relativize(path));
+                    if (Files.isDirectory(path) && Files.notExists(absoluteTargetPath)) {
+                        Files.createDirectories(absoluteTargetPath);
+                    } else if (Files.isRegularFile(path)) {
+                        copy(path, absoluteTargetPath);
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }
+            });
         }
-
-        file.delete();
     }
 
+    public static void insertData(String fileName, String destination) {
+        final Path destinationPath = Paths.get(destination);
+        try (InputStream localInputStream = FileUtility.class.getClassLoader().getResourceAsStream(fileName)) {
+            Files.deleteIfExists(destinationPath);
+            if (localInputStream != null) {
+                Files.copy(localInputStream, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteDirectory(File directory) {
+        deleteDirectory(directory.toPath());
+    }
+
+    public static void deleteDirectory(Path directory) {
+        if (Files.notExists(directory)) {
+            return;
+        }
+        try {
+            Files.walkFileTree(directory, new DeletingFileVisitor());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     public static void rewriteFileUtils(File file, String host) throws Exception {
-        file.setReadable(true);
-        FileInputStream in = new FileInputStream(file);
-        List<String> liste = new CopyOnWriteArrayList<>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        String input;
-        boolean value = false;
-        while ((input = reader.readLine()) != null) {
-            if (value) {
-                liste.add("  host: " + host + '\n');
-                value = false;
-            } else {
-                if (input.startsWith("  query_enabled")) {
-                    liste.add(input + '\n');
-                    value = true;
-                } else {
-                    liste.add(input + '\n');
-                }
+
+        Map<String, Object> configuration;
+        try (Reader reader = new FileReader(file)) {
+            configuration = YAML.load(reader);
+        }
+
+        if (configuration != null) {
+            List listeners = (List) configuration.get("listeners");
+            final Map map = (Map) listeners.get(0);
+            map.put("host", host);
+            try (Writer writer = new FileWriter(file)) {
+                YAML.dump(configuration, writer);
             }
         }
-        file.delete();
-        file.createNewFile();
-        file.setReadable(true);
-        FileOutputStream out = new FileOutputStream(file);
-        PrintWriter w = new PrintWriter(out);
-        for (String wert : liste) {
-            w.write(wert);
-            w.flush();
+    }
+
+    private static class DeletingFileVisitor extends SimpleFileVisitor<Path> {
+        @Override
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+            super.visitFile(file, attrs);
+            Files.deleteIfExists(file);
+            return FileVisitResult.CONTINUE;
         }
-        reader.close();
-        w.close();
+
+        @Override
+        public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
+            super.postVisitDirectory(dir, exc);
+            Files.deleteIfExists(dir);
+            return FileVisitResult.CONTINUE;
+        }
     }
 
 }

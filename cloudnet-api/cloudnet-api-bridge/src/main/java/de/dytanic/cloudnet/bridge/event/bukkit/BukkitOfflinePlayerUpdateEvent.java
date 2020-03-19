@@ -3,6 +3,10 @@ package de.dytanic.cloudnet.bridge.event.bukkit;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import org.bukkit.event.HandlerList;
 
+/**
+ * This event is called whenever an {@link OfflinePlayer} is updated and the data is
+ * forwarded to this service.
+ */
 public class BukkitOfflinePlayerUpdateEvent extends BukkitCloudEvent {
 
     private static final HandlerList handlerList = new HandlerList();
@@ -17,6 +21,9 @@ public class BukkitOfflinePlayerUpdateEvent extends BukkitCloudEvent {
         return handlerList;
     }
 
+    /**
+     * @return the newly updated player instance.
+     */
     public OfflinePlayer getOfflinePlayer() {
         return offlinePlayer;
     }

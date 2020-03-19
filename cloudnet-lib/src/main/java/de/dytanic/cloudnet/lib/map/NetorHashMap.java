@@ -24,7 +24,7 @@ public class NetorHashMap<Key, VF, VS> implements NetorMap<Key> {
 
     @Override
     public boolean contains(Key key) {
-        return values.containsKey(key) ? true : false;
+        return values.containsKey(key);
     }
 
     @Override

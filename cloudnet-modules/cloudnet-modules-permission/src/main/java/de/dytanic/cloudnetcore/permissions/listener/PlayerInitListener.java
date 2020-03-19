@@ -1,10 +1,6 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.permissions.listener;
 
-import de.dytanic.cloudnet.event.IEventListener;
+import de.dytanic.cloudnet.event.EventListener;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnetcore.api.event.player.PlayerInitEvent;
 import de.dytanic.cloudnetcore.permissions.PermissionModule;
@@ -15,7 +11,7 @@ import java.util.LinkedList;
 /**
  * Created by Tareko on 18.10.2017.
  */
-public final class PlayerInitListener implements IEventListener<PlayerInitEvent> {
+public final class PlayerInitListener implements EventListener<PlayerInitEvent> {
 
     @Override
     public void onCall(PlayerInitEvent event) {

@@ -1,14 +1,9 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.wrapper.local;
 
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.user.BasicUser;
 import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.threading.Runnabled;
 import de.dytanic.cloudnet.setup.spigot.SetupSpigotVersion;
 import de.dytanic.cloudnet.web.client.WebClient;
 import de.dytanic.cloudnetcore.CloudNet;
@@ -28,20 +23,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 01.10.2017.
  */
-public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
+public class LocalCloudWrapper implements Consumer<OptionSet>, Closeable {
 
     private static final String WRAPPER_URL = "https://ci.cloudnetservice.eu/job/CloudNetService/job/CloudNet/job/master/lastSuccessfulBuild/artifact/cloudnet-wrapper/target/CloudNet-Wrapper.jar";
 
     private Process process;
-    private Thread consoleThread;
-    private StringBuffer stringBuffer = new StringBuffer();
-    private byte[] buffer = new byte[1024];
+    private ExecutorService executorService = Executors.newFixedThreadPool(2);
     private boolean shutdown = false;
     private boolean enabled;
     private boolean showConsoleOutput = !Boolean.getBoolean("cloudnet.localwrapper.disableConsole");
@@ -68,8 +63,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
         if (this.config == null || this.config.isOutdated()) {
             try (InputStream inputStream = Files.newInputStream(Paths.get("wrapper/config.yml"))) {
                 this.config = new LocalWrapperConfig(ConfigurationProvider.getProvider(YamlConfiguration.class).load(inputStream));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
         }
         return this.config != null ? this.config.getConfiguration() : null;
@@ -78,12 +73,29 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
     public void installUpdate(WebClient webClient) {
         Path path = Paths.get("wrapper/CloudNet-Wrapper.jar");
         if (Files.exists(path)) {
+            boolean runningBeforeUpdate = false;
+            if (this.process != null && this.process.isAlive()) {
+                this.shutdown = true;
+                try {
+                    this.stop();
+                    runningBeforeUpdate = true;
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
             webClient.updateLocalCloudWrapper(path);
+            if (runningBeforeUpdate) {
+                try {
+                    this.startProcess();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
         }
     }
 
     @Override
-    public void run(OptionSet obj) {
+    public void accept(OptionSet obj) {
         if (obj.has("installWrapper")) {
             try {
                 if (!Files.exists(Paths.get("wrapper"))) {
@@ -95,8 +107,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
                 this.setupWrapperKey();
                 this.setupSpigot(obj);
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
 
             this.startup();
@@ -113,12 +125,12 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
                 System.out.println("Downloading wrapper...");
                 URLConnection urlConnection = new URL(WRAPPER_URL).openConnection();
                 urlConnection.setRequestProperty("User-Agent",
-                                                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                                                 NetworkUtils.USER_AGENT);
                 urlConnection.connect();
                 Files.copy(urlConnection.getInputStream(), path);
                 System.out.println("Download completed!");
-            } catch (Exception ex) {
-                System.err.println("Error on setting up wrapper: " + ex.getMessage());
+            } catch (Exception exception) {
+                System.err.println("Error on setting up wrapper: " + exception.getMessage());
                 return;
             }
         }
@@ -171,7 +183,6 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
             configuration.set("general.saving-records", false);
             configuration.set("general.viaversion", false);
             configuration.set("general.maintenance-copyFileToDirectory", false);
-            configuration.set("general.devservicePath", new File("wrapper/Development").getAbsolutePath());
             configuration.set("general.processQueueSize", (Runtime.getRuntime().availableProcessors() / 2));
             configuration.set("general.percentOfCPUForANewServer", 100D);
             configuration.set("general.percentOfCPUForANewCloudServer", 100D);
@@ -179,8 +190,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
 
             try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
         }
     }
@@ -188,8 +199,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
     private void setupWrapperKey() {
         try {
             Files.copy(Paths.get("WRAPPER_KEY.cnd"), Paths.get("wrapper/WRAPPER_KEY.cnd"), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -198,8 +209,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
         if (!obj.has("disallow_bukkit_download") && !Files.exists(path)) {
             try {
                 Files.createDirectories(path.getParent());
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
             SetupSpigotVersion setup = new SetupSpigotVersion();
             setup.setTarget(path);
@@ -215,12 +226,11 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
         System.out.println("Starting local wrapper...");
         try {
             this.startProcess();
-            this.initConsoleThread();
 
             System.out.println("Successfully started the local wrapper!");
-        } catch (IOException e) {
+        } catch (IOException exception) {
             System.err.println("Failed to start the local wrapper!");
-            e.printStackTrace();
+            exception.printStackTrace();
         }
     }
 
@@ -232,62 +242,48 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
                                           "-Dcloudnet.logging.prompt.disabled=true",
                                           "-jar",
                                           "CloudNet-Wrapper.jar").directory(new File("wrapper")).start();
+        this.initConsoleThread();
         System.out.println("Successfully started the wrapper process!");
     }
 
     private void initConsoleThread() {
-        this.consoleThread = new Thread(() -> {
-            while (!Thread.interrupted()) {
-                if (this.process.isAlive()) {
-                    this.readStream(this.process.getInputStream(), s -> {
-                        if (this.showConsoleOutput) {
-                            System.out.println("LocalWrapper | " + s);
-                        }
-                    });
-                    this.readStream(this.process.getErrorStream(), s -> {
-                        if (this.showConsoleOutput) {
-                            System.err.println("LocalWrapper | " + s);
-                        }
-                    });
-                } else if (!shutdown) {
-                    try {
-                        this.startProcess();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    this.enabled = false;
-                    Thread.currentThread().interrupt();
+        this.executorService.execute(() -> {
+            InputStream inputStream = this.process.getInputStream();
+            this.readStream(inputStream, line -> {
+                if (this.showConsoleOutput) {
+                    System.out.println("LocalWrapper | " + line);
                 }
+            });
+            if (!this.shutdown) {
+                try {
+                    this.startProcess();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                this.enabled = false;
             }
-        }, "LocalWrapper-Console");
-        this.consoleThread.start();
+        });
+        this.executorService.execute(() -> {
+            InputStream inputStream = this.process.getErrorStream();
+            this.readStream(inputStream, line -> {
+                if (this.showConsoleOutput) {
+                    System.err.println("LocalWrapper | " + line);
+                }
+            });
+        });
     }
 
     private void readStream(InputStream inputStream, Consumer<String> consumer) {
-        try {
-            int len;
-            while (inputStream.available() > 0 && (len = inputStream.read(this.buffer)) != -1) {
-                this.stringBuffer.append(new String(this.buffer, 0, len, StandardCharsets.UTF_8));
-            }
-
-            String stringText = this.stringBuffer.toString();
-            if (!stringText.contains("\n") && !stringText.contains("\r")) {
-                return;
-            }
-
-            for (String input : stringText.split("\r")) {
-                for (String text : input.split("\n")) {
-                    if (!text.trim().isEmpty()) {
-                        consumer.accept(text);
-                    }
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))){
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    consumer.accept(line);
                 }
             }
-
-            this.stringBuffer.setLength(0);
-
-        } catch (Exception ignored) {
-            this.stringBuffer.setLength(0);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -308,8 +304,8 @@ public class LocalCloudWrapper implements Runnabled<OptionSet>, Closeable {
                 this.process.destroy();
             }
             System.out.println("Successfully stopped the local wrapper!");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException exception) {
+            exception.printStackTrace();
         }
     }
 

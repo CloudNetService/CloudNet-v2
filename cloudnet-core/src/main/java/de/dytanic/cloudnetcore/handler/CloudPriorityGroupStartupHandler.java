@@ -1,13 +1,9 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.handler;
 
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
-import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
+import de.dytanic.cloudnetcore.process.CoreServerProcessBuilder;
 
 import java.util.Collection;
 
@@ -33,12 +29,12 @@ public class CloudPriorityGroupStartupHandler implements ICloudHandler {
             Collection<String> servers = CloudNet.getInstance().getServersAndWaitings(group.getName());
 
             if (servers.size() == 0 && servers.size() < (priority <= 1 ? 1 : priority)) {
-                CloudNet.getInstance().startGameServer(group);
+                CoreServerProcessBuilder.create(group.getName()).startServer();
                 continue;
             }
 
             if (servers.size() < (priority <= 1 ? 1 : priority)) {
-                CloudNet.getInstance().startGameServer(group, new Document(), true);
+                CoreServerProcessBuilder.create(group.getName()).startServer();
             }
         }
     }

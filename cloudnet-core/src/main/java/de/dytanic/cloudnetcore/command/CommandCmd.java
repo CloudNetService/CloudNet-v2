@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.command;
 
 import de.dytanic.cloudnet.command.Command;
@@ -47,7 +43,7 @@ public final class CommandCmd extends Command {
                     }
                 }
 
-                for (ProxyServer minecraftServer : wrapper.getProxys().values()) {
+                for (ProxyServer minecraftServer : wrapper.getProxies().values()) {
                     if (minecraftServer.getServiceId().getServerId().equalsIgnoreCase(args[0])) {
                         minecraftServer.getWrapper().writeProxyCommand(command, minecraftServer.getProxyInfo());
                         sender.sendMessage("Sending command to " + minecraftServer.getServiceId()

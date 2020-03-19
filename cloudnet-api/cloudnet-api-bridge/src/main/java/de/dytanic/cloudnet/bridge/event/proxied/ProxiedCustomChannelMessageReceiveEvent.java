@@ -1,13 +1,10 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.event.proxied;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
 /**
- * Calls if a custom channel message was received
+ * This event is called whenever a custom channel message has been received.
+ * This event can be used to receive communication from servers across the entire network.
  */
 public class ProxiedCustomChannelMessageReceiveEvent extends ProxiedCloudEvent {
 
@@ -23,14 +20,23 @@ public class ProxiedCustomChannelMessageReceiveEvent extends ProxiedCloudEvent {
         this.document = document;
     }
 
+    /**
+     * @return the channel this channel message was sent on.
+     */
     public String getChannel() {
         return channel;
     }
 
+    /**
+     * @return the document attached to this channel message.
+     */
     public Document getDocument() {
         return document;
     }
 
+    /**
+     * @return the message carried by this channel message.
+     */
     public String getMessage() {
         return message;
     }

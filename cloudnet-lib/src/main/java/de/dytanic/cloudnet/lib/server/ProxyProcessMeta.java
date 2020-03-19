@@ -1,52 +1,83 @@
 package de.dytanic.cloudnet.lib.server;
 
+import com.google.gson.reflect.TypeToken;
+import de.dytanic.cloudnet.lib.process.ProxyProcessData;
 import de.dytanic.cloudnet.lib.service.ServiceId;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
-import java.util.Collection;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
- * Created by Tareko on 30.07.2017.
+ * Class holding data about an actual process that can be used to launch a proxy.
  */
-public class ProxyProcessMeta {
+public class ProxyProcessMeta extends ProxyProcessData {
 
-    private ServiceId serviceId;
+    public static final Type TYPE = TypeToken.get(ProxyProcessMeta.class).getType();
 
-    private int memory;
+    private final ServiceId serviceId;
+    private final int port;
 
-    private int port;
-
-    private String[] processParameters;
-
-    private String url;
-
-    private Collection<ServerInstallablePlugin> downloadablePlugins;
-
-    private Document properties;
-
-    public ProxyProcessMeta(ServiceId serviceId,
-                            int memory,
-                            int port,
-                            String[] processParameters,
-                            String url,
-                            Collection<ServerInstallablePlugin> downloadablePlugins,
-                            Document properties) {
+    public ProxyProcessMeta(final String wrapperName,
+                            final String proxyGroupName,
+                            final int memory,
+                            final List<String> javaProcessParameters,
+                            final List<String> proxyProcessParameters,
+                            final String templateUrl,
+                            final Set<ServerInstallablePlugin> plugins,
+                            final Document properties,
+                            final ServiceId serviceId,
+                            final int port) {
+        super(wrapperName, proxyGroupName, memory, javaProcessParameters, proxyProcessParameters, templateUrl, plugins, properties);
         this.serviceId = serviceId;
-        this.memory = memory;
         this.port = port;
-        this.processParameters = processParameters;
-        this.url = url;
-        this.downloadablePlugins = downloadablePlugins;
-        this.properties = properties;
     }
 
-    public int getMemory() {
-        return memory;
+    public ProxyProcessMeta(final ProxyProcessData proxyProcessData,
+                            final ServiceId serviceId,
+                            final int port) {
+        super(proxyProcessData);
+        this.serviceId = serviceId;
+        this.port = port;
     }
 
-    public Document getProperties() {
-        return properties;
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (serviceId != null ? serviceId.hashCode() : 0);
+        result = 31 * result + port;
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        final ProxyProcessMeta that = (ProxyProcessMeta) o;
+
+        if (port != that.port) {
+            return false;
+        }
+        return Objects.equals(serviceId, that.serviceId);
+    }
+
+    @Override
+    public String toString() {
+        return "ProxyProcessMeta{" +
+            "serviceId=" + serviceId +
+            ", port=" + port +
+            "} " + super.toString();
     }
 
     public ServiceId getServiceId() {
@@ -57,15 +88,4 @@ public class ProxyProcessMeta {
         return port;
     }
 
-    public Collection<ServerInstallablePlugin> getDownloadablePlugins() {
-        return downloadablePlugins;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String[] getProcessParameters() {
-        return processParameters;
-    }
 }

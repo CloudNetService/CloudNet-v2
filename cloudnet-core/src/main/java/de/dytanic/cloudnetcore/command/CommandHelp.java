@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.command;
 
 import de.dytanic.cloudnet.command.Command;
@@ -20,6 +16,8 @@ import java.util.List;
  */
 public class CommandHelp extends Command {
 
+    public static final String[] EMPTY_STRING_ARRAY = new String[0];
+
     public CommandHelp() {
         super("help", "cloudnet.command.help");
     }
@@ -34,18 +32,16 @@ public class CommandHelp extends Command {
 
         messages.add(NetworkUtils.SPACE_STRING);
         messages.add("Server groups:");
-        messages.add(Arrays.toString(CloudNet.getInstance().getServerGroups().keySet().toArray(new String[0])));
+        messages.add(Arrays.toString(CloudNet.getInstance().getServerGroups().keySet().toArray(EMPTY_STRING_ARRAY)));
         messages.add("Proxy groups:");
-        messages.add(Arrays.toString(CloudNet.getInstance().getProxyGroups().keySet().toArray(new String[0])));
+        messages.add(Arrays.toString(CloudNet.getInstance().getProxyGroups().keySet().toArray(EMPTY_STRING_ARRAY)));
         messages.add(NetworkUtils.SPACE_STRING);
-        messages.add("The Cloud uses " + (ManagementFactory.getMemoryMXBean()
-                                                           .getHeapMemoryUsage()
-                                                           .getUsed() / 1048576L) + NetworkUtils.SLASH_STRING + (ManagementFactory.getMemoryMXBean()
-                                                                                                                                  .getHeapMemoryUsage()
-                                                                                                                                  .getMax() / 1048576L) + "MB");
+        messages.add(String.format("The Cloud uses %d/%dMB",
+                                   ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1048576L,
+                                   ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() / 1048576L));
         messages.add("CPU on this instance " + new DecimalFormat("##.##").format(NetworkUtils.internalCpuUsage()) + "/100 %");
         messages.add(NetworkUtils.SPACE_STRING);
 
-        sender.sendMessage(messages.toArray(new String[0]));
+        sender.sendMessage(messages.toArray(EMPTY_STRING_ARRAY));
     }
 }

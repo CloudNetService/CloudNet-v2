@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.lib.hash;
 
 import java.nio.charset.StandardCharsets;
@@ -16,17 +12,23 @@ public final class DyHash {
     private DyHash() {
     }
 
-    public static String hashString(String encode) {
+    /**
+     * (insecurely, but quickly) hashes the given String using SHA-256.
+     *
+     * @param string the string to hash/encode
+     *
+     * @return the hashed string in Base64
+     */
+    public static String hashString(String string) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            messageDigest.update(encode.getBytes(StandardCharsets.UTF_8));
+            messageDigest.update(string.getBytes(StandardCharsets.UTF_8));
 
-            String string = new String(Base64.getMimeEncoder().encode(messageDigest.digest()), StandardCharsets.UTF_8);
-            return string;
+            return Base64.getMimeEncoder().encodeToString(messageDigest.digest());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        return encode;
+        return string;
     }
 }

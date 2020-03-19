@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.util.defaults;
 
 import de.dytanic.cloudnet.lib.NetworkUtils;
@@ -21,7 +17,6 @@ public class BasicProxyConfig extends ProxyConfig {
                        "         §bMaintenance §8» §7We are still in §bmaintenance"),
               "§8➜ §bMaintenance §8§l【§c✘§8§l】",
               1000,
-              false,
               true,
               new AutoSlot(0, false),
               new TabList(true,

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.signs.config;
 
 import com.google.gson.reflect.TypeToken;
@@ -9,30 +5,31 @@ import de.dytanic.cloudnet.lib.serverselectors.sign.SearchingAnimation;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignGroupLayouts;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayout;
 import de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig;
-import de.dytanic.cloudnet.lib.utility.Acceptable;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Created by Tareko on 22.07.2017.
  */
 public class ConfigSignLayout {
 
+    private static final Type SIGN_LAYOUT_CONFIG_TYPE = TypeToken.get(SignLayoutConfig.class).getType();
     private final Path path = Paths.get("local/signLayout.json");
 
     public ConfigSignLayout() {
         if (!Files.exists(path)) {
             new Document().append("layout_config",
-                                  new de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig(true,
-                                                                                                    false,
-                                                                                                    1D,
-                                                                                                    0.8D,
-                                                                                                    Arrays.asList(new SignGroupLayouts(
+                                  new SignLayoutConfig(true,
+                                                       false,
+                                                       1D,
+                                                       0.8D,
+                                                       Arrays.asList(new SignGroupLayouts(
                                                                                                         "default",
                                                                                                         Arrays.asList(new SignLayout("empty",
                                                                                                                                      new String[] {"%server%", "&e%state%", "%online_players%/%max_players%", "%motd%"},
@@ -56,9 +53,9 @@ public class ConfigSignLayout {
                                                                                                                           159,
                                                                                                                           "BROWN_TERRACOTTA",
                                                                                                                           0)))),
-                                                                                                    new SearchingAnimation(33,
-                                                                                                                           11,
-                                                                                                                           Arrays.asList(new SignLayout(
+                                                       new SearchingAnimation(33,
+                                                                              11,
+                                                                              Arrays.asList(new SignLayout(
                                                                                                                                              "loading1",
                                                                                                                                              new String[] {"", "server loads...", "o                ", ""},
                                                                                                                                              159,
@@ -260,14 +257,14 @@ public class ConfigSignLayout {
         }
     }
 
-    public ConfigSignLayout saveLayout(de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig signLayoutConfig) {
+    public ConfigSignLayout saveLayout(SignLayoutConfig signLayoutConfig) {
         Document document = Document.loadDocument(path);
         document.append("layout_config", signLayoutConfig);
         document.saveAsConfig(path);
         return this;
     }
 
-    public de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig loadLayout() {
+    public SignLayoutConfig loadLayout() {
         Document document = Document.loadDocument(path);
 
         if (!document.getDocument("layout_config").contains("knockbackOnSmallDistance")) {
@@ -288,29 +285,22 @@ public class ConfigSignLayout {
             document.saveAsConfig(path);
         }
 
-        SignLayoutConfig signLayoutConfig = document.getObject("layout_config",
-                                                               new TypeToken<de.dytanic.cloudnet.lib.serverselectors.sign.SignLayoutConfig>() {}
-                                                                   .getType());
+        SignLayoutConfig signLayoutConfig = document.getObject("layout_config", SIGN_LAYOUT_CONFIG_TYPE);
 
         boolean injectable = false;
 
         for (SignGroupLayouts groupLayouts : signLayoutConfig.getGroupLayouts()) {
-
-            {
-                SignLayout signLayout = CollectionWrapper.filter(groupLayouts.getLayouts(), new Acceptable<SignLayout>() {
-                    @Override
-                    public boolean isAccepted(SignLayout signLayout) {
-                        return signLayout.getName().equalsIgnoreCase("empty");
-                    }
-                });
-                if (signLayout == null) {
-                    groupLayouts.getLayouts().add(new SignLayout("empty",
-                                                                 new String[] {"%server%", "&6%state%", "%online_players%/%max_players%", "%motd%"},
-                                                                 159,
-                                                                 "BROWN_TERRACOTTA",
-                                                                 1));
-                    injectable = true;
-                }
+            Optional<SignLayout> signLayout = groupLayouts.getLayouts().stream()
+                                                          .filter(layout -> layout.getName().equals("empty"))
+                                                          .findFirst();
+            // Add empty layout, if missing
+            if (!signLayout.isPresent()) {
+                groupLayouts.getLayouts().add(new SignLayout("empty",
+                                                             new String[] {"%server%", "&6%state%", "%online_players%/%max_players%", "%motd%"},
+                                                             159,
+                                                             "BROWN_TERRACOTTA",
+                                                             1));
+                injectable = true;
             }
         }
 

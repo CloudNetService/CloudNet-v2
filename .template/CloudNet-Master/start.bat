@@ -1,2 +1,2 @@
 title CloudNet-Master
-java -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:CompileThreshold=100 -XX:MaxPermSize=256M -Xmx128m -jar CloudNet-Master.jar
+java -Dfile.encoding=UTF-8 -Xmx128m -jar CloudNet-Master.jar

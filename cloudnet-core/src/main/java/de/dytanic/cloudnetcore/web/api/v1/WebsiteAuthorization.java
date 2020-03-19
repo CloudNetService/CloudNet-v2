@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.web.api.v1;
 
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -33,9 +29,9 @@ public class WebsiteAuthorization extends MethodWebHandlerAdapter {
                                 QueryDecoder queryDecoder,
                                 PathProvider path,
                                 HttpRequest httpRequest) throws Exception {
-        CloudNet.getLogger().debug("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
+        CloudNet.getLogger().finest("HTTP Request from " + channelHandlerContext.channel().remoteAddress());
 
-        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), HttpResponseStatus.UNAUTHORIZED);
+        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.UNAUTHORIZED);
         fullHttpResponse.headers().set("Content-Type", "application/json");
         fullHttpResponse.headers().set("Access-Control-Allow-Origin", "*");
 

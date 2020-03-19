@@ -1,11 +1,8 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.internal.command.bukkit;
 
 import com.google.common.collect.ImmutableList;
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.bridge.internal.serverselectors.Mob;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.SignSelector;
 import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.out.PacketOutAddMob;
@@ -26,7 +23,6 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
@@ -39,11 +35,11 @@ import java.util.stream.Collectors;
 /**
  * Created by Tareko on 23.08.2017.
  */
-public final class CommandCloudServer implements CommandExecutor, TabExecutor {
+public final class CommandCloudServer implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
-        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s (label = %s) with arguments %s",
+        CloudAPI.getInstance().getLogger().finest(String.format("%s executed %s (label = %s) with arguments %s%n",
                                                                 commandSender,
                                                                 command,
                                                                 label,
@@ -104,7 +100,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         }
     }
 
-    private boolean createMob(CommandSender commandSender, String[] args, Player player) {
+    private static boolean createMob(CommandSender commandSender, String[] args, Player player) {
         if (checkMobSelectorActive(commandSender)) {
             return true;
         }
@@ -141,8 +137,8 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                                                     -1,
                                                     material.name(),
                                                     args[5].equalsIgnoreCase("true"),
-                                                    MobSelector.getInstance()
-                                                               .toPosition(CloudAPI.getInstance().getGroup(), player.getLocation()),
+                                                    MobSelector
+                                                        .toPosition(CloudAPI.getInstance().getGroup(), player.getLocation()),
                                                     "§8#§c%group% &bPlayers online §8|§7 %group_online% of %max_players%",
                                                     new Document());
                 CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(serverMob));
@@ -165,7 +161,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        MobSelector.MobImpl mob = findMobWithName(args[1]);
+        Mob mob = findMobWithName(args[1]);
         if (mob != null) {
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -184,24 +180,14 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         return false;
     }
 
-    private boolean setDisplay(CommandSender commandSender, String[] args) {
-        MobSelector.MobImpl mob = findMobWithName(args[1]);
-        if (mob != null) {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            for (short i = 2; i < args.length; i++) {
-                stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
-            }
-
-            mob.getMob().setDisplay(stringBuilder.substring(0, stringBuilder.length() - 1));
-            CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(mob.getMob()));
-            commandSender.sendMessage(CloudAPI.getInstance()
-                                              .getPrefix() + "You set the display for \"" + args[1] + "\" the line \"" + stringBuilder.substring(
-                0,
-                stringBuilder.length() - 1) + '"');
-            return true;
-        }
-        return false;
+    private static Mob findMobWithName(String arg) {
+        return MobSelector.getInstance()
+                          .getMobs()
+                          .values()
+                          .stream()
+                          .filter(value -> value.getMob().getName().equalsIgnoreCase(arg))
+                          .findFirst()
+                          .orElse(null);
     }
 
     private boolean removeSign(CommandSender commandSender, Player player) {
@@ -270,16 +256,13 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
 
         if (CloudAPI.getInstance().getServerGroupMap().containsKey(arg)) {
             for (Sign sign : SignSelector.getInstance().getSigns().values()) {
-                CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddSign(new Sign(sign.getTargetGroup(),
-                                                                                                       new Position(arg,
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getWorld(),
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getX(),
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getY(),
-                                                                                                                    sign.getPosition()
-                                                                                                                        .getZ()))));
+                CloudAPI.getInstance().getNetworkConnection().sendPacket(
+                    new PacketOutAddSign(new Sign(sign.getTargetGroup(),
+                                                  new Position(arg,
+                                                               sign.getPosition().getWorld(),
+                                                               sign.getPosition().getX(),
+                                                               sign.getPosition().getY(),
+                                                               sign.getPosition().getZ()))));
             }
 
             commandSender.sendMessage(CloudAPI.getInstance()
@@ -288,7 +271,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         return true;
     }
 
-    private boolean createSign(CommandSender commandSender, String[] args, Player player) {
+    private static boolean createSign(CommandSender commandSender, String[] args, Player player) {
         if (checkSignSelectorActive(commandSender)) {
             return false;
         }
@@ -297,7 +280,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         if (block.getState() instanceof org.bukkit.block.Sign) {
             if (!SignSelector.getInstance().containsPosition(block.getLocation())) {
                 if (CloudAPI.getInstance().getServerGroupMap().containsKey(args[1])) {
-                    Sign sign = new Sign(args[1], SignSelector.getInstance().toPosition(block.getLocation()));
+                    Sign sign = new Sign(args[1], SignSelector.toPosition(block.getLocation()));
                     CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddSign(sign));
                     commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The sign was successfully created!");
                 } else {
@@ -325,37 +308,37 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         return false;
     }
 
+    private boolean setDisplay(CommandSender commandSender, String[] args) {
+        Mob mob = findMobWithName(args[1]);
+        if (mob != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            for (short i = 2; i < args.length; i++) {
+                stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
+            }
+
+            mob.getMob().setDisplay(stringBuilder.substring(0, stringBuilder.length() - 1));
+            CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(mob.getMob()));
+            commandSender.sendMessage(CloudAPI.getInstance()
+                                              .getPrefix() + "You set the display for \"" + args[1] + "\" the line \"" + stringBuilder.substring(
+                0,
+                stringBuilder.length() - 1) + '"');
+            return true;
+        }
+        return false;
+    }
+
     private boolean removeMob(CommandSender commandSender, String arg) {
         if (checkMobSelectorActive(commandSender)) {
             return true;
         }
 
-        MobSelector.MobImpl mob = findMobWithName(arg);
+        Mob mob = findMobWithName(arg);
         if (mob != null) {
             CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveMob(mob.getMob()));
             commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The mob has been removed");
         } else {
             commandSender.sendMessage(CloudAPI.getInstance().getPrefix() + "The Mob doesn't exist on this group");
-        }
-        return false;
-    }
-
-    private boolean setItem(CommandSender commandSender, String[] args) {
-        if (checkMobSelectorActive(commandSender)) {
-            return true;
-        }
-
-        MobSelector.MobImpl mob = findMobWithName(args[1]);
-        if (mob != null) {
-            int itemId = NetworkUtils.checkIsNumber(args[2]) ? Integer.parseInt(args[2]) : 138;
-            Material material = ItemStackBuilder.getMaterialIgnoreVersion(args[2], itemId);
-            if (material != null) {
-                mob.getMob().setItemName(material.name());
-                CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(mob.getMob()));
-                commandSender.sendMessage(CloudAPI.getInstance()
-                                                  .getPrefix() + "You set the item for \"" + args[1] + "\" the material \"" + material.name() + '"');
-            }
-            return true;
         }
         return false;
     }
@@ -389,14 +372,24 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
         }
     }
 
-    private static MobSelector.MobImpl findMobWithName(String arg) {
-        return MobSelector.getInstance()
-                          .getMobs()
-                          .values()
-                          .stream()
-                          .filter(value -> value.getMob().getName().equalsIgnoreCase(arg))
-                          .findFirst()
-                          .orElse(null);
+    private boolean setItem(CommandSender commandSender, String[] args) {
+        if (checkMobSelectorActive(commandSender)) {
+            return true;
+        }
+
+        Mob mob = findMobWithName(args[1]);
+        if (mob != null) {
+            int itemId = NetworkUtils.checkIsNumber(args[2]) ? Integer.parseInt(args[2]) : 138;
+            Material material = ItemStackBuilder.getMaterialIgnoreVersion(args[2], itemId);
+            if (material != null) {
+                mob.getMob().setItemName(material.name());
+                CloudAPI.getInstance().getNetworkConnection().sendPacket(new PacketOutAddMob(mob.getMob()));
+                commandSender.sendMessage(CloudAPI.getInstance()
+                                                  .getPrefix() + "You set the item for \"" + args[1] + "\" the material \"" + material.name() + '"');
+            }
+            return true;
+        }
+        return false;
     }
 
     private static boolean checkSignSelectorActive(CommandSender commandSender) {
@@ -408,7 +401,7 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args) {
         switch (args.length) {
             case 1: {
                 return ImmutableList.of("createSign",
@@ -422,36 +415,62 @@ public final class CommandCloudServer implements CommandExecutor, TabExecutor {
                                         "setDisplay",
                                         "setItem",
                                         "editMobLine",
-                                        "debug");
+                                        "debug")
+                                    .stream()
+                                    .filter(s -> s.startsWith(args[args.length - 1]))
+                                    .sorted()
+                                    .collect(Collectors.toList());
             }
             case 2: {
                 if (args[0].equalsIgnoreCase("createsign") || args[0].equalsIgnoreCase("removesigns") || args[0].equalsIgnoreCase("copyto")) {
-                    return ImmutableList.copyOf(CloudAPI.getInstance().getServerGroupMap().keySet());
+                    return CloudAPI.getInstance().getServerGroupMap().keySet()
+                                   .stream()
+                                   .filter(s -> s.startsWith(args[args.length - 1]))
+                                   .sorted()
+                                   .collect(Collectors.toList());
                 } else if (args[0].equalsIgnoreCase("removeMob") || args[0].equalsIgnoreCase("setDisplay") || args[0].equalsIgnoreCase(
                     "setItem") || args[0].equalsIgnoreCase("editMobLine")) {
-                    return ImmutableList.copyOf(MobSelector.getInstance()
-                                                           .getMobs()
-                                                           .values()
-                                                           .stream()
-                                                           .map(mob -> mob.getMob().getName())
-                                                           .collect(Collectors.toList()));
+                    return MobSelector.getInstance()
+                                      .getMobs()
+                                      .values()
+                                      .stream()
+                                      .map(mob -> mob.getMob().getName())
+                                      .filter(s -> s.startsWith(args[args.length - 1]))
+                                      .sorted()
+                                      .collect(Collectors.toList());
                 } else if (args[0].equalsIgnoreCase("createMob")) {
-                    return ImmutableList.copyOf(Arrays.stream(EntityType.values()).map(Enum::name).collect(Collectors.toList()));
+                    return Arrays.stream(EntityType.values())
+                                 .map(Enum::name)
+                                 .filter(s -> s.startsWith(args[args.length - 1]))
+                                 .sorted()
+                                 .collect(Collectors.toList());
                 }
             }
             case 4: {
                 if (args[0].equalsIgnoreCase("createMob")) {
-                    return ImmutableList.copyOf(CloudAPI.getInstance().getServerGroupMap().keySet());
+                    return CloudAPI.getInstance().getServerGroupMap().keySet()
+                                   .stream()
+                                   .filter(s -> s.startsWith(args[args.length - 1]))
+                                   .sorted()
+                                   .collect(Collectors.toList());
                 }
             }
             case 5: {
                 if (args[0].equalsIgnoreCase("createMob")) {
-                    return ImmutableList.copyOf(Arrays.stream(Material.values()).map(Enum::name).collect(Collectors.toList()));
+                    return Arrays.stream(Material.values())
+                                 .map(Enum::name)
+                                 .filter(s -> s.startsWith(args[args.length - 1]))
+                                 .sorted()
+                                 .collect(Collectors.toList());
                 }
             }
             case 6: {
                 if (args[0].equalsIgnoreCase("createMob")) {
-                    return ImmutableList.of("true", "false");
+                    return ImmutableList.of("true", "false")
+                                        .stream()
+                                        .filter(s -> s.startsWith(args[args.length - 1]))
+                                        .sorted()
+                                        .collect(Collectors.toList());
                 }
             }
         }

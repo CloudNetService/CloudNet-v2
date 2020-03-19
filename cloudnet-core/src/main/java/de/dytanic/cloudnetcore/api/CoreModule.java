@@ -1,12 +1,8 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnetcore.api;
 
 import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.event.Event;
-import de.dytanic.cloudnet.event.IEventListener;
+import de.dytanic.cloudnet.event.EventListener;
 import de.dytanic.cloudnet.modules.Module;
 import de.dytanic.cloudnetcore.CloudNet;
 
@@ -21,7 +17,7 @@ public class CoreModule extends Module<CloudNet> {
      * @param eventListener
      * @param <T>
      */
-    public <T extends Event> void registerListener(IEventListener<T> eventListener) {
+    public <T extends Event> void registerListener(EventListener<T> eventListener) {
         CloudNet.getInstance().getEventManager().registerListener(this, eventListener);
     }
 

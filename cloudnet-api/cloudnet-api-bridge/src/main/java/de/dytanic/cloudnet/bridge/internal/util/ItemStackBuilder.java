@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet.bridge.internal.util;
 
 import de.dytanic.cloudnet.api.CloudAPI;
@@ -20,6 +16,7 @@ import java.util.logging.Level;
 /**
  * Created by Tareko on 26.08.2017.
  */
+@SuppressWarnings("deprecation")
 public class ItemStackBuilder {
 
     protected ItemMeta itemMeta;
@@ -84,7 +81,7 @@ public class ItemStackBuilder {
                                                         ItemStackBuilder.class.getSimpleName(),
                                                         "getMaterialIgnoreVersion",
                                                         String.format(
-                                                            "Can't get material by id %d! Beginning with MC 1.13 you HAVE to use material names!",
+                                                            "Can't get material by id %d! Beginning with MC 1.13 you HAVE to use material names!%n",
                                                             id),
                                                         exception);
                 return null;

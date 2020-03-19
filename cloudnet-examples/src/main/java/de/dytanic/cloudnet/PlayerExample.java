@@ -1,15 +1,11 @@
-/*
- * Copyright (c) Tarek Hosni El Alaoui 2017
- */
-
 package de.dytanic.cloudnet;
 
 import de.dytanic.cloudnet.api.CloudAPI;
+import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
-import de.dytanic.cloudnet.lib.player.PlayerExecutor;
 import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
 import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 
@@ -37,9 +33,8 @@ public class PlayerExample {
         System.out.println("The player " + cloudPlayer.getName() + " is on " + cloudPlayer.getProxy() + NetworkUtils.SLASH_STRING + cloudPlayer
             .getServer() + " and connected at " + cloudPlayer.getLoginTimeStamp().getTime());
 
-        PlayerExecutor playerExecutor = cloudPlayer.getPlayerExecutor(); //Returns a util Class for some network methods
-        playerExecutor.sendMessage(cloudPlayer, "Hello world!"); //writes a message to the player if the player is online
-        playerExecutor.sendPlayer(cloudPlayer, "Lobby-2"); //send a player to a some server
+        PlayerExecutorBridge.INSTANCE.sendMessage(cloudPlayer, "Hello world!"); //writes a message to the player if the player is online
+        PlayerExecutorBridge.INSTANCE.sendPlayer(cloudPlayer, "Lobby-2"); //send a player to a some server
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -48,7 +43,8 @@ public class PlayerExample {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                playerExecutor.kickPlayer(cloudPlayer, "you are a cool guy for the network"); //Kick a player from the network
+                PlayerExecutorBridge.INSTANCE.kickPlayer(cloudPlayer,
+                                                         "you are a cool guy for the network"); //Kick a player from the network
             }
         }).start();
 

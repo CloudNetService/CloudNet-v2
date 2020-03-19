@@ -3,19 +3,19 @@ package de.dytanic.cloudnet.event;
 import de.dytanic.cloudnet.event.async.AsyncEvent;
 import de.dytanic.cloudnet.event.interfaces.IEventManager;
 import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.scheduler.TaskScheduler;
 import net.jodah.typetools.TypeResolver;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class that manages events
  */
 public final class EventManager implements IEventManager {
 
-    private final Map<Class<? extends Event>, Collection<EventEntity>> registeredListeners = NetworkUtils.newConcurrentHashMap();
+    private final Map<Class<? extends Event>, Collection<EventEntity>> registeredListeners = new ConcurrentHashMap<>();
 
     /**
      * Clears all currently registered {@link EventEntity}s from this event
@@ -27,18 +27,17 @@ public final class EventManager implements IEventManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Event> void registerListener(EventKey eventKey, IEventListener<T> eventListener) {
-        Class eventClazz = TypeResolver.resolveRawArgument(IEventListener.class, eventListener.getClass());
+    public <T extends Event> void registerListener(EventKey eventKey, EventListener<T> eventListener) {
+        Class eventClazz = TypeResolver.resolveRawArgument(EventListener.class, eventListener.getClass());
         if (!registeredListeners.containsKey(eventClazz)) {
             registeredListeners.put(eventClazz, new LinkedList<>());
         }
         registeredListeners.get(eventClazz).add(new EventEntity<>(eventListener, eventKey, eventClazz));
     }
 
-    @SafeVarargs
     @Override
-    public final <T extends Event> void registerListeners(EventKey eventKey, IEventListener<T>... eventListeners) {
-        for (IEventListener<T> eventListener : eventListeners) {
+    public final <T extends Event> void registerListeners(EventKey eventKey, EventListener<T>[] eventListeners) {
+        for (EventListener<T> eventListener : eventListeners) {
             registerListener(eventKey, eventListener);
         }
     }
@@ -55,7 +54,7 @@ public final class EventManager implements IEventManager {
     }
 
     @Override
-    public void unregisterListener(IEventListener<? extends Event> eventListener) {
+    public void unregisterListener(EventListener<? extends Event> eventListener) {
         try {
             Class clazz = getClazz(eventListener);
             if (registeredListeners.containsKey(clazz)) {
@@ -83,12 +82,8 @@ public final class EventManager implements IEventManager {
             return true;
         }
 
-        if (!(event instanceof AsyncEvent)) {
-            for (EventEntity eventEntity : this.registeredListeners.get(event.getClass())) {
-                eventEntity.getEventListener().onCall(event);
-            }
-        } else {
-            TaskScheduler.runtimeScheduler().schedule(() -> {
+        if (event instanceof AsyncEvent) {
+            NetworkUtils.getExecutor().submit(() -> {
                 AsyncEvent asyncEvent = ((AsyncEvent) event);
                 asyncEvent.getPoster().onPreCall(asyncEvent);
                 for (EventEntity eventEntity : registeredListeners.get(event.getClass())) {
@@ -96,11 +91,15 @@ public final class EventManager implements IEventManager {
                 }
                 asyncEvent.getPoster().onPostCall(asyncEvent);
             });
+        } else {
+            for (EventEntity eventEntity : this.registeredListeners.get(event.getClass())) {
+                eventEntity.getEventListener().onCall(event);
+            }
         }
         return false;
     }
 
-    private Class getClazz(IEventListener<?> eventListener) throws Exception {
+    private Class getClazz(EventListener<?> eventListener) throws Exception {
         return eventListener.getClass().getMethod("onCall", Event.class).getParameters()[0].getType();
     }
 

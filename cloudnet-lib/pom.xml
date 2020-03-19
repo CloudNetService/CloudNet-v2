@@ -6,7 +6,7 @@
     <parent>
         <artifactId>cloudnet</artifactId>
         <groupId>de.dytanic.cloudnet</groupId>
-        <version>dev-snapshot</version>
+        <version>2.2.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -45,6 +45,12 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
             <version>${dependency.netty.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.dizitart</groupId>
+            <artifactId>nitrite</artifactId>
+            <version>${dependency.nitrite.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
