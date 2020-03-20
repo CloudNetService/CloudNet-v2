@@ -131,6 +131,99 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     }
 
     /**
+     * Download the {@link ServerInstallablePlugin] an copy to a web plugin cache.
+     *
+     * @param The ServerInstallable plugin to download it.
+     */
+    private void downloadInstallablePlugin(ServerInstallablePlugin plugin) {
+        switch (plugin.getPluginResourceType()) {
+            case URL: {
+                if (!Files.exists(Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"))) {
+                    try {
+                        URLConnection urlConnection = new URL(plugin.getUrl()).openConnection();
+                        urlConnection.setRequestProperty("User-Agent",
+                                                         NetworkUtils.USER_AGENT);
+                        Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+            break;
+            case MASTER: {
+                if (!Files.exists(Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar")) && CloudNetWrapper.getInstance()
+                                                                                                                       .getSimpledUser() != null) {
+                    try {
+                        URLConnection urlConnection = new URL(
+                            String.format("http://%s:%d/cloudnet/api/v1/download",
+                                          CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                          CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())).openConnection();
+                        urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
+
+                        SimpledUser simpledUser = CloudNetWrapper.getInstance().getSimpledUser();
+                        urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
+                        urlConnection.setRequestProperty("-Xcloudnet-token", simpledUser.getApiToken());
+                        urlConnection.setRequestProperty("-Xmessage", "plugin");
+                        urlConnection.setRequestProperty("-Xvalue", plugin.getName());
+
+                        urlConnection.connect();
+                        System.out.println("Downloading " + plugin.getName() + ".jar");
+                        Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"));
+                        System.out.println("Download was completed successfully!");
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+            break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Copy the cloudnet api from wrapper to server folder.
+     */
+    private void copyCloudNetApi() {
+        try {
+            Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
+            FileUtility.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Copy some config files for different server types.
+     */
+    private void copyConfigurations() {
+        if (serverGroup.getServerType().equals(ServerGroupType.GLOWSTONE)) {
+            if (!Files.exists(Paths.get(path + "/config"))) {
+                try {
+                    Files.createDirectories(Paths.get(path + "/config"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (!Files.exists(Paths.get(path + "/config/glowstone.yml"))) {
+                FileUtility.insertData("files/glowstone.yml", path + "/config/glowstone.yml");
+            }
+        }
+
+        if (!Files.exists(Paths.get(path + "/server.properties"))) {
+            FileUtility.insertData("files/server.properties", path + "/server.properties");
+        }
+
+        if (!Files.exists(Paths.get(path + "/bukkit.yml"))) {
+            FileUtility.insertData("files/bukkit.yml", path + "/bukkit.yml");
+        }
+
+        if (!Files.exists(Paths.get(path + "/spigot.yml"))) {
+            FileUtility.insertData("files/spigot.yml", path + "/spigot.yml");
+        }
+    }
+
+    /**
      * Prepare the game server
      *
      * @return Return true if the preparing successful, else return false
@@ -143,97 +236,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         long startupTime = System.currentTimeMillis();
 
         for (ServerInstallablePlugin plugin : serverProcess.getMeta().getPlugins()) {
-            switch (plugin.getPluginResourceType()) {
-                case URL: {
-                    if (!Files.exists(Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"))) {
-                        try {
-                            URLConnection urlConnection = new URL(plugin.getUrl()).openConnection();
-                            urlConnection.setRequestProperty("User-Agent",
-                                                             NetworkUtils.USER_AGENT);
-                            Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-                break;
-                case MASTER: {
-                    if (!Files.exists(Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar")) && CloudNetWrapper.getInstance()
-                                                                                                                           .getSimpledUser() != null) {
-                        try {
-                            URLConnection urlConnection = new URL(
-                                String.format("http://%s:%d/cloudnet/api/v1/download",
-                                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
-                                              CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())).openConnection();
-                            urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
-
-                            SimpledUser simpledUser = CloudNetWrapper.getInstance().getSimpledUser();
-                            urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
-                            urlConnection.setRequestProperty("-Xcloudnet-token", simpledUser.getApiToken());
-                            urlConnection.setRequestProperty("-Xmessage", "plugin");
-                            urlConnection.setRequestProperty("-Xvalue", plugin.getName());
-
-                            urlConnection.connect();
-                            System.out.println("Downloading " + plugin.getName() + ".jar");
-                            Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"));
-                            System.out.println("Download was completed successfully!");
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-                break;
-                default:
-                    break;
-            }
+            downloadInstallablePlugin(plugin);
         }
 
         for (ServerInstallablePlugin url : serverProcess.getMeta().getTemplate().getInstallablePlugins()) {
-            switch (url.getPluginResourceType()) {
-                case URL: {
-                    if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"))) {
-                        try {
-                            URLConnection urlConnection = new URL(url.getUrl()).openConnection();
-                            urlConnection.setRequestProperty("User-Agent",
-                                                             NetworkUtils.USER_AGENT);
-                            Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-                break;
-                case MASTER: {
-                    if (!Files.exists(Paths.get("local/cache/web_plugins/" + url.getName() + ".jar")) && CloudNetWrapper.getInstance()
-                                                                                                                        .getSimpledUser() != null) {
-                        try {
-                            URLConnection urlConnection = new URL(
-                                String.format("http://%s:%d/cloudnet/api/v1/download",
-                                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
-                                              CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()))
-                                .openConnection();
-                            urlConnection.setRequestProperty("User-Agent",
-                                                             NetworkUtils.USER_AGENT);
-
-                            SimpledUser simpledUser = CloudNetWrapper.getInstance().getSimpledUser();
-                            urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
-                            urlConnection.setRequestProperty("-Xcloudnet-token", simpledUser.getApiToken());
-                            urlConnection.setRequestProperty("-Xmessage", "plugin");
-                            urlConnection.setRequestProperty("-Xvalue", url.getName());
-
-                            urlConnection.connect();
-                            System.out.println("Downloading " + url.getName() + ".jar");
-                            Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + url.getName() + ".jar"));
-                            System.out.println("Download was completed successfully!");
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-                break;
-                default:
-                    break;
-            }
+            downloadInstallablePlugin(url);
         }
 
         if (serverGroup.getTemplates().size() == 0 && serverProcess.getMeta().getTemplateUrl() == null) {
@@ -263,116 +270,37 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                 FileUtility.copyFileToDirectory(new File("local/spigot.jar"), new File(path));
             }
         }
-
-        if (serverGroup.getServerType().equals(ServerGroupType.GLOWSTONE)) {
-            if (!Files.exists(Paths.get(path + "/config"))) {
-                Files.createDirectories(Paths.get(path + "/config"));
-            }
-            if (!Files.exists(Paths.get(path + "/config/glowstone.yml"))) {
-                FileUtility.insertData("files/glowstone.yml", path + "/config/glowstone.yml");
-            }
-        }
-
-        if (!Files.exists(Paths.get(path + "/server.properties"))) {
-            FileUtility.insertData("files/server.properties", path + "/server.properties");
-        }
-
-        if (!Files.exists(Paths.get(path + "/bukkit.yml"))) {
-            FileUtility.insertData("files/bukkit.yml", path + "/bukkit.yml");
-        }
-
-        if (!Files.exists(Paths.get(path + "/spigot.yml"))) {
-            FileUtility.insertData("files/spigot.yml", path + "/spigot.yml");
-        }
-
-        Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
-        FileUtility.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
-
+        copyConfigurations();
+        copyCloudNetApi();
         FileUtility.copyFilesInDirectory(new File("local/global"), new File(path));
 
-        String motd;
-        int maxPlayers;
-
         if (!serverGroup.getServerType().equals(ServerGroupType.GLOWSTONE)) {
-            Properties properties = new Properties();
-            try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/server.properties")))) {
-                properties.load(inputStreamReader);
-            }
-            if ((properties.isEmpty() || !properties.containsKey("max-players"))) {
-                properties.setProperty("max-players", "100");
-                FileUtility.insertData("files/server.properties", path + "/server.properties");
-                try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/server.properties")))) {
-                    properties.load(inputStreamReader);
-                }
-                if (this.serverGroup.getGroupMode() == ServerGroupMode.STATIC || this.serverGroup.getGroupMode() == ServerGroupMode.STATIC_LOBBY) {
-                    System.err.println("Filled empty server.properties (or missing \"max-players\" entry) of server [" + this.serverProcess.getMeta()
-                                                                                                                                           .getServiceId() + "] at " + (new File(
-                        path,
-                        "server.properties").getAbsolutePath()));
-                } else {
-                    System.err.println("Filled empty server.properties (or missing \"max-players\" entry) of server [" + this.serverProcess.getMeta()
-                                                                                                                                           .getServiceId() + "], " + "please fix this error in the server.properties (check the template [" + this.serverProcess
-                        .getMeta()
-                        .getTemplate()
-                        .getName() + '@' + this.serverProcess.getMeta()
-                                                             .getTemplate()
-                                                             .getBackend() + "] and the global directory [" + new File("local/global").getAbsolutePath() + "])");
-                }
-            }
-
-            Enumeration<Object> enumeration = this.serverProcess.getMeta().getProperties().keys();
-            while (enumeration.hasMoreElements()) {
-                String x = enumeration.nextElement().toString();
-                properties.setProperty(x, this.serverProcess.getMeta().getProperties().getProperty(x));
-            }
-
-            properties.setProperty("server-ip", CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP());
-            properties.setProperty("server-port", serverProcess.getMeta().getPort() + NetworkUtils.EMPTY_STRING);
-
-            motd = properties.getProperty("motd");
-            try {
-                maxPlayers = Integer.parseInt(properties.getProperty("max-players"));
-            } catch (NumberFormatException e) {
-                maxPlayers = 100;
-            }
-
-            try (OutputStream outputStream = Files.newOutputStream(Paths.get(path + "/server.properties"))) {
-                properties.store(outputStream, "CloudNet-Wrapper EDIT");
-            }
+            this.serverInfo = configureNoGlowstoneServer();
         } else {
-            try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/config/glowstone.yml")),
-                                                                             StandardCharsets.UTF_8)) {
-                Configuration configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(inputStreamReader);
-                Configuration section = configuration.getSection("server");
-                section.set("ip", CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP());
-                section.set("port", serverProcess.getMeta().getPort());
-
-                maxPlayers = section.getInt("max-players");
-                motd = section.getString("motd");
-
-                configuration.set("server", section);
-                configuration.set("console.use-jline", false);
-                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(Paths.get(path + "/config/glowstone.yml")),
-                                                                                    StandardCharsets.UTF_8)) {
-                    ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
-                }
-            }
+            this.serverInfo = configureGlowstoneServer();
         }
-        this.serverInfo = new ServerInfo(serverProcess.getMeta().getServiceId(),
-                                         CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP(),
-                                         this.serverProcess.getMeta().getPort(),
-                                         false,
-                                         new ArrayList<>(),
-                                         serverProcess.getMeta().getMemory(),
-                                         motd,
-                                         0,
-                                         maxPlayers,
-                                         ServerState.OFFLINE,
-                                         this.serverProcess.getMeta().getServerConfig(),
-                                         serverProcess.getMeta().getTemplate());
+        generateCloudNetConfigurations();
 
+        CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddServer(this.serverInfo,
+                                                                                               this.serverProcess.getMeta()));
+        System.out.println("Server " + this + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
+        this.startupTimeStamp = System.currentTimeMillis();
+
+        startProcess();
+
+        serverProcess.setServerStage(ServerStage.PROCESS);
+        CloudNetWrapper.getInstance().getServers().put(this.serverProcess.getMeta().getServiceId().getServerId(), this);
+        serverProcess.setServerStage(ServerStage.NET_INIT);
+        return true;
+    }
+
+    private void generateCloudNetConfigurations() {
         if (!Files.exists(Paths.get(path + "/CLOUD"))) {
-            Files.createDirectory(Paths.get(path + "/CLOUD"));
+            try {
+                Files.createDirectory(Paths.get(path + "/CLOUD"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         new Document().append("serviceId", serverProcess.getMeta().getServiceId())
@@ -387,17 +315,126 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                                                                                                                                            .get(
                                                                                                                                                path + "/CLOUD/connection.json"));
 
-        CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddServer(this.serverInfo,
-                                                                                               this.serverProcess.getMeta()));
-        System.out.println("Server " + this + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
-        this.startupTimeStamp = System.currentTimeMillis();
+    }
 
-        startProcess();
+    /**
+     * Configure a glowstone server.
+     *
+     * @return Given back a complete server info
+     */
+    private ServerInfo configureGlowstoneServer() {
+        String motd = null;
+        int maxPlayers = 0;
+        try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/config/glowstone.yml")),
+                                                                         StandardCharsets.UTF_8)) {
+            Configuration configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(inputStreamReader);
+            Configuration section = configuration.getSection("server");
+            section.set("ip", CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP());
+            section.set("port", serverProcess.getMeta().getPort());
 
-        serverProcess.setServerStage(ServerStage.PROCESS);
-        CloudNetWrapper.getInstance().getServers().put(this.serverProcess.getMeta().getServiceId().getServerId(), this);
-        serverProcess.setServerStage(ServerStage.NET_INIT);
-        return true;
+            maxPlayers = section.getInt("max-players");
+            motd = section.getString("motd");
+
+            configuration.set("server", section);
+            configuration.set("console.use-jline", false);
+            try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(Paths.get(path + "/config/glowstone.yml")),
+                                                                                StandardCharsets.UTF_8)) {
+                ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ServerInfo(serverProcess.getMeta().getServiceId(),
+                              CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP(),
+                              this.serverProcess.getMeta().getPort(),
+                              false,
+                              new ArrayList<>(),
+                              serverProcess.getMeta().getMemory(),
+                              motd,
+                              0,
+                              maxPlayers,
+                              ServerState.OFFLINE,
+                              this.serverProcess.getMeta().getServerConfig(),
+                              serverProcess.getMeta().getTemplate());
+    }
+
+    /**
+     * Configure a server like not a glowstone server type.
+     *
+     * @return Return the finish Server info.
+     */
+    private ServerInfo configureNoGlowstoneServer() {
+        String motd;
+        int maxPlayers;
+        Properties properties = new Properties();
+        try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/server.properties")))) {
+            try {
+                properties.load(inputStreamReader);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if ((properties.isEmpty() || !properties.containsKey("max-players"))) {
+            properties.setProperty("max-players", "100");
+            FileUtility.insertData("files/server.properties", path + "/server.properties");
+            try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/server.properties")))) {
+                properties.load(inputStreamReader);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (this.serverGroup.getGroupMode() == ServerGroupMode.STATIC || this.serverGroup.getGroupMode() == ServerGroupMode.STATIC_LOBBY) {
+                System.err.println("Filled empty server.properties (or missing \"max-players\" entry) of server [" + this.serverProcess.getMeta()
+                                                                                                                                       .getServiceId() + "] at " + (new File(
+                    path,
+                    "server.properties").getAbsolutePath()));
+            } else {
+                System.err.println("Filled empty server.properties (or missing \"max-players\" entry) of server [" + this.serverProcess.getMeta()
+                                                                                                                                       .getServiceId() + "], " + "please fix this error in the server.properties (check the template [" + this.serverProcess
+                    .getMeta()
+                    .getTemplate()
+                    .getName() + '@' + this.serverProcess.getMeta()
+                                                         .getTemplate()
+                                                         .getBackend() + "] and the global directory [" + new File("local/global").getAbsolutePath() + "])");
+            }
+        }
+
+        Enumeration<Object> enumeration = this.serverProcess.getMeta().getProperties().keys();
+        while (enumeration.hasMoreElements()) {
+            String x = enumeration.nextElement().toString();
+            properties.setProperty(x, this.serverProcess.getMeta().getProperties().getProperty(x));
+        }
+
+        properties.setProperty("server-ip", CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP());
+        properties.setProperty("server-port", serverProcess.getMeta().getPort() + NetworkUtils.EMPTY_STRING);
+
+        motd = properties.getProperty("motd");
+        try {
+            maxPlayers = Integer.parseInt(properties.getProperty("max-players"));
+        } catch (NumberFormatException e) {
+            maxPlayers = 100;
+        }
+
+        try (OutputStream outputStream = Files.newOutputStream(Paths.get(path + "/server.properties"))) {
+            properties.store(outputStream, "CloudNet-Wrapper EDIT");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ServerInfo(serverProcess.getMeta().getServiceId(),
+                              CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP(),
+                              this.serverProcess.getMeta().getPort(),
+                              false,
+                              new ArrayList<>(),
+                              serverProcess.getMeta().getMemory(),
+                              motd,
+                              0,
+                              maxPlayers,
+                              ServerState.OFFLINE,
+                              this.serverProcess.getMeta().getServerConfig(),
+                              serverProcess.getMeta().getTemplate());
     }
 
     /**
@@ -550,7 +587,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     /**
      * Start the java process
      *
-     * @throws Exception
+     * @throws Exception Throws some exception, if something wrong on the start of a game server
      */
     private void startProcess() throws Exception {
         StringBuilder commandBuilder = new StringBuilder();
