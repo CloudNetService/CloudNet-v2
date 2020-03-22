@@ -133,7 +133,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     /**
      * Download the {@link ServerInstallablePlugin] an copy to a web plugin cache.
      *
-     * @param The ServerInstallable plugin to download it.
+     * @param plugin The ServerInstallable plugin to download it.
      */
     private void downloadInstallablePlugin(ServerInstallablePlugin plugin) {
         switch (plugin.getPluginResourceType()) {
