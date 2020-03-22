@@ -60,8 +60,8 @@ pipeline {
         branch 'master'
       }
       steps {
-        withMaven(mavenSettingsConfig: '3878f406-e3fa-4923-bdcc-931101ac18ea') {
-          sh 'mvn deploy -P deployment'
+        withMaven(jdk: 'Java8', maven: 'Maven3', mavenSettingsConfig: '8bf610f1-24ed-48d5-8d4c-703b68cdb906', publisherStrategy: 'EXPLICIT', options: [dependenciesFingerprintPublisher(), artifactsPublisher(), mavenLinkerPublisher()]) {
+          sh 'mvn -DskipTests -P deployment deploy'
         }
       }
     }
