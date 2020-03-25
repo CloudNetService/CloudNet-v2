@@ -363,7 +363,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     /**
      * Configure a server like not a glowstone server type.
      *
-     * @return Return the finish Server info.
+     * @return the finished server info of the configured server.
      */
     private ServerInfo configureNoGlowstoneServer() {
         String motd;
