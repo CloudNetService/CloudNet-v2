@@ -369,7 +369,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         String motd;
         int maxPlayers;
         Properties properties = new Properties();
-        try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/server.properties")))) {
+        try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path,  "server.properties")))) {
             try {
                 properties.load(inputStreamReader);
             } catch (IOException e) {
