@@ -43,17 +43,18 @@ Use of KVM virtualization or dedicated servers is recommended.
 ### Discord
  *  [Discord Invite](https://discord.gg/CPCWr7w)
  
-### Developer
-If you would like to contribute to this repository, feel free to fork the repo and then create a pull request to our current dev branch. 
+### Developers
+If you would like to contribute to this repository, feel free to fork the repo and then create a pull request to our current development branch. 
   
 Maven:
 ```xml
 
     <repositories>
-        <repository>
-            <id>cloudnet-repo</id>
-            <url>https://cloudnetservice.eu/repositories</url>
-        </repository>
+      <repository>
+        <id>cloudnet-releases</id>
+        <name>CloudNet Release Repository</name>
+        <url>https://repo.cloudnetservice.eu/repository/releases/</url>
+      </repository>
     </repositories>
 
     <dependencies>
