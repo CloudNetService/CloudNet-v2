@@ -70,8 +70,6 @@ public class CloudConfig {
 
     private List<String> disabledModules;
 
-    private Map<String, Object> networkProperties;
-
     private List<String> hasteServer;
 
     public CloudConfig(ConsoleReader consoleReader) throws Exception {
@@ -114,7 +112,6 @@ public class CloudConfig {
 
         configuration.set("cloudnet-statistics.enabled", true);
         configuration.set("cloudnet-statistics.uuid", UUID.randomUUID().toString());
-        configuration.set("networkproperties.test", true);
 
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
@@ -168,7 +165,6 @@ public class CloudConfig {
                                                        configuration.getString("server.webservice.hostaddress"),
                                                        configuration.getInt("server.webservice.port"));
             this.formatSplitter = configuration.getString("general.server-name-splitter");
-            this.networkProperties = configuration.getSection("networkproperties").getSelf();
 
             if (!configuration.getSection("general").contains("disabled-modules")) {
                 configuration.set("general.disabled-modules", new ArrayList<>());
@@ -365,10 +361,6 @@ public class CloudConfig {
 
     public List<String> getDisabledModules() {
         return this.disabledModules;
-    }
-
-    public Map<String, Object> getNetworkProperties() {
-        return this.networkProperties;
     }
 
     public List<String> getHasteServer() {
