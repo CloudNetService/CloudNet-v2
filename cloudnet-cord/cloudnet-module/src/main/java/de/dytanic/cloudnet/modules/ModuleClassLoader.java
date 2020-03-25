@@ -28,9 +28,9 @@ public class ModuleClassLoader extends URLClassLoader implements ModuleLoader {
         return config;
     }
 
-    public Module loadModule() throws Exception {
+    public Module<?> loadModule() throws Exception {
         Class<?> bootstrap = loadClass(config.getMain());
-        Module module = (Module) bootstrap.getDeclaredConstructor().newInstance();
+        Module<?> module = (Module<?>) bootstrap.getDeclaredConstructor().newInstance();
 
         module.setClassLoader(this);
         module.setModuleConfig(config);
