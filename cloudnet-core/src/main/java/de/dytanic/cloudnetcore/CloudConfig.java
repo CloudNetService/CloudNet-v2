@@ -18,10 +18,7 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
-import java.io.File;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -38,15 +35,28 @@ public class CloudConfig {
 
     private static final ConfigurationProvider CONFIGURATION_PROVIDER = ConfigurationProvider.getProvider(YamlConfiguration.class);
     private static final Type WRAPPER_META_TYPE = TypeToken.getParameterized(List.class, WrapperMeta.class).getType();
-    private static final Type COLLECTION_PROXY_GROUP_TYPE = TypeToken.getParameterized(Collection.class, ProxyGroup.class).getType();
+    private static final Type COLLECTION_PROXY_GROUP_TYPE = TypeToken.getParameterized(Collection.class, ProxyGroup.TYPE).getType();
     private static final Type COLLECTION_USER_TYPE = TypeToken.getParameterized(Collection.class, User.class).getType();
     private static final Type COLLECTION_SERVERGROUP_TYPE = TypeToken.getParameterized(Collection.class, ServerGroup.TYPE).getType();
 
-    private final Path configPath = Paths.get("config.yml"), servicePath = Paths.get("services.json"), usersPath = Paths.get("users.json");
+    private static final Path[] MASTER_PATHS = {
+        Paths.get("local", "servers"),
+        Paths.get("local", "templates"),
+        Paths.get("local", "plugins"),
+        Paths.get("local", "cache"),
+        Paths.get("groups"),
+        Paths.get("modules")
+    };
+
+    private final Path configPath = Paths.get("config.yml");
+    private final Path servicePath = Paths.get("services.json");
+    private final Path usersPath = Paths.get("users.json");
 
     private Collection<ConnectableAddress> addresses;
 
-    private boolean autoUpdate, notifyService, cloudDynamicServices;
+    private boolean autoUpdate;
+
+    private boolean notifyService;
 
     private String formatSplitter, wrapperKey;
 
@@ -66,9 +76,8 @@ public class CloudConfig {
 
     public CloudConfig(ConsoleReader consoleReader) throws Exception {
 
-        for (File directory : new File[] {new File("local/servers"), new File("local/templates"), new File("local/plugins"), new File(
-            "local/servers"), new File("local/cache"), new File("groups"), new File("modules")}) {
-            directory.mkdirs();
+        for (Path path : MASTER_PATHS) {
+            Files.createDirectories(path);
         }
 
         NetworkUtils.writeWrapperKey();
@@ -89,15 +98,14 @@ public class CloudConfig {
         Configuration configuration = new Configuration();
 
         configuration.set("general.auto-update", false);
-        configuration.set("general.dynamicservices", false);
         configuration.set("general.server-name-splitter", "-");
         configuration.set("general.notify-service", true);
         configuration.set("general.disabled-modules", new ArrayList<>());
 
-        configuration.set("general.haste.server",
-                          Arrays.asList("https://hastebin.com",
-                                        "https://hasteb.in",
-                                        "https://haste.llamacloud.io"));
+        configuration.set("general.haste.server", Arrays.asList("https://hastebin.com",
+                                                                "https://hasteb.in",
+                                                                "https://haste.llamacloud.io",
+                                                                "https://pastes.cf"));
 
         configuration.set("server.hostaddress", hostName);
         configuration.set("server.ports", Collections.singletonList(1410));
@@ -133,7 +141,9 @@ public class CloudConfig {
         String password = NetworkUtils.randomString(32);
         System.out.printf("\"admin\" Password: %s%n", password);
         System.out.println(NetworkUtils.SPACE_STRING);
-        new Document("users", Collections.singletonList(new BasicUser("admin", password, Collections.singletonList("*"))))
+        new Document("users",
+                     Collections.singletonList(
+                         new BasicUser("admin", password, Collections.singletonList("*"))))
             .saveAsConfig(usersPath);
     }
 
@@ -154,7 +164,6 @@ public class CloudConfig {
             this.wrapperKey = NetworkUtils.readWrapperKey();
             this.autoUpdate = configuration.getBoolean("general.auto-update");
             this.notifyService = configuration.getBoolean("general.notify-service");
-            this.cloudDynamicServices = configuration.getBoolean("general.dynamicservices");
             this.webServerConfig = new WebServerConfig(true,
                                                        configuration.getString("server.webservice.hostaddress"),
                                                        configuration.getInt("server.webservice.port"));
@@ -234,7 +243,11 @@ public class CloudConfig {
     }
 
     public void deleteGroup(ServerGroup serverGroup) {
-        new File("groups/" + serverGroup.getName() + ".json").delete();
+        try {
+            Files.deleteIfExists(Paths.get("groups", serverGroup.getName() + ".json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteGroup(ProxyGroup proxyGroup) {
@@ -243,14 +256,14 @@ public class CloudConfig {
         this.serviceDocument.append("proxyGroups", groups).saveAsConfig(servicePath);
     }
 
-    public java.util.Map<String, ServerGroup> getServerGroups() {
+    public Map<String, ServerGroup> getServerGroups() {
         Map<String, ServerGroup> groups = new ConcurrentHashMap<>();
 
         if (serviceDocument.contains("serverGroups")) {
 
-            Collection<ServerGroup> collection = serviceDocument.getObject("serverGroups", COLLECTION_SERVERGROUP_TYPE);
+            Collection<ServerGroup> serverGroups = serviceDocument.getObject("serverGroups", COLLECTION_SERVERGROUP_TYPE);
 
-            for (ServerGroup serverGroup : collection) {
+            for (ServerGroup serverGroup : serverGroups) {
                 createGroup(serverGroup);
             }
 
@@ -259,7 +272,6 @@ public class CloudConfig {
         }
 
         File groupsDirectory = new File("groups");
-        Document entry;
 
         if (groupsDirectory.isDirectory()) {
             File[] files = groupsDirectory.listFiles();
@@ -268,7 +280,7 @@ public class CloudConfig {
                 for (File file : files) {
                     if (file.getName().endsWith(".json")) {
                         try {
-                            entry = Document.loadDocument(file);
+                            Document entry = Document.loadDocument(file);
                             ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
                             groups.put(serverGroup.getName(), serverGroup);
                         } catch (Throwable ex) {
@@ -285,7 +297,7 @@ public class CloudConfig {
 
     public void createGroup(ServerGroup serverGroup) {
         new Document("group", serverGroup)
-            .saveAsConfig(Paths.get("groups/" + serverGroup.getName() + ".json"));
+            .saveAsConfig(Paths.get("groups", serverGroup.getName() + ".json"));
     }
 
     public Map<String, ProxyGroup> getProxyGroups() {
@@ -321,10 +333,6 @@ public class CloudConfig {
 
     public boolean isNotifyService() {
         return this.notifyService;
-    }
-
-    public boolean isCloudDynamicServices() {
-        return this.cloudDynamicServices;
     }
 
     public String getFormatSplitter() {
