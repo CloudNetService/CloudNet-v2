@@ -185,7 +185,6 @@ public class LocalCloudWrapper implements Consumer<OptionSet>, Closeable {
             configuration.set("general.maintenance-copyFileToDirectory", false);
             configuration.set("general.processQueueSize", (Runtime.getRuntime().availableProcessors() / 2));
             configuration.set("general.percentOfCPUForANewServer", 100D);
-            configuration.set("general.percentOfCPUForANewCloudServer", 100D);
             configuration.set("general.percentOfCPUForANewProxy", 100D);
 
             try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {

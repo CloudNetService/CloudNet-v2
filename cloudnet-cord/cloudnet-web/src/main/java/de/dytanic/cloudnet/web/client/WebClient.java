@@ -43,7 +43,7 @@ public class WebClient {
      */
     private <E> E handleRequest(String url, Type type) {
         try {
-            URLConnection urlConnection = new java.net.URL(url).openConnection();
+            URLConnection urlConnection = new URL(url).openConnection();
             urlConnection.setRequestProperty("User-Agent",
                                              NetworkUtils.USER_AGENT);
             urlConnection.setUseCaches(false);
@@ -90,7 +90,7 @@ public class WebClient {
      */
     private String getString(String url, String key) {
         try {
-            URLConnection urlConnection = new java.net.URL(url).openConnection();
+            URLConnection urlConnection = new URL(url).openConnection();
             urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             urlConnection.setUseCaches(false);
             urlConnection.setConnectTimeout(1000);

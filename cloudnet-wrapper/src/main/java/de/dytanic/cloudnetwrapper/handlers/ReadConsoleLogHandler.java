@@ -10,20 +10,18 @@ import java.nio.charset.StandardCharsets;
 
 public final class ReadConsoleLogHandler implements IWrapperHandler {
 
-    private final StringBuffer stringBuffer = new StringBuffer();
-
-    private final byte[] buffer = new byte[1024];
+    private final StringBuilder stringBuilder = new StringBuilder();
 
     @Override
-    public void accept(CloudNetWrapper obj) {
-        for (BungeeCord bungeeCord : obj.getProxies().values()) {
-            if (bungeeCord.isAlive() && bungeeCord.getInstance() != null) {
+    public void accept(CloudNetWrapper wrapper) {
+        for (BungeeCord bungeeCord : wrapper.getProxies().values()) {
+            if (bungeeCord.isAlive()) {
                 readConsoleLog(bungeeCord);
             }
         }
 
-        for (GameServer gameServer : obj.getServers().values()) {
-            if (gameServer.isAlive() && gameServer.getInstance() != null) {
+        for (GameServer gameServer : wrapper.getServers().values()) {
+            if (gameServer.isAlive()) {
                 readConsoleLog(gameServer);
             }
         }
@@ -39,27 +37,27 @@ public final class ReadConsoleLogHandler implements IWrapperHandler {
     private synchronized void readStream(AbstractScreenService screenService, InputStream inputStream) {
         try {
             int len;
+            final byte[] buffer = new byte[1024];
             while (inputStream.available() > 0 && (len = inputStream.read(buffer, 0, buffer.length)) != -1) {
-                stringBuffer.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
+                stringBuilder.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
             }
 
-            String stringText = stringBuffer.toString();
-            if (!stringText.contains("\n") && !stringText.contains("\r")) {
+            if (stringBuilder.lastIndexOf("\n") == -1 ||
+                stringBuilder.lastIndexOf("\r") == -1) {
                 return;
             }
 
-            for (String input : stringText.split("\r")) {
-                for (String text : input.split("\n")) {
-                    if (!text.trim().isEmpty()) {
-                        screenService.addCachedItem(text);
-                    }
+            String stringText = stringBuilder.toString();
+            for (String text : stringText.split("\r?\n")) {
+                if (!text.trim().isEmpty()) {
+                    screenService.addCachedItem(text);
                 }
             }
 
-            stringBuffer.setLength(0);
+            stringBuilder.setLength(0);
 
         } catch (Exception ignored) {
-            stringBuffer.setLength(0);
+            stringBuilder.setLength(0);
         }
     }
 

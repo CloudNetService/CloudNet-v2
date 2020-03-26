@@ -38,7 +38,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
@@ -167,7 +166,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             new SetupSpigotVersion().accept(cloudNetLogging.getReader());
         }
 
-        getExecutor().scheduleWithFixedDelay(serverProcessQueue, 500, 500, TimeUnit.MILLISECONDS);
+        NetworkUtils.getExecutor().scheduleWithFixedDelay(serverProcessQueue, 500, 500, TimeUnit.MILLISECONDS);
 
         commandManager.registerCommand(new CommandHelp())
                       .registerCommand(new CommandClear())
@@ -219,10 +218,10 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             IWrapperHandler iWrapperHandler = new StopTimeHandler();
             IWrapperHandler readConsoleLogWrapperHandler = new ReadConsoleLogHandler();
 
-            getExecutor().scheduleWithFixedDelay(iWrapperHandler.toExecutor(), 0, 250, TimeUnit.MILLISECONDS);
-            getExecutor().scheduleWithFixedDelay(readConsoleLogWrapperHandler.toExecutor(), 0, 1, TimeUnit.SECONDS);
+            NetworkUtils.getExecutor().scheduleWithFixedDelay(iWrapperHandler.toExecutor(), 0, 250, TimeUnit.MILLISECONDS);
+            NetworkUtils.getExecutor().scheduleWithFixedDelay(readConsoleLogWrapperHandler.toExecutor(), 0, 1, TimeUnit.SECONDS);
 
-            getExecutor().scheduleWithFixedDelay(
+            NetworkUtils.getExecutor().scheduleWithFixedDelay(
                 () -> networkConnection.sendPacket(new PacketOutUpdateCPUUsage(NetworkUtils.cpuUsage())), 0, 5, TimeUnit.SECONDS);
         }
 
@@ -259,10 +258,6 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
     }
 
-    public static ScheduledExecutorService getExecutor() {
-        return NetworkUtils.getExecutor();
-    }
-
     @Override
     public boolean shutdown() {
         if (!RUNNING) {
@@ -272,7 +267,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         }
         System.out.println("Wrapper shutdown...");
 
-        getExecutor().shutdownNow();
+        NetworkUtils.getExecutor().shutdownNow();
 
         shutdownProcesses();
 
@@ -290,7 +285,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         this.cloudNetLogging.info("   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/");
 
         try {
-            getExecutor().awaitTermination(10, TimeUnit.SECONDS);
+            NetworkUtils.getExecutor().awaitTermination(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

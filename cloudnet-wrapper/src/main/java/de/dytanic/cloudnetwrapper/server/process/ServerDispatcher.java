@@ -8,7 +8,7 @@ import java.io.IOException;
 public interface ServerDispatcher extends Executable, Screenable {
 
     default void executeCommand(String consoleCommand) {
-        if (getInstance() == null && !getInstance().isAlive()) {
+        if (!isAlive()) {
             return;
         }
 
@@ -16,6 +16,7 @@ public interface ServerDispatcher extends Executable, Screenable {
             getInstance().getOutputStream().write((consoleCommand + '\n').getBytes());
             getInstance().getOutputStream().flush();
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

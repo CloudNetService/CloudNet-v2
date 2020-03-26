@@ -46,7 +46,6 @@ public final class NetworkUtils {
     public static final String EMPTY_STRING = "";
     public static final String SPACE_STRING = " ";
     public static final String SLASH_STRING = "/";
-    private static final boolean EPOLL = Epoll.isAvailable();
     private static final char[] ALPHABET = new char[] {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
     private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -83,7 +82,7 @@ public final class NetworkUtils {
     }
 
     public static Class<? extends SocketChannel> socketChannel() {
-        if (EPOLL) {
+        if (Epoll.isAvailable()) {
             return EpollSocketChannel.class;
         } else if (KQueue.isAvailable()) {
             return KQueueSocketChannel.class;
@@ -93,7 +92,7 @@ public final class NetworkUtils {
     }
 
     public static Class<? extends ServerSocketChannel> serverSocketChannel() {
-        if (EPOLL) {
+        if (Epoll.isAvailable()) {
             return EpollServerSocketChannel.class;
         } else if (KQueue.isAvailable()) {
             return KQueueServerSocketChannel.class;
@@ -107,7 +106,7 @@ public final class NetworkUtils {
     }
 
     public static EventLoopGroup eventLoopGroup(int threads) {
-        if (EPOLL) {
+        if (Epoll.isAvailable()) {
             return new EpollEventLoopGroup(threads);
         } else if (KQueue.isAvailable()) {
             return new KQueueEventLoopGroup(threads);
