@@ -72,15 +72,15 @@ public class ProxiedListener implements Listener {
             int max = (proxyConfig.getAutoSlot().isEnabled() ? onlineCount + proxyConfig.getAutoSlot()
                                                                                         .getDynamicSlotSize() : proxyConfig.getMaxPlayers());
 
-            ServerPing.PlayerInfo[] playerInfos = new ServerPing.PlayerInfo[proxyConfig.getPlayerInfo().length];
+            ServerPing.PlayerInfo[] playerInfos = new ServerPing.PlayerInfo[proxyConfig.getPlayerInfo().size()];
             for (short i = 0; i < playerInfos.length; i++) {
-                playerInfos[i] = new ServerPing.PlayerInfo(ChatColor.translateAlternateColorCodes('&', proxyConfig.getPlayerInfo()[i]),
+                playerInfos[i] = new ServerPing.PlayerInfo(ChatColor.translateAlternateColorCodes('&', proxyConfig.getPlayerInfo().get(i)),
                                                            UUID.randomUUID());
             }
             serverPing.setPlayers(new ServerPing.Players(max, onlineCount, playerInfos));
 
             if (proxyConfig.isMaintenance()) {
-                serverPing.setVersion(new ServerPing.Protocol(proxyConfig.getMaintenaceProtocol(), 1));
+                serverPing.setVersion(new ServerPing.Protocol(proxyConfig.getMaintenanceProtocol(), 1));
             }
             event.setResponse(serverPing);
         }
