@@ -2,6 +2,7 @@ package de.dytanic.cloudnet.lib.process;
 
 import com.google.gson.reflect.TypeToken;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
+import de.dytanic.cloudnet.lib.server.priority.PriorityService;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 
@@ -67,6 +68,13 @@ public class ServerProcessData {
      * Additional overrides for the {@code server.properties} file.
      */
     private Properties properties;
+
+    /**
+     * Determines whether the priority stop feature is active for this server process.
+     * Stops the server after no players are on this server and the amount of time in
+     * seconds of {@link PriorityService#getStopTimeInSeconds()} have passed.
+     */
+    private boolean priorityStop;
 
     /**
      * Creates a new data holder for server process data with default values.
@@ -280,5 +288,13 @@ public class ServerProcessData {
 
     public void setTemplate(final Template template) {
         this.template = template;
+    }
+
+    public boolean isPriorityStop() {
+        return priorityStop;
+    }
+
+    public void setPriorityStop(final boolean priorityStop) {
+        this.priorityStop = priorityStop;
     }
 }
