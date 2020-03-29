@@ -34,6 +34,7 @@ public class CloudPriorityGroupStartupHandler implements ICloudHandler {
             }
 
             if (servers.size() < (priority <= 1 ? 1 : priority)) {
+                //TODO Start with priority stop
                 CoreServerProcessBuilder.create(group.getName()).startServer();
             }
         }
