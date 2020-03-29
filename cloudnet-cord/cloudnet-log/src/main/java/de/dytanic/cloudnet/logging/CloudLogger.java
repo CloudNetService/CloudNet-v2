@@ -55,7 +55,7 @@ public class CloudLogger extends Logger {
         this.reader.setExpandEvents(false);
 
         final LoggingFormatter formatter = new LoggingFormatter();
-        FileHandler fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, true);
+        FileHandler fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, false);
         fileHandler.setEncoding(StandardCharsets.UTF_8.name());
         fileHandler.setFormatter(formatter);
 
