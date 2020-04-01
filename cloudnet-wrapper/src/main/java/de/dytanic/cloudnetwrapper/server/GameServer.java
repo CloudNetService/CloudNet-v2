@@ -202,7 +202,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         if (serverGroup.getServerType().equals(ServerGroupType.GLOWSTONE)) {
             if (!Files.exists(Paths.get(path + "/config"))) {
                 try {
-                    Files.createDirectories(Paths.get(path + "/config"));
+                    Files.createDirectories(Paths.get(path, "config"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
