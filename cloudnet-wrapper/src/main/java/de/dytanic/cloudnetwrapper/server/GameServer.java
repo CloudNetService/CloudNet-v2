@@ -12,6 +12,7 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.server.template.TemplateLoader;
 import de.dytanic.cloudnet.lib.server.template.TemplateResource;
 import de.dytanic.cloudnet.lib.service.ServiceId;
+import de.dytanic.cloudnet.lib.service.plugin.PluginResourceType;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 import de.dytanic.cloudnet.lib.user.SimpledUser;
 import de.dytanic.cloudnet.lib.utility.document.Document;
@@ -137,49 +138,42 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
      * @param plugin The ServerInstallable plugin to download it.
      */
     private void downloadInstallablePlugin(ServerInstallablePlugin plugin) {
-        switch (plugin.getPluginResourceType()) {
-            case URL: {
-                if (!Files.exists(Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"))) {
-                    try {
-                        URLConnection urlConnection = new URL(plugin.getUrl()).openConnection();
-                        urlConnection.setRequestProperty("User-Agent",
-                                                         NetworkUtils.USER_AGENT);
-                        Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+        if (plugin.getPluginResourceType().equals(PluginResourceType.URL)) {
+            if (!Files.exists(Paths.get("local", "cache", "web_plugins", plugin.getName() + ".jar"))) {
+                try {
+                    URLConnection urlConnection = new URL(plugin.getUrl()).openConnection();
+                    urlConnection.setRequestProperty("User-Agent",
+                                                     NetworkUtils.USER_AGENT);
+                    Files.copy(urlConnection.getInputStream(), Paths.get("local", "cache", "web_plugins", plugin.getName() + ".jar"));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
-            break;
-            case MASTER: {
-                if (!Files.exists(Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar")) && CloudNetWrapper.getInstance()
+        } else if (plugin.getPluginResourceType().equals(PluginResourceType.MASTER)) {
+            if (!Files.exists(Paths.get("local", "cache", "web_plugins", plugin.getName() + ".jar")) && CloudNetWrapper.getInstance()
                                                                                                                        .getSimpledUser() != null) {
-                    try {
-                        URLConnection urlConnection = new URL(
-                            String.format("http://%s:%d/cloudnet/api/v1/download",
-                                          CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
-                                          CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())).openConnection();
-                        urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
+                try {
+                    URLConnection urlConnection = new URL(
+                        String.format("http://%s:%d/cloudnet/api/v1/download",
+                                      CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                      CloudNetWrapper.getInstance().getWrapperConfig().getWebPort())).openConnection();
+                    urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
 
-                        SimpledUser simpledUser = CloudNetWrapper.getInstance().getSimpledUser();
-                        urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
-                        urlConnection.setRequestProperty("-Xcloudnet-token", simpledUser.getApiToken());
-                        urlConnection.setRequestProperty("-Xmessage", "plugin");
-                        urlConnection.setRequestProperty("-Xvalue", plugin.getName());
+                    SimpledUser simpledUser = CloudNetWrapper.getInstance().getSimpledUser();
+                    urlConnection.setRequestProperty("-Xcloudnet-user", simpledUser.getUserName());
+                    urlConnection.setRequestProperty("-Xcloudnet-token", simpledUser.getApiToken());
+                    urlConnection.setRequestProperty("-Xmessage", "plugin");
+                    urlConnection.setRequestProperty("-Xvalue", plugin.getName());
 
-                        urlConnection.connect();
-                        CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO,
-                                                                               String.format("Downloading %s.jar", plugin.getName()));
-                        Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"));
-                        CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO, "Download was completed successfully!");
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+                    urlConnection.connect();
+                    CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO,
+                                                                           String.format("Downloading %s.jar", plugin.getName()));
+                    Files.copy(urlConnection.getInputStream(), Paths.get("local", "cache", "web_plugins", plugin.getName() + ".jar"));
+                    CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO, "Download was completed successfully!");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
-            break;
-            default:
-                break;
         }
     }
 
