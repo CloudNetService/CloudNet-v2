@@ -188,7 +188,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
      */
     private void copyCloudNetApi() {
         try {
-            Files.deleteIfExists(Paths.get(path + "/plugins/CloudNetAPI.jar"));
+            Files.deleteIfExists(Paths.get(path, "plugins", "CloudNetAPI.jar"));
             FileUtility.insertData("files/CloudNetAPI.jar", path + "/plugins/CloudNetAPI.jar");
         } catch (IOException e) {
             e.printStackTrace();
