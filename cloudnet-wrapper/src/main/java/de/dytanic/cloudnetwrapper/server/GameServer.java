@@ -320,7 +320,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     }
 
     /**
-     * Configure a glowstone server.
+     * Configure a game server that's compatible with glowstone and set some properties.
      *
      * @return Given back a complete server info
      */
@@ -363,7 +363,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     }
 
     /**
-     * Configure a server like not a glowstone server type.
+     * Configure a normal game server with server.properties depend of groups settings and set ip and port right.
      *
      * @return the finished server info of the configured server.
      */
