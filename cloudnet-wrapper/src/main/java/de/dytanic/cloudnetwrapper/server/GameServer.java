@@ -268,7 +268,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         serverProcess.setServerStage(ServerStage.COPY);
 
         if (serverGroup.getServerType().equals(ServerGroupType.BUKKIT)) {
-            if (!Files.exists(Paths.get(path + "/spigot.jar"))) {
+            if (!Files.exists(Paths.get(path, "spigot.jar"))) {
                 FileUtility.copyFileToDirectory(new File("local/spigot.jar"), new File(path));
             }
         }
@@ -285,7 +285,10 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddServer(this.serverInfo,
                                                                                                this.serverProcess.getMeta()));
-        System.out.println("Server " + this + " started in [" + (System.currentTimeMillis() - startupTime) + " milliseconds]");
+        CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO,
+                                                               String.format("Server %s started in [%d] millseconds",
+                                                                             this,
+                                                                             (System.currentTimeMillis() - startupTime)));
         this.startupTimeStamp = System.currentTimeMillis();
 
         startProcess();
@@ -315,7 +318,9 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                               new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
                                                      CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetPort())).saveAsConfig(Paths
                                                                                                                                            .get(
-                                                                                                                                               path, "CLOUD", "connection.json"));
+                                                                                                                                               path,
+                                                                                                                                               "CLOUD",
+                                                                                                                                               "connection.json"));
 
     }
 
@@ -327,7 +332,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     private ServerInfo configureNonNormalServer() {
         String motd = null;
         int maxPlayers = 0;
-        try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/config/glowstone.yml")),
+        try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path, "config", "glowstone.yml")),
                                                                          StandardCharsets.UTF_8)) {
             Configuration configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(inputStreamReader);
             Configuration section = configuration.getSection("server");
@@ -340,7 +345,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             configuration.set("server", section);
             configuration.set("console.use-jline", false);
             try (Writer writer = new OutputStreamWriter(Files.newOutputStream(Paths.get(path, "config", "glowstone.yml")),
-                                                                    StandardCharsets.UTF_8)) {
+                                                        StandardCharsets.UTF_8)) {
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, writer);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -371,7 +376,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         String motd;
         int maxPlayers;
         Properties properties = new Properties();
-        try (Reader reader = new InputStreamReader(Files.newInputStream(Paths.get(path,  "server.properties")))) {
+        try (Reader reader = new InputStreamReader(Files.newInputStream(Paths.get(path, "server.properties")))) {
             try {
                 properties.load(reader);
             } catch (IOException e) {
@@ -425,7 +430,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             maxPlayers = 100;
         }
 
-        try (OutputStream outputStream = Files.newOutputStream(Paths.get(path + "/server.properties"))) {
+        try (OutputStream outputStream = Files.newOutputStream(Paths.get(path, "server.properties"))) {
             properties.store(outputStream, "CloudNet-Wrapper EDIT");
         } catch (IOException e) {
             e.printStackTrace();
