@@ -181,7 +181,6 @@ public class LocalCloudWrapper implements Consumer<OptionSet>, Closeable {
             configuration.set("general.startPort", 41570);
             configuration.set("general.auto-update", false);
             configuration.set("general.saving-records", false);
-            configuration.set("general.viaversion", false);
             configuration.set("general.maintenance-copyFileToDirectory", false);
             configuration.set("general.processQueueSize", (Runtime.getRuntime().availableProcessors() / 2));
             configuration.set("general.percentOfCPUForANewServer", 100D);

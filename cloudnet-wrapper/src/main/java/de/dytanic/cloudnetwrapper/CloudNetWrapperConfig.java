@@ -20,7 +20,7 @@ public class CloudNetWrapperConfig {
 
     private String internalIP, wrapperId, cloudnetHost, proxyConfigHost;
 
-    private boolean savingRecords, viaVersion, autoUpdate, maintenance_copy;
+    private boolean savingRecords, autoUpdate, maintenance_copy;
 
     private int cloudnetPort, startPort, processQueueSize, maxMemory, webPort;
 
@@ -114,7 +114,6 @@ public class CloudNetWrapperConfig {
             configuration.set("general.startPort", 41570);
             configuration.set("general.auto-update", false);
             configuration.set("general.saving-records", false);
-            configuration.set("general.viaversion", false);
             configuration.set("general.maintenance-copyFileToDirectory", false);
             configuration.set("general.processQueueSize", (Runtime.getRuntime().availableProcessors() / 2));
             configuration.set("general.percentOfCPUForANewServer", 100D);
@@ -138,7 +137,6 @@ public class CloudNetWrapperConfig {
             this.startPort = configuration.getInt("general.startPort");
             this.processQueueSize = configuration.getInt("general.processQueueSize");
             this.maxMemory = configuration.getInt("general.max-memory");
-            this.viaVersion = configuration.getBoolean("general.viaversion");
             this.autoUpdate = configuration.getBoolean("general.auto-update");
             this.maintenance_copy = configuration.getBoolean("maintenance-copyFileToDirectory");
             this.percentOfCPUForANewProxy = configuration.getDouble("general.percentOfCPUForANewProxy");
@@ -236,7 +234,4 @@ public class CloudNetWrapperConfig {
         return savingRecords;
     }
 
-    public boolean isViaVersion() {
-        return viaVersion;
-    }
 }
