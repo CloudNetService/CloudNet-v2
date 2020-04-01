@@ -365,13 +365,13 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     /**
      * Configure a server like not a glowstone server type.
      *
-     * @return Return the finish Server info.
+     * @return the finished server info of the configured server.
      */
     private ServerInfo configureNormalServer() {
         String motd;
         int maxPlayers;
         Properties properties = new Properties();
-        try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/server.properties")))) {
+        try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path,  "server.properties")))) {
             try {
                 properties.load(inputStreamReader);
             } catch (IOException e) {
