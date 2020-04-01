@@ -341,7 +341,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             configuration.set("console.use-jline", false);
             try (Writer writer = new OutputStreamWriter(Files.newOutputStream(Paths.get(path, "config", "glowstone.yml")),
                                                                     StandardCharsets.UTF_8)) {
-                ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
+                ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, writer);
             } catch (IOException e) {
                 e.printStackTrace();
             }
