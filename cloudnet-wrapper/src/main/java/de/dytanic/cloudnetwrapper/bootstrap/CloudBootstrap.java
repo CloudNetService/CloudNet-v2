@@ -88,7 +88,7 @@ public class CloudBootstrap {
         CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging);
 
         if (optionSet.has("systemTimer")) {
-            CloudNetWrapper.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);
+            NetworkUtils.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);
         }
 
         if (!cloudNetWrapper.bootstrap()) {

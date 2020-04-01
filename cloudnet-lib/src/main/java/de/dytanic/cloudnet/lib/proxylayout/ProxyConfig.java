@@ -1,7 +1,9 @@
 package de.dytanic.cloudnet.lib.proxylayout;
 
-import java.util.Collection;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
+import java.util.Set;
 
 public class ProxyConfig {
 
@@ -13,19 +15,21 @@ public class ProxyConfig {
 
     private Motd maintenanceMotdLayout;
 
-    private String maintenaceProtocol;
+    // 2.2.0 - Fixed a typo, keep old name in alternatives for backwards compatibility.
+    @SerializedName(value = "maintenanceProtocol", alternate = {"maintenaceProtocol"})
+    private String maintenanceProtocol;
 
     private int maxPlayers;
 
-    private Boolean customPayloadFixer;
+    private boolean customPayloadFixer;
 
     private AutoSlot autoSlot;
 
     private TabList tabList;
 
-    private String[] playerInfo;
+    private List<String> playerInfo;
 
-    private Collection<String> whitelist;
+    private Set<String> whitelist;
 
     private DynamicFallback dynamicFallback;
 
@@ -33,19 +37,19 @@ public class ProxyConfig {
                        boolean maintenance,
                        List<Motd> motdsLayouts,
                        Motd maintenanceMotdLayout,
-                       String maintenaceProtocol,
+                       String maintenanceProtocol,
                        int maxPlayers,
                        Boolean customPayloadFixer,
                        AutoSlot autoSlot,
                        TabList tabList,
-                       String[] playerInfo,
-                       Collection<String> whitelist,
+                       List<String> playerInfo,
+                       Set<String> whitelist,
                        DynamicFallback dynamicFallback) {
         this.enabled = enabled;
         this.maintenance = maintenance;
         this.motdsLayouts = motdsLayouts;
         this.maintenanceMotdLayout = maintenanceMotdLayout;
-        this.maintenaceProtocol = maintenaceProtocol;
+        this.maintenanceProtocol = maintenanceProtocol;
         this.maxPlayers = maxPlayers;
         this.customPayloadFixer = customPayloadFixer;
         this.autoSlot = autoSlot;
@@ -71,19 +75,19 @@ public class ProxyConfig {
         this.autoSlot = autoSlot;
     }
 
-    public Boolean getCustomPayloadFixer() {
+    public boolean getCustomPayloadFixer() {
         return customPayloadFixer;
     }
 
-    public void setCustomPayloadFixer(Boolean customPayloadFixer) {
+    public void setCustomPayloadFixer(boolean customPayloadFixer) {
         this.customPayloadFixer = customPayloadFixer;
     }
 
-    public Collection<String> getWhitelist() {
+    public Set<String> getWhitelist() {
         return whitelist;
     }
 
-    public void setWhitelist(Collection<String> whitelist) {
+    public void setWhitelist(Set<String> whitelist) {
         this.whitelist = whitelist;
     }
 
@@ -111,19 +115,19 @@ public class ProxyConfig {
         this.maintenanceMotdLayout = maintenanceMotdLayout;
     }
 
-    public String getMaintenaceProtocol() {
-        return maintenaceProtocol;
+    public String getMaintenanceProtocol() {
+        return maintenanceProtocol;
     }
 
-    public void setMaintenaceProtocol(String maintenaceProtocol) {
-        this.maintenaceProtocol = maintenaceProtocol;
+    public void setMaintenanceProtocol(String maintenanceProtocol) {
+        this.maintenanceProtocol = maintenanceProtocol;
     }
 
-    public String[] getPlayerInfo() {
+    public List<String> getPlayerInfo() {
         return playerInfo;
     }
 
-    public void setPlayerInfo(String[] playerInfo) {
+    public void setPlayerInfo(List<String> playerInfo) {
         this.playerInfo = playerInfo;
     }
 

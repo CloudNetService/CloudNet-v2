@@ -10,6 +10,8 @@ import net.md_5.bungee.config.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 /**
@@ -19,7 +21,7 @@ public abstract class Module<E> extends EventKey {
     /**
      * The folder where the data of this module is saved in.
      */
-    private File dataFolder;
+    private Path dataFolder;
     /**
      * The configuration file of this module.
      */
@@ -209,16 +211,20 @@ public abstract class Module<E> extends EventKey {
     }
 
     private void loadConfiguration() {
-        getDataFolder().mkdir();
-        if (configFile == null) {
-            configFile = new File("modules/" + moduleConfig.getName() + "/config.yml");
-            if (!configFile.exists()) {
-                try {
-                    configFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        try {
+            Files.createDirectories(getDataFolder());
+            if (configFile == null) {
+                configFile = new File("modules/" + moduleConfig.getName() + "/config.yml");
+                if (!configFile.exists()) {
+                    try {
+                        configFile.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         try {
@@ -234,11 +240,11 @@ public abstract class Module<E> extends EventKey {
      *
      * @return the directory for storing module data
      */
-    public File getDataFolder() {
+    public Path getDataFolder() {
         if (dataFolder == null) {
-            dataFolder = new File("modules", moduleConfig.getName());
+            dataFolder = Paths.get("modules", moduleConfig.getName());
             try {
-                Files.createDirectories(dataFolder.toPath());
+                Files.createDirectories(dataFolder);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -246,7 +252,7 @@ public abstract class Module<E> extends EventKey {
         return dataFolder;
     }
 
-    public void setDataFolder(File dataFolder) {
+    public void setDataFolder(Path dataFolder) {
         this.dataFolder = dataFolder;
     }
 

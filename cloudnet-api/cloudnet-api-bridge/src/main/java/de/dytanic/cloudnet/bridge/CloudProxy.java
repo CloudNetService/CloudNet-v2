@@ -496,11 +496,11 @@ public class CloudProxy implements CloudService, NetworkHandler {
                 final String serverName = proxiedPlayer.getServer() != null ?
                     proxiedPlayer.getServer().getInfo().getName() : proxyGroup;
                 final String groupName = proxiedPlayer.getServer() != null &&
-                    CloudProxy.getInstance().getServers().containsKey(proxiedPlayer.getServer().getInfo().getName()) ?
-                    CloudProxy.getInstance().getServers()
-                              .get(proxiedPlayer.getServer().getInfo().getName())
-                              .getServiceId()
-                              .getGroup() : "Hub";
+                    CloudProxy.getInstance().cachedServers.containsKey(proxiedPlayer.getServer().getInfo().getName()) ?
+                    CloudProxy.getInstance().cachedServers
+                        .get(proxiedPlayer.getServer().getInfo().getName())
+                        .getServiceId()
+                        .getGroup() : "Hub";
                 proxiedPlayer.setTabHeader(
                     new TextComponent(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes(
                         '&', tabList.getHeader()

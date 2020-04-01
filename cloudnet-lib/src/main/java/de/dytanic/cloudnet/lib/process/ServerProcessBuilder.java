@@ -2,6 +2,7 @@ package de.dytanic.cloudnet.lib.process;
 
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
+import de.dytanic.cloudnet.lib.server.priority.PriorityService;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.service.plugin.ServerInstallablePlugin;
 
@@ -191,6 +192,21 @@ public abstract class ServerProcessBuilder {
     }
 
     /**
+     * Enables or disables the priority stop feature of CloudNet on servers started by this
+     * server process builder.
+     * When enabled, servers without players on them will automatically stop after the configured
+     * amount of time in seconds of {@link PriorityService#getStopTimeInSeconds()} has passed.
+     *
+     * @param priorityStop whether the priority stop feature is active on this server.
+     *
+     * @return the server process builder.
+     */
+    public ServerProcessBuilder priorityStop(boolean priorityStop) {
+        this.serverProcessData.setPriorityStop(priorityStop);
+        return this;
+    }
+
+    /**
      * Requests the master to initiate this server startup.
      * This will trigger a sequence of messages to be passed between the calling service,
      * the master and the wrapper that will start the server.
@@ -244,6 +260,10 @@ public abstract class ServerProcessBuilder {
 
     public Template getTemplate() {
         return serverProcessData.getTemplate();
+    }
+
+    public boolean isPriorityStop() {
+        return this.serverProcessData.isPriorityStop();
     }
 
     public ServerProcessData getServerProcessData() {

@@ -57,9 +57,8 @@ public final class ZipConverter {
             return new byte[0];
         }
 
-        try (ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream(); ZipOutputStream zipOutputStream = new ZipOutputStream(
-            byteBuffer,
-            StandardCharsets.UTF_8)) {
+        try (ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+             ZipOutputStream zipOutputStream = new ZipOutputStream(byteBuffer, StandardCharsets.UTF_8)) {
 
             for (Path dir : directories) {
                 if (Files.exists(dir)) {
@@ -82,25 +81,24 @@ public final class ZipConverter {
         }
 
         try (InputStream inputStream = Files.newInputStream(zipPath)) {
-            extract0(inputStream, targetDirectory);
+            extractStreamToDirectory(inputStream, targetDirectory);
         }
 
         return targetDirectory;
     }
 
-    public static void extract0(InputStream inputStream, Path targetDirectory) throws IOException {
+    public static void extractStreamToDirectory(InputStream inputStream, Path targetDirectory) throws IOException {
         try (ZipInputStream zipInputStream = new ZipInputStream(inputStream, StandardCharsets.UTF_8)) {
-            ZipEntry zipEntry = null;
+            ZipEntry zipEntry;
 
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                extract1(zipInputStream, zipEntry, targetDirectory);
+                extractEntryToDirectory(zipInputStream, zipEntry, targetDirectory);
                 zipInputStream.closeEntry();
             }
         }
     }
 
-    private static void extract1(ZipInputStream zipInputStream, ZipEntry zipEntry, Path targetDirectory) throws IOException {
-        byte[] buffer = new byte[0x1FFF];
+    private static void extractEntryToDirectory(ZipInputStream zipInputStream, ZipEntry zipEntry, Path targetDirectory) throws IOException {
         Path file = Paths.get(targetDirectory.toString(), zipEntry.getName());
 
         if (zipEntry.isDirectory()) {
@@ -113,13 +111,9 @@ public final class ZipConverter {
                 Files.createDirectories(parent);
             }
 
+            Files.deleteIfExists(file);
             Files.createFile(file);
-            try (OutputStream outputStream = Files.newOutputStream(file)) {
-                int len;
-                while ((len = zipInputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, len);
-                }
-            }
+            Files.copy(zipInputStream, file);
         }
     }
 
@@ -129,7 +123,7 @@ public final class ZipConverter {
         }
 
         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(zipData)) {
-            extract0(byteArrayInputStream, targetDirectory);
+            extractStreamToDirectory(byteArrayInputStream, targetDirectory);
         }
 
         return targetDirectory;

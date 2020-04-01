@@ -14,7 +14,7 @@ public class CloudPriorityStartupHandler implements ICloudHandler {
 
     @Override
     public void onHandle(CloudNet cloudNet) {
-        double onlineCount = CloudNet.getInstance().getNetworkManager().newCloudNetwork().getOnlineCount();
+        double onlineCount = CloudNet.getInstance().getNetworkManager().getOnlineCount();
         for (ServerGroup group : CloudNet.getInstance().getServerGroups().values()) {
             if (group.getPriorityService().getGlobal().getOnlineServers() == 0 ||
                 group.getPriorityService().getGlobal().getOnlineCount() == 0 ||
@@ -34,6 +34,7 @@ public class CloudPriorityStartupHandler implements ICloudHandler {
             }
 
             if (servers.size() < (priority <= 1 ? 1 : priority)) {
+                //TODO Start with priority stop
                 CoreServerProcessBuilder.create(group.getName()).startServer();
             }
 

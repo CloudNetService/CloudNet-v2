@@ -1,93 +1,48 @@
 package de.dytanic.cloudnetcore.network.components.priority;
 
-import de.dytanic.cloudnetcore.CloudNet;
-import de.dytanic.cloudnetcore.network.components.INetworkComponent;
 import de.dytanic.cloudnetcore.network.components.MinecraftServer;
-import de.dytanic.cloudnetcore.network.components.ProxyServer;
-import de.dytanic.cloudnetcore.network.components.Wrapper;
 
 import java.util.concurrent.Future;
 
 /**
- * Created by Tareko on 20.08.2017.
+ * Task for automatically stopping {@link MinecraftServer} instances based on their priority
+ * service configuration.
  */
 public final class PriorityStopTask implements Runnable {
 
-    private String wrapper;
-
-    private INetworkComponent iNetworkComponent;
-
+    private final MinecraftServer minecraftServer;
+    private final int originalTime;
     private int time;
-
     private Future<?> future;
 
-    public PriorityStopTask(Wrapper wrapper, INetworkComponent iNetworkComponent, int time) {
-        this.wrapper = wrapper.getServerId();
-        this.iNetworkComponent = iNetworkComponent;
+    public PriorityStopTask(final MinecraftServer minecraftServer,
+                            final int time) {
         this.time = time;
+        this.originalTime = time;
+        this.minecraftServer = minecraftServer;
     }
 
     @Override
     public void run() {
 
-        if (iNetworkComponent instanceof ProxyServer) {
-            if (!getWrapperInstance().getProxies().containsKey(iNetworkComponent.getServerId()) && future != null) {
-                future.cancel(true);
-            }
+        if (this.future == null) {
+            return;
         }
 
-        if (iNetworkComponent instanceof MinecraftServer) {
-            if (!getWrapperInstance().getServers().containsKey(iNetworkComponent.getServerId()) && future != null) {
-                future.cancel(true);
+        if (this.minecraftServer != null) {
+            if (this.minecraftServer.getServerInfo().getOnlineCount() == 0) {
+                this.time--;
+            } else {
+                this.time = this.originalTime;
             }
-        }
-
-        if (iNetworkComponent.getChannel() != null) {
-            if (iNetworkComponent instanceof ProxyServer) {
-                if (((ProxyServer) iNetworkComponent).getProxyInfo().getOnlineCount() == 0) {
-                    time--;
-                }
-            }
-
-            if (iNetworkComponent instanceof MinecraftServer) {
-                if (((MinecraftServer) iNetworkComponent).getServerInfo().getOnlineCount() == 0) {
-                    time--;
-                }
-            }
-        }
-
-        if (time == 0) {
-            if (iNetworkComponent instanceof ProxyServer) {
-                getWrapperInstance().stopProxy(((ProxyServer) iNetworkComponent));
-            }
-
-            if (iNetworkComponent instanceof MinecraftServer) {
-                getWrapperInstance().stopServer(((MinecraftServer) iNetworkComponent));
-            }
-
-            if (future != null) {
-                future.cancel(true);
+            if (this.time <= 0) {
+                this.minecraftServer.getWrapper().stopServer(this.minecraftServer);
+                this.future.cancel(false);
             }
         }
     }
 
-    private Wrapper getWrapperInstance() {
-        return CloudNet.getInstance().getWrappers().get(wrapper);
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public Future<?> getFuture() {
-        return future;
-    }
-
-    public void setFuture(Future<?> future) {
+    public void setFuture(final Future<?> future) {
         this.future = future;
-    }
-
-    public String getWrapper() {
-        return wrapper;
     }
 }
