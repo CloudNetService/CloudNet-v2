@@ -315,7 +315,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                               new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
                                                      CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetPort())).saveAsConfig(Paths
                                                                                                                                            .get(
-                                                                                                                                               path + "/CLOUD/connection.json"));
+                                                                                                                                               path, "CLOUD", "connection.json"));
 
     }
 
