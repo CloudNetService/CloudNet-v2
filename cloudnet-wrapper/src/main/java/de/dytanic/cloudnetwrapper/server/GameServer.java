@@ -273,7 +273,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         if (!serverGroup.getServerType().equals(ServerGroupType.GLOWSTONE)) {
             this.serverInfo = configureNormalServer();
         } else {
-            this.serverInfo = configureNonNormalServer();
+            this.serverInfo = configureGlowstoneServer();
         }
         generateCloudNetConfigurations();
 
@@ -323,7 +323,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
      *
      * @return Given back a complete server info
      */
-    private ServerInfo configureNonNormalServer() {
+    private ServerInfo configureGlowstoneServer() {
         String motd = null;
         int maxPlayers = 0;
         try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path, "config", "glowstone.yml")),
@@ -491,7 +491,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
         CloudNetWrapper.getInstance().getServers().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveServer(serverInfo));
-        System.out.println("Server " + this + " was stopped");
+        CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO, String.format("Server %s was stopped", this));
         return true;
     }
 
@@ -558,9 +558,12 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             }
 
             TemplateLoader templateLoader = new TemplateLoader(serverProcess.getMeta().getTemplateUrl(), path + "/template.zip");
-            System.out.println("Downloading template for " + this.serverProcess.getMeta().getServiceId().getServerId() + ' ' + serverProcess
-                .getMeta()
-                .getTemplateUrl());
+            CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO,
+                                                                   String.format("Downloading template for %s %s",
+                                                                                 this.serverProcess.getMeta().getServiceId().getServerId(),
+                                                                                 serverProcess
+                                                                                     .getMeta()
+                                                                                     .getTemplateUrl()));
             templateLoader.load();
             templateLoader.unZip(path);
         } else {
@@ -651,9 +654,13 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                 CloudNetWrapper.getInstance().getSimpledUser(),
                 template,
                 serverGroup.getName());
-            System.out.println("Downloading template for " + this.serverProcess.getMeta()
-                                                                               .getServiceId()
-                                                                               .getGroup() + ' ' + template.getName());
+            CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO,
+                                                                   String.format("Downloading template for %s %s",
+                                                                                 this.serverProcess.getMeta()
+                                                                                                   .getServiceId()
+                                                                                                   .getGroup(),
+                                                                                 template.getName()));
+
             templateLoader.load();
             templateLoader.unZip(groupTemplates);
         }
@@ -672,9 +679,10 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         if (!Files.exists(Paths.get(groupTemplates))) {
             Files.createDirectories(Paths.get(groupTemplates));
             TemplateLoader templateLoader = new TemplateLoader(template.getUrl(), groupTemplates + "/template.zip");
-            System.out.println("Downloading template for " + this.serverProcess.getMeta()
-                                                                               .getServiceId()
-                                                                               .getGroup() + ' ' + template.getName());
+            CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO,
+                                                                   String.format("Downloading template for %s %s",
+                                                                                 this.serverProcess.getMeta().getServiceId().getGroup(),
+                                                                                 template.getName()));
             templateLoader.load();
             templateLoader.unZip(groupTemplates);
         }
@@ -715,8 +723,9 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                 e.printStackTrace();
             }
         } else if (template != null) {
-            System.out.println("Copying template from " + this.serverProcess.getMeta().getServiceId() + " to local directory...");
-
+            CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO,
+                                                                   String.format("Copying template from %s to local directory...",
+                                                                                 this.serverProcess.getMeta().getServiceId()));
             try {
                 FileUtility.copyFilesInDirectory(Paths.get(this.path),
                                                  Paths.get("local", "templates", serverGroup.getName(), template.getName()));
@@ -731,8 +740,8 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            System.out.println("Template " + template.getName() + " was copied!");
+            CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO,
+                                                                   String.format("Template %s was copied!", template.getName()));
         }
     }
 
@@ -742,11 +751,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     public void restart() {
 
         kill();
-        System.out.println("Server " + this + " was killed and restart...");
+        CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO, String.format("Server %s was killed and restart...", this));
         try {
             startProcess();
             startupTimeStamp = System.currentTimeMillis();
-            System.out.println("Server " + this + " restarted now!");
+            CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO, String.format("Server %s restarted now!", this));
         } catch (Exception e) {
             e.printStackTrace();
         }
