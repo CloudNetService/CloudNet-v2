@@ -216,7 +216,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             FileUtility.insertData("files/server.properties", path + "/server.properties");
         }
 
-        if (!Files.exists(Paths.get(path + "/bukkit.yml"))) {
+        if (!Files.exists(Paths.get(path, "bukkit.yml"))) {
             FileUtility.insertData("files/bukkit.yml", path + "/bukkit.yml");
         }
 
