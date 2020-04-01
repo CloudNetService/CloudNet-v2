@@ -297,7 +297,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     }
 
     private void generateCloudNetConfigurations() {
-        if (!Files.exists(Paths.get(path + "/CLOUD"))) {
+        if (!Files.exists(Paths.get(path, "CLOUD"))) {
             try {
                 Files.createDirectory(Paths.get(path + "/CLOUD"));
             } catch (IOException e) {
