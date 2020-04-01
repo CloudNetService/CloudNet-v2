@@ -316,25 +316,6 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                      CloudNetWrapper.getInstance().getWrapperConfig().getProxyConfigHost() +
                                          ':' + this.proxyProcessMeta.getPort());
 
-        if (CloudNetWrapper.getInstance().getWrapperConfig().isViaVersion()) {
-            if (!Files.exists(Paths.get("local/ViaVersion-Proxied.jar"))) {
-                try {
-                    System.out.println("Downloading ViaVersion...");
-                    URLConnection url = new URL(
-                        "https://ci.cloudnetservice.eu/job/ViaVersion/lastStableBuild/artifact/jar/target/ViaVersion.jar").openConnection();
-                    url.setRequestProperty("User-Agent",
-                                           NetworkUtils.USER_AGENT);
-                    url.connect();
-                    Files.copy(url.getInputStream(), Paths.get("local/ViaVersion-Proxied.jar"));
-                    ((HttpURLConnection) url).disconnect();
-                    System.out.println("Download complete successfully!");
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            FileUtility.copyFileToDirectory(new File("local/ViaVersion-Proxied.jar"), new File(path + "/plugins"));
-        }
-
         this.proxyInfo = new ProxyInfo(proxyProcessMeta.getServiceId(),
                                        CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP(),
                                        proxyProcessMeta.getPort(),
