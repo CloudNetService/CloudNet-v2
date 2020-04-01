@@ -207,7 +207,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                     e.printStackTrace();
                 }
             }
-            if (!Files.exists(Paths.get(path + "/config/glowstone.yml"))) {
+            if (!Files.exists(Paths.get(path, "config", "glowstone.yml"))) {
                 FileUtility.insertData("files/glowstone.yml", path + "/config/glowstone.yml");
             }
         }
