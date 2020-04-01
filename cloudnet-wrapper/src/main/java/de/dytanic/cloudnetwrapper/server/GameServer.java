@@ -39,6 +39,7 @@ import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class GameServer extends AbstractScreenService implements ServerDispatcher {
 
@@ -167,9 +168,10 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                         urlConnection.setRequestProperty("-Xvalue", plugin.getName());
 
                         urlConnection.connect();
-                        System.out.println("Downloading " + plugin.getName() + ".jar");
+                        CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO,
+                                                                               String.format("Downloading %s.jar", plugin.getName()));
                         Files.copy(urlConnection.getInputStream(), Paths.get("local/cache/web_plugins/" + plugin.getName() + ".jar"));
-                        System.out.println("Download was completed successfully!");
+                        CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO, "Download was completed successfully!");
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -275,9 +277,9 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         FileUtility.copyFilesInDirectory(new File("local/global"), new File(path));
 
         if (!serverGroup.getServerType().equals(ServerGroupType.GLOWSTONE)) {
-            this.serverInfo = configureNoGlowstoneServer();
+            this.serverInfo = configureNormalServer();
         } else {
-            this.serverInfo = configureGlowstoneServer();
+            this.serverInfo = configureNonNormalServer();
         }
         generateCloudNetConfigurations();
 
@@ -322,7 +324,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
      *
      * @return Given back a complete server info
      */
-    private ServerInfo configureGlowstoneServer() {
+    private ServerInfo configureNonNormalServer() {
         String motd = null;
         int maxPlayers = 0;
         try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(Paths.get(path + "/config/glowstone.yml")),
@@ -337,8 +339,8 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
             configuration.set("server", section);
             configuration.set("console.use-jline", false);
-            try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(Paths.get(path + "/config/glowstone.yml")),
-                                                                                StandardCharsets.UTF_8)) {
+            try (Writer outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(Paths.get(path, "/config/glowstone.yml")),
+                                                                    StandardCharsets.UTF_8)) {
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -365,7 +367,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
      *
      * @return Return the finish Server info.
      */
-    private ServerInfo configureNoGlowstoneServer() {
+    private ServerInfo configureNormalServer() {
         String motd;
         int maxPlayers;
         Properties properties = new Properties();
@@ -387,18 +389,23 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                 e.printStackTrace();
             }
             if (this.serverGroup.getGroupMode() == ServerGroupMode.STATIC || this.serverGroup.getGroupMode() == ServerGroupMode.STATIC_LOBBY) {
-                System.err.println("Filled empty server.properties (or missing \"max-players\" entry) of server [" + this.serverProcess.getMeta()
-                                                                                                                                       .getServiceId() + "] at " + (new File(
-                    path,
-                    "server.properties").getAbsolutePath()));
+                CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.WARNING,
+                                                                       String.format(
+                                                                           "Filled empty server.properties (or missing \"max-players\" entry) of server [%s] at %s",
+                                                                           this.serverProcess.getMeta().getServiceId(),
+                                                                           new File(path, "server.properties").getAbsolutePath()));
             } else {
-                System.err.println("Filled empty server.properties (or missing \"max-players\" entry) of server [" + this.serverProcess.getMeta()
-                                                                                                                                       .getServiceId() + "], " + "please fix this error in the server.properties (check the template [" + this.serverProcess
-                    .getMeta()
-                    .getTemplate()
-                    .getName() + '@' + this.serverProcess.getMeta()
-                                                         .getTemplate()
-                                                         .getBackend() + "] and the global directory [" + new File("local/global").getAbsolutePath() + "])");
+                CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.WARNING,
+                                                                       String.format(
+                                                                           "Filled empty server.properties (or missing \"max-players\" entry) of server [%s], please fix this error in the server.properties (check the template [%s] and the global directory [%s])",
+                                                                           this.serverProcess.getMeta().getServiceId(),
+                                                                           (this.serverProcess
+                                                                               .getMeta()
+                                                                               .getTemplate()
+                                                                               .getName() + '@' + this.serverProcess.getMeta()
+                                                                                                                    .getTemplate()
+                                                                                                                    .getBackend()),
+                                                                           new File("local/global").getAbsolutePath()));
             }
         }
 
