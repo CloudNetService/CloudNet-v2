@@ -212,7 +212,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             }
         }
 
-        if (!Files.exists(Paths.get(path + "/server.properties"))) {
+        if (!Files.exists(Paths.get(path, "server.properties"))) {
             FileUtility.insertData("files/server.properties", path + "/server.properties");
         }
 
