@@ -7,11 +7,6 @@ import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudNetworkUpdateEvent;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitCloudServerInitEvent;
 import de.dytanic.cloudnet.bridge.event.bukkit.BukkitSubChannelMessageEvent;
 import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandCloudServer;
-import de.dytanic.cloudnet.bridge.internal.util.CloudPermissible;
-import de.dytanic.cloudnet.bridge.internal.util.ReflectionUtil;
-import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
-import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.server.ServerConfig;
 import de.dytanic.cloudnet.lib.server.ServerGroupMode;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
@@ -25,7 +20,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -97,24 +91,6 @@ public final class BukkitListener implements Listener {
         if (CloudServer.getInstance().getCloudPlayers().containsKey(event.getPlayer().getUniqueId()) &&
             requests.contains(event.getPlayer().getUniqueId())) {
             requests.remove(event.getPlayer().getUniqueId());
-            if (CloudAPI.getInstance().getPermissionPool() != null && CloudAPI.getInstance().getPermissionPool().isAvailable()) {
-                try {
-                    Field field;
-                    Class<?> clazz = ReflectionUtil.reflectCraftClazz(".entity.CraftHumanEntity");
-
-                    if (clazz != null) {
-                        field = clazz.getDeclaredField("perm");
-                    } else {
-                        field = Class.forName("net.glowstone.entity.GlowHumanEntity").getDeclaredField("permissions");
-                    }
-
-                    field.setAccessible(true);
-                    final CloudPermissible cloudPermissible = new CloudPermissible(event.getPlayer());
-                    field.set(event.getPlayer(), cloudPermissible);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
 
         } else {
             this.kicks.add(event.getPlayer().getUniqueId());
@@ -139,22 +115,9 @@ public final class BukkitListener implements Listener {
             if (serverGroupData.getJoinPower() > 0 &&
                 !serverGroupData.getMode().equals(ServerGroupMode.LOBBY) &&
                 !serverGroupData.getMode().equals(ServerGroupMode.STATIC_LOBBY)) {
-                CloudPlayer cloudPlayer = CloudServer.getInstance().getCloudPlayers().get(event.getPlayer().getUniqueId());
                 int joinPower = serverGroupData.getJoinPower();
 
                 boolean acceptLogin = false;
-
-                if (CloudAPI.getInstance().getPermissionPool() != null) {
-                    for (GroupEntityData entityData : cloudPlayer.getPermissionEntity().getGroups()) {
-                        PermissionGroup permissionGroup = CloudAPI.getInstance().getPermissionGroup(entityData.getGroup());
-
-                        if (permissionGroup != null) {
-                            if (permissionGroup.getJoinPower() >= joinPower) {
-                                acceptLogin = true;
-                            }
-                        }
-                    }
-                }
 
                 if (event.getPlayer().hasPermission("cloudnet.joinpower." + joinPower)) {
                     acceptLogin = true;

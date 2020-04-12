@@ -28,7 +28,6 @@ import de.dytanic.cloudnetcore.api.event.network.CloudInitEvent;
 import de.dytanic.cloudnetcore.command.*;
 import de.dytanic.cloudnetcore.database.DatabaseBasicHandlers;
 import de.dytanic.cloudnetcore.handler.*;
-import de.dytanic.cloudnetcore.modules.DefaultModuleManager;
 import de.dytanic.cloudnetcore.network.CloudNetServer;
 import de.dytanic.cloudnetcore.network.NetworkManager;
 import de.dytanic.cloudnetcore.network.components.*;
@@ -83,7 +82,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
     private final CloudConfig config;
     private final CloudLogger logger;
     private final OptionSet optionSet;
-    private final DefaultModuleManager defaultModuleManager;
     private final List<String> arguments;
     private final long startupTime = System.currentTimeMillis();
     private WebServer webServer;
@@ -100,7 +98,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         this.logger = cloudNetLogging;
         this.optionSet = optionSet;
         this.arguments = args;
-        this.defaultModuleManager = new DefaultModuleManager();
 
         // We need the reader to stay open
         //noinspection resource
@@ -476,10 +473,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
     public DatabaseBasicHandlers getDbHandlers() {
         return dbHandlers;
-    }
-
-    public DefaultModuleManager getDefaultModuleManager() {
-        return defaultModuleManager;
     }
 
     public List<String> getArguments() {

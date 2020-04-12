@@ -6,17 +6,11 @@ import de.dytanic.cloudnet.api.config.ConfigTypeLoader;
 import de.dytanic.cloudnet.bridge.internal.chat.DocumentRegistry;
 import de.dytanic.cloudnet.bridge.internal.command.bukkit.CommandResource;
 import de.dytanic.cloudnet.bridge.internal.listener.bukkit.BukkitListener;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.MobSelector;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.SignSelector;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.in.PacketInMobSelector;
-import de.dytanic.cloudnet.bridge.internal.serverselectors.packet.in.PacketInSignSelector;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.nio.file.Paths;
 
@@ -36,8 +30,6 @@ public final class BukkitBootstrap extends JavaPlugin {
         api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
                                                  Paths.get("CLOUD", "config.json"),
                                                  ConfigTypeLoader.INTERNAL), getLogger());
-        api.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 1, PacketInSignSelector.class);
-        api.getNetworkConnection().getPacketManager().registerHandler(PacketRC.SERVER_SELECTORS + 2, PacketInMobSelector.class);
     }
 
     @Override
@@ -49,15 +41,6 @@ public final class BukkitBootstrap extends JavaPlugin {
             this.cloudServer.updateDisable();
             api.shutdown();
             api.getNetworkHandlerProvider().clear();
-        }
-
-
-        if (SignSelector.getInstance() != null && SignSelector.getInstance().getWorker() != null) {
-            SignSelector.getInstance().getWorker().interrupt();
-        }
-
-        if (MobSelector.getInstance() != null) {
-            MobSelector.getInstance().shutdown();
         }
 
         Bukkit.getScheduler().cancelTasks(this);
@@ -76,24 +59,8 @@ public final class BukkitBootstrap extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerOutgoingPluginChannel(this, "cloudnet:main");
 
-        enableTasks();
         startUpdateTask();
         loadPlayers();
-    }
-
-    /**
-     * If Vault-API or Vault is present, this method registers the Vault services implemented by CloudNet.
-     */
-    private void enableTasks() {
-        if (api.getPermissionPool() != null &&
-            (getServer().getPluginManager().isPluginEnabled("VaultAPI") ||
-                getServer().getPluginManager().isPluginEnabled("Vault"))) {
-            try {
-                Class.forName("de.dytanic.cloudnet.bridge.vault.VaultInvoker").getMethod("invoke").invoke(null);
-            } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     /**

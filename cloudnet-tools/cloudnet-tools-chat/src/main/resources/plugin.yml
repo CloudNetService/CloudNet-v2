@@ -1,7 +1,0 @@
-name: Chat
-version: 1.0
-author: Dytanic
-
-main: de.dytanic.cloudnet.tools.ChatPlugin
-
-softdepend: [CloudNetAPI]

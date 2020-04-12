@@ -22,7 +22,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
-import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
@@ -362,23 +361,6 @@ public final class CloudAPI {
      */
     public Collection<WrapperInfo> getWrappers() {
         return cloudNetwork.getWrappers();
-    }
-
-    /**
-     * Returns the permission group from the permissions-system
-     */
-    public PermissionGroup getPermissionGroup(String group) {
-        if (cloudNetwork.getModules().contains("permissionPool")) {
-            return this.getPermissionPool().getGroups().get(group);
-        }
-        return null;
-    }
-
-    /**
-     * @return the pool of permissions including all permission groups and the default group for the cloud network.
-     */
-    public PermissionPool getPermissionPool() {
-        return cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE);
     }
 
     /**
