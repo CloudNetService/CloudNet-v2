@@ -45,7 +45,6 @@ import java.util.logging.Level;
 public class GameServer extends AbstractScreenService implements ServerDispatcher {
 
     private ServerProcess serverProcess;
-    private ServerStage serverStage;
     private ServerGroup serverGroup;
     private Process instance;
     private ServerInfo serverInfo;
@@ -53,9 +52,8 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     private Path dir;
     private String path;
 
-    public GameServer(ServerProcess serverProcess, ServerStage serverStage, ServerGroup serverGroup) {
+    public GameServer(ServerProcess serverProcess, ServerGroup serverGroup) {
         this.serverProcess = serverProcess;
-        this.serverStage = serverStage;
         this.serverGroup = serverGroup;
 
         if (serverGroup.getGroupMode().equals(ServerGroupMode.STATIC) || serverGroup.getGroupMode()
@@ -72,7 +70,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
     @Override
     public int hashCode() {
-        return Objects.hash(serverProcess, serverStage, serverGroup, instance, serverInfo, startupTimeStamp, dir, path);
+        return Objects.hash(serverProcess, serverGroup, instance, serverInfo, startupTimeStamp, dir, path);
     }
 
     @Override
@@ -86,7 +84,6 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         final GameServer that = (GameServer) o;
         return startupTimeStamp == that.startupTimeStamp &&
             Objects.equals(serverProcess, that.serverProcess) &&
-            serverStage == that.serverStage &&
             Objects.equals(serverGroup, that.serverGroup) &&
             Objects.equals(instance, that.instance) &&
             Objects.equals(serverInfo, that.serverInfo) &&
@@ -98,7 +95,6 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     public String toString() {
         return "de.dytanic.cloudnetwrapper.server.GameServer{" +
             "serverProcess=" + serverProcess +
-            ", serverStage=" + serverStage +
             ", serverGroup=" + serverGroup +
             ", instance=" + instance +
             ", serverInfo=" + serverInfo +
@@ -124,16 +120,12 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         return startupTimeStamp;
     }
 
-    public ServerStage getServerStage() {
-        return serverStage;
-    }
-
     public Path getDir() {
         return dir;
     }
 
     /**
-     * Download the {@link ServerInstallablePlugin] an copy to a web plugin cache.
+     * Download the {@link ServerInstallablePlugin] and copy to a plugin cache for future installations.
      *
      * @param plugin The ServerInstallable plugin to download it.
      */
@@ -228,7 +220,6 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
      */
     @Override
     public boolean bootstrap() throws Exception {
-        serverProcess.setServerStage(ServerStage.DOWNLOAD);
         long startupTime = System.currentTimeMillis();
 
         for (ServerInstallablePlugin plugin : serverProcess.getMeta().getPlugins()) {
@@ -259,7 +250,6 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             FileUtility.copyFileToDirectory(new File("local/cache/web_plugins/" + plugin.getName() + ".jar"), new File(path + "/plugins"));
         }
 
-        serverProcess.setServerStage(ServerStage.COPY);
 
         if (serverGroup.getServerType().equals(ServerGroupType.BUKKIT)) {
             if (!Files.exists(Paths.get(path, "spigot.jar"))) {
@@ -287,9 +277,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
         startProcess();
 
-        serverProcess.setServerStage(ServerStage.PROCESS);
         CloudNetWrapper.getInstance().getServers().put(this.serverProcess.getMeta().getServiceId().getServerId(), this);
-        serverProcess.setServerStage(ServerStage.NET_INIT);
         return true;
     }
 
