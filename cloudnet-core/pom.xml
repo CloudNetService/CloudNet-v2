@@ -102,7 +102,7 @@
                                         <include name="**/CloudNet-Service-*.jar"/>
                                     </fileset>
                                 </copy>
-                            </target>
+                             </target>
                         </configuration>
                     </execution>
                 </executions>
