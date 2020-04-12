@@ -44,8 +44,7 @@ public class CloudConfig {
         Paths.get("local", "templates"),
         Paths.get("local", "plugins"),
         Paths.get("local", "cache"),
-        Paths.get("groups"),
-        Paths.get("modules")
+        Paths.get("groups")
     };
 
     private final Path configPath = Paths.get("config.yml");

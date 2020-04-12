@@ -17,15 +17,18 @@ public class ModuleManager {
 
     private final Queue<Module<?>> modules = new ConcurrentLinkedQueue<>();
     private ModuleDetector moduleDetector = new ModuleDetector();
-    private Path directory = Paths.get("modules");
+    private final Path directory = Paths.get("modules");
     private Collection<String> disabledModuleList = new ArrayList<>();
 
     public ModuleManager() {
-        try {
-            Files.createDirectory(directory);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!Files.exists(directory)) {
+            try {
+                Files.createDirectory(directory);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     public Collection<Module<?>> getModules() {
