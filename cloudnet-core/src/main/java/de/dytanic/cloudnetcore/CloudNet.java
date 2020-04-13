@@ -43,8 +43,6 @@ import de.dytanic.cloudnetcore.util.FileCopy;
 import de.dytanic.cloudnetcore.web.api.v1.*;
 import de.dytanic.cloudnetcore.web.log.WebsiteLog;
 import de.dytanic.cloudnetcore.wrapper.local.LocalCloudWrapper;
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import io.netty.util.internal.logging.JdkLoggerFactory;
 import joptsimple.OptionSet;
 
 import java.io.IOException;
@@ -98,7 +96,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
         this.config = config;
         this.logger = cloudNetLogging;
-        InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
         this.optionSet = optionSet;
         this.arguments = args;
 

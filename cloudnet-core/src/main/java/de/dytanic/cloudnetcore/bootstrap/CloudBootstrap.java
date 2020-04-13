@@ -7,6 +7,8 @@ import de.dytanic.cloudnet.lib.SystemTimer;
 import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnetcore.CloudConfig;
 import de.dytanic.cloudnetcore.CloudNet;
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.JdkLoggerFactory;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
@@ -18,9 +20,13 @@ import java.util.concurrent.TimeUnit;
  */
 public final class CloudBootstrap {
 
+    private static final InternalLoggerFactory INTERNAL_LOGGER_FACTORY = InternalLoggerFactory.getDefaultFactory();
+
     public static synchronized void main(String[] args) throws Exception {
         System.setProperty("file.encoding", "UTF-8");
         System.setProperty("java.net.preferIPv4Stack", "true");
+
+        InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
 
         OptionParser optionParser = new OptionParser();
 
