@@ -21,7 +21,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
-import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
@@ -430,19 +429,6 @@ public final class CloudAPI {
      */
     public void updateServerGroup(ServerGroup serverGroup) {
         networkConnection.sendPacket(new PacketOutUpdateServerGroup(serverGroup));
-    }
-
-    /**
-     * Updates the given permission group.
-     *
-     * @param permissionGroup the permission group to update.
-     */
-    public void updatePermissionGroup(PermissionGroup permissionGroup) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "updatePermissionGroup",
-                         String.format("Updating permission group: %s%n", permissionGroup));
-        networkConnection.sendPacket(new PacketOutUpdatePermissionGroup(permissionGroup));
     }
 
     /**

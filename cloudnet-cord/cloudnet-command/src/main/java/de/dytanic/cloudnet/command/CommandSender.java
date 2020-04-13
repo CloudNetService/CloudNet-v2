@@ -1,12 +1,11 @@
 package de.dytanic.cloudnet.command;
 
 import de.dytanic.cloudnet.lib.interfaces.Nameable;
-import de.dytanic.cloudnet.lib.player.permission.Permissible;
 
 /**
  * Interface for denoting classes that can dispatch commands.
  */
-public interface CommandSender extends Nameable, Permissible {
+public interface CommandSender extends Nameable {
 
     /**
      * Send messages to this command sender.
