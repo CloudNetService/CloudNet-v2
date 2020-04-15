@@ -1,4 +1,3 @@
-
 package de.dytanic.cloudnetwrapper.util;
 
 import org.yaml.snakeyaml.DumperOptions;
@@ -25,22 +24,8 @@ public final class FileUtility {
     private FileUtility() {
     }
 
-    public static void copy(InputStream inputStream, OutputStream outputStream) throws IOException {
-        byte[] buffer = new byte[8192];
-        copy(inputStream, outputStream, buffer);
-    }
-
-    public static void copy(InputStream inputStream, OutputStream outputStream, byte[] buffer) throws IOException {
-        int len;
-
-        while ((len = inputStream.read(buffer, 0, buffer.length)) != -1) {
-            outputStream.write(buffer, 0, len);
-        }
-        outputStream.flush();
-    }
-
     public static void copyFileToDirectory(File from, File to) throws IOException {
-        copy(from.toPath(), new File(to, from.getName()).toPath());
+        copy(from.toPath(), to.toPath().resolve(from.getName()));
     }
 
     public static void copy(Path from, Path to) throws IOException {
@@ -53,6 +38,10 @@ public final class FileUtility {
         }
 
         Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public static void copyFileToDirectory(Path from, Path to) throws IOException {
+        copy(from, to.resolve(from.getFileName()));
     }
 
     public static void copyFilesInDirectory(File from, File to) throws IOException {
@@ -98,6 +87,17 @@ public final class FileUtility {
         }
     }
 
+    public static void insertData(String file, Path destination) {
+        try (InputStream localInputStream = FileUtility.class.getClassLoader().getResourceAsStream(file)) {
+            Files.deleteIfExists(destination);
+            if (localInputStream != null) {
+                Files.copy(localInputStream, destination, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void deleteDirectory(File directory) {
         deleteDirectory(directory.toPath());
     }
@@ -114,10 +114,10 @@ public final class FileUtility {
     }
 
     @SuppressWarnings("unchecked")
-    public static void rewriteFileUtils(File file, String host) throws Exception {
+    public static void rewriteFileUtils(Path path, String host) throws Exception {
 
         Map<String, Object> configuration;
-        try (Reader reader = new FileReader(file)) {
+        try (Reader reader = Files.newBufferedReader(path)) {
             configuration = YAML.load(reader);
         }
 
@@ -125,7 +125,7 @@ public final class FileUtility {
             List listeners = (List) configuration.get("listeners");
             final Map map = (Map) listeners.get(0);
             map.put("host", host);
-            try (Writer writer = new FileWriter(file)) {
+            try (Writer writer = Files.newBufferedWriter(path)) {
                 YAML.dump(configuration, writer);
             }
         }

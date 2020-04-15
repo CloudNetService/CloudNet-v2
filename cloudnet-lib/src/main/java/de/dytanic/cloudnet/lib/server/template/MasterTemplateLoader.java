@@ -8,24 +8,24 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 /**
  * Created by Tareko on 24.09.2017.
  */
 public class MasterTemplateLoader {
 
-    private String url;
+    private final String url;
 
-    private String dest;
+    private final Path dest;
 
-    private SimpledUser simpledUser;
+    private final SimpledUser simpledUser;
 
-    private Template template;
+    private final Template template;
 
-    private String group;
+    private final String group;
 
-    public MasterTemplateLoader(String url, String dest, SimpledUser simpledUser, Template template, String group) {
+    public MasterTemplateLoader(String url, Path dest, SimpledUser simpledUser, Template template, String group) {
         this.url = url;
         this.dest = dest;
         this.simpledUser = simpledUser;
@@ -49,7 +49,7 @@ public class MasterTemplateLoader {
         return simpledUser;
     }
 
-    public String getDest() {
+    public Path getDest() {
         return dest;
     }
 
@@ -66,7 +66,7 @@ public class MasterTemplateLoader {
             urlConnection.connect();
 
             if (urlConnection.getHeaderField("-Xresponse") == null) {
-                Files.copy(urlConnection.getInputStream(), Paths.get(dest));
+                Files.copy(urlConnection.getInputStream(), dest);
             }
 
             urlConnection.disconnect();
@@ -77,10 +77,10 @@ public class MasterTemplateLoader {
         return this;
     }
 
-    public MasterTemplateLoader unZip(String dest) {
+    public MasterTemplateLoader unZip(Path dest) {
         try {
-            ZipConverter.extract(Paths.get(this.dest), Paths.get(dest));
-            Files.deleteIfExists(Paths.get(this.dest));
+            ZipConverter.extract(this.dest, dest);
+            Files.deleteIfExists(this.dest);
         } catch (IOException e) {
             e.printStackTrace();
         }
