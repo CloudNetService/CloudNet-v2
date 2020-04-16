@@ -39,7 +39,7 @@
         <plugin.javadoc.version>3.2.0</plugin.javadoc.version>
         <plugin.jar.version>3.2.0</plugin.jar.version>
         <plugin.resources.version>3.1.0</plugin.resources.version>
-        <plugin.antrun.version>1.8</plugin.antrun.version>
+        <plugin.antrun.version>3.0.0</plugin.antrun.version>
         <plugin.source.version>3.2.1</plugin.source.version>
     </properties>
 
