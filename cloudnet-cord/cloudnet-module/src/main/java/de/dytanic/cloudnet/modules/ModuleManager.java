@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class ModuleManager {
 
     private final Queue<Module<?>> modules = new ConcurrentLinkedQueue<>();
-    private ModuleDetector moduleDetector = new ModuleDetector();
+    private final ModuleDetector moduleDetector = new ModuleDetector();
     private final Path directory = Paths.get("modules");
     private Collection<String> disabledModuleList = new ArrayList<>();
 
