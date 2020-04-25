@@ -21,14 +21,11 @@ public class ModuleManager {
     private Collection<String> disabledModuleList = new ArrayList<>();
 
     public ModuleManager() {
-        if (!Files.exists(directory)) {
-            try {
-                Files.createDirectory(directory);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            Files.createDirectories(directory);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
     public Collection<Module<?>> getModules() {

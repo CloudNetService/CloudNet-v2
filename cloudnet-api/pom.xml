@@ -21,10 +21,6 @@
 
     <repositories>
         <repository>
-            <id>cloudnet-repo</id>
-            <url>https://cloudnetservice.eu/repositories</url>
-        </repository>
-        <repository>
             <id>cloudnet</id>
             <name>CloudNet Snapshot Repository</name>
             <url>https://repo.cloudnetservice.eu/repository/snapshots/</url>
