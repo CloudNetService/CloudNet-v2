@@ -1,0 +1,98 @@
+CloudNet REST-API
+
+The master API:
+URL: http://example.com:1420/cloudnet/cloudnet/api/v1/v1/utils
+Method: GET
+
+Default Json-form
+response:
+{
+    "success": false, //the request of the api is successfully
+    "reason": [], //reason for a failure or notice's
+    "response": {} //response data of a -Xmessage type
+}
+
+required in header:
+-Xcloudnet-user = user in the cloudnet management
+-Xcloudnet-token = api token of the user | -Xcloudnet-password = raw password of the user
+
+-Xmessage arguments:
+serverInfos,
+proxyInfos,
+statistics,
+onlinePlayers,
+cloudnetwork,
+startserver,
+startproxy
+
+================================================================================================================================
+
+The deployment API:
+URL: http://example.com:1420/cloudnet/api/v1/deployment
+Method: POST
+response error:
+{
+    "success": false, //the request of the api is successfully
+    "reason": [], //reason for a failure or notice's
+    "response": {} //response data of a -Xmessage type
+}
+
+response success:
+{
+    "success": true, //the request of the api is successfully
+    "reason": [], //reason for a failure or notice's
+    "response": {} //response data of a -Xmessage type
+}
+
+required in header:
+-Xcloudnet-user = user in the cloudnet management
+-Xcloudnet-token = api token of the user | -Xcloudnet-password = raw password of the user
+
+-Xmessage arguments:
+plugin:
+-Xvalue = "exampleplugin.jar"
+template:
+-Xvalue = "{"group": "Lobby", "template": "customTemplate"}"
+custom:
+-Xvalue = "myCustomServer"
+
+==================================================================================================================================
+
+The Download API
+URL: http://example.com:1420/cloudnet/api/v1/download
+Method: GET
+response error:
+{
+    "success": false, //the request of the api is successfully
+    "reason": [], //reason for a failure or notice's
+    "response": {} //response data of a -Xmessage type
+}
+
+required in header:
+-Xcloudnet-user = user in the cloudnet management
+-Xcloudnet-token = api token of the user | -Xcloudnet-password = raw password of the user
+
+-Xmessage arguments:
+plugin:
+-Xvalue = "exampleplugin.jar"
+template:
+-Xvalue = "{"group": "Lobby", "template": "customTemplate"}"
+custom:
+-Xvalue = "myCustomServer"
+
+==================================================================================================================================
+
+The Authorization API for a synchronized user management
+URL: http://example.com:1420/cloudnet/api/v1/auth
+Method: GET
+
+response:
+{
+    "success": false, //the request of the api is successfully
+    "reason": [], //reason for a failure or notice's
+    "response": {} //ever empty
+}
+
+required in header:
+-Xcloudnet-user = user in the cloudnet management
+-Xcloudnet-token = api token of the user | -Xcloudnet-password = raw password of the user
