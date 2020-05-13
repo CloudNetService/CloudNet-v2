@@ -1,6 +1,0 @@
-name: SimpleNameTags
-version: 1.0
-author: Dytanic
-
-main: de.dytanic.cloudnet.tools.SimpleNameTagsPlugin
-softdepend: [CloudNetAPI]

@@ -3,31 +3,29 @@ package de.dytanic.cloudnet.lib.server.template;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.zip.ZipConverter;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 public class TemplateLoader {
 
-    private String url;
+    private final String url;
+    private final Path dest;
 
-    private String dest;
-
-    public TemplateLoader(String url, String dest) {
+    public TemplateLoader(String url, Path dest) {
         this.url = url;
         this.dest = dest;
     }
 
-    public String getUrl() {
-        return url;
+    public Path getDest() {
+        return dest;
     }
 
-    public String getDest() {
-        return dest;
+    public String getUrl() {
+        return url;
     }
 
     public TemplateLoader load() {
@@ -36,7 +34,7 @@ public class TemplateLoader {
             urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             urlConnection.setUseCaches(false);
             urlConnection.connect();
-            Files.copy(urlConnection.getInputStream(), Paths.get(dest));
+            Files.copy(urlConnection.getInputStream(), this.dest);
             ((HttpURLConnection) urlConnection).disconnect();
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,10 +42,10 @@ public class TemplateLoader {
         return this;
     }
 
-    public TemplateLoader unZip(String dest) {
+    public TemplateLoader unZip(Path dest) {
         try {
-            ZipConverter.extract(Paths.get(this.dest), Paths.get(dest));
-            new File(this.dest).delete();
+            ZipConverter.extract(this.dest, dest);
+            Files.deleteIfExists(this.dest);
         } catch (IOException e) {
             e.printStackTrace();
         }

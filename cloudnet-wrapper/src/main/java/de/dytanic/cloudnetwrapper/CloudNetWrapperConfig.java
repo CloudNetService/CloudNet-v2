@@ -20,7 +20,7 @@ public class CloudNetWrapperConfig {
 
     private String internalIP, wrapperId, cloudnetHost, proxyConfigHost;
 
-    private boolean savingRecords, autoUpdate, maintenance_copy;
+    private boolean savingRecords, autoUpdate, maintenanceCopy;
 
     private int cloudnetPort, startPort, processQueueSize, maxMemory, webPort;
 
@@ -138,7 +138,7 @@ public class CloudNetWrapperConfig {
             this.processQueueSize = configuration.getInt("general.processQueueSize");
             this.maxMemory = configuration.getInt("general.max-memory");
             this.autoUpdate = configuration.getBoolean("general.auto-update");
-            this.maintenance_copy = configuration.getBoolean("maintenance-copyFileToDirectory");
+            this.maintenanceCopy = configuration.getBoolean("maintenance-copyFileToDirectory");
             this.percentOfCPUForANewProxy = configuration.getDouble("general.percentOfCPUForANewProxy");
             this.percentOfCPUForANewServer = configuration.getDouble("general.percentOfCPUForANewServer");
 
@@ -226,8 +226,8 @@ public class CloudNetWrapperConfig {
         return autoUpdate;
     }
 
-    public boolean isMaintenance_copy() {
-        return maintenance_copy;
+    public boolean isMaintenanceCopy() {
+        return maintenanceCopy;
     }
 
     public boolean isSavingRecords() {

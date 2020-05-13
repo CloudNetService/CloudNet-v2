@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
-            <artifactId>cloudnet-cloudflare</artifactId>
+            <artifactId>cloudnet-database</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -84,7 +84,7 @@
                     </archive>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>${plugin.antrun.version}</version>
@@ -102,11 +102,11 @@
                                         <include name="**/CloudNet-Service-*.jar"/>
                                     </fileset>
                                 </copy>
-                            </target>
+                             </target>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 

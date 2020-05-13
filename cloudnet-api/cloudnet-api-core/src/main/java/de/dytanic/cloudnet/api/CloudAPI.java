@@ -21,8 +21,6 @@ import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
 import de.dytanic.cloudnet.lib.network.protocol.packet.result.Result;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
-import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
-import de.dytanic.cloudnet.lib.player.permission.PermissionPool;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ServerGroup;
 import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
@@ -365,23 +363,6 @@ public final class CloudAPI {
     }
 
     /**
-     * Returns the permission group from the permissions-system
-     */
-    public PermissionGroup getPermissionGroup(String group) {
-        if (cloudNetwork.getModules().contains("permissionPool")) {
-            return this.getPermissionPool().getGroups().get(group);
-        }
-        return null;
-    }
-
-    /**
-     * @return the pool of permissions including all permission groups and the default group for the cloud network.
-     */
-    public PermissionPool getPermissionPool() {
-        return cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE);
-    }
-
-    /**
      * Finds the first wrapper with the given case-insensitive name.
      * If no wrapper with the given id can be found, this returns null.
      *
@@ -448,19 +429,6 @@ public final class CloudAPI {
      */
     public void updateServerGroup(ServerGroup serverGroup) {
         networkConnection.sendPacket(new PacketOutUpdateServerGroup(serverGroup));
-    }
-
-    /**
-     * Updates the given permission group.
-     *
-     * @param permissionGroup the permission group to update.
-     */
-    public void updatePermissionGroup(PermissionGroup permissionGroup) {
-        this.logger.logp(Level.FINEST,
-                         this.getClass().getSimpleName(),
-                         "updatePermissionGroup",
-                         String.format("Updating permission group: %s%n", permissionGroup));
-        networkConnection.sendPacket(new PacketOutUpdatePermissionGroup(permissionGroup));
     }
 
     /**

@@ -10,6 +10,7 @@ import de.dytanic.cloudnet.lib.server.template.Template;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Tareko on 21.05.2017.
@@ -25,7 +26,7 @@ public class ServerGroup implements Nameable {
     protected ServerGroupType serverType;
     protected ServerGroupMode groupMode;
     protected Template globalTemplate;
-    protected Collection<Template> templates;
+    protected List<Template> templates;
 
     protected int memory;
     protected int joinPower;
@@ -55,7 +56,7 @@ public class ServerGroup implements Nameable {
                        ServerGroupType serverType,
                        ServerGroupMode groupMode,
                        Template globalTemplate,
-                       Collection<Template> templates,
+                       List<Template> templates,
                        AdvancedServerConfig advancedServerConfig) {
         this.name = name;
         this.kickedForceFallback = kickedForceFallback;
@@ -145,11 +146,11 @@ public class ServerGroup implements Nameable {
         this.groupMode = groupMode;
     }
 
-    public Collection<Template> getTemplates() {
+    public List<Template> getTemplates() {
         return templates;
     }
 
-    public void setTemplates(Collection<Template> templates) {
+    public void setTemplates(List<Template> templates) {
         this.templates = templates;
     }
 

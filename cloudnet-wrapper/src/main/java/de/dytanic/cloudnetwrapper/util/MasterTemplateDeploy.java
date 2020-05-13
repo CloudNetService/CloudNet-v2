@@ -19,17 +19,17 @@ import java.nio.file.Paths;
  */
 public class MasterTemplateDeploy {
 
-    private String dir;
+    private final Path dir;
 
-    private ConnectableAddress connectableAddress;
+    private final ConnectableAddress connectableAddress;
 
-    private SimpledUser simpledUser;
+    private final SimpledUser simpledUser;
 
-    private Template template;
+    private final Template template;
 
-    private String group;
+    private final String group;
 
-    public MasterTemplateDeploy(String dir,
+    public MasterTemplateDeploy(Path dir,
                                 ConnectableAddress connectableAddress,
                                 SimpledUser simpledUser,
                                 Template template,
@@ -41,7 +41,7 @@ public class MasterTemplateDeploy {
         this.group = group;
     }
 
-    public String getDir() {
+    public Path getDir() {
         return dir;
     }
 
@@ -65,9 +65,10 @@ public class MasterTemplateDeploy {
         System.out.println("Trying to setup the new template... [" + template.getName() + ']');
         Path dir = Paths.get("local/cache/" + NetworkUtils.randomString(10));
         try {
-            FileUtility.copyFilesInDirectory(new File(this.dir), dir.toFile());
+            FileUtility.copyFilesInDirectory(this.dir, dir);
             new File(dir + "/plugins/CloudNetAPI.jar").delete();
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(
             String.format("http://%s:%d/cloudnet/api/v1/deployment",

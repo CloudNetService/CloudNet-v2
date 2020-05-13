@@ -2,6 +2,7 @@ package de.dytanic.cloudnetcore.network;
 
 import de.dytanic.cloudnet.lib.ConnectableAddress;
 import de.dytanic.cloudnet.lib.NetworkUtils;
+import de.dytanic.cloudnet.logging.CloudLogger;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.network.ChannelConnectEvent;
 import de.dytanic.cloudnetcore.network.components.Wrapper;
@@ -9,6 +10,8 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
 
@@ -32,6 +35,7 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.AUTO_READ, true)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .handler(new LoggingHandler(CloudLogger.class, LogLevel.DEBUG))
                 .childHandler(this);
 
             CloudNet.getLogger().finest("Using " + (Epoll.isAvailable() ? "Epoll native transport" : "NIO transport"));

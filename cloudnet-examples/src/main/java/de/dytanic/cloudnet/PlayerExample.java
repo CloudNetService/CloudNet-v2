@@ -6,11 +6,8 @@ import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
-import de.dytanic.cloudnet.lib.player.permission.GroupEntityData;
-import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tareko on 15.10.2017.
@@ -51,14 +48,6 @@ public class PlayerExample {
         OfflinePlayer offlinePlayer = CloudAPI.getInstance().getOfflinePlayer("Dytanic");
         if (offlinePlayer != null) //If the player is registered
         {
-            PermissionEntity permissionEntity = offlinePlayer.getPermissionEntity(); //Returns the permissionentity for manage some permission systems
-            permissionEntity.getGroups().add(new GroupEntityData("VIP",
-                                                                 System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30))); //add a permission group with the delay of 30 days
-            permissionEntity.getPermissions().put("minecraft.command.tp", true); //add a permission for this player
-
-            if (permissionEntity.isInGroup("VIP")) {
-                System.out.println("The player " + offlinePlayer.getUniqueId() + NetworkUtils.SLASH_STRING + offlinePlayer.getName() + " is in the group VIP");
-            }
 
             PlayerConnection playerConnection = offlinePlayer.getLastPlayerConnection();
             playerConnection.getHost(); //Returns the IP

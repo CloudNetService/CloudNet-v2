@@ -21,7 +21,7 @@
         <service.version>2.2.0</service.version>
         <service.type>RELEASE</service.type>
         <!-- Dependencies -->
-        <dependency.netty.version>4.1.48.Final</dependency.netty.version>
+        <dependency.netty.version>4.1.49.Final</dependency.netty.version>
         <dependency.nitrite.version>3.4.1</dependency.nitrite.version>
         <!-- Should be kept in sync with minecraft -->
         <dependency.gson.version>2.8.6</dependency.gson.version>
@@ -35,11 +35,11 @@
         <!-- test dependencies -->
         <test.junit.version>4.13</test.junit.version>
         <!-- Plugins -->
-        <plugin.shade.version>3.2.2</plugin.shade.version>
+        <plugin.shade.version>3.2.3</plugin.shade.version>
         <plugin.javadoc.version>3.2.0</plugin.javadoc.version>
         <plugin.jar.version>3.2.0</plugin.jar.version>
         <plugin.resources.version>3.1.0</plugin.resources.version>
-        <plugin.antrun.version>1.8</plugin.antrun.version>
+        <plugin.antrun.version>3.0.0</plugin.antrun.version>
         <plugin.source.version>3.2.1</plugin.source.version>
     </properties>
 
@@ -57,8 +57,6 @@
         <module>cloudnet-cord</module>
         <module>cloudnet-wrapper</module>
         <module>cloudnet-api</module>
-        <module>cloudnet-tools</module>
-        <module>cloudnet-modules</module>
         <module>cloudnet-examples</module>
     </modules>
 

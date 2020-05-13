@@ -11,14 +11,12 @@ import de.dytanic.cloudnet.lib.CloudNetwork;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
-import de.dytanic.cloudnet.lib.player.permission.PermissionGroup;
 import de.dytanic.cloudnet.lib.server.*;
 import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
 import de.dytanic.cloudnet.lib.server.info.ServerInfo;
 import de.dytanic.cloudnet.lib.server.template.Template;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.entity.HumanEntity;
@@ -27,12 +25,10 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Team;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -43,7 +39,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -360,117 +355,10 @@ public class CloudServer implements CloudService, NetworkHandler {
         return CloudAPI.getInstance().getConfig().getObject("serverProcess", ServerProcessMeta.TYPE);
     }
 
-    /**
-     * @param player
-     */
-    public void updateNameTags(Player player) {
-        this.updateNameTags(player, null);
-    }
-
-    public void updateNameTags(Player player, Function<Player, PermissionGroup> playerPermissionGroupFunction) {
-        this.updateNameTags(player, playerPermissionGroupFunction, null);
-    }
-
-    public void updateNameTags(Player player,
-                               Function<Player, PermissionGroup> playerPermissionGroupFunction,
-                               Function<Player, PermissionGroup> allOtherPlayerPermissionGroupFunction) {
-        if (CloudAPI.getInstance().getPermissionPool() == null || !CloudAPI.getInstance().getPermissionPool().isAvailable()) {
-            return;
-        }
-
-        PermissionGroup playerPermissionGroup = playerPermissionGroupFunction != null ? playerPermissionGroupFunction.apply(player) : cloudPlayers
-            .get(player.getUniqueId())
-            .getPermissionEntity()
-            .getHighestPermissionGroup(CloudAPI.getInstance().getPermissionPool());
-
-        initScoreboard(player);
-
-        for (Player all : player.getServer().getOnlinePlayers()) {
-            initScoreboard(all);
-
-            if (playerPermissionGroup != null) {
-                addTeamEntry(player, all, playerPermissionGroup);
-            }
-
-            PermissionGroup targetPermissionGroup = allOtherPlayerPermissionGroupFunction != null ? allOtherPlayerPermissionGroupFunction.apply(
-                all) : null;
-
-            if (targetPermissionGroup == null) {
-                targetPermissionGroup = getCachedPlayer(all.getUniqueId()).getPermissionEntity()
-                                                                          .getHighestPermissionGroup(CloudAPI.getInstance()
-                                                                                                             .getPermissionPool());
-            }
-
-            if (targetPermissionGroup != null) {
-                addTeamEntry(all, player, targetPermissionGroup);
-            }
-
-        }
-    }
-
     private void initScoreboard(Player all) {
         if (all.getScoreboard() == null) {
             all.setScoreboard(all.getServer().getScoreboardManager().getNewScoreboard());
         }
-    }
-
-    private void addTeamEntry(Player target, Player all, PermissionGroup permissionGroup) {
-        String teamName = permissionGroup.getTagId() + permissionGroup.getName();
-        if (teamName.length() > 16) {
-            teamName = teamName.substring(0, 16);
-            CloudAPI.getInstance()
-                    .dispatchConsoleMessage("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
-            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the name of the group in your perms.yml");
-            Bukkit.broadcast("In order to prevent issues, the name (+ tagID) of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!",
-                             "cloudnet.notify");
-            Bukkit.broadcast("Please fix this issue by changing the name of the group in your perms.yml", "cloudnet.notify");
-        }
-        Team team = all.getScoreboard().getTeam(teamName);
-        if (team == null) {
-            team = all.getScoreboard().registerNewTeam(teamName);
-        }
-
-        if (permissionGroup.getPrefix().length() > 16) {
-            permissionGroup.setPrefix(permissionGroup.getPrefix().substring(0, 16));
-            CloudAPI.getInstance()
-                    .dispatchConsoleMessage("In order to prevent issues, the prefix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
-            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the prefix in your perms.yml");
-            Bukkit.broadcast("In order to prevent issues, the prefix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!",
-                             "cloudnet.notify");
-            Bukkit.broadcast("Please fix this issue by changing the prefix in your perms.yml", "cloudnet.notify");
-        }
-        if (permissionGroup.getSuffix().length() > 16) {
-            permissionGroup.setSuffix(permissionGroup.getSuffix().substring(0, 16));
-            CloudAPI.getInstance()
-                    .dispatchConsoleMessage("In order to prevent issues, the suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!");
-            CloudAPI.getInstance().dispatchConsoleMessage("Please fix this issue by changing the suffix in your perms.yml");
-            Bukkit.broadcast("In order to prevent issues, the suffix of the group " + permissionGroup.getName() + " was temporarily shortened to 16 characters!",
-                             "cloudnet.notify");
-            Bukkit.broadcast("Please fix this issue by changing the suffix in your perms.yml", "cloudnet.notify");
-        }
-
-        try {
-            Method setColor = team.getClass().getDeclaredMethod("setColor", ChatColor.class);
-            setColor.setAccessible(true);
-            if (permissionGroup.getColor().length() != 0) {
-                setColor.invoke(team, ChatColor.getByChar(permissionGroup.getColor().replaceAll("&", "").replaceAll("§", "")));
-            } else {
-                setColor.invoke(team, ChatColor.getByChar(ChatColor.getLastColors(permissionGroup.getPrefix().replace('&', '§'))
-                                                                   .replaceAll("&", "")
-                                                                   .replaceAll("§", "")));
-            }
-        } catch (NoSuchMethodException ignored) {
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
-
-        team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
-        team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
-
-        team.addEntry(target.getName());
-
-        target.setDisplayName(ChatColor.translateAlternateColorCodes('&', permissionGroup.getDisplay() + target.getName()));
     }
 
     public CloudPlayer getCachedPlayer(UUID uniqueId) {

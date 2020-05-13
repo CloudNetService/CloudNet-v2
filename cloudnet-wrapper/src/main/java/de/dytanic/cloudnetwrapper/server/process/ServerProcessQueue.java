@@ -6,7 +6,6 @@ import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
 import de.dytanic.cloudnetwrapper.CloudNetWrapper;
 import de.dytanic.cloudnetwrapper.server.BungeeCord;
 import de.dytanic.cloudnetwrapper.server.GameServer;
-import de.dytanic.cloudnetwrapper.server.ServerStage;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -39,7 +38,7 @@ public class ServerProcessQueue implements Runnable {
     }
 
     public void putProcess(ServerProcessMeta serverProcessMeta) {
-        this.servers.offer(new ServerProcess(serverProcessMeta, ServerStage.SETUP));
+        this.servers.offer(new ServerProcess(serverProcessMeta));
     }
 
     public void putProcess(ProxyProcessMeta proxyProcessMeta) {
@@ -73,7 +72,6 @@ public class ServerProcessQueue implements Runnable {
                     try {
                         System.out.println("Fetching entry [" + serverProcess.getMeta().getServiceId() + ']');
                         gameServer = new GameServer(serverProcess,
-                                                    ServerStage.SETUP,
                                                     CloudNetWrapper.getInstance()
                                                                    .getServerGroups()
                                                                    .get(serverProcess.getMeta().getServiceId().getGroup()));
