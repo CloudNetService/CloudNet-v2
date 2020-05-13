@@ -1,8 +1,8 @@
-package de.dytanic.cloudnet;
+package eu.cloudnetservice.v2.examples;
 
-import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
-import de.dytanic.cloudnet.web.server.util.PathProvider;
-import de.dytanic.cloudnet.web.server.util.QueryDecoder;
+import eu.cloudnetservice.v2.web.server.handler.MethodWebHandlerAdapter;
+import eu.cloudnetservice.v2.web.server.util.PathProvider;
+import eu.cloudnetservice.v2.web.server.util.QueryDecoder;
 import eu.cloudnetservice.v2.master.CloudNet;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;

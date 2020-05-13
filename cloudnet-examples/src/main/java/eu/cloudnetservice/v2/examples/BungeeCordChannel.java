@@ -1,8 +1,8 @@
-package de.dytanic.cloudnet;
+package eu.cloudnetservice.v2.examples;
 
-import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.bridge.event.proxied.ProxiedSubChannelMessageEvent;
-import de.dytanic.cloudnet.lib.utility.document.Document;
+import eu.cloudnetservice.v2.api.CloudAPI;
+import eu.cloudnetservice.v2.bridge.event.proxied.ProxiedSubChannelMessageEvent;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

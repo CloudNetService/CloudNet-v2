@@ -1,4 +1,4 @@
-package de.dytanic.cloudnet;
+package eu.cloudnetservice.v2.examples;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;

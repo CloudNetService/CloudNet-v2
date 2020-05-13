@@ -1,10 +1,10 @@
-package de.dytanic.cloudnet;
+package eu.cloudnetservice.v2.examples;
 
-import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.api.builders.ApiServerProcessBuilder;
-import de.dytanic.cloudnet.lib.server.ProxyGroup;
-import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.server.SimpleServerGroup;
+import eu.cloudnetservice.v2.api.CloudAPI;
+import eu.cloudnetservice.v2.api.builders.ApiServerProcessBuilder;
+import eu.cloudnetservice.v2.lib.server.ProxyGroup;
+import eu.cloudnetservice.v2.lib.server.ServerGroup;
+import eu.cloudnetservice.v2.lib.server.SimpleServerGroup;
 
 /**
  * Created by Tareko on 15.10.2017.

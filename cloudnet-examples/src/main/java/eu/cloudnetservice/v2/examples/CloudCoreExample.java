@@ -1,9 +1,9 @@
-package de.dytanic.cloudnet;
+package eu.cloudnetservice.v2.examples;
 
-import de.dytanic.cloudnet.command.Command;
-import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.event.EventListener;
-import de.dytanic.cloudnet.lib.utility.document.Document;
+import eu.cloudnetservice.v2.command.Command;
+import eu.cloudnetservice.v2.command.CommandSender;
+import eu.cloudnetservice.v2.event.EventListener;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
 import eu.cloudnetservice.v2.master.api.CoreModule;
 import eu.cloudnetservice.v2.master.api.event.server.ServerAddEvent;
 import eu.cloudnetservice.v2.master.process.CoreServerProcessBuilder;

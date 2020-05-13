@@ -1,11 +1,11 @@
-package de.dytanic.cloudnet;
+package eu.cloudnetservice.v2.examples;
 
-import de.dytanic.cloudnet.api.CloudAPI;
-import de.dytanic.cloudnet.api.player.PlayerExecutorBridge;
-import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import de.dytanic.cloudnet.lib.player.OfflinePlayer;
-import de.dytanic.cloudnet.lib.player.PlayerConnection;
+import eu.cloudnetservice.v2.api.CloudAPI;
+import eu.cloudnetservice.v2.api.player.PlayerExecutorBridge;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.lib.player.CloudPlayer;
+import eu.cloudnetservice.v2.lib.player.OfflinePlayer;
+import eu.cloudnetservice.v2.lib.player.PlayerConnection;
 
 import java.util.UUID;
 

@@ -1,7 +1,7 @@
-package de.dytanic.cloudnet;
+package eu.cloudnetservice.v2.examples;
 
-import de.dytanic.cloudnet.bridge.CloudServer;
-import de.dytanic.cloudnet.lib.server.ServerState;
+import eu.cloudnetservice.v2.bridge.CloudServer;
+import eu.cloudnetservice.v2.lib.server.ServerState;
 
 /**
  * Created by Tareko on 15.10.2017.
