@@ -1,7 +1,7 @@
 package eu.cloudnetservice.v2.wrapper.command;
 
-import eu.cloudnetservice.v2.examples.command.Command;
-import eu.cloudnetservice.v2.examples.command.CommandSender;
+import eu.cloudnetservice.v2.command.Command;
+import eu.cloudnetservice.v2.command.CommandSender;
 import eu.cloudnetservice.v2.wrapper.CloudNetWrapper;
 import eu.cloudnetservice.v2.wrapper.network.packet.out.PacketOutUpdateWrapperInfo;
 

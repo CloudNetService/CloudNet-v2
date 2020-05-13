@@ -1,6 +1,6 @@
 package eu.cloudnetservice.v2.wrapper;
 
-import eu.cloudnetservice.v2.examples.command.CommandManager;
+import eu.cloudnetservice.v2.command.CommandManager;
 import eu.cloudnetservice.v2.lib.ConnectableAddress;
 import eu.cloudnetservice.v2.lib.NetworkUtils;
 import eu.cloudnetservice.v2.lib.interfaces.Executable;
@@ -11,11 +11,11 @@ import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketRC;
 import eu.cloudnetservice.v2.lib.server.ProxyGroup;
 import eu.cloudnetservice.v2.lib.server.ServerGroup;
 import eu.cloudnetservice.v2.lib.user.SimpledUser;
-import eu.cloudnetservice.v2.examples.logging.CloudLogger;
-import eu.cloudnetservice.v2.examples.setup.spigot.PaperBuilder;
-import eu.cloudnetservice.v2.examples.setup.spigot.SetupSpigotVersion;
-import eu.cloudnetservice.v2.examples.setup.spigot.SpigotBuilder;
-import eu.cloudnetservice.v2.examples.web.client.WebClient;
+import eu.cloudnetservice.v2.logging.CloudLogger;
+import eu.cloudnetservice.v2.setup.spigot.PaperBuilder;
+import eu.cloudnetservice.v2.setup.spigot.SetupSpigotVersion;
+import eu.cloudnetservice.v2.setup.spigot.SpigotBuilder;
+import eu.cloudnetservice.v2.web.client.WebClient;
 import de.dytanic.cloudnetwrapper.command.*;
 import eu.cloudnetservice.v2.wrapper.handlers.IWrapperHandler;
 import eu.cloudnetservice.v2.wrapper.handlers.ReadConsoleLogHandler;
