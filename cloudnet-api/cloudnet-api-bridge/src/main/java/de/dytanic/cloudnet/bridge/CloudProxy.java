@@ -385,24 +385,6 @@ public class CloudProxy implements CloudService, NetworkHandler {
         }
         cachedServers.put(serverInfo.getServiceId().getServerId(), serverInfo);
 
-        if (this.cloudAPI.getModuleProperties().contains("notifyService") &&
-            this.cloudAPI.getModuleProperties().getBoolean("notifyService")) {
-            for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
-                if (proxiedPlayer.hasPermission("cloudnet.notify")) {
-                    proxiedPlayer.sendMessage(
-                        TextComponent.fromLegacyText(
-                            ChatColor.translateAlternateColorCodes('&',
-                                                                   this.cloudAPI
-                                                                       .getCloudNetwork()
-                                                                       .getMessages()
-                                                                       .getString("notify-message-server-add")
-                                                                       .replace("%server%",
-                                                                                serverInfo.getServiceId()
-                                                                                          .getServerId()))));
-                }
-            }
-        }
-
     }
 
     @Override
@@ -430,18 +412,6 @@ public class CloudProxy implements CloudService, NetworkHandler {
             getProxyGroup().getProxyConfig().getDynamicFallback().getDefaultFallback())) {
             ProxyServer.getInstance().getConfig().getListeners().forEach(
                 listener -> listener.getServerPriority().remove(serverInfo.getServiceId().getServerId()));
-        }
-
-        if (this.cloudAPI.getModuleProperties().getBoolean("notifyService")) {
-            for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
-                if (proxiedPlayer.hasPermission("cloudnet.notify")) {
-                    proxiedPlayer.sendMessage(
-                        TextComponent.fromLegacyText(
-                            ChatColor.translateAlternateColorCodes(
-                                '&', this.cloudAPI.getCloudNetwork().getMessages().getString("notify-message-server-remove")
-                                                  .replace("%server%", serverInfo.getServiceId().getServerId()))));
-                }
-            }
         }
     }
 

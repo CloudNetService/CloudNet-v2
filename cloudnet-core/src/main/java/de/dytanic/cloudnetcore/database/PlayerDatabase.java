@@ -6,13 +6,11 @@ import de.dytanic.cloudnet.lib.database.DatabaseDocument;
 import de.dytanic.cloudnet.lib.player.CloudPlayer;
 import de.dytanic.cloudnet.lib.player.OfflinePlayer;
 import de.dytanic.cloudnet.lib.player.PlayerConnection;
-import de.dytanic.cloudnet.lib.player.permission.PermissionEntity;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import de.dytanic.cloudnetcore.CloudNet;
 import de.dytanic.cloudnetcore.api.event.player.UpdatePlayerEvent;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,12 +29,7 @@ public class PlayerDatabase extends DatabaseUsable {
                                                         new Document(),
                                                         System.currentTimeMillis(),
                                                         System.currentTimeMillis(),
-                                                        playerConnection,
-                                                        new PermissionEntity(playerConnection.getUniqueId(),
-                                                                             new HashMap<>(),
-                                                                             null,
-                                                                             null,
-                                                                             new LinkedList<>()));
+                                                        playerConnection);
         database.insert(new DatabaseDocument(playerConnection.getUniqueId().toString()).append("offlinePlayer", offlinePlayer));
         return offlinePlayer;
     }
@@ -65,15 +58,6 @@ public class PlayerDatabase extends DatabaseUsable {
 
     public boolean containsPlayer(UUID uuid) {
         return database.contains(uuid.toString());
-    }
-
-    public PlayerDatabase updatePermissionEntity(UUID uuid, PermissionEntity permissionEntity) {
-        DatabaseDocument document = database.getDocument(uuid.toString());
-        OfflinePlayer offlinePlayer = document.getObject("offlinePlayer", OfflinePlayer.TYPE);
-        offlinePlayer.setPermissionEntity(permissionEntity);
-        document.append("offlinePlayer", offlinePlayer);
-        database.insert(document);
-        return this;
     }
 
     public OfflinePlayer getPlayer(UUID uniqueId) {
