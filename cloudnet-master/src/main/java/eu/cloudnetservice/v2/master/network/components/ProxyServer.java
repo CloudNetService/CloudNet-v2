@@ -1,9 +1,9 @@
 package eu.cloudnetservice.v2.master.network.components;
 
-import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
-import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
-import de.dytanic.cloudnet.lib.service.ServiceId;
-import de.dytanic.cloudnet.lib.utility.document.Document;
+import eu.cloudnetservice.v2.lib.server.ProxyProcessMeta;
+import eu.cloudnetservice.v2.lib.server.info.ProxyInfo;
+import eu.cloudnetservice.v2.lib.service.ServiceId;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
 import eu.cloudnetservice.v2.master.network.NetworkInfo;
 import eu.cloudnetservice.v2.master.network.packet.out.PacketOutCustomChannelMessage;
 import io.netty.channel.Channel;

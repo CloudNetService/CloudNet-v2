@@ -1,11 +1,11 @@
 package eu.cloudnetservice.v2.master.web.api.v1;
 
-import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
-import de.dytanic.cloudnet.web.server.util.PathProvider;
-import de.dytanic.cloudnet.web.server.util.QueryDecoder;
+import eu.cloudnetservice.v2.lib.player.CloudPlayer;
+import eu.cloudnetservice.v2.lib.user.User;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
+import eu.cloudnetservice.v2.web.server.handler.MethodWebHandlerAdapter;
+import eu.cloudnetservice.v2.web.server.util.PathProvider;
+import eu.cloudnetservice.v2.web.server.util.QueryDecoder;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.database.StatisticManager;
 import eu.cloudnetservice.v2.master.network.components.MinecraftServer;

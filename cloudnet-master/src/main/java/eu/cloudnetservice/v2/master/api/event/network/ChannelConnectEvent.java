@@ -1,7 +1,7 @@
 package eu.cloudnetservice.v2.master.api.event.network;
 
-import de.dytanic.cloudnet.event.Cancelable;
-import de.dytanic.cloudnet.event.Event;
+import eu.cloudnetservice.v2.event.Cancelable;
+import eu.cloudnetservice.v2.event.Event;
 import io.netty.channel.Channel;
 
 /**

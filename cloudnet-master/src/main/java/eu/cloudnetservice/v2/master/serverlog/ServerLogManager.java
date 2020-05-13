@@ -1,8 +1,8 @@
 package eu.cloudnetservice.v2.master.serverlog;
 
-import de.dytanic.cloudnet.lib.MultiValue;
-import de.dytanic.cloudnet.lib.map.NetorHashMap;
-import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
+import eu.cloudnetservice.v2.lib.MultiValue;
+import eu.cloudnetservice.v2.lib.map.NetorHashMap;
+import eu.cloudnetservice.v2.lib.server.screen.ScreenInfo;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.v2.master.network.components.ProxyServer;

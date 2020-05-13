@@ -1,8 +1,8 @@
 package eu.cloudnetservice.v2.master.web.log;
 
-import de.dytanic.cloudnet.web.server.handler.WebHandler;
-import de.dytanic.cloudnet.web.server.util.PathProvider;
-import de.dytanic.cloudnet.web.server.util.QueryDecoder;
+import eu.cloudnetservice.v2.web.server.handler.WebHandler;
+import eu.cloudnetservice.v2.web.server.util.PathProvider;
+import eu.cloudnetservice.v2.web.server.util.QueryDecoder;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.web.api.v1.WebsiteDocumentation;
 import io.netty.channel.ChannelHandlerContext;

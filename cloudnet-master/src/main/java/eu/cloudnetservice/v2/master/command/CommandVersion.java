@@ -1,8 +1,8 @@
 package eu.cloudnetservice.v2.master.command;
 
-import de.dytanic.cloudnet.command.Command;
-import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.lib.NetworkUtils;
+import eu.cloudnetservice.v2.command.Command;
+import eu.cloudnetservice.v2.command.CommandSender;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
 
 /**
  * Created by Tareko on 19.01.2018.

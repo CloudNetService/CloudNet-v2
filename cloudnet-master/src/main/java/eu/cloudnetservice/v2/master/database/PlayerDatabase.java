@@ -1,12 +1,12 @@
 package eu.cloudnetservice.v2.master.database;
 
-import de.dytanic.cloudnet.database.DatabaseUsable;
-import de.dytanic.cloudnet.lib.database.Database;
-import de.dytanic.cloudnet.lib.database.DatabaseDocument;
-import de.dytanic.cloudnet.lib.player.CloudPlayer;
-import de.dytanic.cloudnet.lib.player.OfflinePlayer;
-import de.dytanic.cloudnet.lib.player.PlayerConnection;
-import de.dytanic.cloudnet.lib.utility.document.Document;
+import eu.cloudnetservice.v2.database.DatabaseUsable;
+import eu.cloudnetservice.v2.lib.database.Database;
+import eu.cloudnetservice.v2.lib.database.DatabaseDocument;
+import eu.cloudnetservice.v2.lib.player.CloudPlayer;
+import eu.cloudnetservice.v2.lib.player.OfflinePlayer;
+import eu.cloudnetservice.v2.lib.player.PlayerConnection;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.api.event.player.UpdatePlayerEvent;
 

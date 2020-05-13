@@ -1,10 +1,10 @@
 package eu.cloudnetservice.v2.master.bootstrap;
 
-import de.dytanic.cloudnet.help.HelpService;
-import de.dytanic.cloudnet.help.ServiceDescription;
-import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.SystemTimer;
-import de.dytanic.cloudnet.logging.CloudLogger;
+import eu.cloudnetservice.v2.help.HelpService;
+import eu.cloudnetservice.v2.help.ServiceDescription;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.lib.SystemTimer;
+import eu.cloudnetservice.v2.logging.CloudLogger;
 import eu.cloudnetservice.v2.master.CloudConfig;
 import eu.cloudnetservice.v2.master.CloudNet;
 import io.netty.util.internal.logging.InternalLoggerFactory;

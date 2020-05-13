@@ -1,16 +1,16 @@
 package eu.cloudnetservice.v2.master.setup;
 
-import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.server.ServerGroupMode;
-import de.dytanic.cloudnet.lib.server.ServerGroupType;
-import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
-import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.server.template.TemplateResource;
-import de.dytanic.cloudnet.setup.Setup;
-import de.dytanic.cloudnet.setup.SetupRequest;
-import de.dytanic.cloudnet.setup.responsetype.IntegerResponseType;
-import de.dytanic.cloudnet.setup.responsetype.StringResponseType;
+import eu.cloudnetservice.v2.command.CommandSender;
+import eu.cloudnetservice.v2.lib.server.ServerGroup;
+import eu.cloudnetservice.v2.lib.server.ServerGroupMode;
+import eu.cloudnetservice.v2.lib.server.ServerGroupType;
+import eu.cloudnetservice.v2.lib.server.advanced.AdvancedServerConfig;
+import eu.cloudnetservice.v2.lib.server.template.Template;
+import eu.cloudnetservice.v2.lib.server.template.TemplateResource;
+import eu.cloudnetservice.v2.setup.Setup;
+import eu.cloudnetservice.v2.setup.SetupRequest;
+import eu.cloudnetservice.v2.setup.responsetype.IntegerResponseType;
+import eu.cloudnetservice.v2.setup.responsetype.StringResponseType;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.components.Wrapper;
 

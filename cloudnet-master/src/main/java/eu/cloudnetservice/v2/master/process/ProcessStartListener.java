@@ -1,8 +1,8 @@
 package eu.cloudnetservice.v2.master.process;
 
-import de.dytanic.cloudnet.event.EventListener;
-import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
-import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
+import eu.cloudnetservice.v2.event.EventListener;
+import eu.cloudnetservice.v2.lib.server.ProxyProcessMeta;
+import eu.cloudnetservice.v2.lib.server.ServerProcessMeta;
 import eu.cloudnetservice.v2.master.api.event.network.ChannelInitEvent;
 import eu.cloudnetservice.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.v2.master.network.components.ProxyServer;

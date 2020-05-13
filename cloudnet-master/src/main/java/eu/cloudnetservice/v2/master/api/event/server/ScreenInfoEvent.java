@@ -1,8 +1,8 @@
 package eu.cloudnetservice.v2.master.api.event.server;
 
-import de.dytanic.cloudnet.event.async.AsyncEvent;
-import de.dytanic.cloudnet.event.async.AsyncPosterAdapter;
-import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
+import eu.cloudnetservice.v2.event.async.AsyncEvent;
+import eu.cloudnetservice.v2.event.async.AsyncPosterAdapter;
+import eu.cloudnetservice.v2.lib.server.screen.ScreenInfo;
 
 import java.util.Collection;
 

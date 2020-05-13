@@ -1,6 +1,6 @@
 package eu.cloudnetservice.v2.master.util.defaults;
 
-import de.dytanic.cloudnet.lib.proxylayout.*;
+import eu.cloudnetservice.v2.lib.proxylayout.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;

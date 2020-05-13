@@ -1,10 +1,10 @@
 package eu.cloudnetservice.v2.master.network.packet.api.sync;
 
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.player.OfflinePlayer;
-import de.dytanic.cloudnet.lib.utility.document.Document;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.Packet;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketRC;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketSender;
+import eu.cloudnetservice.v2.lib.player.OfflinePlayer;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
 import eu.cloudnetservice.v2.master.CloudNet;
 
 import java.util.UUID;

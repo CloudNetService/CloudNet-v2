@@ -1,12 +1,12 @@
 package eu.cloudnetservice.v2.master.process;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.process.ServerProcessBuilder;
-import de.dytanic.cloudnet.lib.process.ServerProcessData;
-import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
-import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.service.ServiceId;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.lib.process.ServerProcessBuilder;
+import eu.cloudnetservice.v2.lib.process.ServerProcessData;
+import eu.cloudnetservice.v2.lib.server.ServerGroup;
+import eu.cloudnetservice.v2.lib.server.ServerProcessMeta;
+import eu.cloudnetservice.v2.lib.server.template.Template;
+import eu.cloudnetservice.v2.lib.service.ServiceId;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.components.Wrapper;
 

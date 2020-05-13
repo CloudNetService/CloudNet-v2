@@ -1,10 +1,10 @@
 package eu.cloudnetservice.v2.master.network;
 
-import de.dytanic.cloudnet.lib.network.protocol.IProtocol;
-import de.dytanic.cloudnet.lib.network.protocol.ProtocolRequest;
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketRC;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
+import eu.cloudnetservice.v2.lib.network.protocol.IProtocol;
+import eu.cloudnetservice.v2.lib.network.protocol.ProtocolRequest;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.Packet;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketRC;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketSender;
 import eu.cloudnetservice.v2.master.CloudNet;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;

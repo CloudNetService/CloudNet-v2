@@ -1,11 +1,11 @@
 package eu.cloudnetservice.v2.master.network.components;
 
-import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.server.ServerGroupMode;
-import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
-import de.dytanic.cloudnet.lib.server.info.ServerInfo;
-import de.dytanic.cloudnet.lib.service.ServiceId;
-import de.dytanic.cloudnet.lib.utility.document.Document;
+import eu.cloudnetservice.v2.lib.server.ServerGroup;
+import eu.cloudnetservice.v2.lib.server.ServerGroupMode;
+import eu.cloudnetservice.v2.lib.server.ServerProcessMeta;
+import eu.cloudnetservice.v2.lib.server.info.ServerInfo;
+import eu.cloudnetservice.v2.lib.service.ServiceId;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.packet.out.PacketOutCustomSubChannelMessage;
 import io.netty.channel.Channel;

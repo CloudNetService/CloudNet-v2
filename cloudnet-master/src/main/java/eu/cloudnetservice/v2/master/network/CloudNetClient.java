@@ -1,7 +1,7 @@
 package eu.cloudnetservice.v2.master.network;
 
-import de.dytanic.cloudnet.lib.CloudNetwork;
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
+import eu.cloudnetservice.v2.lib.CloudNetwork;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.Packet;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.api.event.network.ChannelInitEvent;
 import eu.cloudnetservice.v2.master.api.event.network.WrapperChannelDisconnectEvent;

@@ -1,7 +1,7 @@
 package eu.cloudnetservice.v2.master.handler;
 
-import de.dytanic.cloudnet.lib.server.ProxyGroup;
-import de.dytanic.cloudnet.lib.server.ServerGroup;
+import eu.cloudnetservice.v2.lib.server.ProxyGroup;
+import eu.cloudnetservice.v2.lib.server.ServerGroup;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.process.CoreProxyProcessBuilder;
 import eu.cloudnetservice.v2.master.process.CoreServerProcessBuilder;

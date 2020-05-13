@@ -1,7 +1,7 @@
 package eu.cloudnetservice.v2.master.network.components;
 
-import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.service.ServiceId;
+import eu.cloudnetservice.v2.lib.server.template.Template;
+import eu.cloudnetservice.v2.lib.service.ServiceId;
 
 import java.util.Objects;
 

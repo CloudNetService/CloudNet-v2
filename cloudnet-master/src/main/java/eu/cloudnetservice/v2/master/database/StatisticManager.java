@@ -1,8 +1,8 @@
 package eu.cloudnetservice.v2.master.database;
 
-import de.dytanic.cloudnet.database.DatabaseUsable;
-import de.dytanic.cloudnet.lib.database.Database;
-import de.dytanic.cloudnet.lib.database.DatabaseDocument;
+import eu.cloudnetservice.v2.database.DatabaseUsable;
+import eu.cloudnetservice.v2.lib.database.Database;
+import eu.cloudnetservice.v2.lib.database.DatabaseDocument;
 import eu.cloudnetservice.v2.master.CloudNet;
 
 /**

@@ -1,6 +1,6 @@
 package eu.cloudnetservice.v2.master.handler;
 
-import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
+import eu.cloudnetservice.v2.lib.server.info.ProxyInfo;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.components.ProxyServer;
 

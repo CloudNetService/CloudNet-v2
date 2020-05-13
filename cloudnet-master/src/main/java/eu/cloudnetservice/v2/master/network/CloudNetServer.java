@@ -1,8 +1,8 @@
 package eu.cloudnetservice.v2.master.network;
 
-import de.dytanic.cloudnet.lib.ConnectableAddress;
-import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.logging.CloudLogger;
+import eu.cloudnetservice.v2.lib.ConnectableAddress;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.logging.CloudLogger;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.api.event.network.ChannelConnectEvent;
 import eu.cloudnetservice.v2.master.network.components.Wrapper;

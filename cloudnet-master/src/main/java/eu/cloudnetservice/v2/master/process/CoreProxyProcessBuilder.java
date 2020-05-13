@@ -1,10 +1,10 @@
 package eu.cloudnetservice.v2.master.process;
 
-import de.dytanic.cloudnet.lib.process.ProxyProcessBuilder;
-import de.dytanic.cloudnet.lib.process.ProxyProcessData;
-import de.dytanic.cloudnet.lib.server.ProxyGroup;
-import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
-import de.dytanic.cloudnet.lib.service.ServiceId;
+import eu.cloudnetservice.v2.lib.process.ProxyProcessBuilder;
+import eu.cloudnetservice.v2.lib.process.ProxyProcessData;
+import eu.cloudnetservice.v2.lib.server.ProxyGroup;
+import eu.cloudnetservice.v2.lib.server.ProxyProcessMeta;
+import eu.cloudnetservice.v2.lib.service.ServiceId;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.components.Wrapper;
 

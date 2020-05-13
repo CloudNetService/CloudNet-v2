@@ -1,6 +1,6 @@
 package eu.cloudnetservice.v2.master.util.defaults;
 
-import de.dytanic.cloudnet.lib.server.resource.ResourceMeta;
+import eu.cloudnetservice.v2.lib.server.resource.ResourceMeta;
 
 /**
  * Created by Tareko on 03.09.2017.

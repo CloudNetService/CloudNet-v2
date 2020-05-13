@@ -1,9 +1,9 @@
 package eu.cloudnetservice.v2.master.setup;
 
-import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.setup.Setup;
-import de.dytanic.cloudnet.setup.SetupRequest;
-import de.dytanic.cloudnet.setup.responsetype.StringResponseType;
+import eu.cloudnetservice.v2.command.CommandSender;
+import eu.cloudnetservice.v2.setup.Setup;
+import eu.cloudnetservice.v2.setup.SetupRequest;
+import eu.cloudnetservice.v2.setup.responsetype.StringResponseType;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.components.WrapperMeta;
 

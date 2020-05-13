@@ -1,14 +1,14 @@
 package eu.cloudnetservice.v2.master.network.packet.in;
 
-import de.dytanic.cloudnet.lib.network.auth.Auth;
-import de.dytanic.cloudnet.lib.network.auth.AuthLoginResult;
-import de.dytanic.cloudnet.lib.network.auth.AuthType;
-import de.dytanic.cloudnet.lib.network.auth.packetio.PacketOutAuthResult;
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.service.ServiceId;
-import de.dytanic.cloudnet.lib.utility.document.Document;
+import eu.cloudnetservice.v2.lib.network.auth.Auth;
+import eu.cloudnetservice.v2.lib.network.auth.AuthLoginResult;
+import eu.cloudnetservice.v2.lib.network.auth.AuthType;
+import eu.cloudnetservice.v2.lib.network.auth.packetio.PacketOutAuthResult;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.Packet;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketInHandler;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketSender;
+import eu.cloudnetservice.v2.lib.service.ServiceId;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.CloudNetClient;
 import eu.cloudnetservice.v2.master.network.CloudNetClientAuth;

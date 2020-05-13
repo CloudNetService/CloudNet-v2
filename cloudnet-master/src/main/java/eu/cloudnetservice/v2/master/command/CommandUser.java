@@ -3,10 +3,10 @@ package eu.cloudnetservice.v2.master.command;
  * Created by derrop on 04.06.2019
  */
 
-import de.dytanic.cloudnet.command.Command;
-import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.lib.user.BasicUser;
-import de.dytanic.cloudnet.lib.user.User;
+import eu.cloudnetservice.v2.command.Command;
+import eu.cloudnetservice.v2.command.CommandSender;
+import eu.cloudnetservice.v2.lib.user.BasicUser;
+import eu.cloudnetservice.v2.lib.user.User;
 import eu.cloudnetservice.v2.master.CloudNet;
 
 import java.util.ArrayList;

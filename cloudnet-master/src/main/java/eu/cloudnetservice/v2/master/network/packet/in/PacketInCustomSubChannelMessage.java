@@ -1,10 +1,10 @@
 package eu.cloudnetservice.v2.master.network.packet.in;
 
-import de.dytanic.cloudnet.lib.DefaultType;
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.utility.document.Document;
+import eu.cloudnetservice.v2.lib.DefaultType;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.Packet;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketInHandler;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketSender;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.v2.master.network.components.ProxyServer;

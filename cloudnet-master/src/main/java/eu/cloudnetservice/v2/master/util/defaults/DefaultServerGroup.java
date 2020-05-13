@@ -1,11 +1,11 @@
 package eu.cloudnetservice.v2.master.util.defaults;
 
-import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.server.ServerGroupMode;
-import de.dytanic.cloudnet.lib.server.ServerGroupType;
-import de.dytanic.cloudnet.lib.server.advanced.AdvancedServerConfig;
-import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.server.template.TemplateResource;
+import eu.cloudnetservice.v2.lib.server.ServerGroup;
+import eu.cloudnetservice.v2.lib.server.ServerGroupMode;
+import eu.cloudnetservice.v2.lib.server.ServerGroupType;
+import eu.cloudnetservice.v2.lib.server.advanced.AdvancedServerConfig;
+import eu.cloudnetservice.v2.lib.server.template.Template;
+import eu.cloudnetservice.v2.lib.server.template.TemplateResource;
 
 import java.util.Collection;
 import java.util.Collections;

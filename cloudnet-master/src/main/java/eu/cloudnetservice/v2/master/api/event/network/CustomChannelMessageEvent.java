@@ -1,9 +1,9 @@
 package eu.cloudnetservice.v2.master.api.event.network;
 
-import de.dytanic.cloudnet.event.async.AsyncEvent;
-import de.dytanic.cloudnet.event.async.AsyncPosterAdapter;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.utility.document.Document;
+import eu.cloudnetservice.v2.event.async.AsyncEvent;
+import eu.cloudnetservice.v2.event.async.AsyncPosterAdapter;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketSender;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
 
 /**
  * Calls if a CustomChannelMessage was received from a INetworkComponent

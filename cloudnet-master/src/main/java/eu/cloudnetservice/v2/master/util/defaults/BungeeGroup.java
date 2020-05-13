@@ -1,11 +1,11 @@
 package eu.cloudnetservice.v2.master.util.defaults;
 
-import de.dytanic.cloudnet.lib.map.WrappedMap;
-import de.dytanic.cloudnet.lib.server.ProxyGroup;
-import de.dytanic.cloudnet.lib.server.ProxyGroupMode;
-import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.server.template.TemplateResource;
-import de.dytanic.cloudnet.lib.server.version.ProxyVersion;
+import eu.cloudnetservice.v2.lib.map.WrappedMap;
+import eu.cloudnetservice.v2.lib.server.ProxyGroup;
+import eu.cloudnetservice.v2.lib.server.ProxyGroupMode;
+import eu.cloudnetservice.v2.lib.server.template.Template;
+import eu.cloudnetservice.v2.lib.server.template.TemplateResource;
+import eu.cloudnetservice.v2.lib.server.version.ProxyVersion;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,11 +1,11 @@
 package eu.cloudnetservice.v2.master.wrapper.local;
 
-import de.dytanic.cloudnet.lib.ConnectableAddress;
-import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.user.BasicUser;
-import de.dytanic.cloudnet.lib.user.User;
-import de.dytanic.cloudnet.setup.spigot.SetupSpigotVersion;
-import de.dytanic.cloudnet.web.client.WebClient;
+import eu.cloudnetservice.v2.lib.ConnectableAddress;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.lib.user.BasicUser;
+import eu.cloudnetservice.v2.lib.user.User;
+import eu.cloudnetservice.v2.setup.spigot.SetupSpigotVersion;
+import eu.cloudnetservice.v2.web.client.WebClient;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.components.Wrapper;
 import eu.cloudnetservice.v2.master.network.components.WrapperMeta;

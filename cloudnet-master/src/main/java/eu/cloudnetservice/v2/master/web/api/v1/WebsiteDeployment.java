@@ -1,10 +1,10 @@
 package eu.cloudnetservice.v2.master.web.api.v1;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
-import de.dytanic.cloudnet.web.server.util.PathProvider;
-import de.dytanic.cloudnet.web.server.util.QueryDecoder;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
+import eu.cloudnetservice.v2.web.server.handler.MethodWebHandlerAdapter;
+import eu.cloudnetservice.v2.web.server.util.PathProvider;
+import eu.cloudnetservice.v2.web.server.util.QueryDecoder;
 import eu.cloudnetservice.v2.master.CloudNet;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;

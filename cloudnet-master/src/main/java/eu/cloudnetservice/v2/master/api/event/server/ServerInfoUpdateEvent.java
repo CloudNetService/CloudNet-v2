@@ -1,7 +1,7 @@
 package eu.cloudnetservice.v2.master.api.event.server;
 
-import de.dytanic.cloudnet.event.Event;
-import de.dytanic.cloudnet.lib.server.info.ServerInfo;
+import eu.cloudnetservice.v2.event.Event;
+import eu.cloudnetservice.v2.lib.server.info.ServerInfo;
 import eu.cloudnetservice.v2.master.network.components.INetworkComponent;
 
 /**

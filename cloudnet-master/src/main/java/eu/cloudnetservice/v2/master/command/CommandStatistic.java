@@ -1,8 +1,8 @@
 package eu.cloudnetservice.v2.master.command;
 
-import de.dytanic.cloudnet.command.Command;
-import de.dytanic.cloudnet.command.CommandSender;
-import de.dytanic.cloudnet.lib.database.DatabaseDocument;
+import eu.cloudnetservice.v2.command.Command;
+import eu.cloudnetservice.v2.command.CommandSender;
+import eu.cloudnetservice.v2.lib.database.DatabaseDocument;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.database.StatisticManager;
 

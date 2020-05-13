@@ -1,10 +1,10 @@
 package eu.cloudnetservice.v2.master.network.packet.in;
 
 import com.google.gson.reflect.TypeToken;
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.Packet;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketInHandler;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketSender;
+import eu.cloudnetservice.v2.lib.server.screen.ScreenInfo;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.api.event.server.ScreenInfoEvent;
 import eu.cloudnetservice.v2.master.network.components.INetworkComponent;
