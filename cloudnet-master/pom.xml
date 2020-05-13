@@ -76,7 +76,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>de.dytanic.cloudnetcore.bootstrap.CloudNetLauncher</Main-Class>
+                            <Main-Class>eu.cloudnetservice.v2.master.bootstrap.CloudNetLauncher</Main-Class>
                             <Version>${project.version}</Version>
                             <Implementation-Version>${service.version}</Implementation-Version>
                             <Specification-Version>${service.type}</Specification-Version>

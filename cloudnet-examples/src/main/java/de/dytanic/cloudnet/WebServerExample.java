@@ -3,7 +3,7 @@ package de.dytanic.cloudnet;
 import de.dytanic.cloudnet.web.server.handler.MethodWebHandlerAdapter;
 import de.dytanic.cloudnet.web.server.util.PathProvider;
 import de.dytanic.cloudnet.web.server.util.QueryDecoder;
-import de.dytanic.cloudnetcore.CloudNet;
+import eu.cloudnetservice.v2.master.CloudNet;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;

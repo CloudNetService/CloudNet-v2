@@ -4,9 +4,9 @@ import de.dytanic.cloudnet.command.Command;
 import de.dytanic.cloudnet.command.CommandSender;
 import de.dytanic.cloudnet.event.EventListener;
 import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnetcore.api.CoreModule;
-import de.dytanic.cloudnetcore.api.event.server.ServerAddEvent;
-import de.dytanic.cloudnetcore.process.CoreServerProcessBuilder;
+import eu.cloudnetservice.v2.master.api.CoreModule;
+import eu.cloudnetservice.v2.master.api.event.server.ServerAddEvent;
+import eu.cloudnetservice.v2.master.process.CoreServerProcessBuilder;
 
 /**
  * Created by Tareko on 15.10.2017.
