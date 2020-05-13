@@ -11,7 +11,7 @@ import java.nio.file.Paths;
  */
 public class MessageConfig {
 
-    private Path path = Paths.get("local/ingame_messages.json");
+    private final Path path = Paths.get("local/ingame_messages.json");
 
     public MessageConfig() {
         if (!Files.exists(path)) {

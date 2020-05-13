@@ -4,7 +4,7 @@ import eu.cloudnetservice.v2.wrapper.CloudNetWrapper;
 
 public class ShutdownHook implements Runnable {
 
-    private CloudNetWrapper cloudNetWrapper;
+    private final CloudNetWrapper cloudNetWrapper;
 
     public ShutdownHook(CloudNetWrapper wrapper) {
         this.cloudNetWrapper = wrapper;

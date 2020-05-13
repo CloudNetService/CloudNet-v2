@@ -15,10 +15,10 @@ import io.netty.channel.Channel;
  */
 public final class MinecraftServer implements INetworkComponent {
 
-    private ServiceId serviceId;
-    private ServerProcessMeta processMeta;
-    private Wrapper wrapper;
-    private ServerGroupMode groupMode;
+    private final ServiceId serviceId;
+    private final ServerProcessMeta processMeta;
+    private final Wrapper wrapper;
+    private final ServerGroupMode groupMode;
 
     private long channelLostTime = 0L;
 

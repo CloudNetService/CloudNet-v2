@@ -1,6 +1,5 @@
 package eu.cloudnetservice.v2.lib.network.protocol.codec;
 
-import de.dytanic.cloudnet.lib.network.protocol.*;
 import eu.cloudnetservice.v2.lib.network.protocol.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

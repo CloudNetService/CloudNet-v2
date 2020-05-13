@@ -5,13 +5,14 @@ package eu.cloudnetservice.v2.master.util;
  */
 public class CustomServerConfig {
 
-    private String serverId;
+    private final String serverId;
 
-    private int memory;
+    private final int memory;
 
-    private String group, wrapper;
+    private final String group;
+    private final String wrapper;
 
-    private boolean onlineMode;
+    private final boolean onlineMode;
 
     public CustomServerConfig(String serverId, int memory, String group, String wrapper, boolean onlineMode) {
         this.serverId = serverId;

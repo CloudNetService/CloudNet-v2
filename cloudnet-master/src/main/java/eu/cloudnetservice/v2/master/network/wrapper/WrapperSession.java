@@ -10,11 +10,11 @@ import java.util.UUID;
  */
 public class WrapperSession implements Serializable {
 
-    private UUID uniqueId;
+    private final UUID uniqueId;
 
-    private WrapperMeta wrapperMeta;
+    private final WrapperMeta wrapperMeta;
 
-    private long connected;
+    private final long connected;
 
     public WrapperSession(UUID uniqueId, WrapperMeta wrapperMeta, long connected) {
         this.uniqueId = uniqueId;

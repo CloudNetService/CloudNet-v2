@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class LogoutEventUnique extends AsyncEvent<LogoutEventUnique> {
 
-    private UUID uniqueId;
+    private final UUID uniqueId;
 
     public LogoutEventUnique(UUID uniqueId) {
         super(new AsyncPosterAdapter<>());

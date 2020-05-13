@@ -5,9 +5,9 @@ package eu.cloudnetservice.v2.lib.service.wrapper;
  */
 public class WrapperScreen {
 
-    private String wrapperId;
+    private final String wrapperId;
 
-    private String consoleLine;
+    private final String consoleLine;
 
     public WrapperScreen(String wrapperId, String consoleLine) {
         this.wrapperId = wrapperId;

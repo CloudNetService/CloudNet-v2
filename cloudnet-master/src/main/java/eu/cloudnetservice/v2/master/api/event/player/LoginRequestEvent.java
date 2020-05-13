@@ -10,9 +10,9 @@ import eu.cloudnetservice.v2.master.network.components.ProxyServer;
  */
 public class LoginRequestEvent extends Event implements Cancelable {
 
-    private PlayerConnection cloudPlayerConnection;
+    private final PlayerConnection cloudPlayerConnection;
 
-    private ProxyServer proxyServer;
+    private final ProxyServer proxyServer;
 
     private boolean cancelled = false;
 

@@ -7,9 +7,9 @@ import eu.cloudnetservice.v2.lib.player.CloudPlayer;
  */
 public class ProxiedPlayerServerSwitchEvent extends ProxiedCloudEvent {
 
-    private CloudPlayer cloudPlayer;
+    private final CloudPlayer cloudPlayer;
 
-    private String server;
+    private final String server;
 
     public ProxiedPlayerServerSwitchEvent(CloudPlayer cloudPlayer, String server) {
         this.cloudPlayer = cloudPlayer;

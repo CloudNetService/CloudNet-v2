@@ -5,9 +5,9 @@ package eu.cloudnetservice.v2.lib.network.protocol;
  */
 public class ProtocolRequest {
 
-    private int id;
+    private final int id;
 
-    private Object element;
+    private final Object element;
 
     public ProtocolRequest(int id, Object element) {
         this.id = id;

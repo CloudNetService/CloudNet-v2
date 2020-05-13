@@ -8,7 +8,7 @@ import eu.cloudnetservice.v2.lib.player.CloudPlayer;
  */
 public class ProxiedPlayerLogoutEvent extends ProxiedCloudEvent {
 
-    private CloudPlayer cloudPlayer;
+    private final CloudPlayer cloudPlayer;
 
     public ProxiedPlayerLogoutEvent(CloudPlayer cloudPlayer) {
         this.cloudPlayer = cloudPlayer;

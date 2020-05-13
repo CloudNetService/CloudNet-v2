@@ -4,11 +4,11 @@ import eu.cloudnetservice.v2.lib.ConnectableAddress;
 import eu.cloudnetservice.v2.lib.NetworkUtils;
 import eu.cloudnetservice.v2.lib.user.BasicUser;
 import eu.cloudnetservice.v2.lib.user.User;
-import eu.cloudnetservice.v2.setup.spigot.SetupSpigotVersion;
-import eu.cloudnetservice.v2.web.client.WebClient;
 import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.network.components.Wrapper;
 import eu.cloudnetservice.v2.master.network.components.WrapperMeta;
+import eu.cloudnetservice.v2.setup.spigot.SetupSpigotVersion;
+import eu.cloudnetservice.v2.web.client.WebClient;
 import joptsimple.OptionSet;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -36,7 +36,7 @@ public class LocalCloudWrapper implements Consumer<OptionSet>, Closeable {
     private static final String WRAPPER_URL = "https://ci.cloudnetservice.eu/job/CloudNetService/job/CloudNet/job/master/lastSuccessfulBuild/artifact/cloudnet-wrapper/target/CloudNet-Wrapper.jar";
 
     private Process process;
-    private ExecutorService executorService = Executors.newFixedThreadPool(2);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
     private boolean shutdown = false;
     private boolean enabled;
     private boolean showConsoleOutput = !Boolean.getBoolean("cloudnet.localwrapper.disableConsole");

@@ -10,9 +10,9 @@ import eu.cloudnetservice.v2.master.network.components.ProxyServer;
  */
 public class ProxyInfoUpdateEvent extends AsyncEvent<ProxyInfoUpdateEvent> {
 
-    private ProxyInfo proxyInfo;
+    private final ProxyInfo proxyInfo;
 
-    private ProxyServer proxyServer;
+    private final ProxyServer proxyServer;
 
     public ProxyInfoUpdateEvent(ProxyServer proxyServer, ProxyInfo proxyInfo) {
         super(new AsyncPosterAdapter<>());

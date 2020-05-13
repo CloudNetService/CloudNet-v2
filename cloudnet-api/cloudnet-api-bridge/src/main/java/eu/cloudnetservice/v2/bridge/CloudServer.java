@@ -1,14 +1,12 @@
 package eu.cloudnetservice.v2.bridge;
 
-import eu.cloudnetservice.v2.bridge.event.bukkit.*;
 import eu.cloudnetservice.v2.api.CloudAPI;
 import eu.cloudnetservice.v2.api.CloudService;
 import eu.cloudnetservice.v2.api.builders.ApiServerProcessBuilder;
 import eu.cloudnetservice.v2.api.handlers.NetworkHandler;
 import eu.cloudnetservice.v2.api.network.packet.out.PacketOutUpdateServerInfo;
-import de.dytanic.cloudnet.bridge.event.bukkit.*;
+import eu.cloudnetservice.v2.bridge.event.bukkit.*;
 import eu.cloudnetservice.v2.bridge.internal.util.ReflectionUtil;
-import eu.cloudnetservice.v2.examples.bridge.event.bukkit.*;
 import eu.cloudnetservice.v2.lib.CloudNetwork;
 import eu.cloudnetservice.v2.lib.NetworkUtils;
 import eu.cloudnetservice.v2.lib.player.CloudPlayer;

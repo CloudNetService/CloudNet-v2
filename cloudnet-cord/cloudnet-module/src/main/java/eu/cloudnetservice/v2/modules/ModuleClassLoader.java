@@ -9,7 +9,7 @@ import java.net.URLClassLoader;
  */
 public class ModuleClassLoader extends URLClassLoader implements ModuleLoader {
 
-    private ModuleConfig config;
+    private final ModuleConfig config;
 
     /**
      * Constructs a new class loader for modules

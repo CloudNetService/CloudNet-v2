@@ -4,7 +4,7 @@ import eu.cloudnetservice.v2.lib.server.ServerProcessMeta;
 
 public class ServerProcess {
 
-    private ServerProcessMeta meta;
+    private final ServerProcessMeta meta;
 
     public ServerProcess(ServerProcessMeta meta) {
         this.meta = meta;

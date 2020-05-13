@@ -9,7 +9,7 @@ import eu.cloudnetservice.v2.master.network.components.Wrapper;
  */
 public class WrapperChannelDisconnectEvent extends AsyncEvent<WrapperChannelDisconnectEvent> {
 
-    private Wrapper wrapper;
+    private final Wrapper wrapper;
 
     public WrapperChannelDisconnectEvent(Wrapper wrapper) {
         super(new AsyncPosterAdapter<>());

@@ -9,9 +9,9 @@ import io.netty.channel.Channel;
  */
 public class ChannelInitEvent extends Event {
 
-    private Channel channel;
+    private final Channel channel;
 
-    private INetworkComponent iNetworkComponent;
+    private final INetworkComponent iNetworkComponent;
 
     public ChannelInitEvent(Channel channel, INetworkComponent iNetworkComponent) {
         this.channel = channel;

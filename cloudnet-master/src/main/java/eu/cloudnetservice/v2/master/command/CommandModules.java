@@ -3,8 +3,8 @@ package eu.cloudnetservice.v2.master.command;
 import eu.cloudnetservice.v2.command.Command;
 import eu.cloudnetservice.v2.command.CommandSender;
 import eu.cloudnetservice.v2.lib.NetworkUtils;
-import eu.cloudnetservice.v2.modules.Module;
 import eu.cloudnetservice.v2.master.CloudNet;
+import eu.cloudnetservice.v2.modules.Module;
 
 /**
  * Created by Tareko on 23.08.2017.

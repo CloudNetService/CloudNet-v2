@@ -9,9 +9,9 @@ import java.util.UUID;
  */
 public class Result {
 
-    private UUID uniqueId;
+    private final UUID uniqueId;
 
-    private Document result;
+    private final Document result;
 
     public Result(UUID uniqueId, Document result) {
         this.uniqueId = uniqueId;

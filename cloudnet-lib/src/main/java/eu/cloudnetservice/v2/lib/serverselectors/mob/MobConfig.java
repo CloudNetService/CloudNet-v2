@@ -11,13 +11,13 @@ import java.util.Map;
 public class MobConfig {
 
     public static final Type TYPE = TypeToken.get(MobConfig.class).getType();
-    private int inventorySize;
+    private final int inventorySize;
 
-    private int startPoint;
+    private final int startPoint;
 
-    private MobItemLayout itemLayout;
+    private final MobItemLayout itemLayout;
 
-    private Map<Integer, MobItemLayout> defaultItemInventory;
+    private final Map<Integer, MobItemLayout> defaultItemInventory;
 
     public MobConfig(int inventorySize, int startPoint, MobItemLayout itemLayout, Map<Integer, MobItemLayout> defaultItemInventory) {
         this.inventorySize = inventorySize;

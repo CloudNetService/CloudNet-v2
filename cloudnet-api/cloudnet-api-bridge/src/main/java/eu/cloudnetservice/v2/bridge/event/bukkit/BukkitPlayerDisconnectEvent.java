@@ -8,9 +8,9 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitPlayerDisconnectEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+    private static final HandlerList handlerList = new HandlerList();
 
-    private CloudPlayer cloudPlayer;
+    private final CloudPlayer cloudPlayer;
 
     public BukkitPlayerDisconnectEvent(CloudPlayer cloudPlayer) {
         this.cloudPlayer = cloudPlayer;

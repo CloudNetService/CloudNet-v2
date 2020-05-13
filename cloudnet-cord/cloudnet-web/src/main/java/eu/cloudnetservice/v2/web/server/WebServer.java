@@ -34,12 +34,12 @@ public class WebServer {
     /**
      * The connection acceptor event loop group, handling server channels.
      */
-    private EventLoopGroup acceptorGroup = NetworkUtils.eventLoopGroup();
+    private final EventLoopGroup acceptorGroup = NetworkUtils.eventLoopGroup();
 
     /**
      * The child event loop group to the acceptor group, handling channels.
      */
-    private EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
+    private final EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
 
     /**
      * The web handler provider of this web server.

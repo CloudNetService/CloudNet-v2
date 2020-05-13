@@ -7,6 +7,6 @@ public enum AuthType {
 
     GAMESERVER_OR_BUNGEE,
     USER_AUTH,
-    CLOUD_NET;
+    CLOUD_NET
 
 }

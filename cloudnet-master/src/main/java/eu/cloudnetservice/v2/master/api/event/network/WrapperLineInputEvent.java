@@ -10,9 +10,9 @@ import eu.cloudnetservice.v2.master.network.components.Wrapper;
  */
 public class WrapperLineInputEvent extends AsyncEvent<WrapperLineInputEvent> {
 
-    private WrapperScreen wrapperScreen;
+    private final WrapperScreen wrapperScreen;
 
-    private Wrapper wrapper;
+    private final Wrapper wrapper;
 
     public WrapperLineInputEvent(Wrapper wrapper, WrapperScreen wrapperScreen) {
         super(new AsyncPosterAdapter<>());

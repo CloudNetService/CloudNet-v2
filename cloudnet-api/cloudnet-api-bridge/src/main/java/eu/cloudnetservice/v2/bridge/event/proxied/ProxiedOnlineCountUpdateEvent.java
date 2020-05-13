@@ -8,7 +8,7 @@ import net.md_5.bungee.api.plugin.Event;
  */
 public class ProxiedOnlineCountUpdateEvent extends Event {
 
-    private int onlineCount;
+    private final int onlineCount;
 
     public ProxiedOnlineCountUpdateEvent(int onlineCount) {
         this.onlineCount = onlineCount;

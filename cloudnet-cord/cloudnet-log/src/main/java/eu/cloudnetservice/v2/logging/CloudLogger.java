@@ -1,7 +1,7 @@
 package eu.cloudnetservice.v2.logging;
 
-import eu.cloudnetservice.v2.logging.handler.ICloudLoggerHandler;
 import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.logging.handler.ICloudLoggerHandler;
 import jline.console.ConsoleReader;
 
 import java.io.IOException;

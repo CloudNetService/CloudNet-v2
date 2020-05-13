@@ -13,7 +13,6 @@ import eu.cloudnetservice.v2.lib.server.template.Template;
 import eu.cloudnetservice.v2.lib.user.SimpledUser;
 import eu.cloudnetservice.v2.lib.user.User;
 import eu.cloudnetservice.v2.master.CloudNet;
-import de.dytanic.cloudnetcore.network.packet.out.*;
 import eu.cloudnetservice.v2.master.network.packet.out.*;
 import io.netty.channel.Channel;
 import net.md_5.bungee.config.Configuration;

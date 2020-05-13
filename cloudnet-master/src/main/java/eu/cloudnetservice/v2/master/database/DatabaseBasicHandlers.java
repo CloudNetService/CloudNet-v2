@@ -8,17 +8,17 @@ import eu.cloudnetservice.v2.lib.database.Database;
  */
 public class DatabaseBasicHandlers {
 
-    private StatisticManager statisticManager;
+    private final StatisticManager statisticManager;
 
-    private PlayerDatabase playerDatabase;
+    private final PlayerDatabase playerDatabase;
 
-    private CommandDispatcherDatabase commandDispatcherDatabase;
+    private final CommandDispatcherDatabase commandDispatcherDatabase;
 
-    private NameToUUIDDatabase nameToUUIDDatabase;
+    private final NameToUUIDDatabase nameToUUIDDatabase;
 
-    private WrapperSessionDatabase wrapperSessionDatabase;
+    private final WrapperSessionDatabase wrapperSessionDatabase;
 
-    private UpdateConfigurationDatabase updateConfigurationDatabase;
+    private final UpdateConfigurationDatabase updateConfigurationDatabase;
 
     public DatabaseBasicHandlers(DatabaseManager databaseManager) {
         Database config = databaseManager.getDatabase("cloud_internal_cfg");

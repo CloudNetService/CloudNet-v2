@@ -4,9 +4,9 @@ import eu.cloudnetservice.v2.lib.service.ServiceId;
 
 public class ScreenInfo {
 
-    private ServiceId serviceId;
+    private final ServiceId serviceId;
 
-    private String line;
+    private final String line;
 
     public ScreenInfo(ServiceId serviceId, String line) {
         this.serviceId = serviceId;

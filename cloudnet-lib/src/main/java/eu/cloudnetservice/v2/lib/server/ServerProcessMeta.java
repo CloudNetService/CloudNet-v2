@@ -18,8 +18,8 @@ public class ServerProcessMeta extends ServerProcessData {
 
     public static final Type TYPE = TypeToken.get(ServerProcessMeta.class).getType();
 
-    private ServiceId serviceId;
-    private int port;
+    private final ServiceId serviceId;
+    private final int port;
 
     public ServerProcessMeta(final String wrapperName,
                              final String serverGroupName,

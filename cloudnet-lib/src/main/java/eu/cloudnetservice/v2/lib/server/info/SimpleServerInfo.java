@@ -4,15 +4,15 @@ import eu.cloudnetservice.v2.lib.service.ServiceId;
 
 public class SimpleServerInfo {
 
-    private ServiceId serviceId;
+    private final ServiceId serviceId;
 
-    private String hostAddress;
+    private final String hostAddress;
 
-    private int port;
+    private final int port;
 
-    private int onlineCount;
+    private final int onlineCount;
 
-    private int maxPlayers;
+    private final int maxPlayers;
 
     public SimpleServerInfo(ServiceId serviceId, String hostAddress, int port, int onlineCount, int maxPlayers) {
         this.serviceId = serviceId;

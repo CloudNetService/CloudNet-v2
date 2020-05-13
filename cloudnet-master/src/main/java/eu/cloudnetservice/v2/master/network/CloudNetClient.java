@@ -27,7 +27,7 @@ import java.util.UUID;
 public class CloudNetClient extends SimpleChannelInboundHandler<Packet> {
 
     private Channel channel;
-    private INetworkComponent networkComponent;
+    private final INetworkComponent networkComponent;
 
     public CloudNetClient(INetworkComponent iNetworkComponent, Channel channel) {
         this.networkComponent = iNetworkComponent;

@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class CommandManager implements Completer {
 
     private final Map<String, Command> commands = new ConcurrentHashMap<>();
-    private ConsoleCommandSender consoleSender = new ConsoleCommandSender();
+    private final ConsoleCommandSender consoleSender = new ConsoleCommandSender();
 
     /**
      * Constructs a new command manager with a {@link ConsoleCommandSender} and

@@ -8,6 +8,6 @@ public enum ServerGroupType {
     CUSTOM,
     GLOWSTONE,
     CAULDRON,
-    BUKKIT;
+    BUKKIT
 
 }

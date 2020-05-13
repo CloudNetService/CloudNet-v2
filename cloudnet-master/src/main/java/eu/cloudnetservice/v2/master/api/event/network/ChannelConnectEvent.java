@@ -11,7 +11,7 @@ public class ChannelConnectEvent extends Event implements Cancelable {
 
     private boolean cancelled;
 
-    private Channel channel;
+    private final Channel channel;
 
     public ChannelConnectEvent(boolean cancelled, Channel channel) {
         this.cancelled = cancelled;

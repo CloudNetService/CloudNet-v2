@@ -9,7 +9,7 @@ import eu.cloudnetservice.v2.master.network.components.MinecraftServer;
  */
 public class ServerAddEvent extends AsyncEvent<ServerAddEvent> {
 
-    private MinecraftServer minecraftServer;
+    private final MinecraftServer minecraftServer;
 
     public ServerAddEvent(MinecraftServer minecraftServer) {
         super(new AsyncPosterAdapter<>());

@@ -8,7 +8,7 @@ import eu.cloudnetservice.v2.lib.player.OfflinePlayer;
  */
 public class ProxiedOfflinePlayerUpdateEvent extends ProxiedCloudEvent {
 
-    private OfflinePlayer offlinePlayer;
+    private final OfflinePlayer offlinePlayer;
 
     public ProxiedOfflinePlayerUpdateEvent(OfflinePlayer offlinePlayer) {
         this.offlinePlayer = offlinePlayer;

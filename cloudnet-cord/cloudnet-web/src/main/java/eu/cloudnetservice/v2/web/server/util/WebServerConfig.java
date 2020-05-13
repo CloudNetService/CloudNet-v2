@@ -8,17 +8,17 @@ public class WebServerConfig {
     /**
      * Whether the web server is enabled or not
      */
-    private boolean enabled;
+    private final boolean enabled;
 
     /**
      * The address the web server is bound to
      */
-    private String address;
+    private final String address;
 
     /**
      * Port that this web server is bound to
      */
-    private int port;
+    private final int port;
 
     public WebServerConfig(boolean enabled, String address, int port) {
         this.enabled = enabled;

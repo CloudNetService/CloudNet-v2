@@ -9,9 +9,9 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitCloudServerInitEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+    private static final HandlerList handlerList = new HandlerList();
 
-    private CloudServer cloudServer;
+    private final CloudServer cloudServer;
 
     public BukkitCloudServerInitEvent(CloudServer cloudServer) {
         super();

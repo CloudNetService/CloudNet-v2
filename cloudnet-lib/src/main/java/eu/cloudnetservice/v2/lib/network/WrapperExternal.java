@@ -17,10 +17,10 @@ public class WrapperExternal {
 
     public static final Type TYPE = TypeToken.get(WrapperExternal.class).getType();
 
-    private CloudNetwork cloudNetwork;
-    private SimpledUser user;
-    private Map<String, ServerGroup> serverGroups;
-    private Map<String, ProxyGroup> proxyGroups;
+    private final CloudNetwork cloudNetwork;
+    private final SimpledUser user;
+    private final Map<String, ServerGroup> serverGroups;
+    private final Map<String, ProxyGroup> proxyGroups;
 
     public WrapperExternal(CloudNetwork cloudNetwork,
                            SimpledUser user,

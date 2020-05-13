@@ -5,8 +5,8 @@ package eu.cloudnetservice.v2.lib.server.priority;
  */
 public class PriorityConfig {
 
-    private int onlineServers;
-    private int onlineCount;
+    private final int onlineServers;
+    private final int onlineCount;
 
     public PriorityConfig(int onlineServers, int onlineCount) {
         this.onlineServers = onlineServers;

@@ -12,11 +12,11 @@ public class MobItemLayout implements Cloneable {
      */
 
     @Deprecated
-    private int itemId;
-    private String itemName;
-    private int subId;
-    private String display;
-    private List<String> lore;
+    private final int itemId;
+    private final String itemName;
+    private final int subId;
+    private final String display;
+    private final List<String> lore;
 
     public MobItemLayout(int itemId, String itemName, int subId, String display, List<String> lore) {
         this.itemId = itemId;

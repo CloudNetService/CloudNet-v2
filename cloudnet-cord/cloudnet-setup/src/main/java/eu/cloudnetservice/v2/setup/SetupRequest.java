@@ -12,23 +12,23 @@ public class SetupRequest implements Nameable {
     /**
      * Name of this setup request.
      */
-    private String name;
+    private final String name;
     /**
      * Question that is displayed to the user.
      */
-    private String question;
+    private final String question;
     /**
      * Message that is shown when the input was invalid.
      */
-    private String invalidMessage;
+    private final String invalidMessage;
     /**
      * The type of response that is required from the user.
      */
-    private SetupResponseType<?> responseType;
+    private final SetupResponseType<?> responseType;
     /**
      * The validation function that determines whether the input is valid or not.
      */
-    private Predicate<String> validator;
+    private final Predicate<String> validator;
 
     public SetupRequest(String name,
                         String question,

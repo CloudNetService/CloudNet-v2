@@ -7,13 +7,13 @@ import eu.cloudnetservice.v2.lib.server.ProxyGroupMode;
 import eu.cloudnetservice.v2.lib.server.template.Template;
 import eu.cloudnetservice.v2.lib.server.template.TemplateResource;
 import eu.cloudnetservice.v2.lib.server.version.ProxyVersion;
+import eu.cloudnetservice.v2.master.CloudNet;
+import eu.cloudnetservice.v2.master.network.components.Wrapper;
+import eu.cloudnetservice.v2.master.util.defaults.BasicProxyConfig;
 import eu.cloudnetservice.v2.setup.Setup;
 import eu.cloudnetservice.v2.setup.SetupRequest;
 import eu.cloudnetservice.v2.setup.responsetype.IntegerResponseType;
 import eu.cloudnetservice.v2.setup.responsetype.StringResponseType;
-import eu.cloudnetservice.v2.master.CloudNet;
-import eu.cloudnetservice.v2.master.network.components.Wrapper;
-import eu.cloudnetservice.v2.master.util.defaults.BasicProxyConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ public class SetupProxyGroup {
 
     private static final Pattern WRAPPER_SPLITTER = Pattern.compile("\\s?+,\\s?+");
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
-    private String name;
+    private final String name;
     private final Setup setup;
 
     public SetupProxyGroup(CommandSender commandSender, String name) {

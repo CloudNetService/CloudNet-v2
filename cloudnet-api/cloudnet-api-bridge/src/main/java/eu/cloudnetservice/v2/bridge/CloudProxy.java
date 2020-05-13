@@ -1,11 +1,9 @@
 package eu.cloudnetservice.v2.bridge;
 
-import eu.cloudnetservice.v2.bridge.event.proxied.*;
 import eu.cloudnetservice.v2.api.CloudAPI;
 import eu.cloudnetservice.v2.api.CloudService;
 import eu.cloudnetservice.v2.api.handlers.NetworkHandler;
-import de.dytanic.cloudnet.bridge.event.proxied.*;
-import eu.cloudnetservice.v2.examples.bridge.event.proxied.*;
+import eu.cloudnetservice.v2.bridge.event.proxied.*;
 import eu.cloudnetservice.v2.lib.CloudNetwork;
 import eu.cloudnetservice.v2.lib.NetworkUtils;
 import eu.cloudnetservice.v2.lib.player.CloudPlayer;

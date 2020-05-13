@@ -1,9 +1,9 @@
 package eu.cloudnetservice.v2.master.web.api.v1;
 
+import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.web.server.handler.MethodWebHandlerAdapter;
 import eu.cloudnetservice.v2.web.server.util.PathProvider;
 import eu.cloudnetservice.v2.web.server.util.QueryDecoder;
-import eu.cloudnetservice.v2.master.CloudNet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;

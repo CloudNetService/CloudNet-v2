@@ -10,11 +10,11 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
  */
 public class ProxiedPlayerFallbackEvent extends ProxiedCloudEvent {
 
-    private ProxiedPlayer proxiedPlayer;
+    private final ProxiedPlayer proxiedPlayer;
 
-    private CloudPlayer cloudPlayer;
+    private final CloudPlayer cloudPlayer;
 
-    private FallbackType fallbackType;
+    private final FallbackType fallbackType;
 
     private String fallback;
 

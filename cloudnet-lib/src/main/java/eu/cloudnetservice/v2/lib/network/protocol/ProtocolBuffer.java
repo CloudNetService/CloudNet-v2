@@ -22,7 +22,7 @@ import java.util.Objects;
  */
 public final class ProtocolBuffer extends ByteBuf implements Cloneable {
 
-    private ByteBuf byteBuf;
+    private final ByteBuf byteBuf;
 
     public ProtocolBuffer(ByteBuf byteBuf) {
         this.byteBuf = byteBuf;

@@ -9,11 +9,11 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitCustomChannelMessageReceiveEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+    private static final HandlerList handlerList = new HandlerList();
 
-    private String channel;
-    private String message;
-    private Document document;
+    private final String channel;
+    private final String message;
+    private final Document document;
 
     public BukkitCustomChannelMessageReceiveEvent(String channel, String message, Document document) {
         super();

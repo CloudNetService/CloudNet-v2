@@ -9,7 +9,7 @@ import eu.cloudnetservice.v2.lib.player.OfflinePlayer;
  */
 public class UpdatePlayerEvent extends AsyncEvent<UpdatePlayerEvent> {
 
-    private OfflinePlayer offlinePlayer;
+    private final OfflinePlayer offlinePlayer;
 
     public UpdatePlayerEvent(OfflinePlayer offlinePlayer) {
         super(new AsyncPosterAdapter<>());

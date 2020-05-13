@@ -9,9 +9,9 @@ import java.util.Collection;
  */
 public class SignGroupLayouts implements Nameable {
 
-    private String name;
+    private final String name;
 
-    private Collection<SignLayout> layouts;
+    private final Collection<SignLayout> layouts;
 
     public SignGroupLayouts(String name, Collection<SignLayout> layouts) {
         this.name = name;

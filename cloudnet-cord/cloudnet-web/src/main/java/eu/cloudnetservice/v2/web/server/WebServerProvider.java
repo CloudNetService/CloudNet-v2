@@ -1,8 +1,8 @@
 package eu.cloudnetservice.v2.web.server;
 
+import eu.cloudnetservice.v2.lib.NetworkUtils;
 import eu.cloudnetservice.v2.web.server.handler.DynamicWebHandler;
 import eu.cloudnetservice.v2.web.server.handler.WebHandler;
-import eu.cloudnetservice.v2.lib.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;

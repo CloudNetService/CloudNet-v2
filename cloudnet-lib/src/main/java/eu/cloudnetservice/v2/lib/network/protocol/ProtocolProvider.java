@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class ProtocolProvider {
 
-    private static Map<Integer, IProtocol> protocols;
+    private static final Map<Integer, IProtocol> protocols;
 
     static {
         protocols = new ConcurrentHashMap<>();

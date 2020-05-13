@@ -2,11 +2,11 @@ package eu.cloudnetservice.v2.lib.proxylayout;
 
 public class TabList {
 
-    private boolean enabled;
+    private final boolean enabled;
 
-    private String header;
+    private final String header;
 
-    private String footer;
+    private final String footer;
 
     public TabList(boolean enabled, String header, String footer) {
         this.enabled = enabled;

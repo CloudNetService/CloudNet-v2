@@ -12,9 +12,9 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitCloudNetworkUpdateEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+    private static final HandlerList handlerList = new HandlerList();
 
-    private CloudNetwork cloudNetwork;
+    private final CloudNetwork cloudNetwork;
 
     /**
      * Constructs a new event for notifying other plugins that the CloudNetwork has been updated.

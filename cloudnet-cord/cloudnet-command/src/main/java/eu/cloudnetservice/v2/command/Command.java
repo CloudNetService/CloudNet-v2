@@ -16,7 +16,7 @@ public abstract class Command implements CommandExecutor, Nameable {
 
     protected String description = "Default command description";
 
-    private Collection<CommandArgument> commandArguments = new HashSet<>();
+    private final Collection<CommandArgument> commandArguments = new HashSet<>();
 
     /**
      * Constructs a new command with a name, a needed permission and variable aliases.

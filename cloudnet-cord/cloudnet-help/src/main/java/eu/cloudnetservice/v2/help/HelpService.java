@@ -7,7 +7,7 @@ import eu.cloudnetservice.v2.lib.map.Maps;
  */
 public final class HelpService {
 
-    private Maps.ArrayMap<String, ServiceDescription> descriptions = new Maps.ArrayMap<>();
+    private final Maps.ArrayMap<String, ServiceDescription> descriptions = new Maps.ArrayMap<>();
 
     /**
      * Print the help directly to {@link System#out}

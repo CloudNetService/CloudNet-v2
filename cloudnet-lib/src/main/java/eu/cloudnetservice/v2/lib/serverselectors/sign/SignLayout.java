@@ -12,10 +12,10 @@ public class SignLayout implements Nameable {
      */
     @Deprecated
     int blockId;
-    private String name;
-    private String[] signLayout;
-    private String blockName;
-    private int subId;
+    private final String name;
+    private final String[] signLayout;
+    private final String blockName;
+    private final int subId;
 
     public SignLayout(String name, String[] signLayout, int blockId, String blockName, int subId) {
         this.name = name;

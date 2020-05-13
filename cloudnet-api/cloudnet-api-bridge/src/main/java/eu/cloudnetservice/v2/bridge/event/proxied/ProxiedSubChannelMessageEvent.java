@@ -7,11 +7,11 @@ import eu.cloudnetservice.v2.lib.utility.document.Document;
  */
 public class ProxiedSubChannelMessageEvent extends ProxiedCloudEvent {
 
-    private String channel;
+    private final String channel;
 
-    private String message;
+    private final String message;
 
-    private Document document;
+    private final Document document;
 
     public ProxiedSubChannelMessageEvent(String channel, String message, Document document) {
         this.channel = channel;

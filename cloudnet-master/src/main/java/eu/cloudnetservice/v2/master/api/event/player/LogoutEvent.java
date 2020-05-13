@@ -8,7 +8,7 @@ import eu.cloudnetservice.v2.lib.player.CloudPlayer;
  */
 public class LogoutEvent extends Event {
 
-    private CloudPlayer playerWhereAmI;
+    private final CloudPlayer playerWhereAmI;
 
     public LogoutEvent(CloudPlayer playerWhereAmI) {
         this.playerWhereAmI = playerWhereAmI;

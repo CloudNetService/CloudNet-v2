@@ -5,9 +5,9 @@ package eu.cloudnetservice.v2.lib.player;
  */
 public class PlayerCommandExecution {
 
-    private String name;
+    private final String name;
 
-    private String commandLine;
+    private final String commandLine;
 
     public PlayerCommandExecution(String name, String commandLine) {
         this.name = name;

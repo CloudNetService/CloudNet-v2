@@ -2,10 +2,10 @@ package eu.cloudnetservice.v2.bridge.internal.command.proxied;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import eu.cloudnetservice.v2.bridge.CloudProxy;
 import eu.cloudnetservice.v2.api.CloudAPI;
 import eu.cloudnetservice.v2.api.builders.ApiProxyProcessBuilder;
 import eu.cloudnetservice.v2.api.builders.ApiServerProcessBuilder;
+import eu.cloudnetservice.v2.bridge.CloudProxy;
 import eu.cloudnetservice.v2.lib.DefaultType;
 import eu.cloudnetservice.v2.lib.NetworkUtils;
 import eu.cloudnetservice.v2.lib.database.Database;

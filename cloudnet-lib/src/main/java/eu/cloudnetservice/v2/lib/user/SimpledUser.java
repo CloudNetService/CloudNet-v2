@@ -5,9 +5,9 @@ package eu.cloudnetservice.v2.lib.user;
  */
 public class SimpledUser {
 
-    private String userName;
+    private final String userName;
 
-    private String apiToken;
+    private final String apiToken;
 
     public SimpledUser(String userName, String apiToken) {
         this.userName = userName;

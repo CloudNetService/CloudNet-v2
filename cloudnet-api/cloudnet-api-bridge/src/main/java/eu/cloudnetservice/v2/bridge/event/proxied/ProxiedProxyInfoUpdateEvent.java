@@ -8,7 +8,7 @@ import eu.cloudnetservice.v2.lib.server.info.ProxyInfo;
  */
 public class ProxiedProxyInfoUpdateEvent extends ProxiedCloudEvent {
 
-    private ProxyInfo proxyInfo;
+    private final ProxyInfo proxyInfo;
 
     public ProxiedProxyInfoUpdateEvent(ProxyInfo proxyInfo) {
         this.proxyInfo = proxyInfo;

@@ -7,9 +7,9 @@ import eu.cloudnetservice.v2.lib.interfaces.Nameable;
  */
 public class SimpleWrapperInfo implements Nameable {
 
-    private String name;
+    private final String name;
 
-    private String hostName;
+    private final String hostName;
 
     public SimpleWrapperInfo(String name, String hostName) {
         this.name = name;

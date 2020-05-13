@@ -1,10 +1,8 @@
 package eu.cloudnetservice.v2.api.database;
 
 import com.google.gson.reflect.TypeToken;
-import eu.cloudnetservice.v2.api.database.packet.out.*;
 import eu.cloudnetservice.v2.api.CloudAPI;
-import de.dytanic.cloudnet.api.database.packet.out.*;
-import eu.cloudnetservice.v2.examples.api.database.packet.out.*;
+import eu.cloudnetservice.v2.api.database.packet.out.*;
 import eu.cloudnetservice.v2.lib.database.Database;
 import eu.cloudnetservice.v2.lib.database.DatabaseDocument;
 import eu.cloudnetservice.v2.lib.network.protocol.packet.result.Result;

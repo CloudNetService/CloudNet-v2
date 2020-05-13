@@ -8,7 +8,7 @@ public abstract class CommandArgument {
     /**
      * The name of the argument to process
      */
-    private String name;
+    private final String name;
 
     public CommandArgument(String name) {
         this.name = name;

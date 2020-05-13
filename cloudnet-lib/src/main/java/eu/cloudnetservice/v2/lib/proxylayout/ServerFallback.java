@@ -5,9 +5,9 @@ package eu.cloudnetservice.v2.lib.proxylayout;
  */
 public class ServerFallback {
 
-    private String group;
+    private final String group;
 
-    private String permission;
+    private final String permission;
 
     public ServerFallback(String group, String permission) {
         this.group = group;

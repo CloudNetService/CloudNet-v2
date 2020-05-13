@@ -9,7 +9,7 @@ import eu.cloudnetservice.v2.lib.player.CloudPlayer;
  */
 public class LoginEvent extends AsyncEvent<LoginEvent> {
 
-    private CloudPlayer cloudPlayer;
+    private final CloudPlayer cloudPlayer;
 
     public LoginEvent(CloudPlayer cloudPlayer) {
         super(new AsyncPosterAdapter<>());

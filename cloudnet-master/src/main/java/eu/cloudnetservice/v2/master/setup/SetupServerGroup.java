@@ -7,12 +7,12 @@ import eu.cloudnetservice.v2.lib.server.ServerGroupType;
 import eu.cloudnetservice.v2.lib.server.advanced.AdvancedServerConfig;
 import eu.cloudnetservice.v2.lib.server.template.Template;
 import eu.cloudnetservice.v2.lib.server.template.TemplateResource;
+import eu.cloudnetservice.v2.master.CloudNet;
+import eu.cloudnetservice.v2.master.network.components.Wrapper;
 import eu.cloudnetservice.v2.setup.Setup;
 import eu.cloudnetservice.v2.setup.SetupRequest;
 import eu.cloudnetservice.v2.setup.responsetype.IntegerResponseType;
 import eu.cloudnetservice.v2.setup.responsetype.StringResponseType;
-import eu.cloudnetservice.v2.master.CloudNet;
-import eu.cloudnetservice.v2.master.network.components.Wrapper;
 
 import java.util.*;
 import java.util.regex.Pattern;

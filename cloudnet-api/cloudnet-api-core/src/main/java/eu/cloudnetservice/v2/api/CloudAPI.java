@@ -1,21 +1,13 @@
 package eu.cloudnetservice.v2.api;
 
 import com.google.gson.reflect.TypeToken;
+import eu.cloudnetservice.v2.api.config.CloudConfigLoader;
 import eu.cloudnetservice.v2.api.database.DatabaseManager;
 import eu.cloudnetservice.v2.api.handlers.NetworkHandlerProvider;
-import eu.cloudnetservice.v2.api.config.CloudConfigLoader;
-import de.dytanic.cloudnet.api.network.packet.api.*;
-import de.dytanic.cloudnet.api.network.packet.api.sync.*;
-import de.dytanic.cloudnet.api.network.packet.in.*;
-import de.dytanic.cloudnet.api.network.packet.out.*;
 import eu.cloudnetservice.v2.api.network.packet.api.*;
 import eu.cloudnetservice.v2.api.network.packet.api.sync.*;
 import eu.cloudnetservice.v2.api.network.packet.in.*;
 import eu.cloudnetservice.v2.api.network.packet.out.*;
-import eu.cloudnetservice.v2.examples.api.network.packet.api.*;
-import eu.cloudnetservice.v2.examples.api.network.packet.api.sync.*;
-import eu.cloudnetservice.v2.examples.api.network.packet.in.*;
-import eu.cloudnetservice.v2.examples.api.network.packet.out.*;
 import eu.cloudnetservice.v2.lib.CloudNetwork;
 import eu.cloudnetservice.v2.lib.ConnectableAddress;
 import eu.cloudnetservice.v2.lib.DefaultType;

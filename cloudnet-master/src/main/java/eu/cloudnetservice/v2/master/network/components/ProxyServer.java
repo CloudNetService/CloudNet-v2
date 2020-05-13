@@ -13,16 +13,16 @@ import io.netty.channel.Channel;
  */
 public class ProxyServer implements INetworkComponent {
 
-    private ServiceId serviceId;
-    private Wrapper wrapper;
-    private NetworkInfo networkInfo;
+    private final ServiceId serviceId;
+    private final Wrapper wrapper;
+    private final NetworkInfo networkInfo;
 
     private long channelLostTime = 0L;
 
     private Channel channel;
     private ProxyInfo proxyInfo;
     private ProxyInfo lastProxyInfo;
-    private ProxyProcessMeta processMeta;
+    private final ProxyProcessMeta processMeta;
 
     public ProxyServer(ProxyProcessMeta processMeta, Wrapper wrapper, ProxyInfo proxyInfo) {
         this.processMeta = processMeta;

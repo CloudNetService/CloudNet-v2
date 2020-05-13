@@ -3,8 +3,8 @@ package eu.cloudnetservice.v2.master.api;
 import eu.cloudnetservice.v2.command.Command;
 import eu.cloudnetservice.v2.event.Event;
 import eu.cloudnetservice.v2.event.EventListener;
-import eu.cloudnetservice.v2.modules.Module;
 import eu.cloudnetservice.v2.master.CloudNet;
+import eu.cloudnetservice.v2.modules.Module;
 
 /**
  * This Class creates the simply option of simple registering of Listeners and Commands

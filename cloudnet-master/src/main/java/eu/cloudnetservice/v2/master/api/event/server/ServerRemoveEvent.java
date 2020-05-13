@@ -9,7 +9,7 @@ import eu.cloudnetservice.v2.master.network.components.MinecraftServer;
  */
 public class ServerRemoveEvent extends AsyncEvent<ServerRemoveEvent> {
 
-    private MinecraftServer minecraftServer;
+    private final MinecraftServer minecraftServer;
 
     public ServerRemoveEvent(MinecraftServer minecraftServer) {
         super(new AsyncPosterAdapter<>());

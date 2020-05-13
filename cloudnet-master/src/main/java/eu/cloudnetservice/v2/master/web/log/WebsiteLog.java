@@ -1,10 +1,10 @@
 package eu.cloudnetservice.v2.master.web.log;
 
+import eu.cloudnetservice.v2.master.CloudNet;
+import eu.cloudnetservice.v2.master.web.api.v1.WebsiteDocumentation;
 import eu.cloudnetservice.v2.web.server.handler.WebHandler;
 import eu.cloudnetservice.v2.web.server.util.PathProvider;
 import eu.cloudnetservice.v2.web.server.util.QueryDecoder;
-import eu.cloudnetservice.v2.master.CloudNet;
-import eu.cloudnetservice.v2.master.web.api.v1.WebsiteDocumentation;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;

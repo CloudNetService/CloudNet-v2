@@ -5,9 +5,9 @@ package eu.cloudnetservice.v2.master.network;
  */
 public class NetworkInfo {
 
-    private String serverId;
-    private String hostName;
-    private int port;
+    private final String serverId;
+    private final String hostName;
+    private final int port;
 
     public NetworkInfo(String serverId, String hostName, int port) {
         this.serverId = serverId;

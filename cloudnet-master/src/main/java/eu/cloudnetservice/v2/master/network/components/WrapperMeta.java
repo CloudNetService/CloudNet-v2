@@ -7,11 +7,11 @@ import java.util.Objects;
  */
 public class WrapperMeta {
 
-    private String id;
+    private final String id;
 
-    private String hostName;
+    private final String hostName;
 
-    private String user;
+    private final String user;
 
     public WrapperMeta(String id, String hostName, String user) {
         this.id = id;

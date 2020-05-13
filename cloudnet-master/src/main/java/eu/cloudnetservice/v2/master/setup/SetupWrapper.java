@@ -1,18 +1,18 @@
 package eu.cloudnetservice.v2.master.setup;
 
 import eu.cloudnetservice.v2.command.CommandSender;
+import eu.cloudnetservice.v2.master.CloudNet;
+import eu.cloudnetservice.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.v2.setup.Setup;
 import eu.cloudnetservice.v2.setup.SetupRequest;
 import eu.cloudnetservice.v2.setup.responsetype.StringResponseType;
-import eu.cloudnetservice.v2.master.CloudNet;
-import eu.cloudnetservice.v2.master.network.components.WrapperMeta;
 
 /**
  * Created by Tareko on 21.10.2017.
  */
 public class SetupWrapper {
 
-    private String name;
+    private final String name;
     private final Setup setup;
 
     public SetupWrapper(CommandSender commandSender, String name) {

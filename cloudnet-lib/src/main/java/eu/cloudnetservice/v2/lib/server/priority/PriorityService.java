@@ -5,11 +5,11 @@ package eu.cloudnetservice.v2.lib.server.priority;
  */
 public class PriorityService {
 
-    private int stopTimeInSeconds;
+    private final int stopTimeInSeconds;
 
-    private PriorityConfig global;
+    private final PriorityConfig global;
 
-    private PriorityConfig group;
+    private final PriorityConfig group;
 
     public PriorityService(int stopTimeInSeconds, PriorityConfig global, PriorityConfig group) {
         this.stopTimeInSeconds = stopTimeInSeconds;

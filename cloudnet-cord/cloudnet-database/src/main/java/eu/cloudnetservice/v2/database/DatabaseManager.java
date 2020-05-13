@@ -35,7 +35,7 @@ public class DatabaseManager {
      * This serves as a means of reducing the amount of managed databases to
      * one per database name.
      */
-    private Map<String, Database> databaseCollection = new ConcurrentHashMap<>();
+    private final Map<String, Database> databaseCollection = new ConcurrentHashMap<>();
 
     /**
      * Constructs a new database manager.

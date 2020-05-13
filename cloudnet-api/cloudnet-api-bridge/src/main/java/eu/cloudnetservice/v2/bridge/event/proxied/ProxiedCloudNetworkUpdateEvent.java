@@ -7,7 +7,7 @@ import eu.cloudnetservice.v2.lib.CloudNetwork;
  */
 public class ProxiedCloudNetworkUpdateEvent extends ProxiedCloudEvent {
 
-    private CloudNetwork cloudNetwork;
+    private final CloudNetwork cloudNetwork;
 
     public ProxiedCloudNetworkUpdateEvent(CloudNetwork cloudNetwork) {
         this.cloudNetwork = cloudNetwork;

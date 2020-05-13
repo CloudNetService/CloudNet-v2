@@ -13,11 +13,11 @@ public final class ServiceId {
 
     public static final Type TYPE = TypeToken.get(ServiceId.class).getType();
 
-    private String group;
-    private int id;
-    private UUID uniqueId;
-    private String wrapperId;
-    private String serverId;
+    private final String group;
+    private final int id;
+    private final UUID uniqueId;
+    private final String wrapperId;
+    private final String serverId;
 
     public ServiceId(String groupName, int id, String wrapperName) {
         this.group = groupName;

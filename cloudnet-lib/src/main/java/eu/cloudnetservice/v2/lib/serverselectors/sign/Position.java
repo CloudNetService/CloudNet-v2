@@ -7,11 +7,11 @@ import java.util.Objects;
  */
 public class Position {
 
-    private String group;
-    private String world;
-    private double x;
-    private double y;
-    private double z;
+    private final String group;
+    private final String world;
+    private final double x;
+    private final double y;
+    private final double z;
 
     public Position(String group, String world, double x, double y, double z) {
         this.group = group;

@@ -2,10 +2,9 @@ package eu.cloudnetservice.v2.bridge.internal.listener.proxied;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import eu.cloudnetservice.v2.api.CloudAPI;
 import eu.cloudnetservice.v2.api.network.packet.out.*;
 import eu.cloudnetservice.v2.bridge.CloudProxy;
-import eu.cloudnetservice.v2.api.CloudAPI;
-import de.dytanic.cloudnet.api.network.packet.out.*;
 import eu.cloudnetservice.v2.bridge.event.proxied.ProxiedOnlineCountUpdateEvent;
 import eu.cloudnetservice.v2.bridge.event.proxied.ProxiedPlayerFallbackEvent;
 import eu.cloudnetservice.v2.bridge.internal.util.CloudPlayerCommandSender;

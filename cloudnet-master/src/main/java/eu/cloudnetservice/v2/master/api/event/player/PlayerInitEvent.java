@@ -8,7 +8,7 @@ import eu.cloudnetservice.v2.lib.player.CloudPlayer;
  */
 public class PlayerInitEvent extends Event {
 
-    private CloudPlayer cloudPlayer;
+    private final CloudPlayer cloudPlayer;
 
     public PlayerInitEvent(CloudPlayer cloudPlayer) {
         this.cloudPlayer = cloudPlayer;

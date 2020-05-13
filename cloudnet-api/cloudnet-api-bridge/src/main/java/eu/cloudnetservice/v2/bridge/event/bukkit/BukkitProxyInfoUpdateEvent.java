@@ -9,9 +9,9 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitProxyInfoUpdateEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+    private static final HandlerList handlerList = new HandlerList();
 
-    private ProxyInfo serverInfo;
+    private final ProxyInfo serverInfo;
 
     public BukkitProxyInfoUpdateEvent(ProxyInfo serverInfo) {
         this.serverInfo = serverInfo;

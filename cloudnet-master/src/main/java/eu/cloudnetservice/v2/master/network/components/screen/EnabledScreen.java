@@ -8,9 +8,9 @@ import eu.cloudnetservice.v2.master.network.components.Wrapper;
  */
 public class EnabledScreen {
 
-    private ServiceId serviceId;
+    private final ServiceId serviceId;
 
-    private Wrapper wrapper;
+    private final Wrapper wrapper;
 
     public EnabledScreen(ServiceId serviceId, Wrapper wrapper) {
         this.serviceId = serviceId;

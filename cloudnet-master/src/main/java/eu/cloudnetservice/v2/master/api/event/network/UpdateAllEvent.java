@@ -8,9 +8,9 @@ import eu.cloudnetservice.v2.master.network.NetworkManager;
  */
 public class UpdateAllEvent extends Event {
 
-    private NetworkManager networkManager;
+    private final NetworkManager networkManager;
 
-    private boolean isOnlineCloudNetworkUpdate;
+    private final boolean isOnlineCloudNetworkUpdate;
 
     public UpdateAllEvent(NetworkManager networkManager, boolean isOnlineCloudNetworkUpdate) {
         this.networkManager = networkManager;

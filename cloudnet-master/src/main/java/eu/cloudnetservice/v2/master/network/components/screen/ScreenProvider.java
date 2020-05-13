@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ScreenProvider {
 
-    private Map<String, EnabledScreen> screens = new ConcurrentHashMap<>();
+    private final Map<String, EnabledScreen> screens = new ConcurrentHashMap<>();
 
     private ServiceId mainServiceId;
 

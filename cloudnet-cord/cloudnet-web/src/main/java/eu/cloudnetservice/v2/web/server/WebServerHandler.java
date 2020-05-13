@@ -1,10 +1,10 @@
 package eu.cloudnetservice.v2.web.server;
 
+import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.lib.map.WrappedMap;
 import eu.cloudnetservice.v2.web.server.handler.WebHandler;
 import eu.cloudnetservice.v2.web.server.util.PathProvider;
 import eu.cloudnetservice.v2.web.server.util.QueryDecoder;
-import eu.cloudnetservice.v2.lib.NetworkUtils;
-import eu.cloudnetservice.v2.lib.map.WrappedMap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,7 +25,7 @@ final class WebServerHandler extends ChannelInboundHandlerAdapter {
     /**
      * The web server that is handled by this handler instance.
      */
-    private WebServer webServer;
+    private final WebServer webServer;
 
     /**
      * Constructs a new web server handler for a given web server.

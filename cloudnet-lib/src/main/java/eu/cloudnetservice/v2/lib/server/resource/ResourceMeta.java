@@ -5,11 +5,11 @@ package eu.cloudnetservice.v2.lib.server.resource;
  */
 public class ResourceMeta {
 
-    private double cpuUsage; //%
+    private final double cpuUsage; //%
 
-    private long heapMemory; //KB
+    private final long heapMemory; //KB
 
-    private long maxHeapMemory; //KB
+    private final long maxHeapMemory; //KB
 
     public ResourceMeta(double cpuUsage, long heapMemory, long maxHeapMemory) {
         this.cpuUsage = cpuUsage;

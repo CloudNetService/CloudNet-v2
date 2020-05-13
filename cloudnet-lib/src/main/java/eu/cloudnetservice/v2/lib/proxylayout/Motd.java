@@ -2,9 +2,9 @@ package eu.cloudnetservice.v2.lib.proxylayout;
 
 public class Motd {
 
-    private String firstLine;
+    private final String firstLine;
 
-    private String secondLine;
+    private final String secondLine;
 
     public Motd(String firstLine, String secondLine) {
         this.firstLine = firstLine;

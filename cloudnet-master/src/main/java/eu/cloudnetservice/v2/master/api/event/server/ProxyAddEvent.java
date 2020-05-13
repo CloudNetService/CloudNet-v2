@@ -9,7 +9,7 @@ import eu.cloudnetservice.v2.master.network.components.ProxyServer;
  */
 public class ProxyAddEvent extends AsyncEvent<ProxyAddEvent> {
 
-    private ProxyServer proxyServer;
+    private final ProxyServer proxyServer;
 
     public ProxyAddEvent(ProxyServer proxyServer) {
         super(new AsyncPosterAdapter<>());

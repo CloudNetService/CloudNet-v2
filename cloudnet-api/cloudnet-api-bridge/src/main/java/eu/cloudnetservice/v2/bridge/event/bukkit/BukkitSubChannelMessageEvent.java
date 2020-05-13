@@ -8,13 +8,13 @@ import org.bukkit.event.HandlerList;
  */
 public class BukkitSubChannelMessageEvent extends BukkitCloudEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+    private static final HandlerList handlerList = new HandlerList();
 
-    private String channel;
+    private final String channel;
 
-    private String message;
+    private final String message;
 
-    private Document document;
+    private final Document document;
 
     public BukkitSubChannelMessageEvent(String channel, String message, Document document) {
         this.channel = channel;

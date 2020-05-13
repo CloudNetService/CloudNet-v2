@@ -5,19 +5,19 @@ package eu.cloudnetservice.v2.lib.serverselectors.mob;
  */
 public class MobPosition {
 
-    private String group;
+    private final String group;
 
-    private String world;
+    private final String world;
 
-    private double x;
+    private final double x;
 
-    private double y;
+    private final double y;
 
-    private double z;
+    private final double z;
 
-    private float yaw;
+    private final float yaw;
 
-    private float pitch;
+    private final float pitch;
 
     public MobPosition(String group, String world, double x, double y, double z, float yaw, float pitch) {
         this.group = group;

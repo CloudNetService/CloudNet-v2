@@ -10,27 +10,27 @@ public class ModuleConfig {
     /**
      * The file this module is stored in.
      */
-    private File file;
+    private final File file;
 
     /**
      * The name of this module, used for the configuration directory.
      */
-    private String name;
+    private final String name;
 
     /**
      * The version string of this module.
      */
-    private String version;
+    private final String version;
 
     /**
      * The author of this module.
      */
-    private String author;
+    private final String author;
 
     /**
      * The path to the main class of this module.
      */
-    private String main;
+    private final String main;
 
     public ModuleConfig(File file, String name, String version, String author, String main) {
         this.file = file;

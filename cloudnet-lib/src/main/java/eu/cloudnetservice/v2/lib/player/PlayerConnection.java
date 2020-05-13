@@ -12,13 +12,13 @@ public class PlayerConnection {
 
     public static final Type TYPE = TypeToken.get(PlayerConnection.class).getType();
 
-    private UUID uniqueId;
-    private String name;
-    private int version;
-    private String host;
-    private int port;
-    private boolean onlineMode;
-    private boolean legacy;
+    private final UUID uniqueId;
+    private final String name;
+    private final int version;
+    private final String host;
+    private final int port;
+    private final boolean onlineMode;
+    private final boolean legacy;
 
     public PlayerConnection(UUID uniqueId, String name, int version, String host, int port, boolean onlineMode, boolean legacy) {
         this.uniqueId = uniqueId;

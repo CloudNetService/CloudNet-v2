@@ -10,8 +10,8 @@ import java.lang.reflect.Type;
 public class ConnectableAddress {
 
     public static final Type TYPE = TypeToken.get(ConnectableAddress.class).getType();
-    private String hostName;
-    private int port;
+    private final String hostName;
+    private final int port;
 
     public ConnectableAddress(String hostName, int port) {
         this.hostName = hostName;

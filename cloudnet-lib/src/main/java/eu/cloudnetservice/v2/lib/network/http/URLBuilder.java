@@ -6,8 +6,8 @@ import java.net.URLConnection;
 
 public class URLBuilder implements Cloneable {
 
-    private StringBuilder urlString = new StringBuilder();
-    private StringBuilder param = new StringBuilder().append('?');
+    private final StringBuilder urlString = new StringBuilder();
+    private final StringBuilder param = new StringBuilder().append('?');
 
     public URLBuilder(String http, String mainUrl) {
         this.urlString.append(http).append("://").append(mainUrl).append(NetworkUtils.SLASH_STRING);

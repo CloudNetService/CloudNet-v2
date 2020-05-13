@@ -22,8 +22,8 @@ import eu.cloudnetservice.v2.master.CloudNet;
 import eu.cloudnetservice.v2.master.api.event.network.CustomChannelMessageEvent;
 import eu.cloudnetservice.v2.master.api.event.network.UpdateAllEvent;
 import eu.cloudnetservice.v2.master.api.event.network.WrapperLineInputEvent;
-import de.dytanic.cloudnetcore.api.event.player.*;
-import de.dytanic.cloudnetcore.api.event.server.*;
+import eu.cloudnetservice.v2.master.api.event.player.*;
+import eu.cloudnetservice.v2.master.api.event.server.*;
 import eu.cloudnetservice.v2.master.database.PlayerDatabase;
 import eu.cloudnetservice.v2.master.database.StatisticManager;
 import eu.cloudnetservice.v2.master.network.components.INetworkComponent;
@@ -31,11 +31,8 @@ import eu.cloudnetservice.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.v2.master.network.components.Wrapper;
 import eu.cloudnetservice.v2.master.network.components.util.ChannelFilter;
-import de.dytanic.cloudnetcore.network.packet.out.*;
-import eu.cloudnetservice.v2.master.util.MessageConfig;
-import eu.cloudnetservice.v2.master.api.event.player.*;
-import eu.cloudnetservice.v2.master.api.event.server.*;
 import eu.cloudnetservice.v2.master.network.packet.out.*;
+import eu.cloudnetservice.v2.master.util.MessageConfig;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,11 +42,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class NetworkManager {
 
-    private java.util.Map<UUID, CloudPlayer> waitingPlayers = new ConcurrentHashMap<>();
-    private java.util.Map<UUID, CloudPlayer> onlinePlayers = new ConcurrentHashMap<>();
-    private Document moduleProperties = new Document();
+    private final java.util.Map<UUID, CloudPlayer> waitingPlayers = new ConcurrentHashMap<>();
+    private final java.util.Map<UUID, CloudPlayer> onlinePlayers = new ConcurrentHashMap<>();
+    private final Document moduleProperties = new Document();
 
-    private MessageConfig messageConfig;
+    private final MessageConfig messageConfig;
 
     public NetworkManager() {
         messageConfig = new MessageConfig();

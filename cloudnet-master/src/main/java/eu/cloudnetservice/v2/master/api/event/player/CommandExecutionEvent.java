@@ -9,7 +9,7 @@ import eu.cloudnetservice.v2.lib.player.PlayerCommandExecution;
  */
 public class CommandExecutionEvent extends AsyncEvent<CommandExecutionEvent> {
 
-    private PlayerCommandExecution playerCommandExecution;
+    private final PlayerCommandExecution playerCommandExecution;
 
     public CommandExecutionEvent(PlayerCommandExecution playerCommandExecution) {
         super(new AsyncPosterAdapter<>());

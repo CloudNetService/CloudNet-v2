@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class NetorHashMap<Key, VF, VS> implements NetorMap<Key> {
 
-    private ConcurrentHashMap<Key, NetorSet<VF, VS>> values = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Key, NetorSet<VF, VS>> values = new ConcurrentHashMap<>();
 
     @Override
     public void clear() {

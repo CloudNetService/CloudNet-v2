@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 public final class Auth {
 
     public static final Type TYPE = TypeToken.get(Auth.class).getType();
-    private AuthType type;
+    private final AuthType type;
     private Document authData = new Document();
 
     public Auth(AuthType type, Document authData) {

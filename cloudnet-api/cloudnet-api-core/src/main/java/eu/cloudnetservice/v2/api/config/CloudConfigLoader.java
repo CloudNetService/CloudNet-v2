@@ -7,11 +7,11 @@ import java.nio.file.Path;
 
 public class CloudConfigLoader {
 
-    private Path pathConnectionJson;
+    private final Path pathConnectionJson;
 
-    private Path pathConfigJson;
+    private final Path pathConfigJson;
 
-    private ConfigTypeLoader type;
+    private final ConfigTypeLoader type;
 
     public CloudConfigLoader(Path pathConnectionJson, Path pathConfigJson, ConfigTypeLoader type) {
         this.pathConnectionJson = pathConnectionJson;

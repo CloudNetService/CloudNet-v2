@@ -13,9 +13,9 @@ import java.util.UUID;
 public class Sign {
 
     public static final Type TYPE = TypeToken.get(Sign.class).getType();
-    private UUID uniqueId;
-    private String targetGroup;
-    private Position position;
+    private final UUID uniqueId;
+    private final String targetGroup;
+    private final Position position;
 
     private transient ServerInfo serverInfo;
 

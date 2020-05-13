@@ -10,13 +10,13 @@ import eu.cloudnetservice.v2.lib.utility.document.Document;
  */
 public class CustomChannelMessageEvent extends AsyncEvent<CustomChannelMessageEvent> {
 
-    private String channel;
+    private final String channel;
 
-    private String message;
+    private final String message;
 
-    private Document document;
+    private final Document document;
 
-    private PacketSender packetSender;
+    private final PacketSender packetSender;
 
     public CustomChannelMessageEvent(PacketSender packetSender, String channel, String message, Document document) {
         super(new AsyncPosterAdapter<>());

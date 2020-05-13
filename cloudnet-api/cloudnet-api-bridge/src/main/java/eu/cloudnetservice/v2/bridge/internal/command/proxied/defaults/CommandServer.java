@@ -1,7 +1,7 @@
 package eu.cloudnetservice.v2.bridge.internal.command.proxied.defaults;
 
-import eu.cloudnetservice.v2.bridge.CloudProxy;
 import eu.cloudnetservice.v2.api.CloudAPI;
+import eu.cloudnetservice.v2.bridge.CloudProxy;
 import eu.cloudnetservice.v2.lib.server.info.ServerInfo;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;

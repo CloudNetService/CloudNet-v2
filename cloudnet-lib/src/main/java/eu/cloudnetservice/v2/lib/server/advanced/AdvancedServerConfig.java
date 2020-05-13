@@ -5,13 +5,13 @@ package eu.cloudnetservice.v2.lib.server.advanced;
  */
 public class AdvancedServerConfig {
 
-    private boolean notifyPlayerUpdatesFromNoCurrentPlayer;
+    private final boolean notifyPlayerUpdatesFromNoCurrentPlayer;
 
-    private boolean notifyProxyUpdates;
+    private final boolean notifyProxyUpdates;
 
-    private boolean notifyServerUpdates;
+    private final boolean notifyServerUpdates;
 
-    private boolean disableAutoSavingForWorlds;
+    private final boolean disableAutoSavingForWorlds;
 
     public AdvancedServerConfig(boolean notifyPlayerUpdatesFromNoCurrentPlayer,
                                 boolean notifyProxyUpdates,

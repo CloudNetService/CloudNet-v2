@@ -6,7 +6,7 @@ package eu.cloudnetservice.v2.modules;
  */
 public class ModuleInternalLoader implements ModuleLoader {
 
-    private ModuleConfig moduleConfig;
+    private final ModuleConfig moduleConfig;
 
     /**
      * Constructs a new loader for loading an internal module.
