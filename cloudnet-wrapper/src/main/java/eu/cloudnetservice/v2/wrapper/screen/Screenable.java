@@ -1,6 +1,6 @@
 package eu.cloudnetservice.v2.wrapper.screen;
 
-import de.dytanic.cloudnet.lib.service.ServiceId;
+import eu.cloudnetservice.v2.lib.service.ServiceId;
 
 public interface Screenable {
 

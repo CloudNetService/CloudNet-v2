@@ -1,6 +1,6 @@
 package eu.cloudnetservice.v2.wrapper.screen;
 
-import de.dytanic.cloudnet.lib.server.screen.ScreenInfo;
+import eu.cloudnetservice.v2.lib.server.screen.ScreenInfo;
 import eu.cloudnetservice.v2.wrapper.CloudNetWrapper;
 import eu.cloudnetservice.v2.wrapper.network.packet.out.PacketOutSendScreenLine;
 

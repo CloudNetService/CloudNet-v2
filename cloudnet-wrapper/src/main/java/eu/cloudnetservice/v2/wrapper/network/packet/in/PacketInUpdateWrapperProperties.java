@@ -1,9 +1,9 @@
 package eu.cloudnetservice.v2.wrapper.network.packet.in;
 
 import com.google.gson.reflect.TypeToken;
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.Packet;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketInHandler;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketSender;
 import eu.cloudnetservice.v2.wrapper.CloudNetWrapper;
 import net.md_5.bungee.config.Configuration;
 

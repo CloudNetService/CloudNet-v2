@@ -1,6 +1,6 @@
 package eu.cloudnetservice.v2.wrapper.server.process;
 
-import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
+import eu.cloudnetservice.v2.lib.server.ServerProcessMeta;
 
 public class ServerProcess {
 

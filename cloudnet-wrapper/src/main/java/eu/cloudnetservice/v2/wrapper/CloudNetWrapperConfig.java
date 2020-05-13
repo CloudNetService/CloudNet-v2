@@ -1,6 +1,6 @@
 package eu.cloudnetservice.v2.wrapper;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
 import jline.console.ConsoleReader;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;

@@ -1,6 +1,6 @@
 package eu.cloudnetservice.v2.wrapper.server.process;
 
-import de.dytanic.cloudnet.lib.interfaces.Executable;
+import eu.cloudnetservice.v2.lib.interfaces.Executable;
 import eu.cloudnetservice.v2.wrapper.screen.Screenable;
 
 import java.io.IOException;

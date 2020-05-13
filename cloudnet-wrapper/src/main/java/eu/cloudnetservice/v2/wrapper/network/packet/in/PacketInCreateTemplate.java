@@ -1,14 +1,14 @@
 package eu.cloudnetservice.v2.wrapper.network.packet.in;
 
-import de.dytanic.cloudnet.lib.DefaultType;
-import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.server.ProxyGroup;
-import de.dytanic.cloudnet.lib.server.ServerGroup;
-import de.dytanic.cloudnet.lib.server.ServerGroupType;
-import de.dytanic.cloudnet.lib.server.template.Template;
+import eu.cloudnetservice.v2.lib.DefaultType;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.Packet;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketInHandler;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketSender;
+import eu.cloudnetservice.v2.lib.server.ProxyGroup;
+import eu.cloudnetservice.v2.lib.server.ServerGroup;
+import eu.cloudnetservice.v2.lib.server.ServerGroupType;
+import eu.cloudnetservice.v2.lib.server.template.Template;
 import eu.cloudnetservice.v2.wrapper.util.FileUtility;
 
 import java.io.File;

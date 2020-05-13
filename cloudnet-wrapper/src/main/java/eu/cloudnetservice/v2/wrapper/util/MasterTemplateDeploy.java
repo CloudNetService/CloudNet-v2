@@ -1,11 +1,11 @@
 package eu.cloudnetservice.v2.wrapper.util;
 
-import de.dytanic.cloudnet.lib.ConnectableAddress;
-import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.server.template.Template;
-import de.dytanic.cloudnet.lib.user.SimpledUser;
-import de.dytanic.cloudnet.lib.utility.document.Document;
-import de.dytanic.cloudnet.lib.zip.ZipConverter;
+import eu.cloudnetservice.v2.lib.ConnectableAddress;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.lib.server.template.Template;
+import eu.cloudnetservice.v2.lib.user.SimpledUser;
+import eu.cloudnetservice.v2.lib.utility.document.Document;
+import eu.cloudnetservice.v2.lib.zip.ZipConverter;
 
 import java.io.File;
 import java.io.OutputStream;

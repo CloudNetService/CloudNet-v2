@@ -1,11 +1,11 @@
 package eu.cloudnetservice.v2.wrapper.network.packet.in;
 
-import de.dytanic.cloudnet.lib.DefaultType;
-import de.dytanic.cloudnet.lib.network.protocol.packet.Packet;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketInHandler;
-import de.dytanic.cloudnet.lib.network.protocol.packet.PacketSender;
-import de.dytanic.cloudnet.lib.server.info.ProxyInfo;
-import de.dytanic.cloudnet.lib.server.info.ServerInfo;
+import eu.cloudnetservice.v2.lib.DefaultType;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.Packet;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketInHandler;
+import eu.cloudnetservice.v2.lib.network.protocol.packet.PacketSender;
+import eu.cloudnetservice.v2.lib.server.info.ProxyInfo;
+import eu.cloudnetservice.v2.lib.server.info.ServerInfo;
 import eu.cloudnetservice.v2.wrapper.CloudNetWrapper;
 import eu.cloudnetservice.v2.wrapper.server.BungeeCord;
 import eu.cloudnetservice.v2.wrapper.server.GameServer;

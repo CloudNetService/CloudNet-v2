@@ -1,8 +1,8 @@
 package eu.cloudnetservice.v2.wrapper.server.process;
 
-import de.dytanic.cloudnet.lib.NetworkUtils;
-import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
-import de.dytanic.cloudnet.lib.server.ServerProcessMeta;
+import eu.cloudnetservice.v2.lib.NetworkUtils;
+import eu.cloudnetservice.v2.lib.server.ProxyProcessMeta;
+import eu.cloudnetservice.v2.lib.server.ServerProcessMeta;
 import eu.cloudnetservice.v2.wrapper.CloudNetWrapper;
 import eu.cloudnetservice.v2.wrapper.server.BungeeCord;
 import eu.cloudnetservice.v2.wrapper.server.GameServer;
