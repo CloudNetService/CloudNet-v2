@@ -5,7 +5,7 @@
 
     <parent>
         <artifactId>cloudnet-api</artifactId>
-        <groupId>eu.cloudnetservice.v2</groupId>
+        <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
         <version>2.2.0-SNAPSHOT</version>
     </parent>
 
@@ -15,7 +15,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>eu.cloudnetservice.v2</groupId>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-lib</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

@@ -5,7 +5,7 @@
 
     <parent>
         <artifactId>cloudnet</artifactId>
-        <groupId>eu.cloudnetservice.v2</groupId>
+        <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
         <version>2.2.0-SNAPSHOT</version>
     </parent>
 
@@ -16,31 +16,31 @@
 
     <dependencies>
         <dependency>
-            <groupId>eu.cloudnetservice.v2</groupId>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-module</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>eu.cloudnetservice.v2</groupId>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-web</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>eu.cloudnetservice.v2</groupId>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-command</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>eu.cloudnetservice.v2</groupId>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-help</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>eu.cloudnetservice.v2</groupId>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-database</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -76,7 +76,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>eu.cloudnetservice.v2.master.bootstrap.CloudNetLauncher</Main-Class>
+                            <Main-Class>eu.cloudnetservice.cloudnet.v2.master.bootstrap.CloudNetLauncher</Main-Class>
                             <Version>${project.version}</Version>
                             <Implementation-Version>${service.version}</Implementation-Version>
                             <Specification-Version>${service.type}</Specification-Version>
