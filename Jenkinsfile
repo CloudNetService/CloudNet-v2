@@ -36,7 +36,7 @@ pipeline {
     }
     stage('Javadocs') {
         steps {
-            sh 'mvn javadoc:jar -P deployment'
+            sh 'mvn javadoc:aggregate-jar -P deployment'
         }
     }
     stage('Release ZIP') {
