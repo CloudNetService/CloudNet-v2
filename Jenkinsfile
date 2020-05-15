@@ -34,6 +34,11 @@ pipeline {
         sh 'mvn package'
       }
     }
+    stage('Javadocs') {
+        steps {
+            sh 'mvn javadoc:jar'
+        }
+    }
     stage('Release ZIP') {
       steps {
         sh '''mkdir -p temp;
