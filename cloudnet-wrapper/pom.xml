@@ -121,7 +121,7 @@
                         <configuration>
                             <target>
                                 <copy todir="${basedir}/target/classes/files/" flatten="true">
-                                    <fileset dir="${basedir}/../cloudnet-api/target">
+                                    <fileset dir="${basedir}/../cloudnet-api/cloudnet-api-bridge/target">
                                         <include name="**/CloudNetAPI.jar"/>
                                     </fileset>
                                 </copy>
