@@ -5,7 +5,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>cloudnet</artifactId>
-        <groupId>de.dytanic.cloudnet</groupId>
+        <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
         <version>2.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -22,13 +22,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
-            <artifactId>cloudnet-core</artifactId>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
+            <artifactId>cloudnet-master</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-api-bridge</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

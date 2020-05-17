@@ -18,13 +18,11 @@ jobs:
         architecture: x64
     - name: Build with Maven
       run: mvn clean test package
-    - name: Repackage with Maven
-      run: mvn package
     - name: Release ZIP
       run: |
         mkdir -p temp;
         cp -r .template/* temp/;
-        cp cloudnet-core/target/CloudNet-Master.jar temp/CloudNet-Master/;
+        cp cloudnet-master/target/CloudNet-Master.jar temp/CloudNet-Master/;
         cp cloudnet-wrapper/target/CloudNet-Wrapper.jar temp/CloudNet-Wrapper/;
     - uses: actions/upload-artifact@master
       with:

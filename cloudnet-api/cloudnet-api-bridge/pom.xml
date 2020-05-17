@@ -5,7 +5,7 @@
 
     <parent>
         <artifactId>cloudnet-api</artifactId>
-        <groupId>de.dytanic.cloudnet</groupId>
+        <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
         <version>2.2.0-SNAPSHOT</version>
     </parent>
 
@@ -22,7 +22,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-api-core</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -79,14 +79,22 @@
                         <relocation>
                             <!-- Fixes issues with missing TypeToken.getParameterized method -->
                             <pattern>com.google.gson.reflect.TypeToken</pattern>
-                            <shadedPattern>de.dytanic.cloudnet.relocation.gson.reflect.TypeToken</shadedPattern>
+                            <shadedPattern>eu.cloudnetservice.cloudnet.v2.relocation.gson.reflect.TypeToken</shadedPattern>
                         </relocation>
                         <relocation>
                             <!-- Fixes issues with deprecated JsonParser methods -->
                             <pattern>com.google.gson.JsonParser</pattern>
-                            <shadedPattern>de.dytanic.cloudnet.relocation.gson.JsonParser</shadedPattern>
+                            <shadedPattern>eu.cloudnetservice.cloudnet.v2.relocation.gson.JsonParser</shadedPattern>
                         </relocation>
                     </relocations>
+                    <artifactSet>
+                        <excludes>
+                            <exclude>com.squareup.okio:okio</exclude>
+                            <exclude>com.squareup.okhttp3:okhttp</exclude>
+                            <exclude>org.jetbrains.kotlin:kotlin-stdlib</exclude>
+                            <exclude>org.jetbrains.kotlin:kotlin-stdlib-common</exclude>
+                        </excludes>
+                    </artifactSet>
                 </configuration>
             </plugin>
             <plugin>

@@ -34,16 +34,16 @@ pipeline {
         sh 'mvn package'
       }
     }
-    stage('Re-package') {
-      steps {
-        sh 'mvn package javadoc:aggregate-jar -P deployment '
-      }
+    stage('Javadocs') {
+        steps {
+            sh 'mvn javadoc:aggregate-jar -P deployment'
+        }
     }
     stage('Release ZIP') {
       steps {
         sh '''mkdir -p temp;
         cp -r .template/* temp/;
-        cp cloudnet-core/target/CloudNet-Master.jar temp/CloudNet-Master/;
+        cp cloudnet-master/target/CloudNet-Master.jar temp/CloudNet-Master/;
         cp cloudnet-wrapper/target/CloudNet-Wrapper.jar temp/CloudNet-Wrapper/;
         '''
         zip archive: true, dir: 'temp', glob: '', zipFile: 'CloudNet.zip'
