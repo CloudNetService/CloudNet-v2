@@ -87,6 +87,14 @@
                             <shadedPattern>eu.cloudnetservice.cloudnet.v2.relocation.gson.JsonParser</shadedPattern>
                         </relocation>
                     </relocations>
+                    <artifactSet>
+                        <excludes>
+                            <exclude>com.squareup.okio:okio</exclude>
+                            <exclude>com.squareup.okhttp3:okhttp</exclude>
+                            <exclude>org.jetbrains.kotlin:kotlin-stdlib</exclude>
+                            <exclude>org.jetbrains.kotlin:kotlin-stdlib-common</exclude>
+                        </excludes>
+                    </artifactSet>
                 </configuration>
             </plugin>
             <plugin>
