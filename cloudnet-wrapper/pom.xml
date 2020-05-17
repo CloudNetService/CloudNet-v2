@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
-            <artifactId>cloudnet-api</artifactId>
+            <artifactId>cloudnet-api-bridge</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
