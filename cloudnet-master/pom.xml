@@ -70,7 +70,7 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>com.squareup.okio:okio</exclude>
-                                    <exclude>com.squareup.okhttp3:okhttp3</exclude>
+                                    <exclude>com.squareup.okhttp3:okhttp</exclude>
                                     <exclude>org.jetbrains.kotlin:kotlin-stdlib</exclude>
                                     <exclude>org.jetbrains.kotlin:kotlin-stdlib-common</exclude>
                                 </excludes>
