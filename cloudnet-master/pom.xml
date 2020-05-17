@@ -70,7 +70,7 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>com.squareup.okio:okio</exclude>
-                                    <exclude>com.squareup.okhttp3:http3</exclude>
+                                    <exclude>com.squareup.okhttp3:okhttp3</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
