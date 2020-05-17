@@ -57,7 +57,10 @@ pipeline {
     }
     stage('Deploy') {
       when {
-        branch 'master'
+        anyOf {
+          branch 'master'
+          branch 'development'
+        }
       }
       steps {
         withMaven(jdk: 'Java8', maven: 'Maven3', mavenSettingsConfig: '8bf610f1-24ed-48d5-8d4c-703b68cdb906', publisherStrategy: 'EXPLICIT', options: [dependenciesFingerprintPublisher(), artifactsPublisher(), mavenLinkerPublisher()]) {
