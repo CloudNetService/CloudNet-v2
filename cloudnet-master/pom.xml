@@ -51,6 +51,12 @@
             <version>${dependency.jopt-simple.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>semver4j</artifactId>
+            <version>${dependency.semver4j.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
