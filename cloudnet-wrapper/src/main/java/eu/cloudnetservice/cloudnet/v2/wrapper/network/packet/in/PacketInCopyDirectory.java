@@ -22,7 +22,7 @@ public final class PacketInCopyDirectory implements PacketInHandler {
             return;
         }
 
-        if (gameServer.getServerProcess().getMeta().getTemplate().getBackend().equals(TemplateResource.LOCAL)) {
+        if (gameServer.getServerProcessMeta().getTemplate().getBackend().equals(TemplateResource.LOCAL)) {
             gameServer.copyDirectory(packet.getData().getString("directory"));
         }
 

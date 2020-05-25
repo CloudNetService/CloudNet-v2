@@ -512,8 +512,8 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         Map<String, ProxyServer> minecraftServerMap = new HashMap<>();
 
         for (Wrapper wrapper : wrappers.values()) {
-            for (ProxyServer minecraftServer : wrapper.getProxies().values()) {
-                minecraftServerMap.put(minecraftServer.getServerId(), minecraftServer);
+            for (ProxyServer proxyServer : wrapper.getProxies().values()) {
+                minecraftServerMap.put(proxyServer.getServerId(), proxyServer);
             }
         }
 

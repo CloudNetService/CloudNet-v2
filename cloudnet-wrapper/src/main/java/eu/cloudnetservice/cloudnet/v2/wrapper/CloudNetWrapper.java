@@ -296,7 +296,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     public int getUsedMemory() {
         int memory = 0;
         for (GameServer gameServer : servers.values()) {
-            memory += gameServer.getServerProcess().getMeta().getMemory();
+            memory += gameServer.getServerProcessMeta().getMemory();
         }
 
         for (BungeeCord bungeeCord : proxies.values()) {

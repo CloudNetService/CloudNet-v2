@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ServerProcessQueue implements Runnable {
 
-    private final Queue<ServerProcess> servers = new ConcurrentLinkedQueue<>();
+    private final Queue<ServerProcessMeta> servers = new ConcurrentLinkedQueue<>();
     private final Queue<ProxyProcessMeta> proxies = new ConcurrentLinkedQueue<>();
     private final int processQueueSize;
     private volatile boolean running = true;
@@ -25,7 +25,7 @@ public class ServerProcessQueue implements Runnable {
         this.running = running;
     }
 
-    public Queue<ServerProcess> getServers() {
+    public Queue<ServerProcessMeta> getServers() {
         return servers;
     }
 
@@ -38,7 +38,7 @@ public class ServerProcessQueue implements Runnable {
     }
 
     public void putProcess(ServerProcessMeta serverProcessMeta) {
-        this.servers.offer(new ServerProcess(serverProcessMeta));
+        this.servers.offer(serverProcessMeta);
     }
 
     public void putProcess(ProxyProcessMeta proxyProcessMeta) {
@@ -47,86 +47,74 @@ public class ServerProcessQueue implements Runnable {
 
     @Override
     public void run() {
-        {
-            short i = 0;
 
-            while (running && !servers.isEmpty() &&
-                (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer() == 0D ||
-                    NetworkUtils.cpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer())) {
-                i++;
-                if (i == 3) {
-                    break;
-                }
+        if (!running) {
+            return;
+        }
+
+        if (!servers.isEmpty() &&
+            hasFreeCpu(CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewServer())) {
+            ServerProcessMeta serverProcessMeta = servers.poll();
+            if (serverProcessMeta != null) {
 
                 int memory = CloudNetWrapper.getInstance().getUsedMemory();
 
-                ServerProcess serverProcess = servers.poll();
-
-                if (!CloudNetWrapper.getInstance().getServerGroups().containsKey(serverProcess.getMeta().getServiceId().getGroup())) {
-                    this.servers.add(serverProcess);
-                    continue;
-                }
-
-                if ((memory + serverProcess.getMeta().getMemory()) < CloudNetWrapper.getInstance().getMaxMemory()) {
-                    GameServer gameServer = null;
+                if ((memory + serverProcessMeta.getMemory()) < CloudNetWrapper.getInstance().getMaxMemory()) {
                     try {
-                        System.out.println("Fetching entry [" + serverProcess.getMeta().getServiceId() + ']');
-                        gameServer = new GameServer(serverProcess,
-                                                    CloudNetWrapper.getInstance()
-                                                                   .getServerGroups()
-                                                                   .get(serverProcess.getMeta().getServiceId().getGroup()));
+                        GameServer gameServer = new GameServer(
+                            serverProcessMeta,
+                            CloudNetWrapper.getInstance().getServerGroups().get(serverProcessMeta.getServiceId().getGroup()));
+
+                        System.out.println("Fetching entry [" + gameServer.getServiceId() + ']');
+
                         if (!gameServer.bootstrap()) {
-                            this.servers.add(serverProcess);
+                            this.servers.add(serverProcessMeta);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        this.servers.add(serverProcess);
+                        this.servers.add(serverProcessMeta);
                     }
                 } else {
-                    this.servers.add(serverProcess);
+                    this.servers.add(serverProcessMeta);
                 }
             }
+
         }
 
-        {
-            short i = 0;
-            while (running && !proxies.isEmpty() &&
-                (CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy() == 0 ||
-                    NetworkUtils.cpuUsage() <= CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy())) {
-                i++;
-                if (i == 3) {
-                    break;
-                }
+        if (!proxies.isEmpty() &&
+            (hasFreeCpu(CloudNetWrapper.getInstance().getWrapperConfig().getPercentOfCPUForANewProxy()))) {
+
+            ProxyProcessMeta proxyProcessMeta = proxies.poll();
+            if (proxyProcessMeta != null) {
                 int memory = CloudNetWrapper.getInstance().getUsedMemory();
 
-                ProxyProcessMeta serverProcess = proxies.poll();
 
-                if (!CloudNetWrapper.getInstance().getProxyGroups().containsKey(serverProcess.getServiceId().getGroup())) {
-                    this.proxies.add(serverProcess);
-                    continue;
-                }
+                if ((memory + proxyProcessMeta.getMemory()) < CloudNetWrapper.getInstance().getMaxMemory()) {
 
-                if ((memory + serverProcess.getMemory()) < CloudNetWrapper.getInstance().getMaxMemory()) {
-
-                    BungeeCord bungeeCord = new BungeeCord(serverProcess,
-                                                           CloudNetWrapper.getInstance()
-                                                                          .getProxyGroups()
-                                                                          .get(serverProcess.getServiceId().getGroup()));
+                    BungeeCord bungeeCord = new BungeeCord(
+                        proxyProcessMeta,
+                        CloudNetWrapper.getInstance().getProxyGroups().get(proxyProcessMeta.getServiceId().getGroup()));
 
                     try {
                         System.out.println("Fetching entry [" + bungeeCord.getServiceId() + ']');
+
                         if (!bungeeCord.bootstrap()) {
-                            this.proxies.add(serverProcess);
+                            this.proxies.add(proxyProcessMeta);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        this.proxies.add(serverProcess);
+                        this.proxies.add(proxyProcessMeta);
                     }
                 } else {
-                    this.proxies.add(serverProcess);
+                    this.proxies.add(proxyProcessMeta);
                 }
             }
         }
+    }
+
+    private static boolean hasFreeCpu(final double percentOfCPUForANewServer) {
+        return percentOfCPUForANewServer == 0.0D ||
+            NetworkUtils.cpuUsage() <= percentOfCPUForANewServer;
     }
 
 }
