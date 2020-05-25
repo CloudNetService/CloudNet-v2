@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerConfig;
 import eu.cloudnetservice.cloudnet.v2.lib.server.priority.PriorityService;
 import eu.cloudnetservice.cloudnet.v2.lib.server.template.Template;
+import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 import eu.cloudnetservice.cloudnet.v2.lib.service.plugin.ServerInstallablePlugin;
 
 import java.lang.reflect.Type;
@@ -77,6 +78,13 @@ public class ServerProcessData {
     private boolean priorityStop;
 
     /**
+     * The service id of this server.
+     * The server is identified using this property so care must be taken to ensure
+     * that this object is not mutated after the server has started.
+     */
+    private ServiceId serviceId;
+
+    /**
      * Creates a new data holder for server process data with default values.
      * The server configuration will be set to not hide the server, an empty string for the extra,
      * an empty document for properties and immediate (ie. now) startup time.
@@ -112,7 +120,7 @@ public class ServerProcessData {
                              final List<String> serverProcessParameters,
                              final String templateUrl,
                              final Set<ServerInstallablePlugin> plugins,
-                             final Properties properties) {
+                             final Properties properties, final ServiceId serviceId) {
         this.wrapperName = wrapperName;
         this.serverGroupName = serverGroupName;
         this.memory = memory;
@@ -123,9 +131,10 @@ public class ServerProcessData {
         this.templateUrl = templateUrl;
         this.plugins = plugins;
         this.properties = properties;
+        this.serviceId = serviceId;
     }
 
-    public ServerProcessData(final ServerProcessData serverProcessData) {
+    public ServerProcessData(final ServerProcessData serverProcessData, final ServiceId serviceId) {
         this.wrapperName = serverProcessData.wrapperName;
         this.serverGroupName = serverProcessData.serverGroupName;
         this.serverConfig = serverProcessData.serverConfig;
@@ -136,6 +145,7 @@ public class ServerProcessData {
         this.templateUrl = serverProcessData.templateUrl;
         this.plugins = serverProcessData.plugins;
         this.properties = serverProcessData.properties;
+        this.serviceId = serviceId;
     }
 
     @Override
@@ -296,5 +306,13 @@ public class ServerProcessData {
 
     public void setPriorityStop(final boolean priorityStop) {
         this.priorityStop = priorityStop;
+    }
+
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(final ServiceId serviceId) {
+        this.serviceId = serviceId;
     }
 }

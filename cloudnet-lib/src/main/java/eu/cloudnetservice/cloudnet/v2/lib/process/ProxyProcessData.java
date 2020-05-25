@@ -1,6 +1,7 @@
 package eu.cloudnetservice.cloudnet.v2.lib.process;
 
 import com.google.gson.reflect.TypeToken;
+import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 import eu.cloudnetservice.cloudnet.v2.lib.service.plugin.ServerInstallablePlugin;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
 
@@ -55,6 +56,13 @@ public class ProxyProcessData {
      * Additional properties to store in the proxy process for custom usage.
      */
     private Document properties;
+
+    /**
+     * The service id of this server.
+     * The server is identified using this property so care must be taken to ensure
+     * that this object is not mutated after the server has started.
+     */
+    private ServiceId serviceId;
 
     public ProxyProcessData() {
         this.javaProcessParameters = new ArrayList<>();
@@ -218,4 +226,11 @@ public class ProxyProcessData {
         this.properties = properties;
     }
 
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(final ServiceId serviceId) {
+        this.serviceId = serviceId;
+    }
 }

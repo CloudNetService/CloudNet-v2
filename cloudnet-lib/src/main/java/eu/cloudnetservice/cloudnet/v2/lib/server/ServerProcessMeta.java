@@ -18,7 +18,6 @@ public class ServerProcessMeta extends ServerProcessData {
 
     public static final Type TYPE = TypeToken.get(ServerProcessMeta.class).getType();
 
-    private final ServiceId serviceId;
     private final int port;
 
     public ServerProcessMeta(final String wrapperName,
@@ -42,21 +41,16 @@ public class ServerProcessMeta extends ServerProcessData {
               serverProcessParameters,
               templateUrl,
               plugins,
-              properties);
-        this.serviceId = serviceId;
+              properties,
+              serviceId);
         this.port = port;
     }
 
     public ServerProcessMeta(final ServerProcessData serverProcessData,
                              final ServiceId serviceId,
                              final int port) {
-        super(serverProcessData);
-        this.serviceId = serviceId;
+        super(serverProcessData, serviceId);
         this.port = port;
-    }
-
-    public ServiceId getServiceId() {
-        return serviceId;
     }
 
     public int getPort() {

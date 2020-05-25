@@ -52,7 +52,7 @@ public class CoreServerProcessBuilder extends ServerProcessBuilder {
     public CompletableFuture<ServerProcessMeta> startServer() {
         try {
             final UUID uuid = UUID.randomUUID();
-            this.getServerProcessData().getServerConfig().getProperties().append("cloudnet:requestId", uuid);
+            this.getServerConfig().getProperties().append("cloudnet:requestId", uuid);
 
             ServerGroup serverGroup = CloudNet.getInstance().getServerGroup(this.getServerGroupName());
             if (this.getMemory() < serverGroup.getMemory()) {
@@ -127,6 +127,14 @@ public class CoreServerProcessBuilder extends ServerProcessBuilder {
     }
 
     private ServiceId determineServiceId(final Wrapper wrapper) {
+        if (this.getServiceId() != null) {
+            if (CloudNet.getInstance().getProxys().containsKey(this.getServiceId().getServerId()) ||
+                CloudNet.getInstance().getServers().containsKey(this.getServiceId().getServerId())) {
+                throw new IllegalStateException(String.format("A server with the ID %s is already running!",
+                                                              this.getServiceId().getServerId()));
+            }
+            return this.getServiceId();
+        }
         Collection<ServiceId> serviceIds = CloudNet.getInstance().getServerServiceIdsAndWaitings(this.getServerGroupName());
         List<Integer> usedIds = serviceIds.stream()
                                           .map(ServiceId::getId)

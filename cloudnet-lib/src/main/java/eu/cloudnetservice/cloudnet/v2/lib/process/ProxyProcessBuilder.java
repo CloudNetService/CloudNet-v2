@@ -1,6 +1,7 @@
 package eu.cloudnetservice.cloudnet.v2.lib.process;
 
 import eu.cloudnetservice.cloudnet.v2.lib.server.ProxyProcessMeta;
+import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 import eu.cloudnetservice.cloudnet.v2.lib.service.plugin.ServerInstallablePlugin;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
 
@@ -161,6 +162,20 @@ public abstract class ProxyProcessBuilder {
     }
 
     /**
+     * Overrides the service id of the proxy that should be started.
+     * The proxy will be identified by this in CloudNet, so care must be taken
+     * to ensure that this property is never changed after the proxy has started.
+     *
+     * @param serviceId the new proxy id.
+     *
+     * @return the proxy process builder.
+     */
+    public ProxyProcessBuilder serviceId(ServiceId serviceId) {
+        this.proxyProcessData.setServiceId(serviceId);
+        return this;
+    }
+
+    /**
      * Requests the master to initiate this proxy startup.
      * This will trigger a sequence of messages to be passed between the calling service,
      * the master and the wrapper that will start the proxy.
@@ -208,8 +223,11 @@ public abstract class ProxyProcessBuilder {
         return proxyProcessData.getProperties();
     }
 
+    protected ServiceId getServiceId() {
+        return proxyProcessData.getServiceId();
+    }
+
     public ProxyProcessData getProxyProcessData() {
         return proxyProcessData;
     }
-
 }

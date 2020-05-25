@@ -25,6 +25,7 @@ public class PacketInStartServer implements PacketInHandler {
                                     .properties(processData.getProperties())
                                     .template(processData.getTemplate())
                                     .serverConfig(processData.getServerConfig())
+                                    .serviceId(processData.getServiceId())
                                     .startServer();
         });
     }

@@ -111,6 +111,14 @@ public class CoreProxyProcessBuilder extends ProxyProcessBuilder {
     }
 
     private ServiceId determineServiceId(final Wrapper wrapper) {
+        if (this.getServiceId() != null) {
+            if (CloudNet.getInstance().getProxys().containsKey(this.getServiceId().getServerId()) ||
+                CloudNet.getInstance().getServers().containsKey(this.getServiceId().getServerId())) {
+                throw new IllegalStateException(String.format("A proxy with the ID %s is already running!",
+                                                              this.getServiceId().getServerId()));
+            }
+            return this.getServiceId();
+        }
         Collection<ServiceId> serviceIds = CloudNet.getInstance().getProxyServiceIdsAndWaitingServices(this.getProxyGroupName());
         List<Integer> usedIds = serviceIds.stream()
                                           .map(ServiceId::getId)

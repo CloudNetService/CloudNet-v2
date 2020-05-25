@@ -4,6 +4,7 @@ import eu.cloudnetservice.cloudnet.v2.lib.server.ServerConfig;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerProcessMeta;
 import eu.cloudnetservice.cloudnet.v2.lib.server.priority.PriorityService;
 import eu.cloudnetservice.cloudnet.v2.lib.server.template.Template;
+import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 import eu.cloudnetservice.cloudnet.v2.lib.service.plugin.ServerInstallablePlugin;
 
 import java.util.List;
@@ -207,6 +208,20 @@ public abstract class ServerProcessBuilder {
     }
 
     /**
+     * Overrides the service id of the server that should be started.
+     * The server will be identified by this in CloudNet, so care must be taken
+     * to ensure that this property is never changed after the server has started.
+     *
+     * @param serviceId the new server id.
+     *
+     * @return the server process builder.
+     */
+    public ServerProcessBuilder serviceId(ServiceId serviceId) {
+        this.serverProcessData.setServiceId(serviceId);
+        return this;
+    }
+
+    /**
      * Requests the master to initiate this server startup.
      * This will trigger a sequence of messages to be passed between the calling service,
      * the master and the wrapper that will start the server.
@@ -264,6 +279,10 @@ public abstract class ServerProcessBuilder {
 
     public boolean isPriorityStop() {
         return this.serverProcessData.isPriorityStop();
+    }
+
+    public ServiceId getServiceId() {
+        return this.serverProcessData.getServiceId();
     }
 
     public ServerProcessData getServerProcessData() {
