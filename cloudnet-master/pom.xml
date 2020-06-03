@@ -57,6 +57,11 @@
             <version>${dependency.semver4j.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${dependency.guava.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

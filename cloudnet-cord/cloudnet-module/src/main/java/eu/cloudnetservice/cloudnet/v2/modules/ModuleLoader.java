@@ -10,8 +10,7 @@ public interface ModuleLoader {
      *
      * @return the module that was loaded
      *
-     * @throws Exception when an error loading the module happened
      */
-    Module<?> loadModule() throws Exception;
+    Module<?> loadModule();
 
 }

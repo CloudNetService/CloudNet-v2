@@ -1,25 +1,39 @@
 package eu.cloudnetservice.cloudnet.v2.master.module.model;
 
+import com.google.gson.reflect.TypeToken;
+import com.vdurmont.semver4j.Semver;
+import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
+import eu.cloudnetservice.cloudnet.v2.master.module.exception.InvalidDescriptionException;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class CloudModuleDescriptionFile {
 
-    private final String main;
-    private final String version;
-    private final String name;
-    private final String groupId;
-    private final String updateUrl;
+    private String main;
+    private Semver version;
+    private String name;
+    private String groupId;
+    private String updateUrl;
 
-    private final String description;
-    private final String website;
+    private String description;
+    private String website;
 
-    private final HashSet<CloudModuleDependency> dependencies;
-    private final HashSet<CloudModuleAuthor> authors;
+    private Set<CloudModuleDependency> dependencies;
+    private Set<CloudModuleAuthor> authors;
 
-    private final HashSet<CloudModulePlugin> plugins;
+    private Set<CloudModulePlugin> plugins;
 
+    //transient allows to use this constant only on runtime and was not saved into a config
     private transient Path file;
+
+    public CloudModuleDescriptionFile(InputStream stream) {
+        loadJson(stream);
+    }
 
     public CloudModuleDescriptionFile(String main,
                                       String version,
@@ -32,7 +46,7 @@ public final class CloudModuleDescriptionFile {
                                       HashSet<CloudModuleAuthor> authors,
                                       HashSet<CloudModulePlugin> plugins, Path file) {
         this.main = main;
-        this.version = version;
+        this.version = new Semver(version);
         this.name = name;
         this.groupId = groupId;
         this.updateUrl = updateUrl;
@@ -44,11 +58,25 @@ public final class CloudModuleDescriptionFile {
         this.file = file;
     }
 
+    private void loadJson(InputStream stream) {
+        CloudModuleDescriptionFile thisClazz = Document.GSON.fromJson(new InputStreamReader(stream), TypeToken.get(CloudModuleDescriptionFile.class).getType());
+        this.main = thisClazz.main;
+        this.version = thisClazz.version;
+        this.name = thisClazz.name;
+        this.groupId = thisClazz.groupId;
+        this.updateUrl = thisClazz.updateUrl;
+        this.description = thisClazz.description;
+        this.website = thisClazz.website;
+        this.dependencies = thisClazz.dependencies;
+        this.authors = thisClazz.authors;
+        this.plugins = thisClazz.plugins;
+    }
+
     public Path getFile() {
         return file;
     }
 
-    public HashSet<CloudModulePlugin> getPlugins() {
+    public Set<CloudModulePlugin> getPlugins() {
         return plugins;
     }
 
@@ -56,7 +84,7 @@ public final class CloudModuleDescriptionFile {
         return main;
     }
 
-    public String getVersion() {
+    public Semver getVersion() {
         return version;
     }
 
@@ -80,11 +108,22 @@ public final class CloudModuleDescriptionFile {
         return website;
     }
 
-    public HashSet<CloudModuleDependency> getDependencies() {
+    public Set<CloudModuleDependency> getDependencies() {
         return dependencies;
     }
 
-    public HashSet<CloudModuleAuthor> getAuthors() {
+    public Set<CloudModuleAuthor> getAuthors() {
         return authors;
+    }
+
+    public String getAuthorsAsString() {
+        return getAuthors().stream().map(cloudModuleAuthor -> String.format("%s(%s)", cloudModuleAuthor.getName(),cloudModuleAuthor.getRole())).collect(Collectors.joining(","));
+    }
+
+    public void setFile(Path file) {
+        if (file == null) {
+            throw new InvalidDescriptionException("The given path can not be null for the description file");
+        }
+        this.file = file;
     }
 }

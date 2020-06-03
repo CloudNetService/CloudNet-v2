@@ -33,6 +33,7 @@
         <dependency.vaultapi.version>1.7</dependency.vaultapi.version>
         <dependency.typetools.version>0.6.2</dependency.typetools.version>
         <dependency.semver4j.version>3.1.0</dependency.semver4j.version>
+        <dependency.guava.version>29.0-jre</dependency.guava.version>
         <!-- test dependencies -->
         <test.junit.version>4.13</test.junit.version>
         <!-- Plugins -->
@@ -58,6 +59,7 @@
         <module>cloudnet-wrapper</module>
         <module>cloudnet-api</module>
         <module>cloudnet-examples</module>
+        <module>cloudnet-example-module</module>
     </modules>
 
     <distributionManagement>
