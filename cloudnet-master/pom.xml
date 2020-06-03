@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-config</artifactId>
+            <version>${dependency.bungeecord.version}</version>
+        </dependency>
+        <dependency>
             <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-web</artifactId>
             <version>${project.version}</version>
