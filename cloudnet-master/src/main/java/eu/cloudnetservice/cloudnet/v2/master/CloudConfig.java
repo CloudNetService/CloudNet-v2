@@ -71,21 +71,25 @@ public class CloudConfig {
 
     private List<String> hasteServer;
 
-    public CloudConfig(ConsoleReader consoleReader) throws Exception {
+    public CloudConfig() {
 
         for (Path path : MASTER_PATHS) {
-            Files.createDirectories(path);
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         NetworkUtils.writeWrapperKey();
 
-        defaultInit(consoleReader);
+        defaultInit();
         defaultInitDoc();
-        defaultInitUsers(consoleReader);
+        defaultInitUsers();
         load();
     }
 
-    private void defaultInit(ConsoleReader consoleReader) throws Exception {
+    private void defaultInit() {
         if (Files.exists(configPath)) {
             return;
         }
@@ -114,10 +118,12 @@ public class CloudConfig {
 
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void defaultInitDoc() throws Exception {
+    private void defaultInitDoc() {
         if (Files.exists(servicePath)) {
             return;
         }
@@ -129,7 +135,7 @@ public class CloudConfig {
         new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
     }
 
-    private void defaultInitUsers(ConsoleReader consoleReader) {
+    private void defaultInitUsers() {
         if (Files.exists(usersPath)) {
             return;
         }
@@ -143,7 +149,7 @@ public class CloudConfig {
             .saveAsConfig(usersPath);
     }
 
-    public CloudConfig load() throws Exception {
+    public CloudConfig load() {
 
         try (Reader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
             Configuration configuration = CONFIGURATION_PROVIDER.load(reader);
@@ -186,6 +192,8 @@ public class CloudConfig {
             this.hasteServer = configuration.getStringList("general.haste.server");
 
             this.disabledModules = configuration.getStringList("general.disabled-modules");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         this.serviceDocument = Document.loadDocument(servicePath);

@@ -4,10 +4,7 @@ import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.logging.handler.ICloudLoggerHandler;
 import jline.console.ConsoleReader;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -24,7 +21,7 @@ import java.util.logging.*;
 public class CloudLogger extends Logger {
 
     private static final String SEPARATOR = System.lineSeparator();
-    private final ConsoleReader reader;
+    private ConsoleReader reader;
     private final String name = System.getProperty("user.name");
 
     private final List<ICloudLoggerHandler> handler = new LinkedList<>();
@@ -39,39 +36,68 @@ public class CloudLogger extends Logger {
      * @throws IOException            when creating directories or files in {@code local/}
      *                                was not possible
      */
-    public CloudLogger() throws IOException {
+    public CloudLogger() {
         super("CloudNetServerLogger", null);
 
         if (!Files.exists(Paths.get("local"))) {
-            Files.createDirectory(Paths.get("local"));
+            try {
+                Files.createDirectory(Paths.get("local"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         if (!Files.exists(Paths.get("local", "logs"))) {
-            Files.createDirectory(Paths.get("local", "logs"));
+            try {
+                Files.createDirectory(Paths.get("local", "logs"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         setLevel(Level.ALL);
 
-        this.reader = new ConsoleReader(System.in, System.out);
+        try {
+            this.reader = new ConsoleReader(System.in, System.out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.reader.setExpandEvents(false);
 
         final LoggingFormatter formatter = new LoggingFormatter();
-        FileHandler fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, false);
-        fileHandler.setEncoding(StandardCharsets.UTF_8.name());
+        FileHandler fileHandler = null;
+        try {
+            fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fileHandler.setEncoding(StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            e.initCause(new RuntimeException("Cannot set file encoding to UTF-8 logger"));
+        }
         fileHandler.setFormatter(formatter);
 
         addHandler(fileHandler);
 
         loggingHandler = new LoggingHandler(reader, this);
         loggingHandler.setFormatter(formatter);
-        loggingHandler.setEncoding(StandardCharsets.UTF_8.name());
+        try {
+            loggingHandler.setEncoding(StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            e.initCause(new RuntimeException("Cannot set logger encoding to UTF-8"));
+        }
         loggingHandler.setLevel(Level.INFO);
         addHandler(loggingHandler);
 
-        System.setOut(new AsyncPrintStream(new LoggingOutputStream(this, Level.INFO)));
-        System.setErr(new AsyncPrintStream(new LoggingOutputStream(this, Level.SEVERE)));
+        System.setOut(new PrintStream(new LoggingOutputStream(this, Level.INFO)));
+        System.setErr(new PrintStream(new LoggingOutputStream(this, Level.SEVERE)));
 
         this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
-        this.reader.resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
+        try {
+            this.reader.resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isShowPrompt() {
