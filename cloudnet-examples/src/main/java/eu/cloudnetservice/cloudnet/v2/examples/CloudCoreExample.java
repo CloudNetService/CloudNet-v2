@@ -3,7 +3,6 @@ package eu.cloudnetservice.cloudnet.v2.examples;
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.event.EventListener;
-import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
 import eu.cloudnetservice.cloudnet.v2.master.api.event.server.ServerAddEvent;
 import eu.cloudnetservice.cloudnet.v2.master.module.JavaCloudModule;
 import eu.cloudnetservice.cloudnet.v2.master.process.CoreServerProcessBuilder;
@@ -20,7 +19,7 @@ public class CloudCoreExample extends JavaCloudModule { //extend the JavaCloudMo
     @Override
     public void onEnable() {
         getCloud().getCommandManager().registerCommand(new CommandTest());//Register the command test
-        getCloud().getEventManager().registerListener(this, new EventListenerExample()); //Register the event listener
+        this.registerListener(new EventListenerExample()); //Register the event listener
     }
 
     @Override
