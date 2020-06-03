@@ -1,12 +1,16 @@
 package eu.cloudnetservice.cloudnet.v2.master.module;
 
+import eu.cloudnetservice.cloudnet.v2.command.Command;
+import eu.cloudnetservice.cloudnet.v2.event.Event;
+import eu.cloudnetservice.cloudnet.v2.event.EventKey;
+import eu.cloudnetservice.cloudnet.v2.event.EventListener;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.module.model.CloudModuleDescriptionFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class JavaCloudModule implements CloudModule {
+public class JavaCloudModule extends EventKey implements CloudModule {
 
     private CloudModuleDescriptionFile moduleDescriptionFile;
     private CloudModuleLogger cloudModuleLogger;
@@ -80,5 +84,26 @@ public class JavaCloudModule implements CloudModule {
                 onDisable();
             }
         }
+    }
+
+    /**
+     * Registered a IEventListener objective to a Event Class
+     *
+     * @param eventListener
+     * @param <T>
+     */
+    @Override
+    public <T extends Event> void registerListener(EventListener<T> eventListener) {
+        CloudNet.getInstance().getEventManager().registerListener(this, eventListener);
+    }
+
+    /**
+     * Registered a command
+     *
+     * @param command
+     */
+    @Override
+    public void registerCommand(Command command) {
+        CloudNet.getInstance().getCommandManager().registerCommand(command);
     }
 }

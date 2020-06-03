@@ -15,7 +15,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>cloudnet-module</module>
         <module>cloudnet-event</module>
         <module>cloudnet-command</module>
         <module>cloudnet-log</module>

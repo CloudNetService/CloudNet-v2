@@ -25,6 +25,7 @@ import eu.cloudnetservice.cloudnet.v2.master.api.event.network.CloudInitEvent;
 import eu.cloudnetservice.cloudnet.v2.master.command.*;
 import eu.cloudnetservice.cloudnet.v2.master.database.DatabaseBasicHandlers;
 import eu.cloudnetservice.cloudnet.v2.master.handler.*;
+import eu.cloudnetservice.cloudnet.v2.master.module.CloudModuleManager;
 import eu.cloudnetservice.cloudnet.v2.master.network.CloudNetServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.NetworkManager;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.*;
@@ -40,7 +41,6 @@ import eu.cloudnetservice.cloudnet.v2.master.util.FileCopy;
 import eu.cloudnetservice.cloudnet.v2.master.web.api.v1.*;
 import eu.cloudnetservice.cloudnet.v2.master.web.log.WebsiteLog;
 import eu.cloudnetservice.cloudnet.v2.master.wrapper.local.LocalCloudWrapper;
-import eu.cloudnetservice.cloudnet.v2.modules.ModuleManager;
 import eu.cloudnetservice.cloudnet.v2.web.client.WebClient;
 import eu.cloudnetservice.cloudnet.v2.web.server.WebServer;
 import joptsimple.OptionSet;
@@ -65,7 +65,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
     private static CloudNet instance;
 
     private final CommandManager commandManager = new CommandManager();
-    private final ModuleManager moduleManager = new ModuleManager();
     private final DatabaseManager databaseManager = new DatabaseManager();
     private final PacketManager packetManager = new PacketManager();
     private final EventManager eventManager = new EventManager();
@@ -87,8 +86,9 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
     private WebServer webServer;
     private DatabaseBasicHandlers dbHandlers;
     private Collection<User> users;
+    private CloudModuleManager moduleManager;
 
-    public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) throws Exception {
+    public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) {
         if (instance != null) {
             throw new IllegalStateException("CloudNet already initialized!");
         }
@@ -102,6 +102,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         // We need the reader to stay open
         //noinspection resource
         this.logger.getReader().addCompleter(commandManager);
+        this.moduleManager = new CloudModuleManager();
     }
 
     public static CloudLogger getLogger() {
@@ -117,7 +118,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
     }
 
     @Override
-    public boolean bootstrap() throws Exception {
+    public boolean bootstrap() {
         if (!optionSet.has("disable-autoupdate")) {
             checkForUpdates();
         }
@@ -127,11 +128,10 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
         this.eventManager.registerListener(this, processStartListener);
 
-        this.moduleManager.setDisabledModuleList(config.getDisabledModules());
-
         if (!optionSet.has("disable-modules")) {
             System.out.println("Loading Modules...");
-            moduleManager.loadModules();
+            this.moduleManager.detectModules();
+            this.moduleManager.getModules().values().forEach(javaCloudModule -> this.moduleManager.enableModule(javaCloudModule));
         }
 
         for (WrapperMeta wrapperMeta : config.getWrappers()) {
@@ -195,7 +195,8 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
         if (!optionSet.has("disable-modules")) {
             System.out.println("Enabling Modules...");
-            moduleManager.enableModules();
+            this.moduleManager.detectModules();
+            this.moduleManager.getModules().values().forEach(javaCloudModule -> this.moduleManager.enableModule(javaCloudModule));
         }
 
         eventManager.callEvent(new CloudInitEvent());
@@ -219,7 +220,8 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
         if (!optionSet.has("disable-modules")) {
             System.out.println("Disabling Modules...");
-            this.moduleManager.disableModules();
+            this.moduleManager.detectModules();
+            this.moduleManager.getModules().values().forEach(javaCloudModule -> this.moduleManager.disableModule(javaCloudModule));
         }
         dbHandlers.getStatisticManager().cloudOnlineTime(startupTime);
         this.databaseManager.save().clear();
@@ -431,10 +433,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         return eventManager;
     }
 
-    public ModuleManager getModuleManager() {
-        return moduleManager;
-    }
-
     public OptionSet getOptionSet() {
         return optionSet;
     }
@@ -529,7 +527,8 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
         if (!optionSet.has("disable-modules")) {
             System.out.println("Disabling modules...");
-            this.moduleManager.disableModules();
+            this.moduleManager.detectModules();
+            this.moduleManager.getModules().values().forEach(javaCloudModule -> this.moduleManager.disableModule(javaCloudModule));
         }
 
         this.eventManager.clearAll();
@@ -564,7 +563,8 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         this.initPacketHandlers();
 
         if (!optionSet.has("disable-modules")) {
-            this.moduleManager.loadModules().enableModules();
+            this.moduleManager.detectModules();
+            this.moduleManager.getModules().values().forEach(javaCloudModule -> this.moduleManager.enableModule(javaCloudModule));
         }
 
         System.out.println("Updating wrappers...");
@@ -848,4 +848,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         return templateMap;
     }
 
+    public CloudModuleManager getModuleManager() {
+        return moduleManager;
+    }
 }

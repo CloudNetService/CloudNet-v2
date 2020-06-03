@@ -4,36 +4,27 @@ import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.event.EventListener;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
-import eu.cloudnetservice.cloudnet.v2.master.api.CoreModule;
 import eu.cloudnetservice.cloudnet.v2.master.api.event.server.ServerAddEvent;
+import eu.cloudnetservice.cloudnet.v2.master.module.JavaCloudModule;
 import eu.cloudnetservice.cloudnet.v2.master.process.CoreServerProcessBuilder;
 
-/**
- * Created by Tareko on 15.10.2017.
- */
-public class CloudCoreExample extends CoreModule { //extend the CoreModule class to implement the Module system
+public class CloudCoreExample extends JavaCloudModule { //extend the JavaCloudModule class to implement the Module system
 
     @Override
     public void onLoad() {
-        if (!getUtilFile().exists()) {
-            saveUtils(new Document("myutil configuration", "hello world!"));
-        }
-        if (!getConfigFile().exists()) {
-            getConfig().set("myconfiguration", "foo bar");
-            saveConfig();
-        }
+        /**
+         *  Can used to create some config files and initiate database connections
+         */
     }
 
     @Override
-    public void onBootstrap() {
-        loadConfig();
-        System.out.println(getConfig().getString("myconfiguration"));
+    public void onEnable() {
         getCloud().getCommandManager().registerCommand(new CommandTest());//Register the command test
         getCloud().getEventManager().registerListener(this, new EventListenerExample()); //Register the event listener
     }
 
     @Override
-    public void onShutdown() {
+    public void onDisable() {
 
     }
 
