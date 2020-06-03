@@ -33,10 +33,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
-            <artifactId>cloudnet-snakeconfig</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-config</artifactId>
+            <version>${dependency.bungeecord.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.jopt-simple</groupId>
