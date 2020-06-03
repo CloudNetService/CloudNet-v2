@@ -34,6 +34,7 @@
         <dependency.typetools.version>0.6.2</dependency.typetools.version>
         <dependency.semver4j.version>3.1.0</dependency.semver4j.version>
         <dependency.guava.version>29.0-jre</dependency.guava.version>
+        <dependency.slf4j.version>2.0.0-alpha1</dependency.slf4j.version>
         <!-- test dependencies -->
         <test.junit.version>4.13</test.junit.version>
         <!-- Plugins -->
