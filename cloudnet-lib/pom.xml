@@ -34,12 +34,6 @@
             <artifactId>bungeecord-config</artifactId>
             <version>${dependency.bungeecord.version}</version>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty-parent</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
