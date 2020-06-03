@@ -119,10 +119,13 @@ public class WebServer {
     /**
      * Actually binds the web server to the configured port.
      *
-     * @throws InterruptedException thrown when the synchronous call is interrupted.
      */
-    public void bind() throws InterruptedException {
+    public void bind() {
         System.out.println("Bind WebServer at [" + address + ':' + port + ']');
-        serverBootstrap.bind(address, port).sync().channel().closeFuture();
+        try {
+            serverBootstrap.bind(address, port).sync().channel().closeFuture();
+        } catch (InterruptedException e) {
+            e.initCause(new RuntimeException("Cannot bind REST-API to the given port " + port + " and host " + address));
+        }
     }
 }
