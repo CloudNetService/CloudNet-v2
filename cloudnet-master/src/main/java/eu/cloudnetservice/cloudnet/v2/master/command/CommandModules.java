@@ -22,7 +22,7 @@ public final class CommandModules extends Command {
     public void onExecuteCommand(CommandSender sender, String[] args) {
         sender.sendMessage("Running modules:", NetworkUtils.SPACE_STRING);
         for (JavaCloudModule module : CloudNet.getInstance().getModuleManager().getModules().values()) {
-            sender.sendMessage(module.getModuleJson().getName() + ' ' + module.getModuleJson().getVersion().getOriginalValue() + " by " + module.getModuleJson().getAuthorsAsString() + NetworkUtils.EMPTY_STRING);
+            sender.sendMessage(module.getModuleJson().getName() + ' ' + module.getModuleJson().getVersion() + " by " + module.getModuleJson().getAuthorsAsString() + NetworkUtils.EMPTY_STRING);
         }
     }
 }

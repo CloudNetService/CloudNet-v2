@@ -20,6 +20,7 @@ public final class CloudModuleLogger extends Logger {
     public CloudModuleLogger(CloudModule module) {
         super(module.getClass().getCanonicalName(), null);
         this.moduleName = "[" + module.getModuleJson().getName() + "] ";
+        this.setUseParentHandlers(true);
         this.setParent(CloudNet.getLogger());
     }
 

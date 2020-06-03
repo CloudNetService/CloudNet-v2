@@ -5,6 +5,7 @@ import com.vdurmont.semver4j.Semver;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
 import eu.cloudnetservice.cloudnet.v2.master.module.exception.InvalidDescriptionException;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 public final class CloudModuleDescriptionFile {
 
     private String main;
-    private Semver version;
+    private String version;
     private String name;
     private String groupId;
     private String updateUrl;
@@ -30,9 +31,10 @@ public final class CloudModuleDescriptionFile {
 
     //transient allows to use this constant only on runtime and was not saved into a config
     private transient Path file;
+    private transient Semver semver;
 
-    public CloudModuleDescriptionFile(InputStream stream) {
-        loadJson(stream);
+    public CloudModuleDescriptionFile(InputStream stream, Path file) {
+        loadJson(stream, file);
     }
 
     public CloudModuleDescriptionFile(String main,
@@ -46,7 +48,7 @@ public final class CloudModuleDescriptionFile {
                                       HashSet<CloudModuleAuthor> authors,
                                       HashSet<CloudModulePlugin> plugins, Path file) {
         this.main = main;
-        this.version = new Semver(version);
+        this.version = version;
         this.name = name;
         this.groupId = groupId;
         this.updateUrl = updateUrl;
@@ -56,9 +58,10 @@ public final class CloudModuleDescriptionFile {
         this.authors = authors;
         this.plugins = plugins;
         this.file = file;
+        this.semver = new Semver(version, Semver.SemverType.NPM);
     }
 
-    private void loadJson(InputStream stream) {
+    private void loadJson(InputStream stream, Path file) {
         CloudModuleDescriptionFile thisClazz = Document.GSON.fromJson(new InputStreamReader(stream), TypeToken.get(CloudModuleDescriptionFile.class).getType());
         this.main = thisClazz.main;
         this.version = thisClazz.version;
@@ -70,6 +73,8 @@ public final class CloudModuleDescriptionFile {
         this.dependencies = thisClazz.dependencies;
         this.authors = thisClazz.authors;
         this.plugins = thisClazz.plugins;
+        this.semver = new Semver(version, Semver.SemverType.NPM);
+        this.file = file;
     }
 
     public Path getFile() {
@@ -84,8 +89,11 @@ public final class CloudModuleDescriptionFile {
         return main;
     }
 
-    public Semver getVersion() {
+    public String getVersion() {
         return version;
+    }
+    public Semver getSemVersion() {
+        return this.semver;
     }
 
     public String getName() {

@@ -6,13 +6,12 @@ public final class CloudModuleDependency {
 
     private final String groupId;
     private final String name;
-    private final Semver version;
+    private final String version;
 
-
-    public CloudModuleDependency(final String groupId, final String name, final String version) {
+    public CloudModuleDependency(String groupId, String name, String version) {
         this.groupId = groupId;
         this.name = name;
-        this.version = new Semver(version, Semver.SemverType.NPM);
+        this.version = version;
     }
 
     public String getName() {
@@ -23,7 +22,7 @@ public final class CloudModuleDependency {
         return groupId;
     }
 
-    public Semver getVersion() {
+    public String getVersion() {
         return version;
     }
 }

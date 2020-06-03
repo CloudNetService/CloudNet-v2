@@ -1,20 +1,22 @@
 package eu.cloudnetservice.cloudnet.v2.master.module.model;
 
+import com.google.gson.JsonObject;
+
 public final class CloudModulePlugin {
 
     private final String path;
-    private final String role;
+    private final JsonObject properties;
 
-    public CloudModulePlugin(final String path, final String role) {
+    public CloudModulePlugin(final String path, final JsonObject properties) {
         this.path = path;
-        this.role = role;
+        this.properties = properties;
     }
 
     public String getPath() {
         return path;
     }
 
-    public String getRole() {
-        return role;
+    public JsonObject getRole() {
+        return properties;
     }
 }
