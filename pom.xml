@@ -61,6 +61,7 @@
         <module>cloudnet-api</module>
         <module>cloudnet-examples</module>
         <module>cloudnet-example-module</module>
+        <module>parent-cloudnet-example-module</module>
     </modules>
 
     <distributionManagement>
