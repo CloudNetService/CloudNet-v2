@@ -14,20 +14,8 @@
     <artifactId>cloudnet-master</artifactId>
     <packaging>jar</packaging>
 
-    <repositories>
-        <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-config</artifactId>
-            <version>${dependency.bungeecord.version}</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-web</artifactId>

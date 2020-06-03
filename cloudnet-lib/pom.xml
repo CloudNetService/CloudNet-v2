@@ -55,6 +55,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${dependecy.snakeyaml.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
             <version>${dependency.netty.version}</version>

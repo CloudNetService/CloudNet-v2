@@ -13,12 +13,7 @@
     <name>CloudNet-Wrapper</name>
     <artifactId>cloudnet-wrapper</artifactId>
 
-    <repositories>
-        <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
+
 
     <dependencies>
         <dependency>
@@ -37,12 +32,6 @@
             <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-help</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-config</artifactId>
-            <version>${dependency.bungeecord.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
