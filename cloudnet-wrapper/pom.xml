@@ -13,8 +13,6 @@
     <name>CloudNet-Wrapper</name>
     <artifactId>cloudnet-wrapper</artifactId>
 
-
-
     <dependencies>
         <dependency>
             <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
