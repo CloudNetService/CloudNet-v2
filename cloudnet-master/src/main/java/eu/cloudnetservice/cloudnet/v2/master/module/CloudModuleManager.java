@@ -4,8 +4,6 @@ import com.google.common.collect.Maps;
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
-import com.vdurmont.semver4j.Requirement;
-import com.vdurmont.semver4j.SemverException;
 import eu.cloudnetservice.cloudnet.v2.master.module.exception.ModuleDescriptionFileNotFoundException;
 import eu.cloudnetservice.cloudnet.v2.master.module.exception.ModuleNotFoundException;
 import eu.cloudnetservice.cloudnet.v2.master.module.model.CloudModuleDependency;
@@ -20,20 +18,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
 public final class CloudModuleManager {
@@ -72,7 +59,10 @@ public final class CloudModuleManager {
     public void disableModule(CloudModule module) {
         if (module instanceof JavaCloudModule) {
             if (module.isEnabled()) {
-                String name = String.format("%s:%s:%s", module.getModuleJson().getGroupId(),module.getModuleJson().getName(), module.getModuleJson().getVersion());
+                String name = String.format("%s:%s:%s",
+                                            module.getModuleJson().getGroupId(),
+                                            module.getModuleJson().getName(),
+                                            module.getModuleJson().getVersion());
                 module.getModuleLogger().info(String.format("Disabling %s from %s", name, module.getModuleJson().getAuthorsAsString()));
                 JavaCloudModule javaCloudModule = (JavaCloudModule) module;
                 if (this.modules.containsKey(name)) {
@@ -87,36 +77,42 @@ public final class CloudModuleManager {
     public void enableModule(CloudModule module) {
 
         if (module instanceof JavaCloudModule) {
-            if (!module.isEnabled()) {
-                String name = String.format("%s:%s", module.getModuleJson().getGroupId(),module.getModuleJson().getName());
-                module.getModuleLogger().info(String.format("Enabling %s from %s", name, module.getModuleJson().getAuthorsAsString()));
-
-                JavaCloudModule javaCloudModule = (JavaCloudModule) module;
-                final List<CloudModuleDescriptionFile> cloudModuleDescriptionFiles = this.resolveDependenciesSortedSignle(getModules().values()
-                                                                                                                                      .stream()
-                                                                                                                                      .map(
-                                                                                                                                          JavaCloudModule::getModuleJson)
-                                                                                                                                      .collect(
-                                                                                                                                          Collectors
-                                                                                                                                              .toList()),
-                                                                                                                          javaCloudModule);
-                load:
-                for (CloudModuleDescriptionFile descriptionFile : cloudModuleDescriptionFiles) {
-                    String moduleName = descriptionFile.getGroupId() + ":" + descriptionFile.getName();
-                    for (final CloudModuleDependency dependency : descriptionFile.getDependencies()) {
-                        String dependName = dependency.getGroupId() + ":" + dependency.getName();
-                        final Optional<JavaCloudModule> omodule = getModule(dependName);
-                        if (!omodule.isPresent()) {
-                            System.err.println("unable to load module " + moduleName + " because of missing dependency " + dependName);
-                            this.modules.remove(moduleName);
-                            continue load;
+            JavaCloudModule javaCloudModule = (JavaCloudModule) module;
+            final List<JavaCloudModule> cloudModuleDescriptionFiles = this.resolveDependenciesSortedSignle(new ArrayList<>(getModules().values()),
+                                                                                                           javaCloudModule);
+            load:
+            for (JavaCloudModule descriptionFile : cloudModuleDescriptionFiles) {
+                String moduleName = descriptionFile.getModuleJson().getGroupId() + ":" + descriptionFile.getModuleJson().getName();
+                for (final CloudModuleDependency dependency : descriptionFile.getModuleJson().getDependencies()) {
+                    String dependName = dependency.getGroupId() + ":" + dependency.getName();
+                    final Optional<JavaCloudModule> omodule = getModule(dependName);
+                    if (!omodule.isPresent()) {
+                        System.err.println("unable to load module " + moduleName + " because of missing dependency " + dependName);
+                        this.modules.remove(moduleName);
+                        continue load;
+                    }
+                    if (omodule.get().getModuleJson().getSemVersion().satisfies(dependency.getVersion())) {
+                        System.err.println("Cannot load module " + moduleName + " because of missing dependency with version " + dependency
+                            .getVersion());
+                        this.modules.remove(moduleName);
+                        continue load;
+                    }
+                    omodule.ifPresent(javaCloudModule1 -> {
+                        if (!javaCloudModule1.isEnabled()) {
+                            javaCloudModule1.getModuleLogger().info(String.format("Enabling %s from %s",
+                                                                                  dependName,
+                                                                                  javaCloudModule1.getModuleJson()
+                                                                                                  .getAuthorsAsString()));
+                            javaCloudModule1.setEnabled(true);
                         }
-                        if (omodule.get().getModuleJson().getSemVersion().satisfies(dependency.getVersion())) {
-                            System.err.println("Cannot load module " + moduleName + " because of missing dependency with version " + dependency.getVersion());
-                            this.modules.remove(moduleName);
-                            continue load;
-                        }
-                        omodule.ifPresent(javaCloudModule1 -> javaCloudModule.setEnabled(true));
+                    });
+                }
+                if (this.modules.containsKey(moduleName)) {
+                    if (!descriptionFile.isEnabled()) {
+                        descriptionFile.getModuleLogger().info(String.format("Enabling %s from %s",
+                                                                             moduleName,
+                                                                             javaCloudModule.getModuleJson().getAuthorsAsString()));
+                        descriptionFile.setEnabled(true);
                     }
                 }
             }
@@ -127,18 +123,18 @@ public final class CloudModuleManager {
 
     private void handleLoaded() {
         for (Path path : this.toLoad) {
-            this.toLoad.remove(path);
             Optional<JavaCloudModule> cloudModule = loadModule(path);
-            cloudModule.ifPresent(javaCloudModule -> this.modules.put(javaCloudModule.getModuleJson().getGroupId()+":"+javaCloudModule.getModuleJson().getName(), javaCloudModule));
+            cloudModule.ifPresent(javaCloudModule -> this.modules.put(javaCloudModule.getModuleJson()
+                                                                                     .getGroupId() + ":" + javaCloudModule.getModuleJson()
+                                                                                                                          .getName(),
+                                                                      javaCloudModule));
+            this.toLoad.remove(path);
         }
-        final List<CloudModuleDescriptionFile> cloudModuleDescriptionFiles = resolveDependenciesSorted(getModules().values()
-                                                                                                                   .stream()
-                                                                                                                   .map(JavaCloudModule::getModuleJson)
-                                                                                                                   .collect(Collectors.toList()));
+        final List<JavaCloudModule> cloudModuleDescriptionFiles = resolveDependenciesSorted(new ArrayList<>(getModules().values()));
         load:
-        for (CloudModuleDescriptionFile descriptionFile : cloudModuleDescriptionFiles) {
-            String moduleName = descriptionFile.getGroupId() + ":" + descriptionFile.getName();
-            for (final CloudModuleDependency dependency : descriptionFile.getDependencies()) {
+        for (JavaCloudModule descriptionFile : cloudModuleDescriptionFiles) {
+            String moduleName = descriptionFile.getModuleJson().getGroupId() + ":" + descriptionFile.getModuleJson().getName();
+            for (final CloudModuleDependency dependency : descriptionFile.getModuleJson().getDependencies()) {
                 String name = dependency.getGroupId() + ":" + dependency.getName();
                 final Optional<JavaCloudModule> omodule = getModule(name);
                 if (!omodule.isPresent()) {
@@ -151,7 +147,20 @@ public final class CloudModuleManager {
                     this.modules.remove(moduleName);
                     continue load;
                 }
-                omodule.ifPresent(JavaCloudModule::onLoad);
+                omodule.ifPresent(javaCloudModule -> {
+                    if (!javaCloudModule.isLoaded()) {
+                        javaCloudModule.getModuleLogger().info(String.format("Loading module %s from %s",
+                                                                             javaCloudModule.getModuleJson().getName(),
+                                                                             javaCloudModule.getModuleJson().getAuthorsAsString()));
+                        javaCloudModule.setLoaded(true);
+                    }
+                });
+            }
+            if (!descriptionFile.isLoaded()) {
+                descriptionFile.getModuleLogger().info(String.format("Loading module %s from %s",
+                                                                     descriptionFile.getModuleJson().getName(),
+                                                                     descriptionFile.getModuleJson().getAuthorsAsString()));
+                descriptionFile.setLoaded(true);
             }
         }
     }
@@ -161,7 +170,7 @@ public final class CloudModuleManager {
         try {
             Optional<CloudModuleDescriptionFile> cloudModuleDescriptionFile = getCloudModuleDescriptionFile(path);
             if (cloudModuleDescriptionFile.isPresent()) {
-                ModuleClassLoader classLoader = new ModuleClassLoader(getClass().getClassLoader(),cloudModuleDescriptionFile.get(),path);
+                ModuleClassLoader classLoader = new ModuleClassLoader(getClass().getClassLoader(), cloudModuleDescriptionFile.get(), path);
                 final Class<?> jarClazz = classLoader.loadClass(cloudModuleDescriptionFile.get().getMain());
                 final Class<? extends JavaCloudModule> mainClazz = jarClazz.asSubclass(JavaCloudModule.class);
                 javaModule = Optional.of(mainClazz.getDeclaredConstructor().newInstance());
@@ -180,15 +189,20 @@ public final class CloudModuleManager {
                     throw new ModuleDescriptionFileNotFoundException("The module don't contain a module_v2.json!");
                 }
                 try (InputStream stream = moduleJar.getInputStream(moduleJsonFile)) {
-                    CloudModuleDescriptionFile moduleDescriptionFile = new CloudModuleDescriptionFile(stream,module);
-                    if (moduleDescriptionFile.getSemVersion().getMajor() != null && moduleDescriptionFile.getSemVersion().getMajor() != null && moduleDescriptionFile.getSemVersion().getPatch() != null) {
+                    CloudModuleDescriptionFile moduleDescriptionFile = new CloudModuleDescriptionFile(stream, module);
+                    if (moduleDescriptionFile.getSemVersion().getMajor() != null && moduleDescriptionFile.getSemVersion()
+                                                                                                         .getMajor() != null && moduleDescriptionFile
+                        .getSemVersion()
+                        .getPatch() != null) {
                         return Optional.of(moduleDescriptionFile);
                     } else {
-                        System.err.println(String.format("Module(%s) not enabling, wrong version format %s",moduleDescriptionFile.getName(),moduleDescriptionFile.getVersion()));
+                        System.err.println(String.format("Module(%s) not enabling, wrong version format %s",
+                                                         moduleDescriptionFile.getName(),
+                                                         moduleDescriptionFile.getVersion()));
                     }
                 }
             } catch (IOException e) {
-                throw new RuntimeException("Something is wrong with the jar",e);
+                throw new RuntimeException("Something is wrong with the jar", e);
             }
         } else {
             throw new ModuleNotFoundException("Module file not found");
@@ -216,58 +230,69 @@ public final class CloudModuleManager {
         return modules;
     }
 
-    public Optional<JavaCloudModule> getModule(@NotNull  String name) {
+    public Optional<JavaCloudModule> getModule(@NotNull String name) {
         return Optional.of(getModules().get(name));
     }
 
-    private List<CloudModuleDescriptionFile> resolveDependenciesSortedSignle(@NotNull List<CloudModuleDescriptionFile> cloudModuleDescriptionFiles,JavaCloudModule javaCloudModule) {
-        MutableGraph<CloudModuleDescriptionFile> graph = GraphBuilder
+    private List<JavaCloudModule> resolveDependenciesSortedSignle(@NotNull List<JavaCloudModule> cloudModuleDescriptionFiles,
+                                                                  JavaCloudModule javaCloudModule) {
+        MutableGraph<JavaCloudModule> graph = GraphBuilder
             .directed()
             .expectedNodeCount(cloudModuleDescriptionFiles.size())
             .allowsSelfLoops(false)
             .build();
-        Map<String, CloudModuleDescriptionFile> candidateAsMap = Maps.uniqueIndex(cloudModuleDescriptionFiles, f -> String.format("%s:%s", f.getGroupId(), f.getName()));
+        Map<String, JavaCloudModule> candidateAsMap = Maps.uniqueIndex(cloudModuleDescriptionFiles,
+                                                                       f -> String.format("%s:%s",
+                                                                                          f.getModuleJson().getGroupId(),
+                                                                                          f.getModuleJson().getName()));
 
-        CloudModuleDescriptionFile descriptionFile = javaCloudModule.getModuleJson();
+        JavaCloudModule descriptionFile = javaCloudModule;
         graph.addNode(descriptionFile);
-        for (CloudModuleDependency dependency : descriptionFile.getDependencies()) {
-            CloudModuleDescriptionFile dependencyContainer = candidateAsMap.get(String.format("%s:%s", dependency.getGroupId(), dependency.getName()));
+        for (CloudModuleDependency dependency : descriptionFile.getModuleJson().getDependencies()) {
+            JavaCloudModule dependencyContainer = candidateAsMap.get(String.format("%s:%s",
+                                                                                   dependency.getGroupId(),
+                                                                                   dependency.getName()));
             if (dependencyContainer != null) {
                 graph.putEdge(dependencyContainer, descriptionFile);
             }
         }
 
-        List<CloudModuleDescriptionFile> sorted = new ArrayList<>();
-        Map<CloudModuleDescriptionFile, Integer> integerMap = new HashMap<>();
+        List<JavaCloudModule> sorted = new ArrayList<>();
+        Map<JavaCloudModule, Integer> integerMap = new HashMap<>();
 
-        for (CloudModuleDescriptionFile node : graph.nodes()) {
+        for (JavaCloudModule node : graph.nodes()) {
             this.visitDependency(graph, node, integerMap, sorted, new ArrayDeque<>());
         }
 
         return sorted;
     }
 
-    private List<CloudModuleDescriptionFile> resolveDependenciesSorted(@NotNull List<CloudModuleDescriptionFile> cloudModuleDescriptionFiles) {
-        MutableGraph<CloudModuleDescriptionFile> graph = GraphBuilder
+    private List<JavaCloudModule> resolveDependenciesSorted(@NotNull List<JavaCloudModule> cloudModuleDescriptionFiles) {
+        MutableGraph<JavaCloudModule> graph = GraphBuilder
             .directed()
             .expectedNodeCount(cloudModuleDescriptionFiles.size())
             .allowsSelfLoops(false)
             .build();
-        Map<String, CloudModuleDescriptionFile> candidateAsMap = Maps.uniqueIndex(cloudModuleDescriptionFiles, f -> String.format("%s:%s", f.getGroupId(), f.getName()));
+        Map<String, JavaCloudModule> candidateAsMap = Maps.uniqueIndex(cloudModuleDescriptionFiles,
+                                                                       f -> String.format("%s:%s",
+                                                                                          f.getModuleJson().getGroupId(),
+                                                                                          f.getModuleJson().getName()));
 
-        for (CloudModuleDescriptionFile descriptionFile : cloudModuleDescriptionFiles) {
+        for (JavaCloudModule descriptionFile : cloudModuleDescriptionFiles) {
             graph.addNode(descriptionFile);
-            for (CloudModuleDependency dependency : descriptionFile.getDependencies()) {
-                CloudModuleDescriptionFile dependencyContainer = candidateAsMap.get(String.format("%s:%s", dependency.getGroupId(), dependency.getName()));
+            for (CloudModuleDependency dependency : descriptionFile.getModuleJson().getDependencies()) {
+                JavaCloudModule dependencyContainer = candidateAsMap.get(String.format("%s:%s",
+                                                                                       dependency.getGroupId(),
+                                                                                       dependency.getName()));
                 if (dependencyContainer != null) {
                     graph.putEdge(dependencyContainer, descriptionFile);
                 }
             }
         }
-        List<CloudModuleDescriptionFile> sorted = new ArrayList<>();
-        Map<CloudModuleDescriptionFile, Integer> integerMap = new HashMap<>();
+        List<JavaCloudModule> sorted = new ArrayList<>();
+        Map<JavaCloudModule, Integer> integerMap = new HashMap<>();
 
-        for (CloudModuleDescriptionFile node : graph.nodes()) {
+        for (JavaCloudModule node : graph.nodes()) {
             this.visitDependency(graph, node, integerMap, sorted, new ArrayDeque<>());
         }
 
@@ -276,25 +301,31 @@ public final class CloudModuleManager {
 
     //TODO: Gibt es ein Limit für den Integer von der Map. Wenn ja die If etwas umbauen.
 
-    private void visitDependency(Graph<CloudModuleDescriptionFile> graph,
-                                 CloudModuleDescriptionFile node,
-                                 Map<CloudModuleDescriptionFile, Integer> marks,
-                                 List<CloudModuleDescriptionFile> sorted,
-                                 Deque<CloudModuleDescriptionFile> currentIteration) {
+    private void visitDependency(Graph<JavaCloudModule> graph,
+                                 JavaCloudModule node,
+                                 Map<JavaCloudModule, Integer> marks,
+                                 List<JavaCloudModule> sorted,
+                                 Deque<JavaCloudModule> currentIteration) {
 
-        if (marks.getOrDefault(node, 0) == 1) {
+        final Integer integer = marks.getOrDefault(node, 0);
+        if (integer == 2) {
+            return;
+        } else if (integer == 1) {
             currentIteration.addLast(node);
 
             StringBuilder stringBuilder = new StringBuilder();
-            for (CloudModuleDescriptionFile description : currentIteration) {
-                stringBuilder.append(description.getGroupId()).append(":").append(description.getName()).append("; ");
+            for (JavaCloudModule description : currentIteration) {
+                stringBuilder.append(description.getModuleJson().getGroupId())
+                             .append(":")
+                             .append(description.getModuleJson().getName())
+                             .append("; ");
             }
             throw new StackOverflowError("Dependency load injects itself or other injects other: " + stringBuilder.toString());
         }
 
         currentIteration.addLast(node);
         marks.put(node, 2);
-        for (CloudModuleDescriptionFile edge : graph.successors(node)) {
+        for (JavaCloudModule edge : graph.successors(node)) {
             this.visitDependency(graph, edge, marks, sorted, currentIteration);
         }
 
