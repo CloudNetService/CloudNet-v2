@@ -131,7 +131,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         if (!optionSet.has("disable-modules")) {
             System.out.println("Loading Modules...");
             this.moduleManager.detectModules();
-            this.moduleManager.getModules().values().forEach(javaCloudModule -> javaCloudModule.getModuleLogger().info(String.format("Loading module %s from %s", javaCloudModule.getModuleJson().getName(), javaCloudModule.getModuleJson().getAuthorsAsString())));
         }
 
         for (WrapperMeta wrapperMeta : config.getWrappers()) {
@@ -563,7 +562,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         if (!optionSet.has("disable-modules")) {
             System.out.println("Load Modules...");
             this.moduleManager.detectModules();
-            this.moduleManager.getModules().values().forEach(javaCloudModule -> javaCloudModule.getModuleLogger().info(String.format("Loading module %s from %s", javaCloudModule.getModuleJson().getName(), javaCloudModule.getModuleJson().getAuthorsAsString())));
         }
 
         if (!optionSet.has("disable-modules")) {
