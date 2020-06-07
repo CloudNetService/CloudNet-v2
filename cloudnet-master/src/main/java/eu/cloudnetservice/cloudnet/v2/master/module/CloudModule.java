@@ -17,6 +17,10 @@ public interface CloudModule {
 
     void onDisable();
 
+    void setLoaded(boolean loaded);
+
+    void setEnabled(boolean enabled);
+
     CloudModuleDescriptionFile getModuleJson();
 
     Path getDataFolder();
@@ -26,6 +30,8 @@ public interface CloudModule {
     CloudModuleLogger getModuleLogger();
 
     boolean isEnabled();
+
+    boolean isLoaded();
 
     /**
      * Registered a IEventListener objective to a Event Class

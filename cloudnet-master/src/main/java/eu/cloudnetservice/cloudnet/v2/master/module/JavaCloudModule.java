@@ -75,20 +75,23 @@ public class JavaCloudModule extends EventKey implements CloudModule {
         return isEnabled;
     }
 
+    @Override
     public boolean isLoaded() {
         return isLoaded;
     }
 
-    protected void setLoaded(final boolean enabled) {
-        if (isLoaded != enabled) {
-            isLoaded = enabled;
+    @Override
+    public void setLoaded(final boolean loaded) {
+        if (isLoaded != loaded) {
+            isLoaded = loaded;
             if (isLoaded) {
                 onLoad();
             }
         }
     }
 
-    protected void setEnabled(final boolean enabled) {
+    @Override
+    public void setEnabled(final boolean enabled) {
         if (isEnabled != enabled) {
             isEnabled = enabled;
             if (isEnabled) {
