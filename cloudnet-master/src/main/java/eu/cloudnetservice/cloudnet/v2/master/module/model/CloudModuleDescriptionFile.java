@@ -5,11 +5,9 @@ import com.vdurmont.semver4j.Semver;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
 import eu.cloudnetservice.cloudnet.v2.master.module.exception.InvalidDescriptionException;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +25,7 @@ public final class CloudModuleDescriptionFile {
     private Set<CloudModuleDependency> dependencies;
     private Set<CloudModuleAuthor> authors;
 
-    private Set<CloudModulePlugin> plugins;
+    private Set<CloudModuleDeployFile> fileDeployment;
 
     //transient allows to use this constant only on runtime and was not saved into a config
     private transient Path file;
@@ -48,7 +46,7 @@ public final class CloudModuleDescriptionFile {
                                       String website,
                                       Set<CloudModuleDependency> dependencies,
                                       Set<CloudModuleAuthor> authors,
-                                      Set<CloudModulePlugin> plugins, Path file) {
+                                      Set<CloudModuleDeployFile> fileDeployment, Path file) {
         this.main = main;
         this.version = version;
         this.name = name;
@@ -58,7 +56,7 @@ public final class CloudModuleDescriptionFile {
         this.website = website;
         this.dependencies = dependencies;
         this.authors = authors;
-        this.plugins = plugins;
+        this.fileDeployment = fileDeployment;
         this.file = file;
         this.semver = new Semver(version, Semver.SemverType.NPM);
     }
@@ -74,7 +72,7 @@ public final class CloudModuleDescriptionFile {
         this.website = thisClazz.website;
         this.dependencies = thisClazz.dependencies;
         this.authors = thisClazz.authors;
-        this.plugins = thisClazz.plugins;
+        this.fileDeployment = thisClazz.fileDeployment;
         this.semver = new Semver(version, Semver.SemverType.NPM);
         this.file = file;
     }
@@ -83,8 +81,8 @@ public final class CloudModuleDescriptionFile {
         return file;
     }
 
-    public Set<CloudModulePlugin> getPlugins() {
-        return plugins;
+    public Set<CloudModuleDeployFile> getFileDeployment() {
+        return fileDeployment;
     }
 
     public String getMain() {
