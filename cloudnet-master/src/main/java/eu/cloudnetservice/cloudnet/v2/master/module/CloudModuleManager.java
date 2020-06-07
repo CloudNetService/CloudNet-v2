@@ -166,10 +166,12 @@ public final class CloudModuleManager {
         try {
             Optional<CloudModuleDescriptionFile> cloudModuleDescriptionFile = getCloudModuleDescriptionFile(path);
             if (cloudModuleDescriptionFile.isPresent()) {
-                ModuleClassLoader classLoader = new ModuleClassLoader(getClass().getClassLoader(), cloudModuleDescriptionFile.get(), path);
+                ModuleClassLoader classLoader = new ModuleClassLoader(getClass().getClassLoader(), path);
                 final Class<?> jarClazz = classLoader.loadClass(cloudModuleDescriptionFile.get().getMain());
                 final Class<? extends JavaCloudModule> mainClazz = jarClazz.asSubclass(JavaCloudModule.class);
-                javaModule = Optional.of(mainClazz.getDeclaredConstructor().newInstance());
+                final JavaCloudModule javaCloudModule = mainClazz.getDeclaredConstructor().newInstance();
+                javaModule = Optional.of(javaCloudModule);
+                javaModule.ifPresent(cloudModule -> cloudModule.init(classLoader,cloudModuleDescriptionFile.get()));
             }
         } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();

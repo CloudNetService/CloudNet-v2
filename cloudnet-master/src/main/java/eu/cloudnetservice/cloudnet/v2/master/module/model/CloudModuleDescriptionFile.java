@@ -33,6 +33,8 @@ public final class CloudModuleDescriptionFile {
     private transient Path file;
     private transient Semver semver;
 
+    public static transient TypeToken<CloudModuleDescriptionFile> CLOUD_MODULE_DESCRIPTION_FILE = TypeToken.get(CloudModuleDescriptionFile.class);
+
     public CloudModuleDescriptionFile(InputStream stream, Path file) {
         loadJson(stream, file);
     }
@@ -44,9 +46,9 @@ public final class CloudModuleDescriptionFile {
                                       String updateUrl,
                                       String description,
                                       String website,
-                                      HashSet<CloudModuleDependency> dependencies,
-                                      HashSet<CloudModuleAuthor> authors,
-                                      HashSet<CloudModulePlugin> plugins, Path file) {
+                                      Set<CloudModuleDependency> dependencies,
+                                      Set<CloudModuleAuthor> authors,
+                                      Set<CloudModulePlugin> plugins, Path file) {
         this.main = main;
         this.version = version;
         this.name = name;
@@ -62,7 +64,7 @@ public final class CloudModuleDescriptionFile {
     }
 
     private void loadJson(InputStream stream, Path file) {
-        CloudModuleDescriptionFile thisClazz = Document.GSON.fromJson(new InputStreamReader(stream), TypeToken.get(CloudModuleDescriptionFile.class).getType());
+        CloudModuleDescriptionFile thisClazz = Document.GSON.fromJson(new InputStreamReader(stream), CLOUD_MODULE_DESCRIPTION_FILE.getType());
         this.main = thisClazz.main;
         this.version = thisClazz.version;
         this.name = thisClazz.name;

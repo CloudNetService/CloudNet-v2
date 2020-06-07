@@ -23,7 +23,6 @@ public class JavaCloudModule extends EventKey implements CloudModule {
         if (!(classLoader instanceof ModuleClassLoader)) {
             throw new IllegalStateException("JavaPlugin requires " + ModuleClassLoader.class.getName());
         }
-        ((ModuleClassLoader) classLoader).initialize(this);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class JavaCloudModule extends EventKey implements CloudModule {
         return classLoader;
     }
 
-    final void init(ClassLoader loader, CloudModuleDescriptionFile descriptionFile) {
+    protected final void init(ClassLoader loader, CloudModuleDescriptionFile descriptionFile) {
         this.moduleDescriptionFile = descriptionFile;
         this.cloudModuleLogger = new CloudModuleLogger(this);
         this.classLoader = loader;

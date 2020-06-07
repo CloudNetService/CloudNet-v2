@@ -13,17 +13,9 @@ public class ModuleClassLoader extends URLClassLoader {
     static {
         ClassLoader.registerAsParallelCapable();
     }
-    private final CloudModuleDescriptionFile description;
-    private final ClassLoader loader;
 
-    public ModuleClassLoader(final ClassLoader parent, final CloudModuleDescriptionFile description, final Path file) throws
+    public ModuleClassLoader(final ClassLoader parent, final Path file) throws
         MalformedURLException {
         super(new URL[] {file.toUri().toURL()}, parent);
-        this.loader = parent;
-        this.description = description;
-    }
-
-    synchronized void initialize(final JavaCloudModule javaCloudModule) {
-        javaCloudModule.init(this.loader,this.description);
     }
 }
