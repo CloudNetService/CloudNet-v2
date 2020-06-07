@@ -1,6 +1,6 @@
 name: CloudNetAPI
 version: ${project.version}
-author: cloudNetService
+author: CloudNetService
 website: https://cloudnetservice.eu/
 description: CloudNet Interface for the Central server
 
