@@ -16,6 +16,7 @@ public class JavaCloudModule extends EventKey implements CloudModule {
     private CloudModuleLogger cloudModuleLogger;
     private ClassLoader classLoader;
     private boolean isEnabled = false;
+    private boolean isLoaded = false;
 
     public JavaCloudModule() {
         final ClassLoader classLoader = this.getClass().getClassLoader();
@@ -73,6 +74,19 @@ public class JavaCloudModule extends EventKey implements CloudModule {
     @Override
     public boolean isEnabled() {
         return isEnabled;
+    }
+
+    public boolean isLoaded() {
+        return isLoaded;
+    }
+
+    protected void setLoaded(final boolean enabled) {
+        if (isLoaded != enabled) {
+            isLoaded = enabled;
+            if (isLoaded) {
+                onLoad();
+            }
+        }
     }
 
     protected void setEnabled(final boolean enabled) {
