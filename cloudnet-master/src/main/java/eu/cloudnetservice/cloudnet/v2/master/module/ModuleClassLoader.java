@@ -11,18 +11,7 @@ import java.nio.file.Path;
 public class ModuleClassLoader extends URLClassLoader {
 
     static {
-        try {
-            java.lang.reflect.Method method = ClassLoader.class.getDeclaredMethod( "registerAsParallelCapable" );
-            boolean oldAccessible = method.isAccessible();
-            method.setAccessible( true );
-            method.invoke( null );
-            method.setAccessible( oldAccessible );
-            CloudNet.getLogger().log( java.util.logging.Level.INFO, "Set ModuleClassLoader as parallel capable" );
-        } catch ( NoSuchMethodException ex ) {
-            ex.printStackTrace();
-        } catch ( Exception ex ) {
-            CloudNet.getLogger().log(java.util.logging.Level.WARNING, "Error setting ModuleClassLoader as parallel capable", ex );
-        }
+        ClassLoader.registerAsParallelCapable();
     }
     private final CloudModuleDescriptionFile description;
     private final ClassLoader loader;
