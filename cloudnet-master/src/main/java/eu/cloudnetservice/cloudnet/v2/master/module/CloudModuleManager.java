@@ -30,7 +30,6 @@ public final class CloudModuleManager {
     private final Path moduleDirectory;
 
     public CloudModuleManager() {
-        // Allows to use duplicated modules
         modules = new LinkedHashMap<>();
         this.moduleDirectory = Paths.get("modules");
         if (!Files.exists(this.moduleDirectory)) {
