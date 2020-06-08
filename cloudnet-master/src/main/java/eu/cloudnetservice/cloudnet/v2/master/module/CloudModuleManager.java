@@ -92,11 +92,11 @@ public final class CloudModuleManager {
     public void enableModule(CloudModule module) {
         if (module instanceof JavaCloudModule) {
             JavaCloudModule javaCloudModule = (JavaCloudModule) module;
-            final List<CloudModule> cloudModuleDescriptionFiles = this.resolveDependenciesSortedSingle(new ArrayList<>(getModules().values()),
+            final List<CloudModule> cloudModules = this.resolveDependenciesSortedSingle(new ArrayList<>(getModules().values()),
                                                                                                        javaCloudModule);
             final Set<CloudModule> loadOrder = new HashSet<>();
             load:
-            for (CloudModule cloudModule : cloudModuleDescriptionFiles) {
+            for (CloudModule cloudModule : cloudModules) {
                 String moduleName = cloudModule.getModuleJson().getGroupId() + ":" + cloudModule.getModuleJson().getName();
                 if (!this.semCloudNetVersion.satisfies(cloudModule.getModuleJson().getRequiredCloudNetVersion())) {
                     System.err.println("Cannot load module " + moduleName + " because of missing required CloudNet version");
@@ -181,31 +181,63 @@ public final class CloudModuleManager {
                                                     .getGroupId() + ":" + javaCloudModule);
                             if (jcm instanceof MigrateCloudModule) {
                                 MigrateCloudModule migrateCloudModule = (MigrateCloudModule) jcm;
-                                if (migrateCloudModule.migrate(module.getModuleJson().getVersion(),
-                                                               javaCloudModule.getModuleJson().getVersion())) {
+                                if (migrateCloudModule.migrate(module.getModuleJson().getSemVersion(),
+                                                               javaCloudModule.getModuleJson().getSemVersion())) {
                                     jcm.getModuleLogger().info(String.format("Module %s successfully migrated from %s to %s",
                                                                              module.getModuleJson().getName(),
                                                                              module.getModuleJson().getVersion(),
                                                                              javaCloudModule.getModuleJson().getVersion()));
+                                    try {
+                                        Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
+                                        Files.copy(javaCloudModule.getModuleJson().getFile(), module.getModuleJson().getFile());
+                                        final Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson()
+                                                                                                                   .getFile());
+                                        optionalJavaCloudModule.ifPresent(value -> {
+                                            this.modules.put(value
+                                                                 .getModuleJson()
+                                                                 .getGroupId() + ":" + javaCloudModule
+                                                                 .getModuleJson()
+                                                                 .getName(),
+                                                             value);
+                                            value.getModuleLogger().info(String.format("Update to %s was successful",
+                                                                                       value.getModuleJson().getVersion()));
+                                        });
+                                        optionalJavaCloudModule.orElseThrow(() -> new RuntimeException(String.format(
+                                            "New update of %s could not be loaded!",
+                                            module.getModuleJson().getName())));
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    jcm.getModuleLogger().info(String.format("Module %s could not be migrated from %s to %s ",
+                                                                             module.getModuleJson().getName(),
+                                                                             module.getModuleJson().getVersion(),
+                                                                             javaCloudModule.getModuleJson().getVersion()));
+                                }
+                            } else {
+                                try {
+                                    Files.copy(javaCloudModule.getModuleJson().getFile(), module.getModuleJson().getFile());
+                                    Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
+                                    final Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson().getFile());
+                                    optionalJavaCloudModule.ifPresent(value -> {
+                                        this.modules.put(value
+                                                             .getModuleJson()
+                                                             .getGroupId() + ":" + javaCloudModule
+                                                             .getModuleJson()
+                                                             .getName(),
+                                                         value);
+                                        value.getModuleLogger().info(String.format("Update to %s was successful",
+                                                                                   value.getModuleJson().getVersion()));
+                                    });
+                                    optionalJavaCloudModule.orElseThrow(() -> new RuntimeException(String.format(
+                                        "New update of %s could not be loaded!",
+                                        module.getModuleJson().getName())));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
                             }
-                            try {
-                                Files.copy(javaCloudModule.getModuleJson().getFile(), module.getModuleJson().getFile());
-                                Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
-                                final Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson().getFile());
-                                optionalJavaCloudModule.ifPresent(value -> {
-                                    this.modules.put(value
-                                                         .getModuleJson()
-                                                         .getGroupId() + ":" + javaCloudModule
-                                                         .getModuleJson()
-                                                         .getName(),
-                                                     value);
-                                    value.getModuleLogger().info(String.format("Update to %s was successful",
-                                                                               value.getModuleJson().getVersion()));
-                                });
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+
+
                         }
 
                     }
@@ -213,10 +245,10 @@ public final class CloudModuleManager {
                 }
             });
         }
-        final List<CloudModule> cloudModuleDescriptionFiles = resolveDependenciesSorted(new ArrayList<>(getModules().values()));
+        final List<CloudModule> cloudModules = resolveDependenciesSorted(new ArrayList<>(getModules().values()));
         final Set<CloudModule> loadOrder = new HashSet<>();
         load:
-        for (CloudModule cloudModule : cloudModuleDescriptionFiles) {
+        for (CloudModule cloudModule : cloudModules) {
             String moduleName = cloudModule.getModuleJson().getGroupId() + ":" + cloudModule.getModuleJson().getName();
             if (!this.semCloudNetVersion.satisfies(cloudModule.getModuleJson().getRequiredCloudNetVersion())) {
                 System.err.println("Cannot load module " + moduleName + " because of missing required CloudNet version");
