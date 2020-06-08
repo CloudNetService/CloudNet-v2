@@ -21,23 +21,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 public final class CloudModuleManager {
 
     private final Map<String, CloudModule> modules;
-    private final Collection<Path> toLoad = new CopyOnWriteArrayList<>();
     private final Path moduleDirectory;
+    private final Path updateModuleDirectory;
     private final Semver semCloudNetVersion;
 
     public CloudModuleManager() {
         modules = new LinkedHashMap<>();
         this.moduleDirectory = Paths.get("modules");
-        if (!Files.exists(this.moduleDirectory)) {
+        this.updateModuleDirectory = Paths.get(moduleDirectory.toString(), "update");
+        if (!Files.exists(this.updateModuleDirectory)) {
             try {
-                Files.createDirectory(this.moduleDirectory);
+                Files.createDirectories(this.updateModuleDirectory);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -49,9 +49,18 @@ public final class CloudModuleManager {
     }
 
     public void detectModules() {
+        List<Path> toUpdate = new ArrayList<>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.updateModuleDirectory, "*.jar")) {
+            for (Path path : stream) {
+                toUpdate.add(path);
+            }
+        } catch (final IOException ex) {
+            ex.printStackTrace();
+        }
+        List<Path> toLoad = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.moduleDirectory, "*.jar")) {
             for (Path path : stream) {
-                if (this.isModuleDetectedByPath(path)) {
+                if (this.isModuleDetectedByPath(path, toLoad)) {
                     continue;
                 }
                 toLoad.add(path);
@@ -59,7 +68,7 @@ public final class CloudModuleManager {
         } catch (final IOException ex) {
             ex.printStackTrace();
         }
-        handleLoaded();
+        handleLoaded(toLoad, toUpdate);
     }
 
     public void disableModule(CloudModule module) {
@@ -129,14 +138,80 @@ public final class CloudModuleManager {
         }
     }
 
-    private void handleLoaded() {
-        for (Path path : this.toLoad) {
+    private void handleUpdate(final List<Path> toUpdate) {
+        for (Path path : toUpdate) {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
-            cloudModule.ifPresent(javaCloudModule -> this.modules.put(javaCloudModule.getModuleJson()
-                                                                                     .getGroupId() + ":" + javaCloudModule.getModuleJson()
-                                                                                                                          .getName(),
+        }
+    }
+
+    private void handleLoaded(final List<Path> toLoaded, final List<Path> toUpdate) {
+        for (Path path : toLoaded) {
+            Optional<JavaCloudModule> cloudModule = loadModule(path);
+            cloudModule.ifPresent(javaCloudModule -> {
+                if (javaCloudModule instanceof UpdateCloudModule) {
+                    javaCloudModule.getModuleLogger().info(String.format("Check module update %s",
+                                                                         javaCloudModule.getModuleJson().getName()));
+                    UpdateCloudModule updateCloudModule = (UpdateCloudModule) javaCloudModule;
+                    javaCloudModule.setUpdate(updateCloudModule.update(javaCloudModule.getModuleJson().getUpdateUrl()));
+                }
+            });
+            cloudModule.ifPresent(javaCloudModule -> this.modules.put(javaCloudModule
+                                                                          .getModuleJson()
+                                                                          .getGroupId() + ":" + javaCloudModule
+                                                                          .getModuleJson()
+                                                                          .getName(),
                                                                       javaCloudModule));
-            this.toLoad.remove(path);
+            toLoaded.remove(path);
+        }
+        for (final Path path : toUpdate) {
+            Optional<JavaCloudModule> cloudModule = loadModule(path);
+            cloudModule.ifPresent(javaCloudModule -> {
+                final Optional<CloudModule> moduleOptional = this.getModule(javaCloudModule
+                                                                                .getModuleJson()
+                                                                                .getGroupId() + ":" + javaCloudModule
+                    .getModuleJson()
+                    .getName());
+                if (moduleOptional.isPresent()) {
+                    CloudModule module = moduleOptional.get();
+                    if (module instanceof JavaCloudModule && module.isUpdate()) {
+                        if (javaCloudModule.getModuleJson().getSemVersion().isGreaterThan(module.getModuleJson().getSemVersion())) {
+                            JavaCloudModule jcm = (JavaCloudModule) module;
+                            this.modules.remove(javaCloudModule
+                                                    .getModuleJson()
+                                                    .getGroupId() + ":" + javaCloudModule);
+                            if (jcm instanceof MigrateCloudModule) {
+                                MigrateCloudModule migrateCloudModule = (MigrateCloudModule) jcm;
+                                if (migrateCloudModule.migrate(module.getModuleJson().getVersion(),
+                                                               javaCloudModule.getModuleJson().getVersion())) {
+                                    jcm.getModuleLogger().info(String.format("Module %s successfully migrated from %s to %s",
+                                                                             module.getModuleJson().getName(),
+                                                                             module.getModuleJson().getVersion(),
+                                                                             javaCloudModule.getModuleJson().getVersion()));
+                                }
+                            }
+                            try {
+                                Files.copy(javaCloudModule.getModuleJson().getFile(), module.getModuleJson().getFile());
+                                Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
+                                final Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson().getFile());
+                                optionalJavaCloudModule.ifPresent(value -> {
+                                    this.modules.put(value
+                                                         .getModuleJson()
+                                                         .getGroupId() + ":" + javaCloudModule
+                                                         .getModuleJson()
+                                                         .getName(),
+                                                     value);
+                                    value.getModuleLogger().info(String.format("Update to %s was successful",
+                                                                               value.getModuleJson().getVersion()));
+                                });
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+
+                }
+            });
         }
         final List<CloudModule> cloudModuleDescriptionFiles = resolveDependenciesSorted(new ArrayList<>(getModules().values()));
         final Set<CloudModule> loadOrder = new HashSet<>();
@@ -167,12 +242,14 @@ public final class CloudModuleManager {
         }
         List<CloudModule> forLoading = new ArrayList<>(resolveDependenciesSorted(new ArrayList<>(loadOrder)));
         Collections.reverse(forLoading);
-        forLoading.stream().filter(javaCloudModule -> !javaCloudModule.isLoaded()).forEach(javaCloudModule -> {
-            javaCloudModule.getModuleLogger().info(String.format("Loading module %s from %s",
-                                                                 javaCloudModule.getModuleJson().getName(),
-                                                                 javaCloudModule.getModuleJson().getAuthorsAsString()));
-            javaCloudModule.setLoaded(true);
-        });
+        forLoading.stream()
+                  .filter(javaCloudModule -> !javaCloudModule.isLoaded())
+                  .forEach(javaCloudModule -> {
+                      javaCloudModule.getModuleLogger().info(String.format("Loading module %s from %s",
+                                                                           javaCloudModule.getModuleJson().getName(),
+                                                                           javaCloudModule.getModuleJson().getAuthorsAsString()));
+                      javaCloudModule.setLoaded(true);
+                  });
     }
 
     public Optional<JavaCloudModule> loadModule(Path path) {
@@ -186,15 +263,6 @@ public final class CloudModuleManager {
                 final JavaCloudModule javaCloudModule = mainClazz.getDeclaredConstructor().newInstance();
                 javaModule = Optional.of(javaCloudModule);
                 javaModule.ifPresent(cloudModule -> cloudModule.init(classLoader, cloudModuleDescriptionFile.get()));
-                javaModule.ifPresent(cloudModule -> {
-                    if (cloudModule instanceof UpdateCloudModule) {
-                        cloudModule.getModuleLogger().info(String.format("Check module update %s", cloudModule.getModuleJson().getName()));
-                        UpdateCloudModule updateCloudModule = (UpdateCloudModule) cloudModule;
-                        if (updateCloudModule.update(cloudModule.getModuleJson().getUpdateUrl())) {
-                            cloudModule.getModuleLogger().info(String.format("Module update %s available", cloudModule.getModuleJson().getName()));
-                        }
-                    }
-                });
             }
         } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
@@ -231,7 +299,7 @@ public final class CloudModuleManager {
         return Optional.empty();
     }
 
-    private boolean isModuleDetectedByPath(@NotNull Path path) {
+    private boolean isModuleDetectedByPath(@NotNull Path path, List<Path> toLoad) {
         boolean result = false;
         String check = path.toAbsolutePath().toString();
         Iterator<CloudModule> moduleIterator = this.getModules().values().iterator();

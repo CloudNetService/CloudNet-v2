@@ -17,6 +17,7 @@ public class JavaCloudModule extends EventKey implements CloudModule {
     private ClassLoader classLoader;
     private boolean isEnabled = false;
     private boolean isLoaded = false;
+    private boolean isUpdate = false;
 
     public JavaCloudModule() {
         final ClassLoader classLoader = this.getClass().getClassLoader();
@@ -81,6 +82,11 @@ public class JavaCloudModule extends EventKey implements CloudModule {
     }
 
     @Override
+    public boolean isUpdate() {
+        return this.isUpdate;
+    }
+
+    @Override
     public void setLoaded(final boolean loaded) {
         if (isLoaded != loaded) {
             isLoaded = loaded;
@@ -101,6 +107,14 @@ public class JavaCloudModule extends EventKey implements CloudModule {
             }
         }
     }
+
+    @Override
+    public void setUpdate(final boolean update) {
+        if (isUpdate != update) {
+            isUpdate = update;
+        }
+    }
+
 
     /**
      * Registered a IEventListener objective to a Event Class

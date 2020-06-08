@@ -21,6 +21,8 @@ public interface CloudModule {
 
     void setEnabled(boolean enabled);
 
+    void setUpdate(boolean update);
+
     CloudModuleDescriptionFile getModuleJson();
 
     Path getDataFolder();
@@ -32,6 +34,8 @@ public interface CloudModule {
     boolean isEnabled();
 
     boolean isLoaded();
+
+    boolean isUpdate();
 
     /**
      * Registered a IEventListener objective to a Event Class
