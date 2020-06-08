@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -42,14 +43,13 @@ public final class CloudModuleManager {
                 e.printStackTrace();
             }
         }
-        this.semCloudNetVersion = new Semver(String.format("%s-%s",
-                                                           CloudBootstrap.class.getPackage().getImplementationVersion(),
-                                                           CloudBootstrap.class.getPackage().getSpecificationVersion()),
+        this.semCloudNetVersion = new Semver(String.format("%s",
+                                                           CloudBootstrap.class.getPackage().getImplementationVersion()),
                                              Semver.SemverType.NPM);
     }
 
     public void detectModules() {
-        List<Path> toUpdate = new ArrayList<>();
+        List<Path> toUpdate = new CopyOnWriteArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.updateModuleDirectory, "*.jar")) {
             for (Path path : stream) {
                 toUpdate.add(path);
@@ -57,7 +57,7 @@ public final class CloudModuleManager {
         } catch (final IOException ex) {
             ex.printStackTrace();
         }
-        List<Path> toLoad = new ArrayList<>();
+        List<Path> toLoad = new CopyOnWriteArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.moduleDirectory, "*.jar")) {
             for (Path path : stream) {
                 if (this.isModuleDetectedByPath(path, toLoad)) {
@@ -244,6 +244,7 @@ public final class CloudModuleManager {
 
                 }
             });
+            toUpdate.remove(path);
         }
         final List<CloudModule> cloudModules = resolveDependenciesSorted(new ArrayList<>(getModules().values()));
         final Set<CloudModule> loadOrder = new HashSet<>();
