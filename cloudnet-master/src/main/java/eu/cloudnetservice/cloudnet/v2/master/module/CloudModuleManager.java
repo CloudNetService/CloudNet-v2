@@ -113,7 +113,10 @@ public final class CloudModuleManager {
                                         module.getModuleJson().getName());
             if (module.isEnabled()) {
 
-                module.getModuleLogger().info(String.format("Disabling %s from %s", name, module.getModuleJson().getAuthorsAsString()));
+                module.getModuleLogger().info(String.format("Disabling %s from %s with version %s",
+                                                            name,
+                                                            module.getModuleJson().getAuthorsAsString(),
+                                                            module.getModuleJson().getVersion()));
                 JavaCloudModule javaCloudModule = (JavaCloudModule) module;
                 if (this.modules.containsKey(name)) {
                     javaCloudModule.setEnabled(false);
@@ -137,7 +140,7 @@ public final class CloudModuleManager {
         if (module instanceof JavaCloudModule) {
             JavaCloudModule javaCloudModule = (JavaCloudModule) module;
             final List<CloudModule> cloudModules = this.resolveDependenciesSortedSingle(new ArrayList<>(getModules().values()),
-                                                                                                       javaCloudModule);
+                                                                                        javaCloudModule);
             final Set<CloudModule> loadOrder = new HashSet<>();
             load:
             for (CloudModule cloudModule : cloudModules) {
@@ -171,9 +174,10 @@ public final class CloudModuleManager {
             Collections.reverse(forLoading);
             forLoading.forEach(cloudModule -> {
                 if (!cloudModule.isEnabled()) {
-                    cloudModule.getModuleLogger().info(String.format("Enabling module %s from %s",
+                    cloudModule.getModuleLogger().info(String.format("Enabling module %s from %s with version %s",
                                                                      cloudModule.getModuleJson().getName(),
-                                                                     cloudModule.getModuleJson().getAuthorsAsString()));
+                                                                     cloudModule.getModuleJson().getAuthorsAsString(),
+                                                                     cloudModule.getModuleJson().getVersion()));
                     cloudModule.setEnabled(true);
                 }
             });
@@ -324,9 +328,10 @@ public final class CloudModuleManager {
         forLoading.stream()
                   .filter(javaCloudModule -> !javaCloudModule.isLoaded())
                   .forEach(javaCloudModule -> {
-                      javaCloudModule.getModuleLogger().info(String.format("Loading module %s from %s",
+                      javaCloudModule.getModuleLogger().info(String.format("Loading module %s from %s with version %s",
                                                                            javaCloudModule.getModuleJson().getName(),
-                                                                           javaCloudModule.getModuleJson().getAuthorsAsString()));
+                                                                           javaCloudModule.getModuleJson().getAuthorsAsString(),
+                                                                           javaCloudModule.getModuleJson().getVersion()));
                       javaCloudModule.setLoaded(true);
                   });
     }
@@ -336,13 +341,15 @@ public final class CloudModuleManager {
         try {
             Optional<CloudModuleDescriptionFile> cloudModuleDescriptionFile = getCloudModuleDescriptionFile(path);
             if (cloudModuleDescriptionFile.isPresent()) {
-                ModuleClassLoader classLoader = new ModuleClassLoader(getClass().getClassLoader(), path,this);
+                ModuleClassLoader classLoader = new ModuleClassLoader(getClass().getClassLoader(), path, this);
                 final Class<?> jarClazz = classLoader.loadClass(cloudModuleDescriptionFile.get().getMain());
                 final Class<? extends JavaCloudModule> mainClazz = jarClazz.asSubclass(JavaCloudModule.class);
                 final JavaCloudModule javaCloudModule = mainClazz.getDeclaredConstructor().newInstance();
                 javaModule = Optional.of(javaCloudModule);
                 javaModule.ifPresent(cloudModule -> cloudModule.init(classLoader, cloudModuleDescriptionFile.get()));
-                javaModule.ifPresent(cloudModule -> this.loaders.put(String.format("%s:%s", cloudModule.getModuleJson().getGroupId(),cloudModule.getModuleJson().getName()),classLoader));
+                javaModule.ifPresent(cloudModule -> this.loaders.put(String.format("%s:%s",
+                                                                                   cloudModule.getModuleJson().getGroupId(),
+                                                                                   cloudModule.getModuleJson().getName()), classLoader));
             }
         } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
@@ -407,7 +414,8 @@ public final class CloudModuleManager {
 
                 try {
                     cachedClass = loader.findClass(name, false);
-                } catch (ClassNotFoundException cnfe) {}
+                } catch (ClassNotFoundException cnfe) {
+                }
                 if (cachedClass != null) {
                     return cachedClass;
                 }
