@@ -27,7 +27,7 @@ public final class CloudModuleDescriptionFile {
 
     private Set<CloudModuleDeployFile> fileDeployment;
 
-    //transient allows to use this constant only on runtime and was not saved into a config
+    //transient allows us to use this variable only for runtime and can be ignored for serialization
     private transient Path file;
     private transient Semver semver;
 
