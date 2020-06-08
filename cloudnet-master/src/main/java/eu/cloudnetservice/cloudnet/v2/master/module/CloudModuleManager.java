@@ -167,13 +167,11 @@ public final class CloudModuleManager {
         }
         List<CloudModule> forLoading = new ArrayList<>(resolveDependenciesSorted(new ArrayList<>(loadOrder)));
         Collections.reverse(forLoading);
-        forLoading.forEach(javaCloudModule -> {
-            if (!javaCloudModule.isLoaded()) {
-                javaCloudModule.getModuleLogger().info(String.format("Loading module %s from %s",
-                                                                     javaCloudModule.getModuleJson().getName(),
-                                                                     javaCloudModule.getModuleJson().getAuthorsAsString()));
-                javaCloudModule.setLoaded(true);
-            }
+        forLoading.stream().filter(javaCloudModule -> !javaCloudModule.isLoaded()).forEach(javaCloudModule -> {
+            javaCloudModule.getModuleLogger().info(String.format("Loading module %s from %s",
+                                                                 javaCloudModule.getModuleJson().getName(),
+                                                                 javaCloudModule.getModuleJson().getAuthorsAsString()));
+            javaCloudModule.setLoaded(true);
         });
     }
 
@@ -188,6 +186,15 @@ public final class CloudModuleManager {
                 final JavaCloudModule javaCloudModule = mainClazz.getDeclaredConstructor().newInstance();
                 javaModule = Optional.of(javaCloudModule);
                 javaModule.ifPresent(cloudModule -> cloudModule.init(classLoader, cloudModuleDescriptionFile.get()));
+                javaModule.ifPresent(cloudModule -> {
+                    if (cloudModule instanceof UpdateCloudModule) {
+                        cloudModule.getModuleLogger().info(String.format("Check module update %s", cloudModule.getModuleJson().getName()));
+                        UpdateCloudModule updateCloudModule = (UpdateCloudModule) cloudModule;
+                        if (updateCloudModule.update(cloudModule.getModuleJson().getUpdateUrl())) {
+                            cloudModule.getModuleLogger().info(String.format("Module update %s available", cloudModule.getModuleJson().getName()));
+                        }
+                    }
+                });
             }
         } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
