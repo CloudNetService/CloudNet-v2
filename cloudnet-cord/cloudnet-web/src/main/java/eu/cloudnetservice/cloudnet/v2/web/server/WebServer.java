@@ -125,7 +125,7 @@ public class WebServer {
         try {
             serverBootstrap.bind(address, port).sync().channel().closeFuture();
         } catch (InterruptedException e) {
-            e.initCause(new RuntimeException("Cannot bind REST-API to the given port " + port + " and host " + address));
+            throw new RuntimeException("Cannot bind REST-API to the given port " + port + " and host " + address, e);
         }
     }
 }
