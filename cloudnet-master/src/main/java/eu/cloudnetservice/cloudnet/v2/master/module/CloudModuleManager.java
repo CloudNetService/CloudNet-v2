@@ -51,8 +51,8 @@ public final class CloudModuleManager {
     }
 
     /**
-     * Looks for files in the Modules folder and the Update folder and indexes all files from the Update folder and the Modules folder.
-     * Afterwards all modules are loaded and checked if updates are available and if something needs to be migrated.
+     * Looks for files in the modules and update folder and indexes all files.
+     * Afterwards all modules are loaded and checked, whether updates are available and whether migrations need to be run.
      */
     public void detectModules() {
         List<Path> toUpdate = new CopyOnWriteArrayList<>();
