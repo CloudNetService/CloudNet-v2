@@ -50,6 +50,10 @@ public final class CloudModuleManager {
                                              Semver.SemverType.NPM);
     }
 
+    /**
+     * Looks for files in the Modules folder and the Update folder and indexes all files from the Update folder and the Modules folder.
+     * Afterwards all modules are loaded and checked if updates are available and if something needs to be migrated.
+     */
     public void detectModules() {
         List<Path> toUpdate = new CopyOnWriteArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.updateModuleDirectory, "*.jar")) {
@@ -73,6 +77,10 @@ public final class CloudModuleManager {
         handleLoaded(toLoad, toUpdate);
     }
 
+    /**
+     * Unloads all classes, if the module is still loaded it is deactivated and all classes are unloaded.
+     * @param module contains all information to load dependencies and the module itself such as version and authors
+     */
     public void unloadModule(CloudModule module) {
         if (module instanceof JavaCloudModule) {
             if (module.isEnabled()) {
@@ -106,6 +114,10 @@ public final class CloudModuleManager {
 
     }
 
+    /**
+     * Disables the module and unloads all classes from the module. To enable a clean delete
+     * @param module contains all information to load dependencies and the module itself such as version and authors
+     */
     public void disableModule(CloudModule module) {
         if (module instanceof JavaCloudModule) {
             String name = String.format("%s:%s",
@@ -136,6 +148,12 @@ public final class CloudModuleManager {
         }
     }
 
+    /**
+     * Loads the module and checks the dependencies.
+     * If a dependency is not there or not compatible with the version. This will disable and unload the module.
+     * No update check is performed here!
+     * @param module contains all information to load dependencies and the module itself such as version and authors
+     */
     public void enableModule(CloudModule module) {
         if (module instanceof JavaCloudModule) {
             JavaCloudModule javaCloudModule = (JavaCloudModule) module;
@@ -148,6 +166,7 @@ public final class CloudModuleManager {
                 if (!this.semCloudNetVersion.satisfies(cloudModule.getModuleJson().getRequiredCloudNetVersion())) {
                     System.err.println("Cannot load module " + moduleName + " because of missing required CloudNet version");
                     this.modules.remove(moduleName);
+                    unloadModule(cloudModule);
                     continue load;
                 }
                 for (final CloudModuleDependency dependency : cloudModule.getModuleJson().getDependencies()) {
@@ -156,12 +175,14 @@ public final class CloudModuleManager {
                     if (!optionalCloudModule.isPresent()) {
                         System.err.println("unable to load module " + moduleName + " because of missing dependency " + dependName);
                         this.modules.remove(moduleName);
+                        unloadModule(module);
                         continue load;
                     }
                     if (!optionalCloudModule.get().getModuleJson().getSemVersion().satisfies(dependency.getVersion())) {
                         System.err.println("Cannot load module " + moduleName + " because of missing dependency with version " + dependency
                             .getVersion());
                         this.modules.remove(moduleName);
+                        unloadModule(module);
                         continue load;
                     }
 
@@ -186,12 +207,11 @@ public final class CloudModuleManager {
         }
     }
 
-    private void handleUpdate(final List<Path> toUpdate) {
-        for (Path path : toUpdate) {
-            Optional<JavaCloudModule> cloudModule = loadModule(path);
-        }
-    }
-
+    /**
+     * Here all modules are loaded from a list, checked for updates and migrated if necessary
+     * @param toLoaded contains all files that have to be loaded
+     * @param toUpdate contains all update files which have to be checked if the update works
+     */
     private void handleLoaded(final List<Path> toLoaded, final List<Path> toUpdate) {
         for (Path path : toLoaded) {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
@@ -338,6 +358,11 @@ public final class CloudModuleManager {
                   });
     }
 
+    /**
+     * Here you can use a file to load the module without activating it or triggering anything else
+     * @param path specifies where the module to be loaded is located
+     * @return It returns the loaded module if it was loaded correctly
+     */
     public Optional<JavaCloudModule> loadModule(Path path) {
         Optional<JavaCloudModule> javaModule = Optional.empty();
         try {
@@ -359,6 +384,11 @@ public final class CloudModuleManager {
         return javaModule;
     }
 
+    /**
+     * With this method it is possible to read the modules json and save them as POJO
+     * @param module specifies where the module file is located
+     * @return Returns the Java object class with all values from the file
+     */
     public Optional<CloudModuleDescriptionFile> getCloudModuleDescriptionFile(Path module) {
         Optional<CloudModuleDescriptionFile> cloudModuleDescriptionFile = Optional.empty();
         if (module != null) {
@@ -389,6 +419,12 @@ public final class CloudModuleManager {
         return cloudModuleDescriptionFile;
     }
 
+    /**
+     * This method checks whether the file is entered in the relevant list with the absolute path
+     * @param path is the file to be checked
+     * @param toLoad is a list with already indexed files in the module folder
+     * @return Returns true if the file exists in the list
+     */
     private boolean isModuleDetectedByPath(@NotNull Path path, List<Path> toLoad) {
         boolean result = false;
         String check = path.toAbsolutePath().toString();
@@ -405,6 +441,11 @@ public final class CloudModuleManager {
         return result;
     }
 
+    /**
+     * With this method you can find a class that is already loaded using the name
+     * @param name name defines the class name you want to find
+     * @return The class you want to have
+     */
     Class<?> getClassByName(final String name) {
         Class<?> cachedClass = classes.get(name);
 
@@ -426,24 +467,48 @@ public final class CloudModuleManager {
         return null;
     }
 
+    /**
+     * Adds the class to a list of classes using the name
+     * @param name is the name that should apply to the class when the class is added
+     * @param clazz is the class to be added
+     */
     void setClass(final String name, final Class<?> clazz) {
         if (!classes.containsKey(name)) {
             classes.put(name, clazz);
         }
     }
 
+    /**
+     * Removes a class by the name
+     * @param name of the class concerned
+     */
     private void removeClass(String name) {
         classes.remove(name);
     }
 
+    /**
+     * Returns a list of loaded modules with their names
+     * @return The list where as key groupid:name is specified and as value the class instance
+     */
     public Map<String, CloudModule> getModules() {
         return modules;
     }
 
+    /**
+     * Returns the module instance with a name
+     * @param name is the one to find module
+     * @return Returns the object instance
+     */
     public Optional<CloudModule> getModule(@NotNull String name) {
         return Optional.of(getModules().get(name));
     }
 
+    /**
+     * Resolves the dependencies recursively
+     * @param cloudModuleDescriptionFiles is the list in which the dependencies should be resolved
+     * @param javaCloudModule is the module in which you want to see which dependencies there are
+     * @return Returns a list of dependencies in the correct order
+     */
     private List<CloudModule> resolveDependenciesSortedSingle(@NotNull List<CloudModule> cloudModuleDescriptionFiles,
                                                               CloudModule javaCloudModule) {
         MutableGraph<CloudModule> graph = GraphBuilder
@@ -477,6 +542,11 @@ public final class CloudModuleManager {
         return sorted;
     }
 
+    /**
+     * Resolves the dependencies recursively
+     * @param cloudModuleDescriptionFiles is the list in which the dependencies should be resolved
+     * @return Returns a list of dependencies in the correct order
+     */
     private List<CloudModule> resolveDependenciesSorted(@NotNull List<CloudModule> cloudModuleDescriptionFiles) {
         MutableGraph<CloudModule> graph = GraphBuilder
             .directed()
@@ -509,8 +579,14 @@ public final class CloudModuleManager {
         return sorted;
     }
 
-    //TODO: Gibt es ein Limit für den Integer von der Map. Wenn ja die If etwas umbauen.
-
+    /**
+     * Resolves the dependency and looks for the order
+     * @param graph indicates the graph in question
+     * @param node specifies the module in question
+     * @param marks are indicators where the system is located
+     * @param sorted is a list where at the end all dependencies come in sorted
+     * @param currentIteration tell from which module to iterate
+     */
     private void visitDependency(Graph<CloudModule> graph,
                                  CloudModule node,
                                  Map<CloudModule, Integer> marks,
