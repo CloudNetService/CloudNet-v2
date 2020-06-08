@@ -31,6 +31,8 @@ public final class CloudModuleManager {
     private final Path moduleDirectory;
     private final Path updateModuleDirectory;
     private final Semver semCloudNetVersion;
+    private final Map<String, Class<?>> classes = new java.util.concurrent.ConcurrentHashMap<String, Class<?>>(); // Spigot
+    private final Map<String, ModuleClassLoader> loaders = new LinkedHashMap<>();
 
     public CloudModuleManager() {
         modules = new LinkedHashMap<>();
@@ -71,17 +73,59 @@ public final class CloudModuleManager {
         handleLoaded(toLoad, toUpdate);
     }
 
-    public void disableModule(CloudModule module) {
+    public void unloadModule(CloudModule module) {
         if (module instanceof JavaCloudModule) {
             if (module.isEnabled()) {
-                String name = String.format("%s:%s:%s",
+                disableModule(module);
+            } else {
+                String name = String.format("%s:%s",
                                             module.getModuleJson().getGroupId(),
-                                            module.getModuleJson().getName(),
-                                            module.getModuleJson().getVersion());
+                                            module.getModuleJson().getName());
+                JavaCloudModule javaCloudModule = (JavaCloudModule) module;
+
+                if (this.modules.containsKey(name)) {
+                    javaCloudModule.setEnabled(false);
+                    this.loaders.remove(name);
+                    final ClassLoader classLoader = javaCloudModule.getClassLoader();
+                    if (classLoader instanceof ModuleClassLoader) {
+                        ModuleClassLoader moduleClassLoader = (ModuleClassLoader) classLoader;
+                        Set<String> names = moduleClassLoader.getClasses();
+                        for (String s : names) {
+                            removeClass(s);
+                        }
+                        try {
+                            moduleClassLoader.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    public void disableModule(CloudModule module) {
+        if (module instanceof JavaCloudModule) {
+            String name = String.format("%s:%s",
+                                        module.getModuleJson().getGroupId(),
+                                        module.getModuleJson().getName());
+            if (module.isEnabled()) {
+
                 module.getModuleLogger().info(String.format("Disabling %s from %s", name, module.getModuleJson().getAuthorsAsString()));
                 JavaCloudModule javaCloudModule = (JavaCloudModule) module;
                 if (this.modules.containsKey(name)) {
                     javaCloudModule.setEnabled(false);
+                    this.loaders.remove(name);
+                    final ClassLoader classLoader = javaCloudModule.getClassLoader();
+                    if (classLoader instanceof ModuleClassLoader) {
+                        ModuleClassLoader moduleClassLoader = (ModuleClassLoader) classLoader;
+                        Set<String> names = moduleClassLoader.getClasses();
+                        for (String s : names) {
+                            removeClass(s);
+                        }
+                    }
                 }
             }
         } else {
@@ -176,9 +220,10 @@ public final class CloudModuleManager {
                     if (module instanceof JavaCloudModule && module.isUpdate()) {
                         if (javaCloudModule.getModuleJson().getSemVersion().isGreaterThan(module.getModuleJson().getSemVersion())) {
                             JavaCloudModule jcm = (JavaCloudModule) module;
-                            this.modules.remove(javaCloudModule
+                            unloadModule(jcm);
+                            this.modules.remove(module
                                                     .getModuleJson()
-                                                    .getGroupId() + ":" + javaCloudModule);
+                                                    .getGroupId() + ":" + module.getModuleJson().getName());
                             if (jcm instanceof MigrateCloudModule) {
                                 MigrateCloudModule migrateCloudModule = (MigrateCloudModule) jcm;
                                 if (migrateCloudModule.migrate(module.getModuleJson().getSemVersion(),
@@ -188,8 +233,9 @@ public final class CloudModuleManager {
                                                                              module.getModuleJson().getVersion(),
                                                                              javaCloudModule.getModuleJson().getVersion()));
                                     try {
-                                        Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
+                                        Files.deleteIfExists(module.getModuleJson().getFile());
                                         Files.copy(javaCloudModule.getModuleJson().getFile(), module.getModuleJson().getFile());
+                                        Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
                                         final Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson()
                                                                                                                    .getFile());
                                         optionalJavaCloudModule.ifPresent(value -> {
@@ -290,12 +336,13 @@ public final class CloudModuleManager {
         try {
             Optional<CloudModuleDescriptionFile> cloudModuleDescriptionFile = getCloudModuleDescriptionFile(path);
             if (cloudModuleDescriptionFile.isPresent()) {
-                ModuleClassLoader classLoader = new ModuleClassLoader(getClass().getClassLoader(), path);
+                ModuleClassLoader classLoader = new ModuleClassLoader(getClass().getClassLoader(), path,this);
                 final Class<?> jarClazz = classLoader.loadClass(cloudModuleDescriptionFile.get().getMain());
                 final Class<? extends JavaCloudModule> mainClazz = jarClazz.asSubclass(JavaCloudModule.class);
                 final JavaCloudModule javaCloudModule = mainClazz.getDeclaredConstructor().newInstance();
                 javaModule = Optional.of(javaCloudModule);
                 javaModule.ifPresent(cloudModule -> cloudModule.init(classLoader, cloudModuleDescriptionFile.get()));
+                javaModule.ifPresent(cloudModule -> this.loaders.put(String.format("%s:%s", cloudModule.getModuleJson().getGroupId(),cloudModule.getModuleJson().getName()),classLoader));
             }
         } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
@@ -304,6 +351,7 @@ public final class CloudModuleManager {
     }
 
     public Optional<CloudModuleDescriptionFile> getCloudModuleDescriptionFile(Path module) {
+        Optional<CloudModuleDescriptionFile> cloudModuleDescriptionFile = Optional.empty();
         if (module != null) {
             try (JarFile moduleJar = new JarFile(module.toFile())) {
                 ZipEntry moduleJsonFile = moduleJar.getEntry("module_v2.json");
@@ -316,7 +364,7 @@ public final class CloudModuleManager {
                                                                                                          .getMajor() != null && moduleDescriptionFile
                         .getSemVersion()
                         .getPatch() != null) {
-                        return Optional.of(moduleDescriptionFile);
+                        cloudModuleDescriptionFile = Optional.of(moduleDescriptionFile);
                     } else {
                         System.err.println(String.format("Module(%s) not enabling, wrong version format %s",
                                                          moduleDescriptionFile.getName(),
@@ -329,7 +377,7 @@ public final class CloudModuleManager {
         } else {
             throw new ModuleNotFoundException("Module file not found");
         }
-        return Optional.empty();
+        return cloudModuleDescriptionFile;
     }
 
     private boolean isModuleDetectedByPath(@NotNull Path path, List<Path> toLoad) {
@@ -346,6 +394,36 @@ public final class CloudModuleManager {
             }
         }
         return result;
+    }
+
+    Class<?> getClassByName(final String name) {
+        Class<?> cachedClass = classes.get(name);
+
+        if (cachedClass != null) {
+            return cachedClass;
+        } else {
+            for (String current : loaders.keySet()) {
+                ModuleClassLoader loader = loaders.get(current);
+
+                try {
+                    cachedClass = loader.findClass(name, false);
+                } catch (ClassNotFoundException cnfe) {}
+                if (cachedClass != null) {
+                    return cachedClass;
+                }
+            }
+        }
+        return null;
+    }
+
+    void setClass(final String name, final Class<?> clazz) {
+        if (!classes.containsKey(name)) {
+            classes.put(name, clazz);
+        }
+    }
+
+    private void removeClass(String name) {
+        classes.remove(name);
     }
 
     public Map<String, CloudModule> getModules() {
