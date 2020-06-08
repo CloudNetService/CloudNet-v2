@@ -26,8 +26,6 @@ public final class CloudModuleDescriptionFile {
     private Set<CloudModuleDependency> dependencies;
     private Set<CloudModuleAuthor> authors;
 
-    private Set<CloudModuleDeployFile> fileDeployment;
-
     //transient allows us to use this variable only for runtime and can be ignored for serialization
     private transient Path file;
     private transient Semver semver;
@@ -46,8 +44,7 @@ public final class CloudModuleDescriptionFile {
                                       String description,
                                       String website,
                                       String requiredCloudNetVersion, Set<CloudModuleDependency> dependencies,
-                                      Set<CloudModuleAuthor> authors,
-                                      Set<CloudModuleDeployFile> fileDeployment, Path file) {
+                                      Set<CloudModuleAuthor> authors, Path file) {
         this.main = main;
         this.version = version;
         this.name = name;
@@ -58,7 +55,6 @@ public final class CloudModuleDescriptionFile {
         this.requiredCloudNetVersion = requiredCloudNetVersion;
         this.dependencies = dependencies;
         this.authors = authors;
-        this.fileDeployment = fileDeployment;
         this.file = file;
         this.semver = new Semver(version, Semver.SemverType.NPM);
     }
@@ -76,17 +72,12 @@ public final class CloudModuleDescriptionFile {
         this.requiredCloudNetVersion = thisClazz.requiredCloudNetVersion;
         this.dependencies = thisClazz.dependencies;
         this.authors = thisClazz.authors;
-        this.fileDeployment = thisClazz.fileDeployment;
         this.semver = new Semver(version, Semver.SemverType.NPM);
         this.file = file;
     }
 
     public Path getFile() {
         return file;
-    }
-
-    public Set<CloudModuleDeployFile> getFileDeployment() {
-        return fileDeployment;
     }
 
     public String getMain() {
