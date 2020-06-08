@@ -13,7 +13,6 @@ import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.cloudnet.v2.master.util.defaults.BungeeGroup;
 import eu.cloudnetservice.cloudnet.v2.master.util.defaults.LobbyGroup;
 import eu.cloudnetservice.cloudnet.v2.web.server.util.WebServerConfig;
-import jline.console.ConsoleReader;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;

@@ -5,7 +5,6 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.module.CloudModule;
-import eu.cloudnetservice.cloudnet.v2.master.module.JavaCloudModule;
 
 /**
  * Created by Tareko on 23.08.2017.
@@ -23,7 +22,9 @@ public final class CommandModules extends Command {
     public void onExecuteCommand(CommandSender sender, String[] args) {
         sender.sendMessage("Running modules:", NetworkUtils.SPACE_STRING);
         for (CloudModule module : CloudNet.getInstance().getModuleManager().getModules().values()) {
-            sender.sendMessage(module.getModuleJson().getName() + ' ' + module.getModuleJson().getVersion() + " by " + module.getModuleJson().getAuthorsAsString() + NetworkUtils.EMPTY_STRING);
+            sender.sendMessage(module.getModuleJson().getName() + ' ' + module.getModuleJson()
+                                                                              .getVersion() + " by " + module.getModuleJson()
+                                                                                                             .getAuthorsAsString() + NetworkUtils.EMPTY_STRING);
         }
     }
 }

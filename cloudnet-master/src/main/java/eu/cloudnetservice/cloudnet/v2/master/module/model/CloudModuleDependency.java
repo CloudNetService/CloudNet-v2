@@ -1,7 +1,5 @@
 package eu.cloudnetservice.cloudnet.v2.master.module.model;
 
-import com.vdurmont.semver4j.Semver;
-
 public final class CloudModuleDependency {
 
     private final String groupId;

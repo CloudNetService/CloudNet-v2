@@ -22,7 +22,7 @@ public final class CloudBootstrap {
 
     private static final InternalLoggerFactory INTERNAL_LOGGER_FACTORY = InternalLoggerFactory.getDefaultFactory();
 
-    public static synchronized void main(String[] args)  {
+    public static synchronized void main(String[] args) {
         System.setProperty("file.encoding", "UTF-8");
         System.setProperty("java.net.preferIPv4Stack", "true");
 

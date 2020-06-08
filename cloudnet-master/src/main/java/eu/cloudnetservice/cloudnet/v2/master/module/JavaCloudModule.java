@@ -48,7 +48,7 @@ public class JavaCloudModule extends EventKey implements CloudModule {
 
     @Override
     public Path getDataFolder() {
-        return Paths.get("modules",getModuleJson().getName());
+        return Paths.get("modules", getModuleJson().getName());
     }
 
     @Override

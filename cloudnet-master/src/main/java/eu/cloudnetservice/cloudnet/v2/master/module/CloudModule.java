@@ -2,7 +2,6 @@ package eu.cloudnetservice.cloudnet.v2.master.module;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.event.Event;
-import eu.cloudnetservice.cloudnet.v2.event.EventKey;
 import eu.cloudnetservice.cloudnet.v2.event.EventListener;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.module.model.CloudModuleDescriptionFile;

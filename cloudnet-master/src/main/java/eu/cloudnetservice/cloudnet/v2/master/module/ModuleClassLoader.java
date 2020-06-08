@@ -11,6 +11,7 @@ public class ModuleClassLoader extends URLClassLoader {
 
     private final Map<String, Class<?>> classes = new java.util.concurrent.ConcurrentHashMap<String, Class<?>>(); // Spigot
     private final CloudModuleManager moduleManager;
+
     static {
         ClassLoader.registerAsParallelCapable();
     }
@@ -27,9 +28,6 @@ public class ModuleClassLoader extends URLClassLoader {
     }
 
     Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
-        if (name.startsWith("org.bukkit.") || name.startsWith("net.minecraft.")) {
-            throw new ClassNotFoundException(name);
-        }
         Class<?> result = classes.get(name);
 
         if (result == null) {
