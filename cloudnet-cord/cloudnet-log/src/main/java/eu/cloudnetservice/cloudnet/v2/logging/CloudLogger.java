@@ -27,73 +27,47 @@ public class CloudLogger extends Logger {
     private final List<ICloudLoggerHandler> handler = new LinkedList<>();
 
     private boolean showPrompt = !Boolean.getBoolean("cloudnet.logging.prompt.disabled");
-    private final Handler loggingHandler;
+    private Handler loggingHandler;
 
     /**
      * Constructs a new cloud logger instance that handles logging messages from
      * all sources in an asynchronous matter.
      *
-     * @throws IOException            when creating directories or files in {@code local/}
-     *                                was not possible
      */
     public CloudLogger() {
         super("CloudNetServerLogger", null);
-
-        if (!Files.exists(Paths.get("local"))) {
-            try {
+        try {
+            if (!Files.exists(Paths.get("local"))) {
                 Files.createDirectory(Paths.get("local"));
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-        }
-        if (!Files.exists(Paths.get("local", "logs"))) {
-            try {
+            if (!Files.exists(Paths.get("local", "logs"))) {
                 Files.createDirectory(Paths.get("local", "logs"));
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-        }
 
-        setLevel(Level.ALL);
-
-        try {
+            setLevel(Level.ALL);
             this.reader = new ConsoleReader(System.in, System.out);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.reader.setExpandEvents(false);
+            this.reader.setExpandEvents(false);
 
-        final LoggingFormatter formatter = new LoggingFormatter();
-        FileHandler fileHandler = null;
-        try {
+            final LoggingFormatter formatter = new LoggingFormatter();
+            FileHandler fileHandler;
+
             fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             fileHandler.setEncoding(StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-            e.initCause(new RuntimeException("Cannot set file encoding to UTF-8 logger"));
-        }
-        fileHandler.setFormatter(formatter);
+            fileHandler.setFormatter(formatter);
 
-        addHandler(fileHandler);
+            addHandler(fileHandler);
 
-        loggingHandler = new LoggingHandler(reader, this);
-        loggingHandler.setFormatter(formatter);
-        try {
+            loggingHandler = new LoggingHandler(reader, this);
+            loggingHandler.setFormatter(formatter);
+
             loggingHandler.setEncoding(StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-            e.initCause(new RuntimeException("Cannot set logger encoding to UTF-8"));
-        }
-        loggingHandler.setLevel(Level.INFO);
-        addHandler(loggingHandler);
+            loggingHandler.setLevel(Level.INFO);
+            addHandler(loggingHandler);
 
-        System.setOut(new PrintStream(new LoggingOutputStream(this, Level.INFO)));
-        System.setErr(new PrintStream(new LoggingOutputStream(this, Level.SEVERE)));
+            System.setOut(new PrintStream(new LoggingOutputStream(this, Level.INFO)));
+            System.setErr(new PrintStream(new LoggingOutputStream(this, Level.SEVERE)));
 
-        this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
-        try {
+            this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
             this.reader.resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
         } catch (IOException e) {
             e.printStackTrace();
