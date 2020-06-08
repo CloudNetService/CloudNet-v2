@@ -1,0 +1,22 @@
+{
+  "main": "eu.cloudnetservice.cloudnet.v2.examples.module.ModuleExample",
+  "version": "1.0.0-BETA",
+  "groupId": "eu.cloudnetservice.cloudnet.v2",
+  "name": "ExampleModule",
+  "description": "This is only an example Module",
+  "website": "https://cloudnetservice.eu/",
+  "requiredCloudNetVersion": ">=2.2.0-RELEASE",
+  "dependencies": [
+    {
+      "name": "AnotherExampleModule",
+      "groupId": "eu.cloudnetservice.cloudnet.v2",
+      "version": "~1.0.0"
+    }
+  ],
+  "authors": [
+    {
+      "name": "TheMeinerLP",
+      "role": "Developer"
+    }
+  ]
+}
