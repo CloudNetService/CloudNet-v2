@@ -7,6 +7,7 @@ import eu.cloudnetservice.cloudnet.v2.master.module.exception.InvalidDescription
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ public final class CloudModuleDescriptionFile {
     private transient Path file;
     private transient Semver semver;
 
-    public static transient TypeToken<CloudModuleDescriptionFile> CLOUD_MODULE_DESCRIPTION_FILE = TypeToken.get(CloudModuleDescriptionFile.class);
+    public static transient Type CLOUD_MODULE_DESCRIPTION_FILE = TypeToken.get(CloudModuleDescriptionFile.class).getType();
 
     public CloudModuleDescriptionFile(InputStream stream, Path file) {
         loadJson(stream, file);
@@ -61,7 +62,7 @@ public final class CloudModuleDescriptionFile {
 
     private void loadJson(InputStream stream, Path file) {
         CloudModuleDescriptionFile thisClazz = Document.GSON.fromJson(new InputStreamReader(stream),
-                                                                      CLOUD_MODULE_DESCRIPTION_FILE.getType());
+                                                                      CLOUD_MODULE_DESCRIPTION_FILE);
         this.main = thisClazz.main;
         this.version = thisClazz.version;
         this.name = thisClazz.name;
