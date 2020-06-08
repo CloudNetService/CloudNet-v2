@@ -266,9 +266,11 @@ public final class CloudModuleManager {
                                 }
                             } else {
                                 try {
+                                    Files.deleteIfExists(module.getModuleJson().getFile());
                                     Files.copy(javaCloudModule.getModuleJson().getFile(), module.getModuleJson().getFile());
                                     Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
-                                    final Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson().getFile());
+                                    final Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson()
+                                                                                                               .getFile());
                                     optionalJavaCloudModule.ifPresent(value -> {
                                         this.modules.put(value
                                                              .getModuleJson()
