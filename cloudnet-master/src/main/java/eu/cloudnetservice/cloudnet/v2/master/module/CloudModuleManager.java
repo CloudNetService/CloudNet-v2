@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import com.vdurmont.semver4j.Semver;
+import eu.cloudnetservice.cloudnet.v2.master.bootstrap.CloudBootstrap;
 import eu.cloudnetservice.cloudnet.v2.master.module.exception.ModuleDescriptionFileNotFoundException;
 import eu.cloudnetservice.cloudnet.v2.master.module.exception.ModuleNotFoundException;
 import eu.cloudnetservice.cloudnet.v2.master.module.model.CloudModuleDependency;
@@ -28,6 +30,7 @@ public final class CloudModuleManager {
     private final Map<String, CloudModule> modules;
     private final Collection<Path> toLoad = new CopyOnWriteArrayList<>();
     private final Path moduleDirectory;
+    private final Semver semCloudNetVersion;
 
     public CloudModuleManager() {
         modules = new LinkedHashMap<>();
@@ -39,6 +42,10 @@ public final class CloudModuleManager {
                 e.printStackTrace();
             }
         }
+        this.semCloudNetVersion = new Semver(String.format("%s-%s",
+                                                           CloudBootstrap.class.getPackage().getImplementationVersion(),
+                                                           CloudBootstrap.class.getPackage().getSpecificationVersion()),
+                                             Semver.SemverType.NPM);
     }
 
     public void detectModules() {
@@ -74,32 +81,37 @@ public final class CloudModuleManager {
     }
 
     public void enableModule(CloudModule module) {
-
         if (module instanceof JavaCloudModule) {
             JavaCloudModule javaCloudModule = (JavaCloudModule) module;
             final List<CloudModule> cloudModuleDescriptionFiles = this.resolveDependenciesSortedSingle(new ArrayList<>(getModules().values()),
-                                                                                                           javaCloudModule);
+                                                                                                       javaCloudModule);
             final Set<CloudModule> loadOrder = new HashSet<>();
             load:
-            for (CloudModule descriptionFile : cloudModuleDescriptionFiles) {
-                String moduleName = descriptionFile.getModuleJson().getGroupId() + ":" + descriptionFile.getModuleJson().getName();
-                for (final CloudModuleDependency dependency : descriptionFile.getModuleJson().getDependencies()) {
+            for (CloudModule cloudModule : cloudModuleDescriptionFiles) {
+                String moduleName = cloudModule.getModuleJson().getGroupId() + ":" + cloudModule.getModuleJson().getName();
+                if (!this.semCloudNetVersion.satisfies(cloudModule.getModuleJson().getRequiredCloudNetVersion())) {
+                    System.err.println("Cannot load module " + moduleName + " because of missing required CloudNet version");
+                    this.modules.remove(moduleName);
+                    continue load;
+                }
+                for (final CloudModuleDependency dependency : cloudModule.getModuleJson().getDependencies()) {
                     String dependName = dependency.getGroupId() + ":" + dependency.getName();
-                    final Optional<CloudModule> omodule = getModule(dependName);
-                    if (!omodule.isPresent()) {
+                    final Optional<CloudModule> optionalCloudModule = getModule(dependName);
+                    if (!optionalCloudModule.isPresent()) {
                         System.err.println("unable to load module " + moduleName + " because of missing dependency " + dependName);
                         this.modules.remove(moduleName);
                         continue load;
                     }
-                    if (!omodule.get().getModuleJson().getSemVersion().satisfies(dependency.getVersion())) {
+                    if (!optionalCloudModule.get().getModuleJson().getSemVersion().satisfies(dependency.getVersion())) {
                         System.err.println("Cannot load module " + moduleName + " because of missing dependency with version " + dependency
                             .getVersion());
                         this.modules.remove(moduleName);
                         continue load;
                     }
-                    omodule.ifPresent(loadOrder::add);
+
+                    optionalCloudModule.ifPresent(loadOrder::add);
                 }
-                loadOrder.add(descriptionFile);
+                loadOrder.add(cloudModule);
             }
 
             List<CloudModule> forLoading = new ArrayList<>(resolveDependenciesSorted(new ArrayList<>(loadOrder)));
@@ -129,24 +141,29 @@ public final class CloudModuleManager {
         final List<CloudModule> cloudModuleDescriptionFiles = resolveDependenciesSorted(new ArrayList<>(getModules().values()));
         final Set<CloudModule> loadOrder = new HashSet<>();
         load:
-        for (CloudModule descriptionFile : cloudModuleDescriptionFiles) {
-            String moduleName = descriptionFile.getModuleJson().getGroupId() + ":" + descriptionFile.getModuleJson().getName();
-            for (final CloudModuleDependency dependency : descriptionFile.getModuleJson().getDependencies()) {
+        for (CloudModule cloudModule : cloudModuleDescriptionFiles) {
+            String moduleName = cloudModule.getModuleJson().getGroupId() + ":" + cloudModule.getModuleJson().getName();
+            if (!this.semCloudNetVersion.satisfies(cloudModule.getModuleJson().getRequiredCloudNetVersion())) {
+                System.err.println("Cannot load module " + moduleName + " because of missing required CloudNet version");
+                this.modules.remove(moduleName);
+                continue load;
+            }
+            for (final CloudModuleDependency dependency : cloudModule.getModuleJson().getDependencies()) {
                 String name = dependency.getGroupId() + ":" + dependency.getName();
-                final Optional<CloudModule> omodule = getModule(name);
-                if (!omodule.isPresent()) {
+                final Optional<CloudModule> optionalCloudModule = getModule(name);
+                if (!optionalCloudModule.isPresent()) {
                     System.err.println("unable to load module " + moduleName + " because of missing dependency " + name);
                     this.modules.remove(moduleName);
                     continue load;
                 }
-                if (!omodule.get().getModuleJson().getSemVersion().satisfies(dependency.getVersion())) {
+                if (!optionalCloudModule.get().getModuleJson().getSemVersion().satisfies(dependency.getVersion())) {
                     System.err.println("Cannot load module " + moduleName + " because of missing dependency with version " + dependency.getVersion());
                     this.modules.remove(moduleName);
                     continue load;
                 }
-                omodule.ifPresent(loadOrder::add);
+                optionalCloudModule.ifPresent(loadOrder::add);
             }
-            loadOrder.add(descriptionFile);
+            loadOrder.add(cloudModule);
         }
         List<CloudModule> forLoading = new ArrayList<>(resolveDependenciesSorted(new ArrayList<>(loadOrder)));
         Collections.reverse(forLoading);
@@ -170,7 +187,7 @@ public final class CloudModuleManager {
                 final Class<? extends JavaCloudModule> mainClazz = jarClazz.asSubclass(JavaCloudModule.class);
                 final JavaCloudModule javaCloudModule = mainClazz.getDeclaredConstructor().newInstance();
                 javaModule = Optional.of(javaCloudModule);
-                javaModule.ifPresent(cloudModule -> cloudModule.init(classLoader,cloudModuleDescriptionFile.get()));
+                javaModule.ifPresent(cloudModule -> cloudModule.init(classLoader, cloudModuleDescriptionFile.get()));
             }
         } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
@@ -232,23 +249,23 @@ public final class CloudModuleManager {
     }
 
     private List<CloudModule> resolveDependenciesSortedSingle(@NotNull List<CloudModule> cloudModuleDescriptionFiles,
-                                                                  CloudModule javaCloudModule) {
+                                                              CloudModule javaCloudModule) {
         MutableGraph<CloudModule> graph = GraphBuilder
             .directed()
             .expectedNodeCount(cloudModuleDescriptionFiles.size())
             .allowsSelfLoops(false)
             .build();
         Map<String, CloudModule> candidateAsMap = Maps.uniqueIndex(cloudModuleDescriptionFiles,
-                                                                       f -> String.format("%s:%s",
-                                                                                          f.getModuleJson().getGroupId(),
-                                                                                          f.getModuleJson().getName()));
+                                                                   f -> String.format("%s:%s",
+                                                                                      f.getModuleJson().getGroupId(),
+                                                                                      f.getModuleJson().getName()));
 
         CloudModule descriptionFile = javaCloudModule;
         graph.addNode(descriptionFile);
         for (CloudModuleDependency dependency : descriptionFile.getModuleJson().getDependencies()) {
             CloudModule dependencyContainer = candidateAsMap.get(String.format("%s:%s",
-                                                                                   dependency.getGroupId(),
-                                                                                   dependency.getName()));
+                                                                               dependency.getGroupId(),
+                                                                               dependency.getName()));
             if (dependencyContainer != null) {
                 graph.putEdge(dependencyContainer, descriptionFile);
             }
@@ -271,16 +288,16 @@ public final class CloudModuleManager {
             .allowsSelfLoops(false)
             .build();
         Map<String, CloudModule> candidateAsMap = Maps.uniqueIndex(cloudModuleDescriptionFiles,
-                                                                       f -> String.format("%s:%s",
-                                                                                          f.getModuleJson().getGroupId(),
-                                                                                          f.getModuleJson().getName()));
+                                                                   f -> String.format("%s:%s",
+                                                                                      f.getModuleJson().getGroupId(),
+                                                                                      f.getModuleJson().getName()));
 
         for (CloudModule descriptionFile : cloudModuleDescriptionFiles) {
             graph.addNode(descriptionFile);
             for (CloudModuleDependency dependency : descriptionFile.getModuleJson().getDependencies()) {
                 CloudModule dependencyContainer = candidateAsMap.get(String.format("%s:%s",
-                                                                                       dependency.getGroupId(),
-                                                                                       dependency.getName()));
+                                                                                   dependency.getGroupId(),
+                                                                                   dependency.getName()));
                 if (dependencyContainer != null) {
                     graph.putEdge(dependencyContainer, descriptionFile);
                 }

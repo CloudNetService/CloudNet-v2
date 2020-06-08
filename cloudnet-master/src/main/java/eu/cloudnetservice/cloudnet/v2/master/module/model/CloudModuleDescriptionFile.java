@@ -21,6 +21,7 @@ public final class CloudModuleDescriptionFile {
 
     private String description;
     private String website;
+    private String requiredCloudNetVersion;
 
     private Set<CloudModuleDependency> dependencies;
     private Set<CloudModuleAuthor> authors;
@@ -44,7 +45,7 @@ public final class CloudModuleDescriptionFile {
                                       String updateUrl,
                                       String description,
                                       String website,
-                                      Set<CloudModuleDependency> dependencies,
+                                      String requiredCloudNetVersion, Set<CloudModuleDependency> dependencies,
                                       Set<CloudModuleAuthor> authors,
                                       Set<CloudModuleDeployFile> fileDeployment, Path file) {
         this.main = main;
@@ -54,6 +55,7 @@ public final class CloudModuleDescriptionFile {
         this.updateUrl = updateUrl;
         this.description = description;
         this.website = website;
+        this.requiredCloudNetVersion = requiredCloudNetVersion;
         this.dependencies = dependencies;
         this.authors = authors;
         this.fileDeployment = fileDeployment;
@@ -62,7 +64,8 @@ public final class CloudModuleDescriptionFile {
     }
 
     private void loadJson(InputStream stream, Path file) {
-        CloudModuleDescriptionFile thisClazz = Document.GSON.fromJson(new InputStreamReader(stream), CLOUD_MODULE_DESCRIPTION_FILE.getType());
+        CloudModuleDescriptionFile thisClazz = Document.GSON.fromJson(new InputStreamReader(stream),
+                                                                      CLOUD_MODULE_DESCRIPTION_FILE.getType());
         this.main = thisClazz.main;
         this.version = thisClazz.version;
         this.name = thisClazz.name;
@@ -70,6 +73,7 @@ public final class CloudModuleDescriptionFile {
         this.updateUrl = thisClazz.updateUrl;
         this.description = thisClazz.description;
         this.website = thisClazz.website;
+        this.requiredCloudNetVersion = thisClazz.requiredCloudNetVersion;
         this.dependencies = thisClazz.dependencies;
         this.authors = thisClazz.authors;
         this.fileDeployment = thisClazz.fileDeployment;
@@ -92,6 +96,7 @@ public final class CloudModuleDescriptionFile {
     public String getVersion() {
         return version;
     }
+
     public Semver getSemVersion() {
         return this.semver;
     }
@@ -124,8 +129,14 @@ public final class CloudModuleDescriptionFile {
         return authors;
     }
 
+    public String getRequiredCloudNetVersion() {
+        return requiredCloudNetVersion;
+    }
+
     public String getAuthorsAsString() {
-        return getAuthors().stream().map(cloudModuleAuthor -> String.format("%s(%s)", cloudModuleAuthor.getName(),cloudModuleAuthor.getRole())).collect(Collectors.joining(","));
+        return getAuthors().stream().map(cloudModuleAuthor -> String.format("%s(%s)",
+                                                                            cloudModuleAuthor.getName(),
+                                                                            cloudModuleAuthor.getRole())).collect(Collectors.joining(","));
     }
 
     public void setFile(Path file) {
