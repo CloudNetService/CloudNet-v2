@@ -1,5 +1,6 @@
 package eu.cloudnetservice.cloudnet.v2.examples.module;
 
+import com.vdurmont.semver4j.Semver;
 import eu.cloudnetservice.cloudnet.v2.master.module.JavaCloudModule;
 import eu.cloudnetservice.cloudnet.v2.master.module.MigrateCloudModule;
 import eu.cloudnetservice.cloudnet.v2.master.module.UpdateCloudModule;
@@ -54,7 +55,7 @@ public class ModuleExample extends JavaCloudModule implements MigrateCloudModule
     }
 
     @Override
-    public boolean migrate(final String oldVersion, final String newVersion) {
+    public boolean migrate(final Semver oldVersion, final Semver newVersion) {
         return true;
     }
 
