@@ -359,9 +359,10 @@ public final class CloudModuleManager {
     }
 
     /**
-     * Here you can use a file to load the module without activating it or triggering anything else
-     * @param path specifies where the module to be loaded is located
-     * @return It returns the loaded module if it was loaded correctly
+     * Attempts to load a module from the given path.
+     
+     * @param path the place where the module resides.
+     * @return an {@code Optional} containing the loaded module, if successful.
      */
     public Optional<JavaCloudModule> loadModule(Path path) {
         Optional<JavaCloudModule> javaModule = Optional.empty();
@@ -385,9 +386,11 @@ public final class CloudModuleManager {
     }
 
     /**
-     * With this method it is possible to read the modules json and save them as POJO
-     * @param module specifies where the module file is located
-     * @return Returns the Java object class with all values from the file
+     * Attempts to read and parse a module's description file.
+     
+     * @param module the path where the module resides.
+     
+     * @return an {@code Optional} possibly containing the parsed description file.
      */
     public Optional<CloudModuleDescriptionFile> getCloudModuleDescriptionFile(Path module) {
         Optional<CloudModuleDescriptionFile> cloudModuleDescriptionFile = Optional.empty();
@@ -420,10 +423,12 @@ public final class CloudModuleManager {
     }
 
     /**
-     * This method checks whether the file is entered in the relevant list with the absolute path
-     * @param path is the file to be checked
-     * @param toLoad is a list with already indexed files in the module folder
-     * @return Returns true if the file exists in the list
+     * Checks whether the given path is present in the list of modules to load.
+     * The check is done using the absolute path.
+     
+     * @param path the path to the module.
+     * @param toLoad a list of all modules already indexed.
+     * @return {@code true}, if the module is present in the list, {@code false} otherwise.
      */
     private boolean isModuleDetectedByPath(@NotNull Path path, List<Path> toLoad) {
         boolean result = false;
@@ -442,9 +447,11 @@ public final class CloudModuleManager {
     }
 
     /**
-     * With this method you can find a class that is already loaded using the name
-     * @param name name defines the class name you want to find
-     * @return The class you want to have
+     * Attempts to the a class by the given name.
+     * Searches every modules' class loaders.
+     *
+     * @param name the fully-qualified name of the class.
+     * @return the class, if present in any class loader. {@code null}, if the class is not present in any search class loader.
      */
     Class<?> getClassByName(final String name) {
         Class<?> cachedClass = classes.get(name);
@@ -479,35 +486,34 @@ public final class CloudModuleManager {
     }
 
     /**
-     * Removes a class by the name
-     * @param name of the class concerned
+     * Removes a class from the cache by the given name.
+     * @param name the name of the class to remove.
      */
     private void removeClass(String name) {
         classes.remove(name);
     }
 
     /**
-     * Returns a list of loaded modules with their names
-     * @return The list where as key groupid:name is specified and as value the class instance
+     * @return a map of loaded modules' names mapped to the respective module instances.
      */
     public Map<String, CloudModule> getModules() {
         return modules;
     }
 
     /**
-     * Returns the module instance with a name
-     * @param name is the one to find module
-     * @return Returns the object instance
+     * Returns the module instance associated to the given name, if present.
+     * @param name the name of the module to get.
+     * @return an {@code Optional} possibly containing the module's instance.
      */
     public Optional<CloudModule> getModule(@NotNull String name) {
         return Optional.of(getModules().get(name));
     }
 
     /**
-     * Resolves the dependencies recursively
-     * @param cloudModuleDescriptionFiles is the list in which the dependencies should be resolved
-     * @param javaCloudModule is the module in which you want to see which dependencies there are
-     * @return Returns a list of dependencies in the correct order
+     * Resolves all dependencies of the given module description files recursively.
+     * @param cloudModuleDescriptionFiles a list containing the dependencies to be resolved.
+     * @param javaCloudModule the module for which to resolve the dependencies.
+     * @return a list of modules that the given module depends on in the order they need to be loaded.
      */
     private List<CloudModule> resolveDependenciesSortedSingle(@NotNull List<CloudModule> cloudModuleDescriptionFiles,
                                                               CloudModule javaCloudModule) {
@@ -543,9 +549,9 @@ public final class CloudModuleManager {
     }
 
     /**
-     * Resolves the dependencies recursively
-     * @param cloudModuleDescriptionFiles is the list in which the dependencies should be resolved
-     * @return Returns a list of dependencies in the correct order
+     * Resolves dependencies recursively.
+     * @param cloudModuleDescriptionFiles a list containing the dependencies which should be resolved.
+     * @return a list of modules in the order they need to be loaded.
      */
     private List<CloudModule> resolveDependenciesSorted(@NotNull List<CloudModule> cloudModuleDescriptionFiles) {
         MutableGraph<CloudModule> graph = GraphBuilder
