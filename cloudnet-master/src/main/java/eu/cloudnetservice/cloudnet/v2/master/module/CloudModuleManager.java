@@ -150,10 +150,9 @@ public final class CloudModuleManager {
     }
 
     /**
-     * Loads the module and checks the dependencies.
-     * If a dependency is not there or not compatible with the version. This will disable and unload the module.
-     * No update check is performed here!
-     * @param module contains all information to load dependencies and the module itself such as version and authors
+     * Checks a module's dependencies and attempts to load a module.
+     * If a dependency is not present or incompatible with the module, this will disable and unload the module cleanly.
+     * @param module the module that should be loaded.
      */
     public void enableModule(CloudModule module) {
         if (module instanceof JavaCloudModule) {
