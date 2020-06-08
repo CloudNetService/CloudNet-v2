@@ -116,8 +116,8 @@ public final class CloudModuleManager {
     }
 
     /**
-     * Disables the module and unloads all classes from the module. To enable a clean delete
-     * @param module contains all information to load dependencies and the module itself such as version and authors
+     * Disables the module and unloads all classes from the module.
+     * @param module the module that should be disabled.
      */
     public void disableModule(CloudModule module) {
         if (module instanceof JavaCloudModule) {
