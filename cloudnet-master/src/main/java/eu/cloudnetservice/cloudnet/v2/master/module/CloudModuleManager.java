@@ -78,8 +78,9 @@ public final class CloudModuleManager {
     }
 
     /**
-     * Unloads all classes, if the module is still loaded it is deactivated and all classes are unloaded.
-     * @param module contains all information to load dependencies and the module itself such as version and authors
+     * Unloads the given module.
+     * If it is currently enabled, disables the module and unloads all known classes.
+     * @param module the module that should be unloaded.
      */
     public void unloadModule(CloudModule module) {
         if (module instanceof JavaCloudModule) {
