@@ -19,14 +19,14 @@ public final class CloudModuleLogger extends Logger {
      */
     public CloudModuleLogger(CloudModule module) {
         super(module.getClass().getCanonicalName(), null);
-        this.moduleName = "[" + module.getModuleJson().getName() + "] ";
+        this.moduleName =  module.getModuleJson().getName();
         this.setUseParentHandlers(true);
         this.setParent(CloudNet.getLogger());
     }
 
     @Override
     public void log(final LogRecord record) {
-        record.setMessage(this.moduleName + record.getMessage());
+        record.setMessage(String.format("[%s] %s", moduleName, record.getMessage()));
         super.log(record);
     }
 }
