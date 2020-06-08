@@ -15,7 +15,7 @@ public final class CloudModuleLogger extends Logger {
      * The logger will be initially configured with a null Level
      * and with useParentHandlers set to true.
      *
-     * @param module is used to say in the log message that this message comes from this module
+     * @param module used to refer to the module in messages.
      */
     public CloudModuleLogger(CloudModule module) {
         super(module.getClass().getCanonicalName(), null);
