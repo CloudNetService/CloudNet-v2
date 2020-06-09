@@ -61,7 +61,14 @@ public class User implements Nameable {
 
     @Override
     public String toString() {
-        return "User{" + "name='" + name + '\'' + ", uniqueId=" + uniqueId + ", apiToken='" + apiToken + '\'' + ", hashedPassword='" + hashedPassword + '\'' + ", permissions=" + permissions + ", metaData=" + metaData + '}';
+        return "User{" +
+            "name='" + name + '\'' +
+            ", uniqueId=" + uniqueId +
+            ", apiToken='" + apiToken + '\'' +
+            ", hashedPassword='" + hashedPassword + '\'' +
+            ", permissions=" + permissions +
+            ", metaData=" + metaData +
+            '}';
     }
 
     public String getApiToken() {

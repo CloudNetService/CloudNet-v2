@@ -77,8 +77,15 @@ public abstract class Module<E> extends EventKey {
 
     @Override
     public String toString() {
-        return "Module{" + "dataFolder=" + dataFolder + ", configFile=" + configFile + ", utilFile=" + utilFile + ", moduleConfig=" + moduleConfig + ", classLoader=" + classLoader + ", configuration=" + configuration + ", moduleLoader=" + moduleLoader + "} " + super
-            .toString();
+        return "Module{" +
+            "dataFolder=" + dataFolder +
+            ", configFile=" + configFile +
+            ", utilFile=" + utilFile +
+            ", moduleConfig=" + moduleConfig +
+            ", classLoader=" + classLoader +
+            ", configuration=" + configuration +
+            ", moduleLoader=" + moduleLoader +
+            '}';
     }
 
     /**

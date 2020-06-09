@@ -113,7 +113,19 @@ public class ServerInfo {
 
     @Override
     public String toString() {
-        return "ServerInfo{" + "serviceId=" + serviceId + ", host='" + host + '\'' + ", port=" + port + ", online=" + online + ", players=" + players + ", memory=" + memory + ", motd='" + motd + '\'' + ", onlineCount=" + onlineCount + ", maxPlayers=" + maxPlayers + ", serverState=" + serverState + ", serverConfig=" + serverConfig + ", template=" + template + '}';
+        return "ServerInfo{" +
+            "serviceId=" + serviceId +
+            ", host='" + host + '\'' +
+            ", port=" + port +
+            ", online=" + online +
+            ", players=" + players +
+            ", memory=" + memory +
+            ", maxPlayers=" + maxPlayers +
+            ", serverConfig=" + serverConfig +
+            ", template=" + template +
+            ", motd='" + motd + '\'' +
+            ", serverState=" + serverState +
+            '}';
     }
 
     public ServiceId getServiceId() {

@@ -45,7 +45,15 @@ public class ProxyInfo {
 
     @Override
     public String toString() {
-        return "ProxyInfo{" + "serviceId=" + serviceId + ", host='" + host + '\'' + ", port=" + port + ", online=" + online + ", players=" + players + ", memory=" + memory + ", onlineCount=" + onlineCount + '}';
+        return "ProxyInfo{" +
+            "serviceId=" + serviceId +
+            ", host='" + host + '\'' +
+            ", port=" + port +
+            ", online=" + online +
+            ", players=" + players +
+            ", memory=" + memory +
+            ", onlineCount=" + onlineCount +
+            '}';
     }
 
     public ServiceId getServiceId() {
