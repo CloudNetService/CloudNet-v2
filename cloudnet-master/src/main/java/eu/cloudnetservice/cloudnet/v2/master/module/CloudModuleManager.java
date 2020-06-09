@@ -379,7 +379,7 @@ public final class CloudModuleManager {
             try (InputStream stream = moduleJar.getInputStream(moduleJsonFile)) {
                 CloudModuleDescriptionFile moduleDescriptionFile = new CloudModuleDescriptionFile(stream, module);
                 if (moduleDescriptionFile.getSemVersion().getMajor() != null && moduleDescriptionFile.getSemVersion()
-                                                                                                     .getMajor() != null && moduleDescriptionFile
+                                                                                                     .getMinor() != null && moduleDescriptionFile
                     .getSemVersion()
                     .getPatch() != null) {
                     cloudModuleDescriptionFile = Optional.of(moduleDescriptionFile);
