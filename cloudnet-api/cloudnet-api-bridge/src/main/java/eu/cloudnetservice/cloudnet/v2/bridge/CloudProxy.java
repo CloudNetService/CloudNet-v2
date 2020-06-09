@@ -300,8 +300,7 @@ public class CloudProxy implements CloudService, NetworkHandler {
                                             true,
                                             ProxyServer.getInstance().getPlayers().stream()
                                                        .collect(Collectors.toMap(ProxiedPlayer::getUniqueId, CommandSender::getName)),
-                                            proxyProcessMeta.getMemory(),
-                                            ProxyServer.getInstance().getOnlineCount());
+                                            proxyProcessMeta.getMemory());
         this.cloudAPI.update(proxyInfo);
     }
 

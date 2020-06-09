@@ -17,26 +17,22 @@ public class ProxyInfo {
     private final ServiceId serviceId;
 
     private final String host;
-    private final int port;
     private final boolean online;
     private final Map<UUID, String> players;
-    private final int memory;
-    private final int onlineCount;
+    private final int memory, port;
 
     public ProxyInfo(ServiceId serviceId,
                      String host,
                      int port,
                      boolean online,
                      Map<UUID, String> players,
-                     int memory,
-                     int onlineCount) {
+                     int memory) {
         this.serviceId = serviceId;
         this.host = host;
         this.port = port;
         this.online = online;
         this.players = players;
         this.memory = memory;
-        this.onlineCount = onlineCount;
     }
 
     public int getMemory() {
@@ -52,7 +48,6 @@ public class ProxyInfo {
             ", online=" + online +
             ", players=" + players +
             ", memory=" + memory +
-            ", onlineCount=" + onlineCount +
             '}';
     }
 
@@ -69,7 +64,7 @@ public class ProxyInfo {
     }
 
     public int getOnlineCount() {
-        return onlineCount;
+        return players != null ? players.size() : 0;
     }
 
     public boolean isOnline() {
@@ -81,7 +76,8 @@ public class ProxyInfo {
     }
 
     public SimpleProxyInfo toSimple() {
-        return new SimpleProxyInfo(serviceId, online, host, port, memory, onlineCount);
+        int onlinePlayers = players != null ? players.size() : 0;
+        return new SimpleProxyInfo(serviceId, online, host, port, memory, onlinePlayers);
     }
 
 }
