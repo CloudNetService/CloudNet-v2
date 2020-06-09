@@ -7,10 +7,8 @@ import com.google.common.graph.MutableGraph;
 import com.vdurmont.semver4j.Semver;
 import eu.cloudnetservice.cloudnet.v2.master.bootstrap.CloudBootstrap;
 import eu.cloudnetservice.cloudnet.v2.master.module.exception.ModuleDescriptionFileNotFoundException;
-import eu.cloudnetservice.cloudnet.v2.master.module.exception.ModuleNotFoundException;
 import eu.cloudnetservice.cloudnet.v2.master.module.model.CloudModuleDependency;
 import eu.cloudnetservice.cloudnet.v2.master.module.model.CloudModuleDescriptionFile;
-import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -23,10 +21,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+/**
+ * Manages loading of modules, dependencies, updating, mirroring and unloading of modules.
+ */
 public final class CloudModuleManager {
 
     private final Map<String, CloudModule> modules;
