@@ -18,16 +18,14 @@ public class ServerInfo {
 
     private final ServiceId serviceId;
     private final String host;
-    private final int port;
     private final boolean online;
     private final List<String> players;
-    private final int memory;
-    private String motd;
-    private final int onlineCount;
-    private final int maxPlayers;
-    private ServerState serverState;
+    private final int port, memory, maxPlayers;
     private final ServerConfig serverConfig;
     private final Template template;
+    private String motd;
+    private ServerState serverState;
+
     public ServerInfo(ServiceId serviceId,
                       String host,
                       int port,
