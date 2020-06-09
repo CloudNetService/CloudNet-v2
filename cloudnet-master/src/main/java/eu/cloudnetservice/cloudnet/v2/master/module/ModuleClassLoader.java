@@ -6,11 +6,13 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ModuleClassLoader extends URLClassLoader {
 
-    private final Map<String, Class<?>> classes = new java.util.concurrent.ConcurrentHashMap<String, Class<?>>(); // Spigot
+    private final Map<String, Class<?>> classes = new ConcurrentHashMap<>();
     private final CloudModuleManager moduleManager;
+
 
     static {
         ClassLoader.registerAsParallelCapable();
