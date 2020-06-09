@@ -35,7 +35,6 @@ public class ServerInfo {
                       List<String> players,
                       int memory,
                       String motd,
-                      int onlineCount,
                       int maxPlayers,
                       ServerState serverState,
                       ServerConfig serverConfig,
@@ -47,7 +46,6 @@ public class ServerInfo {
         this.players = players;
         this.memory = memory;
         this.motd = motd;
-        this.onlineCount = onlineCount;
         this.maxPlayers = maxPlayers;
         this.serverState = serverState;
         this.serverConfig = serverConfig;
@@ -63,7 +61,7 @@ public class ServerInfo {
         result = 31 * result + (players != null ? players.hashCode() : 0);
         result = 31 * result + memory;
         result = 31 * result + (motd != null ? motd.hashCode() : 0);
-        result = 31 * result + onlineCount;
+        result = 31 * result + (players != null ? players.size() : 0);
         result = 31 * result + maxPlayers;
         result = 31 * result + (serverState != null ? serverState.hashCode() : 0);
         result = 31 * result + (serverConfig != null ? serverConfig.hashCode() : 0);
@@ -89,9 +87,6 @@ public class ServerInfo {
             return false;
         }
         if (memory != that.memory) {
-            return false;
-        }
-        if (onlineCount != that.onlineCount) {
             return false;
         }
         if (maxPlayers != that.maxPlayers) {
@@ -128,7 +123,7 @@ public class ServerInfo {
     }
 
     public int getOnlineCount() {
-        return onlineCount;
+        return players != null ? players.size() : 0;
     }
 
     public int getPort() {
@@ -185,7 +180,8 @@ public class ServerInfo {
     }
 
     public SimpleServerInfo toSimple() {
-        return new SimpleServerInfo(serviceId, host, port, onlineCount, maxPlayers);
+        int onlinePlayers = players != null ? players.size() : 0;
+        return new SimpleServerInfo(serviceId, host, port, onlinePlayers, maxPlayers);
     }
 
 }
