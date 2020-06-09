@@ -159,7 +159,7 @@ public final class CloudModuleManager {
     public void enableModule(@NotNull CloudModule module) {
         if (module instanceof JavaCloudModule) {
             JavaCloudModule javaCloudModule = (JavaCloudModule) module;
-            checkDependencies(this.resolveDependenciesSortedSingle(new ArrayList<>(getModules().values()),
+            checkDependencies(this.resolveDependenciesSortedSingle(getModules().values(),
                                                                    javaCloudModule)).forEach(cloudModule -> {
                 if (!cloudModule.isEnabled()) {
                     cloudModule.getModuleLogger().info(String.format("Enabling module %s from %s with version %s",
@@ -285,7 +285,7 @@ public final class CloudModuleManager {
             });
             toUpdate.remove(path);
         }
-        checkDependencies(resolveDependenciesSorted(new ArrayList<>(getModules().values()))).stream()
+        checkDependencies(resolveDependenciesSorted(getModules().values())).stream()
                                                                                             .filter(javaCloudModule -> !javaCloudModule.isLoaded())
                                                                                             .forEach(javaCloudModule -> {
                                                                                                 javaCloudModule.getModuleLogger().info(
@@ -329,7 +329,7 @@ public final class CloudModuleManager {
             }
             loadOrder.add(cloudModule);
         }
-        List<CloudModule> forLoading = new ArrayList<>(resolveDependenciesSorted(new ArrayList<>(loadOrder)));
+        List<CloudModule> forLoading = new ArrayList<>(resolveDependenciesSorted(loadOrder));
         Collections.reverse(forLoading);
         return forLoading;
     }
@@ -501,7 +501,7 @@ public final class CloudModuleManager {
      *
      * @return a list of modules that the given module depends on in the order they need to be loaded.
      */
-    private List<CloudModule> resolveDependenciesSortedSingle(@NotNull List<CloudModule> cloudModuleDescriptionFiles,
+    private List<CloudModule> resolveDependenciesSortedSingle(@NotNull Collection<CloudModule> cloudModuleDescriptionFiles,
                                                               CloudModule javaCloudModule) {
         MutableGraph<CloudModule> graph = GraphBuilder
             .directed()
@@ -545,7 +545,7 @@ public final class CloudModuleManager {
      *
      * @return a list of modules in the order they need to be loaded.
      */
-    private List<CloudModule> resolveDependenciesSorted(@NotNull List<CloudModule> cloudModuleDescriptionFiles) {
+    private List<CloudModule> resolveDependenciesSorted(@NotNull Collection<CloudModule> cloudModuleDescriptionFiles) {
         Set<CloudModule> sorted = new HashSet<>();
         for (CloudModule module : cloudModuleDescriptionFiles) {
             sorted.addAll(this.resolveDependenciesSortedSingle(cloudModuleDescriptionFiles, module));
