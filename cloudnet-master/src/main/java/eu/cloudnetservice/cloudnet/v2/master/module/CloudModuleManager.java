@@ -10,6 +10,7 @@ import eu.cloudnetservice.cloudnet.v2.master.module.exception.ModuleDescriptionF
 import eu.cloudnetservice.cloudnet.v2.master.module.exception.ModuleNotFoundException;
 import eu.cloudnetservice.cloudnet.v2.master.module.model.CloudModuleDependency;
 import eu.cloudnetservice.cloudnet.v2.master.module.model.CloudModuleDescriptionFile;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -31,11 +33,11 @@ public final class CloudModuleManager {
     private final Path moduleDirectory;
     private final Path updateModuleDirectory;
     private final Semver semCloudNetVersion;
-    private final Map<String, Class<?>> classes = new java.util.concurrent.ConcurrentHashMap<>();
+    private final Map<String, Class<?>> classes = new ConcurrentHashMap<>();
     private final Map<String, ModuleClassLoader> loaders = new LinkedHashMap<>();
 
     public CloudModuleManager() {
-        modules = new LinkedHashMap<>();
+        this.modules = new LinkedHashMap<>();
         this.moduleDirectory = Paths.get("modules");
         this.updateModuleDirectory = Paths.get(moduleDirectory.toString(), "update");
         if (!Files.exists(this.updateModuleDirectory)) {
@@ -55,7 +57,7 @@ public final class CloudModuleManager {
      * Afterwards all modules are loaded and checked, whether updates are available and whether migrations need to be run.
      */
     public void detectModules() {
-        List<Path> toUpdate = new CopyOnWriteArrayList<>();
+        List<Path> toUpdate = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.updateModuleDirectory, "*.jar")) {
             for (Path path : stream) {
                 toUpdate.add(path);
@@ -63,7 +65,7 @@ public final class CloudModuleManager {
         } catch (final IOException ex) {
             ex.printStackTrace();
         }
-        List<Path> toLoad = new CopyOnWriteArrayList<>();
+        List<Path> toLoad = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.moduleDirectory, "*.jar")) {
             for (Path path : stream) {
                 if (this.isModuleDetectedByPath(path, toLoad)) {
@@ -83,7 +85,7 @@ public final class CloudModuleManager {
      *
      * @param module the module that should be unloaded.
      */
-    public void unloadModule(CloudModule module) {
+    public void unloadModule(@NotNull CloudModule module) {
         if (module instanceof JavaCloudModule) {
             if (module.isEnabled()) {
                 disableModule(module);
@@ -107,7 +109,7 @@ public final class CloudModuleManager {
      *
      * @param module the module that should be disabled.
      */
-    public void disableModule(CloudModule module) {
+    public void disableModule(@NotNull CloudModule module) {
         if (module instanceof JavaCloudModule) {
             String name = String.format("%s:%s",
                                         module.getModuleJson().getGroupId(),
@@ -133,12 +135,12 @@ public final class CloudModuleManager {
      * Unloads all classes from one module
      * @param cloudModule contains all information
      */
-    private void unloadClasses(JavaCloudModule cloudModule) {
+    private void unloadClasses(@NotNull JavaCloudModule cloudModule) {
         String name = String.format("%s:%s",
                                     cloudModule.getModuleJson().getGroupId(),
                                     cloudModule.getModuleJson().getName());
         this.loaders.remove(name);
-        final ClassLoader classLoader = cloudModule.getClassLoader();
+        ClassLoader classLoader = cloudModule.getClassLoader();
         if (classLoader instanceof ModuleClassLoader) {
             ModuleClassLoader moduleClassLoader = (ModuleClassLoader) classLoader;
             Set<String> names = moduleClassLoader.getClasses();
@@ -154,7 +156,7 @@ public final class CloudModuleManager {
      *
      * @param module the module that should be loaded.
      */
-    public void enableModule(CloudModule module) {
+    public void enableModule(@NotNull CloudModule module) {
         if (module instanceof JavaCloudModule) {
             JavaCloudModule javaCloudModule = (JavaCloudModule) module;
             checkDependencies(this.resolveDependenciesSortedSingle(new ArrayList<>(getModules().values()),
@@ -178,7 +180,7 @@ public final class CloudModuleManager {
      * @param toLoaded contains all files that have to be loaded
      * @param toUpdate contains all update files which have to be checked if the update works
      */
-    private void handleLoaded(final List<Path> toLoaded, final List<Path> toUpdate) {
+    private void handleLoaded(@NotNull List<Path> toLoaded,@NotNull List<Path> toUpdate) {
         for (Path path : toLoaded) {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
             cloudModule.ifPresent(javaCloudModule -> {
@@ -197,10 +199,10 @@ public final class CloudModuleManager {
                                                                       javaCloudModule));
             toLoaded.remove(path);
         }
-        for (final Path path : toUpdate) {
+        for (Path path : toUpdate) {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
             cloudModule.ifPresent(javaCloudModule -> {
-                final Optional<CloudModule> moduleOptional = this.getModule(javaCloudModule
+                Optional<CloudModule> moduleOptional = this.getModule(javaCloudModule
                                                                                 .getModuleJson()
                                                                                 .getGroupId() + ":" + javaCloudModule
                     .getModuleJson()
@@ -209,16 +211,15 @@ public final class CloudModuleManager {
                     CloudModule module = moduleOptional.get();
                     if (module instanceof JavaCloudModule && module.isUpdate()) {
                         if (javaCloudModule.getModuleJson().getSemVersion().isGreaterThan(module.getModuleJson().getSemVersion())) {
-                            JavaCloudModule jcm = (JavaCloudModule) module;
-                            unloadModule(jcm);
+                            unloadModule(module);
                             this.modules.remove(module
                                                     .getModuleJson()
                                                     .getGroupId() + ":" + module.getModuleJson().getName());
-                            if (jcm instanceof MigrateCloudModule) {
-                                MigrateCloudModule migrateCloudModule = (MigrateCloudModule) jcm;
+                            if (module instanceof MigrateCloudModule) {
+                                MigrateCloudModule migrateCloudModule = (MigrateCloudModule) module;
                                 if (migrateCloudModule.migrate(module.getModuleJson().getSemVersion(),
                                                                javaCloudModule.getModuleJson().getSemVersion())) {
-                                    jcm.getModuleLogger().info(String.format("Module %s successfully migrated from %s to %s",
+                                    module.getModuleLogger().info(String.format("Module %s successfully migrated from %s to %s",
                                                                              module.getModuleJson().getName(),
                                                                              module.getModuleJson().getVersion(),
                                                                              javaCloudModule.getModuleJson().getVersion()));
@@ -226,7 +227,7 @@ public final class CloudModuleManager {
                                         Files.deleteIfExists(module.getModuleJson().getFile());
                                         Files.copy(javaCloudModule.getModuleJson().getFile(), module.getModuleJson().getFile());
                                         Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
-                                        final Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson()
+                                        Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson()
                                                                                                                    .getFile());
                                         optionalJavaCloudModule.ifPresent(value -> {
                                             this.modules.put(value
@@ -245,7 +246,7 @@ public final class CloudModuleManager {
                                         e.printStackTrace();
                                     }
                                 } else {
-                                    jcm.getModuleLogger().info(String.format("Module %s could not be migrated from %s to %s ",
+                                    module.getModuleLogger().info(String.format("Module %s could not be migrated from %s to %s ",
                                                                              module.getModuleJson().getName(),
                                                                              module.getModuleJson().getVersion(),
                                                                              javaCloudModule.getModuleJson().getVersion()));
@@ -255,7 +256,7 @@ public final class CloudModuleManager {
                                     Files.deleteIfExists(module.getModuleJson().getFile());
                                     Files.copy(javaCloudModule.getModuleJson().getFile(), module.getModuleJson().getFile());
                                     Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
-                                    final Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson()
+                                    Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson()
                                                                                                                .getFile());
                                     optionalJavaCloudModule.ifPresent(value -> {
                                         this.modules.put(value
@@ -300,8 +301,9 @@ public final class CloudModuleManager {
                                                                                             });
     }
 
-    private List<CloudModule> checkDependencies(List<CloudModule> cloudModules) {
-        final Set<CloudModule> loadOrder = new HashSet<>();
+
+    private List<CloudModule> checkDependencies(@NotNull List<CloudModule> cloudModules) {
+        Set<CloudModule> loadOrder = new HashSet<>();
         load:
         for (CloudModule cloudModule : cloudModules) {
             String moduleName = cloudModule.getModuleJson().getGroupId() + ":" + cloudModule.getModuleJson().getName();
@@ -312,7 +314,7 @@ public final class CloudModuleManager {
             }
             for (final CloudModuleDependency dependency : cloudModule.getModuleJson().getDependencies()) {
                 String name = dependency.getGroupId() + ":" + dependency.getName();
-                final Optional<CloudModule> optionalCloudModule = getModule(name);
+                Optional<CloudModule> optionalCloudModule = getModule(name);
                 if (!optionalCloudModule.isPresent()) {
                     System.err.println("unable to load module " + moduleName + " because of missing dependency " + name);
                     this.modules.remove(moduleName);
@@ -339,15 +341,15 @@ public final class CloudModuleManager {
      *
      * @return an {@code Optional} containing the loaded module, if successful.
      */
-    public Optional<JavaCloudModule> loadModule(Path path) {
+    public Optional<JavaCloudModule> loadModule(@NotNull Path path) {
         Optional<JavaCloudModule> javaModule = Optional.empty();
         try {
             Optional<CloudModuleDescriptionFile> cloudModuleDescriptionFile = getCloudModuleDescriptionFile(path);
             if (cloudModuleDescriptionFile.isPresent()) {
                 ModuleClassLoader classLoader = new ModuleClassLoader(getClass().getClassLoader(), path, this);
-                final Class<?> jarClazz = classLoader.loadClass(cloudModuleDescriptionFile.get().getMain());
-                final Class<? extends JavaCloudModule> mainClazz = jarClazz.asSubclass(JavaCloudModule.class);
-                final JavaCloudModule javaCloudModule = mainClazz.getDeclaredConstructor().newInstance();
+                Class<?> jarClazz = classLoader.loadClass(cloudModuleDescriptionFile.get().getMain());
+                Class<? extends JavaCloudModule> mainClazz = jarClazz.asSubclass(JavaCloudModule.class);
+                JavaCloudModule javaCloudModule = mainClazz.getDeclaredConstructor().newInstance();
                 javaModule = Optional.of(javaCloudModule);
                 javaModule.ifPresent(cloudModule -> cloudModule.init(classLoader, cloudModuleDescriptionFile.get()));
                 javaModule.ifPresent(cloudModule -> this.loaders.put(String.format("%s:%s",
@@ -367,32 +369,28 @@ public final class CloudModuleManager {
      *
      * @return an {@code Optional} possibly containing the parsed description file.
      */
-    public Optional<CloudModuleDescriptionFile> getCloudModuleDescriptionFile(Path module) {
+    public Optional<CloudModuleDescriptionFile> getCloudModuleDescriptionFile(@NotNull Path module) {
         Optional<CloudModuleDescriptionFile> cloudModuleDescriptionFile = Optional.empty();
-        if (module != null) {
-            try (JarFile moduleJar = new JarFile(module.toFile())) {
-                ZipEntry moduleJsonFile = moduleJar.getEntry("module_v2.json");
-                if (moduleJsonFile == null) {
-                    throw new ModuleDescriptionFileNotFoundException("The module don't contain a module_v2.json!");
-                }
-                try (InputStream stream = moduleJar.getInputStream(moduleJsonFile)) {
-                    CloudModuleDescriptionFile moduleDescriptionFile = new CloudModuleDescriptionFile(stream, module);
-                    if (moduleDescriptionFile.getSemVersion().getMajor() != null && moduleDescriptionFile.getSemVersion()
-                                                                                                         .getMajor() != null && moduleDescriptionFile
-                        .getSemVersion()
-                        .getPatch() != null) {
-                        cloudModuleDescriptionFile = Optional.of(moduleDescriptionFile);
-                    } else {
-                        System.err.println(String.format("Module(%s) not enabling, wrong version format %s",
-                                                         moduleDescriptionFile.getName(),
-                                                         moduleDescriptionFile.getVersion()));
-                    }
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("Something is wrong with the jar", e);
+        try (JarFile moduleJar = new JarFile(module.toFile())) {
+            ZipEntry moduleJsonFile = moduleJar.getEntry("module_v2.json");
+            if (moduleJsonFile == null) {
+                throw new ModuleDescriptionFileNotFoundException("The module don't contain a module_v2.json!");
             }
-        } else {
-            throw new ModuleNotFoundException("Module file not found");
+            try (InputStream stream = moduleJar.getInputStream(moduleJsonFile)) {
+                CloudModuleDescriptionFile moduleDescriptionFile = new CloudModuleDescriptionFile(stream, module);
+                if (moduleDescriptionFile.getSemVersion().getMajor() != null && moduleDescriptionFile.getSemVersion()
+                                                                                                     .getMajor() != null && moduleDescriptionFile
+                    .getSemVersion()
+                    .getPatch() != null) {
+                    cloudModuleDescriptionFile = Optional.of(moduleDescriptionFile);
+                } else {
+                    System.err.println(String.format("Module(%s) not enabling, wrong version format %s",
+                                                     moduleDescriptionFile.getName(),
+                                                     moduleDescriptionFile.getVersion()));
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Something is wrong with the jar", e);
         }
         return cloudModuleDescriptionFile;
     }
@@ -406,7 +404,7 @@ public final class CloudModuleManager {
      *
      * @return {@code true}, if the module is present in the list, {@code false} otherwise.
      */
-    private boolean isModuleDetectedByPath(@NotNull Path path, List<Path> toLoad) {
+    private boolean isModuleDetectedByPath(@NotNull Path path,@NotNull List<Path> toLoad) {
         boolean result = false;
         String check = path.toAbsolutePath().toString();
         Iterator<CloudModule> moduleIterator = this.getModules().values().iterator();
@@ -430,7 +428,7 @@ public final class CloudModuleManager {
      *
      * @return the class, if present in any class loader. {@code null}, if the class is not present in any search class loader.
      */
-    Class<?> getClassByName(final String name) {
+    Class<?> getClassByName(@NotNull String name) {
         Class<?> cachedClass = classes.get(name);
 
         if (cachedClass != null) {
@@ -458,7 +456,7 @@ public final class CloudModuleManager {
      * @param name  is the name that should apply to the class when the class is added
      * @param clazz is the class to be added
      */
-    void setClass(final String name, final Class<?> clazz) {
+    void setClass(@NotNull String name,@NotNull Class<?> clazz) {
         if (!classes.containsKey(name)) {
             classes.put(name, clazz);
         }
@@ -469,7 +467,7 @@ public final class CloudModuleManager {
      *
      * @param name the name of the class to remove.
      */
-    private void removeClass(String name) {
+    private void removeClass(@NotNull String name) {
         classes.remove(name);
     }
 
@@ -488,7 +486,11 @@ public final class CloudModuleManager {
      * @return an {@code Optional} possibly containing the module's instance.
      */
     public Optional<CloudModule> getModule(@NotNull String name) {
-        return Optional.of(getModules().get(name));
+        Optional<CloudModule> module = Optional.empty();
+        if (this.modules.containsKey(name)) {
+            module = Optional.of(getModules().get(name));
+        }
+        return module;
     }
 
     /**
@@ -545,7 +547,7 @@ public final class CloudModuleManager {
      */
     private List<CloudModule> resolveDependenciesSorted(@NotNull List<CloudModule> cloudModuleDescriptionFiles) {
         Set<CloudModule> sorted = new HashSet<>();
-        for (final CloudModule module : cloudModuleDescriptionFiles) {
+        for (CloudModule module : cloudModuleDescriptionFiles) {
             sorted.addAll(this.resolveDependenciesSortedSingle(cloudModuleDescriptionFiles, module));
         }
         return new ArrayList<>(sorted);
@@ -566,7 +568,7 @@ public final class CloudModuleManager {
                                  List<CloudModule> sorted,
                                  Deque<CloudModule> currentIteration) {
 
-        final Integer integer = marks.getOrDefault(node, 0);
+        Integer integer = marks.getOrDefault(node, 0);
         if (integer == 2) {
             return;
         } else if (integer == 1) {
