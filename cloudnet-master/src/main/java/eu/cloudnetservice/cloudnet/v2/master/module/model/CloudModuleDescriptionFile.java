@@ -3,7 +3,7 @@ package eu.cloudnetservice.cloudnet.v2.master.module.model;
 import com.google.gson.reflect.TypeToken;
 import com.vdurmont.semver4j.Semver;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
-import eu.cloudnetservice.cloudnet.v2.master.module.exception.InvalidDescriptionException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,7 +12,11 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * This class contains all information to activate the module. Module dependencies, update path, minimum CloudNet version, group id, name, version and authors
+ */
 public final class CloudModuleDescriptionFile {
+
 
     private String main;
     private String version;
@@ -33,34 +37,11 @@ public final class CloudModuleDescriptionFile {
 
     public static transient Type CLOUD_MODULE_DESCRIPTION_FILE = TypeToken.get(CloudModuleDescriptionFile.class).getType();
 
-    public CloudModuleDescriptionFile(InputStream stream, Path file) {
+    public CloudModuleDescriptionFile(@NotNull InputStream stream,@NotNull Path file) {
         loadJson(stream, file);
     }
 
-    public CloudModuleDescriptionFile(String main,
-                                      String version,
-                                      String name,
-                                      String groupId,
-                                      String updateUrl,
-                                      String description,
-                                      String website,
-                                      String requiredCloudNetVersion, Set<CloudModuleDependency> dependencies,
-                                      Set<CloudModuleAuthor> authors, Path file) {
-        this.main = main;
-        this.version = version;
-        this.name = name;
-        this.groupId = groupId;
-        this.updateUrl = updateUrl;
-        this.description = description;
-        this.website = website;
-        this.requiredCloudNetVersion = requiredCloudNetVersion;
-        this.dependencies = dependencies;
-        this.authors = authors;
-        this.file = file;
-        this.semver = new Semver(version, Semver.SemverType.NPM);
-    }
-
-    private void loadJson(InputStream stream, Path file) {
+    private void loadJson(@NotNull InputStream stream,@NotNull Path file) {
         CloudModuleDescriptionFile thisClazz = Document.GSON.fromJson(new InputStreamReader(stream),
                                                                       CLOUD_MODULE_DESCRIPTION_FILE);
         this.main = thisClazz.main;
@@ -125,16 +106,20 @@ public final class CloudModuleDescriptionFile {
         return requiredCloudNetVersion;
     }
 
+    /**
+     * Collects all authors to a string
+     * @return Returns all authors as string
+     */
     public String getAuthorsAsString() {
         return getAuthors().stream().map(cloudModuleAuthor -> String.format("%s(%s)",
                                                                             cloudModuleAuthor.getName(),
                                                                             cloudModuleAuthor.getRole())).collect(Collectors.joining(","));
     }
 
-    public void setFile(Path file) {
-        if (file == null) {
-            throw new InvalidDescriptionException("The given path can not be null for the description file");
-        }
+    /**
+     * @param file sets the running modules jar
+     */
+    public void setFile(@NotNull Path file) {
         this.file = file;
     }
 }

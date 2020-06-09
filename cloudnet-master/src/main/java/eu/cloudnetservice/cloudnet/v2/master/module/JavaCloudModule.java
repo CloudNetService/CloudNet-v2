@@ -10,6 +10,9 @@ import eu.cloudnetservice.cloudnet.v2.master.module.model.CloudModuleDescription
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Allows you to write your own module based on this class
+ */
 public class JavaCloudModule extends EventKey implements CloudModule {
 
     private CloudModuleDescriptionFile moduleDescriptionFile;
@@ -26,41 +29,70 @@ public class JavaCloudModule extends EventKey implements CloudModule {
         }
     }
 
+    /**
+     * Is called after the update has been checked but before the module has been activated
+     */
     @Override
     public void onLoad() {
 
     }
 
+    /**
+     * Is called when the module is activated
+     */
     @Override
     public void onEnable() {
 
     }
 
+    /**
+     * Is called when the module is deactivated
+     */
     @Override
     public void onDisable() {
 
     }
 
+    /**
+     * Can be used to interact with background information from the module
+     * @return Returns the module description
+     */
     @Override
     public CloudModuleDescriptionFile getModuleJson() {
         return this.moduleDescriptionFile;
     }
 
+    /**
+     * Can be used to interact with the data folder of the module
+     * @return Returns the path to the folder
+     */
     @Override
     public Path getDataFolder() {
         return Paths.get("modules", getModuleJson().getName());
     }
 
+    /**
+     * Can be used to interact with the main part of the cloud
+     * @return Returns the current running Cloudnet instance
+     */
     @Override
     public CloudNet getCloud() {
         return CloudNet.getInstance();
     }
 
+    /**
+     * The module logger can be used to output things to the console
+     * @return Returns the logger instance
+     */
     @Override
     public CloudModuleLogger getModuleLogger() {
         return cloudModuleLogger;
     }
 
+    /**
+     * Can be used to interact with the class loader module
+     * @return Returns the class loader from the module instance
+     */
     public ClassLoader getClassLoader() {
         return classLoader;
     }
@@ -71,23 +103,36 @@ public class JavaCloudModule extends EventKey implements CloudModule {
         this.classLoader = loader;
     }
 
+    /**
+     * @return Indicates if the module was activated
+     */
     @Override
     public boolean isEnabled() {
         return isEnabled;
     }
 
+    /**
+     * @return Indicates if the module was loaded
+     */
     @Override
     public boolean isLoaded() {
         return isLoaded;
     }
 
+    /**
+     * @return Indicates whether an update is available
+     */
     @Override
     public boolean isUpdate() {
         return this.isUpdate;
     }
 
+    /**
+     * Allows to change the loading status of the module
+     * @param loaded sets the new loaded status of the module
+     */
     @Override
-    public void setLoaded(final boolean loaded) {
+    public void setLoaded(boolean loaded) {
         if (isLoaded != loaded) {
             isLoaded = loaded;
             if (isLoaded) {
@@ -96,8 +141,13 @@ public class JavaCloudModule extends EventKey implements CloudModule {
         }
     }
 
+    /**
+     * Allows to change the active status of the module
+     * If false, the module is deactivated, if true, it is activated
+     * @param enabled is the new status of the module
+     */
     @Override
-    public void setEnabled(final boolean enabled) {
+    public void setEnabled(boolean enabled) {
         if (isEnabled != enabled) {
             isEnabled = enabled;
             if (isEnabled) {
@@ -108,8 +158,12 @@ public class JavaCloudModule extends EventKey implements CloudModule {
         }
     }
 
+    /**
+     * Sets the update status
+     * @param update is the new status of the variable
+     */
     @Override
-    public void setUpdate(final boolean update) {
+    public void setUpdate(boolean update) {
         if (isUpdate != update) {
             isUpdate = update;
         }
@@ -119,8 +173,7 @@ public class JavaCloudModule extends EventKey implements CloudModule {
     /**
      * Registered a IEventListener objective to a Event Class
      *
-     * @param eventListener
-     * @param <T>
+     * @param eventListener is the event listener to be registered
      */
     @Override
     public <T extends Event> void registerListener(EventListener<T> eventListener) {
@@ -130,7 +183,7 @@ public class JavaCloudModule extends EventKey implements CloudModule {
     /**
      * Registered a command
      *
-     * @param command
+     * @param command is the command to register
      */
     @Override
     public void registerCommand(Command command) {

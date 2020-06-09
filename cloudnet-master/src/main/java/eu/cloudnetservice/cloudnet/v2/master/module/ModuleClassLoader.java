@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ModuleClassLoader extends URLClassLoader {
+/**
+ * This class loader enables a clean unloading of a module.
+ */
+public final class ModuleClassLoader extends URLClassLoader {
 
     private final Map<String, Class<?>> classes = new ConcurrentHashMap<>();
     private final CloudModuleManager moduleManager;
@@ -24,11 +27,24 @@ public class ModuleClassLoader extends URLClassLoader {
         this.moduleManager = manager;
     }
 
+    /**
+     * Finds classes by name
+     * @param name defines the class name
+     * @return Returns the class object
+     * @throws ClassNotFoundException is called if the classes cannot be found using the name
+     */
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         return findClass(name, true);
     }
 
+    /**
+     * Finds classes globally in the module manager or only in the class loader
+     * @param name defines the class name
+     * @param checkGlobal indicates whether the class should be searched for in the module manager.
+     * @return Returns the class object
+     * @throws ClassNotFoundException is called if the classes cannot be found using the name
+     */
     Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
         Class<?> result = classes.get(name);
 

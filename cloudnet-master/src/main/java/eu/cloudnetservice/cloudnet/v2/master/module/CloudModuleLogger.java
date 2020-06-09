@@ -5,6 +5,9 @@ import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+/**
+ * Own logger to show from which module the message was sent
+ */
 public final class CloudModuleLogger extends Logger {
 
     private final String moduleName;
@@ -24,8 +27,12 @@ public final class CloudModuleLogger extends Logger {
         this.setParent(CloudNet.getLogger());
     }
 
+    /**
+     * Writes all log messages
+     * @param record specifies to which message should be sent
+     */
     @Override
-    public void log(final LogRecord record) {
+    public void log(LogRecord record) {
         record.setMessage(String.format("[%s] %s", moduleName, record.getMessage()));
         super.log(record);
     }

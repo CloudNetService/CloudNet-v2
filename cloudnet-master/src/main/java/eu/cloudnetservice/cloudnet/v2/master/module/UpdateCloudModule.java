@@ -1,5 +1,8 @@
 package eu.cloudnetservice.cloudnet.v2.master.module;
 
+/**
+ * This class allows a car to make updates
+ */
 public interface UpdateCloudModule {
 
     /**

@@ -1,5 +1,8 @@
 package eu.cloudnetservice.cloudnet.v2.master.module.model;
 
+/**
+ * This class returns the dependency for the module with the fields module name, version and group id
+ */
 public final class CloudModuleDependency {
 
     private final String groupId;
