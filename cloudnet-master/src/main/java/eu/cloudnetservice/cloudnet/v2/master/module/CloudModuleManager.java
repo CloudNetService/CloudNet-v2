@@ -25,7 +25,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 /**
- * Manages loading of modules, dependencies, updating, mirroring and unloading of modules.
+ * Manages loading of modules, dependencies, updating, running migrations and unloading of modules.
  */
 public final class CloudModuleManager {
 
