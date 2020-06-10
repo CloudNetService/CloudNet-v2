@@ -15,13 +15,11 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>cloudnet-module</module>
         <module>cloudnet-event</module>
         <module>cloudnet-command</module>
         <module>cloudnet-log</module>
         <module>cloudnet-web</module>
         <module>cloudnet-database</module>
-        <module>cloudnet-snakeconfig</module>
         <module>cloudnet-help</module>
         <module>cloudnet-setup</module>
     </modules>

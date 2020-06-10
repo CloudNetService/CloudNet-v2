@@ -1,5 +1,5 @@
 name: CloudNetAPI
-version: 2.1
-author: Dytanic
+version: ${project.version}
+author: CloudNetService
 
-main: de.dytanic.cloudnet.bridge.ProxiedBootstrap
+main: eu.cloudnetservice.cloudnet.v2.bridge.ProxiedBootstrap

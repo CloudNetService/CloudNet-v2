@@ -1,4 +1,3 @@
-
 package eu.cloudnetservice.cloudnet.v2.master.util;
 
 import java.io.IOException;

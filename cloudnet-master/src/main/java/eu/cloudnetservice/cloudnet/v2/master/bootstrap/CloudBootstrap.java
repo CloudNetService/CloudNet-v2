@@ -22,7 +22,7 @@ public final class CloudBootstrap {
 
     private static final InternalLoggerFactory INTERNAL_LOGGER_FACTORY = InternalLoggerFactory.getDefaultFactory();
 
-    public static synchronized void main(String[] args) throws Exception {
+    public static synchronized void main(String[] args) {
         System.setProperty("file.encoding", "UTF-8");
         System.setProperty("java.net.preferIPv4Stack", "true");
 
@@ -97,7 +97,7 @@ public final class CloudBootstrap {
         }
 
         NetworkUtils.header();
-        CloudConfig coreConfig = new CloudConfig(cloudNetLogging.getReader());
+        CloudConfig coreConfig = new CloudConfig();
         CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args));
 
         if (optionSet.has("systemTimer")) {

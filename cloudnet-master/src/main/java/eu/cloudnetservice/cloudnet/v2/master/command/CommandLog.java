@@ -132,7 +132,7 @@ public final class CommandLog extends Command {
      *
      * @param sender          The sender of the command
      * @param random          A random string
-     * @param urls             The urls of the paste sites
+     * @param urls            The urls of the paste sites
      * @param minecraftServer The minecraft server with the log inside
      */
     private void sendMinecraftServerPaste(CommandSender sender, String random, List<String> urls, MinecraftServer minecraftServer) {
@@ -163,7 +163,7 @@ public final class CommandLog extends Command {
      *
      * @param sender      The sender of the command
      * @param random      A random string
-     * @param urls         The urls of the paste sites
+     * @param urls        The urls of the paste sites
      * @param proxyServer The proxy server with the log inside
      */
     private void sendProxyServerPaste(CommandSender sender, String random, List<String> urls, ProxyServer proxyServer) {

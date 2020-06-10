@@ -14,12 +14,25 @@
     <name>CloudNet-Library</name>
     <artifactId>cloudnet-lib</artifactId>
 
+    <repositories>
+        <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-native-epoll</artifactId>
             <version>${dependency.netty.version}</version>
             <classifier>linux-x86_64</classifier>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-config</artifactId>
+            <version>${dependency.bungeecord.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -39,6 +52,12 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${dependency.gson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${dependecy.snakeyaml.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -67,7 +86,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${test.junit.version}</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
