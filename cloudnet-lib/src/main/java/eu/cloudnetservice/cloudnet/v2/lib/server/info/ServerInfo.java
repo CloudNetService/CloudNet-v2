@@ -9,6 +9,7 @@ import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 24.05.2017.
@@ -48,6 +49,10 @@ public class ServerInfo {
         this.serverState = serverState;
         this.serverConfig = serverConfig;
         this.template = template;
+    }
+
+    public void fetch(Consumer<ServerInfo> serverInfo){
+        serverInfo.accept(this);
     }
 
     @Override

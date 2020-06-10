@@ -6,6 +6,7 @@ import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * Created by Tareko on 25.05.2017.
@@ -33,6 +34,10 @@ public class ProxyInfo {
         this.online = online;
         this.players = players;
         this.memory = memory;
+    }
+
+    public void fetch(Consumer<ProxyInfo> proxyInfo) {
+        proxyInfo.accept(this);
     }
 
     public int getMemory() {

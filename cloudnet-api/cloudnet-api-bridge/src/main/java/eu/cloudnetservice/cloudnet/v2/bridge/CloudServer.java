@@ -107,23 +107,18 @@ public class CloudServer implements CloudService, NetworkHandler {
     public void updateDisable() {
         List<String> list = new CopyOnWriteArrayList<>();
 
-        for (Player all : Bukkit.getOnlinePlayers()) {
-            list.add(all.getName());
-        }
-
-        ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(),
-                                               hostAddress,
-                                               port,
-                                               false,
-                                               list,
-                                               memory,
-                                               motd,
-                                               Bukkit.getOnlinePlayers().size(),
-                                               maxPlayers,
-                                               serverState,
-                                               serverConfig,
-                                               template);
-        CloudAPI.getInstance().getNetworkConnection().sendPacketSynchronized(new PacketOutUpdateServerInfo(serverInfo));
+        new ServerInfo(CloudAPI.getInstance().getServiceId(),
+                       hostAddress,
+                       port,
+                       false,
+                       list,
+                       memory,
+                       motd,
+                       maxPlayers,
+                       serverState,
+                       serverConfig,
+                       template)
+            .fetch(serverInfo -> CloudAPI.getInstance().getNetworkConnection().sendPacketSynchronized(new PacketOutUpdateServerInfo(serverInfo)));
     }
 
     /**
@@ -136,19 +131,18 @@ public class CloudServer implements CloudService, NetworkHandler {
                 list.add(all.getName());
             }
 
-            ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(),
-                                                   hostAddress,
-                                                   port,
-                                                   true,
-                                                   list,
-                                                   memory,
-                                                   motd,
-                                                   Bukkit.getOnlinePlayers().size(),
-                                                   maxPlayers,
-                                                   serverState,
-                                                   serverConfig,
-                                                   template);
-            CloudAPI.getInstance().update(serverInfo);
+            new ServerInfo(CloudAPI.getInstance().getServiceId(),
+                           hostAddress,
+                           port,
+                           true,
+                           list,
+                           memory,
+                           motd,
+                           maxPlayers,
+                           serverState,
+                           serverConfig,
+                           template)
+                .fetch(serverInfo -> CloudAPI.getInstance().update(serverInfo));
         });
     }
 
@@ -178,19 +172,18 @@ public class CloudServer implements CloudService, NetworkHandler {
                                   .map(HumanEntity::getName)
                                   .collect(Collectors.toList());
 
-        ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(),
-                                               hostAddress,
-                                               port,
-                                               true,
-                                               list,
-                                               memory,
-                                               motd,
-                                               Bukkit.getOnlinePlayers().size(),
-                                               maxPlayers,
-                                               serverState,
-                                               serverConfig,
-                                               template);
-        CloudAPI.getInstance().update(serverInfo);
+        new ServerInfo(CloudAPI.getInstance().getServiceId(),
+                       hostAddress,
+                       port,
+                       true,
+                       list,
+                       memory,
+                       motd,
+                       maxPlayers,
+                       serverState,
+                       serverConfig,
+                       template)
+            .fetch(serverInfo -> CloudAPI.getInstance().update(serverInfo));
     }
 
     /**

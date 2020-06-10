@@ -8,7 +8,6 @@ import eu.cloudnetservice.cloudnet.v2.lib.CloudNetwork;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.player.CloudPlayer;
 import eu.cloudnetservice.cloudnet.v2.lib.player.OfflinePlayer;
-import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.ServerFallback;
 import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.TabList;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ProxyGroup;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ProxyProcessMeta;
@@ -294,14 +293,14 @@ public class CloudProxy implements CloudService, NetworkHandler {
      * Updates this proxy instance with all of its' state using the API.
      */
     public void update() {
-        ProxyInfo proxyInfo = new ProxyInfo(this.cloudAPI.getServiceId(),
-                                            this.cloudAPI.getConfig().getString("host"),
-                                            0,
-                                            true,
-                                            ProxyServer.getInstance().getPlayers().stream()
-                                                       .collect(Collectors.toMap(ProxiedPlayer::getUniqueId, CommandSender::getName)),
-                                            proxyProcessMeta.getMemory());
-        this.cloudAPI.update(proxyInfo);
+        new ProxyInfo(this.cloudAPI.getServiceId(),
+                      this.cloudAPI.getConfig().getString("host"),
+                      0,
+                      true,
+                      ProxyServer.getInstance().getPlayers().stream()
+                                 .collect(Collectors.toMap(ProxiedPlayer::getUniqueId, CommandSender::getName)),
+                      proxyProcessMeta.getMemory())
+            .fetch(this.cloudAPI::update);
     }
 
     /**
