@@ -55,6 +55,7 @@ public class CloudServer implements CloudService, NetworkHandler {
     private final int port;
     private final Template template;
     private final int memory;
+    private final CloudAPI cloudAPI;
 
     /**
      * A map of all proxies which are requested to be launched.
@@ -92,6 +93,7 @@ public class CloudServer implements CloudService, NetworkHandler {
         this.memory = serverInfo.getMemory();
         this.template = serverInfo.getTemplate();
         this.serverState = ServerState.LOBBY;
+        this.cloudAPI = cloudAPI;
     }
 
     /**
@@ -106,7 +108,7 @@ public class CloudServer implements CloudService, NetworkHandler {
     public void updateDisable() {
         List<String> list = Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
 
-        new ServerInfo(CloudAPI.getInstance().getServiceId(),
+        new ServerInfo(this.cloudAPI.getServiceId(),
                        hostAddress,
                        port,
                        false,
@@ -117,9 +119,7 @@ public class CloudServer implements CloudService, NetworkHandler {
                        serverState,
                        serverConfig,
                        template)
-            .fetch(serverInfo -> CloudAPI.getInstance()
-                                         .getNetworkConnection()
-                                         .sendPacketSynchronized(new PacketOutUpdateServerInfo(serverInfo)));
+            .fetch(serverInfo -> this.cloudAPI.getNetworkConnection().sendPacketSynchronized(new PacketOutUpdateServerInfo(serverInfo)));
     }
 
     /**
@@ -129,7 +129,7 @@ public class CloudServer implements CloudService, NetworkHandler {
         bukkitBootstrap.getServer().getScheduler().runTaskAsynchronously(bukkitBootstrap, () -> {
             List<String> list = Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
 
-            new ServerInfo(CloudAPI.getInstance().getServiceId(),
+            new ServerInfo(this.cloudAPI.getServiceId(),
                            hostAddress,
                            port,
                            true,
@@ -140,7 +140,7 @@ public class CloudServer implements CloudService, NetworkHandler {
                            serverState,
                            serverConfig,
                            template)
-                .fetch(serverInfo -> CloudAPI.getInstance().update(serverInfo));
+                .fetch(this.cloudAPI::update);
         });
     }
 
@@ -151,7 +151,7 @@ public class CloudServer implements CloudService, NetworkHandler {
         serverState = ServerState.INGAME;
 
         if (allowAutoStart) {
-            ApiServerProcessBuilder.create(CloudAPI.getInstance().getGroup())
+            ApiServerProcessBuilder.create(this.cloudAPI.getGroup())
                                    .template(template)
                                    .startServer();
             allowAutoStart = false;
@@ -170,7 +170,7 @@ public class CloudServer implements CloudService, NetworkHandler {
                                   .map(HumanEntity::getName)
                                   .collect(Collectors.toList());
 
-        new ServerInfo(CloudAPI.getInstance().getServiceId(),
+        new ServerInfo(this.cloudAPI.getServiceId(),
                        hostAddress,
                        port,
                        true,
@@ -181,7 +181,7 @@ public class CloudServer implements CloudService, NetworkHandler {
                        serverState,
                        serverConfig,
                        template)
-            .fetch(serverInfo -> CloudAPI.getInstance().update(serverInfo));
+            .fetch(this.cloudAPI::update);
     }
 
     /**
@@ -330,7 +330,7 @@ public class CloudServer implements CloudService, NetworkHandler {
      * @return
      */
     public SimpleServerGroup getGroupData() {
-        return CloudAPI.getInstance().getCloudNetwork().getServerGroups().get(CloudAPI.getInstance().getGroup());
+        return this.cloudAPI.getCloudNetwork().getServerGroups().get(this.cloudAPI.getGroup());
     }
 
     public double getPercentOfPlayerNowOnline() {
@@ -343,7 +343,7 @@ public class CloudServer implements CloudService, NetworkHandler {
      * @return
      */
     public ServerProcessMeta getServerProcessMeta() {
-        return CloudAPI.getInstance().getConfig().getObject("serverProcess", ServerProcessMeta.TYPE);
+        return this.cloudAPI.getConfig().getObject("serverProcess", ServerProcessMeta.TYPE);
     }
 
     private void initScoreboard(Player all) {
