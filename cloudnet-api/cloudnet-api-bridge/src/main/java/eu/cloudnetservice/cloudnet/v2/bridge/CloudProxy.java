@@ -294,15 +294,14 @@ public class CloudProxy implements CloudService, NetworkHandler {
      * Updates this proxy instance with all of its' state using the API.
      */
     public void update() {
-        ProxyInfo proxyInfo = new ProxyInfo(this.cloudAPI.getServiceId(),
-                                            this.cloudAPI.getConfig().getString("host"),
-                                            0,
-                                            true,
-                                            ProxyServer.getInstance().getPlayers().stream()
-                                                       .collect(Collectors.toMap(ProxiedPlayer::getUniqueId, CommandSender::getName)),
-                                            proxyProcessMeta.getMemory(),
-                                            ProxyServer.getInstance().getOnlineCount());
-        this.cloudAPI.update(proxyInfo);
+        new ProxyInfo(this.cloudAPI.getServiceId(),
+                      this.cloudAPI.getConfig().getString("host"),
+                      0,
+                      true,
+                      ProxyServer.getInstance().getPlayers().stream()
+                                 .collect(Collectors.toMap(ProxiedPlayer::getUniqueId, CommandSender::getName)),
+                      proxyProcessMeta.getMemory())
+            .fetch(this.cloudAPI::update);
     }
 
     /**

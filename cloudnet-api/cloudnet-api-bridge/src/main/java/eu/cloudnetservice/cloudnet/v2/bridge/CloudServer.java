@@ -4,7 +4,6 @@ import eu.cloudnetservice.cloudnet.v2.api.CloudAPI;
 import eu.cloudnetservice.cloudnet.v2.api.CloudService;
 import eu.cloudnetservice.cloudnet.v2.api.builders.ApiServerProcessBuilder;
 import eu.cloudnetservice.cloudnet.v2.api.handlers.NetworkHandler;
-import eu.cloudnetservice.cloudnet.v2.api.network.packet.out.PacketOutUpdateServerInfo;
 import eu.cloudnetservice.cloudnet.v2.bridge.event.bukkit.*;
 import eu.cloudnetservice.cloudnet.v2.bridge.internal.util.ReflectionUtil;
 import eu.cloudnetservice.cloudnet.v2.lib.CloudNetwork;
@@ -38,7 +37,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -56,6 +54,7 @@ public class CloudServer implements CloudService, NetworkHandler {
     private final int port;
     private final Template template;
     private final int memory;
+    private final CloudAPI cloudAPI;
 
     /**
      * A map of all proxies which are requested to be launched.
@@ -93,6 +92,7 @@ public class CloudServer implements CloudService, NetworkHandler {
         this.memory = serverInfo.getMemory();
         this.template = serverInfo.getTemplate();
         this.serverState = ServerState.LOBBY;
+        this.cloudAPI = cloudAPI;
     }
 
     /**
@@ -105,25 +105,20 @@ public class CloudServer implements CloudService, NetworkHandler {
     }
 
     public void updateDisable() {
-        List<String> list = new CopyOnWriteArrayList<>();
+        List<String> list = Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
 
-        for (Player all : Bukkit.getOnlinePlayers()) {
-            list.add(all.getName());
-        }
-
-        ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(),
-                                               hostAddress,
-                                               port,
-                                               false,
-                                               list,
-                                               memory,
-                                               motd,
-                                               Bukkit.getOnlinePlayers().size(),
-                                               maxPlayers,
-                                               serverState,
-                                               serverConfig,
-                                               template);
-        CloudAPI.getInstance().getNetworkConnection().sendPacketSynchronized(new PacketOutUpdateServerInfo(serverInfo));
+        new ServerInfo(this.cloudAPI.getServiceId(),
+                       hostAddress,
+                       port,
+                       false,
+                       list,
+                       memory,
+                       motd,
+                       maxPlayers,
+                       serverState,
+                       serverConfig,
+                       template)
+            .fetch(this.cloudAPI::update);
     }
 
     /**
@@ -131,24 +126,20 @@ public class CloudServer implements CloudService, NetworkHandler {
      */
     public void updateAsync() {
         bukkitBootstrap.getServer().getScheduler().runTaskAsynchronously(bukkitBootstrap, () -> {
-            List<String> list = new CopyOnWriteArrayList<>();
-            for (Player all : Bukkit.getOnlinePlayers()) {
-                list.add(all.getName());
-            }
+            List<String> list = Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
 
-            ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(),
-                                                   hostAddress,
-                                                   port,
-                                                   true,
-                                                   list,
-                                                   memory,
-                                                   motd,
-                                                   Bukkit.getOnlinePlayers().size(),
-                                                   maxPlayers,
-                                                   serverState,
-                                                   serverConfig,
-                                                   template);
-            CloudAPI.getInstance().update(serverInfo);
+            new ServerInfo(this.cloudAPI.getServiceId(),
+                           hostAddress,
+                           port,
+                           true,
+                           list,
+                           memory,
+                           motd,
+                           maxPlayers,
+                           serverState,
+                           serverConfig,
+                           template)
+                .fetch(this.cloudAPI::update);
         });
     }
 
@@ -159,7 +150,7 @@ public class CloudServer implements CloudService, NetworkHandler {
         serverState = ServerState.INGAME;
 
         if (allowAutoStart) {
-            ApiServerProcessBuilder.create(CloudAPI.getInstance().getGroup())
+            ApiServerProcessBuilder.create(this.cloudAPI.getGroup())
                                    .template(template)
                                    .startServer();
             allowAutoStart = false;
@@ -178,19 +169,18 @@ public class CloudServer implements CloudService, NetworkHandler {
                                   .map(HumanEntity::getName)
                                   .collect(Collectors.toList());
 
-        ServerInfo serverInfo = new ServerInfo(CloudAPI.getInstance().getServiceId(),
-                                               hostAddress,
-                                               port,
-                                               true,
-                                               list,
-                                               memory,
-                                               motd,
-                                               Bukkit.getOnlinePlayers().size(),
-                                               maxPlayers,
-                                               serverState,
-                                               serverConfig,
-                                               template);
-        CloudAPI.getInstance().update(serverInfo);
+        new ServerInfo(this.cloudAPI.getServiceId(),
+                       hostAddress,
+                       port,
+                       true,
+                       list,
+                       memory,
+                       motd,
+                       maxPlayers,
+                       serverState,
+                       serverConfig,
+                       template)
+            .fetch(this.cloudAPI::update);
     }
 
     /**
@@ -339,7 +329,7 @@ public class CloudServer implements CloudService, NetworkHandler {
      * @return
      */
     public SimpleServerGroup getGroupData() {
-        return CloudAPI.getInstance().getCloudNetwork().getServerGroups().get(CloudAPI.getInstance().getGroup());
+        return this.cloudAPI.getCloudNetwork().getServerGroups().get(this.cloudAPI.getGroup());
     }
 
     public double getPercentOfPlayerNowOnline() {
@@ -352,7 +342,7 @@ public class CloudServer implements CloudService, NetworkHandler {
      * @return
      */
     public ServerProcessMeta getServerProcessMeta() {
-        return CloudAPI.getInstance().getConfig().getObject("serverProcess", ServerProcessMeta.TYPE);
+        return this.cloudAPI.getConfig().getObject("serverProcess", ServerProcessMeta.TYPE);
     }
 
     private void initScoreboard(Player all) {

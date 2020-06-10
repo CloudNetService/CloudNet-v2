@@ -6,10 +6,8 @@ import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-/**
- * Created by Tareko on 25.05.2017.
- */
 public class ProxyInfo {
 
     public static final Type TYPE = TypeToken.get(ProxyInfo.class).getType();
@@ -17,39 +15,55 @@ public class ProxyInfo {
     private final ServiceId serviceId;
 
     private final String host;
-    private final int port;
     private final boolean online;
     private final Map<UUID, String> players;
     private final int memory;
-    private final int onlineCount;
+    private final int port;
 
     public ProxyInfo(ServiceId serviceId,
                      String host,
                      int port,
                      boolean online,
                      Map<UUID, String> players,
-                     int memory,
-                     int onlineCount) {
+                     int memory) {
         this.serviceId = serviceId;
         this.host = host;
         this.port = port;
         this.online = online;
         this.players = players;
         this.memory = memory;
-        this.onlineCount = onlineCount;
     }
 
-    public int getMemory() {
-        return memory;
+    public void fetch(Consumer<ProxyInfo> proxyInfo) {
+        proxyInfo.accept(this);
     }
 
     @Override
     public String toString() {
-        return "ProxyInfo{" + "serviceId=" + serviceId + ", host='" + host + '\'' + ", port=" + port + ", online=" + online + ", players=" + players + ", memory=" + memory + ", onlineCount=" + onlineCount + '}';
+        return "ProxyInfo{" +
+            "serviceId=" + serviceId +
+            ", host='" + host + '\'' +
+            ", port=" + port +
+            ", online=" + online +
+            ", players=" + players +
+            ", memory=" + memory +
+            '}';
+    }
+
+    public Map<UUID, String> getPlayers() {
+        return players;
+    }
+
+    public SimpleProxyInfo toSimple() {
+        return new SimpleProxyInfo(getServiceId(), isOnline(), getHost(), getPort(), getMemory(), getOnlineCount());
     }
 
     public ServiceId getServiceId() {
         return serviceId;
+    }
+
+    public boolean isOnline() {
+        return online;
     }
 
     public String getHost() {
@@ -60,20 +74,12 @@ public class ProxyInfo {
         return port;
     }
 
+    public int getMemory() {
+        return memory;
+    }
+
     public int getOnlineCount() {
-        return onlineCount;
-    }
-
-    public boolean isOnline() {
-        return online;
-    }
-
-    public Map<UUID, String> getPlayers() {
-        return players;
-    }
-
-    public SimpleProxyInfo toSimple() {
-        return new SimpleProxyInfo(serviceId, online, host, port, memory, onlineCount);
+        return players != null ? players.size() : 0;
     }
 
 }

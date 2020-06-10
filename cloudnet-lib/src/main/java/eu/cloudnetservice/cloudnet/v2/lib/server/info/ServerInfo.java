@@ -9,25 +9,23 @@ import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
-/**
- * Created by Tareko on 24.05.2017.
- */
 public class ServerInfo {
     public static final Type TYPE = TypeToken.get(ServerInfo.class).getType();
 
     private final ServiceId serviceId;
     private final String host;
-    private final int port;
     private final boolean online;
     private final List<String> players;
+    private final int port;
     private final int memory;
-    private String motd;
-    private final int onlineCount;
     private final int maxPlayers;
-    private ServerState serverState;
     private final ServerConfig serverConfig;
     private final Template template;
+    private String motd;
+    private ServerState serverState;
+
     public ServerInfo(ServiceId serviceId,
                       String host,
                       int port,
@@ -35,7 +33,6 @@ public class ServerInfo {
                       List<String> players,
                       int memory,
                       String motd,
-                      int onlineCount,
                       int maxPlayers,
                       ServerState serverState,
                       ServerConfig serverConfig,
@@ -47,11 +44,14 @@ public class ServerInfo {
         this.players = players;
         this.memory = memory;
         this.motd = motd;
-        this.onlineCount = onlineCount;
         this.maxPlayers = maxPlayers;
         this.serverState = serverState;
         this.serverConfig = serverConfig;
         this.template = template;
+    }
+
+    public void fetch(Consumer<ServerInfo> serverInfo) {
+        serverInfo.accept(this);
     }
 
     @Override
@@ -63,7 +63,6 @@ public class ServerInfo {
         result = 31 * result + (players != null ? players.hashCode() : 0);
         result = 31 * result + memory;
         result = 31 * result + (motd != null ? motd.hashCode() : 0);
-        result = 31 * result + onlineCount;
         result = 31 * result + maxPlayers;
         result = 31 * result + (serverState != null ? serverState.hashCode() : 0);
         result = 31 * result + (serverConfig != null ? serverConfig.hashCode() : 0);
@@ -89,9 +88,6 @@ public class ServerInfo {
             return false;
         }
         if (memory != that.memory) {
-            return false;
-        }
-        if (onlineCount != that.onlineCount) {
             return false;
         }
         if (maxPlayers != that.maxPlayers) {
@@ -120,19 +116,19 @@ public class ServerInfo {
 
     @Override
     public String toString() {
-        return "ServerInfo{" + "serviceId=" + serviceId + ", host='" + host + '\'' + ", port=" + port + ", online=" + online + ", players=" + players + ", memory=" + memory + ", motd='" + motd + '\'' + ", onlineCount=" + onlineCount + ", maxPlayers=" + maxPlayers + ", serverState=" + serverState + ", serverConfig=" + serverConfig + ", template=" + template + '}';
-    }
-
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
-
-    public int getOnlineCount() {
-        return onlineCount;
-    }
-
-    public int getPort() {
-        return port;
+        return "ServerInfo{" +
+            "serviceId=" + serviceId +
+            ", host='" + host + '\'' +
+            ", port=" + port +
+            ", online=" + online +
+            ", players=" + players +
+            ", memory=" + memory +
+            ", maxPlayers=" + maxPlayers +
+            ", serverConfig=" + serverConfig +
+            ", template=" + template +
+            ", motd='" + motd + '\'' +
+            ", serverState=" + serverState +
+            '}';
     }
 
     public int getMemory() {
@@ -141,10 +137,6 @@ public class ServerInfo {
 
     public Template getTemplate() {
         return template;
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers;
     }
 
     public List<String> getPlayers() {
@@ -157,10 +149,6 @@ public class ServerInfo {
 
     public ServerState getServerState() {
         return serverState;
-    }
-
-    public String getHost() {
-        return host;
     }
 
     public String getMotd() {
@@ -185,7 +173,27 @@ public class ServerInfo {
     }
 
     public SimpleServerInfo toSimple() {
-        return new SimpleServerInfo(serviceId, host, port, onlineCount, maxPlayers);
+        return new SimpleServerInfo(getServiceId(), getHost(), getPort(), getOnlineCount(), getMaxPlayers());
+    }
+
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public int getOnlineCount() {
+        return players != null ? players.size() : 0;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
     }
 
 }

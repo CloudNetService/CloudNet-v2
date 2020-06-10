@@ -269,8 +269,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                                        proxyProcessMeta.getPort(),
                                        false,
                                        new HashMap<>(),
-                                       proxyProcessMeta.getMemory(),
-                                       0);
+                                       proxyProcessMeta.getMemory());
 
         final Path cloudPath = this.dir.resolve("CLOUD");
         if (!Files.exists(cloudPath)) {
