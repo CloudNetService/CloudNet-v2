@@ -76,7 +76,7 @@ public class CloudConfig {
             try {
                 Files.createDirectories(path);
             } catch (IOException e) {
-                e.printStackTrace();
+                 throw new RuntimeException("Folder path " + path.toAbsolutePath().toString() + " could not be created", e);
             }
         }
 
