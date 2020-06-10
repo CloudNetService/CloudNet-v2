@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -105,10 +104,7 @@ public class CloudServer implements CloudService, NetworkHandler {
     }
 
     public void updateDisable() {
-        List<String> list = new CopyOnWriteArrayList<>();
-        for (Player all : Bukkit.getOnlinePlayers()) {
-            list.add(all.getName());
-        }
+        List<String> list = Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
 
         new ServerInfo(CloudAPI.getInstance().getServiceId(),
                        hostAddress,
@@ -121,7 +117,9 @@ public class CloudServer implements CloudService, NetworkHandler {
                        serverState,
                        serverConfig,
                        template)
-            .fetch(serverInfo -> CloudAPI.getInstance().getNetworkConnection().sendPacketSynchronized(new PacketOutUpdateServerInfo(serverInfo)));
+            .fetch(serverInfo -> CloudAPI.getInstance()
+                                         .getNetworkConnection()
+                                         .sendPacketSynchronized(new PacketOutUpdateServerInfo(serverInfo)));
     }
 
     /**
@@ -129,10 +127,7 @@ public class CloudServer implements CloudService, NetworkHandler {
      */
     public void updateAsync() {
         bukkitBootstrap.getServer().getScheduler().runTaskAsynchronously(bukkitBootstrap, () -> {
-            List<String> list = new CopyOnWriteArrayList<>();
-            for (Player all : Bukkit.getOnlinePlayers()) {
-                list.add(all.getName());
-            }
+            List<String> list = Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
 
             new ServerInfo(CloudAPI.getInstance().getServiceId(),
                            hostAddress,
