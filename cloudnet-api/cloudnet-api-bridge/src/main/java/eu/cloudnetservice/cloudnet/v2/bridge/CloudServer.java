@@ -4,7 +4,6 @@ import eu.cloudnetservice.cloudnet.v2.api.CloudAPI;
 import eu.cloudnetservice.cloudnet.v2.api.CloudService;
 import eu.cloudnetservice.cloudnet.v2.api.builders.ApiServerProcessBuilder;
 import eu.cloudnetservice.cloudnet.v2.api.handlers.NetworkHandler;
-import eu.cloudnetservice.cloudnet.v2.api.network.packet.out.PacketOutUpdateServerInfo;
 import eu.cloudnetservice.cloudnet.v2.bridge.event.bukkit.*;
 import eu.cloudnetservice.cloudnet.v2.bridge.internal.util.ReflectionUtil;
 import eu.cloudnetservice.cloudnet.v2.lib.CloudNetwork;
@@ -119,7 +118,7 @@ public class CloudServer implements CloudService, NetworkHandler {
                        serverState,
                        serverConfig,
                        template)
-            .fetch(serverInfo -> this.cloudAPI.getNetworkConnection().sendPacketSynchronized(new PacketOutUpdateServerInfo(serverInfo)));
+            .fetch(this.cloudAPI::update);
     }
 
     /**

@@ -63,7 +63,6 @@ public class ServerInfo {
         result = 31 * result + (players != null ? players.hashCode() : 0);
         result = 31 * result + memory;
         result = 31 * result + (motd != null ? motd.hashCode() : 0);
-        result = 31 * result + (players != null ? players.size() : 0);
         result = 31 * result + maxPlayers;
         result = 31 * result + (serverState != null ? serverState.hashCode() : 0);
         result = 31 * result + (serverConfig != null ? serverConfig.hashCode() : 0);
