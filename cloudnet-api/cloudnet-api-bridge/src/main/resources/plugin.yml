@@ -1,10 +1,10 @@
 name: CloudNetAPI
-version: 2.1
-author: Dytanic
+version: ${project.version}
+author: CloudNetService
 website: https://cloudnetservice.eu/
 description: CloudNet Interface for the Central server
 
-main: de.dytanic.cloudnet.bridge.BukkitBootstrap
+main: eu.cloudnetservice.cloudnet.v2.bridge.BukkitBootstrap
 
 softdepend: [Vault, VaultAPI]
 

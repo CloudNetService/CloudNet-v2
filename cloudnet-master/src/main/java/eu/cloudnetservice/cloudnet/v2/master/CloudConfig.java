@@ -13,7 +13,6 @@ import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.cloudnet.v2.master.util.defaults.BungeeGroup;
 import eu.cloudnetservice.cloudnet.v2.master.util.defaults.LobbyGroup;
 import eu.cloudnetservice.cloudnet.v2.web.server.util.WebServerConfig;
-import jline.console.ConsoleReader;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -71,21 +70,25 @@ public class CloudConfig {
 
     private List<String> hasteServer;
 
-    public CloudConfig(ConsoleReader consoleReader) throws Exception {
+    public CloudConfig() {
 
         for (Path path : MASTER_PATHS) {
-            Files.createDirectories(path);
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                 throw new RuntimeException("Folder path " + path.toAbsolutePath().toString() + " could not be created", e);
+            }
         }
 
         NetworkUtils.writeWrapperKey();
 
-        defaultInit(consoleReader);
+        defaultInit();
         defaultInitDoc();
-        defaultInitUsers(consoleReader);
+        defaultInitUsers();
         load();
     }
 
-    private void defaultInit(ConsoleReader consoleReader) throws Exception {
+    private void defaultInit() {
         if (Files.exists(configPath)) {
             return;
         }
@@ -114,10 +117,12 @@ public class CloudConfig {
 
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void defaultInitDoc() throws Exception {
+    private void defaultInitDoc() {
         if (Files.exists(servicePath)) {
             return;
         }
@@ -129,7 +134,7 @@ public class CloudConfig {
         new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
     }
 
-    private void defaultInitUsers(ConsoleReader consoleReader) {
+    private void defaultInitUsers() {
         if (Files.exists(usersPath)) {
             return;
         }
@@ -143,7 +148,7 @@ public class CloudConfig {
             .saveAsConfig(usersPath);
     }
 
-    public CloudConfig load() throws Exception {
+    public CloudConfig load() {
 
         try (Reader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
             Configuration configuration = CONFIGURATION_PROVIDER.load(reader);
@@ -186,6 +191,8 @@ public class CloudConfig {
             this.hasteServer = configuration.getStringList("general.haste.server");
 
             this.disabledModules = configuration.getStringList("general.disabled-modules");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         this.serviceDocument = Document.loadDocument(servicePath);

@@ -4,10 +4,7 @@ import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.logging.handler.ICloudLoggerHandler;
 import jline.console.ConsoleReader;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -24,54 +21,57 @@ import java.util.logging.*;
 public class CloudLogger extends Logger {
 
     private static final String SEPARATOR = System.lineSeparator();
-    private final ConsoleReader reader;
+    private ConsoleReader reader;
     private final String name = System.getProperty("user.name");
 
     private final List<ICloudLoggerHandler> handler = new LinkedList<>();
 
     private boolean showPrompt = !Boolean.getBoolean("cloudnet.logging.prompt.disabled");
-    private final Handler loggingHandler;
+    private Handler loggingHandler;
 
     /**
      * Constructs a new cloud logger instance that handles logging messages from
      * all sources in an asynchronous matter.
      *
-     * @throws IOException            when creating directories or files in {@code local/}
-     *                                was not possible
      */
-    public CloudLogger() throws IOException {
+    public CloudLogger() {
         super("CloudNetServerLogger", null);
+        try {
+            if (!Files.exists(Paths.get("local"))) {
+                Files.createDirectory(Paths.get("local"));
+            }
+            if (!Files.exists(Paths.get("local", "logs"))) {
+                Files.createDirectory(Paths.get("local", "logs"));
+            }
 
-        if (!Files.exists(Paths.get("local"))) {
-            Files.createDirectory(Paths.get("local"));
+            setLevel(Level.ALL);
+            this.reader = new ConsoleReader(System.in, System.out);
+            this.reader.setExpandEvents(false);
+
+            final LoggingFormatter formatter = new LoggingFormatter();
+            FileHandler fileHandler;
+
+            fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, false);
+            fileHandler.setEncoding(StandardCharsets.UTF_8.name());
+            fileHandler.setFormatter(formatter);
+
+            addHandler(fileHandler);
+
+            loggingHandler = new LoggingHandler(reader, this);
+            loggingHandler.setFormatter(formatter);
+
+            loggingHandler.setEncoding(StandardCharsets.UTF_8.name());
+            loggingHandler.setLevel(Level.INFO);
+            addHandler(loggingHandler);
+
+            System.setOut(new PrintStream(new LoggingOutputStream(this, Level.INFO)));
+            System.setErr(new PrintStream(new LoggingOutputStream(this, Level.SEVERE)));
+
+            this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
+            this.reader.resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        if (!Files.exists(Paths.get("local", "logs"))) {
-            Files.createDirectory(Paths.get("local", "logs"));
-        }
-
-        setLevel(Level.ALL);
-
-        this.reader = new ConsoleReader(System.in, System.out);
-        this.reader.setExpandEvents(false);
-
-        final LoggingFormatter formatter = new LoggingFormatter();
-        FileHandler fileHandler = new FileHandler("local/logs/cloudnet.log", 8000000, 8, false);
-        fileHandler.setEncoding(StandardCharsets.UTF_8.name());
-        fileHandler.setFormatter(formatter);
-
-        addHandler(fileHandler);
-
-        loggingHandler = new LoggingHandler(reader, this);
-        loggingHandler.setFormatter(formatter);
-        loggingHandler.setEncoding(StandardCharsets.UTF_8.name());
-        loggingHandler.setLevel(Level.INFO);
-        addHandler(loggingHandler);
-
-        System.setOut(new AsyncPrintStream(new LoggingOutputStream(this, Level.INFO)));
-        System.setErr(new AsyncPrintStream(new LoggingOutputStream(this, Level.SEVERE)));
-
-        this.reader.setPrompt(NetworkUtils.EMPTY_STRING);
-        this.reader.resetPromptLine(NetworkUtils.EMPTY_STRING, "", 0);
     }
 
     public boolean isShowPrompt() {

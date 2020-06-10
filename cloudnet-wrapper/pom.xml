@@ -33,12 +33,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
-            <artifactId>cloudnet-snakeconfig</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>net.sf.jopt-simple</groupId>
             <artifactId>jopt-simple</artifactId>
             <version>${dependency.jopt-simple.version}</version>
