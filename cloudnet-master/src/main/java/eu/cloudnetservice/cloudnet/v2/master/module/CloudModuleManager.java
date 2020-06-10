@@ -133,6 +133,7 @@ public final class CloudModuleManager {
 
     /**
      * Unloads all classes from one module
+     *
      * @param cloudModule contains all information
      */
     private void unloadClasses(@NotNull JavaCloudModule cloudModule) {
@@ -174,131 +175,151 @@ public final class CloudModuleManager {
         }
     }
 
+    private void checkModuleForAvailableUpdate(@NotNull CloudModule module) {
+        if (module instanceof UpdateCloudModule) {
+            module.getModuleLogger().info(String.format("Check module update %s",
+                                                        module.getModuleJson().getName()));
+            UpdateCloudModule updateCloudModule = (UpdateCloudModule) module;
+            module.setUpdate(updateCloudModule.update(module.getModuleJson().getUpdateUrl()));
+        }
+    }
+
+
+    /**
+     * @param module is registered in the map
+     */
+    private void registerModule(@NotNull CloudModule module) {
+        this.modules.put(module
+                             .getModuleJson()
+                             .getGroupId() + ":" + module
+                             .getModuleJson()
+                             .getName(),
+                         module);
+    }
+
+
+    /**
+     * @param module is registered in the map and it is displayed that it was successfully updated
+     */
+    private void updateSuccessful(@NotNull CloudModule module) {
+        module.getModuleLogger().info(String.format("Update to %s was successful",
+                                                    module.getModuleJson().getVersion()));
+        this.registerModule(module);
+
+    }
+
+    /**
+     * Creates a unique string from a module
+     * @param module is used for the string
+     * @return Returns the unique string
+     */
+    public String translateModuleAsUniqueString(@NotNull CloudModule module) {
+        return module
+            .getModuleJson()
+            .getGroupId() + ":" + module
+            .getModuleJson()
+            .getName();
+    }
+
+    /**
+     * Migrates the module from an old version to a new
+     * @param oldModule is the old once
+     * @param newModule is the new one where the migration will take place
+     */
+    private void migrateFromOldToNewModule(@NotNull CloudModule oldModule, @NotNull CloudModule newModule) {
+        if (newModule instanceof MigrateCloudModule) {
+            MigrateCloudModule migrateCloudModule = (MigrateCloudModule) newModule;
+            if (migrateCloudModule.migrate(newModule.getModuleJson().getSemVersion(),
+                                           oldModule.getModuleJson().getSemVersion())) {
+                newModule.getModuleLogger().info(String.format("Module %s successfully migrated from %s to %s",
+                                                               oldModule.getModuleJson().getName(),
+                                                               oldModule.getModuleJson().getVersion(),
+                                                               newModule.getModuleJson().getVersion()));
+                this.updateModule(oldModule, newModule);
+            } else {
+                oldModule.getModuleLogger().info(String.format("Module %s could not be migrated from %s to %s ",
+                                                               oldModule.getModuleJson().getName(),
+                                                               oldModule.getModuleJson().getName(),
+                                                               newModule.getModuleJson().getVersion()));
+            }
+        }
+    }
+
+    /**
+     * Replaces the old module with the new one and loads it into the module system
+     * @param oldModule is the module to be deleted
+     * @param newModule is the module to be copied and loaded
+     */
+    private void updateModule(@NotNull CloudModule oldModule, @NotNull CloudModule newModule) {
+        try {
+            Files.deleteIfExists(oldModule.getModuleJson().getFile());
+            Files.copy(newModule.getModuleJson().getFile(), oldModule.getModuleJson().getFile());
+            Files.deleteIfExists(newModule.getModuleJson().getFile());
+            Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(newModule.getModuleJson()
+                                                                                    .getFile());
+            optionalJavaCloudModule.ifPresent(this::updateSuccessful);
+            optionalJavaCloudModule.orElseThrow(() -> new RuntimeException(String.format(
+                "New update of %s could not be loaded!",
+                oldModule.getModuleJson().getName())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Checks the file if the new version is larger than the old one and if migration is possible
+     * @param oldModule should be checked
+     */
+    private void checkForNewerVersion(@NotNull CloudModule oldModule) {
+        Optional<CloudModule> newOptionalModule = this.getModule(translateModuleAsUniqueString(oldModule));
+        if (newOptionalModule.isPresent()) {
+            CloudModule newModule = newOptionalModule.get();
+            if (newModule instanceof JavaCloudModule && newModule.isUpdate()) {
+                if (oldModule.getModuleJson().getSemVersion().isGreaterThan(newModule.getModuleJson().getSemVersion())) {
+                    unloadModule(newModule);
+                    this.modules.remove(translateModuleAsUniqueString(newModule));
+                    if (newModule instanceof MigrateCloudModule) {
+                        this.migrateFromOldToNewModule(oldModule, newModule);
+                    } else {
+                        this.updateModule(oldModule, newModule);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Here all modules are loaded from a list, checked for updates and migrated if necessary
      *
      * @param toLoaded contains all files that have to be loaded
      * @param toUpdate contains all update files which have to be checked if the update works
      */
-    private void handleLoaded(@NotNull List<Path> toLoaded,@NotNull List<Path> toUpdate) {
+    private void handleLoaded(@NotNull List<Path> toLoaded, @NotNull List<Path> toUpdate) {
         for (Path path : toLoaded) {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
-            cloudModule.ifPresent(javaCloudModule -> {
-                if (javaCloudModule instanceof UpdateCloudModule) {
-                    javaCloudModule.getModuleLogger().info(String.format("Check module update %s",
-                                                                         javaCloudModule.getModuleJson().getName()));
-                    UpdateCloudModule updateCloudModule = (UpdateCloudModule) javaCloudModule;
-                    javaCloudModule.setUpdate(updateCloudModule.update(javaCloudModule.getModuleJson().getUpdateUrl()));
-                }
-            });
-            cloudModule.ifPresent(javaCloudModule -> this.modules.put(javaCloudModule
-                                                                          .getModuleJson()
-                                                                          .getGroupId() + ":" + javaCloudModule
-                                                                          .getModuleJson()
-                                                                          .getName(),
-                                                                      javaCloudModule));
+            cloudModule.ifPresent(this::checkModuleForAvailableUpdate);
+            cloudModule.ifPresent(this::registerModule);
             toLoaded.remove(path);
         }
         for (Path path : toUpdate) {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
-            cloudModule.ifPresent(javaCloudModule -> {
-                Optional<CloudModule> moduleOptional = this.getModule(javaCloudModule
-                                                                                .getModuleJson()
-                                                                                .getGroupId() + ":" + javaCloudModule
-                    .getModuleJson()
-                    .getName());
-                if (moduleOptional.isPresent()) {
-                    CloudModule module = moduleOptional.get();
-                    if (module instanceof JavaCloudModule && module.isUpdate()) {
-                        if (javaCloudModule.getModuleJson().getSemVersion().isGreaterThan(module.getModuleJson().getSemVersion())) {
-                            unloadModule(module);
-                            this.modules.remove(module
-                                                    .getModuleJson()
-                                                    .getGroupId() + ":" + module.getModuleJson().getName());
-                            if (module instanceof MigrateCloudModule) {
-                                MigrateCloudModule migrateCloudModule = (MigrateCloudModule) module;
-                                if (migrateCloudModule.migrate(module.getModuleJson().getSemVersion(),
-                                                               javaCloudModule.getModuleJson().getSemVersion())) {
-                                    module.getModuleLogger().info(String.format("Module %s successfully migrated from %s to %s",
-                                                                             module.getModuleJson().getName(),
-                                                                             module.getModuleJson().getVersion(),
-                                                                             javaCloudModule.getModuleJson().getVersion()));
-                                    try {
-                                        Files.deleteIfExists(module.getModuleJson().getFile());
-                                        Files.copy(javaCloudModule.getModuleJson().getFile(), module.getModuleJson().getFile());
-                                        Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
-                                        Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson()
-                                                                                                                   .getFile());
-                                        optionalJavaCloudModule.ifPresent(value -> {
-                                            this.modules.put(value
-                                                                 .getModuleJson()
-                                                                 .getGroupId() + ":" + javaCloudModule
-                                                                 .getModuleJson()
-                                                                 .getName(),
-                                                             value);
-                                            value.getModuleLogger().info(String.format("Update to %s was successful",
-                                                                                       value.getModuleJson().getVersion()));
-                                        });
-                                        optionalJavaCloudModule.orElseThrow(() -> new RuntimeException(String.format(
-                                            "New update of %s could not be loaded!",
-                                            module.getModuleJson().getName())));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                } else {
-                                    module.getModuleLogger().info(String.format("Module %s could not be migrated from %s to %s ",
-                                                                             module.getModuleJson().getName(),
-                                                                             module.getModuleJson().getVersion(),
-                                                                             javaCloudModule.getModuleJson().getVersion()));
-                                }
-                            } else {
-                                try {
-                                    Files.deleteIfExists(module.getModuleJson().getFile());
-                                    Files.copy(javaCloudModule.getModuleJson().getFile(), module.getModuleJson().getFile());
-                                    Files.deleteIfExists(javaCloudModule.getModuleJson().getFile());
-                                    Optional<JavaCloudModule> optionalJavaCloudModule = loadModule(module.getModuleJson()
-                                                                                                               .getFile());
-                                    optionalJavaCloudModule.ifPresent(value -> {
-                                        this.modules.put(value
-                                                             .getModuleJson()
-                                                             .getGroupId() + ":" + javaCloudModule
-                                                             .getModuleJson()
-                                                             .getName(),
-                                                         value);
-                                        value.getModuleLogger().info(String.format("Update to %s was successful",
-                                                                                   value.getModuleJson().getVersion()));
-                                    });
-                                    optionalJavaCloudModule.orElseThrow(() -> new RuntimeException(String.format(
-                                        "New update of %s could not be loaded!",
-                                        module.getModuleJson().getName())));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-
-                        }
-
-                    }
-
-                }
-            });
+            cloudModule.ifPresent(this::checkForNewerVersion);
             toUpdate.remove(path);
         }
         checkDependencies(resolveDependenciesSorted(getModules().values())).stream()
-                                                                                            .filter(javaCloudModule -> !javaCloudModule.isLoaded())
-                                                                                            .forEach(javaCloudModule -> {
-                                                                                                javaCloudModule.getModuleLogger().info(
-                                                                                                    String.format(
-                                                                                                        "Loading module %s from %s with version %s",
-                                                                                                        javaCloudModule.getModuleJson()
-                                                                                                                       .getName(),
-                                                                                                        javaCloudModule.getModuleJson()
-                                                                                                                       .getAuthorsAsString(),
-                                                                                                        javaCloudModule.getModuleJson()
-                                                                                                                       .getVersion()));
-                                                                                                javaCloudModule.setLoaded(true);
-                                                                                            });
+                                                                           .filter(javaCloudModule -> !javaCloudModule.isLoaded())
+                                                                           .forEach(javaCloudModule -> {
+                                                                               javaCloudModule.getModuleLogger().info(
+                                                                                   String.format(
+                                                                                       "Loading module %s from %s with version %s",
+                                                                                       javaCloudModule.getModuleJson()
+                                                                                                      .getName(),
+                                                                                       javaCloudModule.getModuleJson()
+                                                                                                      .getAuthorsAsString(),
+                                                                                       javaCloudModule.getModuleJson()
+                                                                                                      .getVersion()));
+                                                                               javaCloudModule.setLoaded(true);
+                                                                           });
     }
 
 
@@ -404,7 +425,7 @@ public final class CloudModuleManager {
      *
      * @return {@code true}, if the module is present in the list, {@code false} otherwise.
      */
-    private boolean isModuleDetectedByPath(@NotNull Path path,@NotNull List<Path> toLoad) {
+    private boolean isModuleDetectedByPath(@NotNull Path path, @NotNull List<Path> toLoad) {
         boolean result = false;
         String check = path.toAbsolutePath().toString();
         Iterator<CloudModule> moduleIterator = this.getModules().values().iterator();
@@ -456,7 +477,7 @@ public final class CloudModuleManager {
      * @param name  is the name that should apply to the class when the class is added
      * @param clazz is the class to be added
      */
-    void setClass(@NotNull String name,@NotNull Class<?> clazz) {
+    void setClass(@NotNull String name, @NotNull Class<?> clazz) {
         if (!classes.containsKey(name)) {
             classes.put(name, clazz);
         }
