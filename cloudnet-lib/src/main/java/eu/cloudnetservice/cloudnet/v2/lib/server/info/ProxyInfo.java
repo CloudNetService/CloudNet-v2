@@ -20,7 +20,8 @@ public class ProxyInfo {
     private final String host;
     private final boolean online;
     private final Map<UUID, String> players;
-    private final int memory, port;
+    private final int memory;
+    private final int port;
 
     public ProxyInfo(ServiceId serviceId,
                      String host,

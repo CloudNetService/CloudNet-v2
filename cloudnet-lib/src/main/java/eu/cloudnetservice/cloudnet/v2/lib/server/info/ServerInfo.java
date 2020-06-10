@@ -21,7 +21,9 @@ public class ServerInfo {
     private final String host;
     private final boolean online;
     private final List<String> players;
-    private final int port, memory, maxPlayers;
+    private final int port;
+    private final int memory;
+    private final int maxPlayers;
     private final ServerConfig serverConfig;
     private final Template template;
     private String motd;
@@ -51,7 +53,7 @@ public class ServerInfo {
         this.template = template;
     }
 
-    public void fetch(Consumer<ServerInfo> serverInfo){
+    public void fetch(Consumer<ServerInfo> serverInfo) {
         serverInfo.accept(this);
     }
 
