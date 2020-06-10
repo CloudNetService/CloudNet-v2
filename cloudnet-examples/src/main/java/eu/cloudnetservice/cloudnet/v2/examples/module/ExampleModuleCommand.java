@@ -4,6 +4,10 @@ import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 
 public class ExampleModuleCommand extends Command {
+
+
+    private final ModuleExample moduleExample;
+
     /**
      * Constructs a new command with a name, a needed permission and variable aliases.
      *
@@ -11,16 +15,13 @@ public class ExampleModuleCommand extends Command {
      * @param permission the permission a user has to have
      * @param aliases    other names of this command
      */
-
-    private final ModuleExample moduleExample;
-
-    public ExampleModuleCommand(ModuleExample moduleExample,final String name, final String permission, final String... aliases) {
+    public ExampleModuleCommand(ModuleExample moduleExample,String name, String permission, String... aliases) {
         super(name, permission, aliases);
         this.moduleExample = moduleExample;
     }
 
     @Override
-    public void onExecuteCommand(final CommandSender sender, final String[] args) {
+    public void onExecuteCommand(CommandSender sender, String[] args) {
         this.moduleExample.getModuleLogger().warning(String.format("ExampleCommand Sender: %s",sender.getName()));
     }
 }
