@@ -57,14 +57,6 @@ public final class CloudModuleManager {
      * Afterwards all modules are loaded and checked, whether updates are available and whether migrations need to be run.
      */
     public void detectModules() {
-        List<Path> toUpdate = new ArrayList<>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.updateModuleDirectory, "*.jar")) {
-            for (Path path : stream) {
-                toUpdate.add(path);
-            }
-        } catch (final IOException ex) {
-            ex.printStackTrace();
-        }
         List<Path> toLoad = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.moduleDirectory, "*.jar")) {
             for (Path path : stream) {
@@ -76,7 +68,7 @@ public final class CloudModuleManager {
         } catch (final IOException ex) {
             ex.printStackTrace();
         }
-        handleLoaded(toLoad, toUpdate);
+        handleLoaded(toLoad);
     }
 
     /**
@@ -292,14 +284,21 @@ public final class CloudModuleManager {
      * Here all modules are loaded from a list, checked for updates and migrated if necessary
      *
      * @param toLoaded contains all files that have to be loaded
-     * @param toUpdate contains all update files which have to be checked if the update works
      */
-    private void handleLoaded(@NotNull List<Path> toLoaded, @NotNull List<Path> toUpdate) {
+    private void handleLoaded(@NotNull List<Path> toLoaded) {
         for (Path path : toLoaded) {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
             cloudModule.ifPresent(this::checkModuleForAvailableUpdate);
             cloudModule.ifPresent(this::registerModule);
             toLoaded.remove(path);
+        }
+        List<Path> toUpdate = new ArrayList<>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.updateModuleDirectory, "*.jar")) {
+            for (Path path : stream) {
+                toUpdate.add(path);
+            }
+        } catch (final IOException ex) {
+            ex.printStackTrace();
         }
         for (Path path : toUpdate) {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
