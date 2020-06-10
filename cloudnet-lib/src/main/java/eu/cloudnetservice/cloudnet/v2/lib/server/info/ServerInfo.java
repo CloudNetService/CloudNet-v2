@@ -135,28 +135,12 @@ public class ServerInfo {
             '}';
     }
 
-    public ServiceId getServiceId() {
-        return serviceId;
-    }
-
-    public int getOnlineCount() {
-        return players != null ? players.size() : 0;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
     public int getMemory() {
         return memory;
     }
 
     public Template getTemplate() {
         return template;
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers;
     }
 
     public List<String> getPlayers() {
@@ -169,10 +153,6 @@ public class ServerInfo {
 
     public ServerState getServerState() {
         return serverState;
-    }
-
-    public String getHost() {
-        return host;
     }
 
     public String getMotd() {
@@ -197,8 +177,27 @@ public class ServerInfo {
     }
 
     public SimpleServerInfo toSimple() {
-        int onlinePlayers = players != null ? players.size() : 0;
-        return new SimpleServerInfo(serviceId, host, port, onlinePlayers, maxPlayers);
+        return new SimpleServerInfo(getServiceId(), getHost(), getPort(), getOnlineCount(), getMaxPlayers());
+    }
+
+    public ServiceId getServiceId() {
+        return serviceId;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public int getOnlineCount() {
+        return players != null ? players.size() : 0;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
     }
 
 }

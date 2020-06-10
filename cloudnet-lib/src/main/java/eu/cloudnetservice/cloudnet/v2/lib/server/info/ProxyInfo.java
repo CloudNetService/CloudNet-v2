@@ -41,10 +41,6 @@ public class ProxyInfo {
         proxyInfo.accept(this);
     }
 
-    public int getMemory() {
-        return memory;
-    }
-
     @Override
     public String toString() {
         return "ProxyInfo{" +
@@ -57,8 +53,20 @@ public class ProxyInfo {
             '}';
     }
 
+    public Map<UUID, String> getPlayers() {
+        return players;
+    }
+
+    public SimpleProxyInfo toSimple() {
+        return new SimpleProxyInfo(getServiceId(), isOnline(), getHost(), getPort(), getMemory(), getOnlineCount());
+    }
+
     public ServiceId getServiceId() {
         return serviceId;
+    }
+
+    public boolean isOnline() {
+        return online;
     }
 
     public String getHost() {
@@ -69,21 +77,12 @@ public class ProxyInfo {
         return port;
     }
 
+    public int getMemory() {
+        return memory;
+    }
+
     public int getOnlineCount() {
         return players != null ? players.size() : 0;
-    }
-
-    public boolean isOnline() {
-        return online;
-    }
-
-    public Map<UUID, String> getPlayers() {
-        return players;
-    }
-
-    public SimpleProxyInfo toSimple() {
-        int onlinePlayers = players != null ? players.size() : 0;
-        return new SimpleProxyInfo(serviceId, online, host, port, memory, onlinePlayers);
     }
 
 }
