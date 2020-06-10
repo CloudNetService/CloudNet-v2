@@ -8,9 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-/**
- * Created by Tareko on 25.05.2017.
- */
 public class ProxyInfo {
 
     public static final Type TYPE = TypeToken.get(ProxyInfo.class).getType();

@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-/**
- * Created by Tareko on 24.05.2017.
- */
 public class ServerInfo {
     public static final Type TYPE = TypeToken.get(ServerInfo.class).getType();
 

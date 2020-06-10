@@ -7,9 +7,6 @@ import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
 
 import java.util.*;
 
-/**
- * Created by Tareko on 19.07.2017.
- */
 public class CloudNetwork {
     private int registeredPlayerCount = 0;
     private int onlineCount = 0;
