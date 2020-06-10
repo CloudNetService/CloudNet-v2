@@ -8,6 +8,7 @@ import eu.cloudnetservice.cloudnet.v2.lib.CloudNetwork;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.player.CloudPlayer;
 import eu.cloudnetservice.cloudnet.v2.lib.player.OfflinePlayer;
+import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.ServerFallback;
 import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.TabList;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ProxyGroup;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ProxyProcessMeta;
