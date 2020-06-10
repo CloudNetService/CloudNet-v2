@@ -106,6 +106,9 @@ public class CloudServer implements CloudService, NetworkHandler {
 
     public void updateDisable() {
         List<String> list = new CopyOnWriteArrayList<>();
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            list.add(all.getName());
+        }
 
         new ServerInfo(CloudAPI.getInstance().getServiceId(),
                        hostAddress,
