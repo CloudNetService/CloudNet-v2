@@ -61,37 +61,37 @@ public class CloudNetWrapperConfig {
             Optional<String> host6Name = Optional.empty();
             InetAddressValidator validator = new InetAddressValidator();
 
-            if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4) {
-                String input;
-                System.out.println("Please provide your service ipv4, leave blank for only ipv6");
-                System.out.println("Only Ipv6 is not recommended!");
-                while ((input = reader.readLine()) != null) {
-                    if (input.isEmpty()) {
-                        host4Name = Optional.empty();
-                        break;
-                    }
-                    if (!validator.isValidInet4Address(input)) {
-                        System.out.println("Please provide your real ipv4 address :)");
-                        continue;
-                    }
-                    host4Name = Optional.of(input);
+            //if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4) {
+            String input;
+            System.out.println("Please provide your service ipv4, leave blank for only ipv6");
+            System.out.println("Only Ipv6 is not recommended!");
+            while ((input = reader.readLine()) != null) {
+                if (input.isEmpty()) {
+                    host4Name = Optional.empty();
                     break;
                 }
-
-                System.out.println("please provide your service ipv6, leave blank for only ipv4");
-                while ((input = reader.readLine()) != null) {
-                    if (input.isEmpty()) {
-                        host6Name = Optional.empty();
-                        break;
-                    }
-                    if (!validator.isValidInet6Address(input)) {
-                        System.out.println("Please provide your real ipv6 address :)");
-                        continue;
-                    }
-                    host6Name = Optional.of(input);
-                    break;
+                if (!validator.isValidInet4Address(input)) {
+                    System.out.println("Please provide your real ipv4 address :)");
+                    continue;
                 }
+                host4Name = Optional.of(input);
+                break;
             }
+
+            System.out.println("please provide your service ipv6, leave blank for only ipv4");
+            while ((input = reader.readLine()) != null) {
+                if (input.isEmpty()) {
+                    host6Name = Optional.empty();
+                    break;
+                }
+                if (!validator.isValidInet6Address(input)) {
+                    System.out.println("Please provide your real ipv6 address :)");
+                    continue;
+                }
+                host6Name = Optional.of(input);
+                break;
+            }
+            //}
 
             if (!host4Name.isPresent() && !host6Name.isPresent()) {
                 //TODO: Exit or rerequest data
@@ -122,37 +122,36 @@ public class CloudNetWrapperConfig {
             Optional<String> cloud4Host = Optional.empty();
             Optional<String> cloud6Host = Optional.empty();
 
-            if (cloudNetHost.equals("127.0.0.1") || cloudNetHost.equals("127.0.1.1") || cloudNetHost.split("\\.").length != 4) {
-                String input;
-                System.out.println("Please provide your master ipv4, leave blank for only ipv6");
-                System.out.println("Only Ipv6 is not recommended!");
-                while ((input = reader.readLine()) != null) {
-                    if (input.isEmpty()) {
-                        cloud4Host = Optional.empty();
-                        break;
-                    }
-                    if (!validator.isValidInet4Address(input)) {
-                        System.out.println("Please provide the real ipv4 address :)");
-                        continue;
-                    }
-                    cloud4Host = Optional.of(input);
+            //if (cloudNetHost.equals("127.0.0.1") || cloudNetHost.equals("127.0.1.1") || cloudNetHost.split("\\.").length != 4) {
+            System.out.println("Please provide your master ipv4, leave blank for only ipv6");
+            System.out.println("Only Ipv6 is not recommended!");
+            while ((input = reader.readLine()) != null) {
+                if (input.isEmpty()) {
+                    cloud4Host = Optional.empty();
                     break;
                 }
-
-                System.out.println("please provide your service ipv6, leave blank for only ipv4");
-                while ((input = reader.readLine()) != null) {
-                    if (input.isEmpty()) {
-                        cloud6Host = Optional.empty();
-                        break;
-                    }
-                    if (!validator.isValidInet6Address(input)) {
-                        System.out.println("Please provide the real ipv6 address :)");
-                        continue;
-                    }
-                    cloud6Host = Optional.of(input);
-                    break;
+                if (!validator.isValidInet4Address(input)) {
+                    System.out.println("Please provide the real ipv4 address :)");
+                    continue;
                 }
+                cloud4Host = Optional.of(input);
+                break;
             }
+
+            System.out.println("please provide your service ipv6, leave blank for only ipv4");
+            while ((input = reader.readLine()) != null) {
+                if (input.isEmpty()) {
+                    cloud6Host = Optional.empty();
+                    break;
+                }
+                if (!validator.isValidInet6Address(input)) {
+                    System.out.println("Please provide the real ipv6 address :)");
+                    continue;
+                }
+                cloud6Host = Optional.of(input);
+                break;
+            }
+            // }
 
             if (!cloud6Host.isPresent() && !cloud4Host.isPresent()) {
                 //TODO: Exit or rerequest data
@@ -204,9 +203,9 @@ public class CloudNetWrapperConfig {
             this.percentOfCPUForANewProxy = configuration.getDouble("general.percentOfCPUForANewProxy");
             this.percentOfCPUForANewServer = configuration.getDouble("general.percentOfCPUForANewServer");
 
-            this.cloudnet4Host = !configuration.getString("connection.cloudnet-4host").isEmpty() ? Optional.of(configuration.getString(
+            this.cloudnet4Host = !configuration.getString("connection.cloudnet-4host").equals("") ? Optional.of(configuration.getString(
                 "connection.cloudnet-4host")) : Optional.empty();
-            this.cloudnet6Host = !configuration.getString("connection.cloudnet-6host").isEmpty() ? Optional.of(configuration.getString(
+            this.cloudnet6Host = !configuration.getString("connection.cloudnet-4host").equals("") ? Optional.of(configuration.getString(
                 "connection.cloudnet-6host")) : Optional.empty();
             this.cloudnetPort = configuration.getInt("connection.cloudnet-port");
             this.webPort = configuration.getInt("connection.cloudnet-web");
@@ -261,12 +260,13 @@ public class CloudNetWrapperConfig {
 
     public Optional<InetAddress> getCloudnetHost() {
         try {
+
             InetAddressValidator validator = new InetAddressValidator();
             if (cloudnet6Host.isPresent() && validator.isValidInet6Address(cloudnet6Host.get())) {
                 return Optional.of(InetAddress.getByName(cloudnet6Host.get()));
             }
 
-            if (cloudnet4Host.isPresent() && validator.isValidInet6Address(cloudnet4Host.get())) {
+            if (cloudnet4Host.isPresent() && validator.isValidInet4Address(cloudnet4Host.get())) {
                 return Optional.of(InetAddress.getByName(cloudnet4Host.get()));
             }
         } catch (UnknownHostException ignore) {

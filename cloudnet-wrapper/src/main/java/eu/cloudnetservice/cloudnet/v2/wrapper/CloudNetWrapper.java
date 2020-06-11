@@ -72,7 +72,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         this.cloudNetLogging = cloudNetLogging;
 
         if (!cloudNetWrapperConfig.getCloudnetHost().isPresent()) {
-            throw new NullPointerException("No CloudNet host defined!");
+            throw new NullPointerException("no cloudnet host defined!");
         }
 
         InetAddress address = cloudNetWrapperConfig.getCloudnetHost().get();
