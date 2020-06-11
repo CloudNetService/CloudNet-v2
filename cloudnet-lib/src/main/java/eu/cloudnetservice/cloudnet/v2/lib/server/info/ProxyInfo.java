@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -14,14 +15,14 @@ public class ProxyInfo {
 
     private final ServiceId serviceId;
 
-    private final String host;
+    private final InetAddress host;
     private final boolean online;
     private final Map<UUID, String> players;
     private final int memory;
     private final int port;
 
     public ProxyInfo(ServiceId serviceId,
-                     String host,
+                     InetAddress host,
                      int port,
                      boolean online,
                      Map<UUID, String> players,
@@ -66,7 +67,7 @@ public class ProxyInfo {
         return online;
     }
 
-    public String getHost() {
+    public InetAddress getHost() {
         return host;
     }
 

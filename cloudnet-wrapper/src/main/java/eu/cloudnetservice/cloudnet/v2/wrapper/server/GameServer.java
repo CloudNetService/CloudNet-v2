@@ -406,7 +406,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
             properties.setProperty(x, this.serverProcessMeta.getProperties().getProperty(x));
         }
 
-        properties.setProperty("server-ip", CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP());
+        properties.setProperty("server-ip", CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP().toString());
         properties.setProperty("server-port", serverProcessMeta.getPort() + NetworkUtils.EMPTY_STRING);
 
         String motd = properties.getProperty("motd");
@@ -494,10 +494,15 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                       .append("memory", serverProcessMeta.getMemory())
                       .saveAsConfig(cloudPath.resolve("config.json"));
 
-        new Document("connection",
-                     new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
-                                            CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetPort()))
-            .saveAsConfig(cloudPath.resolve("connection.json"));
+        if (CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost().isPresent()) {
+            new Document("connection",
+                         new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost().get(),
+                                                CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetPort()))
+                .saveAsConfig(cloudPath.resolve("connection.json"));
+        } else {
+            throw new NullPointerException("No CloudNet host defined!");
+        }
+
 
     }
 
@@ -699,18 +704,29 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         }
 
         if (template != null && template.getBackend().equals(TemplateResource.MASTER)) {
-            MasterTemplateDeploy masterTemplateDeploy =
-                new MasterTemplateDeploy(this.dir,
-                                         new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
-                                                                CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
-                                         CloudNetWrapper.getInstance().getSimpledUser(),
-                                         template,
-                                         serverGroup.getName());
-            try {
-                masterTemplateDeploy.deploy();
-            } catch (Exception e) {
-                e.printStackTrace();
+
+            if (CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost().isPresent()) {
+                MasterTemplateDeploy masterTemplateDeploy =
+                    new MasterTemplateDeploy(this.dir,
+                                             new ConnectableAddress(CloudNetWrapper.getInstance()
+                                                                                   .getWrapperConfig()
+                                                                                   .getCloudnetHost()
+                                                                                   .get(),
+                                                                    CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
+                                             CloudNetWrapper.getInstance().getSimpledUser(),
+                                             template,
+                                             serverGroup.getName());
+
+                try {
+                    masterTemplateDeploy.deploy();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                throw new NullPointerException("No CloudNet host defined!");
             }
+
         } else if (template != null) {
             CloudNetWrapper.getInstance().getCloudNetLogging().log(Level.INFO,
                                                                    String.format("Copying template from %s to local directory...",
