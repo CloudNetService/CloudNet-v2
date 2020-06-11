@@ -12,8 +12,6 @@ import eu.cloudnetservice.cloudnet.v2.lib.network.protocol.packet.PacketSender;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 
-import java.net.Inet4Address;
-import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Collections;
@@ -139,17 +137,6 @@ public final class NetworkConnection implements PacketSender {
 
     public void tryConnect(final NetDispatcher netDispatcher, final Auth auth) {
         tryConnect(netDispatcher, auth, null);
-    }    @Override
-    public void send(Object object) {
-        if (channel == null) {
-            return;
-        }
-
-        if (channel.eventLoop().inEventLoop()) {
-            channel.writeAndFlush(object);
-        } else {
-            channel.eventLoop().execute(() -> channel.writeAndFlush(object));
-        }
     }
 
     public boolean tryConnect(SimpleChannelInboundHandler<Packet> channelInboundHandler, Auth auth, Runnable cancelTask) {
@@ -164,24 +151,10 @@ public final class NetworkConnection implements PacketSender {
                                                  })
                                                  .channel(NetworkUtils.socketChannel());
             InetAddress addr = connectableAddress.getHostName();
-            InetSocketAddress destination = null;
+            InetSocketAddress dest = new InetSocketAddress(addr, connectableAddress.getPort());
+            InetSocketAddress localdest = new InetSocketAddress(localAddress.getHostName(), localAddress.getPort());
 
-            if (addr instanceof Inet6Address) {
-                Inet6Address tmp = (Inet6Address) addr;
-                if (tmp.getScopeId() != 0) {
-                    destination = new InetSocketAddress(InetAddress.getByAddress(tmp.getAddress()), connectableAddress.getPort());
-                }
-            } else if (addr instanceof Inet4Address) {
-                Inet4Address tmp = (Inet4Address) addr;
-                destination = new InetSocketAddress(InetAddress.getByAddress(tmp.getAddress()), connectableAddress.getPort());
-            }
-
-            if(destination == null){
-                throw new NullPointerException("NetworkConnection - No valid destination found!");
-            }
-
-            this.channel = bootstrap.connect(destination,
-                                             new InetSocketAddress(localAddress.getHostName(), localAddress.getPort()))
+            this.channel = bootstrap.connect(dest, localdest)
                                     .sync()
                                     .channel()
                                     .writeAndFlush(new PacketOutAuth(auth))
@@ -209,14 +182,26 @@ public final class NetworkConnection implements PacketSender {
 
     public boolean isConnected() {
         return channel != null;
+    }    @Override
+    public void send(Object object) {
+        if (channel == null) {
+            return;
+        }
+
+        if (channel.eventLoop().inEventLoop()) {
+            channel.writeAndFlush(object);
+        } else {
+            channel.eventLoop().execute(() -> channel.writeAndFlush(object));
+        }
     }
+
+
+
 
     @Override
     public void sendSynchronized(Object object) {
         channel.writeAndFlush(object).syncUninterruptibly();
     }
-
-
 
 
     @Override
