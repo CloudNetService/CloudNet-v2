@@ -131,10 +131,15 @@ public class CloudConfig {
         }
 
         String hostName = NetworkUtils.getHostName();
-        new Document("wrapper", Collections.singletonList(new WrapperMeta("Wrapper-1", hostName, "admin")))
-            .append("proxyGroups", Collections.singletonList(new BungeeGroup())).saveAsConfig(servicePath);
+        try {
+            new Document("wrapper", Collections.singletonList(new WrapperMeta("Wrapper-1", InetAddress.getByName(hostName), "admin")))
+                .append("proxyGroups", Collections.singletonList(new BungeeGroup())).saveAsConfig(servicePath);
 
-        new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
+            new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     private void defaultInitUsers() {
