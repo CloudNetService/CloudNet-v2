@@ -1,21 +1,21 @@
 package eu.cloudnetservice.cloudnet.v2.master.network;
 
-/**
- * Created by Tareko on 27.05.2017.
- */
+
+import java.net.InetAddress;
+
 public class NetworkInfo {
 
     private final String serverId;
-    private final String hostName;
+    private final InetAddress hostName;
     private final int port;
 
-    public NetworkInfo(String serverId, String hostName, int port) {
+    public NetworkInfo(String serverId, InetAddress hostName, int port) {
         this.serverId = serverId;
         this.hostName = hostName;
         this.port = port;
     }
 
-    public String getHostName() {
+    public InetAddress getHostName() {
         return hostName;
     }
 
