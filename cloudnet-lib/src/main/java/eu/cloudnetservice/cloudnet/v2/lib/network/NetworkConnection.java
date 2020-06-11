@@ -12,6 +12,9 @@ import eu.cloudnetservice.cloudnet.v2.lib.network.protocol.packet.PacketSender;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
