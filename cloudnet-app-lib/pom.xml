@@ -10,8 +10,8 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <name>CloudNet-Cord</name>
-    <artifactId>cloudnet-cord</artifactId>
+    <name>CloudNet-App-Lib</name>
+    <artifactId>cloudnet-app-lib</artifactId>
     <packaging>pom</packaging>
 
     <modules>
