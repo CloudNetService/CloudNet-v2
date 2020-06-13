@@ -56,7 +56,7 @@
     <modules>
         <module>cloudnet-lib</module>
         <module>cloudnet-master</module>
-        <module>cloudnet-cord</module>
+        <module>cloudnet-app-lib</module>
         <module>cloudnet-wrapper</module>
         <module>cloudnet-api</module>
         <module>cloudnet-examples</module>
