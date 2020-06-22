@@ -26,7 +26,7 @@ public interface NetworkHandler {
     void onServerAdd(ServerInfo serverInfo);
 
     /**
-     * Called if the ServerInfo is updated from a game server
+     * Called if the serverinfo of a game server is updated
      *
      * @param serverInfo
      */
@@ -52,7 +52,7 @@ public interface NetworkHandler {
     void onProxyInfoUpdate(ProxyInfo proxyInfo);
 
     /**
-     * Called if some proxy server is disconnected from network
+     * Called if a proxy server is disconnected from network
      *
      * @param proxyInfo
      */
@@ -84,40 +84,40 @@ public interface NetworkHandler {
     void onCustomSubChannelMessageReceive(String channel, String message, Document document);
 
     /**
-     * Called if a Player Login to the network from the cloudnet successfully
+     * Called if a playerlogin to the network from cloudnet was successfull
      *
      * @param cloudPlayer
      */
     void onPlayerLoginNetwork(CloudPlayer cloudPlayer);
 
     /**
-     * Called if a Player Disconnect to the network from cloudnet
+     * Called if a player disconnects from the network
      *
      * @param cloudPlayer
      */
     void onPlayerDisconnectNetwork(CloudPlayer cloudPlayer);
 
     /**
-     * Called if a Player Disconnect to the network from cloudnet
+     * Called if a player disconnects from the network
      *
      * @param cloudPlayer
      */
     void onPlayerDisconnectNetwork(UUID uniqueId);
 
     /**
-     * Called if a Player was updated on network
+     * Called if a player was updated on network
      *
      * @param cloudPlayer
      */
     void onPlayerUpdate(CloudPlayer cloudPlayer);
 
     /**
-     * Called if a OfflinePlayer was updated
+     * Called if a offlineplayer was updated
      */
     void onOfflinePlayerUpdate(OfflinePlayer offlinePlayer);
 
     /**
-     * Called if the player online count was changed
+     * Called if the player online count changed
      *
      * @param onlineCount
      */
