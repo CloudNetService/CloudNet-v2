@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/934c97b32a2445bab1444b96833e34d0)](https://app.codacy.com/gh/CloudNetService/CloudNet?utm_source=github.com&utm_medium=referral&utm_content=CloudNetService/CloudNet&utm_campaign=Badge_Grade_Settings)
 [![Build Status](https://ci.cloudnetservice.eu/buildStatus/icon?job=CloudNetService/CloudNet/master)](https://ci.cloudnetservice.eu/job/CloudNetService/job/CloudNet/master)
 [![star this repo](http://githubbadges.com/star.svg?user=CloudNetService&repo=CloudNet)](https://github.com/CloudNetService/CloudNet)
 [![fork this repo](http://githubbadges.com/fork.svg?user=CloudNetService&repo=CloudNet)](https://github.com/CloudNetService/CloudNet/fork)
