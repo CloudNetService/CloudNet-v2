@@ -12,6 +12,11 @@
     <name>CloudNet-Parent</name>
     <url>https://cloudnetservice.eu/</url>
 
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/CloudNetService/CloudNet/issues</url>
+    </issueManagement>
+
     <properties>
         <!-- compiler and encoding -->
         <maven.compiler.source>1.8</maven.compiler.source>
