@@ -39,6 +39,7 @@
         <module>cloudnet-database</module>
         <module>cloudnet-help</module>
         <module>cloudnet-setup</module>
+        <module>cloudnet-console</module>
     </modules>
 
     <dependencies>
