@@ -12,6 +12,13 @@
     <name>CloudNet-Parent</name>
     <url>https://cloudnetservice.eu/</url>
 
+    <scm>
+        <connection>scm:git:ssh://git@github.com:CloudNetService/CloudNet.git</connection>
+        <tag>HEAD</tag>
+        <url>https://cloudnetservice.eu</url>
+        <developerConnection>scm:git:ssh://git@github.com:CloudNetService/CloudNet.git</developerConnection>
+    </scm>
+
     <properties>
         <!-- compiler and encoding -->
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -45,6 +52,7 @@
         <plugin.antrun.version>3.0.0</plugin.antrun.version>
         <plugin.source.version>3.2.1</plugin.source.version>
     </properties>
+
 
     <developers>
         <developer>
