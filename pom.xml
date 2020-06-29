@@ -12,6 +12,11 @@
     <name>CloudNet-Parent</name>
     <url>https://cloudnetservice.eu/</url>
 
+    <ciManagement>
+        <url>https://ci.cloudnetservice.eu/</url>
+        <system>Jenkins</system>
+    </ciManagement>
+
     <properties>
         <!-- compiler and encoding -->
         <maven.compiler.source>1.8</maven.compiler.source>
