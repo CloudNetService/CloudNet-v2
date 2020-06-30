@@ -6,7 +6,7 @@ updates:
     interval: daily
   open-pull-requests-limit: 99
   target-branch: development
-  - package-ecosystem: github-actions
+- package-ecosystem: github-actions
   directory: "/"
   schedule:
     interval: daily
