@@ -104,8 +104,7 @@ public class CloudConfig {
 
         configuration.set("general.haste.server", Arrays.asList("https://hastebin.com",
                                                                 "https://hasteb.in",
-                                                                "https://haste.llamacloud.io",
-                                                                "https://pastes.cf"));
+                                                                "https://just-paste.it"));
 
         configuration.set("server.hostaddress", hostName);
         configuration.set("server.ports", Collections.singletonList(1410));
@@ -180,8 +179,7 @@ public class CloudConfig {
             if (!configuration.getSection("general").contains("haste")) {
                 configuration.set("general.haste.server", Arrays.asList("https://hastebin.com",
                                                                         "https://hasteb.in",
-                                                                        "https://haste.llamacloud.io",
-                                                                        "https://pastes.cf"));
+                                                                        "https://just-paste.it"));
 
                 try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
                     CONFIGURATION_PROVIDER.save(configuration, writer);
