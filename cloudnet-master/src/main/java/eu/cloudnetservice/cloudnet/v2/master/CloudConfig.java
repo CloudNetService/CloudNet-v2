@@ -79,7 +79,7 @@ public class CloudConfig {
             try {
                 Files.createDirectories(path);
             } catch (IOException e) {
-                throw new RuntimeException("Folder path " + path.toAbsolutePath().toString() + " could not be created", e);
+                throw new RuntimeException("Folder path " + path.toAbsolutePath() + " could not be created", e);
             }
         }
 
@@ -165,7 +165,7 @@ public class CloudConfig {
 
             InetAddressValidator validator = new InetAddressValidator();
             if (!validator.isValid(host)) {
-                throw new UnknownHostException("No valid InetAdress found!");
+                throw new UnknownHostException("No valid InetAddress found!");
             }
 
             InetAddress hostInet = InetAddress.getByName(host);

@@ -24,8 +24,6 @@ public final class CloudBootstrap {
 
     public static synchronized void main(String[] args) {
         System.setProperty("file.encoding", "UTF-8");
-        System.setProperty("java.net.preferIPv6Stack", "true");
-        System.setProperty("java.net.preferIPv4Stack", "false");
 
         InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
 
