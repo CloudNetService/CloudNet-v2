@@ -284,10 +284,16 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                       .append("proxyInfo", proxyInfo)
                       .append("memory", proxyProcessMeta.getMemory())
                       .saveAsConfig(cloudPath.resolve("config.json"));
-        new Document().append("connection",
-                              new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
-                                                     CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetPort()))
-                      .saveAsConfig(cloudPath.resolve("connection.json"));
+
+        if (CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost().isPresent()) {
+            new Document().append("connection",
+                                  new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost().get(),
+                                                         CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetPort()))
+                          .saveAsConfig(cloudPath.resolve("connection.json"));
+        } else {
+            throw new NullPointerException("No CloudNet host defined!");
+        }
+
 
         StringBuilder commandBuilder = new StringBuilder();
         commandBuilder.append("java ");

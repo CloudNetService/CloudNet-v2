@@ -34,6 +34,7 @@ import eu.cloudnetservice.cloudnet.v2.wrapper.util.ShutdownOnCentral;
 import joptsimple.OptionSet;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -69,18 +70,24 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
         this.wrapperConfig = cloudNetWrapperConfig;
         this.cloudNetLogging = cloudNetLogging;
+
+        if (!cloudNetWrapperConfig.getCloudnetHost().isPresent()) {
+            throw new NullPointerException("no cloudnet host defined!");
+        }
+
+        InetAddress address = cloudNetWrapperConfig.getCloudnetHost().get();
         this.networkConnection = new NetworkConnection(
             new ConnectableAddress(
-                cloudNetWrapperConfig.getCloudnetHost(),
+                address,
                 cloudNetWrapperConfig.getCloudnetPort()),
-            new ConnectableAddress(cloudNetWrapperConfig.getInternalIP(), 0),
-            () -> {
-                try {
-                    onShutdownCentral();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+            new ConnectableAddress(cloudNetWrapperConfig.getInternalIP(), 0), () -> {
+            try {
+                onShutdownCentral();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
 
         String key = NetworkUtils.readWrapperKey();
 

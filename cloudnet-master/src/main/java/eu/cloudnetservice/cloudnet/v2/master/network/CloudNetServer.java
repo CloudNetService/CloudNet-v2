@@ -87,7 +87,7 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
             InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
 
             for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
-                if (wrapper.getNetworkInfo().getHostName().equalsIgnoreCase(address.getAddress().getHostAddress())) {
+                if (wrapper.getNetworkInfo().getHostName().getHostAddress().equals(address.getAddress().getHostAddress())) {
 
                     NetworkUtils.initChannel(channel);
                     channel.pipeline().addLast("client", new CloudNetClientAuth(channel));

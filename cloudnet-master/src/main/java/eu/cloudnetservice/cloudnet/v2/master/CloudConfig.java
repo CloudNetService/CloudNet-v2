@@ -16,9 +16,12 @@ import eu.cloudnetservice.cloudnet.v2.web.server.util.WebServerConfig;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,7 +79,7 @@ public class CloudConfig {
             try {
                 Files.createDirectories(path);
             } catch (IOException e) {
-                 throw new RuntimeException("Folder path " + path.toAbsolutePath().toString() + " could not be created", e);
+                throw new RuntimeException("Folder path " + path.toAbsolutePath().toString() + " could not be created", e);
             }
         }
 
@@ -127,10 +130,15 @@ public class CloudConfig {
         }
 
         String hostName = NetworkUtils.getHostName();
-        new Document("wrapper", Collections.singletonList(new WrapperMeta("Wrapper-1", hostName, "admin")))
-            .append("proxyGroups", Collections.singletonList(new BungeeGroup())).saveAsConfig(servicePath);
+        try {
+            new Document("wrapper", Collections.singletonList(new WrapperMeta("Wrapper-1", InetAddress.getByName(hostName), "admin")))
+                .append("proxyGroups", Collections.singletonList(new BungeeGroup())).saveAsConfig(servicePath);
 
-        new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
+            new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     private void defaultInitUsers() {
@@ -155,9 +163,16 @@ public class CloudConfig {
 
             String host = configuration.getString("server.hostaddress");
 
+            InetAddressValidator validator = new InetAddressValidator();
+            if (!validator.isValid(host)) {
+                throw new UnknownHostException("No valid InetAdress found!");
+            }
+
+            InetAddress hostInet = InetAddress.getByName(host);
+
             Collection<ConnectableAddress> addresses = new ArrayList<>();
             for (int value : configuration.getIntList("server.ports")) {
-                addresses.add(new ConnectableAddress(host, value));
+                addresses.add(new ConnectableAddress(hostInet, value));
             }
             this.addresses = addresses;
 

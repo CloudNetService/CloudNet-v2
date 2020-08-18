@@ -5,12 +5,16 @@ import jline.console.ConsoleReader;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 public class CloudNetWrapperConfig {
 
@@ -18,7 +22,10 @@ public class CloudNetWrapperConfig {
 
     private Configuration configuration;
 
-    private String internalIP, wrapperId, cloudnetHost, proxyConfigHost;
+    private Optional<String> cloudnet4Host = Optional.empty();
+    private Optional<String> cloudnet6Host = Optional.empty();
+
+    private String internalIP, wrapperId, proxyConfigHost;
 
     private boolean savingRecords, autoUpdate, maintenanceCopy;
 
@@ -50,19 +57,47 @@ public class CloudNetWrapperConfig {
                 hostName = System.getProperty("hostAddress");
             }
 
-            if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4) {
-                String input;
-                System.out.println("Your local IP address is 127.0.0.1, please provide your service ip");
-                while ((input = reader.readLine()) != null) {
-                    if ((input.equals("127.0.0.1") || input.equals("127.0.1.1") || input.split("\\.").length != 4)) {
-                        System.out.println("Please provide your real ip address :)");
-                        continue;
-                    }
+            Optional<String> host4Name = Optional.empty();
+            Optional<String> host6Name = Optional.empty();
+            InetAddressValidator validator = new InetAddressValidator();
 
-                    hostName = input;
+            //if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4) {
+            String input;
+            System.out.println("Please provide your service ipv4, leave blank for only ipv6");
+            System.out.println("Only Ipv6 is not recommended!");
+            while ((input = reader.readLine()) != null) {
+                if (input.isEmpty()) {
+                    host4Name = Optional.empty();
                     break;
                 }
+                if (!validator.isValidInet4Address(input)) {
+                    System.out.println("Please provide your real ipv4 address :)");
+                    continue;
+                }
+                host4Name = Optional.of(input);
+                break;
             }
+
+            System.out.println("please provide your service ipv6, leave blank for only ipv4");
+            while ((input = reader.readLine()) != null) {
+                if (input.isEmpty()) {
+                    host6Name = Optional.empty();
+                    break;
+                }
+                if (!validator.isValidInet6Address(input)) {
+                    System.out.println("Please provide your real ipv6 address :)");
+                    continue;
+                }
+                host6Name = Optional.of(input);
+                break;
+            }
+            //}
+
+            if (!host4Name.isPresent() && !host6Name.isPresent()) {
+                //TODO: Exit or rerequest data
+                System.exit(0);
+            }
+
 
             String wrapperId = null;
             if (System.getProperty("wrapper-id") != null) {
@@ -84,18 +119,43 @@ public class CloudNetWrapperConfig {
                 cloudNetHost = System.getProperty("cloudnet-host");
             }
 
-            if (cloudNetHost.equals("127.0.0.1") || cloudNetHost.equals("127.0.1.1") || cloudNetHost.split("\\.").length != 4) {
-                String input;
-                System.out.println("Provide the ip address of the cloudnet-master, please");
-                while ((input = reader.readLine()) != null) {
-                    if ((input.equals("127.0.0.1") || input.equals("127.0.1.1") || input.split("\\.").length != 4)) {
-                        System.out.println("Please provide the real ip address :)");
-                        continue;
-                    }
+            Optional<String> cloud4Host = Optional.empty();
+            Optional<String> cloud6Host = Optional.empty();
 
-                    cloudNetHost = input;
+            //if (cloudNetHost.equals("127.0.0.1") || cloudNetHost.equals("127.0.1.1") || cloudNetHost.split("\\.").length != 4) {
+            System.out.println("Please provide your master ipv4, leave blank for only ipv6");
+            System.out.println("Only Ipv6 is not recommended!");
+            while ((input = reader.readLine()) != null) {
+                if (input.isEmpty()) {
+                    cloud4Host = Optional.empty();
                     break;
                 }
+                if (!validator.isValidInet4Address(input)) {
+                    System.out.println("Please provide the real ipv4 address :)");
+                    continue;
+                }
+                cloud4Host = Optional.of(input);
+                break;
+            }
+
+            System.out.println("please provide your service ipv6, leave blank for only ipv4");
+            while ((input = reader.readLine()) != null) {
+                if (input.isEmpty()) {
+                    cloud6Host = Optional.empty();
+                    break;
+                }
+                if (!validator.isValidInet6Address(input)) {
+                    System.out.println("Please provide the real ipv6 address :)");
+                    continue;
+                }
+                cloud6Host = Optional.of(input);
+                break;
+            }
+            // }
+
+            if (!cloud6Host.isPresent() && !cloud4Host.isPresent()) {
+                //TODO: Exit or rerequest data
+                System.exit(0);
             }
 
             long memory = ((NetworkUtils.systemMemory() / 1048576) - 2048);
@@ -104,7 +164,8 @@ public class CloudNetWrapperConfig {
             }
 
             Configuration configuration = new Configuration();
-            configuration.set("connection.cloudnet-host", cloudNetHost);
+            configuration.set("connection.cloudnet-4host", cloud4Host.orElse(""));
+            configuration.set("connection.cloudnet-6host", cloud6Host.orElse(""));
             configuration.set("connection.cloudnet-port", 1410);
             configuration.set("connection.cloudnet-web", 1420);
             configuration.set("general.wrapperId", wrapperId);
@@ -142,7 +203,10 @@ public class CloudNetWrapperConfig {
             this.percentOfCPUForANewProxy = configuration.getDouble("general.percentOfCPUForANewProxy");
             this.percentOfCPUForANewServer = configuration.getDouble("general.percentOfCPUForANewServer");
 
-            this.cloudnetHost = configuration.getString("connection.cloudnet-host");
+            this.cloudnet4Host = !configuration.getString("connection.cloudnet-4host").equals("") ? Optional.of(configuration.getString(
+                "connection.cloudnet-4host")) : Optional.empty();
+            this.cloudnet6Host = !configuration.getString("connection.cloudnet-4host").equals("") ? Optional.of(configuration.getString(
+                "connection.cloudnet-6host")) : Optional.empty();
             this.cloudnetPort = configuration.getInt("connection.cloudnet-port");
             this.webPort = configuration.getInt("connection.cloudnet-web");
 
@@ -194,12 +258,31 @@ public class CloudNetWrapperConfig {
         return path;
     }
 
-    public String getCloudnetHost() {
-        return cloudnetHost;
+    public Optional<InetAddress> getCloudnetHost() {
+        try {
+
+            InetAddressValidator validator = new InetAddressValidator();
+            if (cloudnet6Host.isPresent() && validator.isValidInet6Address(cloudnet6Host.get())) {
+                return Optional.of(InetAddress.getByName(cloudnet6Host.get()));
+            }
+
+            if (cloudnet4Host.isPresent() && validator.isValidInet4Address(cloudnet4Host.get())) {
+                return Optional.of(InetAddress.getByName(cloudnet4Host.get()));
+            }
+        } catch (UnknownHostException ignore) {
+        }
+
+        System.err.println("No valid cloudnet Host!");
+        return Optional.empty();
     }
 
-    public String getInternalIP() {
-        return internalIP;
+    public InetAddress getInternalIP() {
+        try {
+            return InetAddress.getByName(internalIP);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getProxyConfigHost() {

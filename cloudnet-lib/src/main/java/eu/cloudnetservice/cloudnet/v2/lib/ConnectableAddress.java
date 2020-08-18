@@ -3,18 +3,20 @@ package eu.cloudnetservice.cloudnet.v2.lib;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 
 /**
- * Created by Tareko on 07.06.2017.
+ * Class specifying a Adress & Port Combination
+ * for Wrapper & Master Connections
  */
 public class ConnectableAddress {
 
     public static final Type TYPE = TypeToken.get(ConnectableAddress.class).getType();
-    private final String hostName;
+    private final InetAddress hostName;
     private final int port;
 
-    public ConnectableAddress(String hostName, int port) {
-        this.hostName = hostName;
+    public ConnectableAddress(InetAddress adress, int port) {
+        this.hostName = adress;
         this.port = port;
     }
 
@@ -22,7 +24,7 @@ public class ConnectableAddress {
         return port;
     }
 
-    public String getHostName() {
+    public InetAddress getHostName() {
         return hostName;
     }
 }
