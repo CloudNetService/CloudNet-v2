@@ -8,7 +8,6 @@ import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -17,8 +16,6 @@ import java.util.Set;
 public class ProxyProcessMeta extends ProxyProcessData {
 
     public static final Type TYPE = TypeToken.get(ProxyProcessMeta.class).getType();
-
-    private final ServiceId serviceId;
     private final int port;
 
     public ProxyProcessMeta(final String wrapperName,
@@ -31,23 +28,28 @@ public class ProxyProcessMeta extends ProxyProcessData {
                             final Document properties,
                             final ServiceId serviceId,
                             final int port) {
-        super(wrapperName, proxyGroupName, memory, javaProcessParameters, proxyProcessParameters, templateUrl, plugins, properties);
-        this.serviceId = serviceId;
+        super(wrapperName,
+              proxyGroupName,
+              memory,
+              javaProcessParameters,
+              proxyProcessParameters,
+              templateUrl,
+              plugins,
+              properties,
+              serviceId);
         this.port = port;
     }
 
     public ProxyProcessMeta(final ProxyProcessData proxyProcessData,
                             final ServiceId serviceId,
                             final int port) {
-        super(proxyProcessData);
-        this.serviceId = serviceId;
+        super(proxyProcessData, serviceId);
         this.port = port;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (serviceId != null ? serviceId.hashCode() : 0);
         result = 31 * result + port;
         return result;
     }
@@ -66,22 +68,14 @@ public class ProxyProcessMeta extends ProxyProcessData {
 
         final ProxyProcessMeta that = (ProxyProcessMeta) o;
 
-        if (port != that.port) {
-            return false;
-        }
-        return Objects.equals(serviceId, that.serviceId);
+        return port == that.port;
     }
 
     @Override
     public String toString() {
         return "ProxyProcessMeta{" +
-            "serviceId=" + serviceId +
-            ", port=" + port +
+            "port=" + port +
             "} " + super.toString();
-    }
-
-    public ServiceId getServiceId() {
-        return serviceId;
     }
 
     public int getPort() {

@@ -78,7 +78,8 @@ public class ProxyProcessData {
                             final List<String> proxyProcessParameters,
                             final String templateUrl,
                             final Set<ServerInstallablePlugin> plugins,
-                            final Document properties) {
+                            final Document properties,
+                            final ServiceId serviceId) {
         this.wrapperName = wrapperName;
         this.proxyGroupName = proxyGroupName;
         this.memory = memory;
@@ -87,9 +88,10 @@ public class ProxyProcessData {
         this.templateUrl = templateUrl;
         this.plugins = plugins;
         this.properties = properties;
+        this.serviceId = serviceId;
     }
 
-    public ProxyProcessData(final ProxyProcessData proxyProcessData) {
+    public ProxyProcessData(final ProxyProcessData proxyProcessData, final ServiceId serviceId) {
         this.wrapperName = proxyProcessData.wrapperName;
         this.proxyGroupName = proxyProcessData.proxyGroupName;
         this.memory = proxyProcessData.memory;
@@ -98,6 +100,7 @@ public class ProxyProcessData {
         this.templateUrl = proxyProcessData.templateUrl;
         this.plugins = proxyProcessData.plugins;
         this.properties = proxyProcessData.properties;
+        this.serviceId = serviceId;
     }
 
     @Override
@@ -110,6 +113,7 @@ public class ProxyProcessData {
         result = 31 * result + (templateUrl != null ? templateUrl.hashCode() : 0);
         result = 31 * result + (plugins != null ? plugins.hashCode() : 0);
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
+        result = 31 * result + (serviceId != null ? serviceId.hashCode() : 0);
         return result;
     }
 
@@ -145,20 +149,24 @@ public class ProxyProcessData {
         if (!Objects.equals(plugins, that.plugins)) {
             return false;
         }
-        return Objects.equals(properties, that.properties);
+        if (!Objects.equals(properties, that.properties)) {
+            return false;
+        }
+        return Objects.equals(serviceId, that.serviceId);
     }
 
     @Override
     public String toString() {
         return "ProxyProcessData{" +
-            "wrapper='" + wrapperName + '\'' +
-            ", proxyGroup=" + proxyGroupName +
+            "wrapperName='" + wrapperName + '\'' +
+            ", proxyGroupName='" + proxyGroupName + '\'' +
             ", memory=" + memory +
             ", javaProcessParameters=" + javaProcessParameters +
             ", proxyProcessParameters=" + proxyProcessParameters +
             ", templateUrl='" + templateUrl + '\'' +
             ", plugins=" + plugins +
             ", properties=" + properties +
+            ", serviceId=" + serviceId +
             '}';
     }
 
