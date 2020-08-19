@@ -5,18 +5,14 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 
-/**
- * Class specifying a Adress & Port Combination
- * for Wrapper & Master Connections
- */
 public class ConnectableAddress {
 
     public static final Type TYPE = TypeToken.get(ConnectableAddress.class).getType();
     private final InetAddress hostName;
     private final int port;
 
-    public ConnectableAddress(InetAddress adress, int port) {
-        this.hostName = adress;
+    public ConnectableAddress(InetAddress address, int port) {
+        this.hostName = address;
         this.port = port;
     }
 

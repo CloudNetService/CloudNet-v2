@@ -35,7 +35,7 @@ public class CloudConfigLoader {
         return Document.loadDocument(pathConfigJson);
     }
 
-    public ConnectableAddress loadConnnection() {
+    public ConnectableAddress loadConnection() {
         return Document.loadDocument(pathConnectionJson).getObject("connection", ConnectableAddress.TYPE);
     }
 

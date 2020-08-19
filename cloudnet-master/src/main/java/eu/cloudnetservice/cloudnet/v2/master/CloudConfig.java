@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 
 /**
@@ -73,13 +74,16 @@ public class CloudConfig {
 
     private List<String> hasteServer;
 
-    public CloudConfig() {
+    public CloudConfig() throws IOException {
 
         for (Path path : MASTER_PATHS) {
             try {
-                Files.createDirectories(path);
-            } catch (IOException e) {
-                throw new RuntimeException("Folder path " + path.toAbsolutePath() + " could not be created", e);
+                if (!Files.exists(path)) {
+                    Files.createDirectories(path);
+                }
+            } catch (IOException exception) {
+                CloudNet.getLogger().log(Level.SEVERE, String.format("Could not create directory %s", path.toAbsolutePath()), exception);
+                throw exception;
             }
         }
 
@@ -120,7 +124,7 @@ public class CloudConfig {
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Error saving configuration file to " + configPath, e);
         }
     }
 
@@ -137,7 +141,7 @@ public class CloudConfig {
             new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
 
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Error saving default group configuration files", e);
         }
     }
 
@@ -205,7 +209,7 @@ public class CloudConfig {
 
             this.disabledModules = configuration.getStringList("general.disabled-modules");
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Error loading master configuration", e);
         }
 
         this.serviceDocument = Document.loadDocument(servicePath);
@@ -261,7 +265,7 @@ public class CloudConfig {
         try {
             Files.deleteIfExists(Paths.get("groups", serverGroup.getName() + ".json"));
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, String.format("Error deleting group %s", serverGroup.getName()), e);
         }
     }
 
@@ -299,7 +303,9 @@ public class CloudConfig {
                             ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
                             groups.put(serverGroup.getName(), serverGroup);
                         } catch (Throwable ex) {
-                            ex.printStackTrace();
+                            CloudNet.getLogger().log(Level.SEVERE,
+                                                     String.format("Error loading group configuration file %s", file.getName()),
+                                                     ex);
                             System.out.println("Cannot load servergroup file [" + file.getName() + ']');
                         }
                     }

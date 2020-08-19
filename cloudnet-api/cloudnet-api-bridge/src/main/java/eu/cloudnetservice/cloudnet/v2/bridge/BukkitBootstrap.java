@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 public final class BukkitBootstrap extends JavaPlugin {
 
@@ -29,8 +30,8 @@ public final class BukkitBootstrap extends JavaPlugin {
             api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
                                                      Paths.get("CLOUD", "config.json"),
                                                      ConfigTypeLoader.INTERNAL), getLogger());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        } catch (UnknownHostException exception) {
+            this.getLogger().log(Level.SEVERE, "Exception instantiating CloudAPI, this is a bug!", exception);
         }
     }
 
@@ -114,8 +115,8 @@ public final class BukkitBootstrap extends JavaPlugin {
                         this.cloudServer.update();
                     }
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (Exception exception) {
+                this.getLogger().log(Level.SEVERE, "Error updating server! This is a bug!", exception);
             }
         };
     }

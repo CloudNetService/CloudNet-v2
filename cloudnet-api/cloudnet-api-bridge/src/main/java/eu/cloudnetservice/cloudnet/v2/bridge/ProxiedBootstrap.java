@@ -37,8 +37,8 @@ public class ProxiedBootstrap extends Plugin {
             this.api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
                                                           Paths.get("CLOUD", "config.json"),
                                                           ConfigTypeLoader.INTERNAL), this.getLogger());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        } catch (UnknownHostException exception) {
+            this.getLogger().log(Level.SEVERE, "Exception instantiating CloudAPI, this is a bug!", exception);
         }
         getLogger().setLevel(Level.INFO);
     }

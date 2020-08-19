@@ -72,7 +72,7 @@ public final class CloudAPI {
         this.cloudConfigLoader = loader;
         this.logger = logger;
         this.config = loader.loadConfig();
-        this.networkConnection = new NetworkConnection(loader.loadConnnection(),
+        this.networkConnection = new NetworkConnection(loader.loadConnection(),
                                                        new ConnectableAddress(InetAddress.getByName("0.0.0.0"), 0));
         this.serviceId = config.getObject("serviceId", ServiceId.TYPE);
         this.memory = config.getInt("memory");
@@ -534,7 +534,7 @@ public final class CloudAPI {
                          String.format("Creating server log url: %s%n", serverId));
         String rnd = NetworkUtils.randomString(10);
         networkConnection.sendPacket(new PacketOutCreateServerLog(rnd, serverId));
-        ConnectableAddress connectableAddress = cloudConfigLoader.loadConnnection();
+        ConnectableAddress connectableAddress = cloudConfigLoader.loadConnection();
         return String.format("http://%s:%d/cloudnet/log?server=%s", connectableAddress.getHostName(), cloudNetwork.getWebPort(), rnd);
     }
 
