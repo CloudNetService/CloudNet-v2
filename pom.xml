@@ -40,6 +40,8 @@
         <!-- Dependencies -->
         <dependency.netty.version>4.1.51.Final</dependency.netty.version>
         <dependency.nitrite.version>3.4.2</dependency.nitrite.version>
+        <dependency.jline3.version>3.16.0</dependency.jline3.version>
+        <dependency.ansi.version>1.18</dependency.ansi.version>
         <!-- Should be kept in sync with minecraft -->
         <dependency.gson.version>2.8.6</dependency.gson.version>
         <dependency.jline.version>2.14.6</dependency.jline.version>
@@ -61,6 +63,8 @@
         <plugin.resources.version>3.1.0</plugin.resources.version>
         <plugin.antrun.version>3.0.0</plugin.antrun.version>
         <plugin.source.version>3.2.1</plugin.source.version>
+
+        <kotlin.version>1.3.72</kotlin.version>
     </properties>
 
 
