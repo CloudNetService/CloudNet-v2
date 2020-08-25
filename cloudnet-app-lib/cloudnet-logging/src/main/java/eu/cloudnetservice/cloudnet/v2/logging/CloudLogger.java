@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 public class CloudLogger extends Logger {
 
-    private Boolean debugging;
+    private boolean debugging;
 
     public CloudLogger() {
         super("CloudLogger", null);
@@ -48,5 +48,13 @@ public class CloudLogger extends Logger {
         for (Handler handler : getHandlers()) {
             handler.close();
         }
+    }
+
+    public void setDebugging(final Boolean debugging) {
+        this.debugging = debugging;
+    }
+
+    public boolean isDebugging() {
+        return debugging;
     }
 }
