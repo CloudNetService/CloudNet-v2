@@ -1,6 +1,5 @@
 package eu.cloudnetservice.cloudnet.v2.logging;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
