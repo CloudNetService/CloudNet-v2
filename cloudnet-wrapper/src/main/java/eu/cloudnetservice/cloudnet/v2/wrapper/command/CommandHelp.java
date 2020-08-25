@@ -19,6 +19,7 @@ package eu.cloudnetservice.cloudnet.v2.wrapper.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
+import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
 
 public class CommandHelp extends Command {
 
@@ -28,6 +29,7 @@ public class CommandHelp extends Command {
 
     @Override
     public void onExecuteCommand(CommandSender sender, String[] args) {
-        sender.sendMessage("You can use the commands \"reload\", \"clear\", \"stop\", \"version\" and \"clearcache\"");
+        sender.sendMessage("You can use the commands:");
+        CloudNetWrapper.getInstance().getCommandManager().getCommands().forEach(sender::sendMessage);
     }
 }

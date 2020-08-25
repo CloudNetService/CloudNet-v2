@@ -1,24 +1,10 @@
-/*
- * Copyright 2017 Tarek Hosni El Alaoui
- * Copyright 2020 CloudNetService
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot;
 
-package eu.cloudnetservice.cloudnet.v2.setup.spigot;
-
+import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
-import jline.console.ConsoleReader;
+import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
+import org.jline.reader.LineReader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,46 +17,23 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public final class SpigotBuilder {
+public final class SpigotBuilder implements ConsoleInputDispatch {
 
     private final static String buildToolsUrl = "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar";
     private final static String versionsUrl = "https://hub.spigotmc.org/versions/";
     private static Process exec;
+    private final LinkedList<String> versions;
 
-    /**
-     * Start the process to choice the Spigot version And build after choice
-     *
-     * @param reader to read the answer
-     */
-    public static boolean start(final ConsoleReader reader, Path outputPath) {
+    public SpigotBuilder() {
         System.out.println("Fetching Spigot versions");
-        List<String> versions = loadVersions();
+        this.versions = loadVersions();
         System.out.println("Available Spigot versions:");
         System.out.println("-----------------------------------------------------------------------------");
         versions.forEach(System.out::println);
         System.out.println("-----------------------------------------------------------------------------");
         System.out.println("Please select a version to continue the install process");
-        String answer = null;
-        while (answer == null) {
-            String name = null;
-            try {
-                name = reader.readLine().toLowerCase();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String finalAnswer = name;
-            if (versions.stream().anyMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
-                answer = name;
-                return buildSpigot(finalAnswer, outputPath);
-            } else if (versions.stream().noneMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
-                System.out.println("This version does not exist!");
-            }
-        }
-        return false;
     }
 
     /**
@@ -164,13 +127,17 @@ public final class SpigotBuilder {
                 long endTime = System.currentTimeMillis();
                 long minutes = ((endTime - startTime) / 1000) / 60;
                 long seconds = ((endTime - startTime) / 1000) % 60;
-                System.out.println(String.format("Total Build Time %dMin %dSec%n", minutes, seconds));
+                System.out.printf("Total Build Time %dMin %dSec%n%n", minutes, seconds);
+                CloudNetWrapper.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+                CloudNetWrapper.getInstance().getConsoleManager().getConsoleRegistry().unregisterInput(SpigotBuilder.class);
                 return true;
             } else {
                 deleteBuildFolder(buildFolder);
             }
         } catch (Exception e) {
             e.printStackTrace();
+            CloudNetWrapper.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+            CloudNetWrapper.getInstance().getConsoleManager().getConsoleRegistry().unregisterInput(SpigotBuilder.class);
         }
         return false;
     }
@@ -208,5 +175,22 @@ public final class SpigotBuilder {
 
     public static Process getExec() {
         return exec;
+    }
+
+    @Override
+    public void dispatch(final String line, final LineReader lineReader) {
+        if(line.length() > 0){
+            if (versions.stream().anyMatch(e -> e.equalsIgnoreCase(line.toLowerCase()))) {
+                buildSpigot(line.toLowerCase(), Paths.get("local/spigot.jar"));
+            } else if (versions.stream().noneMatch(e -> e.equalsIgnoreCase(line.toLowerCase()))) {
+                System.out.println("This version does not exist!");
+            }
+        }
+
+    }
+
+    @Override
+    public Collection<String> get() {
+        return this.versions;
     }
 }

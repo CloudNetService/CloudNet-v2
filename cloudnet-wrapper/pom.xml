@@ -33,6 +33,12 @@
     <dependencies>
         <dependency>
             <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
+            <artifactId>cloudnet-setup</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-command</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -89,8 +95,6 @@
                                 <excludes>
                                     <exclude>com.squareup.okio:okio</exclude>
                                     <exclude>com.squareup.okhttp3:okhttp</exclude>
-                                    <exclude>org.jetbrains.kotlin:kotlin-stdlib</exclude>
-                                    <exclude>org.jetbrains.kotlin:kotlin-stdlib-common</exclude>
                                 </excludes>
                             </artifactSet>
                             <transformers>
