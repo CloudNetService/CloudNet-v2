@@ -139,7 +139,7 @@ public final class PaperBuilder implements ConsoleInputDispatch {
      * @param exec the running process
      *
      */
-    static void printProcessOutputToConsole(Process exec) {
+    protected static void printProcessOutputToConsole(Process exec) {
         CountDownLatch count = new CountDownLatch(2);
         try {
             new Thread(new StreamThread(count, exec.getInputStream())).start();
