@@ -1,16 +1,19 @@
 package eu.cloudnetservice.cloudnet.v2.wrapper;
 
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
-import jline.console.ConsoleReader;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import org.jline.reader.LineReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class CloudNetWrapperConfig {
 
@@ -27,7 +30,7 @@ public class CloudNetWrapperConfig {
     private double percentOfCPUForANewServer;
     private double percentOfCPUForANewProxy;
 
-    public CloudNetWrapperConfig(ConsoleReader reader) throws Exception {
+    public CloudNetWrapperConfig() {
 
         for (File directory : new File[] {
             new File("local/servers"),
@@ -42,88 +45,7 @@ public class CloudNetWrapperConfig {
             directory.mkdirs();
         }
 
-        if (!Files.exists(path)) {
-            Files.createFile(path);
 
-            String hostName = NetworkUtils.getHostName();
-            if (System.getProperty("hostAddress") != null) {
-                hostName = System.getProperty("hostAddress");
-            }
-
-            if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4) {
-                String input;
-                System.out.println("Your local IP address is 127.0.0.1, please provide your service ip");
-                while ((input = reader.readLine()) != null) {
-                    if ((input.equals("127.0.0.1") || input.equals("127.0.1.1") || input.split("\\.").length != 4)) {
-                        System.out.println("Please provide your real ip address :)");
-                        continue;
-                    }
-
-                    hostName = input;
-                    break;
-                }
-            }
-
-            String wrapperId = null;
-            if (System.getProperty("wrapper-id") != null) {
-                wrapperId = System.getProperty("wrapper-id");
-            }
-
-            if (wrapperId == null) {
-                System.out.println("Please provide the name of this wrapper (example: Wrapper-1)");
-                wrapperId = reader.readLine().replace(NetworkUtils.SPACE_STRING, NetworkUtils.EMPTY_STRING);
-
-                if (wrapperId.isEmpty()) {
-                    wrapperId = "Wrapper-" + NetworkUtils.RANDOM.nextInt();
-                }
-            }
-
-            String cloudNetHost = NetworkUtils.getHostName();
-
-            if (System.getProperty("cloudnet-host") != null) {
-                cloudNetHost = System.getProperty("cloudnet-host");
-            }
-
-            if (cloudNetHost.equals("127.0.0.1") || cloudNetHost.equals("127.0.1.1") || cloudNetHost.split("\\.").length != 4) {
-                String input;
-                System.out.println("Provide the ip address of the cloudnet-master, please");
-                while ((input = reader.readLine()) != null) {
-                    if ((input.equals("127.0.0.1") || input.equals("127.0.1.1") || input.split("\\.").length != 4)) {
-                        System.out.println("Please provide the real ip address :)");
-                        continue;
-                    }
-
-                    cloudNetHost = input;
-                    break;
-                }
-            }
-
-            long memory = ((NetworkUtils.systemMemory() / 1048576) - 2048);
-            if (memory < 1024) {
-                System.out.println("WARNING: YOU CAN'T USE THE CLOUD NETWORK SOFTWARE WITH SUCH A SMALL MEMORY SIZE!");
-            }
-
-            Configuration configuration = new Configuration();
-            configuration.set("connection.cloudnet-host", cloudNetHost);
-            configuration.set("connection.cloudnet-port", 1410);
-            configuration.set("connection.cloudnet-web", 1420);
-            configuration.set("general.wrapperId", wrapperId);
-            configuration.set("general.internalIp", hostName);
-            configuration.set("general.proxy-config-host", hostName);
-            configuration.set("general.max-memory", memory);
-            configuration.set("general.startPort", 41570);
-            configuration.set("general.auto-update", false);
-            configuration.set("general.saving-records", false);
-            configuration.set("general.maintenance-copyFileToDirectory", false);
-            configuration.set("general.processQueueSize", (Runtime.getRuntime().availableProcessors() / 2));
-            configuration.set("general.percentOfCPUForANewServer", 100D);
-            configuration.set("general.percentOfCPUForANewProxy", 100D);
-
-            try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
-                ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
-            }
-        }
-        load();
     }
 
     public CloudNetWrapperConfig load() {

@@ -1,5 +1,6 @@
 package eu.cloudnetservice.cloudnet.v2.wrapper.bootstrap;
 
+import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.help.HelpService;
 import eu.cloudnetservice.cloudnet.v2.help.ServiceDescription;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
@@ -84,7 +85,7 @@ public class CloudBootstrap {
         }
 
         NetworkUtils.header();
-        CloudNetWrapperConfig cloudNetWrapperConfig = new CloudNetWrapperConfig(cloudNetLogging.getReader());
+        CloudNetWrapperConfig cloudNetWrapperConfig = new CloudNetWrapperConfig();
         CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging);
 
         if (optionSet.has("systemTimer")) {
@@ -94,29 +95,17 @@ public class CloudBootstrap {
         if (!cloudNetWrapper.bootstrap()) {
             System.exit(0);
         }
-
-        if (!optionSet.has("noconsole")) {
-            System.out.println("Use the command \"help\" for further information!");
-
-            String user = System.getProperty("user.name");
-
-            String commandLine;
-            final String prompt = user + '@' + cloudNetWrapper.getWrapperConfig().getWrapperId() + " $ ";
-            while ((commandLine = cloudNetLogging.readLine(prompt)) != null && CloudNetWrapper.RUNNING) {
-
-                try {
-                    if (!cloudNetWrapper.getCommandManager().dispatchCommand(commandLine)) {
-                        System.out.println("Command not found. Use the command \"help\" for further information!");
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        } else {
-            while (!Thread.currentThread().isInterrupted() && CloudNetWrapper.RUNNING) {
+        if (optionSet.has("noconsole")) {
+            while (!Thread.currentThread().isInterrupted()) {
                 NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
             }
+        } else {
+            cloudNetWrapper.getConsoleManager().setRunning(true);
+            cloudNetWrapper.getConsoleManager().useDefaultConsole();
+            cloudNetWrapper.getConsoleManager().startConsole();
         }
+
+
         cloudNetLogging.info("Shutting down now!");
     }
 }

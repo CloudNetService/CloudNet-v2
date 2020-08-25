@@ -17,10 +17,6 @@ public class CommandClear extends Command {
 
     @Override
     public void onExecuteCommand(CommandSender sender, String[] args) {
-        try {
-            CloudNetWrapper.getInstance().getCloudNetLogging().getReader().clearScreen();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        CloudNetWrapper.getInstance().getConsoleManager().getLineReader().getTerminal().flush();
     }
 }

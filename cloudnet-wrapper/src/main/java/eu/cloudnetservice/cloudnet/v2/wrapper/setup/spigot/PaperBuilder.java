@@ -1,11 +1,14 @@
-package eu.cloudnetservice.cloudnet.v2.setup.spigot;
+package eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot;
 
+import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
 import eu.cloudnetservice.cloudnet.v2.setup.models.PaperMCProject;
 import eu.cloudnetservice.cloudnet.v2.setup.models.PaperMCProjectVersion;
 import eu.cloudnetservice.cloudnet.v2.setup.utils.StreamThread;
-import jline.console.ConsoleReader;
+import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
+import org.jline.reader.LineReader;
 
 import java.io.*;
 import java.net.URL;
@@ -15,28 +18,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
-public final class PaperBuilder {
+public final class PaperBuilder implements ConsoleInputDispatch {
 
     private static final String API_PROJECT_URL = "https://papermc.io/api/v1/paper";
     private static final String API_PROJECT_VERSION_DOWNLOAD = "https://papermc.io/api/v1/paper/%s/%s/download";
     private static final String API_PROJECT_VERSION_URL = "https://papermc.io/api/v1/paper/%s";
     private static Process exec;
+    private PaperMCProject paperMCProject;
 
-    /**
-     * Start the process of choice the paper version And build after choice
-     *
-     * @param reader Read the answer from console
-     */
-    public static boolean start(ConsoleReader reader, Path outputPath) {
+    public PaperBuilder() {
         try {
             System.out.println("Fetch Versions");
             URLConnection connection = new URL(API_PROJECT_URL).openConnection();
             connection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             connection.connect();
-            PaperMCProject paperMCProject = Document.GSON.fromJson(new InputStreamReader(connection.getInputStream()),
+            paperMCProject = Document.GSON.fromJson(new InputStreamReader(connection.getInputStream()),
                                                                    PaperMCProject.class);
             System.out.println("Available Paper Versions:");
             System.out.println("-----------------------------------------------------------------------------");
@@ -45,25 +45,9 @@ public final class PaperBuilder {
             Arrays.asList(paperMCProject.getVersions()).forEach(System.out::println);
             System.out.println("-----------------------------------------------------------------------------");
             System.out.println("Please select a version to continue the install process");
-            String name;
-            do {
-                name = null;
-                try {
-                    name = reader.readLine().toLowerCase();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                final String finalAnswer = name;
-                if (Arrays.stream(paperMCProject.getVersions()).anyMatch(e -> e.equalsIgnoreCase(finalAnswer))) {
-                    return buildPaperVersion(name, outputPath);
-                } else {
-                    System.out.println("This version does not exist!");
-                }
-            } while (name == null);
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     /**
@@ -74,7 +58,7 @@ public final class PaperBuilder {
      * @throws Exception If a connection error or something
      */
     private static boolean buildPaperVersion(String version, Path outputPath) throws Exception {
-        System.out.println(String.format("Fetching build %s", version));
+        System.out.printf("Fetching build %s%n", version);
         URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version)).openConnection();
         connection.setRequestProperty("User-Agent",
                                       NetworkUtils.USER_AGENT);
@@ -105,9 +89,15 @@ public final class PaperBuilder {
                     Files.copy(new FileInputStream(Objects.requireNonNull(patchedFiles)[0]),
                                outputPath,
                                StandardCopyOption.REPLACE_EXISTING);
+                    CloudNetWrapper.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+                    CloudNetWrapper.getInstance().getConsoleManager().getConsoleRegistry().unregisterInput(PaperBuilder.class);
+                    CloudNetWrapper.getInstance().getConsoleManager().getConsoleRegistry().unregisterInput(SetupSpigotVersion.class);
                     return true;
                 } catch (IOException e) {
                     e.printStackTrace();
+                    CloudNetWrapper.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+                    CloudNetWrapper.getInstance().getConsoleManager().getConsoleRegistry().unregisterInput(PaperBuilder.class);
+                    CloudNetWrapper.getInstance().getConsoleManager().getConsoleRegistry().unregisterInput(SetupSpigotVersion.class);
                     return false;
                 }
             } else {
@@ -139,6 +129,8 @@ public final class PaperBuilder {
         File cacheFolder = new File(buildFolder, "cache");
         File[] patchedFiles = cacheFolder.listFiles(pathname -> pathname.getName().startsWith("patched"));
         Files.copy(new FileInputStream(Objects.requireNonNull(patchedFiles)[0]), outputPath, StandardCopyOption.REPLACE_EXISTING);
+        CloudNetWrapper.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+        CloudNetWrapper.getInstance().getConsoleManager().getConsoleRegistry().unregisterInput(PaperBuilder.class);
     }
 
     /**
@@ -146,9 +138,8 @@ public final class PaperBuilder {
      *
      * @param exec the running process
      *
-     * @throws IOException throws if readline null
      */
-    static void printProcessOutputToConsole(Process exec) throws IOException {
+    static void printProcessOutputToConsole(Process exec) {
         CountDownLatch count = new CountDownLatch(2);
         try {
             new Thread(new StreamThread(count, exec.getInputStream())).start();
@@ -159,9 +150,30 @@ public final class PaperBuilder {
         }
         System.out.println("Build finished!");
         System.out.println("Copying spigot.jar");
+
     }
 
     public static Process getExec() {
         return exec;
+    }
+
+    @Override
+    public void dispatch(final String line, final LineReader lineReader) {
+        if (line.length() > 0) {
+            if (Arrays.stream(paperMCProject.getVersions()).anyMatch(e -> e.equalsIgnoreCase(line))) {
+                try {
+                    buildPaperVersion(line.toLowerCase(), Paths.get("local/spigot.jar"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("This version does not exist!");
+            }
+        }
+    }
+
+    @Override
+    public Collection<String> get() {
+        return Arrays.asList(paperMCProject.getVersions().clone());
     }
 }
