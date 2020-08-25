@@ -17,7 +17,8 @@ public enum GetBukkitVersion {
     v1_15("1.15", "https://cdn.getbukkit.org/spigot/spigot-%s.jar"),
     v1_15_1("1.15.1", "https://cdn.getbukkit.org/spigot/spigot-%s.jar"),
     v1_15_2("1.15.2", "https://cdn.getbukkit.org/spigot/spigot-%s.jar"),
-    ;
+    v1_16_1("1.16.1", "https://cdn.getbukkit.org/spigot/spigot-%s.jar"),
+    v1_16_2("1.16.2", "https://cdn.getbukkit.org/spigot/spigot-%s.jar");
 
     private final String version;
     private final String url;
