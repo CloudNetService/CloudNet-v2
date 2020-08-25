@@ -17,6 +17,7 @@
 
 package eu.cloudnetservice.cloudnet.v2.master.setup;
 
+import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.map.WrappedMap;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ProxyGroup;
@@ -38,18 +39,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class SetupProxyGroup {
+/**
+ * Created by Tareko on 23.10.2017.
+ */
+public class SetupProxyGroup extends Setup {
 
     private static final Pattern WRAPPER_SPLITTER = Pattern.compile("\\s?+,\\s?+");
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private final String name;
-    private final Setup setup;
 
     public SetupProxyGroup(CommandSender commandSender, String name) {
+        super(CloudNet.getInstance().getConsoleManager());
         this.name = name;
 
-        setup = new Setup().setupCancel(() -> commandSender.sendMessage("Setup cancelled!"))
-                           .setupComplete(data -> {
+        this.setupCancel(() -> {
+            System.out.println("Setup was cancelled");
+            CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+            CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupProxyGroup.class);
+        }).setupComplete(data -> {
                                // Make sure there is at least one valid wrapper
                                List<String> wrappers = new ArrayList<>(Arrays.asList(WRAPPER_SPLITTER.split(data.getString("wrapper"))));
                                if (wrappers.size() == 0) {
@@ -90,6 +97,8 @@ public class SetupProxyGroup {
                                commandSender.sendMessage("The proxy group " + proxyGroup.getName() + " was created!");
                                CloudNet.getInstance().setupProxy(proxyGroup);
                                CloudNet.getInstance().toWrapperInstances(wrappers).forEach(Wrapper::updateWrapper);
+                               CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+                               CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupProxyGroup.class);
                            }).request(new SetupRequest("memory",
                                                        "How much memory should each proxy of this proxy group have (in mb)?",
                                                        "Specified amount of memory is invalid",
@@ -137,7 +146,4 @@ public class SetupProxyGroup {
         return name;
     }
 
-    public void startSetup() {
-        setup.start(CloudNet.getLogger().getReader());
-    }
 }

@@ -61,19 +61,14 @@ public final class CommandCreate extends Command {
                     startServers(sender, args[1], 1);
                     break;
                 }
-                if (args[0].equalsIgnoreCase("wrapper") && !CloudNet.getInstance().getWrappers().containsKey(args[1])) {
-                    final SetupWrapper setupWrapper = new SetupWrapper(sender, args[1]);
-                    setupWrapper.startSetup();
-                    break;
-                }
                 if (args[0].equalsIgnoreCase("serverGroup")) {
-                    final SetupServerGroup setupServerGroup = new SetupServerGroup(sender, args[1]);
-                    setupServerGroup.startSetup();
+                    CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupServerGroup(sender, args[1]));
+                    CloudNet.getInstance().getConsoleManager().changeConsoleInput(SetupServerGroup.class);
                     break;
                 }
                 if (args[0].equalsIgnoreCase("proxyGroup")) {
-                    final SetupProxyGroup setupProxyGroup = new SetupProxyGroup(sender, args[1]);
-                    setupProxyGroup.startSetup();
+                    CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupProxyGroup(sender, args[1]));
+                    CloudNet.getInstance().getConsoleManager().changeConsoleInput(SetupProxyGroup.class);
                     break;
                 }
                 break;

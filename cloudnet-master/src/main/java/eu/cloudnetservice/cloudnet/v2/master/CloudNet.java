@@ -18,6 +18,9 @@
 package eu.cloudnetservice.cloudnet.v2.master;
 
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleRegistry;
+import eu.cloudnetservice.cloudnet.v2.console.SignalManager;
 import eu.cloudnetservice.cloudnet.v2.database.DatabaseManager;
 import eu.cloudnetservice.cloudnet.v2.event.EventKey;
 import eu.cloudnetservice.cloudnet.v2.event.EventManager;
@@ -57,7 +60,6 @@ import eu.cloudnetservice.cloudnet.v2.master.serverlog.ServerLogManager;
 import eu.cloudnetservice.cloudnet.v2.master.util.FileCopy;
 import eu.cloudnetservice.cloudnet.v2.master.web.api.v1.*;
 import eu.cloudnetservice.cloudnet.v2.master.web.log.WebsiteLog;
-import eu.cloudnetservice.cloudnet.v2.master.wrapper.local.LocalCloudWrapper;
 import eu.cloudnetservice.cloudnet.v2.web.client.WebClient;
 import eu.cloudnetservice.cloudnet.v2.web.server.WebServer;
 import joptsimple.OptionSet;
@@ -81,7 +83,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
     private static CloudNet instance;
 
-    private final CommandManager commandManager = new CommandManager();
+    private CommandManager commandManager;
     private final DatabaseManager databaseManager = new DatabaseManager();
     private final PacketManager packetManager = new PacketManager();
     private final EventManager eventManager = new EventManager();
@@ -92,7 +94,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
     private final Map<String, Wrapper> wrappers = new ConcurrentHashMap<>();
     private final Map<String, ServerGroup> serverGroups = new ConcurrentHashMap<>();
     private final Map<String, ProxyGroup> proxyGroups = new ConcurrentHashMap<>();
-    private final LocalCloudWrapper localCloudWrapper = new LocalCloudWrapper();
     private final Collection<CloudNetServer> cloudServers = new CopyOnWriteArrayList<>();
     private final WebClient webClient = new WebClient();
     private final CloudConfig config;
@@ -104,11 +105,16 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
     private WebServer webServer;
     private DatabaseBasicHandlers dbHandlers;
     private Collection<User> users;
+    private CloudModuleManager moduleManager;
+    private ConsoleRegistry consoleRegistry;
+    private SignalManager signalManager;
+    private ConsoleManager consoleManager;
 
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) {
         if (instance != null) {
             throw new IllegalStateException("CloudNet already initialized!");
         }
+
         instance = this;
 
         this.config = config;
@@ -116,8 +122,10 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         this.optionSet = optionSet;
         this.arguments = args;
 
-        // We need the reader to stay open
-        this.logger.getReader().addCompleter(commandManager);
+        this.consoleRegistry = new ConsoleRegistry();
+        this.signalManager = new SignalManager();
+        this.consoleManager = new ConsoleManager(this.consoleRegistry, this.signalManager, cloudNetLogging);
+        this.commandManager = new CommandManager(consoleManager);
         this.moduleManager = new CloudModuleManager();
     }
 
@@ -204,7 +212,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         }
 
         eventManager.callEvent(new CloudInitEvent());
-        this.localCloudWrapper.accept(optionSet);
 
         return true;
     }
@@ -233,12 +240,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
             cloudNetServer.close();
         }
 
-        try {
-            this.localCloudWrapper.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         System.out.println("\n    _  _     _______   _                       _          \n" + "  _| || |_  |__   __| | |                     | |         \n" + " |_  __  _|    | |    | |__     __ _   _ __   | | __  ___ \n" + "  _| || |_     | |    | '_ \\   / _` | | '_ \\  | |/ / / __|\n" + " |_  __  _|    | |    | | | | | (_| | | | | | |   <  \\__ \\\n" + "   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/\n" + "                                                          \n" + "                                                          ");
 
         RUNNING = false;
@@ -265,7 +266,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         if (version != null) {
             if (!version.equals(CloudNet.class.getPackage().getImplementationVersion())) {
                 System.out.println("Preparing update...");
-                localCloudWrapper.installUpdate(webClient);
                 webClient.update(version);
                 shutdown();
 
@@ -308,11 +308,11 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
                            .registerCommand(new CommandCopy())
                            .registerCommand(new CommandLog())
                            .registerCommand(new CommandCreate())
+                           .registerCommand(new CommandWrapper())
                            .registerCommand(new CommandVersion())
                            .registerCommand(new CommandInfo())
                            .registerCommand(new CommandDebug())
-                           .registerCommand(new CommandUser())
-                           .registerCommand(new CommandLocalWrapper());
+                           .registerCommand(new CommandUser());
     }
 
     private void initWebHandlers() {
@@ -494,10 +494,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
     public List<String> getArguments() {
         return arguments;
-    }
-
-    public LocalCloudWrapper getLocalCloudWrapper() {
-        return localCloudWrapper;
     }
 
     public Collection<ServiceId> getProxyServiceIdsAndWaitingServices(String group) {
@@ -871,5 +867,17 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
     public CloudModuleManager getModuleManager() {
         return moduleManager;
+    }
+
+    public ConsoleManager getConsoleManager() {
+        return consoleManager;
+    }
+
+    public ConsoleRegistry getConsoleRegistry() {
+        return consoleRegistry;
+    }
+
+    public SignalManager getSignalManager() {
+        return signalManager;
     }
 }

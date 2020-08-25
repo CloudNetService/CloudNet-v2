@@ -25,7 +25,6 @@ import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
-import eu.cloudnetservice.cloudnet.v2.master.wrapper.local.LocalCloudWrapper;
 
 import java.util.stream.Collectors;
 
@@ -71,11 +70,6 @@ public final class CommandDelete extends Command {
                 } else if (args[0].equalsIgnoreCase("wrapper")) {
                     if (CloudNet.getInstance().getWrappers().containsKey(args[1])) {
                         final Wrapper wrapper = CloudNet.getInstance().getWrappers().get(args[1]);
-                        final LocalCloudWrapper localWrapper = CloudNet.getInstance().getLocalCloudWrapper();
-                        if (localWrapper.getWrapper() == wrapper) {
-                            sender.sendMessage("You can't delete the local wrapper!");
-                            return;
-                        }
                         CloudNet.getInstance()
                                 .getConfig()
                                 .getWrappers()

@@ -17,6 +17,7 @@
 
 package eu.cloudnetservice.cloudnet.v2.master.setup;
 
+import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerGroup;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerGroupMode;
@@ -34,18 +35,24 @@ import eu.cloudnetservice.cloudnet.v2.setup.responsetype.StringResponseType;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class SetupServerGroup {
+/**
+ * Created by Tareko on 21.10.2017.
+ */
+public class SetupServerGroup extends Setup{
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final Pattern WRAPPER_SPLITTER = Pattern.compile("\\s?+,\\s?+");
     private final String name;
-    private final Setup setup;
-
     public SetupServerGroup(CommandSender commandSender, String name) {
+        super(CloudNet.getInstance().getConsoleManager());
         this.name = name;
 
-        setup = new Setup().setupCancel(() -> System.out.println("Setup cancelled!"))
-                           .setupComplete(data -> {
+        this.setupCancel(() -> {
+            System.out.println("Setup was cancelled");
+            CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+            CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupWrapper.class);
+        }).setupComplete(data -> {
+                               if (data == null) return;
                                // Make sure there is at least one valid wrapper
                                List<String> wrappers = new ArrayList<>(Arrays.asList(WRAPPER_SPLITTER.split(data.getString("wrapper"))));
                                if (wrappers.size() == 0) {
@@ -96,6 +103,8 @@ public class SetupServerGroup {
                                CloudNet.getInstance().setupGroup(serverGroup);
                                CloudNet.getInstance().toWrapperInstances(wrappers).forEach(Wrapper::updateWrapper);
                                commandSender.sendMessage(String.format("The server group %s is now created!", serverGroup.getName()));
+                               CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+                               CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupServerGroup.class);
                            })
                            .request(new SetupRequest("memory",
                                                      "How much memory should each server of this server group have?",
@@ -162,7 +171,4 @@ public class SetupServerGroup {
         return name;
     }
 
-    public void startSetup() {
-        setup.start(CloudNet.getLogger().getReader());
-    }
 }

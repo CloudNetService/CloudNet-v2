@@ -17,6 +17,7 @@
 
 package eu.cloudnetservice.cloudnet.v2.master.bootstrap;
 
+import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.help.HelpService;
 import eu.cloudnetservice.cloudnet.v2.help.ServiceDescription;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
@@ -99,9 +100,9 @@ public final class CloudBootstrap {
         }
 
         if (optionSet.has("version")) {
-            System.out.println(String.format("CloudNet-Core RezSyM Version %s-%s%n",
-                                             CloudBootstrap.class.getPackage().getImplementationVersion(),
-                                             CloudBootstrap.class.getPackage().getSpecificationVersion()));
+            System.out.printf("CloudNet-Core RezSyM Version %s-%s%n%n",
+                              CloudBootstrap.class.getPackage().getImplementationVersion(),
+                              CloudBootstrap.class.getPackage().getSpecificationVersion());
             return;
         }
 
@@ -125,28 +126,11 @@ public final class CloudBootstrap {
         if (!optionSet.has("noconsole")) {
             System.out.println("Use the command \"help\" for further information!");
 
-
-            String user = System.getProperty("user.name");
-            String commandLine;
-            final String prompt = user + "@Master $ ";
-            try {
-                while ((commandLine = cloudNetLogging.readLine(prompt)) != null && CloudNet.RUNNING) {
-                    // Aliases
-                    String dispatcher = cloudNetCore.getDbHandlers().getCommandDispatcherDatabase().findDispatcher(commandLine);
-                    if (dispatcher != null) {
-                        try {
-                            cloudNetCore.getCommandManager().dispatchCommand(dispatcher);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                        // Normal commands
-                    } else if (!cloudNetCore.getCommandManager().dispatchCommand(commandLine)) {
-                        System.out.println("Command not found. Use the command \"help\" for further information!");
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            cloudNetCore.getConsoleRegistry().registerInput(cloudNetCore.getCommandManager());
+            cloudNetCore.getConsoleManager().setRunning(true);
+            cloudNetCore.getConsoleManager().changeConsoleInput(CommandManager.class);
+            cloudNetCore.getConsoleManager().useDefaultConsole();
+            cloudNetCore.getConsoleManager().startConsole();
         } else {
             while (!Thread.currentThread().isInterrupted()) {
                 NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
