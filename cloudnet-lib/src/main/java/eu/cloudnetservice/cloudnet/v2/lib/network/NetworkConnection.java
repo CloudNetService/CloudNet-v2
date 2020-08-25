@@ -96,12 +96,14 @@ public final class NetworkConnection implements PacketSender {
             try {
                 channel.closeFuture().sync();
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
         }
         try {
             eventLoopGroup.shutdownGracefully().await(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             e.printStackTrace();
         }
 
@@ -140,6 +142,7 @@ public final class NetworkConnection implements PacketSender {
             try {
                 channel.eventLoop().invokeAll(Collections.singletonList(() -> channel.writeAndFlush(packet).syncUninterruptibly()));
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
         }
