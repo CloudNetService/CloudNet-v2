@@ -32,8 +32,6 @@ import eu.cloudnetservice.cloudnet.v2.lib.server.ProxyGroup;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerGroup;
 import eu.cloudnetservice.cloudnet.v2.lib.user.SimpledUser;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
-import eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot.PaperBuilder;
-import eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot.SpigotBuilder;
 import eu.cloudnetservice.cloudnet.v2.web.client.WebClient;
 import eu.cloudnetservice.cloudnet.v2.wrapper.command.*;
 import eu.cloudnetservice.cloudnet.v2.wrapper.handlers.IWrapperHandler;
@@ -46,6 +44,8 @@ import eu.cloudnetservice.cloudnet.v2.wrapper.network.packet.out.PacketOutUpdate
 import eu.cloudnetservice.cloudnet.v2.wrapper.server.BungeeCord;
 import eu.cloudnetservice.cloudnet.v2.wrapper.server.GameServer;
 import eu.cloudnetservice.cloudnet.v2.wrapper.server.process.ServerProcessQueue;
+import eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot.PaperBuilder;
+import eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot.SpigotBuilder;
 import eu.cloudnetservice.cloudnet.v2.wrapper.util.FileUtility;
 import eu.cloudnetservice.cloudnet.v2.wrapper.util.ShutdownHook;
 import eu.cloudnetservice.cloudnet.v2.wrapper.util.ShutdownOnCentral;
@@ -209,9 +209,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         }
 
 
-
         NetworkUtils.getExecutor().scheduleWithFixedDelay(serverProcessQueue, 500, 500, TimeUnit.MILLISECONDS);
-
 
 
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE, PacketInWrapperInfo.class);
