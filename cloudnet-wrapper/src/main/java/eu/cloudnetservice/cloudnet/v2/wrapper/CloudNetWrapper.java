@@ -68,9 +68,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     private NetworkConnection networkConnection;
     private final CloudLogger cloudNetLogging;
     private final CloudNetWrapperConfig wrapperConfig;
-    private CommandManager commandManager;
-    private final ConsoleRegistry consoleRegistry;
-    private final SignalManager signalManager;
+    private final CommandManager commandManager;
     private final ConsoleManager consoleManager;
     private final WebClient webClient = new WebClient();
     private final Map<String, GameServer> servers = new ConcurrentHashMap<>();
@@ -91,9 +89,9 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
         this.wrapperConfig = cloudNetWrapperConfig;
         this.cloudNetLogging = cloudNetLogging;
-        this.consoleRegistry = new ConsoleRegistry();
-        this.signalManager = new SignalManager();
-        this.consoleManager = new ConsoleManager(this.consoleRegistry, this.signalManager, cloudNetLogging);
+        final ConsoleRegistry consoleRegistry = new ConsoleRegistry();
+        final SignalManager signalManager = new SignalManager();
+        this.consoleManager = new ConsoleManager(consoleRegistry, signalManager, cloudNetLogging);
         this.commandManager = new CommandManager(consoleManager);
         this.optionSet = optionSet;
     }
