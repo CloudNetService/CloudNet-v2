@@ -1,9 +1,13 @@
 package eu.cloudnetservice.cloudnet.v2.setup;
 
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
-import jline.console.ConsoleReader;
+import org.jline.reader.LineReader;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
@@ -11,7 +15,20 @@ import java.util.function.Consumer;
 /**
  * Builder class for setup sequences.
  */
-public class Setup implements ISetup {
+public class Setup implements ConsoleInputDispatch {
+
+    private String oldPrompt;
+    private final ConsoleManager consoleManager;
+    private SetupResponseType<?> responseType;
+
+    public Setup(ConsoleManager consoleManager) {
+        System.out.println();
+        this.consoleManager = consoleManager;
+        if (!this.consoleManager.getPrompt().equals(">")) {
+            this.oldPrompt = this.consoleManager.getPrompt();
+            this.consoleManager.setPrompt(">");
+        }
+    }
 
     private static final String CANCEL = "cancel";
 
@@ -35,63 +52,7 @@ public class Setup implements ISetup {
      * Method that called when this setup sequence is cancelled.
      */
     private Runnable setupCancel = null;
-
-    @Override
-    public void start(ConsoleReader consoleReader) {
-        boolean successful = true;
-        while (!requests.isEmpty()) {
-            SetupRequest setupRequest = null;
-            if (successful) {
-                setupRequest = requests.poll();
-            }
-            if (setupRequest == null) {
-                return;
-            }
-            SetupResponseType<?> responseType = setupRequest.getResponseType();
-            System.out.println(String.format("%s | %s", setupRequest.getQuestion(), responseType.userFriendlyString()));
-
-            String input;
-
-            try {
-                input = consoleReader.readLine();
-            } catch (Exception ex) {
-                System.out.println("Error while reading input: " + ex.getLocalizedMessage());
-                if (setupCancel != null) {
-                    setupCancel.run();
-                }
-                return;
-            }
-
-            if (input.equalsIgnoreCase(CANCEL)) {
-                if (setupCancel != null) {
-                    setupCancel.run();
-                }
-                return;
-            }
-
-            if (!input.isEmpty() && !input.equals(NetworkUtils.SPACE_STRING)) {
-                if (responseType.isValidInput(input)) {
-                    if ((setupRequest.hasValidator() &&
-                        setupRequest.getValidator().test(input)) ||
-                        !setupRequest.hasValidator()) {
-                        successful = true;
-                        responseType.appendDocument(document, setupRequest.getName(), input);
-                    } else {
-                        successful = false;
-                        System.out.println(setupRequest.getInvalidMessage());
-                    }
-                }
-            } else {
-                successful = false;
-                System.out.println(setupRequest.getInvalidMessage());
-            }
-        }
-
-        if (setupComplete != null) {
-            setupComplete.accept(document);
-        }
-
-    }
+    private SetupRequest setupRequest;
 
     /**
      * Add a setup request to this setup sequence.
@@ -132,4 +93,51 @@ public class Setup implements ISetup {
         return this;
     }
 
+    @Override
+    public void dispatch(final String line, final LineReader lineReader) {
+            if (!this.consoleManager.getPrompt().equals(">")) {
+                this.oldPrompt = this.consoleManager.getPrompt();
+                this.consoleManager.setPrompt(">");
+            }
+            if (!requests.isEmpty() && setupRequest == null) {
+                setupRequest = requests.poll();
+                responseType = setupRequest.getResponseType();
+                lineReader.printAbove(String.format("%s | %s%n", setupRequest.getQuestion(), responseType.userFriendlyString()));
+            }
+            if (line.length() > 0 && setupRequest != null ) {
+                if (line.equalsIgnoreCase(CANCEL)) {
+                    if (setupCancel != null) {
+                        this.consoleManager.setPrompt(oldPrompt);
+                        setupCancel.run();
+                    }
+                    return;
+                }
+
+                if (!line.equals(NetworkUtils.SPACE_STRING)) {
+                    if (responseType != null && responseType.isValidInput(line) ) {
+                        if ((setupRequest.hasValidator() &&
+                            setupRequest.getValidator().test(line)) ||
+                            !setupRequest.hasValidator() && setupRequest.getName() != null) {
+                            responseType.appendDocument(document, setupRequest.getName(), line);
+                            setupRequest = null;
+                            if (requests.isEmpty()) {
+                                if (setupComplete != null) {
+                                    setupComplete.accept(document);
+                                    this.consoleManager.setPrompt(oldPrompt);
+                                }
+                            }
+                        } else {
+                            System.out.println(setupRequest.getInvalidMessage());
+                        }
+                    }
+                } else {
+                    System.out.println(setupRequest.getInvalidMessage());
+                }
+            }
+    }
+
+    @Override
+    public Collection<String> get() {
+        return new ArrayList<>();
+    }
 }
