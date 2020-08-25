@@ -5,7 +5,6 @@ import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.setup.Setup;
 import eu.cloudnetservice.cloudnet.v2.setup.SetupRequest;
-import eu.cloudnetservice.cloudnet.v2.setup.SetupResponseType;
 import eu.cloudnetservice.cloudnet.v2.setup.responsetype.StringResponseType;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -16,7 +15,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.function.Predicate;
 
 public class CloudNetWrapperConfigSetup extends Setup {
     public CloudNetWrapperConfigSetup(final ConsoleManager consoleManager) {

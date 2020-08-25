@@ -21,14 +21,7 @@ public class Setup implements ConsoleInputDispatch {
     private final ConsoleManager consoleManager;
     private SetupResponseType<?> responseType;
 
-    public Setup(ConsoleManager consoleManager) {
-        System.out.println();
-        this.consoleManager = consoleManager;
-        if (!this.consoleManager.getPrompt().equals(">")) {
-            this.oldPrompt = this.consoleManager.getPrompt();
-            this.consoleManager.setPrompt(">");
-        }
-    }
+
 
     private static final String CANCEL = "cancel";
 
@@ -53,6 +46,15 @@ public class Setup implements ConsoleInputDispatch {
      */
     private Runnable setupCancel = null;
     private SetupRequest setupRequest;
+
+    public Setup(ConsoleManager consoleManager) {
+        System.out.println();
+        this.consoleManager = consoleManager;
+        if (!this.consoleManager.getPrompt().equals(">")) {
+            this.oldPrompt = this.consoleManager.getPrompt();
+            this.consoleManager.setPrompt(">");
+        }
+    }
 
     /**
      * Add a setup request to this setup sequence.

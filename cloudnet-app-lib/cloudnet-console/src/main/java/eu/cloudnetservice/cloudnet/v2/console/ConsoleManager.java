@@ -28,7 +28,7 @@ public final class ConsoleManager {
     private boolean password;
     private String prompt;
     private char passwordMask = '*';
-    private Terminal terminal;
+
     private LineReader lineReader;
     private final ConsoleRegistry consoleRegistry;
     private ConsoleInputDispatch consoleInputDispatch;
@@ -47,8 +47,9 @@ public final class ConsoleManager {
     public void useDefaultConsole() {
         //Attributes attributes = new Attributes();
         AnsiConsole.systemInstall();
+        Terminal terminal = null;
         try {
-            this.terminal = TerminalBuilder.builder()
+            terminal = TerminalBuilder.builder()
                                            .streams(System.in, System.out)
                                            .jansi(true)
                                            .jna(true)
@@ -63,7 +64,7 @@ public final class ConsoleManager {
         } catch (IOException e) {
             this.cloudLogger.log(Level.SEVERE, "Something went wrong on creating a virtual terminal", e);
         }
-        if (this.consoleInputDispatch != null) {
+        if (this.consoleInputDispatch != null && terminal != null) {
             this.lineReader = LineReaderBuilder.builder()
                                                .appName("CloudNet-Console")
                                                .option(LineReader.Option.ERASE_LINE_ON_FINISH, true)
@@ -72,11 +73,12 @@ public final class ConsoleManager {
                                                .expander(new DefaultExpander())
                                                .history(new DefaultHistory())
                                                .variable(LineReader.HISTORY_FILE, Paths.get(".cn_history"))
-                                               .terminal(this.terminal)
+                                               .terminal(terminal)
                                                .parser(new DefaultParser())
                                                .completer(new StringsCompleter(this.consoleInputDispatch.get()))
                                                .build();
         } else {
+            System.exit(-1);
             throw new NullPointerException("Console input dispatcher is empty");
         }
         final JLine3ConsoleHandler jLine3ConsoleHandler = new JLine3ConsoleHandler(this.lineReader);

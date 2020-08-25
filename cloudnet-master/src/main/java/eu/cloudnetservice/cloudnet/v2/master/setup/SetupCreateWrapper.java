@@ -2,7 +2,6 @@ package eu.cloudnetservice.cloudnet.v2.master.setup;
 
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
-import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
 import eu.cloudnetservice.cloudnet.v2.lib.ConnectableAddress;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;

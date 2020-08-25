@@ -7,15 +7,6 @@ import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.cloudnet.v2.setup.Setup;
 import eu.cloudnetservice.cloudnet.v2.setup.SetupRequest;
 import eu.cloudnetservice.cloudnet.v2.setup.responsetype.StringResponseType;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
-
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * Created by Tareko on 21.10.2017.

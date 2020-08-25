@@ -1,13 +1,13 @@
 package eu.cloudnetservice.cloudnet.v2.logging
 
-import java.io.IOException
-import java.io.PrintStream
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.logging.*
 
-
+/**
+ *
+ */
 class CloudLogger : Logger("CloudLogger",null) {
 
     var debugging: Boolean = false

@@ -1,6 +1,5 @@
 package eu.cloudnetservice.cloudnet.v2.wrapper.bootstrap;
 
-import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.help.HelpService;
 import eu.cloudnetservice.cloudnet.v2.help.ServiceDescription;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
@@ -20,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CloudBootstrap {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         System.setProperty("file.encoding", "UTF-8");
         System.setProperty("java.net.preferIPv4Stack", "true");
