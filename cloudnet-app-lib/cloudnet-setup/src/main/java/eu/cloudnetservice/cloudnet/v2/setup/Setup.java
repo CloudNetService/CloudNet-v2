@@ -22,7 +22,6 @@ public class Setup implements ConsoleInputDispatch {
     private SetupResponseType<?> responseType;
 
 
-
     private static final String CANCEL = "cancel";
 
     /**
@@ -97,45 +96,43 @@ public class Setup implements ConsoleInputDispatch {
 
     @Override
     public void dispatch(final String line, final LineReader lineReader) {
-            if (!this.consoleManager.getPrompt().equals(">")) {
-                this.oldPrompt = this.consoleManager.getPrompt();
-                this.consoleManager.setPrompt(">");
-            }
-            if (!requests.isEmpty() && setupRequest == null) {
-                setupRequest = requests.poll();
-                responseType = setupRequest.getResponseType();
-                lineReader.printAbove(String.format("%s | %s%n", setupRequest.getQuestion(), responseType.userFriendlyString()));
-            }
-            if (line.length() > 0 && setupRequest != null ) {
-                if (line.equalsIgnoreCase(CANCEL)) {
-                    if (setupCancel != null) {
-                        this.consoleManager.setPrompt(oldPrompt);
-                        setupCancel.run();
-                    }
-                    return;
+        if (!this.consoleManager.getPrompt().equals(">")) {
+            this.oldPrompt = this.consoleManager.getPrompt();
+            this.consoleManager.setPrompt(">");
+        }
+        if (!requests.isEmpty() && setupRequest == null) {
+            setupRequest = requests.poll();
+            responseType = setupRequest.getResponseType();
+            lineReader.printAbove(String.format("%s | %s%n", setupRequest.getQuestion(), responseType.userFriendlyString()));
+        }
+        if (line.length() > 0 && setupRequest != null) {
+            if (line.equalsIgnoreCase(CANCEL)) {
+                if (setupCancel != null) {
+                    this.consoleManager.setPrompt(oldPrompt);
+                    setupCancel.run();
                 }
+                return;
+            }
 
-                if (!line.equals(NetworkUtils.SPACE_STRING)) {
-                    if (responseType != null && responseType.isValidInput(line) ) {
-                        if ((setupRequest.hasValidator() &&
-                            setupRequest.getValidator().test(line)) ||
-                            !setupRequest.hasValidator() && setupRequest.getName() != null) {
-                            responseType.appendDocument(document, setupRequest.getName(), line);
-                            setupRequest = null;
-                            if (requests.isEmpty()) {
-                                if (setupComplete != null) {
-                                    setupComplete.accept(document);
-                                    this.consoleManager.setPrompt(oldPrompt);
-                                }
-                            }
-                        } else {
-                            System.out.println(setupRequest.getInvalidMessage());
+            if (!line.equals(NetworkUtils.SPACE_STRING)) {
+                if (responseType != null && responseType.isValidInput(line)) {
+                    if ((setupRequest.hasValidator() &&
+                        setupRequest.getValidator().test(line)) ||
+                        !setupRequest.hasValidator() && setupRequest.getName() != null) {
+                        responseType.appendDocument(document, setupRequest.getName(), line);
+                        setupRequest = null;
+                        if (requests.isEmpty() && setupComplete != null) {
+                            setupComplete.accept(document);
+                            this.consoleManager.setPrompt(oldPrompt);
                         }
+                    } else {
+                        System.out.println(setupRequest.getInvalidMessage());
                     }
-                } else {
-                    System.out.println(setupRequest.getInvalidMessage());
                 }
+            } else {
+                System.out.println(setupRequest.getInvalidMessage());
             }
+        }
     }
 
     @Override

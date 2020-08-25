@@ -65,6 +65,9 @@ public class SetupSpigotVersion implements ConsoleInputDispatch {
                 this.consoleManager.getConsoleRegistry().registerInput(new PaperBuilder());
                 this.consoleManager.changeConsoleInput(PaperBuilder.class);
                 break;
+            default:
+                System.out.println("This option is not available!");
+                break;
         }
     }
 
@@ -106,6 +109,7 @@ public class SetupSpigotVersion implements ConsoleInputDispatch {
                 break;
             default:
                 System.out.println("This version is not supported!");
+                break;
         }
 
         return answer;
