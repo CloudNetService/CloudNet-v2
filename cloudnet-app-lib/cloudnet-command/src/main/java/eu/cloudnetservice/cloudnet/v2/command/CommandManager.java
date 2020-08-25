@@ -192,7 +192,7 @@ public final class CommandManager implements ConsoleInputDispatch {
                         }
                     }
 
-                    if (lineArgumentsWithoutCommand.equals(NetworkUtils.EMPTY_STRING)) {
+                    if (!lineArgumentsWithoutCommand.equals(NetworkUtils.EMPTY_STRING)) {
                         this.commands.get(lineArguments[0].toLowerCase()).onExecuteCommand(consoleSender, new String[0]);
                     } else {
                         String[] c = lineArgumentsWithoutCommand.split(" ");
@@ -247,7 +247,6 @@ public final class CommandManager implements ConsoleInputDispatch {
                 strings.addAll(this.commands.keySet());
             }
         }
-
 
         return strings;
     }

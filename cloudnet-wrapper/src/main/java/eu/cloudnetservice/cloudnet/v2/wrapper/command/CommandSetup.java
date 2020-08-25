@@ -10,7 +10,7 @@ public class CommandSetup extends Command {
     private final CloudNetWrapper cloudNetWrapper;
 
     public CommandSetup(CloudNetWrapper cloudNetWrapper) {
-        super("setup", "cloudnet.wrapper.command.setup", "");
+        super("setup", "cloudnet.wrapper.command.setup");
         this.cloudNetWrapper = cloudNetWrapper;
     }
 
