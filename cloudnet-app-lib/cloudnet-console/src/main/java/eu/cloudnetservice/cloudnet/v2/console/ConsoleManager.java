@@ -10,6 +10,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.DefaultExpander;
 import org.jline.reader.impl.DefaultHighlighter;
 import org.jline.reader.impl.DefaultParser;
+import org.jline.reader.impl.completer.ArgumentCompleter;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
@@ -75,7 +76,7 @@ public final class ConsoleManager {
                                                .variable(LineReader.HISTORY_FILE, Paths.get(".cn_history"))
                                                .terminal(terminal)
                                                .parser(new DefaultParser())
-                                               .completer(new StringsCompleter(this.consoleInputDispatch.get()))
+                                               .completer(new ArgumentCompleter(new StringsCompleter(this.consoleInputDispatch)))
                                                .build();
         } else {
             System.exit(-1);
