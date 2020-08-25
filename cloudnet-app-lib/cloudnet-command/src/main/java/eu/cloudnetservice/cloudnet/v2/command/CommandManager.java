@@ -17,8 +17,10 @@
 
 package eu.cloudnetservice.cloudnet.v2.command;
 
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
-import jline.console.completer.Completer;
+import org.jline.reader.LineReader;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,16 +28,19 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Class that manages commands for the interfaces of CloudNet.
  */
-public final class CommandManager implements Completer {
+public final class CommandManager implements ConsoleInputDispatch {
 
     private final Map<String, Command> commands = new ConcurrentHashMap<>();
     private final ConsoleCommandSender consoleSender = new ConsoleCommandSender();
+    private final ConsoleManager consoleManager;
 
     /**
      * Constructs a new command manager with a {@link ConsoleCommandSender} and
      * no commands.
+     * @param consoleManager for tab completion
      */
-    public CommandManager() {
+    public CommandManager(final ConsoleManager consoleManager) {
+        this.consoleManager = consoleManager;
     }
 
     /**
@@ -156,39 +161,6 @@ public final class CommandManager implements Completer {
         }
     }
 
-    @Override
-    public int complete(String buffer, int cursor, List<CharSequence> candidates) {
-        String[] input = buffer.split(" ");
-
-        List<String> responses = new ArrayList<>();
-
-        if (buffer.isEmpty() || buffer.indexOf(' ') == -1) {
-            responses.addAll(this.commands.keySet());
-        } else {
-            Command command = getCommand(input[0]);
-
-            if (command instanceof TabCompletable) {
-                TabCompletable tabCompletable = (TabCompletable) command;
-                String[] args = buffer.split(" ");
-                String testString = args[args.length - 1];
-
-                tabCompletable.onTab(input.length - 1, input[input.length - 1])
-                              .stream()
-                              .filter(s -> s != null && (
-                                  testString.isEmpty() || s.toLowerCase().contains(testString.toLowerCase())))
-                              .forEach(responses::add);
-
-            }
-        }
-
-        Collections.sort(responses);
-
-        candidates.addAll(responses);
-        int lastSpace = buffer.lastIndexOf(' ');
-
-        return (lastSpace == -1) ? cursor - buffer.length() : cursor - (buffer.length() - lastSpace - 1);
-    }
-
     /**
      * Get the command for a given name.
      *
@@ -199,5 +171,75 @@ public final class CommandManager implements Completer {
      */
     public Command getCommand(String name) {
         return commands.get(name.toLowerCase());
+    }
+
+    @Override
+    public void dispatch(final String line, final LineReader lineReader) {
+        if (line.length() > 0) {
+            String[] a = line.split(" ");
+            if (this.commands.containsKey(a[0].toLowerCase())) {
+                String b = line.replace((line.contains(" ") ? line.split(" ")[0] + ' ' : line), NetworkUtils.EMPTY_STRING);
+                try {
+                    for (String argument : a) {
+                        for (CommandArgument commandArgument : this.commands.get(a[0].toLowerCase()).getCommandArguments()) {
+                            if (commandArgument.getName().equalsIgnoreCase(argument)) {
+                                commandArgument.preExecute(this.commands.get(a[0]), line);
+                            }
+                        }
+                    }
+
+                    if (b.equals(NetworkUtils.EMPTY_STRING)) {
+                        this.commands.get(a[0].toLowerCase()).onExecuteCommand(consoleSender, new String[0]);
+                    } else {
+                        String[] c = b.split(" ");
+                        this.commands.get(a[0].toLowerCase()).onExecuteCommand(consoleSender, c);
+                    }
+
+                    for (String argument : a) {
+                        for (CommandArgument commandArgument : this.commands.get(a[0].toLowerCase()).getCommandArguments()) {
+                            if (commandArgument.getName().equalsIgnoreCase(argument)) {
+                                commandArgument.postExecute(this.commands.get(a[0]), line);
+                            }
+                        }
+                    }
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                System.out.println("Command not found. Use the command \"help\" for further information!");
+            }
+        }
+
+    }
+
+    @Override
+    public Collection<String> get() {
+        Collection<String> strings = new ArrayList<>();
+        if (this.consoleManager != null && this.consoleManager.getLineReader() != null) {
+            final String buffer = this.consoleManager.getLineReader().getBuffer().toString();
+            if (buffer.length() > 0) {
+                String[] input = buffer.split(" ");
+                    Command command = getCommand(input[0]);
+
+                    if (command instanceof TabCompletable) {
+                        TabCompletable tabCompletable = (TabCompletable) command;
+                        String[] args = buffer.split(" ");
+                        String testString = args[args.length - 1];
+
+                        tabCompletable.onTab(input.length - 1, input[input.length - 1])
+                                      .stream()
+                                      .filter(s -> s != null && (
+                                          testString.isEmpty() || s.toLowerCase().contains(testString.toLowerCase())))
+                                      .forEach(strings::add);
+
+                    }
+            } else {
+                strings.addAll(this.commands.keySet());
+            }
+        }
+
+
+        return strings;
     }
 }
