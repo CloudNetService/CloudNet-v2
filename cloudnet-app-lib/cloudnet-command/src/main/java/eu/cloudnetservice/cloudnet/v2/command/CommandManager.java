@@ -5,7 +5,10 @@ import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import org.jline.reader.LineReader;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
