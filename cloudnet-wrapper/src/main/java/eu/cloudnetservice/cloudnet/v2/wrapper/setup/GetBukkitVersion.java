@@ -19,7 +19,8 @@ public enum GetBukkitVersion {
     v1_15_2("1.15.2", "https://cdn.getbukkit.org/spigot/spigot-%s.jar"),
     ;
 
-    private final String version, url;
+    private final String version;
+    private final String url;
 
     GetBukkitVersion(final String version, final String url) {
         this.version = version;

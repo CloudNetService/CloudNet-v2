@@ -9,7 +9,9 @@ import java.util.logging.Formatter
 import java.util.logging.LogRecord
 
 class LoggingFormatter : Formatter() {
+
     private val dateFormat: DateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
+
     override fun format(record: LogRecord?): String {
         val builder = StringBuilder()
         if (record != null) {

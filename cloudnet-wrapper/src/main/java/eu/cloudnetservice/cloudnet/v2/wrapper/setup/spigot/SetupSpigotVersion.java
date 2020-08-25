@@ -20,11 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-/**
- * Created by Tareko on 25.05.2017.
- */
 public class SetupSpigotVersion implements ConsoleInputDispatch {
 
     private final ConsoleManager consoleManager;
