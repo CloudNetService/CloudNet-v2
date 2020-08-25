@@ -93,14 +93,20 @@ public final class NetworkConnection implements PacketSender {
 
     public boolean tryDisconnect() {
         if (channel != null) {
-            channel.close();
+            try {
+                channel.closeFuture().sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
         try {
             eventLoopGroup.shutdownGracefully().await(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
+
         return false;
     }
 
