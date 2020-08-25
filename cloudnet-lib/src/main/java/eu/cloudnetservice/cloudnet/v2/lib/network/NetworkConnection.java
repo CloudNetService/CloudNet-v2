@@ -106,6 +106,27 @@ public final class NetworkConnection implements PacketSender {
         }
     }
 
+    public boolean tryDisconnect() {
+        if (channel != null) {
+            try {
+                channel.closeFuture().sync();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
+            }
+        }
+        try {
+            eventLoopGroup.shutdownGracefully().await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
+
+
+
+        return false;
+    }
+
     @Override
     public void sendPacket(Packet packet) {
         if (channel == null) {
@@ -131,6 +152,7 @@ public final class NetworkConnection implements PacketSender {
             try {
                 channel.eventLoop().invokeAll(Collections.singletonList(() -> channel.writeAndFlush(packet).syncUninterruptibly()));
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
         }
