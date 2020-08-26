@@ -212,7 +212,7 @@ public final class CommandManager implements ConsoleInputDispatch {
                         TabCompletable tabCompletable = (TabCompletable) command;
                         String testString = args[args.length - 1];
                         if (!testString.isEmpty()) {
-                            final List<String> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1]);
+                            final List<String> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1], args);
                             if (onTab != null) {
                                 for(String argument : onTab) {
                                     if (argument != null) {
@@ -223,7 +223,7 @@ public final class CommandManager implements ConsoleInputDispatch {
                                 }
                             }
                         } else {
-                            strings.addAll(tabCompletable.onTab(args.length - 1, args[args.length - 1]));
+                            strings.addAll(tabCompletable.onTab(args.length - 1, args[args.length - 1], args));
                         }
                     }
             } else {
