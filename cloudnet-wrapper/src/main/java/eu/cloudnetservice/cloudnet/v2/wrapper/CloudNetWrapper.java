@@ -224,6 +224,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
                 try {
                     wait(2000);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     e.printStackTrace();
                 }
 
@@ -311,6 +312,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         try {
             NetworkUtils.getExecutor().awaitTermination(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             e.printStackTrace();
         }
         this.cloudNetLogging.shutdownAll();
