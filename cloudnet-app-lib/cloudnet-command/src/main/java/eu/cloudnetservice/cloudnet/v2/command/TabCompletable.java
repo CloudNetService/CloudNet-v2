@@ -16,6 +16,6 @@ public interface TabCompletable {
      *
      * @return a list of tab complete candidates
      */
-    List<String> onTab(long argsLength, String lastWord);
+    List<String> onTab(long argsLength, String lastWord, String[] args);
 
 }
