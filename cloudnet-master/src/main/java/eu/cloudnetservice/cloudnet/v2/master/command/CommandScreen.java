@@ -100,12 +100,31 @@ public final class CommandScreen extends Command implements TabCompletable {
     }
 
     @Override
-    public List<String> onTab(long argsLength, String lastWord) {
-        List<String> list = new ArrayList<>(CloudNet.getInstance().getServers().size() + CloudNet.getInstance().getProxys().size());
+    public List<String> onTab(long argsLength, String lastWord, String[] args) {
+        List<String> strings = new ArrayList<>();
+        if (args.length > 0) {
 
-        list.addAll(CloudNet.getInstance().getServers().keySet());
-        list.addAll(CloudNet.getInstance().getProxys().keySet());
+            if (args[0].equalsIgnoreCase("screen")) {
+                if (args.length > 1) {
+                    if (args[1].equalsIgnoreCase("server")  || args[1].equalsIgnoreCase("-s")) {
+                        strings.addAll(CloudNet.getInstance().getServers().keySet());
+                        return strings;
+                    }
+                    if (args[1].equalsIgnoreCase("proxy")  || args[1].equalsIgnoreCase("-p")) {
+                        strings.addAll(CloudNet.getInstance().getProxys().keySet());
+                        return strings;
+                    }
+                }
+                strings.add("write");
+                strings.add("server");
+                strings.add("proxy");
+                strings.add("leave");
+                strings.add("-s");
+                strings.add("-p");
+                return strings;
+            }
 
-        return list;
+        }
+        return strings;
     }
 }
