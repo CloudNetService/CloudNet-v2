@@ -2,11 +2,15 @@ package eu.cloudnetservice.cloudnet.v2.master.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
+import eu.cloudnetservice.cloudnet.v2.command.TabCompletable;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.cloudnet.v2.master.setup.SetupCreateWrapper;
 
-public class CommandWrapper extends Command {
+import java.util.ArrayList;
+import java.util.List;
+
+public class CommandWrapper extends Command implements TabCompletable {
     /**
      * Constructs a new command with a name, a needed permission and variable aliases.
      */
@@ -31,5 +35,17 @@ public class CommandWrapper extends Command {
                 CloudNet.getInstance().getConfig().getWrappers().stream().map(WrapperMeta::getId).forEach(sender::sendMessage);
             }
         }
+    }
+
+    @Override
+    public List<String> onTab(final long argsLength, final String lastWord, String[] args) {
+        List<String> strings = new ArrayList<>();
+        if (args.length > 0) {
+            if (args[0].equalsIgnoreCase("wrapper")) {
+                strings.add("create");
+                strings.add("list");
+            }
+        }
+        return strings;
     }
 }
