@@ -211,7 +211,7 @@ public final class CommandManager implements ConsoleInputDispatch {
                     if (command instanceof TabCompletable) {
                         TabCompletable tabCompletable = (TabCompletable) command;
                         String testString = args[args.length - 1];
-                        if (!testString.isEmpty()) {
+                        if (testString.isEmpty()) {
                             final List<String> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1], args);
                             if (onTab != null) {
                                 for(String argument : onTab) {
