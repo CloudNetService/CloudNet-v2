@@ -1,20 +1,3 @@
-/*
- * Copyright 2017 Tarek Hosni El Alaoui
- * Copyright 2020 CloudNetService
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package eu.cloudnetservice.cloudnet.v2.master.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
@@ -24,9 +7,13 @@ import eu.cloudnetservice.cloudnet.v2.lib.server.template.Template;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.ParsedLine;
 
 import java.util.HashSet;
 
+/**
+ * Created by Tareko on 28.08.2017.
+ */
 public final class CommandCopy extends Command {
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -39,7 +26,7 @@ public final class CommandCopy extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         switch (args.length) {
             case 1: {
                 MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);

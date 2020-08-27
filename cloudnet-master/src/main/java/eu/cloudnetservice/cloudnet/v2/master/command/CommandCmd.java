@@ -1,20 +1,3 @@
-/*
- * Copyright 2017 Tarek Hosni El Alaoui
- * Copyright 2020 CloudNetService
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package eu.cloudnetservice.cloudnet.v2.master.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
@@ -24,7 +7,11 @@ import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.ParsedLine;
 
+/**
+ * Created by Tareko on 20.08.2017.
+ */
 public final class CommandCmd extends Command {
 
     public CommandCmd() {
@@ -34,7 +21,7 @@ public final class CommandCmd extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         if (args.length > 1) {
             StringBuilder stringBuilder = new StringBuilder();
             for (short i = 1; i < args.length; i++) {
@@ -57,11 +44,11 @@ public final class CommandCmd extends Command {
                     }
                 }
 
-                for (ProxyServer proxyServer : wrapper.getProxies().values()) {
-                    if (proxyServer.getServiceId().getServerId().equalsIgnoreCase(args[0])) {
-                        proxyServer.getWrapper().writeProxyCommand(command, proxyServer.getProxyInfo());
-                        sender.sendMessage("Sending command to " + proxyServer.getServiceId()
-                                                                              .getServerId() + " with [\"" + command + "\"]");
+                for (ProxyServer minecraftServer : wrapper.getProxies().values()) {
+                    if (minecraftServer.getServiceId().getServerId().equalsIgnoreCase(args[0])) {
+                        minecraftServer.getWrapper().writeProxyCommand(command, minecraftServer.getProxyInfo());
+                        sender.sendMessage("Sending command to " + minecraftServer.getServiceId()
+                                                                                  .getServerId() + " with [\"" + command + "\"]");
                         return;
                     }
                 }
