@@ -233,39 +233,55 @@ public final class CommandManager implements ConsoleInputDispatch {
             if (buffer.length() > 0) {
                 final ParsedLine parse = this.consoleManager.getLineReader().getParser().parse(buffer, 0);
                 String[] args = buffer.split(" ");
-                Command command = getCommand(args[0]);
-                if (command == null) {
-                    strings.addAll(this.commands.values().stream().filter(command1 -> command1.name.startsWith(buffer)).map(command1 -> new Candidate(command1.name, command1.name, command1.name,
-                                                                                                command1.description, null, null, true)).collect(
+                if (args.length > 0) {
+                    Command command = getCommand(args[0]);
+                    if (command == null) {
+                        strings.addAll(this.commands.values().stream().filter(command1 -> command1.name.startsWith(buffer)).map(command1 -> new Candidate(command1.name, command1.name, command1.name,
+                                                                                                                                                          command1.description, null, null, true)).collect(
+                            Collectors.toList()));
+                        this.commands.values().forEach(command1 -> strings.addAll(Arrays.stream(command1.aliases).filter(s -> s.startsWith(buffer))
+                                                                                        .map(s -> new Candidate(s,
+                                                                                                                s,
+                                                                                                                command1.name,
+                                                                                                                command1.description,
+                                                                                                                null,
+                                                                                                                null,
+                                                                                                                true))
+                                                                                        .collect(Collectors.toList())));
+                    }
+                    if (command instanceof TabCompletable) {
+                        TabCompletable tabCompletable = (TabCompletable) command;
+                        String testString = args[args.length - 1];
+                        if (testString.isEmpty()) {
+                            final List<Candidate> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1], parse,args);
+                            if (onTab != null) {
+                                for (Candidate argument : onTab) {
+                                    if (argument != null) {
+                                        if (argument.value().toLowerCase().contains(testString.toLowerCase())) {
+                                            strings.add(argument);
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            strings.addAll(tabCompletable.onTab(args.length - 1, args[args.length - 1],parse, args));
+                        }
+                    }
+                } else {
+                    strings.addAll(this.commands.values().stream().map(command -> new Candidate(command.name, command.name, command.name,
+                                                                                                command.description, null, null, true)).collect(
                         Collectors.toList()));
-                    this.commands.values().forEach(command1 -> strings.addAll(Arrays.stream(command1.aliases).filter(s -> s.startsWith(buffer))
+                    this.commands.values().forEach(command -> strings.addAll(Arrays.stream(command.aliases)
                                                                                    .map(s -> new Candidate(s,
                                                                                                            s,
-                                                                                                           command1.name,
-                                                                                                           command1.description,
+                                                                                                           command.name,
+                                                                                                           command.description,
                                                                                                            null,
                                                                                                            null,
                                                                                                            true))
                                                                                    .collect(Collectors.toList())));
                 }
-                if (command instanceof TabCompletable) {
-                    TabCompletable tabCompletable = (TabCompletable) command;
-                    String testString = args[args.length - 1];
-                    if (testString.isEmpty()) {
-                        final List<Candidate> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1], parse,args);
-                        if (onTab != null) {
-                            for (Candidate argument : onTab) {
-                                if (argument != null) {
-                                    if (argument.value().toLowerCase().contains(testString.toLowerCase())) {
-                                        strings.add(argument);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        strings.addAll(tabCompletable.onTab(args.length - 1, args[args.length - 1],parse, args));
-                    }
-                }
+
             } else {
                 strings.addAll(this.commands.values().stream().map(command -> new Candidate(command.name, command.name, command.name,
                                                                                             command.description, null, null, true)).collect(
