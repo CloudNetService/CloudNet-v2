@@ -5,8 +5,11 @@ import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import org.jline.reader.Candidate;
 import org.jline.reader.LineReader;
+import org.jline.reader.ParsedLine;
+import org.jline.reader.impl.DefaultParser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,7 @@ public final class CommandManager implements ConsoleInputDispatch {
     /**
      * Constructs a new command manager with a {@link ConsoleCommandSender} and
      * no commands.
+     *
      * @param consoleManager for tab completion
      */
     public CommandManager(final ConsoleManager consoleManager) {
@@ -127,10 +131,10 @@ public final class CommandManager implements ConsoleInputDispatch {
                 }
 
                 if (b.equals(NetworkUtils.EMPTY_STRING)) {
-                    this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, new String[0]);
+                    this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, this.consoleManager.getLineReader().getParser().parse(command,0),new String[0]);
                 } else {
                     String[] c = b.split(" ");
-                    this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, c);
+                    this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, this.consoleManager.getLineReader().getParser().parse(command,0),c);
                 }
 
                 for (String argument : a) {
@@ -165,9 +169,11 @@ public final class CommandManager implements ConsoleInputDispatch {
     @Override
     public void dispatch(final String line, final LineReader lineReader) {
         if (line.length() > 0) {
-            String[] lineArguments = line.split(" ");
+            final ParsedLine parsedLine = lineReader.getParser().parse(line, 0);
+            String[] lineArguments = parsedLine.words().toArray(new String[0]);
             if (this.commands.containsKey(lineArguments[0].toLowerCase())) {
-                String lineArgumentsWithoutCommand = line.replace((line.contains(" ") ? line.split(" ")[0] + ' ' : line), NetworkUtils.EMPTY_STRING);
+                String lineArgumentsWithoutCommand = line.replace((line.contains(" ") ? line.split(" ")[0] + ' ' : line),
+                                                                  NetworkUtils.EMPTY_STRING);
                 try {
                     for (String argument : lineArguments) {
                         for (CommandArgument commandArgument : this.commands.get(lineArguments[0].toLowerCase()).getCommandArguments()) {
@@ -178,10 +184,10 @@ public final class CommandManager implements ConsoleInputDispatch {
                     }
 
                     if (!lineArgumentsWithoutCommand.equals(NetworkUtils.EMPTY_STRING)) {
-                        this.commands.get(lineArguments[0].toLowerCase()).onExecuteCommand(consoleSender, new String[0]);
+                        this.commands.get(lineArguments[0].toLowerCase()).onExecuteCommand(consoleSender, null, new String[0]);
                     } else {
                         String[] c = lineArgumentsWithoutCommand.split(" ");
-                        this.commands.get(lineArguments[0].toLowerCase()).onExecuteCommand(consoleSender, c);
+                        this.commands.get(lineArguments[0].toLowerCase()).onExecuteCommand(consoleSender, parsedLine, c);
                     }
 
                     for (String argument : lineArguments) {
@@ -208,30 +214,54 @@ public final class CommandManager implements ConsoleInputDispatch {
         if (this.consoleManager != null && this.consoleManager.getLineReader() != null) {
             final String buffer = this.consoleManager.getLineReader().getBuffer().toString();
             if (buffer.length() > 0) {
-                    String[] args = buffer.split(" ");
-                    Command command = getCommand(args[0]);
-                    if (command instanceof TabCompletable) {
-                        TabCompletable tabCompletable = (TabCompletable) command;
-                        String testString = args[args.length - 1];
-                        if (testString.isEmpty()) {
-                            final List<Candidate> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1], args);
-                            if (onTab != null) {
-                                for(Candidate argument : onTab) {
-                                    if (argument != null) {
-                                        if (argument.value().toLowerCase().contains(testString.toLowerCase())) {
-                                            strings.add(argument);
-                                        }
+                final ParsedLine parse = this.consoleManager.getLineReader().getParser().parse(buffer, 0);
+                String[] args = buffer.split(" ");
+                Command command = getCommand(args[0]);
+                if (command == null) {
+                    strings.addAll(this.commands.values().stream().filter(command1 -> command1.name.startsWith(buffer)).map(command1 -> new Candidate(command1.name, command1.name, command1.name,
+                                                                                                command1.description, null, null, true)).collect(
+                        Collectors.toList()));
+                    this.commands.values().forEach(command1 -> strings.addAll(Arrays.stream(command1.aliases).filter(s -> s.startsWith(buffer))
+                                                                                   .map(s -> new Candidate(s,
+                                                                                                           s,
+                                                                                                           command1.name,
+                                                                                                           command1.description,
+                                                                                                           null,
+                                                                                                           null,
+                                                                                                           true))
+                                                                                   .collect(Collectors.toList())));
+                }
+                if (command instanceof TabCompletable) {
+                    TabCompletable tabCompletable = (TabCompletable) command;
+                    String testString = args[args.length - 1];
+                    if (testString.isEmpty()) {
+                        final List<Candidate> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1], parse,args);
+                        if (onTab != null) {
+                            for (Candidate argument : onTab) {
+                                if (argument != null) {
+                                    if (argument.value().toLowerCase().contains(testString.toLowerCase())) {
+                                        strings.add(argument);
                                     }
                                 }
                             }
-                        } else {
-                            strings.addAll(tabCompletable.onTab(args.length - 1, args[args.length - 1], args));
                         }
+                    } else {
+                        strings.addAll(tabCompletable.onTab(args.length - 1, args[args.length - 1],parse, args));
                     }
+                }
             } else {
-                strings.addAll(this.commands.values().stream().map(command -> new Candidate(command.name, command.name, null,
-                                                                                            command.description, null,null,true)).collect(
+                strings.addAll(this.commands.values().stream().map(command -> new Candidate(command.name, command.name, command.name,
+                                                                                            command.description, null, null, true)).collect(
                     Collectors.toList()));
+                this.commands.values().forEach(command -> strings.addAll(Arrays.stream(command.aliases)
+                                                                               .map(s -> new Candidate(s,
+                                                                                                       s,
+                                                                                                       command.name,
+                                                                                                       command.description,
+                                                                                                       null,
+                                                                                                       null,
+                                                                                                       true))
+                                                                               .collect(Collectors.toList())));
             }
         }
 
