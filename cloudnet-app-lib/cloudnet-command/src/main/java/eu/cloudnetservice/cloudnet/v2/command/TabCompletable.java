@@ -1,5 +1,7 @@
 package eu.cloudnetservice.cloudnet.v2.command;
 
+import org.jline.reader.Candidate;
+
 import java.util.List;
 
 /**
@@ -16,6 +18,6 @@ public interface TabCompletable {
      *
      * @return a list of tab complete candidates
      */
-    List<String> onTab(long argsLength, String lastWord, String[] args);
+    List<Candidate> onTab(long argsLength, String lastWord, String[] args);
 
 }

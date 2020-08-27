@@ -6,6 +6,7 @@ import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
 import eu.cloudnetservice.cloudnet.v2.wrapper.setup.GetBukkitVersion;
+import org.jline.reader.Candidate;
 import org.jline.reader.LineReader;
 
 import java.io.InputStream;
@@ -18,8 +19,10 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class SetupSpigotVersion implements ConsoleInputDispatch {
 
@@ -139,28 +142,31 @@ public class SetupSpigotVersion implements ConsoleInputDispatch {
     }
 
     @Override
-    public Collection<String> get() {
+    public Collection<Candidate> get() {
+        List<Candidate> candidateList = new ArrayList<>();
         if (spigotType == null) {
-            return Arrays.asList("paper", "spigot", "buildtools");
+            candidateList.add(new Candidate("paper",
+                                            "paper",
+                                            null,
+                                            "Selects the installation type of paper fork based on Spigot",
+                                            null,
+                                            null,
+                                            true));
+            candidateList.add(new Candidate("spigot", "spigot", null, "Selects the installation type of spigot", null, null, true));
+            candidateList.add(new Candidate("buildtools", "buildtools", null, "Selects the installation type of spigot", null, null, true));
         }
         if (spigot) {
-            return Arrays.asList("1.8.8",
-                                 "1.9.4",
-                                 "1.10.2",
-                                 "1.11.2",
-                                 "1.12.2",
-                                 "1.13",
-                                 "1.13.1",
-                                 "1.13.2",
-                                 "1.14",
-                                 "1.14.1",
-                                 "1.14.2",
-                                 "1.14.3",
-                                 "1.14.4",
-                                 "1.15",
-                                 "1.15.1",
-                                 "1.15.2");
+            candidateList.addAll(Arrays.stream(GetBukkitVersion.values()).map(version -> new Candidate(version.getVersion(),
+                                                                                                       version.getVersion(),
+                                                                                                       "Spigot",
+                                                                                                       "Selects the version of spigot",
+                                                                                                       null,
+                                                                                                       null,
+                                                                                                       true)).collect(
+                Collectors.toList()));
+
+
         }
-        return new ArrayList<>();
+        return candidateList;
     }
 }
