@@ -1,4 +1,4 @@
-package eu.cloudnetservice.cloudnet.v2.console.model;
+package eu.cloudnetservice.cloudnet.v2.logging;
 
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
