@@ -7,6 +7,7 @@ import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.cloudnet.v2.master.setup.SetupCreateWrapper;
 import org.jline.reader.Candidate;
+import org.jline.reader.ParsedLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class CommandWrapper extends Command implements TabCompletable {
     }
 
     @Override
-    public void onExecuteCommand(final CommandSender sender, final String[] args) {
+    public void onExecuteCommand(final CommandSender sender, ParsedLine parsedLine, final String[] args) {
         if (args.length <= 0) {
             sender.sendMessage("wrapper create - Start a wrapper setup to generate a config.yml");
             sender.sendMessage("wrapper list - List all wrappers");
@@ -39,7 +40,7 @@ public class CommandWrapper extends Command implements TabCompletable {
     }
 
     @Override
-    public List<Candidate> onTab(final long argsLength, final String lastWord, String[] args) {
+    public List<Candidate> onTab(final long argsLength, final String lastWord,ParsedLine parsedLine, String[] args) {
         List<Candidate> strings = new ArrayList<>();
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("wrapper")) {

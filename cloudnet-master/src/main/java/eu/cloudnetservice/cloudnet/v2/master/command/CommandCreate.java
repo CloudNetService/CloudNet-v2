@@ -13,6 +13,7 @@ import eu.cloudnetservice.cloudnet.v2.master.process.CoreServerProcessBuilder;
 import eu.cloudnetservice.cloudnet.v2.master.setup.SetupProxyGroup;
 import eu.cloudnetservice.cloudnet.v2.master.setup.SetupServerGroup;
 import eu.cloudnetservice.cloudnet.v2.master.setup.SetupWrapper;
+import org.jline.reader.ParsedLine;
 
 import java.util.Collections;
 
@@ -26,7 +27,7 @@ public final class CommandCreate extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         if (args.length > 2) {
             if (args[0].equalsIgnoreCase("dispatchCommand")) {
                 dispatchCommand(sender, args);

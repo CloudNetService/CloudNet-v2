@@ -8,6 +8,7 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.user.BasicUser;
 import eu.cloudnetservice.cloudnet.v2.lib.user.User;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
+import org.jline.reader.ParsedLine;
 
 import java.util.ArrayList;
 
@@ -19,7 +20,7 @@ public class CommandUser extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         if (args.length == 3 && args[0].equalsIgnoreCase("create")) {
             if (CloudNet.getInstance().getUser(args[1]) != null) {
                 sender.sendMessage("A user with that name already exists!");

@@ -4,6 +4,7 @@ import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.ParsedLine;
 
 public final class CommandReload extends Command {
 
@@ -15,7 +16,7 @@ public final class CommandReload extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("all")) {
                 sender.sendMessage("[RELOAD] Trying to reload CloudNet...");

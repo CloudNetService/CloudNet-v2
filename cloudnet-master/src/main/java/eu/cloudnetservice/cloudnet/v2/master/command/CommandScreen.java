@@ -10,6 +10,7 @@ import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
 import org.jline.reader.Candidate;
+import org.jline.reader.ParsedLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public final class CommandScreen extends Command implements TabCompletable {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
 
         if (CloudNet.getInstance().getScreenProvider().getMainServiceId() != null && args.length > 1 && args[0].equalsIgnoreCase("write")) {
             ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
@@ -102,7 +103,7 @@ public final class CommandScreen extends Command implements TabCompletable {
     }
 
     @Override
-    public List<Candidate> onTab(long argsLength, String lastWord, String[] args) {
+    public List<Candidate> onTab(long argsLength, String lastWord,ParsedLine parsedLine, String[] args) {
         List<Candidate> strings = new ArrayList<>();
         if (args.length > 0) {
 

@@ -3,6 +3,7 @@ package eu.cloudnetservice.cloudnet.v2.master.command;
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
+import org.jline.reader.ParsedLine;
 
 import java.io.IOException;
 
@@ -16,7 +17,7 @@ public final class CommandClear extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         CloudNet.getInstance().getConsoleManager().getLineReader().getTerminal().flush();
     }
 }

@@ -3,6 +3,7 @@ package eu.cloudnetservice.cloudnet.v2.master.command;
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
+import org.jline.reader.ParsedLine;
 
 /**
  * Created by Tareko on 30.07.2017.
@@ -17,7 +18,7 @@ public final class CommandStop extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         sender.sendMessage("CloudNetV2 will be stopped...");
         CloudNet.getInstance().shutdown();
     }

@@ -8,6 +8,7 @@ import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.ParsedLine;
 
 public final class CommandList extends Command {
 
@@ -19,7 +20,7 @@ public final class CommandList extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         sender.sendMessage("CloudNet: ");
         int memory = 0, maxMemory = 0;
         for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {

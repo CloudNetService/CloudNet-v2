@@ -7,6 +7,7 @@ import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.ParsedLine;
 
 /**
  * Created by Tareko on 20.08.2017.
@@ -20,7 +21,7 @@ public final class CommandCmd extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         if (args.length > 1) {
             StringBuilder stringBuilder = new StringBuilder();
             for (short i = 1; i < args.length; i++) {

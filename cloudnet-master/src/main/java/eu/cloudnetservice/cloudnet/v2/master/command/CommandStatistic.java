@@ -5,6 +5,7 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.database.DatabaseDocument;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.database.StatisticManager;
+import org.jline.reader.ParsedLine;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +22,7 @@ public final class CommandStatistic extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         DatabaseDocument document = StatisticManager.getInstance().getStatistics();
         sender.sendMessage("CloudNet2 Statistics:",
                            " ",

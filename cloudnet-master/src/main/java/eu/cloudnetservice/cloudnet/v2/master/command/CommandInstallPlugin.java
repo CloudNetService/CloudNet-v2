@@ -5,6 +5,7 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
+import org.jline.reader.ParsedLine;
 
 /**
  * Created by Tareko on 27.08.2017.
@@ -19,7 +20,7 @@ public final class CommandInstallPlugin extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         switch (args.length) {
             case 3:
                 MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);

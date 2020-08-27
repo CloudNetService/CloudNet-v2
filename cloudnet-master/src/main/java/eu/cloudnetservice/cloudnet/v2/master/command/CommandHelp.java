@@ -4,6 +4,7 @@ import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
+import org.jline.reader.ParsedLine;
 
 import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
@@ -23,7 +24,7 @@ public class CommandHelp extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         List<String> messages = new ArrayList<>(CloudNet.getInstance().getCommandManager().getCommands().size() + 9);
 
         for (String command : CloudNet.getInstance().getCommandManager().getCommands()) {

@@ -13,6 +13,7 @@ import eu.cloudnetservice.cloudnet.v2.lib.server.info.ServerInfo;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
+import org.jline.reader.ParsedLine;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,7 +82,7 @@ public final class CommandLog extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         if (args.length == 1) {
             if (CloudNet.getInstance().getServers().containsKey(args[0])) {
                 MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);

@@ -14,6 +14,29 @@ public class CloudNetLauncher {
             return;
         }
         AnsiConsole.systemInstall();
+        /*System.out.println("RAINBOW-TEST");
+        char block = '\u2588';
+        StringBuilder stringBuilder = new StringBuilder();
+        for (final Ansi.Color value : Ansi.Color.values()) {
+            Ansi.ansi(stringBuilder).bg(value).a(block).a( " BGD " + value.name()).reset();
+            stringBuilder.append("\n");
+        }
+        for (final Ansi.Color value : Ansi.Color.values()) {
+            Ansi.ansi(stringBuilder).bgBright(value).a(block).a( " BGB " + value.name()).reset();
+            stringBuilder.append("\n");
+        }
+        Ansi.ansi(stringBuilder).reset();
+        Ansi.ansi(stringBuilder).bg(Ansi.Color.BLACK);
+        for (final Ansi.Color value : Ansi.Color.values()) {
+            Ansi.ansi(stringBuilder).fg(value).a(block).a( " FGD " + value.name()).reset();
+            stringBuilder.append("\n");
+        }
+        for (final Ansi.Color value : Ansi.Color.values()) {
+            Ansi.ansi(stringBuilder).fgBright(value).a(block).a( " FGB " + value.name()).reset();
+            stringBuilder.append("\n");
+        }
+        System.out.println(stringBuilder.toString());
+        System.out.println(Ansi.ansi().reset().toString());*/
         CloudBootstrap.main(args);
 
     }
