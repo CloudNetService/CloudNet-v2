@@ -4,6 +4,7 @@ import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot.SetupSpigotVersion;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
+import org.jline.reader.ParsedLine;
 
 public class CommandSetup extends Command {
 
@@ -15,7 +16,7 @@ public class CommandSetup extends Command {
     }
 
     @Override
-    public void onExecuteCommand(final CommandSender sender, final String[] args) {
+    public void onExecuteCommand(final CommandSender sender, ParsedLine parsedLine, final String[] args) {
         cloudNetWrapper.getConsoleManager().getConsoleRegistry().registerInput(new SetupSpigotVersion(cloudNetWrapper.getConsoleManager()));
         cloudNetWrapper.getConsoleManager().changeConsoleInput(SetupSpigotVersion.class);
     }

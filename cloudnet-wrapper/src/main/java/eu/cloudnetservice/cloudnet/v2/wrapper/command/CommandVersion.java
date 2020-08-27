@@ -20,6 +20,7 @@ package eu.cloudnetservice.cloudnet.v2.wrapper.command;
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
+import org.jline.reader.ParsedLine;
 
 public class CommandVersion extends Command {
 
@@ -28,7 +29,7 @@ public class CommandVersion extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         sender.sendMessage("CloudNet " + NetworkUtils.class.getPackage().getSpecificationVersion() + " #" + NetworkUtils.class.getPackage()
                                                                                                                               .getImplementationVersion() + " by CloudNetService");
     }

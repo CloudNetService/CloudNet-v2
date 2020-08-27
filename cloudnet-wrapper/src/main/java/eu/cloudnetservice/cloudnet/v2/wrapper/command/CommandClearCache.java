@@ -20,6 +20,7 @@ package eu.cloudnetservice.cloudnet.v2.wrapper.command;
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.wrapper.util.FileUtility;
+import org.jline.reader.ParsedLine;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -32,7 +33,7 @@ public class CommandClearCache extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
         try {
             FileUtility.deleteDirectory(new File("local/cache"));
             Files.createDirectories(Paths.get("local/cache/web_templates"));
