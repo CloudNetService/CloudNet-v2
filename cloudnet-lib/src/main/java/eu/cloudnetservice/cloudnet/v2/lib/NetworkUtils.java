@@ -181,27 +181,26 @@ public final class NetworkUtils {
     }
 
     public static void header() {
-        System.out.println();
+        //System.out.println();
         System.out.print(
-            String.format("██████ █      ██████ █   █ █████ ██    █ █████ █████ [%s]%n",
-                          NetworkUtils.class.getPackage().getImplementationVersion()));
-        System.out.println("█R     █E     █Z   █ █S  █ █Y  █ █M█   █ █       █");
-        System.out.println("█      █      █    █ █   █ █   █ █  █  █ ████    █");
-        System.out.println("█D     █Y     █T   █ █A  █ █N  █ █   █I█ █C      █");
-        System.out.println("██████ ██████ ██████ █████ █████ █    ██ ████    █");
+             String.format("██████ █      ██████ █   █ █████ §9██    █ █████ █████ §r[%s]%n§r", NetworkUtils.class.getPackage().getImplementationVersion().trim()));
+        System.out.println("█R     █E     █Z   █ █S  █ █Y  █ §9█§rM§9█   █ █       █§r");
+        System.out.println("█      █      █    █ █   █ █   █ §9█  █  █ ████    █§r");
+        System.out.println("█D     █Y     █T   █ █A  █ █N  █ §9█   §9█§rI§9█ §9█§rC      §9█§r");
+        System.out.println("██████ ██████ ██████ █████ █████ §9█    ██ ████    █§r");
         headerOut();
     }
 
     private static void headerOut() {
-        System.out.println();
+        //System.out.println();
         System.out.println("«» The Cloud Network Environment Technology 2");
-        System.out.print(String.format("«» Support https://discord.gg/5NUhKuR      [%s]%n",
+        System.out.println(String.format("«» Support https://discord.gg/5NUhKuR      [%s]%n",
                                        NetworkUtils.class.getPackage().getSpecificationVersion()));
-        System.out.print(String.format("«» Java %s @%s %s%n",
+        System.out.println(String.format("«» Java %s @%s %s%n",
                                        System.getProperty("java.version"),
                                        System.getProperty("user.name"),
                                        System.getProperty("os.name")));
-        System.out.println();
+        //System.out.println();
     }
 
 }
