@@ -4,6 +4,7 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
+import org.jline.reader.Candidate;
 import org.jline.reader.LineReader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +19,7 @@ import java.net.URLConnection;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class SpigotBuilder implements ConsoleInputDispatch {
 
@@ -190,7 +192,8 @@ public final class SpigotBuilder implements ConsoleInputDispatch {
     }
 
     @Override
-    public Collection<String> get() {
-        return this.versions;
+    public Collection<Candidate> get() {
+        return this.versions.stream().map(s -> new Candidate(s,s,"buildtools","A version to build with the md_5 build tools", null, null, true)).collect(
+            Collectors.toList());
     }
 }

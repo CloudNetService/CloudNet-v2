@@ -8,6 +8,7 @@ import eu.cloudnetservice.cloudnet.v2.setup.models.PaperMCProject;
 import eu.cloudnetservice.cloudnet.v2.setup.models.PaperMCProjectVersion;
 import eu.cloudnetservice.cloudnet.v2.setup.utils.StreamThread;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
+import org.jline.reader.Candidate;
 import org.jline.reader.LineReader;
 
 import java.io.*;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 public final class PaperBuilder implements ConsoleInputDispatch {
 
@@ -173,7 +175,8 @@ public final class PaperBuilder implements ConsoleInputDispatch {
     }
 
     @Override
-    public Collection<String> get() {
-        return Arrays.asList(paperMCProject.getVersions().clone());
+    public Collection<Candidate> get() {
+        return Arrays.stream(paperMCProject.getVersions()).map(s -> new Candidate(s,s,paperMCProject.getProject(),"A paper version",null,null,true)).collect(
+            Collectors.toList());
     }
 }

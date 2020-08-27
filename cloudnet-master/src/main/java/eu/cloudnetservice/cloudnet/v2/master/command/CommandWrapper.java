@@ -6,6 +6,7 @@ import eu.cloudnetservice.cloudnet.v2.command.TabCompletable;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.cloudnet.v2.master.setup.SetupCreateWrapper;
+import org.jline.reader.Candidate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +39,12 @@ public class CommandWrapper extends Command implements TabCompletable {
     }
 
     @Override
-    public List<String> onTab(final long argsLength, final String lastWord, String[] args) {
-        List<String> strings = new ArrayList<>();
+    public List<Candidate> onTab(final long argsLength, final String lastWord, String[] args) {
+        List<Candidate> strings = new ArrayList<>();
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("wrapper")) {
-                strings.add("create");
-                strings.add("list");
+                strings.add(new Candidate("create", "create", null, "Create a new wrapper configuration", null,null, true));
+                strings.add(new Candidate("list", "list", null, "List all wrapper configurations", null,null, true));
             }
         }
         return strings;

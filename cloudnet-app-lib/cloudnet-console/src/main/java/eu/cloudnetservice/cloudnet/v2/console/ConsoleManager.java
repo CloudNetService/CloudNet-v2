@@ -66,6 +66,9 @@ public final class ConsoleManager {
             this.cloudLogger.log(Level.SEVERE, "Something went wrong on creating a virtual terminal", e);
         }
         if (this.consoleInputDispatch != null && terminal != null) {
+            final ArgumentCompleter argumentCompleter = new ArgumentCompleter(new StringsCompleter(this.consoleInputDispatch.get()));
+            argumentCompleter.setStrict(false);
+            argumentCompleter.setStrictCommand(false);
             this.lineReader = LineReaderBuilder.builder()
                                                .appName("CloudNet-Console")
                                                .option(LineReader.Option.ERASE_LINE_ON_FINISH, true)
@@ -76,7 +79,7 @@ public final class ConsoleManager {
                                                .variable(LineReader.HISTORY_FILE, Paths.get(".cn_history"))
                                                .terminal(terminal)
                                                .parser(new DefaultParser())
-                                               .completer(new ArgumentCompleter(new StringsCompleter(this.consoleInputDispatch)))
+                                               .completer(argumentCompleter)
                                                .build();
         } else {
             System.exit(-1);
@@ -88,8 +91,8 @@ public final class ConsoleManager {
         try {
             jLine3ConsoleHandler.setEncoding(StandardCharsets.UTF_8.name());
             this.cloudLogger.addHandler(jLine3ConsoleHandler);
-            System.setOut(new PrintStream(new LoggingOutputStream(this.cloudLogger, Level.INFO), true, StandardCharsets.UTF_8.name()));
-            System.setErr(new PrintStream(new LoggingOutputStream(this.cloudLogger, Level.SEVERE), true, StandardCharsets.UTF_8.name()));
+            System.setOut(AnsiConsole.wrapSystemOut(new PrintStream(new LoggingOutputStream(this.cloudLogger, Level.INFO), true, StandardCharsets.UTF_8.name())));
+            System.setErr(AnsiConsole.wrapSystemOut(new PrintStream(new LoggingOutputStream(this.cloudLogger, Level.SEVERE), true, StandardCharsets.UTF_8.name())));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

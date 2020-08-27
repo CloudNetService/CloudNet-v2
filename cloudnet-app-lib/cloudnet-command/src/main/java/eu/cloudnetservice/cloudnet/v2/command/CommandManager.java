@@ -20,6 +20,7 @@ package eu.cloudnetservice.cloudnet.v2.command;
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
+import org.jline.reader.Candidate;
 import org.jline.reader.LineReader;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Class that manages commands for the interfaces of CloudNet.
@@ -218,8 +220,8 @@ public final class CommandManager implements ConsoleInputDispatch {
     }
 
     @Override
-    public Collection<String> get() {
-        Collection<String> strings = new ArrayList<>();
+    public Collection<Candidate> get() {
+        Collection<Candidate> strings = new ArrayList<>();
         if (this.consoleManager != null && this.consoleManager.getLineReader() != null) {
             final String buffer = this.consoleManager.getLineReader().getBuffer().toString();
             if (buffer.length() > 0) {
@@ -231,9 +233,9 @@ public final class CommandManager implements ConsoleInputDispatch {
                         if (!testString.isEmpty()) {
                             final List<String> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1]);
                             if (onTab != null) {
-                                for(String argument : onTab) {
+                                for(Candidate argument : onTab) {
                                     if (argument != null) {
-                                        if (argument.toLowerCase().contains(testString.toLowerCase())) {
+                                        if (argument.value().toLowerCase().contains(testString.toLowerCase())) {
                                             strings.add(argument);
                                         }
                                     }
@@ -244,7 +246,9 @@ public final class CommandManager implements ConsoleInputDispatch {
                         }
                     }
             } else {
-                strings.addAll(this.commands.keySet());
+                strings.addAll(this.commands.values().stream().map(command -> new Candidate(command.name, command.name, null,
+                                                                                            command.description, null,null,true)).collect(
+                    Collectors.toList()));
             }
         }
 

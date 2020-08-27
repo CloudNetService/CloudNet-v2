@@ -26,9 +26,11 @@ import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.Candidate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class CommandScreen extends Command implements TabCompletable {
 
@@ -117,27 +119,30 @@ public final class CommandScreen extends Command implements TabCompletable {
     }
 
     @Override
-    public List<String> onTab(long argsLength, String lastWord, String[] args) {
-        List<String> strings = new ArrayList<>();
+    public List<Candidate> onTab(long argsLength, String lastWord, String[] args) {
+        List<Candidate> strings = new ArrayList<>();
         if (args.length > 0) {
 
             if (args[0].equalsIgnoreCase("screen")) {
                 if (args.length > 1) {
                     if (args[1].equalsIgnoreCase("server")  || args[1].equalsIgnoreCase("-s")) {
-                        strings.addAll(CloudNet.getInstance().getServers().keySet());
+                        strings.addAll(CloudNet.getInstance().getServers().values().stream().map(minecraftServer -> new Candidate(minecraftServer.getName(), minecraftServer.getName(), minecraftServer.getGroup().getName(), "A simple minecraft server", null, null, true)).collect(
+                            Collectors.toList()));
                         return strings;
                     }
                     if (args[1].equalsIgnoreCase("proxy")  || args[1].equalsIgnoreCase("-p")) {
-                        strings.addAll(CloudNet.getInstance().getProxys().keySet());
+                        strings.addAll(CloudNet.getInstance().getProxys().values().stream().map(proxyServer -> new Candidate(proxyServer.getName(), proxyServer.getName(), proxyServer.getProcessMeta().getProxyGroupName(), "A simple proxy", null, null, true)).collect(
+                            Collectors.toList()));
                         return strings;
+
                     }
                 }
-                strings.add("write");
-                strings.add("server");
-                strings.add("proxy");
-                strings.add("leave");
-                strings.add("-s");
-                strings.add("-p");
+                strings.add(new Candidate("write", "write", null, "Write a command into the open screen", null, null, true));
+                strings.add(new Candidate("server", "server", "screen-server", "Open a server screen", null, null,true));
+                strings.add(new Candidate("-s", "-s", "screen-server", "Open a server screen", null, null,true));
+                strings.add(new Candidate("proxy", "proxy", "screen-proxy", "Open a proxy screen", null, null,true));
+                strings.add(new Candidate("-p", "-p", "screen-proxy", "Open a proxy screen", null, null,true));
+                strings.add(new Candidate("leave", "leave", null, "Close/leave the current screen", null, null,true));
                 return strings;
             }
 
