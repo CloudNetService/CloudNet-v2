@@ -267,21 +267,7 @@ public final class CommandManager implements ConsoleInputDispatch {
                             strings.addAll(tabCompletable.onTab(args.length - 1, args[args.length - 1],parse, args));
                         }
                     }
-                } else {
-                    strings.addAll(this.commands.values().stream().map(command -> new Candidate(command.name, command.name, command.name,
-                                                                                                command.description, null, null, true)).collect(
-                        Collectors.toList()));
-                    this.commands.values().forEach(command -> strings.addAll(Arrays.stream(command.aliases)
-                                                                                   .map(s -> new Candidate(s,
-                                                                                                           s,
-                                                                                                           command.name,
-                                                                                                           command.description,
-                                                                                                           null,
-                                                                                                           null,
-                                                                                                           true))
-                                                                                   .collect(Collectors.toList())));
                 }
-
             } else {
                 strings.addAll(this.commands.values().stream().map(command -> new Candidate(command.name, command.name, command.name,
                                                                                             command.description, null, null, true)).collect(
