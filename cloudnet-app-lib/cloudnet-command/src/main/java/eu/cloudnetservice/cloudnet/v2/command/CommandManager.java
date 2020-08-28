@@ -6,7 +6,6 @@ import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import org.jline.reader.Candidate;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
-import org.jline.reader.impl.DefaultParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +24,8 @@ public final class CommandManager implements ConsoleInputDispatch {
     private final Map<String, Command> commands = new ConcurrentHashMap<>();
     private final ConsoleCommandSender consoleSender = new ConsoleCommandSender();
     private final ConsoleManager consoleManager;
+    private boolean showDescription = true;
+    private boolean aliases = true;
 
     /**
      * Constructs a new command manager with a {@link ConsoleCommandSender} and
@@ -183,7 +184,7 @@ public final class CommandManager implements ConsoleInputDispatch {
                         }
                     }
 
-                    if (!lineArgumentsWithoutCommand.equals(NetworkUtils.EMPTY_STRING)) {
+                    if (lineArgumentsWithoutCommand.equals(NetworkUtils.EMPTY_STRING)) {
                         this.commands.get(lineArguments[0].toLowerCase()).onExecuteCommand(consoleSender, null, new String[0]);
                     } else {
                         String[] c = lineArgumentsWithoutCommand.split(" ");
@@ -219,14 +220,14 @@ public final class CommandManager implements ConsoleInputDispatch {
                 if (args.length > 0) {
                     Command command = getCommand(args[0]);
                     if (command == null) {
-                        strings.addAll(this.commands.values().stream().filter(command1 -> command1.name.startsWith(buffer)).map(command1 -> new Candidate(command1.name, command1.name, command1.name,
-                                                                                                                                                          command1.description, null, null, true)).collect(
+                        strings.addAll(this.commands.values().stream().filter(command1 -> command1.name.startsWith(buffer)).map(command1 -> new Candidate(command1.name, command1.name, command1.name, this.showDescription ? command1.description : null, null, null, true)).collect(
                             Collectors.toList()));
+                        if (aliases)
                         this.commands.values().forEach(command1 -> strings.addAll(Arrays.stream(command1.aliases).filter(s -> s.startsWith(buffer))
                                                                                         .map(s -> new Candidate(s,
                                                                                                                 s,
                                                                                                                 command1.name,
-                                                                                                                command1.description,
+                                                                                                                this.showDescription ? command1.description : null,
                                                                                                                 null,
                                                                                                                 null,
                                                                                                                 true))
@@ -236,30 +237,32 @@ public final class CommandManager implements ConsoleInputDispatch {
                         TabCompletable tabCompletable = (TabCompletable) command;
                         String testString = args[args.length - 1];
                         if (testString.isEmpty()) {
-                            final List<Candidate> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1], parse,args);
-                            if (onTab != null) {
-                                for (Candidate argument : onTab) {
-                                    if (argument != null) {
-                                        if (argument.value().toLowerCase().contains(testString.toLowerCase())) {
-                                            strings.add(argument);
-                                        }
+                            final List<Candidate> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1], parse,args).stream().map(candidate -> new Candidate(
+                                candidate.value(), candidate.displ(), candidate.group(), this.showDescription ? candidate.descr() : null,
+                                candidate.suffix(), candidate.key(), candidate.complete())).collect(Collectors.toList());
+                            for (Candidate argument : onTab) {
+                                if (argument != null) {
+                                    if (argument.value().toLowerCase().startsWith(testString.toLowerCase())) {
+                                        strings.add(argument);
                                     }
                                 }
                             }
                         } else {
-                            strings.addAll(tabCompletable.onTab(args.length - 1, args[args.length - 1],parse, args));
+                            strings.addAll(tabCompletable.onTab(args.length - 1, args[args.length - 1],parse, args).stream().map(candidate -> new Candidate(
+                                candidate.value(), candidate.displ(), candidate.group(), this.showDescription ? candidate.descr() : null,
+                                candidate.suffix(), candidate.key(), candidate.complete())).collect(Collectors.toList()));
                         }
                     }
                 }
             } else {
                 strings.addAll(this.commands.values().stream().map(command -> new Candidate(command.name, command.name, command.name,
-                                                                                            command.description, null, null, true)).collect(
+                                                                                            this.showDescription ? command.description: null, null, null, true)).collect(
                     Collectors.toList()));
-                this.commands.values().forEach(command -> strings.addAll(Arrays.stream(command.aliases)
+                if (aliases) this.commands.values().forEach(command -> strings.addAll(Arrays.stream(command.aliases)
                                                                                .map(s -> new Candidate(s,
                                                                                                        s,
                                                                                                        command.name,
-                                                                                                       command.description,
+                                                                                                       this.showDescription ?command.description:null,
                                                                                                        null,
                                                                                                        null,
                                                                                                        true))
@@ -268,5 +271,21 @@ public final class CommandManager implements ConsoleInputDispatch {
         }
 
         return strings;
+    }
+
+    public void setShowDescription(final boolean showDescription) {
+        this.showDescription = showDescription;
+    }
+
+    public boolean isShowDescription() {
+        return showDescription;
+    }
+
+    public boolean isAliases() {
+        return aliases;
+    }
+
+    public void setAliases(final boolean aliases) {
+        this.aliases = aliases;
     }
 }
