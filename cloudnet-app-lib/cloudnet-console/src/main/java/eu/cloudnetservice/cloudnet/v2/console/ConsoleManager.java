@@ -2,10 +2,7 @@ package eu.cloudnetservice.cloudnet.v2.console;
 
 import eu.cloudnetservice.cloudnet.v2.console.completer.CloudNetCompleter;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
-import eu.cloudnetservice.cloudnet.v2.logging.LoggingOutputStream;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
-import eu.cloudnetservice.cloudnet.v2.logging.LoggingFormatter;
-import eu.cloudnetservice.cloudnet.v2.logging.handler.ColoredConsoleHandler;
 import org.fusesource.jansi.AnsiOutputStream;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -18,12 +15,9 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 
 public final class ConsoleManager {
@@ -92,7 +86,7 @@ public final class ConsoleManager {
             System.exit(-1);
             throw new NullPointerException("Console input dispatcher is empty");
         }
-        for (final Handler handler : this.cloudLogger.getHandlers()) {
+        /*for (final Handler handler : this.cloudLogger.getHandlers()) {
             if (handler instanceof ColoredConsoleHandler) {
                 this.cloudLogger.removeHandler(handler);
             }
@@ -106,7 +100,7 @@ public final class ConsoleManager {
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void changeConsoleInput(Class<? extends ConsoleInputDispatch> clazz) {
