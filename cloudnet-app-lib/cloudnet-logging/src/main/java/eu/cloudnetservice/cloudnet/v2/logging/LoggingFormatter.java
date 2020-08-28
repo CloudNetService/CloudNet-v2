@@ -24,7 +24,8 @@ public class LoggingFormatter extends Formatter {
             if (record.getThrown() != null) {
                 final StringWriter stringWriter = new StringWriter();
                 record.getThrown().printStackTrace(new PrintWriter(stringWriter));
-                builder.append(stringWriter).append(System.lineSeparator());
+                builder.append(stringWriter);
+                builder.append(System.lineSeparator());
             }
 
         }
