@@ -1,6 +1,5 @@
 package eu.cloudnetservice.cloudnet.v2.master.bootstrap;
 
-import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 /**

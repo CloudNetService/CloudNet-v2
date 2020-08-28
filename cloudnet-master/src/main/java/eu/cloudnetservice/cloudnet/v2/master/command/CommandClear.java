@@ -5,8 +5,6 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import org.jline.reader.ParsedLine;
 
-import java.io.IOException;
-
 public final class CommandClear extends Command {
 
     public CommandClear() {

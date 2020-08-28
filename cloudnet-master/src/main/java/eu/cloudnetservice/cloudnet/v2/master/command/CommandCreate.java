@@ -2,6 +2,7 @@ package eu.cloudnetservice.cloudnet.v2.master.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
+import eu.cloudnetservice.cloudnet.v2.command.TabCompletable;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerGroup;
 import eu.cloudnetservice.cloudnet.v2.lib.server.template.Template;
@@ -12,12 +13,14 @@ import eu.cloudnetservice.cloudnet.v2.master.process.CoreProxyProcessBuilder;
 import eu.cloudnetservice.cloudnet.v2.master.process.CoreServerProcessBuilder;
 import eu.cloudnetservice.cloudnet.v2.master.setup.SetupProxyGroup;
 import eu.cloudnetservice.cloudnet.v2.master.setup.SetupServerGroup;
-import eu.cloudnetservice.cloudnet.v2.master.setup.SetupWrapper;
+import org.jline.reader.Candidate;
 import org.jline.reader.ParsedLine;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-public final class CommandCreate extends Command {
+public final class CommandCreate extends Command implements TabCompletable {
 
     private static final String[] EMPTY_STRING_ARRAY = {};
 
@@ -205,5 +208,26 @@ public final class CommandCreate extends Command {
 
         CloudNet.getInstance().getWrappers().values().forEach(Wrapper::updateWrapper);
         sender.sendMessage("The template was created and all wrappers were updated!");
+    }
+
+    @Override
+    public List<Candidate> onTab(final long argsLength, final String lastWord, final ParsedLine parsedLine, final String[] args) {
+        List<Candidate> candidates = new ArrayList<>();
+        if (parsedLine.word().equalsIgnoreCase("create")) {
+            candidates.add(new Candidate("proxy", "PROXY", null,"Creates a proxy server of a proxy group. <count> is not mandatory", null, null,true));
+            candidates.add(new Candidate("server", "SERVER", null,"Creates a game server of a server group. <count> is not mandatory", null, null,true));
+            candidates.add(new Candidate("PROXYGROUP", "PROXYGROUP", null,"Creates a completely new proxy group for BungeeCord with its own configurations, etc.", null, null,true));
+            candidates.add(new Candidate("SERVERGROUP", "SERVERGROUP", null,"Creates a completely new server group for Minecraft servers with its own configurations, etc.", null, null,true));
+            candidates.add(new Candidate("DISPATCHCOMMAND", "DISPATCHCOMMAND", null,"Creates a simple command alias", null, null,true));
+            candidates.add(new Candidate("WRAPPER", "WRAPPER", null,"Creates and whitelists a new wrapper. The wrapper can also have the same IP of a previous wrapper", null, null,true));
+            candidates.add(new Candidate("TEMPLATE", "TEMPLATE", null,"Creates a new locale (Wrapper locales) template for a server group", null, null,true));
+            candidates.add(new Candidate("TEMPLATE", "TEMPLATE", null,"Creates a new master backend (Master locales) template for a server group", null, null,true));
+            candidates.add(new Candidate("TEMPLATE", "TEMPLATE", null,"Creates a new template of a server group via url", null, null,true));
+            return candidates;
+        }
+        if (parsedLine.word().equalsIgnoreCase("PROXY")) {
+            candidates.add(new Candidate("<proxyGroup>", "<proxyGroup>", null,"Creates a proxy server of a proxy group. <count> is not mandatory", null, null,true));
+        }
+        return candidates;
     }
 }
