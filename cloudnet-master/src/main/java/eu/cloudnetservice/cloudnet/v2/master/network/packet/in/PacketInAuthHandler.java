@@ -32,6 +32,7 @@ import eu.cloudnetservice.cloudnet.v2.master.network.CloudNetClientAuth;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import eu.cloudnetservice.cloudnet.v2.master.network.packet.out.PacketOutConsoleSettings;
 import io.netty.channel.Channel;
 
 public final class PacketInAuthHandler implements PacketInHandler {
@@ -58,6 +59,18 @@ public final class PacketInAuthHandler implements PacketInHandler {
                         Channel channel = client.getChannel();
                         channel.pipeline().remove("client");
                         client.getChannel().writeAndFlush(new PacketOutAuthResult(new AuthLoginResult(true))).syncUninterruptibly();
+                        client.getChannel().writeAndFlush(new PacketOutConsoleSettings(new Document()
+                                                                                           .append("console",
+                                                                                                   new Document()
+                                                                                                       .append("aliases", CloudNet.getInstance().getConfig().isAliases())
+                                                                                                       .append("showdescription", CloudNet.getInstance().getConfig().isShowDescription())
+                                                                                                       .append("showgroup", CloudNet.getInstance().getConfig().isShowGroup())
+                                                                                                       .append("elof", CloudNet.getInstance().getConfig().isElof())
+                                                                                                       .append("showmenu", CloudNet.getInstance().getConfig().isShowMenu())
+                                                                                                       .append("autolist", CloudNet.getInstance().getConfig().isAutoList())
+                                                                                                       .append("groupcolor", CloudNet.getInstance().getConfig().getGroupColor())
+                                                                                                       .append("color", CloudNet.getInstance().getConfig().getColor())
+                                                                                           ))).syncUninterruptibly();
                         channel.pipeline().addLast(new CloudNetClient(wrapper, channel));
                         return;
                     } else {
