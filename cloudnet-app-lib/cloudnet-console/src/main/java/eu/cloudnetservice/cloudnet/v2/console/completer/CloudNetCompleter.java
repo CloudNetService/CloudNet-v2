@@ -2,7 +2,6 @@ package eu.cloudnetservice.cloudnet.v2.console.completer;
 
 import eu.cloudnetservice.cloudnet.v2.logging.color.AnsiColorReplacer;
 import eu.cloudnetservice.cloudnet.v2.logging.color.ChatColor;
-import org.fusesource.jansi.Ansi;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
