@@ -67,6 +67,9 @@ public class CloudConfig {
 
     private boolean notifyService;
 
+    private boolean showDescription;
+    private boolean showMenu;
+
     private String formatSplitter, wrapperKey;
 
     private WebServerConfig webServerConfig;
@@ -80,6 +83,12 @@ public class CloudConfig {
     private List<String> disabledModules;
 
     private List<String> hasteServer;
+    private boolean showGroup;
+    private boolean autoList;
+    private boolean elof;
+    private String color = "§3";
+    private String groupColor = "§8";
+    private boolean aliases;
 
     public CloudConfig() {
 
@@ -87,7 +96,7 @@ public class CloudConfig {
             try {
                 Files.createDirectories(path);
             } catch (IOException e) {
-                 throw new RuntimeException("Folder path " + path.toAbsolutePath().toString() + " could not be created", e);
+                throw new RuntimeException("Folder path " + path.toAbsolutePath().toString() + " could not be created", e);
             }
         }
 
@@ -138,7 +147,7 @@ public class CloudConfig {
         }
 
         String hostName = NetworkUtils.getHostName();
-        new Document("wrapper", Collections.singletonList(new WrapperMeta("Wrapper-1", hostName, "admin")))
+        new Document("wrapper", new ArrayList<>())
             .append("proxyGroups", Collections.singletonList(new BungeeGroup())).saveAsConfig(servicePath);
 
         new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
@@ -196,8 +205,29 @@ public class CloudConfig {
                     CONFIGURATION_PROVIDER.save(configuration, writer);
                 }
             }
+            if (!configuration.contains("console")) {
+                configuration.set("console.showDescription", false);
+                configuration.set("console.showMenu", true);
+                configuration.set("console.showGroup", false);
+                configuration.set("console.autoList", true);
+                configuration.set("console.elof", false);
+                configuration.set("console.aliases", false);
+                configuration.set("console.color", "§3");
+                configuration.set("console.groupColor", "§8");
 
+                try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+                    CONFIGURATION_PROVIDER.save(configuration, writer);
+                }
+            }
             this.hasteServer = configuration.getStringList("general.haste.server");
+            this.showDescription = configuration.getBoolean("console.showDescription");
+            this.showMenu = configuration.getBoolean("console.showMenu");
+            this.showGroup = configuration.getBoolean("console.showGroup");
+            this.autoList = configuration.getBoolean("console.autoList");
+            this.aliases = configuration.getBoolean("console.aliases");
+            this.elof = configuration.getBoolean("console.elof");
+            this.color = configuration.getString("console.color");
+            this.groupColor = configuration.getString("console.groupColor");
 
             this.disabledModules = configuration.getStringList("general.disabled-modules");
         } catch (IOException e) {
@@ -380,5 +410,119 @@ public class CloudConfig {
 
     public List<String> getHasteServer() {
         return this.hasteServer;
+    }
+
+    public boolean isShowDescription() {
+        return showDescription;
+    }
+
+    public void setShowDescription(final boolean showDescription) {
+        this.showDescription = showDescription;
+        this.config.set("console.showDescription", showDescription);
+
+        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public boolean isShowMenu() {
+        return showMenu;
+    }
+
+    public void setShowMenu(final boolean showMenu) {
+        this.showMenu = showMenu;
+        this.config.set("console.showMenu", showMenu);
+        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isShowGroup() {
+        return showGroup;
+    }
+
+    public void setShowGroup(final boolean showGroup) {
+        this.showGroup = showGroup;
+        this.config.set("console.showGroup", showGroup);
+        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isAutoList() {
+        return autoList;
+    }
+
+    public void setAutoList(final boolean autoList) {
+        this.autoList = autoList;
+        this.config.set("console.autoList", autoList);
+        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isElof() {
+        return elof;
+    }
+
+    public void setElof(final boolean elof) {
+        this.elof = elof;
+        this.config.set("console.elof", elof);
+        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public String getGroupColor() {
+        return groupColor;
+    }
+
+    public void setColor(final String color) {
+        this.color = color;
+        this.config.set("console.color", color);
+        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setGroupColor(final String groupColor) {
+        this.groupColor = groupColor;
+        this.config.set("console.groupColor", groupColor);
+        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isAliases() {
+        return aliases;
+    }
+
+    public void setAliases(final boolean aliases) {
+        this.aliases = aliases;
+        this.config.set("console.aliases", aliases);
+        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
