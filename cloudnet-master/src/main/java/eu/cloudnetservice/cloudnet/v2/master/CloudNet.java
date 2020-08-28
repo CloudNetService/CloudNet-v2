@@ -45,6 +45,7 @@ import eu.cloudnetservice.cloudnet.v2.master.api.event.network.CloudInitEvent;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandClear;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandClearCache;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandCmd;
+import eu.cloudnetservice.cloudnet.v2.master.command.CommandConsole;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandCopy;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandCreate;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandDebug;
@@ -400,6 +401,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
                            .registerCommand(new CommandVersion())
                            .registerCommand(new CommandInfo())
                            .registerCommand(new CommandDebug())
+                           .registerCommand(new CommandConsole())
                            .registerCommand(new CommandUser());
     }
 

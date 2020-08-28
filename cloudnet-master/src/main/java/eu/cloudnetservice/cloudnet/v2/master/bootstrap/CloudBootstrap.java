@@ -18,6 +18,7 @@
 package eu.cloudnetservice.cloudnet.v2.master.bootstrap;
 
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
+import eu.cloudnetservice.cloudnet.v2.console.completer.CloudNetCompleter;
 import eu.cloudnetservice.cloudnet.v2.help.HelpService;
 import eu.cloudnetservice.cloudnet.v2.help.ServiceDescription;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
@@ -29,6 +30,10 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.JdkLoggerFactory;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.impl.LineReaderImpl;
+import org.jline.reader.impl.completer.ArgumentCompleter;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -130,6 +135,24 @@ public final class CloudBootstrap {
             cloudNetCore.getConsoleManager().setRunning(true);
             cloudNetCore.getConsoleManager().changeConsoleInput(CommandManager.class);
             cloudNetCore.getConsoleManager().useDefaultConsole();
+            final LineReader lineReader = cloudNetCore.getConsoleManager().getLineReader();
+            lineReader.option(LineReader.Option.GROUP, coreConfig.isShowGroup());
+            lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, coreConfig.isElof());
+            lineReader.option(LineReader.Option.AUTO_GROUP, coreConfig.isShowGroup());
+            lineReader.option(LineReader.Option.MENU_COMPLETE, coreConfig.isShowMenu());
+            lineReader.option(LineReader.Option.AUTO_MENU, coreConfig.isShowMenu());
+            lineReader.option(LineReader.Option.AUTO_LIST, coreConfig.isAutoList());
+            if (lineReader instanceof LineReaderImpl) {
+                Completer completer = ((LineReaderImpl) lineReader).getCompleter();
+                if (completer instanceof ArgumentCompleter) {
+                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setGroupColor(coreConfig.getGroupColor());
+                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setShowDescription(coreConfig.isShowDescription());
+                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setColor(coreConfig.getColor());
+                }
+
+            }
+            cloudNetCore.getCommandManager().setShowDescription(coreConfig.isShowDescription());
+            cloudNetCore.getCommandManager().setAliases(coreConfig.isAliases());
             cloudNetCore.getConsoleManager().startConsole();
         } else {
             while (!Thread.currentThread().isInterrupted()) {
