@@ -1,4 +1,4 @@
-package eu.cloudnetservice.cloudnet.v2.logging;
+package eu.cloudnetservice.cloudnet.v2.logging.stream;
 
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
