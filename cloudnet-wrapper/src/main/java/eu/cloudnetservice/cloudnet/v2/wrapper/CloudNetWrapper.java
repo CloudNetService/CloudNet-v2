@@ -226,10 +226,11 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 11, PacketInOnlineServer.class);
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 12, PacketInUpdateWrapperProperties.class);
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 14, PacketInCopyDirectory.class);
+        networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 15, PacketInConsoleSettings.class);
 
-        System.out.printf("Trying to connect %s:%d%n",
+        System.out.println(String.format("Trying to connect %s:%d%n",
                           networkConnection.getConnectableAddress().getHostName(),
-                          networkConnection.getConnectableAddress().getPort());
+                          networkConnection.getConnectableAddress().getPort()));
 
         NetworkUtils.getExecutor().execute(() -> {
             while (networkConnection.getConnectionTries() < 5 && networkConnection.getChannel() == null) {
