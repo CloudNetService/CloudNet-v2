@@ -1,6 +1,7 @@
 package eu.cloudnetservice.cloudnet.v2.logging;
 
 import eu.cloudnetservice.cloudnet.v2.logging.handler.ColoredConsoleHandler;
+import eu.cloudnetservice.cloudnet.v2.logging.stream.LoggingOutputStream;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -8,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
