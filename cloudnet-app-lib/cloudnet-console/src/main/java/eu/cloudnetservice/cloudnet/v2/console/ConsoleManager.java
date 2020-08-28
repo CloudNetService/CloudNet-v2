@@ -86,21 +86,6 @@ public final class ConsoleManager {
             System.exit(-1);
             throw new NullPointerException("Console input dispatcher is empty");
         }
-        /*for (final Handler handler : this.cloudLogger.getHandlers()) {
-            if (handler instanceof ColoredConsoleHandler) {
-                this.cloudLogger.removeHandler(handler);
-            }
-        }
-        final JLine3ConsoleHandler jLine3ConsoleHandler = new JLine3ConsoleHandler(this.lineReader);
-        jLine3ConsoleHandler.setLevel(Level.INFO);
-        jLine3ConsoleHandler.setFormatter(new LoggingFormatter());
-        try {
-            jLine3ConsoleHandler.setEncoding(StandardCharsets.UTF_8.name());
-            this.cloudLogger.addHandler(jLine3ConsoleHandler);
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }*/
     }
 
     public void changeConsoleInput(Class<? extends ConsoleInputDispatch> clazz) {

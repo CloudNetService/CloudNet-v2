@@ -146,7 +146,6 @@ public class CloudConfig {
             return;
         }
 
-        String hostName = NetworkUtils.getHostName();
         new Document("wrapper", new ArrayList<>())
             .append("proxyGroups", Collections.singletonList(new BungeeGroup())).saveAsConfig(servicePath);
 

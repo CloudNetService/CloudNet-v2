@@ -5,11 +5,6 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
 import org.jline.reader.ParsedLine;
 
-import java.io.IOException;
-
-/**
- * Created by Tareko on 23.09.2017.
- */
 public class CommandClear extends Command {
 
     public CommandClear() {

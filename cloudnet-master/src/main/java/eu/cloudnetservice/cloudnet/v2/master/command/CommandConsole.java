@@ -125,6 +125,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     break;
                 default:
                     sender.sendMessage("§cThis option is not available!");
+                    break;
             }
         }
 
