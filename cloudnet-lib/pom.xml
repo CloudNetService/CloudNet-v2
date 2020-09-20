@@ -86,7 +86,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${test.junit.version}</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

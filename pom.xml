@@ -63,14 +63,6 @@
         <plugin.source.version>3.2.1</plugin.source.version>
     </properties>
 
-
-    <developers>
-        <developer>
-            <id>main</id>
-            <name>GaintTree</name>
-        </developer>
-    </developers>
-
     <modules>
         <module>cloudnet-lib</module>
         <module>cloudnet-master</module>
