@@ -62,6 +62,7 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${dependency.guava.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -74,6 +75,7 @@
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
             <version>${dependency.commons-validator.version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -100,6 +102,26 @@
                                     <exclude>org.jetbrains.kotlin:kotlin-stdlib-common</exclude>
                                 </excludes>
                             </artifactSet>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                                    <resource>META-INF/MANIFEST.MF</resource>
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer">
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
+                                    <addHeader>false</addHeader>
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                                    <resource>LICENSE</resource>
+                                    <file>../LICENSE</file>
+                                </transformer>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>

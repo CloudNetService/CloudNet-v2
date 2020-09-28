@@ -43,6 +43,7 @@ pipeline {
       steps {
         sh '''mkdir -p temp;
         cp -r .template/* temp/;
+        cp LICENSE temp/;
         cp cloudnet-master/target/CloudNet-Master.jar temp/CloudNet-Master/;
         cp cloudnet-wrapper/target/CloudNet-Wrapper.jar temp/CloudNet-Wrapper/;
         '''
