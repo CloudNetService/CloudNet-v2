@@ -10,6 +10,7 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
 
 public class SetupWrapper {
 
@@ -21,7 +22,7 @@ public class SetupWrapper {
 
         setup = new Setup().setupCancel(() -> System.out.println("Setup was cancelled"))
                            .setupComplete(data -> {
-                               try{
+                               try {
                                    InetAddress host = InetAddress.getByName(data.getString("address"));
                                    String user = data.getString("user");
 
@@ -29,8 +30,8 @@ public class SetupWrapper {
                                    CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
                                    commandSender.sendMessage(String.format("Wrapper [%s] was registered on CloudNet",
                                                                            wrapperMeta.getId()));
-                               }catch (UnknownHostException ex){
-                                   ex.printStackTrace();
+                               } catch (UnknownHostException exception) {
+                                   CloudNet.getLogger().log(Level.SEVERE, "Could not resolve hostname!", exception);
                                }
                            });
 

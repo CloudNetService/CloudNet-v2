@@ -39,6 +39,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
@@ -77,8 +78,8 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             new ConnectableAddress(cloudNetWrapperConfig.getInternalIP(), 0), () -> {
             try {
                 onShutdownCentral();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception exception) {
+                this.cloudNetLogging.log(Level.SEVERE, "Central exception when trying to shutdown the network connection!", exception);
             }
         });
 

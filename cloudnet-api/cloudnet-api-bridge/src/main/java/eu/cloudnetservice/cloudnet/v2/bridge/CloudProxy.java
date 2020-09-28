@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -312,8 +313,8 @@ public class CloudProxy implements CloudService, NetworkHandler {
                               proxyProcessMeta.getMemory())
                     .fetch(this.cloudAPI::update);
             }
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        } catch (UnknownHostException exception) {
+            this.cloudAPI.getLogger().log(Level.SEVERE, "Could not resolve hostname!", exception);
         }
     }
 

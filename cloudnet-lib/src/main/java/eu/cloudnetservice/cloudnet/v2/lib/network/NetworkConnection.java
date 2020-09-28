@@ -152,9 +152,9 @@ public final class NetworkConnection implements PacketSender {
                                                  .channel(NetworkUtils.socketChannel());
             InetAddress addr = connectableAddress.getHostName();
             InetSocketAddress dest = new InetSocketAddress(addr, connectableAddress.getPort());
-            InetSocketAddress localdest = new InetSocketAddress(localAddress.getHostName(), localAddress.getPort());
+            InetSocketAddress localAddress = new InetSocketAddress(this.localAddress.getHostName(), this.localAddress.getPort());
 
-            this.channel = bootstrap.connect(dest, localdest)
+            this.channel = bootstrap.connect(dest, localAddress)
                                     .sync()
                                     .channel()
                                     .writeAndFlush(new PacketOutAuth(auth))
@@ -182,7 +182,9 @@ public final class NetworkConnection implements PacketSender {
 
     public boolean isConnected() {
         return channel != null;
-    }    @Override
+    }
+
+    @Override
     public void send(Object object) {
         if (channel == null) {
             return;
@@ -194,8 +196,6 @@ public final class NetworkConnection implements PacketSender {
             channel.eventLoop().execute(() -> channel.writeAndFlush(object));
         }
     }
-
-
 
 
     @Override
