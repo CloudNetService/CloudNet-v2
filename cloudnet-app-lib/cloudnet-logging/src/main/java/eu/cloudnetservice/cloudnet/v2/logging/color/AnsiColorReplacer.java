@@ -22,7 +22,7 @@ public class AnsiColorReplacer {
 
     private static final ReplacementSpecification[] REPLACEMENTS = new ReplacementSpecification[]
         {
-            compile(ChatColor.BLACK, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLACK).boldOff().toString()),
+            compile(ChatColor.BLACK, Ansi.ansi().reset().fg(Ansi.Color.BLACK).boldOff().toString()),
             compile(ChatColor.DARK_BLUE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLUE).boldOff().toString()),
             compile(ChatColor.DARK_GREEN, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.GREEN).boldOff().toString()),
             compile(ChatColor.DARK_AQUA, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.CYAN).boldOff().toString()),
