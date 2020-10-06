@@ -5,8 +5,11 @@ import jline.console.ConsoleReader;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,67 +17,83 @@ import java.nio.file.Paths;
 
 public class CloudNetWrapperConfig {
 
-    private final Path path = Paths.get("config.yml");
+    private static final InetAddressValidator IP_VALIDATOR = new InetAddressValidator();
+
+    private final Path configPath = Paths.get("config.yml");
 
     private Configuration configuration;
 
-    private String internalIP, wrapperId, cloudnetHost, proxyConfigHost;
+    private InetAddress internalIP;
+    private String wrapperId;
+    private InetAddress proxyConfigHost;
 
     private boolean savingRecords, autoUpdate, maintenanceCopy;
 
-    private int cloudnetPort, startPort, processQueueSize, maxMemory, webPort;
+    private InetAddress cloudNetHost;
+    private int cloudNetPort;
+    private int startPort;
+    private int processQueueSize;
+    private int maxMemory;
+    private int webPort;
 
     private double percentOfCPUForANewServer;
     private double percentOfCPUForANewProxy;
 
     public CloudNetWrapperConfig(ConsoleReader reader) throws Exception {
 
-        for (File directory : new File[] {
-            new File("local/servers"),
-            new File("local/templates"),
-            new File("local/cache/web_templates"),
-            new File("local/cache/web_plugins"),
-            new File("local/records"),
-            new File("local/global/plugins"),
-            new File("local/plugins"),
-            new File("local/proxy_versions"),
-            new File("temp")}) {
-            directory.mkdirs();
+        for (final Path path : new Path[] {
+            Paths.get("local", "servers"),
+            Paths.get("local", "templates"),
+            Paths.get("local", "cache", "web_templates"),
+            Paths.get("local", "cache", "web_plugins"),
+            Paths.get("local", "records"),
+            Paths.get("local", "global", "plugins"),
+            Paths.get("local", "plugins"),
+            Paths.get("local", "proxy_versions"),
+            Paths.get("temp")
+        }) {
+            Files.createDirectories(path);
         }
 
-        if (!Files.exists(path)) {
-            Files.createFile(path);
+        if (!Files.exists(configPath)) {
+            Files.createFile(configPath);
 
             String hostName = NetworkUtils.getHostName();
             if (System.getProperty("hostAddress") != null) {
                 hostName = System.getProperty("hostAddress");
             }
 
-            if (hostName.equals("127.0.0.1") || hostName.equals("127.0.1.1") || hostName.split("\\.").length != 4) {
-                String input;
-                System.out.println("Your local IP address is 127.0.0.1, please provide your service ip");
-                while ((input = reader.readLine()) != null) {
-                    if ((input.equals("127.0.0.1") || input.equals("127.0.1.1") || input.split("\\.").length != 4)) {
-                        System.out.println("Please provide your real ip address :)");
-                        continue;
-                    }
 
+            String input;
+            System.out.println("Please provide the host IP address for services on this wrapper.");
+            System.out.println("Using an IPv6 address might prevent some players from joining!");
+            System.out.println("Use 0.0.0.0 to listen on all network interfaces.");
+            System.out.println("Leave empty for 0.0.0.0.");
+            while ((input = reader.readLine()) != null) {
+                if (input.isEmpty()) {
+                    hostName = "0.0.0.0";
+                    break;
+                }
+                // Validate the address and try to get a network interface, that is configured with the given IP address.
+                // If the address was not found, try again.
+                if (IP_VALIDATOR.isValid(input) && NetworkInterface.getByInetAddress(InetAddress.getByName(input)) != null) {
                     hostName = input;
                     break;
+                } else {
+                    System.out.println("Please provide an IP address that is configured on one of your network adapters.");
                 }
             }
 
-            String wrapperId = null;
+
+            String wrapperId;
             if (System.getProperty("wrapper-id") != null) {
                 wrapperId = System.getProperty("wrapper-id");
-            }
-
-            if (wrapperId == null) {
+            } else {
                 System.out.println("Please provide the name of this wrapper (example: Wrapper-1)");
                 wrapperId = reader.readLine().replace(NetworkUtils.SPACE_STRING, NetworkUtils.EMPTY_STRING);
 
                 if (wrapperId.isEmpty()) {
-                    wrapperId = "Wrapper-" + NetworkUtils.RANDOM.nextInt();
+                    wrapperId = "Wrapper-1";
                 }
             }
 
@@ -84,17 +103,18 @@ public class CloudNetWrapperConfig {
                 cloudNetHost = System.getProperty("cloudnet-host");
             }
 
-            if (cloudNetHost.equals("127.0.0.1") || cloudNetHost.equals("127.0.1.1") || cloudNetHost.split("\\.").length != 4) {
-                String input;
-                System.out.println("Provide the ip address of the cloudnet-master, please");
-                while ((input = reader.readLine()) != null) {
-                    if ((input.equals("127.0.0.1") || input.equals("127.0.1.1") || input.split("\\.").length != 4)) {
-                        System.out.println("Please provide the real ip address :)");
-                        continue;
-                    }
-
+            System.out.println("Please provide the IP address of the CloudNet-Master.");
+            System.out.println("Leave empty for loopback.");
+            while ((input = reader.readLine()) != null) {
+                if (input.isEmpty()) {
+                    cloudNetHost = InetAddress.getLoopbackAddress().getHostAddress();
+                    break;
+                }
+                if (IP_VALIDATOR.isValid(input)) {
                     cloudNetHost = input;
                     break;
+                } else {
+                    System.out.println("Please provide a proper IP address.");
                 }
             }
 
@@ -119,7 +139,8 @@ public class CloudNetWrapperConfig {
             configuration.set("general.percentOfCPUForANewServer", 100D);
             configuration.set("general.percentOfCPUForANewProxy", 100D);
 
-            try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
+            try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath),
+                                                                                StandardCharsets.UTF_8)) {
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
             }
         }
@@ -127,11 +148,12 @@ public class CloudNetWrapperConfig {
     }
 
     public CloudNetWrapperConfig load() {
-        try (InputStream inputStream = Files.newInputStream(path); InputStreamReader inputStreamReader = new InputStreamReader(inputStream,
-                                                                                                                               StandardCharsets.UTF_8)) {
+        try (InputStream inputStream = Files.newInputStream(configPath); InputStreamReader inputStreamReader = new InputStreamReader(
+            inputStream,
+            StandardCharsets.UTF_8)) {
             this.configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(inputStreamReader);
 
-            this.internalIP = configuration.getString("general.internalIp");
+            this.internalIP = InetAddress.getByName(configuration.getString("general.internalIp"));
             this.savingRecords = configuration.getBoolean("general.saving-records");
             this.wrapperId = configuration.getString("general.wrapperId");
             this.startPort = configuration.getInt("general.startPort");
@@ -142,18 +164,18 @@ public class CloudNetWrapperConfig {
             this.percentOfCPUForANewProxy = configuration.getDouble("general.percentOfCPUForANewProxy");
             this.percentOfCPUForANewServer = configuration.getDouble("general.percentOfCPUForANewServer");
 
-            this.cloudnetHost = configuration.getString("connection.cloudnet-host");
-            this.cloudnetPort = configuration.getInt("connection.cloudnet-port");
+            this.cloudNetHost = InetAddress.getByName(configuration.getString("connection.cloudnet-host"));
+            this.cloudNetPort = configuration.getInt("connection.cloudnet-port");
             this.webPort = configuration.getInt("connection.cloudnet-web");
 
             if (!configuration.getSection("general").contains("proxy-config-host")) {
-                configuration.set("general.proxy-config-host", this.internalIP);
+                configuration.set("general.proxy-config-host", this.internalIP.getHostAddress());
                 save();
             }
 
             //generatated configurations
 
-            this.proxyConfigHost = configuration.getString("general.proxy-config-host");
+            this.proxyConfigHost = InetAddress.getByName(configuration.getString("general.proxy-config-host"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -162,7 +184,7 @@ public class CloudNetWrapperConfig {
     }
 
     public void save() {
-        try (OutputStream outputStream = Files.newOutputStream(path); OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
+        try (OutputStream outputStream = Files.newOutputStream(configPath); OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
             outputStream)) {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
         } catch (IOException e) {
@@ -178,8 +200,8 @@ public class CloudNetWrapperConfig {
         return maxMemory;
     }
 
-    public int getCloudnetPort() {
-        return cloudnetPort;
+    public int getCloudNetPort() {
+        return cloudNetPort;
     }
 
     public int getProcessQueueSize() {
@@ -190,19 +212,19 @@ public class CloudNetWrapperConfig {
         return startPort;
     }
 
-    public Path getPath() {
-        return path;
+    public Path getConfigPath() {
+        return configPath;
     }
 
-    public String getCloudnetHost() {
-        return cloudnetHost;
+    public InetAddress getCloudNetHost() {
+        return this.cloudNetHost;
     }
 
-    public String getInternalIP() {
+    public InetAddress getInternalIP() {
         return internalIP;
     }
 
-    public String getProxyConfigHost() {
+    public InetAddress getProxyConfigHost() {
         return proxyConfigHost;
     }
 

@@ -11,6 +11,7 @@ import eu.cloudnetservice.cloudnet.v2.bridge.internal.listener.proxied.ProxiedLi
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 
@@ -32,9 +33,13 @@ public class ProxiedBootstrap extends Plugin {
 
     @Override
     public void onLoad() {
-        this.api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
-                                                      Paths.get("CLOUD", "config.json"),
-                                                      ConfigTypeLoader.INTERNAL), this.getLogger());
+        try {
+            this.api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
+                                                          Paths.get("CLOUD", "config.json"),
+                                                          ConfigTypeLoader.INTERNAL), this.getLogger());
+        } catch (UnknownHostException exception) {
+            this.getLogger().log(Level.SEVERE, "Exception instantiating CloudAPI, this is a bug!", exception);
+        }
         getLogger().setLevel(Level.INFO);
     }
 

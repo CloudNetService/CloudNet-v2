@@ -12,11 +12,10 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
-/**
- * Created by Tareko on 17.08.2017.
- */
 public final class BukkitBootstrap extends JavaPlugin {
 
     /**
@@ -27,9 +26,13 @@ public final class BukkitBootstrap extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
-                                                 Paths.get("CLOUD", "config.json"),
-                                                 ConfigTypeLoader.INTERNAL), getLogger());
+        try {
+            api = new CloudAPI(new CloudConfigLoader(Paths.get("CLOUD", "connection.json"),
+                                                     Paths.get("CLOUD", "config.json"),
+                                                     ConfigTypeLoader.INTERNAL), getLogger());
+        } catch (UnknownHostException exception) {
+            this.getLogger().log(Level.SEVERE, "Exception instantiating CloudAPI, this is a bug!", exception);
+        }
     }
 
     @Override
@@ -64,16 +67,6 @@ public final class BukkitBootstrap extends JavaPlugin {
     }
 
     /**
-     * If players are joined on the Bukkit server prior to this plugin being enabled (ie. a reload just happened),
-     * loads all players from the cloud into the cache.
-     */
-    private void loadPlayers() {
-        for (Player all : getServer().getOnlinePlayers()) {
-            api.getOnlinePlayer(all.getUniqueId());
-        }
-    }
-
-    /**
      * Starts the update task for this server.
      */
     private void startUpdateTask() {
@@ -86,6 +79,16 @@ public final class BukkitBootstrap extends JavaPlugin {
             getServer().getScheduler().runTaskTimerAsynchronously(this, updateServer(serverListPingEvent), 0, 5);
         } else {
             getServer().getScheduler().runTaskTimer(this, updateServer(serverListPingEvent), 0, 5);
+        }
+    }
+
+    /**
+     * If players are joined on the Bukkit server prior to this plugin being enabled (ie. a reload just happened),
+     * loads all players from the cloud into the cache.
+     */
+    private void loadPlayers() {
+        for (Player all : getServer().getOnlinePlayers()) {
+            api.getOnlinePlayer(all.getUniqueId());
         }
     }
 
@@ -112,8 +115,8 @@ public final class BukkitBootstrap extends JavaPlugin {
                         this.cloudServer.update();
                     }
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (Exception exception) {
+                this.getLogger().log(Level.SEVERE, "Error updating server! This is a bug!", exception);
             }
         };
     }

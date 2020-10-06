@@ -28,6 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -50,7 +51,7 @@ public class CloudServer implements CloudService, NetworkHandler {
     private final BukkitBootstrap bukkitBootstrap;
 
     private final Map<UUID, CloudPlayer> cloudPlayers = new ConcurrentHashMap<>();
-    private final String hostAddress;
+    private final InetAddress hostAddress;
     private final int port;
     private final Template template;
     private final int memory;
@@ -210,7 +211,7 @@ public class CloudServer implements CloudService, NetworkHandler {
         return port;
     }
 
-    public String getHostAddress() {
+    public InetAddress getHostAddress() {
         return hostAddress;
     }
 

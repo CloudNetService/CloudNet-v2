@@ -21,13 +21,17 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -228,11 +232,13 @@ public class CloudProxy implements CloudService, NetworkHandler {
         }
     }
 
-    @Override
-    public CompletableFuture<ProxyProcessMeta> waitForProxy(final UUID uuid) {
-        final CompletableFuture<ProxyProcessMeta> future = new CompletableFuture<>();
-        this.waitingProxies.put(uuid, future);
-        return future;
+    /**
+     * Returns the instance of this {@link CloudProxy}.
+     *
+     * @return the singleton instance of this class.
+     */
+    public static CloudProxy getInstance() {
+        return instance;
     }
 
     /**
@@ -294,14 +300,22 @@ public class CloudProxy implements CloudService, NetworkHandler {
      * Updates this proxy instance with all of its' state using the API.
      */
     public void update() {
-        new ProxyInfo(this.cloudAPI.getServiceId(),
-                      this.cloudAPI.getConfig().getString("host"),
-                      0,
-                      true,
-                      ProxyServer.getInstance().getPlayers().stream()
-                                 .collect(Collectors.toMap(ProxiedPlayer::getUniqueId, CommandSender::getName)),
-                      proxyProcessMeta.getMemory())
-            .fetch(this.cloudAPI::update);
+        String host = this.cloudAPI.getConfig().getString("host");
+
+        try {
+            if (InetAddressValidator.getInstance().isValid(host)) {
+                new ProxyInfo(this.cloudAPI.getServiceId(),
+                              InetAddress.getByName(host),
+                              0,
+                              true,
+                              ProxyServer.getInstance().getPlayers().stream()
+                                         .collect(Collectors.toMap(ProxiedPlayer::getUniqueId, CommandSender::getName)),
+                              proxyProcessMeta.getMemory())
+                    .fetch(this.cloudAPI::update);
+            }
+        } catch (UnknownHostException exception) {
+            this.cloudAPI.getLogger().log(Level.SEVERE, "Could not resolve hostname!", exception);
+        }
     }
 
     /**
@@ -353,6 +367,13 @@ public class CloudProxy implements CloudService, NetworkHandler {
     @Override
     public Map<String, ServerInfo> getServers() {
         return this.cachedServers;
+    }
+
+    @Override
+    public CompletableFuture<ProxyProcessMeta> waitForProxy(final UUID uuid) {
+        final CompletableFuture<ProxyProcessMeta> future = new CompletableFuture<>();
+        this.waitingProxies.put(uuid, future);
+        return future;
     }
 
     @Override
@@ -490,15 +511,6 @@ public class CloudProxy implements CloudService, NetworkHandler {
             }
         }
 
-    }
-
-    /**
-     * Returns the instance of this {@link CloudProxy}.
-     *
-     * @return the singleton instance of this class.
-     */
-    public static CloudProxy getInstance() {
-        return instance;
     }
 
     @Override

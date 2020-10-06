@@ -6,10 +6,12 @@ import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.cloudnet.v2.setup.Setup;
 import eu.cloudnetservice.cloudnet.v2.setup.SetupRequest;
 import eu.cloudnetservice.cloudnet.v2.setup.responsetype.StringResponseType;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
-/**
- * Created by Tareko on 21.10.2017.
- */
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+
 public class SetupWrapper {
 
     private final String name;
@@ -20,20 +22,26 @@ public class SetupWrapper {
 
         setup = new Setup().setupCancel(() -> System.out.println("Setup was cancelled"))
                            .setupComplete(data -> {
-                               String host = data.getString("address");
-                               String user = data.getString("user");
+                               try {
+                                   InetAddress host = InetAddress.getByName(data.getString("address"));
+                                   String user = data.getString("user");
 
-                               WrapperMeta wrapperMeta = new WrapperMeta(name, host, user);
-                               CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
-                               commandSender.sendMessage(String.format("Wrapper [%s] was registered on CloudNet",
-                                                                       wrapperMeta.getId()));
+                                   WrapperMeta wrapperMeta = new WrapperMeta(name, host, user);
+                                   CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
+                                   commandSender.sendMessage(String.format("Wrapper [%s] was registered on CloudNet",
+                                                                           wrapperMeta.getId()));
+                               } catch (UnknownHostException exception) {
+                                   CloudNet.getLogger().log(Level.SEVERE, "Could not resolve hostname!", exception);
+                               }
                            });
+
+        InetAddressValidator validator = new InetAddressValidator();
 
         setup.request(new SetupRequest("address",
                                        "What is the IP address of this wrapper?",
                                        "The specified IP address is invalid!",
                                        StringResponseType.getInstance(),
-                                       key -> key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1")));
+                                       validator::isValid));
         setup.request(new SetupRequest("user",
                                        "What is the user of the wrapper?",
                                        "The specified user does not exist!",

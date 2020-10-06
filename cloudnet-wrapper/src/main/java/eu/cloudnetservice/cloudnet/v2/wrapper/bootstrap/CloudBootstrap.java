@@ -22,7 +22,6 @@ public class CloudBootstrap {
     public static void main(String[] args) throws Exception {
 
         System.setProperty("file.encoding", "UTF-8");
-        System.setProperty("java.net.preferIPv4Stack", "true");
 
         OptionParser optionParser = new OptionParser();
 

@@ -23,8 +23,7 @@ import eu.cloudnetservice.cloudnet.v2.wrapper.server.process.ServerDispatcher;
 import eu.cloudnetservice.cloudnet.v2.wrapper.util.FileUtility;
 
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -142,7 +141,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                             Files.createDirectories(groupTemplates);
                             MasterTemplateLoader templateLoader = new MasterTemplateLoader(
                                 String.format("http://%s:%d/cloudnet/api/v1/download",
-                                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                              CloudNetWrapper.getInstance().getWrapperConfig().getCloudNetHost(),
                                               CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
                                 groupTemplates.resolve("template.zip"),
                                 CloudNetWrapper.getInstance().getSimpledUser(),
@@ -208,7 +207,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                         Files.createDirectories(groupTemplates);
                         MasterTemplateLoader templateLoader = new MasterTemplateLoader(
                             String.format("http://%s:%d/cloudnet/api/v1/download",
-                                          CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
+                                          CloudNetWrapper.getInstance().getWrapperConfig().getCloudNetHost(),
                                           CloudNetWrapper.getInstance().getWrapperConfig().getWebPort()),
                             groupTemplates.resolve("template.zip"),
                             CloudNetWrapper.getInstance().getSimpledUser(),
@@ -260,9 +259,16 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         Files.deleteIfExists(pluginsPath.resolve("CloudNetAPI.jar"));
         FileUtility.insertData("files/CloudNetAPI.jar", pluginsPath.resolve("CloudNetAPI.jar"));
 
-        FileUtility.rewriteFileUtils(this.dir.resolve("config.yml"),
-                                     CloudNetWrapper.getInstance().getWrapperConfig().getProxyConfigHost() +
-                                         ':' + this.proxyProcessMeta.getPort());
+        InetAddress proxyConfigHost = CloudNetWrapper.getInstance().getWrapperConfig().getProxyConfigHost();
+
+        if (proxyConfigHost instanceof Inet4Address) {
+            FileUtility.rewriteFileUtils(this.dir.resolve("config.yml"),
+                                         String.format("%s:%s", proxyConfigHost.getHostAddress(), this.proxyProcessMeta.getPort()));
+        } else if (proxyConfigHost instanceof Inet6Address) {
+            FileUtility.rewriteFileUtils(this.dir.resolve("config.yml"),
+                                         String.format("[%s]:%s", proxyConfigHost.getHostAddress(), this.proxyProcessMeta.getPort()));
+        }
+
 
         this.proxyInfo = new ProxyInfo(proxyProcessMeta.getServiceId(),
                                        CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP(),
@@ -284,10 +290,12 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
                       .append("proxyInfo", proxyInfo)
                       .append("memory", proxyProcessMeta.getMemory())
                       .saveAsConfig(cloudPath.resolve("config.json"));
+
         new Document().append("connection",
-                              new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetHost(),
-                                                     CloudNetWrapper.getInstance().getWrapperConfig().getCloudnetPort()))
+                              new ConnectableAddress(CloudNetWrapper.getInstance().getWrapperConfig().getCloudNetHost(),
+                                                     CloudNetWrapper.getInstance().getWrapperConfig().getCloudNetPort()))
                       .saveAsConfig(cloudPath.resolve("connection.json"));
+
 
         StringBuilder commandBuilder = new StringBuilder();
         commandBuilder.append("java ");

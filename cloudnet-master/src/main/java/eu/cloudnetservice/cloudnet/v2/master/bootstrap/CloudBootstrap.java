@@ -12,6 +12,7 @@ import io.netty.util.internal.logging.JdkLoggerFactory;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -22,9 +23,8 @@ public final class CloudBootstrap {
 
     private static final InternalLoggerFactory INTERNAL_LOGGER_FACTORY = InternalLoggerFactory.getDefaultFactory();
 
-    public static synchronized void main(String[] args) {
+    public static synchronized void main(String[] args) throws IOException {
         System.setProperty("file.encoding", "UTF-8");
-        System.setProperty("java.net.preferIPv4Stack", "true");
 
         InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
 

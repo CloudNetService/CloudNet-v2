@@ -32,6 +32,8 @@ import net.md_5.bungee.api.ProxyServer;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Type;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,7 +64,7 @@ public final class CloudAPI {
     //Init
     private CloudNetwork cloudNetwork = new CloudNetwork();
 
-    public CloudAPI(CloudConfigLoader loader, final Logger logger) {
+    public CloudAPI(CloudConfigLoader loader, final Logger logger) throws UnknownHostException {
         if (instance != null) {
             throw new IllegalStateException("CloudAPI already instantiated.");
         }
@@ -70,7 +72,8 @@ public final class CloudAPI {
         this.cloudConfigLoader = loader;
         this.logger = logger;
         this.config = loader.loadConfig();
-        this.networkConnection = new NetworkConnection(loader.loadConnnection(), new ConnectableAddress("0.0.0.0", 0));
+        this.networkConnection = new NetworkConnection(loader.loadConnection(),
+                                                       new ConnectableAddress(InetAddress.getByName("0.0.0.0"), 0));
         this.serviceId = config.getObject("serviceId", ServiceId.TYPE);
         this.memory = config.getInt("memory");
 
@@ -531,7 +534,7 @@ public final class CloudAPI {
                          String.format("Creating server log url: %s%n", serverId));
         String rnd = NetworkUtils.randomString(10);
         networkConnection.sendPacket(new PacketOutCreateServerLog(rnd, serverId));
-        ConnectableAddress connectableAddress = cloudConfigLoader.loadConnnection();
+        ConnectableAddress connectableAddress = cloudConfigLoader.loadConnection();
         return String.format("http://%s:%d/cloudnet/log?server=%s", connectableAddress.getHostName(), cloudNetwork.getWebPort(), rnd);
     }
 

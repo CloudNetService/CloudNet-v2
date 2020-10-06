@@ -16,15 +16,19 @@ import eu.cloudnetservice.cloudnet.v2.web.server.util.WebServerConfig;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 
 /**
@@ -70,13 +74,16 @@ public class CloudConfig {
 
     private List<String> hasteServer;
 
-    public CloudConfig() {
+    public CloudConfig() throws IOException {
 
         for (Path path : MASTER_PATHS) {
             try {
-                Files.createDirectories(path);
-            } catch (IOException e) {
-                 throw new RuntimeException("Folder path " + path.toAbsolutePath().toString() + " could not be created", e);
+                if (!Files.exists(path)) {
+                    Files.createDirectories(path);
+                }
+            } catch (IOException exception) {
+                CloudNet.getLogger().log(Level.SEVERE, String.format("Could not create directory %s", path.toAbsolutePath()), exception);
+                throw exception;
             }
         }
 
@@ -117,7 +124,7 @@ public class CloudConfig {
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Error saving configuration file to " + configPath, e);
         }
     }
 
@@ -127,10 +134,15 @@ public class CloudConfig {
         }
 
         String hostName = NetworkUtils.getHostName();
-        new Document("wrapper", Collections.singletonList(new WrapperMeta("Wrapper-1", hostName, "admin")))
-            .append("proxyGroups", Collections.singletonList(new BungeeGroup())).saveAsConfig(servicePath);
+        try {
+            new Document("wrapper", Collections.singletonList(new WrapperMeta("Wrapper-1", InetAddress.getByName(hostName), "admin")))
+                .append("proxyGroups", Collections.singletonList(new BungeeGroup())).saveAsConfig(servicePath);
 
-        new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
+            new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
+
+        } catch (UnknownHostException e) {
+            CloudNet.getLogger().log(Level.SEVERE, "Error saving default group configuration files", e);
+        }
     }
 
     private void defaultInitUsers() {
@@ -155,9 +167,16 @@ public class CloudConfig {
 
             String host = configuration.getString("server.hostaddress");
 
+            InetAddressValidator validator = new InetAddressValidator();
+            if (!validator.isValid(host)) {
+                throw new UnknownHostException("No valid InetAddress found!");
+            }
+
+            InetAddress hostInet = InetAddress.getByName(host);
+
             Collection<ConnectableAddress> addresses = new ArrayList<>();
             for (int value : configuration.getIntList("server.ports")) {
-                addresses.add(new ConnectableAddress(host, value));
+                addresses.add(new ConnectableAddress(hostInet, value));
             }
             this.addresses = addresses;
 
@@ -190,7 +209,7 @@ public class CloudConfig {
 
             this.disabledModules = configuration.getStringList("general.disabled-modules");
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Error loading master configuration", e);
         }
 
         this.serviceDocument = Document.loadDocument(servicePath);
@@ -246,7 +265,7 @@ public class CloudConfig {
         try {
             Files.deleteIfExists(Paths.get("groups", serverGroup.getName() + ".json"));
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, String.format("Error deleting group %s", serverGroup.getName()), e);
         }
     }
 
@@ -284,7 +303,9 @@ public class CloudConfig {
                             ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
                             groups.put(serverGroup.getName(), serverGroup);
                         } catch (Throwable ex) {
-                            ex.printStackTrace();
+                            CloudNet.getLogger().log(Level.SEVERE,
+                                                     String.format("Error loading group configuration file %s", file.getName()),
+                                                     ex);
                             System.out.println("Cannot load servergroup file [" + file.getName() + ']');
                         }
                     }

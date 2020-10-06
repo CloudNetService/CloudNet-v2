@@ -2,11 +2,13 @@ package eu.cloudnetservice.cloudnet.v2.lib.server.info;
 
 import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 
+import java.net.InetAddress;
+
 public class SimpleServerInfo {
 
     private final ServiceId serviceId;
 
-    private final String hostAddress;
+    private final InetAddress hostAddress;
 
     private final int port;
 
@@ -14,7 +16,7 @@ public class SimpleServerInfo {
 
     private final int maxPlayers;
 
-    public SimpleServerInfo(ServiceId serviceId, String hostAddress, int port, int onlineCount, int maxPlayers) {
+    public SimpleServerInfo(ServiceId serviceId, InetAddress hostAddress, int port, int onlineCount, int maxPlayers) {
         this.serviceId = serviceId;
         this.hostAddress = hostAddress;
         this.port = port;
@@ -38,7 +40,7 @@ public class SimpleServerInfo {
         return maxPlayers;
     }
 
-    public String getHostAddress() {
+    public InetAddress getHostAddress() {
         return hostAddress;
     }
 }
