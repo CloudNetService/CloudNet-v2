@@ -725,8 +725,8 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                                                template.getName(),
                                                "plugins",
                                                "CloudNetAPI.jar"));
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                logger.log(Level.SEVERE, "Error copying the template!", exception);
             }
             logger.log(Level.INFO,
                        String.format("Template %s was copied!", template.getName()));

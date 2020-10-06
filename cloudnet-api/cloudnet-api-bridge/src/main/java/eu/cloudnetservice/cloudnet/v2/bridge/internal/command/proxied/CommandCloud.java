@@ -371,6 +371,8 @@ public final class CommandCloud extends Command implements TabExecutor {
                     CloudAPI.getInstance().sendCloudCommand("copy " + args[1]);
                     commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
                                                                                    .getPrefix() + "The information was sent to the cloud"));
+                    commandSender.sendMessage(TextComponent.fromLegacyText(CloudAPI.getInstance()
+                                                                                   .getPrefix() + "Please check the output in the core terminal."));
                     return;
                 }
                 break;
