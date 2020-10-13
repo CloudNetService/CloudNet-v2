@@ -97,10 +97,6 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
-                                    <resource>META-INF/MANIFEST.MF</resource>
-                                </transformer>
-                                <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer">
                                 </transformer>
                                 <transformer
