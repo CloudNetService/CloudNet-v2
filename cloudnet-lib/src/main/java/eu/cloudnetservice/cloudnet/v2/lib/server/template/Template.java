@@ -105,7 +105,7 @@ public class Template {
 
     @Override
     public String toString() {
-        return "de.dytanic.cloudnet.lib.server.template.Template{" +
+        return "Template{" +
             "name='" + name + '\'' +
             ", backend=" + backend +
             ", url='" + url + '\'' +

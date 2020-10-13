@@ -36,9 +36,7 @@ listeners:
   force_default_server: false
 ip_forward: true
 network_compression_threshold: 256
-groups:
-  Dytanic:
-  - admin
+groups: { }
 connection_throttle: -1
 stats: 13be5ac9-5731-4502-9ccc-c4a80163f14a
 prevent_proxy_connections: false

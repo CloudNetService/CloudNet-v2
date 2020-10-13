@@ -20,6 +20,7 @@ package eu.cloudnetservice.cloudnet.v2.lib.proxylayout;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class ProxyConfig {
@@ -74,6 +75,88 @@ public class ProxyConfig {
         this.playerInfo = playerInfo;
         this.whitelist = whitelist;
         this.dynamicFallback = dynamicFallback;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (enabled ? 1 : 0);
+        result = 31 * result + (maintenance ? 1 : 0);
+        result = 31 * result + (motdsLayouts != null ? motdsLayouts.hashCode() : 0);
+        result = 31 * result + (maintenanceMotdLayout != null ? maintenanceMotdLayout.hashCode() : 0);
+        result = 31 * result + (maintenanceProtocol != null ? maintenanceProtocol.hashCode() : 0);
+        result = 31 * result + maxPlayers;
+        result = 31 * result + (customPayloadFixer ? 1 : 0);
+        result = 31 * result + (autoSlot != null ? autoSlot.hashCode() : 0);
+        result = 31 * result + (tabList != null ? tabList.hashCode() : 0);
+        result = 31 * result + (playerInfo != null ? playerInfo.hashCode() : 0);
+        result = 31 * result + (whitelist != null ? whitelist.hashCode() : 0);
+        result = 31 * result + (dynamicFallback != null ? dynamicFallback.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProxyConfig)) {
+            return false;
+        }
+
+        final ProxyConfig that = (ProxyConfig) o;
+
+        if (enabled != that.enabled) {
+            return false;
+        }
+        if (maintenance != that.maintenance) {
+            return false;
+        }
+        if (maxPlayers != that.maxPlayers) {
+            return false;
+        }
+        if (customPayloadFixer != that.customPayloadFixer) {
+            return false;
+        }
+        if (!Objects.equals(motdsLayouts, that.motdsLayouts)) {
+            return false;
+        }
+        if (!Objects.equals(maintenanceMotdLayout, that.maintenanceMotdLayout)) {
+            return false;
+        }
+        if (!Objects.equals(maintenanceProtocol, that.maintenanceProtocol)) {
+            return false;
+        }
+        if (!Objects.equals(autoSlot, that.autoSlot)) {
+            return false;
+        }
+        if (!Objects.equals(tabList, that.tabList)) {
+            return false;
+        }
+        if (!Objects.equals(playerInfo, that.playerInfo)) {
+            return false;
+        }
+        if (!Objects.equals(whitelist, that.whitelist)) {
+            return false;
+        }
+        return Objects.equals(dynamicFallback, that.dynamicFallback);
+    }
+
+    @Override
+    public String toString() {
+        return "ProxyConfig{" +
+            "enabled=" + enabled +
+            ", maintenance=" + maintenance +
+            ", motdsLayouts=" + motdsLayouts +
+            ", maintenanceMotdLayout=" + maintenanceMotdLayout +
+            ", maintenanceProtocol='" + maintenanceProtocol + '\'' +
+            ", maxPlayers=" + maxPlayers +
+            ", customPayloadFixer=" + customPayloadFixer +
+            ", autoSlot=" + autoSlot +
+            ", tabList=" + tabList +
+            ", playerInfo=" + playerInfo +
+            ", whitelist=" + whitelist +
+            ", dynamicFallback=" + dynamicFallback +
+            '}';
     }
 
     public int getMaxPlayers() {

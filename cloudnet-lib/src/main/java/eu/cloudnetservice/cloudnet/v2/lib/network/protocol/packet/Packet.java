@@ -51,7 +51,7 @@ public class Packet extends ProtocolStream {
 
     @Override
     public String toString() {
-        return "de.dytanic.cloudnet.lib.network.protocol.packet.Packet{" +
+        return "Packet{" +
             "id=" + id +
             ", data=" + data +
             ", uniqueId=" + uniqueId +

@@ -84,7 +84,7 @@ public class CloudNetwork {
 
     @Override
     public String toString() {
-        return "de.dytanic.cloudnet.lib.CloudNetwork{" +
+        return "CloudNetwork{" +
             "registeredPlayerCount=" + registeredPlayerCount +
             ", onlineCount=" + onlineCount +
             ", serverGroups=" + serverGroups +

@@ -55,7 +55,7 @@ public class MultiValue<F, S> {
 
     @Override
     public String toString() {
-        return "de.dytanic.cloudnet.lib.MultiValue{" +
+        return "MultiValue{" +
             "first=" + first +
             ", second=" + second +
             '}';

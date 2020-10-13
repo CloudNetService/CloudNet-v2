@@ -120,7 +120,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                     commandSender.sendMessage(TextComponent.fromLegacyText("CloudNet " + NetworkUtils.class.getPackage()
                                                                                                            .getSpecificationVersion() + " #" + NetworkUtils.class
                         .getPackage()
-                        .getImplementationVersion() + " by Dytanic"));
+                        .getImplementationVersion() + " by CloudNetService"));
                     return;
                 } else if (args[0].equalsIgnoreCase("list") && commandSender.hasPermission("cloudnet.command.cloud.list")) {
                     commandSender.sendMessage(TextComponent.fromLegacyText(NetworkUtils.SPACE_STRING));

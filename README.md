@@ -60,16 +60,16 @@ Maven:
     <dependencies>
         <!-- Spigot/BungeeCord -->
         <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-api-bridge</artifactId>
-            <version>2.1.17</version>
+            <version>2.2.0</version>
             <scope>provided</scope>
         </dependency>
          <!-- CloudNet Core -->
         <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
-            <artifactId>cloudnet-core</artifactId>
-            <version>2.1.17</version>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
+            <artifactId>cloudnet-master</artifactId>
+            <version>2.2.0</version>
             <scope>provided</scope>
         </dependency>
      </dependencies>

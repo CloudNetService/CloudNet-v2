@@ -96,7 +96,7 @@ public class WrapperExternal {
 
     @Override
     public String toString() {
-        return "de.dytanic.cloudnet.lib.network.WrapperExternal{" +
+        return "WrapperExternal{" +
             "cloudNetwork=" + cloudNetwork +
             ", user=" + user +
             ", serverGroups=" + serverGroups +

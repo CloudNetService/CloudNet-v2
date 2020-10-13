@@ -225,10 +225,10 @@ public class DatabaseDocument implements org.dizitart.no2.mapper.Mappable {
 
     @Override
     public String toString() {
-        return "de.dytanic.cloudnet.lib.database.DatabaseDocument{" +
+        return "DatabaseDocument{" +
             "_database_id_unique='" + _database_id_unique + '\'' +
             ", backingDocument=" + backingDocument +
-            "} " + super.toString();
+            '}';
     }
 
     /**

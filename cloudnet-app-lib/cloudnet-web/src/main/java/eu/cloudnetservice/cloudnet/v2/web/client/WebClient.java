@@ -179,7 +179,7 @@ public class WebClient {
      */
     private boolean getEnvironment() {
         try {
-            Class.forName("de.dytanic.cloudnetcore.CloudNet");
+            Class.forName("eu.cloudnetservice.cloudnet.v2.master.CloudNet");
             return true;
         } catch (Exception ex) {
             return false;

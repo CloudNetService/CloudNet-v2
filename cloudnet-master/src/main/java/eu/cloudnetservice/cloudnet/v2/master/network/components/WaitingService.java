@@ -72,7 +72,7 @@ public class WaitingService {
 
     @Override
     public String toString() {
-        return "de.dytanic.cloudnetcore.network.components.WaitingService{" +
+        return "WaitingService{" +
             "port=" + port +
             ", usedMemory=" + usedMemory +
             ", serviceId=" + serviceId +

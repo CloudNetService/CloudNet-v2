@@ -97,10 +97,10 @@ public class SetupRequest implements Nameable {
 
     @Override
     public String toString() {
-        return "de.dytanic.cloudnet.setup.SetupRequest{" +
+        return "SetupRequest{" +
             "name='" + name + '\'' +
             ", question='" + question + '\'' +
-            ", inValidMessage='" + invalidMessage + '\'' +
+            ", invalidMessage='" + invalidMessage + '\'' +
             ", responseType=" + responseType +
             ", validator=" + validator +
             '}';
