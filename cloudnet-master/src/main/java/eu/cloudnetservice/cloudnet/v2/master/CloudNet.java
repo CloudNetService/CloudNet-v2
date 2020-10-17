@@ -211,7 +211,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
         if (!optionSet.has("disable-modules")) {
             System.out.println("Enabling Modules...");
-            this.moduleManager.getModules().values().forEach(javaCloudModule -> this.moduleManager.enableModule(javaCloudModule));
+            this.moduleManager.getModules().values().forEach(this.moduleManager::enableModule);
         }
 
         eventManager.callEvent(new CloudInitEvent());
@@ -235,7 +235,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
         if (!optionSet.has("disable-modules")) {
             System.out.println("Disabling Modules...");
-            this.moduleManager.getModules().values().forEach(javaCloudModule -> this.moduleManager.disableModule(javaCloudModule));
+            this.moduleManager.getModules().values().forEach(this.moduleManager::disableModule);
         }
         dbHandlers.getStatisticManager().cloudOnlineTime(startupTime);
         this.databaseManager.save().clear();
@@ -583,7 +583,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
         if (!optionSet.has("disable-modules")) {
             System.out.println("Enabling Modules...");
-            this.moduleManager.getModules().values().forEach(javaCloudModule -> this.moduleManager.enableModule(javaCloudModule));
+            this.moduleManager.getModules().values().forEach(this.moduleManager::enableModule);
         }
 
         System.out.println("Updating wrappers...");

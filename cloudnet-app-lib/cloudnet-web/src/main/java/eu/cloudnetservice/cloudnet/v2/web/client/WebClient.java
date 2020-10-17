@@ -107,15 +107,18 @@ public class WebClient {
      */
     private String getString(String url, String key) {
         try {
-            URLConnection urlConnection = new URL(url).openConnection();
+            HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
             urlConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             urlConnection.setUseCaches(false);
             urlConnection.setConnectTimeout(1000);
             urlConnection.connect();
 
-            try (Reader reader = new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8)) {
+            try (InputStream inputStream = urlConnection.getInputStream();
+                 Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                 JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
                 return jsonObject.get(key).getAsString();
+            } finally {
+                urlConnection.disconnect();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -134,8 +137,7 @@ public class WebClient {
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(DEFAULT_URL + "update/" + (getEnvironment() ? "CloudNet-Master.jar" : "CloudNet-Wrapper.jar"))
                 .openConnection();
-            httpURLConnection.setRequestProperty("User-Agent",
-                                                 NetworkUtils.USER_AGENT);
+            httpURLConnection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             httpURLConnection.setUseCaches(false);
             httpURLConnection.setConnectTimeout(1000);
             httpURLConnection.connect();
@@ -144,20 +146,15 @@ public class WebClient {
             try (InputStream inputStream = httpURLConnection.getInputStream()) {
 
                 boolean windows = System.getProperty("os.name").toLowerCase().contains("windows");
-                Path path = windows ? Paths.get("CloudNet-" + (getEnvironment() ? "Master" : "Wrapper") + "-Update#" + version + '-' + NetworkUtils.RANDOM
-                    .nextLong() + ".jar") : Paths.get(WebClient.class.getProtectionDomain()
+                final Path executablePath = Paths.get(WebClient.class.getProtectionDomain()
                                                                      .getCodeSource()
                                                                      .getLocation()
-                                                                     .toURI()
-                                                                     .getPath());
+                                                                     .toURI());
+                Path path = windows ? Paths.get("CloudNet-" + (getEnvironment() ? "Master" : "Wrapper") + "-Update#" + version + '-' + NetworkUtils.RANDOM
+                    .nextLong() + ".jar") : executablePath;
                 Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
                 if (windows) {
-                    System.out.println("You are using windows, please replace the file [" + Paths.get(WebClient.class.getProtectionDomain()
-                                                                                                                     .getCodeSource()
-                                                                                                                     .getLocation()
-                                                                                                                     .toURI()
-                                                                                                                     .getPath())
-                                                                                                 .getFileName() + "] with the new file [" + path + ']');
+                    System.out.println("You are using windows, please replace the file [" + executablePath.getFileName() + "] with the new file [" + path + ']');
                 }
 
             } catch (URISyntaxException e) {
