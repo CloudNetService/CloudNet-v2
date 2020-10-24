@@ -39,7 +39,11 @@ Use of KVM virtualization or dedicated servers is recommended.
     * PaperSpigot, TacoSpigot, Hose, Torch
   * BungeeCord-Support » 1.7.10 - 1.14
     * Flexpipe, HexaCord, Waterfall, TraverTine
-    
+
+### RestAPI
+You can access the RestAPI by default with 127.0.0.1:1420.
+
+
 ### Discord
  *  [Discord Invite](https://discord.gg/CPCWr7w)
  
