@@ -87,6 +87,7 @@ public class CloudPermissible extends PermissibleBase {
             return;
         }
 
+        if(!CloudServer.getInstance().getCloudPlayers().containsKey(this.uniqueId)) return;
         PermissionEntity permissionEntity = CloudServer.getInstance().getCloudPlayers().get(this.uniqueId).getPermissionEntity();
         final Map<String, Boolean> playerPermissions = permissionEntity.getPermissions();
         playerPermissions.forEach((key, value) -> {
