@@ -62,7 +62,7 @@
         <dependency.jline.version>2.14.6</dependency.jline.version>
         <dependency.jopt-simple.version>5.0.4</dependency.jopt-simple.version>
         <dependecy.snakeyaml.version>1.27</dependecy.snakeyaml.version>
-        <dependency.bungeecord.version>1.15-SNAPSHOT</dependency.bungeecord.version>
+        <dependency.bungeecord.version>1.16-R0.3</dependency.bungeecord.version>
         <dependency.spigot.version>1.8.8-R0.1-SNAPSHOT</dependency.spigot.version>
         <dependency.vaultapi.version>1.7</dependency.vaultapi.version>
         <dependency.typetools.version>0.6.2</dependency.typetools.version>
