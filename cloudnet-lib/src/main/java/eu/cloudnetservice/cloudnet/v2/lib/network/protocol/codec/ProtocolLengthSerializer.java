@@ -25,8 +25,9 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public final class ProtocolLengthSerializer extends MessageToByteEncoder<ByteBuf> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
-        ProtocolBuffer in = new ProtocolBuffer(msg), outbuffer = new ProtocolBuffer(out);
+    protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) {
+        ProtocolBuffer in = new ProtocolBuffer(msg);
+        ProtocolBuffer outBuffer = new ProtocolBuffer(out);
         int readableBytes = in.readableBytes(), lengthByteSpace = getVarIntSize(readableBytes);
 
         if (lengthByteSpace > 3) {
@@ -34,11 +35,11 @@ public final class ProtocolLengthSerializer extends MessageToByteEncoder<ByteBuf
         }
 
         out.ensureWritable(lengthByteSpace + readableBytes);
-        outbuffer.writeVarInt(readableBytes);
+        outBuffer.writeVarInt(readableBytes);
         out.writeBytes(in, in.readerIndex(), readableBytes);
     }
 
-    private int getVarIntSize(int value) {
+    private static int getVarIntSize(int value) {
         if ((value & -128) == 0) {
             return 1;
         } else if ((value & -16384) == 0) {

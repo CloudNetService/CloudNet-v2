@@ -56,12 +56,8 @@ public class CloudNetClientAuth extends SimpleChannelInboundHandler<Packet> impl
             if (channel.eventLoop().inEventLoop()) {
                 channel.writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             } else {
-                channel.eventLoop().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        channel.writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-                    }
-                });
+                channel.eventLoop().execute(() -> channel.writeAndFlush(packet)
+                                                         .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE));
             }
         }
     }
@@ -72,14 +68,14 @@ public class CloudNetClientAuth extends SimpleChannelInboundHandler<Packet> impl
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         if ((!channel.isActive() || !channel.isOpen() || !channel.isWritable())) {
             channel.close().syncUninterruptibly();
         }
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet packet) throws Exception {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet packet) {
         CloudNet.getLogger().finest(String.format("Receiving packet %s from %s%n", packet, channel.remoteAddress()));
         if (packet.getId() == (PacketRC.INTERNAL - 1)) {
             CloudNet.getInstance().getPacketManager().dispatchPacket(packet, this);
@@ -99,12 +95,7 @@ public class CloudNetClientAuth extends SimpleChannelInboundHandler<Packet> impl
         if (channel.eventLoop().inEventLoop()) {
             channel.writeAndFlush(object);
         } else {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run() {
-                    channel.writeAndFlush(object);
-                }
-            });
+            channel.eventLoop().execute(() -> channel.writeAndFlush(object));
         }
     }
 

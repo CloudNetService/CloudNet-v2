@@ -164,7 +164,7 @@ public final class NetworkUtils {
 
             try {
                 Files.createFile(path);
-                Files.write(path, stringBuilder.toString().getBytes());
+                Files.write(path, stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -196,9 +196,8 @@ public final class NetworkUtils {
 
     public static void header() {
         System.out.println();
-        System.out.print(
-            String.format("██████ █      ██████ █   █ █████ ██    █ █████ █████ [%s]%n",
-                          NetworkUtils.class.getPackage().getImplementationVersion()));
+        System.out.printf("██████ █      ██████ █   █ █████ ██    █ █████ █████ [%s]%n",
+                          NetworkUtils.class.getPackage().getImplementationVersion());
         System.out.println("█R     █E     █Z   █ █S  █ █Y  █ █M█   █ █       █");
         System.out.println("█      █      █    █ █   █ █   █ █  █  █ ████    █");
         System.out.println("█D     █Y     █T   █ █A  █ █N  █ █   █I█ █C      █");
@@ -209,12 +208,12 @@ public final class NetworkUtils {
     private static void headerOut() {
         System.out.println();
         System.out.println("«» The Cloud Network Environment Technology 2");
-        System.out.print(String.format("«» Support https://discord.gg/5NUhKuR      [%s]%n",
-                                       NetworkUtils.class.getPackage().getSpecificationVersion()));
-        System.out.print(String.format("«» Java %s @%s %s%n",
-                                       System.getProperty("java.version"),
-                                       System.getProperty("user.name"),
-                                       System.getProperty("os.name")));
+        System.out.printf("«» Support https://discord.gg/5NUhKuR      [%s]%n",
+                          NetworkUtils.class.getPackage().getSpecificationVersion());
+        System.out.printf("«» Java %s @%s %s%n",
+                          System.getProperty("java.version"),
+                          System.getProperty("user.name"),
+                          System.getProperty("os.name"));
         System.out.println();
     }
 

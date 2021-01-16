@@ -32,7 +32,7 @@ import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
 
-public final class CloudNetServer extends ChannelInitializer<Channel> implements AutoCloseable {
+public final class CloudNetServer extends ChannelInitializer<Channel> {
 
     private final EventLoopGroup workerGroup = NetworkUtils.eventLoopGroup();
     private final EventLoopGroup bossGroup = NetworkUtils.eventLoopGroup();
@@ -62,8 +62,6 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
                                        System.out.printf("CloudNet is listening @%s:%d%n",
                                                          connectableAddress.getHostName(),
                                                          connectableAddress.getPort());
-                                       CloudNet.getInstance().getCloudServers().add(this);
-
                                    } else {
                                        System.out.printf("Failed to bind @%s:%d%n",
                                                          connectableAddress.getHostName(),
@@ -80,7 +78,6 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
         }
     }
 
-    @Override
     public void close() {
         workerGroup.shutdownGracefully();
         bossGroup.shutdownGracefully();
@@ -99,9 +96,10 @@ public final class CloudNetServer extends ChannelInitializer<Channel> implements
 
         if (channel.remoteAddress() instanceof InetSocketAddress) {
             InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
+            final String hostAddress = address.getAddress().getHostAddress();
 
             for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
-                if (wrapper.getNetworkInfo().getHostName().getHostAddress().equals(address.getAddress().getHostAddress())) {
+                if (wrapper.getNetworkInfo().getHostName().getHostAddress().equals(hostAddress)) {
 
                     NetworkUtils.initChannel(channel);
                     channel.pipeline().addLast("client", new CloudNetClientAuth(channel));

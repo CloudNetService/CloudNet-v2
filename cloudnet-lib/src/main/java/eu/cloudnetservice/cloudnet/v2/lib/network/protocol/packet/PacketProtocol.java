@@ -20,8 +20,8 @@ package eu.cloudnetservice.cloudnet.v2.lib.network.protocol.packet;
 import eu.cloudnetservice.cloudnet.v2.lib.network.protocol.IProtocol;
 import eu.cloudnetservice.cloudnet.v2.lib.network.protocol.ProtocolStream;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 public class PacketProtocol implements IProtocol {
 
@@ -32,7 +32,7 @@ public class PacketProtocol implements IProtocol {
 
     @Override
     public Collection<Class<?>> getAvailableClasses() {
-        return Arrays.asList(Packet.class);
+        return Collections.singletonList(Packet.class);
     }
 
     @Override

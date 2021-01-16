@@ -22,8 +22,8 @@ import eu.cloudnetservice.cloudnet.v2.event.interfaces.IEventManager;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import net.jodah.typetools.TypeResolver;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,7 +47,7 @@ public final class EventManager implements IEventManager {
     public <T extends Event> void registerListener(EventKey eventKey, EventListener<T> eventListener) {
         Class eventClazz = TypeResolver.resolveRawArgument(EventListener.class, eventListener.getClass());
         if (!registeredListeners.containsKey(eventClazz)) {
-            registeredListeners.put(eventClazz, new LinkedList<>());
+            registeredListeners.put(eventClazz, new ArrayList<>());
         }
         registeredListeners.get(eventClazz).add(new EventEntity<>(eventListener, eventKey, eventClazz));
     }
