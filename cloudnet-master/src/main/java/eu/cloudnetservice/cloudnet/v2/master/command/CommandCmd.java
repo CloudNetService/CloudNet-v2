@@ -57,11 +57,11 @@ public final class CommandCmd extends Command {
                     }
                 }
 
-                for (ProxyServer minecraftServer : wrapper.getProxies().values()) {
-                    if (minecraftServer.getServiceId().getServerId().equalsIgnoreCase(args[0])) {
-                        minecraftServer.getWrapper().writeProxyCommand(command, minecraftServer.getProxyInfo());
-                        sender.sendMessage("Sending command to " + minecraftServer.getServiceId()
-                                                                                  .getServerId() + " with [\"" + command + "\"]");
+                for (ProxyServer proxyServer : wrapper.getProxies().values()) {
+                    if (proxyServer.getServiceId().getServerId().equalsIgnoreCase(args[0])) {
+                        proxyServer.getWrapper().writeProxyCommand(command, proxyServer.getProxyInfo());
+                        sender.sendMessage("Sending command to " + proxyServer.getServiceId()
+                                                                              .getServerId() + " with [\"" + command + "\"]");
                         return;
                     }
                 }
