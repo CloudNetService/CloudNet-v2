@@ -169,7 +169,7 @@ public final class CloudModuleManager {
     public void enableModule(@NotNull CloudModule module) {
         if (module instanceof JavaCloudModule) {
             JavaCloudModule javaCloudModule = (JavaCloudModule) module;
-            checkDependencies(this.resolveDependenciesSortedSingle(getModules().values(),
+            checkDependencies(this.resolveDependenciesSortedSingle(modules.values(),
                                                                    javaCloudModule)).forEach(cloudModule -> {
                 if (!cloudModule.isEnabled()) {
                     cloudModule.getModuleLogger().info(String.format("Enabling module %s from %s with version %s",
@@ -193,17 +193,36 @@ public final class CloudModuleManager {
         }
     }
 
-
-    /**
-     * @param module is registered in the map
-     */
-    private void registerModule(@NotNull CloudModule module) {
-        this.modules.put(module
-                             .getModuleJson()
-                             .getGroupId() + ":" + module
-                             .getModuleJson()
-                             .getName(),
-                         module);
+    private List<CloudModule> checkDependencies(@NotNull List<CloudModule> cloudModules) {
+        Set<CloudModule> loadOrder = new HashSet<>();
+        load:
+        for (CloudModule cloudModule : cloudModules) {
+            String moduleName = cloudModule.getModuleJson().getGroupId() + ':' + cloudModule.getModuleJson().getName();
+            if (!this.semCloudNetVersion.satisfies(cloudModule.getModuleJson().getRequiredCloudNetVersion())) {
+                System.err.println("Cannot load module " + moduleName + " because of missing required CloudNet version");
+                this.modules.remove(moduleName);
+                continue;
+            }
+            for (final CloudModuleDependency dependency : cloudModule.getModuleJson().getDependencies()) {
+                String name = dependency.getGroupId() + ':' + dependency.getName();
+                Optional<CloudModule> optionalCloudModule = getModule(name);
+                if (!optionalCloudModule.isPresent()) {
+                    System.err.println("unable to load module " + moduleName + " because of missing dependency " + name);
+                    this.modules.remove(moduleName);
+                    continue load;
+                }
+                if (!optionalCloudModule.get().getModuleJson().getSemVersion().satisfies(dependency.getVersion())) {
+                    System.err.println("Cannot load module " + moduleName + " because of missing dependency with version " + dependency.getVersion());
+                    this.modules.remove(moduleName);
+                    continue load;
+                }
+                optionalCloudModule.ifPresent(loadOrder::add);
+            }
+            loadOrder.add(cloudModule);
+        }
+        List<CloudModule> forLoading = new ArrayList<>(resolveDependenciesSorted(loadOrder));
+        Collections.reverse(forLoading);
+        return forLoading;
     }
 
 
@@ -218,16 +237,18 @@ public final class CloudModuleManager {
     }
 
     /**
-     * Creates a unique string from a module
-     * @param module is used for the string
-     * @return Returns the unique string
+     * Returns the module instance associated to the given name, if present.
+     *
+     * @param name the name of the module to get.
+     *
+     * @return an {@code Optional} possibly containing the module's instance.
      */
-    public String translateModuleAsUniqueString(@NotNull CloudModule module) {
-        return module
-            .getModuleJson()
-            .getGroupId() + ":" + module
-            .getModuleJson()
-            .getName();
+    public Optional<CloudModule> getModule(@NotNull String name) {
+        Optional<CloudModule> module = Optional.empty();
+        if (this.modules.containsKey(name)) {
+            module = Optional.of(modules.get(name));
+        }
+        return module;
     }
 
     /**
@@ -298,6 +319,21 @@ public final class CloudModuleManager {
     }
 
     /**
+     * Creates a unique string from a module
+     *
+     * @param module is used for the string
+     *
+     * @return Returns the unique string
+     */
+    public String translateModuleAsUniqueString(@NotNull CloudModule module) {
+        return module
+            .getModuleJson()
+            .getGroupId() + ':' + module
+            .getModuleJson()
+            .getName();
+    }
+
+    /**
      * Here all modules are loaded from a list, checked for updates and migrated if necessary
      *
      * @param toLoaded contains all files that have to be loaded
@@ -320,53 +356,20 @@ public final class CloudModuleManager {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
             cloudModule.ifPresent(this::checkForNewerVersion);
         }
-        checkDependencies(resolveDependenciesSorted(getModules().values())).stream()
-                                                                           .filter(javaCloudModule -> !javaCloudModule.isLoaded())
-                                                                           .forEach(javaCloudModule -> {
-                                                                               javaCloudModule.getModuleLogger().info(
-                                                                                   String.format(
-                                                                                       "Loading module %s from %s with version %s",
-                                                                                       javaCloudModule.getModuleJson()
-                                                                                                      .getName(),
-                                                                                       javaCloudModule.getModuleJson()
-                                                                                                      .getAuthorsAsString(),
-                                                                                       javaCloudModule.getModuleJson()
-                                                                                                      .getVersion()));
-                                                                               javaCloudModule.setLoaded(true);
+        checkDependencies(resolveDependenciesSorted(modules.values())).stream()
+                                                                      .filter(javaCloudModule -> !javaCloudModule.isLoaded())
+                                                                      .forEach(javaCloudModule -> {
+                                                                          javaCloudModule.getModuleLogger().info(
+                                                                              String.format(
+                                                                                  "Loading module %s from %s with version %s",
+                                                                                  javaCloudModule.getModuleJson()
+                                                                                                 .getName(),
+                                                                                  javaCloudModule.getModuleJson()
+                                                                                                 .getAuthorsAsString(),
+                                                                                  javaCloudModule.getModuleJson()
+                                                                                                 .getVersion()));
+                                                                          javaCloudModule.setLoaded(true);
                                                                            });
-    }
-
-
-    private List<CloudModule> checkDependencies(@NotNull List<CloudModule> cloudModules) {
-        Set<CloudModule> loadOrder = new HashSet<>();
-        load:
-        for (CloudModule cloudModule : cloudModules) {
-            String moduleName = cloudModule.getModuleJson().getGroupId() + ":" + cloudModule.getModuleJson().getName();
-            if (!this.semCloudNetVersion.satisfies(cloudModule.getModuleJson().getRequiredCloudNetVersion())) {
-                System.err.println("Cannot load module " + moduleName + " because of missing required CloudNet version");
-                this.modules.remove(moduleName);
-                continue;
-            }
-            for (final CloudModuleDependency dependency : cloudModule.getModuleJson().getDependencies()) {
-                String name = dependency.getGroupId() + ":" + dependency.getName();
-                Optional<CloudModule> optionalCloudModule = getModule(name);
-                if (!optionalCloudModule.isPresent()) {
-                    System.err.println("unable to load module " + moduleName + " because of missing dependency " + name);
-                    this.modules.remove(moduleName);
-                    continue load;
-                }
-                if (!optionalCloudModule.get().getModuleJson().getSemVersion().satisfies(dependency.getVersion())) {
-                    System.err.println("Cannot load module " + moduleName + " because of missing dependency with version " + dependency.getVersion());
-                    this.modules.remove(moduleName);
-                    continue load;
-                }
-                optionalCloudModule.ifPresent(loadOrder::add);
-            }
-            loadOrder.add(cloudModule);
-        }
-        List<CloudModule> forLoading = new ArrayList<>(resolveDependenciesSorted(loadOrder));
-        Collections.reverse(forLoading);
-        return forLoading;
     }
 
     /**
@@ -398,6 +401,18 @@ public final class CloudModuleManager {
     }
 
     /**
+     * @param module is registered in the map
+     */
+    private void registerModule(@NotNull CloudModule module) {
+        this.modules.put(module
+                             .getModuleJson()
+                             .getGroupId() + ':' + module
+                             .getModuleJson()
+                             .getName(),
+                         module);
+    }
+
+    /**
      * Attempts to read and parse a module's description file.
      *
      * @param module the path where the module resides.
@@ -419,9 +434,9 @@ public final class CloudModuleManager {
                     .getPatch() != null) {
                     cloudModuleDescriptionFile = Optional.of(moduleDescriptionFile);
                 } else {
-                    System.err.println(String.format("Module(%s) not enabling, wrong version format %s",
-                                                     moduleDescriptionFile.getName(),
-                                                     moduleDescriptionFile.getVersion()));
+                    System.err.printf("Module(%s) not enabling, wrong version format %s%n",
+                                      moduleDescriptionFile.getName(),
+                                      moduleDescriptionFile.getVersion());
                 }
             }
         } catch (IOException e) {
@@ -442,7 +457,7 @@ public final class CloudModuleManager {
     private boolean isModuleDetectedByPath(@NotNull Path path, @NotNull List<Path> toLoad) {
         boolean result = false;
         String check = path.toAbsolutePath().toString();
-        Iterator<CloudModule> moduleIterator = this.getModules().values().iterator();
+        Iterator<CloudModule> moduleIterator = this.modules.values().iterator();
         while (moduleIterator.hasNext() && !result) {
             result = moduleIterator.next().getModuleJson().getFile().toAbsolutePath().toString().equals(check);
         }
@@ -453,36 +468,6 @@ public final class CloudModuleManager {
             }
         }
         return result;
-    }
-
-    /**
-     * Attempts to the a class by the given name.
-     * Searches every modules' class loaders.
-     *
-     * @param name the fully-qualified name of the class.
-     *
-     * @return the class, if present in any class loader. {@code null}, if the class is not present in any search class loader.
-     */
-    Class<?> getClassByName(@NotNull String name) {
-        Class<?> cachedClass = classes.get(name);
-
-        if (cachedClass != null) {
-            return cachedClass;
-        } else {
-            for (String current : loaders.keySet()) {
-                ModuleClassLoader loader = loaders.get(current);
-
-                try {
-                    cachedClass = loader.findClass(name, false);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-                if (cachedClass != null) {
-                    return cachedClass;
-                }
-            }
-        }
-        return null;
     }
 
     /**
@@ -514,18 +499,32 @@ public final class CloudModuleManager {
     }
 
     /**
-     * Returns the module instance associated to the given name, if present.
+     * Attempts to the a class by the given name.
+     * Searches every modules' class loaders.
      *
-     * @param name the name of the module to get.
+     * @param name the fully-qualified name of the class.
      *
-     * @return an {@code Optional} possibly containing the module's instance.
+     * @return the class, if present in any class loader. {@code null}, if the class is not present in any search class loader.
      */
-    public Optional<CloudModule> getModule(@NotNull String name) {
-        Optional<CloudModule> module = Optional.empty();
-        if (this.modules.containsKey(name)) {
-            module = Optional.of(getModules().get(name));
+    Class<?> getClassByName(@NotNull String name) {
+        Class<?> cachedClass = classes.get(name);
+
+        if (cachedClass != null) {
+            return cachedClass;
+        } else {
+            for (final ModuleClassLoader loader : loaders.values()) {
+
+                try {
+                    cachedClass = loader.findClass(name, false);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+                if (cachedClass != null) {
+                    return cachedClass;
+                }
+            }
         }
-        return module;
+        return null;
     }
 
     /**
@@ -612,7 +611,7 @@ public final class CloudModuleManager {
             StringBuilder stringBuilder = new StringBuilder();
             for (CloudModule description : currentIteration) {
                 stringBuilder.append(description.getModuleJson().getGroupId())
-                             .append(":")
+                             .append(':')
                              .append(description.getModuleJson().getName())
                              .append("; ");
             }
