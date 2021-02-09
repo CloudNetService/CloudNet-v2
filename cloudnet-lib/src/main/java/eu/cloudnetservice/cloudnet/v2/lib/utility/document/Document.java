@@ -235,7 +235,7 @@ public class Document {
             this.dataCatcher = JsonParser.parseReader(reader).getAsJsonObject();
             return this;
         } catch (Exception ex) {
-            ex.getStackTrace();
+            ex.printStackTrace();
         }
         return new Document();
     }
@@ -249,7 +249,7 @@ public class Document {
             GSON.toJson(dataCatcher, writer);
             return true;
         } catch (IOException ex) {
-            ex.getStackTrace();
+            ex.printStackTrace();
         }
         return false;
     }
@@ -355,7 +355,7 @@ public class Document {
             this.dataCatcher = JsonParser.parseReader(reader).getAsJsonObject();
             this.file = file;
         } catch (Exception ex) {
-            ex.getStackTrace();
+            ex.printStackTrace();
         }
         return this;
     }
