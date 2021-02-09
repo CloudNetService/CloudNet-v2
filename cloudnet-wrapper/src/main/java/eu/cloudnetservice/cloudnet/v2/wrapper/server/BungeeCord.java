@@ -288,7 +288,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
 
 
         this.proxyInfo = new ProxyInfo(proxyProcessMeta.getServiceId(),
-                                       CloudNetWrapper.getInstance().getWrapperConfig().getInternalIP(),
+                                       proxyConfigHost,
                                        proxyProcessMeta.getPort(),
                                        false,
                                        new HashMap<>(),
@@ -302,7 +302,7 @@ public class BungeeCord extends AbstractScreenService implements ServerDispatche
         new Document().append("serviceId", proxyProcessMeta.getServiceId())
                       .append("proxyProcess", proxyProcessMeta)
                       .append("host", String.format("%s:%d",
-                                                    CloudNetWrapper.getInstance().getWrapperConfig().getProxyConfigHost(),
+                                                    proxyConfigHost,
                                                     this.proxyProcessMeta.getPort()))
                       .append("proxyInfo", proxyInfo)
                       .append("memory", proxyProcessMeta.getMemory())
