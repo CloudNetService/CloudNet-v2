@@ -173,9 +173,9 @@ public class CloudLogger extends Logger {
         @Override
         public void write(final int b) {
             this.byteBuffer.put((byte) b);
-            if (b == LINE_FEED) {
+            if (b == LINE_FEED || this.byteBuffer.remaining() == 0) {
                 this.newLine = true;
-                flush();
+                this.flush();
                 this.newLine = false;
             }
         }
@@ -185,7 +185,7 @@ public class CloudLogger extends Logger {
             if (this.newLine) {
                 String message = new String(this.byteBuffer.array(), 0, this.byteBuffer.position());
                 logger.log(level, message);
-                this.byteBuffer.position(0);
+                this.byteBuffer.rewind();
             }
             //            String contents = toString(StandardCharsets.UTF_8.name());
             //            int linebreakIndex = contents.indexOf('\n');
