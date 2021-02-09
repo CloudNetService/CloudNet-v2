@@ -307,7 +307,6 @@ public final class CloudModuleManager {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
             cloudModule.ifPresent(this::checkModuleForAvailableUpdate);
             cloudModule.ifPresent(this::registerModule);
-            toLoaded.remove(path);
         }
         List<Path> toUpdate = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.updateModuleDirectory, "*.jar")) {
@@ -320,7 +319,6 @@ public final class CloudModuleManager {
         for (Path path : toUpdate) {
             Optional<JavaCloudModule> cloudModule = loadModule(path);
             cloudModule.ifPresent(this::checkForNewerVersion);
-            toUpdate.remove(path);
         }
         checkDependencies(resolveDependenciesSorted(getModules().values())).stream()
                                                                            .filter(javaCloudModule -> !javaCloudModule.isLoaded())
