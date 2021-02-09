@@ -728,20 +728,12 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         } else if (template != null) {
             logger.info(String.format("Copying template from %s to local directory...", this.serverProcessMeta.getServiceId()));
             try {
-                FileUtility.copyFilesInDirectory(this.dir, Paths.get("local", "templates", serverGroup.getName(), template.getName()));
+                final Path templatePath = Paths.get("local", "templates", serverGroup.getName(), template.getName());
+                FileUtility.copyFilesInDirectory(this.dir, templatePath);
 
-                FileUtility.deleteDirectory(Paths.get("local",
-                                                      "templates",
-                                                      serverGroup.getName(),
-                                                      serverProcessMeta.getTemplate().getName(),
-                                                      "CLOUD"));
+                FileUtility.deleteDirectory(templatePath.resolve("CLOUD"));
 
-                Files.deleteIfExists(Paths.get("local",
-                                               "templates",
-                                               serverGroup.getName(),
-                                               template.getName(),
-                                               "plugins",
-                                               "CloudNetAPI.jar"));
+                Files.deleteIfExists(templatePath.resolve(Paths.get("plugins", "CloudNetAPI.jar")));
             } catch (IOException exception) {
                 logger.log(Level.SEVERE, "Error copying the template!", exception);
             }

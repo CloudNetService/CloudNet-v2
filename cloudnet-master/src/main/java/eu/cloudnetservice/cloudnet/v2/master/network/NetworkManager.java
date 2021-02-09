@@ -333,7 +333,7 @@ public final class NetworkManager {
         Collection<UUID> players = new ArrayList<>();
 
         for (ProxyServer proxy : CloudNet.getInstance().getProxys().values()) {
-            proxy.getProxyInfo().getPlayers().forEach((key, value) -> players.add(key));
+            players.addAll(proxy.getProxyInfo().getPlayers().keySet());
         }
 
         // Remove all players that have left the cloud network but haven't been removed

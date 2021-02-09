@@ -23,8 +23,8 @@ import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class ProxyInfo {
 
@@ -52,19 +52,55 @@ public class ProxyInfo {
         this.memory = memory;
     }
 
-    public void fetch(Consumer<ProxyInfo> proxyInfo) {
-        proxyInfo.accept(this);
+    @Override
+    public int hashCode() {
+        int result = serviceId != null ? serviceId.hashCode() : 0;
+        result = 31 * result + (host != null ? host.hashCode() : 0);
+        result = 31 * result + (online ? 1 : 0);
+        result = 31 * result + (players != null ? players.hashCode() : 0);
+        result = 31 * result + memory;
+        result = 31 * result + port;
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProxyInfo)) {
+            return false;
+        }
+
+        final ProxyInfo proxyInfo = (ProxyInfo) o;
+
+        if (online != proxyInfo.online) {
+            return false;
+        }
+        if (memory != proxyInfo.memory) {
+            return false;
+        }
+        if (port != proxyInfo.port) {
+            return false;
+        }
+        if (!Objects.equals(serviceId, proxyInfo.serviceId)) {
+            return false;
+        }
+        if (!Objects.equals(host, proxyInfo.host)) {
+            return false;
+        }
+        return Objects.equals(players, proxyInfo.players);
     }
 
     @Override
     public String toString() {
         return "ProxyInfo{" +
             "serviceId=" + serviceId +
-            ", host='" + host + '\'' +
-            ", port=" + port +
+            ", host=" + host +
             ", online=" + online +
             ", players=" + players +
             ", memory=" + memory +
+            ", port=" + port +
             '}';
     }
 
@@ -73,7 +109,11 @@ public class ProxyInfo {
     }
 
     public SimpleProxyInfo toSimple() {
-        return new SimpleProxyInfo(getServiceId(), isOnline(), getHost(), getPort(), getMemory(), getOnlineCount());
+        return new SimpleProxyInfo(serviceId, online, host, port, memory, getOnlineCount());
+    }
+
+    public int getOnlineCount() {
+        return players != null ? players.size() : 0;
     }
 
     public ServiceId getServiceId() {
@@ -94,10 +134,6 @@ public class ProxyInfo {
 
     public int getMemory() {
         return memory;
-    }
-
-    public int getOnlineCount() {
-        return players != null ? players.size() : 0;
     }
 
 }

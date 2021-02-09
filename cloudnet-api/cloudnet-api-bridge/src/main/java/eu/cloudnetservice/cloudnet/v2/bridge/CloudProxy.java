@@ -321,14 +321,14 @@ public class CloudProxy implements CloudService, NetworkHandler {
 
         try {
             if (InetAddressValidator.getInstance().isValid(host)) {
-                new ProxyInfo(this.cloudAPI.getServiceId(),
-                              InetAddress.getByName(host),
-                              0,
-                              true,
-                              ProxyServer.getInstance().getPlayers().stream()
-                                         .collect(Collectors.toMap(ProxiedPlayer::getUniqueId, CommandSender::getName)),
-                              proxyProcessMeta.getMemory())
-                    .fetch(this.cloudAPI::update);
+                this.cloudAPI.update(new ProxyInfo(this.cloudAPI.getServiceId(),
+                                                   InetAddress.getByName(host),
+                                                   0,
+                                                   true,
+                                                   ProxyServer.getInstance().getPlayers().stream()
+                                                              .collect(Collectors.toMap(ProxiedPlayer::getUniqueId,
+                                                                                        CommandSender::getName)),
+                                                   proxyProcessMeta.getMemory()));
             }
         } catch (UnknownHostException exception) {
             this.cloudAPI.getLogger().log(Level.SEVERE, "Could not resolve hostname!", exception);
