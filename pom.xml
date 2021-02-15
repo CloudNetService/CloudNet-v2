@@ -71,7 +71,7 @@
         <dependency.slf4j.version>1.7.30</dependency.slf4j.version>
         <dependency.commons-validator.version>1.7</dependency.commons-validator.version>
         <!-- test dependencies -->
-        <test.junit.version>4.13.1</test.junit.version>
+        <test.junit.version>4.13.2</test.junit.version>
         <!-- Plugins -->
         <plugin.shade.version>3.2.4</plugin.shade.version>
         <plugin.javadoc.version>3.2.0</plugin.javadoc.version>
