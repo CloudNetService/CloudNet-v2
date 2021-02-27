@@ -2,7 +2,7 @@
 # It contains everything from server.properties and bukkit.yml in a
 # normal CraftBukkit installation.
 # 
-# For help, join us on Discord: https://discord.gg/TFJqhsC
+# For help, join us on Discord: https://discord.cloudnetservice.eu/
 server:
     ip: ''
     port: 25565

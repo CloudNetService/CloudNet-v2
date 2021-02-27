@@ -208,7 +208,7 @@ public final class NetworkUtils {
     private static void headerOut() {
         System.out.println();
         System.out.println("«» The Cloud Network Environment Technology 2");
-        System.out.printf("«» Support https://discord.gg/5NUhKuR      [%s]%n",
+        System.out.printf("«» Support https://discord.cloudnetservice.eu/      [%s]%n",
                           NetworkUtils.class.getPackage().getSpecificationVersion());
         System.out.printf("«» Java %s @%s %s%n",
                           System.getProperty("java.version"),

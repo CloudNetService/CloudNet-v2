@@ -41,7 +41,8 @@ Use of KVM virtualization or dedicated servers is recommended.
     * BungeeCord, HexaCord, Waterfall, TraverTine
     
 ### Discord
- *  [Discord Invite](https://discord.gg/CPCWr7w)
+
+* [Discord Invite](https://discord.cloudnetservice.eu/)
  
 ### Developers
 If you would like to contribute to this repository, feel free to fork the repo and then create a pull request to our current development branch. 

@@ -43,7 +43,7 @@ public class BasicProxyConfig extends ProxyConfig {
               new ArrayList<>(Arrays.asList("",
                                             "§b§lCloud§f§lNet §8× §7your §bfree §7cloudsystem",
                                             "§7Twitter §8» §f@CloudNetService",
-                                            "§7Discord §8» §fdiscord.gg/UNQ4wET",
+                                            "§7Discord §8» §fdiscord.cloudnetservice.eu",
                                             "")),
               new HashSet<>(),
               new DynamicFallback("Lobby", new ArrayList<>(Collections.singletonList(new ServerFallback("Lobby", null)))));
