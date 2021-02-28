@@ -28,8 +28,6 @@ public interface CommandExecutor {
      *
      * @param sender the sender that dispatched the execution of the command
      * @param parsedLine the line parsed with the JLine parser
-
-     * @param args   the arguments that the command was called with
      */
-    void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args);
+    void onExecuteCommand(CommandSender sender, ParsedLine parsedLine);
 }

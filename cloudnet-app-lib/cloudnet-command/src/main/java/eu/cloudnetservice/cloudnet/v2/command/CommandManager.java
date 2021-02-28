@@ -149,10 +149,9 @@ public final class CommandManager implements ConsoleInputDispatch {
                 }
 
                 if (b.equals(NetworkUtils.EMPTY_STRING)) {
-                    this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, this.consoleManager.getLineReader().getParser().parse(command,0),new String[0]);
+                    this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, this.consoleManager.getLineReader().getParser().parse(command,0));
                 } else {
-                    String[] c = b.split(" ");
-                    this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, this.consoleManager.getLineReader().getParser().parse(command,0),c);
+                    this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, this.consoleManager.getLineReader().getParser().parse(command,0));
                 }
 
                 for (String argument : a) {
@@ -188,30 +187,29 @@ public final class CommandManager implements ConsoleInputDispatch {
     public void dispatch(final String line, final LineReader lineReader) {
         if (line.length() > 0) {
             final ParsedLine parsedLine = lineReader.getParser().parse(line, 0);
-            String[] lineArguments = parsedLine.words().toArray(new String[0]);
-            if (this.commands.containsKey(lineArguments[0].toLowerCase())) {
+            final String command = parsedLine.words().get(0).toLowerCase();
+            if (this.commands.containsKey(command)) {
                 String lineArgumentsWithoutCommand = line.replace((line.contains(" ") ? line.split(" ")[0] + ' ' : line),
                                                                   NetworkUtils.EMPTY_STRING);
                 try {
-                    for (String argument : lineArguments) {
-                        for (CommandArgument commandArgument : this.commands.get(lineArguments[0].toLowerCase()).getCommandArguments()) {
+                    for (String argument : parsedLine.words()) {
+                        for (CommandArgument commandArgument : this.commands.get(command).getCommandArguments()) {
                             if (commandArgument.getName().equalsIgnoreCase(argument)) {
-                                commandArgument.preExecute(this.commands.get(lineArguments[0]), line);
+                                commandArgument.preExecute(this.commands.get(command), line);
                             }
                         }
                     }
 
                     if (lineArgumentsWithoutCommand.equals(NetworkUtils.EMPTY_STRING)) {
-                        this.commands.get(lineArguments[0].toLowerCase()).onExecuteCommand(consoleSender, null, new String[0]);
+                        this.commands.get(command).onExecuteCommand(consoleSender, null);
                     } else {
-                        String[] c = lineArgumentsWithoutCommand.split(" ");
-                        this.commands.get(lineArguments[0].toLowerCase()).onExecuteCommand(consoleSender, parsedLine, c);
+                        this.commands.get(command).onExecuteCommand(consoleSender, parsedLine);
                     }
 
-                    for (String argument : lineArguments) {
-                        for (CommandArgument commandArgument : this.commands.get(lineArguments[0].toLowerCase()).getCommandArguments()) {
+                    for (String argument : parsedLine.words()) {
+                        for (CommandArgument commandArgument : this.commands.get(command).getCommandArguments()) {
                             if (commandArgument.getName().equalsIgnoreCase(argument)) {
-                                commandArgument.postExecute(this.commands.get(lineArguments[0]), line);
+                                commandArgument.postExecute(this.commands.get(command), line);
                             }
                         }
                     }
@@ -233,9 +231,8 @@ public final class CommandManager implements ConsoleInputDispatch {
             final String buffer = this.consoleManager.getLineReader().getBuffer().toString();
             if (buffer.length() > 0) {
                 final ParsedLine parse = this.consoleManager.getLineReader().getParser().parse(buffer, 0);
-                String[] args = buffer.split(" ");
-                if (args.length > 0) {
-                    Command command = getCommand(args[0]);
+                if (parse.wordIndex() > 0) {
+                    Command command = getCommand(parse.words().get(0));
                     if (command == null) {
                         strings.addAll(this.commands.values().stream().filter(command1 -> command1.name.startsWith(buffer)).map(command1 -> new Candidate(command1.name, command1.name, command1.name, this.showDescription ? command1.description : null, null, null, true)).collect(
                             Collectors.toList()));
@@ -252,20 +249,20 @@ public final class CommandManager implements ConsoleInputDispatch {
                     }
                     if (command instanceof TabCompletable) {
                         TabCompletable tabCompletable = (TabCompletable) command;
-                        String testString = args[args.length - 1];
-                        if (testString.isEmpty()) {
-                            final List<Candidate> onTab = tabCompletable.onTab(args.length - 1, args[args.length - 1], parse,args).stream().map(candidate -> new Candidate(
+                        String lastWord = parse.word();
+                        if (lastWord.isEmpty()) {
+                            final List<Candidate> onTab = tabCompletable.onTab( parse).stream().map(candidate -> new Candidate(
                                 candidate.value(), candidate.displ(), candidate.group(), this.showDescription ? candidate.descr() : null,
                                 candidate.suffix(), candidate.key(), candidate.complete())).collect(Collectors.toList());
                             for (Candidate argument : onTab) {
                                 if (argument != null) {
-                                    if (argument.value().toLowerCase().startsWith(testString.toLowerCase())) {
+                                    if (argument.value().toLowerCase().startsWith(lastWord.toLowerCase())) {
                                         strings.add(argument);
                                     }
                                 }
                             }
                         } else {
-                            strings.addAll(tabCompletable.onTab(args.length - 1, args[args.length - 1],parse, args).stream().map(candidate -> new Candidate(
+                            strings.addAll(tabCompletable.onTab(parse).stream().map(candidate -> new Candidate(
                                 candidate.value(), candidate.displ(), candidate.group(), this.showDescription ? candidate.descr() : null,
                                 candidate.suffix(), candidate.key(), candidate.complete())).collect(Collectors.toList()));
                         }
