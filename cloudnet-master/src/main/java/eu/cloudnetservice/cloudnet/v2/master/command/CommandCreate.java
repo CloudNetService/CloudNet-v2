@@ -31,71 +31,71 @@ public final class CommandCreate extends Command implements TabCompletable {
 
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
-        if (parsedLine.wordIndex() > 2) {
+        if (parsedLine.words().size() > 2) {
             if (parsedLine.words().get(0).equalsIgnoreCase("dispatchCommand")) {
                 dispatchCommand(sender, parsedLine);
                 return;
             }
         }
 
-        switch (parsedLine.wordIndex()) {
-            case 2:
-                if (parsedLine.words().get(0).equalsIgnoreCase("proxy") || parsedLine.words().get(0).equalsIgnoreCase("-p")) {
-                    startProxies(sender, parsedLine.words().get(1), 1);
+        switch (parsedLine.words().size()) {
+            case 3:
+                if (parsedLine.words().get(1).equalsIgnoreCase("proxy") || parsedLine.words().get(1).equalsIgnoreCase("-p")) {
+                    startProxies(sender, parsedLine.words().get(2), 1);
                     break;
                 }
-                if (parsedLine.words().get(0).equalsIgnoreCase("server") || parsedLine.words().get(0).equalsIgnoreCase("-s")) {
-                    startServers(sender, parsedLine.words().get(1), 1);
+                if (parsedLine.words().get(1).equalsIgnoreCase("server") || parsedLine.words().get(1).equalsIgnoreCase("-s")) {
+                    startServers(sender, parsedLine.words().get(2), 1);
                     break;
                 }
-                if (parsedLine.words().get(0).equalsIgnoreCase("serverGroup")) {
-                    CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupServerGroup(sender, parsedLine.words().get(1)));
+                if (parsedLine.words().get(1).equalsIgnoreCase("serverGroup")) {
+                    CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupServerGroup(sender, parsedLine.words().get(2)));
                     CloudNet.getInstance().getConsoleManager().changeConsoleInput(SetupServerGroup.class);
                     break;
                 }
-                if (parsedLine.words().get(0).equalsIgnoreCase("proxyGroup")) {
-                    CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupProxyGroup(sender, parsedLine.words().get(1)));
+                if (parsedLine.words().get(1).equalsIgnoreCase("proxyGroup")) {
+                    CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupProxyGroup(sender, parsedLine.words().get(2)));
                     CloudNet.getInstance().getConsoleManager().changeConsoleInput(SetupProxyGroup.class);
                     break;
                 }
                 break;
-            case 3:
-                if ((parsedLine.words().get(0).equalsIgnoreCase("proxy") || parsedLine.words().get(0).equalsIgnoreCase("-p")) && NetworkUtils.checkIsNumber(parsedLine.words().get(2))) {
-                    startProxies(sender, parsedLine.words().get(1), Integer.parseInt(parsedLine.words().get(2)));
+            case 4:
+                if ((parsedLine.words().get(1).equalsIgnoreCase("proxy") || parsedLine.words().get(1).equalsIgnoreCase("-p")) && NetworkUtils.checkIsNumber(parsedLine.words().get(3))) {
+                    startProxies(sender, parsedLine.words().get(2), Integer.parseInt(parsedLine.words().get(3)));
                     break;
                 }
-                if ((parsedLine.words().get(0).equalsIgnoreCase("server") || parsedLine.words().get(0).equalsIgnoreCase("-s")) && NetworkUtils.checkIsNumber(parsedLine.words().get(2))) {
-                    startServers(sender, parsedLine.words().get(1), Integer.parseInt(parsedLine.words().get(2)));
+                if ((parsedLine.words().get(1).equalsIgnoreCase("server") || parsedLine.words().get(1).equalsIgnoreCase("-s")) && NetworkUtils.checkIsNumber(parsedLine.words().get(3))) {
+                    startServers(sender, parsedLine.words().get(2), Integer.parseInt(parsedLine.words().get(3)));
                     break;
                 }
                 break;
-            case 4:
-                if ((parsedLine.words().get(0).equalsIgnoreCase("proxy") || parsedLine.words().get(0).equalsIgnoreCase("-p")) && NetworkUtils.checkIsNumber(parsedLine.words().get(2))) {
+            case 5:
+                if ((parsedLine.words().get(1).equalsIgnoreCase("proxy") || parsedLine.words().get(1).equalsIgnoreCase("-p")) && NetworkUtils.checkIsNumber(parsedLine.words().get(3))) {
                     startProxiesOnWrapper(sender, parsedLine);
                     break;
                 }
-                if ((parsedLine.words().get(0).equalsIgnoreCase("server") || parsedLine.words().get(0).equalsIgnoreCase("-s")) && NetworkUtils.checkIsNumber(parsedLine.words().get(2))) {
+                if ((parsedLine.words().get(1).equalsIgnoreCase("server") || parsedLine.words().get(1).equalsIgnoreCase("-s")) && NetworkUtils.checkIsNumber(parsedLine.words().get(3))) {
                     startServersOnWrapper(sender, parsedLine);
                     break;
                 }
-                if (parsedLine.words().get(0).equalsIgnoreCase("template")) {
-                    if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(2))) {
-                        if (parsedLine.words().get(3).equalsIgnoreCase("local")) {
-                            createTemplate(sender, TemplateResource.LOCAL, parsedLine.words().get(1), parsedLine.words().get(2));
+                if (parsedLine.words().get(1).equalsIgnoreCase("template")) {
+                    if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(3))) {
+                        if (parsedLine.words().get(4).equalsIgnoreCase("local")) {
+                            createTemplate(sender, TemplateResource.LOCAL, parsedLine.words().get(2), parsedLine.words().get(3));
                         }
-                        if (parsedLine.words().get(3).equalsIgnoreCase("master")) {
-                            createTemplate(sender, TemplateResource.MASTER, parsedLine.words().get(1), parsedLine.words().get(2));
+                        if (parsedLine.words().get(4).equalsIgnoreCase("master")) {
+                            createTemplate(sender, TemplateResource.MASTER, parsedLine.words().get(2), parsedLine.words().get(3));
                         }
                     } else {
                         sender.sendMessage("The server group doesn't exist");
                     }
                 }
                 break;
-            case 5:
-                if (parsedLine.words().get(0).equalsIgnoreCase("template")) {
-                    if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(2))) {
-                        if (parsedLine.words().get(3).equalsIgnoreCase("url")) {
-                            createTemplate(sender, TemplateResource.URL, parsedLine.words().get(1), parsedLine.words().get(2), parsedLine.words().get(4));
+            case 6:
+                if (parsedLine.words().get(1).equalsIgnoreCase("template")) {
+                    if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(3))) {
+                        if (parsedLine.words().get(4).equalsIgnoreCase("url")) {
+                            createTemplate(sender, TemplateResource.URL, parsedLine.words().get(2), parsedLine.words().get(3), parsedLine.words().get(5));
                         }
                     } else {
                         sender.sendMessage("The server group doesn't exists");
@@ -110,7 +110,6 @@ public final class CommandCreate extends Command implements TabCompletable {
                                    "create PROXYGROUP <name> | Creates a completely new proxy group for BungeeCord with its own configurations, etc.",
                                    "create SERVERGROUP <name> | Creates a completely new server group for Minecraft servers with its own configurations, etc.",
                                    "create DISPATCHCOMMAND <main-command> <command> | Creates a simple command alias",
-                                   "create WRAPPER <name> | Creates and whitelists a new wrapper. The wrapper can also have the same IP of a previous wrapper",
                                    "create TEMPLATE <name> <group> LOCAL | Creates a new locale (Wrapper locales) template for a server group",
                                    "create TEMPLATE <name> <group> MASTER | Creates a new master backend (Master locales) template for a server group",
                                    "create TEMPLATE <name> <group> URL <url> | Creates a new template of a server group via url");

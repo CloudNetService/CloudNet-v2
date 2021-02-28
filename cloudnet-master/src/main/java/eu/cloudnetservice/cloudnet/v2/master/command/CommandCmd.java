@@ -22,7 +22,7 @@ public final class CommandCmd extends Command {
 
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
-        if (parsedLine.wordIndex() > 1) {
+        if (parsedLine.words().size() > 1) {
             StringBuilder stringBuilder = new StringBuilder();
             for (short i = 1; i < parsedLine.words().size(); i++) {
                 stringBuilder.append(parsedLine.words().get(i)).append(NetworkUtils.SPACE_STRING);

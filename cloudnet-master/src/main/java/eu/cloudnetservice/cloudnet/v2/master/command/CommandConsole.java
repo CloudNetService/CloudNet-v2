@@ -41,9 +41,9 @@ public class CommandConsole extends Command implements TabCompletable {
             sender.sendMessage("- color | Allows to change the color of the default tab completion");
             sender.sendMessage("- groupcolor | Allows to change the grouping color of the default tab completion");
         } else if (parsedLine.wordIndex() == 2) {
-            switch (parsedLine.words().get(0).toLowerCase()) {
+            switch (parsedLine.words().get(1).toLowerCase()) {
                 case "showdescription":
-                    boolean parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
+                    boolean parseBoolean = Boolean.parseBoolean(parsedLine.words().get(2));
                     CloudNet.getInstance().getConfig().setShowDescription(parseBoolean);
                     LineReader lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     if (lineReader instanceof LineReaderImpl) {
@@ -57,7 +57,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "showmenu":
-                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
+                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(2));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     lineReader.option(LineReader.Option.MENU_COMPLETE, parseBoolean);
                     lineReader.option(LineReader.Option.AUTO_MENU, parseBoolean);
@@ -66,7 +66,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "showgroup":
-                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
+                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(2));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     lineReader.option(LineReader.Option.GROUP, parseBoolean);
                     lineReader.option(LineReader.Option.AUTO_GROUP, parseBoolean);
@@ -75,7 +75,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "autolist":
-                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
+                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(2));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     lineReader.option(LineReader.Option.AUTO_LIST, parseBoolean);
                     CloudNet.getInstance().getConfig().setAutoList(parseBoolean);
@@ -83,7 +83,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "elof":
-                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
+                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(2));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, parseBoolean);
                     CloudNet.getInstance().getConfig().setElof(parseBoolean);
@@ -91,14 +91,14 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "aliases":
-                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
+                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(2));
                     CloudNet.getInstance().getConfig().setAliases(parseBoolean);
                     CloudNet.getInstance().getCommandManager().setAliases(parseBoolean);
                     sender.sendMessage("§aUpdate option of aliases to: " + parseBoolean);
                     updateWrappers();
                     break;
                 case "color":
-                    ChatColor color = ChatColor.getByChar(parsedLine.words().get(1).charAt(1));
+                    ChatColor color = ChatColor.getByChar(parsedLine.words().get(2).charAt(1));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     if (lineReader instanceof LineReaderImpl) {
                         Completer completer = ((LineReaderImpl) lineReader).getCompleter();
@@ -111,7 +111,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "groupcolor":
-                    color = ChatColor.getByChar(parsedLine.words().get(1).charAt(1));
+                    color = ChatColor.getByChar(parsedLine.words().get(2).charAt(1));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     if (lineReader instanceof LineReaderImpl) {
                         Completer completer = ((LineReaderImpl) lineReader).getCompleter();
@@ -135,29 +135,29 @@ public class CommandConsole extends Command implements TabCompletable {
     public List<Candidate> onTab(final ParsedLine parsedLine) {
         List<Candidate> candidates = new ArrayList<>();
 
-        if (parsedLine.words().size() >= 1 && (parsedLine.words().get(0).equalsIgnoreCase("c") || parsedLine.words()
-                                                                                                            .get(0)
+        if (parsedLine.words().size() >= 2 && (parsedLine.words().get(1).equalsIgnoreCase("c") || parsedLine.words()
+                                                                                                            .get(1)
                                                                                                             .equalsIgnoreCase("console"))) {
-            if (parsedLine.words().size() >= 2 && (parsedLine.words().get(1).equalsIgnoreCase("showdescription") || parsedLine.words()
-                                                                                                                              .get(1)
+            if (parsedLine.words().size() >= 3 && (parsedLine.words().get(2).equalsIgnoreCase("showdescription") || parsedLine.words()
+                                                                                                                              .get(2)
                                                                                                                               .equalsIgnoreCase(
                                                                                                                                   "showmenu") || parsedLine
                 .words()
                 .get(1)
                 .equalsIgnoreCase("showgroup") || parsedLine.words().get(1).equalsIgnoreCase("autolist") || parsedLine.words()
-                                                                                                                      .get(1)
+                                                                                                                      .get(2)
                                                                                                                       .equalsIgnoreCase(
                                                                                                                           "elof") || parsedLine
                 .words()
-                .get(1)
+                .get(2)
                 .equalsIgnoreCase(
                     "aliases"))) {
                 candidates.add(new Candidate("true", "§9True", "Value", "Enable option", null, null, true));
                 candidates.add(new Candidate("false", "§9False", "Value", "Disable option", null, null, true));
                 return candidates;
             }
-            if (parsedLine.words().size() >= 2 && (parsedLine.words().get(1).equalsIgnoreCase("groupcolor") || parsedLine.words()
-                                                                                                                         .get(1)
+            if (parsedLine.words().size() >= 3 && (parsedLine.words().get(2).equalsIgnoreCase("groupcolor") || parsedLine.words()
+                                                                                                                         .get(2)
                                                                                                                          .equalsIgnoreCase(
                                                                                                                              "color"))) {
                 candidates.addAll(Arrays.stream(ChatColor.values())

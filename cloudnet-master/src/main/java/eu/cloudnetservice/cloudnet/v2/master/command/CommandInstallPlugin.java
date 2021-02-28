@@ -21,14 +21,14 @@ public final class CommandInstallPlugin extends Command {
 
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
-        switch (parsedLine.wordIndex()) {
+        switch (parsedLine.words().size()) {
             case 3:
-                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(0));
+                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(1));
                 if (minecraftServer != null && minecraftServer.getChannel() != null) {
                     minecraftServer.sendCustomMessage("cloudnet_internal",
                                                       "install_plugin",
-                                                      new Document("name", parsedLine.words().get(1)).append("url", parsedLine.words().get(2)));
-                    sender.sendMessage("Plugin will install on " + parsedLine.words().get(0) + "...");
+                                                      new Document("name", parsedLine.words().get(2)).append("url", parsedLine.words().get(3)));
+                    sender.sendMessage("Plugin will install on " + parsedLine.words().get(1) + "...");
                 } else {
                     sender.sendMessage("Server doesn't exist");
                 }

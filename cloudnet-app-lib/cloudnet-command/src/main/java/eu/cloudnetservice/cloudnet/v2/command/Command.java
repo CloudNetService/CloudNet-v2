@@ -33,8 +33,6 @@ public abstract class Command implements CommandExecutor, Nameable {
 
     protected String description = "Default command description";
 
-    private final Collection<CommandArgument> commandArguments = new HashSet<>();
-
     /**
      * Constructs a new command with a name, a needed permission and variable aliases.
      *
@@ -48,25 +46,9 @@ public abstract class Command implements CommandExecutor, Nameable {
         this.aliases = aliases;
     }
 
-    /**
-     * Appends a new argument to this command
-     *
-     * @param commandArgument the argument to append
-     *
-     * @return the command for chaining
-     */
-    protected Command appendArgument(CommandArgument commandArgument) {
-        this.commandArguments.add(commandArgument);
-        return this;
-    }
-
     @Override
     public String getName() {
         return name;
-    }
-
-    public Collection<CommandArgument> getCommandArguments() {
-        return commandArguments;
     }
 
     public String getDescription() {
