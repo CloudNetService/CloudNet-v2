@@ -25,7 +25,7 @@ public class CloudLogger extends Logger {
         try {
             Files.createDirectories(logsFolder);
             FileHandler fh = new FileHandler("local/logs/latest.%g.log", 80000, 10, true);
-            fh.setFormatter(new LoggingFormatter());
+            fh.setFormatter(new FileLoggingFormatter());
             fh.setEncoding(StandardCharsets.UTF_8.name());
             fh.setLevel(Level.ALL);
             addHandler(fh);
