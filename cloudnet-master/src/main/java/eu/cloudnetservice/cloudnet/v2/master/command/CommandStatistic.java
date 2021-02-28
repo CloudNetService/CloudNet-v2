@@ -22,7 +22,7 @@ public final class CommandStatistic extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         DatabaseDocument document = StatisticManager.getInstance().getStatistics();
         sender.sendMessage("CloudNet2 Statistics:",
                            " ",

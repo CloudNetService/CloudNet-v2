@@ -20,7 +20,7 @@ public final class CommandModules extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         sender.sendMessage("Running modules:", NetworkUtils.SPACE_STRING);
         for (CloudModule module : CloudNet.getInstance().getModuleManager().getModules().values()) {
             sender.sendMessage(module.getModuleJson().getName() + ' ' + module.getModuleJson()

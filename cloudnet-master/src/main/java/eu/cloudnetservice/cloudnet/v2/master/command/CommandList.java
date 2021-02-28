@@ -20,7 +20,7 @@ public final class CommandList extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         sender.sendMessage("CloudNet: ");
         int memory = 0, maxMemory = 0;
         for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {

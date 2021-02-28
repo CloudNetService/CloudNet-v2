@@ -28,8 +28,8 @@ public class CommandConsole extends Command implements TabCompletable {
     }
 
     @Override
-    public void onExecuteCommand(final CommandSender sender, final ParsedLine parsedLine, final String[] args) {
-        if (args.length < 2) {
+    public void onExecuteCommand(final CommandSender sender, final ParsedLine parsedLine) {
+        if (parsedLine.wordIndex() < 2) {
             sender.sendMessage("§8console §a<option> §9<value> §8| Manipulate a option for the console");
             sender.sendMessage("Options: ");
             sender.sendMessage("- showmenu | Allows to disable or enable a selection menu for tab completion");
@@ -40,10 +40,10 @@ public class CommandConsole extends Command implements TabCompletable {
             sender.sendMessage("- elof | Allows to disable or enable erasing line on finish");
             sender.sendMessage("- color | Allows to change the color of the default tab completion");
             sender.sendMessage("- groupcolor | Allows to change the grouping color of the default tab completion");
-        } else if (args.length == 2) {
-            switch (args[0].toLowerCase()) {
+        } else if (parsedLine.wordIndex() == 2) {
+            switch (parsedLine.words().get(0).toLowerCase()) {
                 case "showdescription":
-                    boolean parseBoolean = Boolean.parseBoolean(args[1]);
+                    boolean parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
                     CloudNet.getInstance().getConfig().setShowDescription(parseBoolean);
                     LineReader lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     if (lineReader instanceof LineReaderImpl) {
@@ -57,7 +57,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "showmenu":
-                    parseBoolean = Boolean.parseBoolean(args[1]);
+                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     lineReader.option(LineReader.Option.MENU_COMPLETE, parseBoolean);
                     lineReader.option(LineReader.Option.AUTO_MENU, parseBoolean);
@@ -66,7 +66,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "showgroup":
-                    parseBoolean = Boolean.parseBoolean(args[1]);
+                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     lineReader.option(LineReader.Option.GROUP, parseBoolean);
                     lineReader.option(LineReader.Option.AUTO_GROUP, parseBoolean);
@@ -75,7 +75,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "autolist":
-                    parseBoolean = Boolean.parseBoolean(args[1]);
+                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     lineReader.option(LineReader.Option.AUTO_LIST, parseBoolean);
                     CloudNet.getInstance().getConfig().setAutoList(parseBoolean);
@@ -83,7 +83,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "elof":
-                    parseBoolean = Boolean.parseBoolean(args[1]);
+                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, parseBoolean);
                     CloudNet.getInstance().getConfig().setElof(parseBoolean);
@@ -91,14 +91,14 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "aliases":
-                    parseBoolean = Boolean.parseBoolean(args[1]);
+                    parseBoolean = Boolean.parseBoolean(parsedLine.words().get(1));
                     CloudNet.getInstance().getConfig().setAliases(parseBoolean);
                     CloudNet.getInstance().getCommandManager().setAliases(parseBoolean);
                     sender.sendMessage("§aUpdate option of aliases to: " + parseBoolean);
                     updateWrappers();
                     break;
                 case "color":
-                    ChatColor color = ChatColor.getByChar(args[1].charAt(1));
+                    ChatColor color = ChatColor.getByChar(parsedLine.words().get(1).charAt(1));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     if (lineReader instanceof LineReaderImpl) {
                         Completer completer = ((LineReaderImpl) lineReader).getCompleter();
@@ -111,7 +111,7 @@ public class CommandConsole extends Command implements TabCompletable {
                     updateWrappers();
                     break;
                 case "groupcolor":
-                    color = ChatColor.getByChar(args[1].charAt(1));
+                    color = ChatColor.getByChar(parsedLine.words().get(1).charAt(1));
                     lineReader = CloudNet.getInstance().getConsoleManager().getLineReader();
                     if (lineReader instanceof LineReaderImpl) {
                         Completer completer = ((LineReaderImpl) lineReader).getCompleter();
@@ -132,7 +132,7 @@ public class CommandConsole extends Command implements TabCompletable {
     }
 
     @Override
-    public List<Candidate> onTab(final long argsLength, final String lastWord, final ParsedLine parsedLine, final String[] args) {
+    public List<Candidate> onTab(final ParsedLine parsedLine) {
         List<Candidate> candidates = new ArrayList<>();
 
         if (parsedLine.words().size() >= 1 && (parsedLine.words().get(0).equalsIgnoreCase("c") || parsedLine.words()

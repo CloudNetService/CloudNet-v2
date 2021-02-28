@@ -24,7 +24,7 @@ public class CommandHelp extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         List<String> messages = new ArrayList<>(CloudNet.getInstance().getCommandManager().getCommands().size() + 9);
 
         for (String command : CloudNet.getInstance().getCommandManager().getCommands()) {
