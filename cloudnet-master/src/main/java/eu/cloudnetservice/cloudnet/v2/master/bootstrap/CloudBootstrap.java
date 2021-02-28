@@ -35,7 +35,6 @@ import org.jline.reader.LineReader;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.reader.impl.completer.ArgumentCompleter;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +42,7 @@ public final class CloudBootstrap {
 
     private static final InternalLoggerFactory INTERNAL_LOGGER_FACTORY = InternalLoggerFactory.getDefaultFactory();
 
-    public static synchronized void main(String[] args) throws IOException {
+    public static synchronized void main(String[] args) {
         System.setProperty("file.encoding", "UTF-8");
 
         InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
@@ -105,7 +104,7 @@ public final class CloudBootstrap {
         }
 
         if (optionSet.has("version")) {
-            System.out.printf("CloudNet-Core RezSyM Version %s-%s%n%n",
+            System.out.printf("CloudNet-Core RezSyM Version %s-%s%n",
                               CloudBootstrap.class.getPackage().getImplementationVersion(),
                               CloudBootstrap.class.getPackage().getSpecificationVersion());
             return;

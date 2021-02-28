@@ -63,7 +63,7 @@ public final class CloudNetServer extends ChannelInitializer<Channel> {
                            .addListener(
                                (ChannelFutureListener) channelFuture -> {
                                    if (channelFuture.isSuccess()) {
-                                       System.out.println(String.format("CloudNet is listening @%s:%d%n",
+                                       System.out.println(String.format("CloudNet is listening @%s:%d",
                                                          connectableAddress.getHostName(),
                                                          connectableAddress.getPort()));
                                        CloudNet.getInstance().getCloudServers().add(this);
