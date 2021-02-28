@@ -16,7 +16,7 @@ public class CommandSetup extends Command {
     }
 
     @Override
-    public void onExecuteCommand(final CommandSender sender, ParsedLine parsedLine, final String[] args) {
+    public void onExecuteCommand(final CommandSender sender, ParsedLine parsedLine) {
         cloudNetWrapper.getConsoleManager().getConsoleRegistry().registerInput(new SetupSpigotVersion(cloudNetWrapper.getConsoleManager()));
         cloudNetWrapper.getConsoleManager().changeConsoleInput(SetupSpigotVersion.class);
     }
