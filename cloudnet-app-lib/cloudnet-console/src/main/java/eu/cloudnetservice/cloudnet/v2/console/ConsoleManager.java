@@ -1,6 +1,7 @@
 package eu.cloudnetservice.cloudnet.v2.console;
 
 import eu.cloudnetservice.cloudnet.v2.console.completer.CloudNetCompleter;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
 import org.fusesource.jansi.AnsiOutputStream;
@@ -92,7 +93,10 @@ public final class ConsoleManager {
         final Optional<ConsoleInputDispatch> console = this.consoleRegistry.getConsole(clazz);
         console.ifPresent(inputDispatch -> this.consoleInputDispatch = inputDispatch);
         if (this.consoleInputDispatch != null) {
-            this.consoleInputDispatch.dispatch("", this.lineReader);
+            if (this.consoleInputDispatch instanceof ConsoleChangeInputPromote) {
+                ((ConsoleChangeInputPromote) this.consoleInputDispatch).changePromote(this.prompt);
+            }
+
         }
     }
 

@@ -1,6 +1,7 @@
 package eu.cloudnetservice.cloudnet.v2.setup;
 
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
@@ -16,7 +17,7 @@ import java.util.function.Consumer;
 /**
  * Builder class for setup sequences.
  */
-public class Setup implements ConsoleInputDispatch {
+public class Setup implements ConsoleInputDispatch, ConsoleChangeInputPromote {
 
     private String oldPrompt;
     private final ConsoleManager consoleManager;
@@ -49,10 +50,7 @@ public class Setup implements ConsoleInputDispatch {
 
     public Setup(ConsoleManager consoleManager) {
         this.consoleManager = consoleManager;
-        if (!this.consoleManager.getPrompt().equals(">")) {
-            this.oldPrompt = this.consoleManager.getPrompt();
-            this.consoleManager.setPrompt(">");
-        }
+
     }
 
     /**
@@ -95,17 +93,9 @@ public class Setup implements ConsoleInputDispatch {
     }
 
     @Override
-    public void dispatch(final String line, final LineReader lineReader) {
-        if (!this.consoleManager.getPrompt().equals(">")) {
-            this.oldPrompt = this.consoleManager.getPrompt();
-            this.consoleManager.setPrompt(">");
-        }
-        if (!requests.isEmpty() && setupRequest == null) {
-            setupRequest = requests.poll();
-            responseType = setupRequest.getResponseType();
-            lineReader.printAbove(String.format("%s | %s%n", setupRequest.getQuestion(), responseType.userFriendlyString()));
-        }
-        if (line.length() > 0 && setupRequest != null) {
+    public void dispatch(String line, LineReader lineReader) {
+        printQuestion(lineReader);
+        if (!line.isEmpty()) {
             if (line.equalsIgnoreCase(CANCEL)) {
                 if (setupCancel != null) {
                     this.consoleManager.setPrompt(oldPrompt);
@@ -113,30 +103,45 @@ public class Setup implements ConsoleInputDispatch {
                 }
                 return;
             }
-
-            if (!line.equals(NetworkUtils.SPACE_STRING)) {
-                if (responseType != null && responseType.isValidInput(line)) {
-                    if ((setupRequest.hasValidator() &&
-                        setupRequest.getValidator().test(line)) ||
-                        !setupRequest.hasValidator() && setupRequest.getName() != null) {
-                        responseType.appendDocument(document, setupRequest.getName(), line);
-                        setupRequest = null;
-                        if (requests.isEmpty() && setupComplete != null) {
-                            setupComplete.accept(document);
-                            this.consoleManager.setPrompt(oldPrompt);
-                        }
-                    } else {
-                        System.out.println(setupRequest.getInvalidMessage());
+            if (responseType != null && responseType.isValidInput(line)) {
+                if (setupRequest.hasValidator() && setupRequest.getValidator().test(line)) {
+                    responseType.appendDocument(document, setupRequest.getName(), line);
+                    setupRequest = null;
+                    printQuestion(lineReader);
+                    if (requests.isEmpty() && setupComplete != null) {
+                        setupComplete.accept(document);
+                        this.consoleManager.setPrompt(oldPrompt);
                     }
+                } else {
+                    System.out.println(setupRequest.getInvalidMessage());
                 }
-            } else {
-                System.out.println(setupRequest.getInvalidMessage());
             }
+        }
+    }
+
+    private void printQuestion(LineReader lineReader) {
+        if (!requests.isEmpty() && setupRequest == null) {
+            setupRequest = requests.poll();
+            responseType = setupRequest.getResponseType();
+            lineReader.printAbove(String.format("%s | %s%n", setupRequest.getQuestion(), responseType.userFriendlyString()));
         }
     }
 
     @Override
     public Collection<Candidate> get() {
         return new ArrayList<>();
+    }
+
+    @Override
+    public void changePromote(final String oldPromote) {
+        if (!requests.isEmpty() && setupRequest == null) {
+            setupRequest = requests.poll();
+            responseType = setupRequest.getResponseType();
+            this.consoleManager.getLineReader().printAbove(String.format("%s | %s%n", setupRequest.getQuestion(), responseType.userFriendlyString()));
+        }
+        if (!this.consoleManager.getPrompt().equals(">")) {
+            this.oldPrompt = oldPromote;
+            this.consoleManager.setPrompt(">");
+        }
     }
 }
