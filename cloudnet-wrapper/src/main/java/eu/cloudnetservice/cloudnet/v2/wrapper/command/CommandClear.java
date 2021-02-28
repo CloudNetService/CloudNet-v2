@@ -12,7 +12,7 @@ public class CommandClear extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         CloudNetWrapper.getInstance().getConsoleManager().getLineReader().getTerminal().flush();
     }
 }
