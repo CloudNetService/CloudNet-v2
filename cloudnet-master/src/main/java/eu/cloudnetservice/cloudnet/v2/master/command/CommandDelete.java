@@ -23,37 +23,37 @@ public final class CommandDelete extends Command {
 
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
-        switch (parsedLine.wordIndex()) {
-            case 2:
-                if (parsedLine.words().get(0).equalsIgnoreCase("serverGroup")) {
-                    if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(1))) {
-                        ServerGroup serverGroup = CloudNet.getInstance().getServerGroup(parsedLine.words().get(1));
+        switch (parsedLine.words().size()) {
+            case 3:
+                if (parsedLine.words().get(1).equalsIgnoreCase("serverGroup")) {
+                    if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(2))) {
+                        ServerGroup serverGroup = CloudNet.getInstance().getServerGroup(parsedLine.words().get(2));
                         CloudNet.getInstance().getConfig().deleteGroup(serverGroup);
-                        CloudNet.getInstance().getServerGroups().remove(parsedLine.words().get(1));
+                        CloudNet.getInstance().getServerGroups().remove(parsedLine.words().get(2));
                         CloudNet.getInstance().getNetworkManager().updateAll();
-                        for (MinecraftServer minecraftServer : CloudNet.getInstance().getServers(parsedLine.words().get(1))) {
+                        for (MinecraftServer minecraftServer : CloudNet.getInstance().getServers(parsedLine.words().get(2))) {
                             minecraftServer.getWrapper().stopServer(minecraftServer);
                         }
                         sender.sendMessage("The group was successfully deleted");
                     } else {
                         sender.sendMessage("The server group doesn't exist");
                     }
-                } else if (parsedLine.words().get(0).equalsIgnoreCase("proxyGroup")) {
-                    if (CloudNet.getInstance().getProxyGroups().containsKey(parsedLine.words().get(1))) {
-                        ProxyGroup proxyGroup = CloudNet.getInstance().getProxyGroup(parsedLine.words().get(1));
+                } else if (parsedLine.words().get(1).equalsIgnoreCase("proxyGroup")) {
+                    if (CloudNet.getInstance().getProxyGroups().containsKey(parsedLine.words().get(2))) {
+                        ProxyGroup proxyGroup = CloudNet.getInstance().getProxyGroup(parsedLine.words().get(2));
                         CloudNet.getInstance().getConfig().deleteGroup(proxyGroup);
-                        CloudNet.getInstance().getProxyGroups().remove(parsedLine.words().get(1));
+                        CloudNet.getInstance().getProxyGroups().remove(parsedLine.words().get(2));
                         CloudNet.getInstance().getNetworkManager().updateAll();
-                        for (ProxyServer proxyServer : CloudNet.getInstance().getProxys(parsedLine.words().get(1))) {
+                        for (ProxyServer proxyServer : CloudNet.getInstance().getProxys(parsedLine.words().get(2))) {
                             proxyServer.getWrapper().stopProxy(proxyServer);
                         }
                         sender.sendMessage("The group was successfully deleted");
                     } else {
                         sender.sendMessage("The proxy group doesn't exist");
                     }
-                } else if (parsedLine.words().get(0).equalsIgnoreCase("wrapper")) {
-                    if (CloudNet.getInstance().getWrappers().containsKey(parsedLine.words().get(1))) {
-                        final Wrapper wrapper = CloudNet.getInstance().getWrappers().get(parsedLine.words().get(1));
+                } else if (parsedLine.words().get(1).equalsIgnoreCase("wrapper")) {
+                    if (CloudNet.getInstance().getWrappers().containsKey(parsedLine.words().get(2))) {
+                        final Wrapper wrapper = CloudNet.getInstance().getWrappers().get(parsedLine.words().get(2));
                         CloudNet.getInstance()
                                 .getConfig()
                                 .getWrappers()
@@ -67,12 +67,12 @@ public final class CommandDelete extends Command {
                     }
                 }
                 break;
-            case 4:
-                if (parsedLine.words().get(0).equalsIgnoreCase("template")) {
-                    if (parsedLine.words().get(1).equalsIgnoreCase("serverGroup")) {
-                        String name = parsedLine.words().get(3);
-                        if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(2))) {
-                            ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(parsedLine.words().get(2));
+            case 5:
+                if (parsedLine.words().get(1).equalsIgnoreCase("template")) {
+                    if (parsedLine.words().get(2).equalsIgnoreCase("serverGroup")) {
+                        String name = parsedLine.words().get(4);
+                        if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(3))) {
+                            ServerGroup serverGroup = CloudNet.getInstance().getServerGroups().get(parsedLine.words().get(3));
                             if (serverGroup.getTemplates().stream().anyMatch(template -> template.getName().equalsIgnoreCase(name))) {
                                 serverGroup.getTemplates().stream().filter(template -> template.getName().equalsIgnoreCase(name)).collect(
                                     Collectors.toList()).forEach(serverGroup.getTemplates()::remove);

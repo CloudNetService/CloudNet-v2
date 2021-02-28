@@ -28,7 +28,7 @@ public final class CommandScreen extends Command implements TabCompletable {
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
 
-        if (CloudNet.getInstance().getScreenProvider().getMainServiceId() != null && parsedLine.wordIndex() > 1 && parsedLine.words().get(0).equalsIgnoreCase("write")) {
+        if (CloudNet.getInstance().getScreenProvider().getMainServiceId() != null && parsedLine.words().size() > 2 && parsedLine.words().get(1).equalsIgnoreCase("write")) {
             ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
             StringBuilder stringBuilder = new StringBuilder();
             for (int i = 1; i < parsedLine.words().size(); i++) {
@@ -47,9 +47,9 @@ public final class CommandScreen extends Command implements TabCompletable {
             return;
         }
 
-        switch (parsedLine.wordIndex()) {
-            case 1:
-                if (parsedLine.words().get(0).equalsIgnoreCase("leave") && CloudNet.getInstance().getScreenProvider().getMainServiceId() != null) {
+        switch (parsedLine.words().size()) {
+            case 2:
+                if (parsedLine.words().get(1).equalsIgnoreCase("leave") && CloudNet.getInstance().getScreenProvider().getMainServiceId() != null) {
 
                     ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
                     CloudNet.getInstance().getScreenProvider().disableScreen(serviceId.getServerId());
@@ -58,10 +58,10 @@ public final class CommandScreen extends Command implements TabCompletable {
                     return;
                 }
                 break;
-            case 2:
-                if (parsedLine.words().get(0).equalsIgnoreCase("-s") || parsedLine.words().get(0).equalsIgnoreCase("server")) {
+            case 3:
+                if (parsedLine.words().get(1).equalsIgnoreCase("-s") || parsedLine.words().get(1).equalsIgnoreCase("server")) {
 
-                    MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(1));
+                    MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(2));
                     if (minecraftServer != null) {
 
                         ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
@@ -76,9 +76,9 @@ public final class CommandScreen extends Command implements TabCompletable {
                     }
                     return;
                 }
-                if (parsedLine.words().get(0).equalsIgnoreCase("-p") || parsedLine.words().get(0).equalsIgnoreCase("proxy")) {
+                if (parsedLine.words().get(1).equalsIgnoreCase("-p") || parsedLine.words().get(1).equalsIgnoreCase("proxy")) {
 
-                    ProxyServer minecraftServer = CloudNet.getInstance().getProxy(parsedLine.words().get(1));
+                    ProxyServer minecraftServer = CloudNet.getInstance().getProxy(parsedLine.words().get(2));
                     if (minecraftServer != null) {
                         ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
                         if (serviceId != null) {
@@ -105,16 +105,16 @@ public final class CommandScreen extends Command implements TabCompletable {
     @Override
     public List<Candidate> onTab(ParsedLine parsedLine) {
         List<Candidate> strings = new ArrayList<>();
-        if (parsedLine.wordIndex() > 0) {
+        if (parsedLine.words().size() > 1) {
 
-            if (parsedLine.words().get(0).equalsIgnoreCase("screen")) {
-                if (parsedLine.wordIndex() > 1) {
-                    if (parsedLine.words().get(1).equalsIgnoreCase("server")  || parsedLine.words().get(1).equalsIgnoreCase("-s")) {
+            if (parsedLine.words().get(1).equalsIgnoreCase("screen")) {
+                if (parsedLine.wordIndex() > 2) {
+                    if (parsedLine.words().get(2).equalsIgnoreCase("server")  || parsedLine.words().get(2).equalsIgnoreCase("-s")) {
                         strings.addAll(CloudNet.getInstance().getServers().values().stream().map(minecraftServer -> new Candidate(minecraftServer.getName(), minecraftServer.getName(), minecraftServer.getGroup().getName(), "A simple minecraft server", null, null, true)).collect(
                             Collectors.toList()));
                         return strings;
                     }
-                    if (parsedLine.words().get(1).equalsIgnoreCase("proxy")  || parsedLine.words().get(1).equalsIgnoreCase("-p")) {
+                    if (parsedLine.words().get(2).equalsIgnoreCase("proxy")  || parsedLine.words().get(2).equalsIgnoreCase("-p")) {
                         strings.addAll(CloudNet.getInstance().getProxys().values().stream().map(proxyServer -> new Candidate(proxyServer.getName(), proxyServer.getName(), proxyServer.getProcessMeta().getProxyGroupName(), "A simple proxy", null, null, true)).collect(
                             Collectors.toList()));
                         return strings;

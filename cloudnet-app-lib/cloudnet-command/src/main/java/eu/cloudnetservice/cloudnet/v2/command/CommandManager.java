@@ -6,6 +6,7 @@ import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import org.jline.reader.Candidate;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
+import org.jline.reader.Parser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +89,6 @@ public final class CommandManager implements ConsoleInputDispatch {
      * a {@link ConsoleCommandSender}.
      *
      * <ol>
-     * <li>First all arguments get processed by the {@link CommandArgument} handlers.</li>
      * <li>Then the {@link Command} is executed with the processed commands</li>
      * <li>Last all arguments are processed again</li>
      * </ol>
@@ -108,7 +108,6 @@ public final class CommandManager implements ConsoleInputDispatch {
      * given {@code sender}.
      *
      * <ol>
-     * <li>First all arguments get processed by the {@link CommandArgument} handlers.</li>
      * <li>Then the {@link Command} is executed with the processed commands</li>
      * <li>Last all arguments are processed again</li>
      * </ol>
@@ -121,33 +120,9 @@ public final class CommandManager implements ConsoleInputDispatch {
     public boolean dispatchCommand(CommandSender sender, String command) {
         String[] a = command.split(" ");
         if (this.commands.containsKey(a[0].toLowerCase())) {
-            String b = command.replace((command.contains(" ") ? command.split(" ")[0] + ' ' : command), NetworkUtils.EMPTY_STRING);
-            try {
-                for (String argument : a) {
-                    for (CommandArgument commandArgument : this.commands.get(a[0].toLowerCase()).getCommandArguments()) {
-                        if (commandArgument.getName().equalsIgnoreCase(argument)) {
-                            commandArgument.preExecute(this.commands.get(a[0]), command);
-                        }
-                    }
-                }
-
-                if (b.equals(NetworkUtils.EMPTY_STRING)) {
-                    this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, this.consoleManager.getLineReader().getParser().parse(command,0));
-                } else {
-                    this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, this.consoleManager.getLineReader().getParser().parse(command,0));
-                }
-
-                for (String argument : a) {
-                    for (CommandArgument commandArgument : this.commands.get(a[0].toLowerCase()).getCommandArguments()) {
-                        if (commandArgument.getName().equalsIgnoreCase(argument)) {
-                            commandArgument.postExecute(this.commands.get(a[0]), command);
-                        }
-                    }
-                }
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            ParsedLine parse = this.consoleManager.getLineReader().getParser().parse(command, 0, Parser.ParseContext.SPLIT_LINE);
+            System.out.println(parse.words().size());
+            this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, parse);
             return true;
         } else {
             return false;
@@ -169,34 +144,12 @@ public final class CommandManager implements ConsoleInputDispatch {
     @Override
     public void dispatch(final String line, final LineReader lineReader) {
         if (line.length() > 0) {
-            final ParsedLine parsedLine = lineReader.getParser().parse(line, 0);
+            final ParsedLine parsedLine = lineReader.getParser().parse(line, 0, Parser.ParseContext.SPLIT_LINE);
+            System.out.println(parsedLine.words().size());
             final String command = parsedLine.words().get(0).toLowerCase();
             if (this.commands.containsKey(command)) {
-                String lineArgumentsWithoutCommand = line.replace((line.contains(" ") ? line.split(" ")[0] + ' ' : line),
-                                                                  NetworkUtils.EMPTY_STRING);
                 try {
-                    for (String argument : parsedLine.words()) {
-                        for (CommandArgument commandArgument : this.commands.get(command).getCommandArguments()) {
-                            if (commandArgument.getName().equalsIgnoreCase(argument)) {
-                                commandArgument.preExecute(this.commands.get(command), line);
-                            }
-                        }
-                    }
-
-                    if (lineArgumentsWithoutCommand.equals(NetworkUtils.EMPTY_STRING)) {
-                        this.commands.get(command).onExecuteCommand(consoleSender, null);
-                    } else {
-                        this.commands.get(command).onExecuteCommand(consoleSender, parsedLine);
-                    }
-
-                    for (String argument : parsedLine.words()) {
-                        for (CommandArgument commandArgument : this.commands.get(command).getCommandArguments()) {
-                            if (commandArgument.getName().equalsIgnoreCase(argument)) {
-                                commandArgument.postExecute(this.commands.get(command), line);
-                            }
-                        }
-                    }
-
+                    this.commands.get(command).onExecuteCommand(consoleSender, parsedLine);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

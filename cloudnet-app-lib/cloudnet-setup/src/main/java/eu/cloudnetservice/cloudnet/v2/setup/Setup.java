@@ -48,7 +48,6 @@ public class Setup implements ConsoleInputDispatch {
     private SetupRequest setupRequest;
 
     public Setup(ConsoleManager consoleManager) {
-        System.out.println();
         this.consoleManager = consoleManager;
         if (!this.consoleManager.getPrompt().equals(">")) {
             this.oldPrompt = this.consoleManager.getPrompt();

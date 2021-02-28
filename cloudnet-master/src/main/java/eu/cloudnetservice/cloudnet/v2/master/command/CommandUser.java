@@ -22,26 +22,26 @@ public class CommandUser extends Command {
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
 
-        if (parsedLine.wordIndex() == 3 && parsedLine.words().get(0).equalsIgnoreCase("create")) {
-            if (CloudNet.getInstance().getUser(parsedLine.words().get(1)) != null) {
+        if (parsedLine.words().size() == 4 && parsedLine.words().get(1).equalsIgnoreCase("create")) {
+            if (CloudNet.getInstance().getUser(parsedLine.words().get(2)) != null) {
                 sender.sendMessage("A user with that name already exists!");
                 return;
             }
-            User user = new BasicUser(parsedLine.words().get(1), parsedLine.words().get(2), new ArrayList<>());
+            User user = new BasicUser(parsedLine.words().get(2), parsedLine.words().get(3), new ArrayList<>());
             CloudNet.getInstance().getUsers().add(user);
             CloudNet.getInstance().getConfig().save(CloudNet.getInstance().getUsers());
             sender.sendMessage("Successfully created a new user!");
-        } else if (parsedLine.wordIndex() == 3 && parsedLine.words().get(0).equalsIgnoreCase("changePassword")) {
-            User user = CloudNet.getInstance().getUser(parsedLine.words().get(1));
+        } else if (parsedLine.words().size() == 4 && parsedLine.words().get(1).equalsIgnoreCase("changePassword")) {
+            User user = CloudNet.getInstance().getUser(parsedLine.words().get(2));
             if (user == null) {
                 sender.sendMessage("A user with that name does not exist!");
                 return;
             }
-            user.setPassword(parsedLine.words().get(2));
+            user.setPassword(parsedLine.words().get(3));
             CloudNet.getInstance().getConfig().save(CloudNet.getInstance().getUsers());
             sender.sendMessage("Successfully changed the password of the user \"" + user.getName() + "\"!");
-        } else if (parsedLine.wordIndex() == 2 && parsedLine.words().get(0).equalsIgnoreCase("delete")) {
-            User user = CloudNet.getInstance().getUser(parsedLine.words().get(1));
+        } else if (parsedLine.words().size() == 3 && parsedLine.words().get(1).equalsIgnoreCase("delete")) {
+            User user = CloudNet.getInstance().getUser(parsedLine.words().get(2));
             if (user == null) {
                 sender.sendMessage("A user with that name does not exist!");
                 return;
@@ -49,7 +49,7 @@ public class CommandUser extends Command {
             CloudNet.getInstance().getUsers().remove(user);
             CloudNet.getInstance().getConfig().save(CloudNet.getInstance().getUsers());
             sender.sendMessage("Successfully deleted the user \"" + user.getName() + '"');
-        } else if (parsedLine.wordIndex() == 1 && parsedLine.words().get(0).equalsIgnoreCase("list")) {
+        } else if (parsedLine.words().size() == 2 && parsedLine.words().get(1).equalsIgnoreCase("list")) {
             sender.sendMessage("Users:");
             for (User user : CloudNet.getInstance().getUsers()) {
                 sender.sendMessage(" - " + user.getName() + '/' + user.getUniqueId() + ':',
@@ -59,22 +59,22 @@ public class CommandUser extends Command {
                     sender.sendMessage("   - " + permission);
                 }
             }
-        } else if (parsedLine.wordIndex() == 4 && parsedLine.words().get(0).equalsIgnoreCase("permission")) {
-            User user = CloudNet.getInstance().getUser(parsedLine.words().get(2));
+        } else if (parsedLine.words().size() == 5 && parsedLine.words().get(1).equalsIgnoreCase("permission")) {
+            User user = CloudNet.getInstance().getUser(parsedLine.words().get(3));
             if (user == null) {
                 sender.sendMessage("A user with that name does not exist!");
                 return;
             }
 
-            String permission = parsedLine.words().get(3);
+            String permission = parsedLine.words().get(4);
 
-            if (parsedLine.words().get(1).equalsIgnoreCase("add")) {
+            if (parsedLine.words().get(2).equalsIgnoreCase("add")) {
                 if (user.getPermissions().contains(permission)) {
                     sender.sendMessage("The user \"" + user.getName() + "\" already has the permission \"" + permission + '"');
                     return;
                 }
                 user.getPermissions().add(permission);
-            } else if (parsedLine.words().get(1).equalsIgnoreCase("remove")) {
+            } else if (parsedLine.words().get(2).equalsIgnoreCase("remove")) {
                 if (!user.getPermissions().contains(permission)) {
                     sender.sendMessage("The user \"" + user.getName() + "\" does not have the permission \"" + permission + '"');
                     return;

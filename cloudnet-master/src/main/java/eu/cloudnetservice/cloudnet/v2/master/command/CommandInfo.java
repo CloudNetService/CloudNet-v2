@@ -29,10 +29,10 @@ public final class CommandInfo extends Command {
 
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
-        if (parsedLine.wordIndex() == 2) {
-            switch (parsedLine.words().get(0).toLowerCase()) {
+        if (parsedLine.words().size() == 3) {
+            switch (parsedLine.words().get(1).toLowerCase()) {
                 case "server": {
-                    MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(1));
+                    MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(2));
                     if (minecraftServer == null) {
                         return;
                     }
@@ -58,7 +58,7 @@ public final class CommandInfo extends Command {
                 }
                 break;
                 case "proxy": {
-                    ProxyServer proxyServer = CloudNet.getInstance().getProxy(parsedLine.words().get(1));
+                    ProxyServer proxyServer = CloudNet.getInstance().getProxy(parsedLine.words().get(2));
                     if (proxyServer == null) {
                         return;
                     }
@@ -79,7 +79,7 @@ public final class CommandInfo extends Command {
                 }
                 break;
                 case "wrapper": {
-                    Wrapper wrapper = CloudNet.getInstance().getWrappers().get(parsedLine.words().get(1));
+                    Wrapper wrapper = CloudNet.getInstance().getWrappers().get(parsedLine.words().get(2));
                     if (wrapper == null) {
                         return;
                     }
@@ -103,7 +103,7 @@ public final class CommandInfo extends Command {
                 }
                 break;
                 case "sg": {
-                    ServerGroup group = CloudNet.getInstance().getServerGroup(parsedLine.words().get(1));
+                    ServerGroup group = CloudNet.getInstance().getServerGroup(parsedLine.words().get(2));
                     if (group == null) {
                         return;
                     }
