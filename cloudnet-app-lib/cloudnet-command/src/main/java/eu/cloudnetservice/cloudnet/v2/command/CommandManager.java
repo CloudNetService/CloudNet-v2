@@ -145,7 +145,6 @@ public final class CommandManager implements ConsoleInputDispatch {
     public void dispatch(final String line, final LineReader lineReader) {
         if (line.length() > 0) {
             final ParsedLine parsedLine = lineReader.getParser().parse(line, 0, Parser.ParseContext.SPLIT_LINE);
-            System.out.println(parsedLine.words().size());
             final String command = parsedLine.words().get(0).toLowerCase();
             if (this.commands.containsKey(command)) {
                 try {
@@ -167,7 +166,7 @@ public final class CommandManager implements ConsoleInputDispatch {
             final String buffer = this.consoleManager.getLineReader().getBuffer().toString();
             if (buffer.length() > 0) {
                 final ParsedLine parse = this.consoleManager.getLineReader().getParser().parse(buffer, 0);
-                if (parse.wordIndex() > 0) {
+                if (parse.words().size() >= 1) {
                     Command command = getCommand(parse.words().get(0));
                     if (command == null) {
                         strings.addAll(this.commands.values().stream().filter(command1 -> command1.name.startsWith(buffer)).map(command1 -> new Candidate(command1.name, command1.name, command1.name, this.showDescription ? command1.description : null, null, null, true)).collect(
@@ -185,7 +184,7 @@ public final class CommandManager implements ConsoleInputDispatch {
                     }
                     if (command instanceof TabCompletable) {
                         TabCompletable tabCompletable = (TabCompletable) command;
-                        String lastWord = parse.word();
+                        String lastWord = parse.words().get(parse.words().size() - 1);
                         if (lastWord.isEmpty()) {
                             final List<Candidate> onTab = tabCompletable.onTab( parse).stream().map(candidate -> new Candidate(
                                 candidate.value(), candidate.displ(), candidate.group(), this.showDescription ? candidate.descr() : null,
