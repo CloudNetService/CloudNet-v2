@@ -31,10 +31,12 @@ public class CommandWrapper extends Command implements TabCompletable {
             if (parsedLine.words().get(1).equalsIgnoreCase("create")) {
                 CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupCreateWrapper(sender));
                 CloudNet.getInstance().getConsoleManager().changeConsoleInput(SetupCreateWrapper.class);
+                return;
             }
             if (parsedLine.words().get(1).equalsIgnoreCase("list")) {
                 sender.sendMessage("Registered   Wrappers:");
                 CloudNet.getInstance().getConfig().getWrappers().stream().map(WrapperMeta::getId).forEach(sender::sendMessage);
+                return;
             }
             if (parsedLine.words().get(1).equalsIgnoreCase("delete") && parsedLine.words().size() == 3) {
                 String wrapperId = parsedLine.words().get(2);
@@ -47,11 +49,14 @@ public class CommandWrapper extends Command implements TabCompletable {
                 if (wrapperMeta.isPresent()) {
                     CloudNet.getInstance().getConfig().deleteWrapper(wrapperMeta.get());
                     sender.sendMessage("§aWrapper " + wrapperId  + " successfully deleted from the system!");
+                    return;
                 } else {
                     sender.sendMessage("§cThis Wrapper-Id(" + wrapperId + ") is not registered in the system!");
+                    return;
                 }
             } else {
                 printHelp(sender);
+                return;
             }
         }
     }
@@ -60,6 +65,7 @@ public class CommandWrapper extends Command implements TabCompletable {
         sender.sendMessage("wrapper create - Start a wrapper setup to generate a config.yml");
         sender.sendMessage("wrapper list - List all wrappers");
         sender.sendMessage("wrapper delete <Wrapper-ID> - Delete a wrapper based on the ID from System");
+        return;
     }
 
     @Override
