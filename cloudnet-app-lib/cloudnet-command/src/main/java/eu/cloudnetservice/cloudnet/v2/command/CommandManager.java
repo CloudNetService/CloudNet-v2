@@ -165,7 +165,7 @@ public final class CommandManager implements ConsoleInputDispatch {
         if (this.consoleManager != null && this.consoleManager.getLineReader() != null) {
             final String buffer = this.consoleManager.getLineReader().getBuffer().toString();
             if (buffer.length() > 0) {
-                final ParsedLine parse = this.consoleManager.getLineReader().getParser().parse(buffer, 0);
+                final ParsedLine parse = this.consoleManager.getLineReader().getParser().parse(buffer, 0, Parser.ParseContext.SPLIT_LINE);
                 if (parse.words().size() >= 1) {
                     Command command = getCommand(parse.words().get(0));
                     if (command == null) {
