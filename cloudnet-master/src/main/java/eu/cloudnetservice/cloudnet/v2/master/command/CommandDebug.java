@@ -15,7 +15,7 @@ public final class CommandDebug extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         CloudNet.getLogger().setDebugging(!CloudNet.getLogger().isDebugging());
         if (CloudNet.getLogger().isDebugging()) {
             sender.sendMessage("debugging was enabled");

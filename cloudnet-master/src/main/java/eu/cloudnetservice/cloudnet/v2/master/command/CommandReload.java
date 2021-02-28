@@ -16,9 +16,9 @@ public final class CommandReload extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
-        if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("all")) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
+        if (parsedLine.wordIndex() == 1) {
+            if (parsedLine.words().get(0).equalsIgnoreCase("all")) {
                 sender.sendMessage("[RELOAD] Trying to reload CloudNet...");
                 try {
                     CloudNet.getInstance().reload();
@@ -28,12 +28,12 @@ public final class CommandReload extends Command {
                     e.printStackTrace();
                 }
             }
-            if (args[0].equalsIgnoreCase("config")) {
+            if (parsedLine.words().get(0).equalsIgnoreCase("config")) {
                 sender.sendMessage("[RELOAD] Trying to reload config");
                 reloadConfig();
                 sender.sendMessage("[RELOAD] Reloading was completed successfully");
             }
-            if (args[0].equalsIgnoreCase("wrapper")) {
+            if (parsedLine.words().get(0).equalsIgnoreCase("wrapper")) {
                 for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
                     if (wrapper.getChannel() != null) {
                         wrapper.writeCommand("reload");

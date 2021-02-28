@@ -18,7 +18,7 @@ public final class CommandClearCache extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         CloudNet.getInstance().getWrappers().values().forEach(wrapper -> {
             if (wrapper.getChannel() != null) {
                 wrapper.sendCommand("clearcache");

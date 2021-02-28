@@ -30,61 +30,61 @@ public final class CommandCreate extends Command implements TabCompletable {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
-        if (args.length > 2) {
-            if (args[0].equalsIgnoreCase("dispatchCommand")) {
-                dispatchCommand(sender, args);
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
+        if (parsedLine.wordIndex() > 2) {
+            if (parsedLine.words().get(0).equalsIgnoreCase("dispatchCommand")) {
+                dispatchCommand(sender, parsedLine);
                 return;
             }
         }
 
-        switch (args.length) {
+        switch (parsedLine.wordIndex()) {
             case 2:
-                if (args[0].equalsIgnoreCase("proxy") || args[0].equalsIgnoreCase("-p")) {
-                    startProxies(sender, args[1], 1);
+                if (parsedLine.words().get(0).equalsIgnoreCase("proxy") || parsedLine.words().get(0).equalsIgnoreCase("-p")) {
+                    startProxies(sender, parsedLine.words().get(1), 1);
                     break;
                 }
-                if (args[0].equalsIgnoreCase("server") || args[0].equalsIgnoreCase("-s")) {
-                    startServers(sender, args[1], 1);
+                if (parsedLine.words().get(0).equalsIgnoreCase("server") || parsedLine.words().get(0).equalsIgnoreCase("-s")) {
+                    startServers(sender, parsedLine.words().get(1), 1);
                     break;
                 }
-                if (args[0].equalsIgnoreCase("serverGroup")) {
-                    CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupServerGroup(sender, args[1]));
+                if (parsedLine.words().get(0).equalsIgnoreCase("serverGroup")) {
+                    CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupServerGroup(sender, parsedLine.words().get(1)));
                     CloudNet.getInstance().getConsoleManager().changeConsoleInput(SetupServerGroup.class);
                     break;
                 }
-                if (args[0].equalsIgnoreCase("proxyGroup")) {
-                    CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupProxyGroup(sender, args[1]));
+                if (parsedLine.words().get(0).equalsIgnoreCase("proxyGroup")) {
+                    CloudNet.getInstance().getConsoleRegistry().registerInput(new SetupProxyGroup(sender, parsedLine.words().get(1)));
                     CloudNet.getInstance().getConsoleManager().changeConsoleInput(SetupProxyGroup.class);
                     break;
                 }
                 break;
             case 3:
-                if ((args[0].equalsIgnoreCase("proxy") || args[0].equalsIgnoreCase("-p")) && NetworkUtils.checkIsNumber(args[2])) {
-                    startProxies(sender, args[1], Integer.parseInt(args[2]));
+                if ((parsedLine.words().get(0).equalsIgnoreCase("proxy") || parsedLine.words().get(0).equalsIgnoreCase("-p")) && NetworkUtils.checkIsNumber(parsedLine.words().get(2))) {
+                    startProxies(sender, parsedLine.words().get(1), Integer.parseInt(parsedLine.words().get(2)));
                     break;
                 }
-                if ((args[0].equalsIgnoreCase("server") || args[0].equalsIgnoreCase("-s")) && NetworkUtils.checkIsNumber(args[2])) {
-                    startServers(sender, args[1], Integer.parseInt(args[2]));
+                if ((parsedLine.words().get(0).equalsIgnoreCase("server") || parsedLine.words().get(0).equalsIgnoreCase("-s")) && NetworkUtils.checkIsNumber(parsedLine.words().get(2))) {
+                    startServers(sender, parsedLine.words().get(1), Integer.parseInt(parsedLine.words().get(2)));
                     break;
                 }
                 break;
             case 4:
-                if ((args[0].equalsIgnoreCase("proxy") || args[0].equalsIgnoreCase("-p")) && NetworkUtils.checkIsNumber(args[2])) {
-                    startProxiesOnWrapper(sender, args);
+                if ((parsedLine.words().get(0).equalsIgnoreCase("proxy") || parsedLine.words().get(0).equalsIgnoreCase("-p")) && NetworkUtils.checkIsNumber(parsedLine.words().get(2))) {
+                    startProxiesOnWrapper(sender, parsedLine);
                     break;
                 }
-                if ((args[0].equalsIgnoreCase("server") || args[0].equalsIgnoreCase("-s")) && NetworkUtils.checkIsNumber(args[2])) {
-                    startServersOnWrapper(sender, args);
+                if ((parsedLine.words().get(0).equalsIgnoreCase("server") || parsedLine.words().get(0).equalsIgnoreCase("-s")) && NetworkUtils.checkIsNumber(parsedLine.words().get(2))) {
+                    startServersOnWrapper(sender, parsedLine);
                     break;
                 }
-                if (args[0].equalsIgnoreCase("template")) {
-                    if (CloudNet.getInstance().getServerGroups().containsKey(args[2])) {
-                        if (args[3].equalsIgnoreCase("local")) {
-                            createTemplate(sender, TemplateResource.LOCAL, args[1], args[2]);
+                if (parsedLine.words().get(0).equalsIgnoreCase("template")) {
+                    if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(2))) {
+                        if (parsedLine.words().get(3).equalsIgnoreCase("local")) {
+                            createTemplate(sender, TemplateResource.LOCAL, parsedLine.words().get(1), parsedLine.words().get(2));
                         }
-                        if (args[3].equalsIgnoreCase("master")) {
-                            createTemplate(sender, TemplateResource.MASTER, args[1], args[2]);
+                        if (parsedLine.words().get(3).equalsIgnoreCase("master")) {
+                            createTemplate(sender, TemplateResource.MASTER, parsedLine.words().get(1), parsedLine.words().get(2));
                         }
                     } else {
                         sender.sendMessage("The server group doesn't exist");
@@ -92,10 +92,10 @@ public final class CommandCreate extends Command implements TabCompletable {
                 }
                 break;
             case 5:
-                if (args[0].equalsIgnoreCase("template")) {
-                    if (CloudNet.getInstance().getServerGroups().containsKey(args[2])) {
-                        if (args[3].equalsIgnoreCase("url")) {
-                            createTemplate(sender, TemplateResource.URL, args[1], args[2], args[4]);
+                if (parsedLine.words().get(0).equalsIgnoreCase("template")) {
+                    if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(2))) {
+                        if (parsedLine.words().get(3).equalsIgnoreCase("url")) {
+                            createTemplate(sender, TemplateResource.URL, parsedLine.words().get(1), parsedLine.words().get(2), parsedLine.words().get(4));
                         }
                     } else {
                         sender.sendMessage("The server group doesn't exists");
@@ -118,15 +118,15 @@ public final class CommandCreate extends Command implements TabCompletable {
         }
     }
 
-    private static void dispatchCommand(final CommandSender sender, final String[] args) {
+    private static void dispatchCommand(final CommandSender sender, ParsedLine parsedLine) {
         //create dispatchCommand name create
         StringBuilder builder = new StringBuilder();
-        for (short i = 2; i < args.length; i++) {
-            builder.append(args[i]);
+        for (short i = 2; i < parsedLine.words().size(); i++) {
+            builder.append(parsedLine.words().get(i));
         }
 
-        CloudNet.getInstance().getDbHandlers().getCommandDispatcherDatabase().appendCommand(args[1], builder.toString());
-        sender.sendMessage(String.format("A dispatcher was created \"%s\": \"%s\"", args[1], builder));
+        CloudNet.getInstance().getDbHandlers().getCommandDispatcherDatabase().appendCommand(parsedLine.words().get(1), builder.toString());
+        sender.sendMessage(String.format("A dispatcher was created \"%s\": \"%s\"", parsedLine.words().get(1), builder));
     }
 
     private static void startProxies(final CommandSender sender, final String proxyGroup, int count) {
@@ -154,11 +154,11 @@ public final class CommandCreate extends Command implements TabCompletable {
         }
     }
 
-    private static void startProxiesOnWrapper(final CommandSender sender, final String[] args) {
-        if (CloudNet.getInstance().getProxyGroups().containsKey(args[1]) && CloudNet.getInstance().getWrappers().containsKey(args[3])) {
-            for (short i = 0; i < Integer.parseInt(args[2]); i++) {
-                CoreProxyProcessBuilder.create(args[1])
-                                       .wrapperName(args[3])
+    private static void startProxiesOnWrapper(final CommandSender sender, ParsedLine parsedLine) {
+        if (CloudNet.getInstance().getProxyGroups().containsKey(parsedLine.words().get(1)) && CloudNet.getInstance().getWrappers().containsKey(parsedLine.words().get(3))) {
+            for (short i = 0; i < Integer.parseInt(parsedLine.words().get(2)); i++) {
+                CoreProxyProcessBuilder.create(parsedLine.words().get(1))
+                                       .wrapperName(parsedLine.words().get(3))
                                        .startProxy();
                 NetworkUtils.sleepUninterruptedly(2000L);
             }
@@ -168,11 +168,11 @@ public final class CommandCreate extends Command implements TabCompletable {
         }
     }
 
-    private static void startServersOnWrapper(final CommandSender sender, final String[] args) {
-        if (CloudNet.getInstance().getServerGroups().containsKey(args[1]) && CloudNet.getInstance().getWrappers().containsKey(args[3])) {
-            for (short i = 0; i < Integer.parseInt(args[2]); i++) {
-                CoreServerProcessBuilder.create(args[1])
-                                        .wrapperName(args[3])
+    private static void startServersOnWrapper(final CommandSender sender, ParsedLine parsedLine) {
+        if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(1)) && CloudNet.getInstance().getWrappers().containsKey(parsedLine.words().get(3))) {
+            for (short i = 0; i < Integer.parseInt(parsedLine.words().get(2)); i++) {
+                CoreServerProcessBuilder.create(parsedLine.words().get(1))
+                                        .wrapperName(parsedLine.words().get(3))
                                         .startServer();
                 NetworkUtils.sleepUninterruptedly(2000L);
             }
@@ -211,7 +211,7 @@ public final class CommandCreate extends Command implements TabCompletable {
     }
 
     @Override
-    public List<Candidate> onTab(final long argsLength, final String lastWord, final ParsedLine parsedLine, final String[] args) {
+    public List<Candidate> onTab(final ParsedLine parsedLine) {
         List<Candidate> candidates = new ArrayList<>();
         if (parsedLine.word().equalsIgnoreCase("create")) {
             candidates.add(new Candidate("proxy", "PROXY", null,"Creates a proxy server of a proxy group. <count> is not mandatory", null, null,true));

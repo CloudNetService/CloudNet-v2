@@ -82,10 +82,10 @@ public final class CommandLog extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
-        if (args.length == 1) {
-            if (CloudNet.getInstance().getServers().containsKey(args[0])) {
-                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
+        if (parsedLine.wordIndex() == 1) {
+            if (CloudNet.getInstance().getServers().containsKey(parsedLine.words().get(0))) {
+                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(0));
                 if (minecraftServer == null) {
                     sender.sendMessage("The given server does not exist.");
                     return;
@@ -103,8 +103,8 @@ public final class CommandLog extends Command {
                 sender.sendMessage("You can see the log at: " + x);
 
                 sender.sendMessage("The log is dynamic and will be deleted in 10 minutes");
-            } else if (CloudNet.getInstance().getProxys().containsKey(args[0])) {
-                ProxyServer proxyServer = CloudNet.getInstance().getProxy(args[0]);
+            } else if (CloudNet.getInstance().getProxys().containsKey(parsedLine.words().get(0))) {
+                ProxyServer proxyServer = CloudNet.getInstance().getProxy(parsedLine.words().get(0));
                 if (proxyServer == null) {
                     sender.sendMessage("The given proxy does not exist.");
                     return;

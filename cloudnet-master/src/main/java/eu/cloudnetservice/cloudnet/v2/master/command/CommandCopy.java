@@ -26,30 +26,30 @@ public final class CommandCopy extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
-        switch (args.length) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
+        switch (parsedLine.wordIndex()) {
             case 1: {
-                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);
+                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(0));
                 if (minecraftServer != null) {
                     minecraftServer.getWrapper().copyServer(minecraftServer.getServerInfo());
-                    sender.sendMessage("The server " + args[0] + " was copied");
+                    sender.sendMessage("The server " + parsedLine.words().get(0) + " was copied");
                 } else {
                     sender.sendMessage("The specified server doesn't exist");
                 }
                 break;
             }
             case 2: {
-                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);
+                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(0));
                 if (minecraftServer != null) {
                     ServerGroup serverGroup = minecraftServer.getGroup();
                     if (serverGroup != null) {
                         Template template = serverGroup.getTemplates().stream()
-                                                       .filter(t -> t.getName().equalsIgnoreCase(args[1]))
+                                                       .filter(t -> t.getName().equalsIgnoreCase(parsedLine.words().get(1)))
                                                        .findFirst()
                                                        .orElse(null);
 
                         if (template == null) {
-                            template = new Template(args[1],
+                            template = new Template(parsedLine.words().get(1),
                                                     minecraftServer.getProcessMeta().getTemplate().getBackend(),
                                                     minecraftServer.getProcessMeta().getTemplate().getUrl(),
                                                     EMPTY_STRING_ARRAY,
