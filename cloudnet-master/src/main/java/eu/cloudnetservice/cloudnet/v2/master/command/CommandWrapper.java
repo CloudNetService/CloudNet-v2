@@ -36,10 +36,11 @@ public class CommandWrapper extends Command implements TabCompletable {
             if (parsedLine.words().get(1).equalsIgnoreCase("list")) {
                 sender.sendMessage("Registered Wrappers:");
                 CloudNet.getInstance().getConfig().getWrappers().stream().map(WrapperMeta::getId).forEach(wrapperName -> {
-                    if (CloudNet.getInstance().getWrappers().containsKey(wrapperName)) {
-                        sender.sendMessage("  §a" + wrapperName);
+                    if (CloudNet.getInstance().getWrappers().containsKey(wrapperName)
+                        && CloudNet.getInstance().getWrappers().get(wrapperName).getChannel() != null ) {
+                        sender.sendMessage("- §a" + wrapperName);
                     } else {
-                        sender.sendMessage("  §e" + wrapperName);
+                        sender.sendMessage("- §e" + wrapperName);
                     }
 
                 });
