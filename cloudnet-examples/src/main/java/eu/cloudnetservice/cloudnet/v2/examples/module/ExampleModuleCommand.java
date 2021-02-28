@@ -22,7 +22,7 @@ public class ExampleModuleCommand extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine, String[] args) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         this.moduleExample.getModuleLogger().warning(String.format("ExampleCommand Sender: %s",sender.getName()));
     }
 }
