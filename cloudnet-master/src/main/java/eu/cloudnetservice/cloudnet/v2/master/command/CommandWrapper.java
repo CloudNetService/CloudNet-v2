@@ -11,6 +11,7 @@ import org.jline.reader.ParsedLine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CommandWrapper extends Command implements TabCompletable {
     /**
@@ -23,8 +24,7 @@ public class CommandWrapper extends Command implements TabCompletable {
     @Override
     public void onExecuteCommand(final CommandSender sender, ParsedLine parsedLine) {
         if (parsedLine.words().size() <= 1) {
-            sender.sendMessage("wrapper create - Start a wrapper setup to generate a config.yml");
-            sender.sendMessage("wrapper list - List all wrappers");
+            printHelp(sender);
             return;
         }
         if (parsedLine.words().size() == 2) {
@@ -36,16 +36,40 @@ public class CommandWrapper extends Command implements TabCompletable {
                 sender.sendMessage("Registered   Wrappers:");
                 CloudNet.getInstance().getConfig().getWrappers().stream().map(WrapperMeta::getId).forEach(sender::sendMessage);
             }
+            if (parsedLine.words().get(1).equalsIgnoreCase("delete") && parsedLine.words().size() == 3) {
+                String wrapperId = parsedLine.words().get(2);
+                Optional<WrapperMeta> wrapperMeta = CloudNet.getInstance()
+                                                      .getConfig()
+                                                      .getWrappers()
+                                                      .stream()
+                                                      .filter(meta -> meta.getId().equalsIgnoreCase(wrapperId))
+                                                      .findFirst();
+                if (wrapperMeta.isPresent()) {
+                    CloudNet.getInstance().getConfig().deleteWrapper(wrapperMeta.get());
+                    sender.sendMessage("§aWrapper " + wrapperId  + " successfully deleted from the system!");
+                } else {
+                    sender.sendMessage("§cThis Wrapper-Id(" + wrapperId + ") is not registered in the system!");
+                }
+            } else {
+                printHelp(sender);
+            }
         }
+    }
+
+    private void printHelp(CommandSender sender) {
+        sender.sendMessage("wrapper create - Start a wrapper setup to generate a config.yml");
+        sender.sendMessage("wrapper list - List all wrappers");
+        sender.sendMessage("wrapper delete <Wrapper-ID> - Delete a wrapper based on the ID from System");
     }
 
     @Override
     public List<Candidate> onTab(ParsedLine parsedLine) {
         List<Candidate> strings = new ArrayList<>();
-        if (parsedLine.wordIndex() >= 1) {
-            if (parsedLine.words().get(1).equalsIgnoreCase("wrapper")) {
+        if (parsedLine.words().size() == 1) {
+            if (parsedLine.words().get(0).equalsIgnoreCase("wrapper")) {
                 strings.add(new Candidate("create", "create", null, "Create a new wrapper configuration", null,null, true));
                 strings.add(new Candidate("list", "list", null, "List all wrapper configurations", null,null, true));
+                strings.add(new Candidate("delete", "delete", null, "Delete a wrapper from system", null,null, true));
             }
         }
         return strings;
