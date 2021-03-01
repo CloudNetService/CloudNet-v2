@@ -513,12 +513,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         commandBuilder.append("java ");
         for (String command : serverProcessMeta.getJavaProcessParameters()) {
             commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
-
-            commandBuilder.append("-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx")
-                          .append(serverProcessMeta.getMemory())
-                          .append("M -jar ");
-
         }
+
+        commandBuilder.append("-Dfile.encoding=UTF-8 -Dcom.mojang.eula.agree=true -Djline.terminal=jline.UnsupportedTerminal -Xmx")
+                      .append(serverProcessMeta.getMemory())
+                      .append("M -jar ");
 
         for (String command : serverProcessMeta.getServerProcessParameters()) {
             commandBuilder.append(command).append(NetworkUtils.SPACE_STRING);
@@ -539,6 +538,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
                 break;
         }
         try {
+            System.out.println(commandBuilder.toString());
             this.instance = Runtime.getRuntime().exec(commandBuilder.toString(), null, this.dir.toFile());
         } catch (Exception e) {
             e.printStackTrace();
