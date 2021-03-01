@@ -198,9 +198,9 @@ public final class NetworkUtils {
         //System.out.println();
         System.out.print(
              String.format("██████ █      ██████ █   █ █████ §9██    █ █████ █████ §r[%s]§r", NetworkUtils.class.getPackage().getImplementationVersion().trim()));
-        System.out.println("█R     █E     █Z   █ █S  █ █Y  █ §9█§rM§9█   █ █       █§r");
+        System.out.println("█      █      █    █ █   █ █   █ §9██    █ █       █§r");
         System.out.println("█      █      █    █ █   █ █   █ §9█  █  █ ████    █§r");
-        System.out.println("█D     █Y     █T   █ █A  █ █N  █ §9█   §9█§rI§9█ §9█§rC      §9█§r");
+        System.out.println("█      █      █    █ █   █ █   █ §9█   █ █ █       █§r");
         System.out.println("██████ ██████ ██████ █████ █████ §9█    ██ ████    █§r");
         headerOut();
     }
