@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CommandWrapper extends Command implements TabCompletable {
+public final class CommandWrapper extends Command implements TabCompletable {
 
     /**
      * Constructs a new command with a name, a needed permission and variable aliases.
