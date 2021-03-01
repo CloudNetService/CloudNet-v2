@@ -184,7 +184,7 @@ public final class NetworkUtils {
         //System.out.println();
         System.out.print(
              String.format("██████ █      ██████ █   █ █████ §9██    █ █████ █████ §r[%s]§r", NetworkUtils.class.getPackage().getImplementationVersion().trim()));
-        System.out.println("█      █      █    █ █   █ █   █ §9██    █ █       █§r");
+        System.out.println("█      █      █    █ █   █ █   █ §9█ █   █ █       █§r");
         System.out.println("█      █      █    █ █   █ █   █ §9█  █  █ ████    █§r");
         System.out.println("█      █      █    █ █   █ █   █ §9█   █ █ █       █§r");
         System.out.println("██████ ██████ ██████ █████ █████ §9█    ██ ████    █§r");
