@@ -2,6 +2,7 @@ package eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot;
 
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
@@ -24,7 +25,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class SetupSpigotVersion implements ConsoleInputDispatch {
+public class SetupSpigotVersion implements ConsoleInputDispatch, ConsoleChangeInputPromote {
 
     private final ConsoleManager consoleManager;
 
@@ -48,8 +49,7 @@ public class SetupSpigotVersion implements ConsoleInputDispatch {
             return false;
         }
     };
-    private String spigotType;
-    private boolean spigot;
+    private boolean spigot, paper, buildtools;
 
     public SetupSpigotVersion(final ConsoleManager consoleManager) {
         this.consoleManager = consoleManager;
@@ -59,30 +59,35 @@ public class SetupSpigotVersion implements ConsoleInputDispatch {
         switch (spigotType) {
             case "spigot":
                 spigot = true;
+                System.out.println("Available Spigot Versions for GetBUKKIT:");
+                System.out.println("-----------------------------------------------------------------------------");
+                System.out.println("Spigot Version");
+                System.out.println("-----------------------------------------------------------------------------");
+                Arrays.stream(GetBukkitVersion.values()).map(GetBukkitVersion::getVersion).forEach(System.out::println);
+                System.out.println("-----------------------------------------------------------------------------");
+                System.out.println("Please select a version to continue the install process");
+                this.consoleManager.setPrompt("spigot>");
                 break;
             case "buildtools":
-                this.consoleManager.getConsoleRegistry().registerInput(new SpigotBuilder());
-                this.consoleManager.changeConsoleInput(SpigotBuilder.class);
+                this.consoleManager.getConsoleRegistry().registerInput(new SpigotBuilder(consoleManager));
+                this.buildtools = true;
                 break;
             case "paper":
-                this.consoleManager.getConsoleRegistry().registerInput(new PaperBuilder());
-                this.consoleManager.changeConsoleInput(PaperBuilder.class);
+                this.consoleManager.getConsoleRegistry().registerInput(new PaperBuilder(consoleManager));
+                this.paper = true;
                 break;
             default:
                 System.out.println("This option is not available!");
                 break;
         }
+        if (paper){
+            this.consoleManager.changeConsoleInput(PaperBuilder.class);
+        } else if (buildtools) {
+            this.consoleManager.changeConsoleInput(SpigotBuilder.class);
+        }
     }
 
     private void installSpigot(String input) {
-        System.out.println("Available Spigot Versions for GetBUKKIT:");
-        System.out.println("-----------------------------------------------------------------------------");
-        System.out.println("Spigot Version");
-        System.out.println("-----------------------------------------------------------------------------");
-        Arrays.stream(GetBukkitVersion.values()).map(GetBukkitVersion::getVersion).forEach(System.out::println);
-        System.out.println("-----------------------------------------------------------------------------");
-        System.out.println("Please select a version to continue the install process");
-
         if (Arrays.stream(GetBukkitVersion.values())
                   .map(GetBukkitVersion::getVersion)
                   .anyMatch(version -> version.equals(input.toLowerCase()))) {
@@ -97,27 +102,6 @@ public class SetupSpigotVersion implements ConsoleInputDispatch {
         }
     }
 
-    private String askForServerType(String input) {
-        String answer = null;
-        System.out.println("Choose a minecraft server version [\"paper\", \"spigot\", \"buildtools\"]");
-        switch (input.toLowerCase()) {
-            case "spigot":
-                answer = "spigot";
-                break;
-            case "buildtools":
-                answer = "buildtools";
-                break;
-            case "paper":
-                answer = "paper";
-                break;
-            default:
-                System.out.println("This version is not supported!");
-                break;
-        }
-
-        return answer;
-    }
-
     public Path getTarget() {
         return this.target != null ? this.target : Paths.get("local/spigot.jar");
     }
@@ -127,16 +111,19 @@ public class SetupSpigotVersion implements ConsoleInputDispatch {
     }
 
     @Override
-    public void dispatch(final String line, final LineReader lineReader) {
+    public void dispatch(String line, LineReader lineReader) {
+        if (paper){
+            this.consoleManager.changeConsoleInput(PaperBuilder.class);
+            return;
+        } else if (buildtools) {
+            this.consoleManager.changeConsoleInput(SpigotBuilder.class);
+            return;
+        }
         if (line.length() > 0) {
-            if (spigotType == null) {
-                this.spigotType = System.getProperty("spigot-type") != null ? System.getProperty("spigot-type") : this.askForServerType(line);
+            if (spigot) {
+                this.installSpigot(line);
             } else {
-                if (spigot) {
-                    this.installSpigot(line);
-                } else {
-                    this.install(spigotType);
-                }
+                this.install(line);
             }
         }
     }
@@ -144,7 +131,7 @@ public class SetupSpigotVersion implements ConsoleInputDispatch {
     @Override
     public Collection<Candidate> get() {
         List<Candidate> candidateList = new ArrayList<>();
-        if (spigotType == null) {
+        if (!spigot && !buildtools && !paper) {
             candidateList.add(new Candidate("paper",
                                             "paper",
                                             null,
@@ -156,17 +143,26 @@ public class SetupSpigotVersion implements ConsoleInputDispatch {
             candidateList.add(new Candidate("buildtools", "buildtools", null, "Selects the installation type of spigot", null, null, true));
         }
         if (spigot) {
-            candidateList.addAll(Arrays.stream(GetBukkitVersion.values()).map(version -> new Candidate(version.getVersion(),
-                                                                                                       version.getVersion(),
-                                                                                                       "Spigot",
-                                                                                                       "Selects the version of spigot",
-                                                                                                       null,
-                                                                                                       null,
-                                                                                                       true)).collect(
-                Collectors.toList()));
+            candidateList.addAll(Arrays.stream(GetBukkitVersion.values())
+                                       .map(version -> new Candidate(version.getVersion(),
+                                                                     version.getVersion(),
+                                                                     "Spigot",
+                                                                     "Selects the version of spigot",
+                                                                     null,
+                                                                     null,
+                                                                     true))
+                                       .collect(Collectors.toList()));
 
 
         }
         return candidateList;
+    }
+
+    @Override
+    public void changePromote(String oldPromote) {
+        if (!this.consoleManager.getPrompt().equals(">")) {
+            this.consoleManager.setPrompt(">");
+            System.out.println("Choose a minecraft server version [\"paper\", \"spigot\", \"buildtools\"]");
+        }
     }
 }

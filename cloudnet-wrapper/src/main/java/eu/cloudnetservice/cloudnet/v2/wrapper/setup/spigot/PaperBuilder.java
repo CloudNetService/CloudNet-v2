@@ -1,6 +1,8 @@
 package eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot;
 
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
@@ -24,32 +26,27 @@ import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
-public final class PaperBuilder implements ConsoleInputDispatch {
+public final class PaperBuilder implements ConsoleInputDispatch, ConsoleChangeInputPromote {
 
     private static final String API_PROJECT_URL = "https://papermc.io/api/v1/paper";
     private static final String API_PROJECT_VERSION_DOWNLOAD = "https://papermc.io/api/v1/paper/%s/%s/download";
     private static final String API_PROJECT_VERSION_URL = "https://papermc.io/api/v1/paper/%s";
     private static Process exec;
     private PaperMCProject paperMCProject;
+    private final ConsoleManager consoleManager;
 
-    public PaperBuilder() {
+    public PaperBuilder(ConsoleManager consoleManager) {
+        this.consoleManager = consoleManager;
         try {
-            System.out.println("Fetch Versions");
             URLConnection connection = new URL(API_PROJECT_URL).openConnection();
             connection.setRequestProperty("User-Agent", NetworkUtils.USER_AGENT);
             connection.connect();
             paperMCProject = Document.GSON.fromJson(new InputStreamReader(connection.getInputStream()),
-                                                                   PaperMCProject.class);
-            System.out.println("Available Paper Versions:");
-            System.out.println("-----------------------------------------------------------------------------");
-            System.out.println("PaperSpigot Version");
-            System.out.println("-----------------------------------------------------------------------------");
-            Arrays.asList(paperMCProject.getVersions()).forEach(System.out::println);
-            System.out.println("-----------------------------------------------------------------------------");
-            System.out.println("Please select a version to continue the install process");
+                                                    PaperMCProject.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     /**
@@ -60,7 +57,7 @@ public final class PaperBuilder implements ConsoleInputDispatch {
      * @throws Exception If a connection error or something
      */
     private static boolean buildPaperVersion(String version, Path outputPath) throws Exception {
-        System.out.printf("Fetching build %s%n", version);
+        System.out.printf("Fetching build %s", version);
         URLConnection connection = new URL(String.format(API_PROJECT_VERSION_URL, version)).openConnection();
         connection.setRequestProperty("User-Agent",
                                       NetworkUtils.USER_AGENT);
@@ -133,6 +130,7 @@ public final class PaperBuilder implements ConsoleInputDispatch {
         Files.copy(new FileInputStream(Objects.requireNonNull(patchedFiles)[0]), outputPath, StandardCopyOption.REPLACE_EXISTING);
         CloudNetWrapper.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
         CloudNetWrapper.getInstance().getConsoleManager().getConsoleRegistry().unregisterInput(PaperBuilder.class);
+        CloudNetWrapper.getInstance().getServerProcessQueue().setRunning(true);
     }
 
     /**
@@ -152,11 +150,20 @@ public final class PaperBuilder implements ConsoleInputDispatch {
         }
         System.out.println("Build finished!");
         System.out.println("Copying spigot.jar");
-
     }
 
     public static Process getExec() {
         return exec;
+    }
+
+    private void printVersions() {
+        System.out.println("Available Paper Versions:");
+        System.out.println("-----------------------------------------------------------------------------");
+        System.out.println("PaperSpigot Version");
+        System.out.println("-----------------------------------------------------------------------------");
+        Arrays.asList(paperMCProject.getVersions()).forEach(System.out::println);
+        System.out.println("-----------------------------------------------------------------------------");
+        System.out.println("Please select a version to continue the install process");
     }
 
     @Override
@@ -178,5 +185,13 @@ public final class PaperBuilder implements ConsoleInputDispatch {
     public Collection<Candidate> get() {
         return Arrays.stream(paperMCProject.getVersions()).map(s -> new Candidate(s,s,paperMCProject.getProject(),"A paper version",null,null,true)).collect(
             Collectors.toList());
+    }
+
+    @Override
+    public void changePromote(String oldPromote) {
+        if (!this.consoleManager.getPrompt().equals("paper>")) {
+            this.consoleManager.setPrompt("paper>");
+            printVersions();
+        }
     }
 }
