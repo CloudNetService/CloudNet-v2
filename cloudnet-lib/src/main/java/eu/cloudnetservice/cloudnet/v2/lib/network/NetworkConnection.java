@@ -161,19 +161,6 @@ public final class NetworkConnection implements PacketSender {
         }
     }
 
-    public boolean tryDisconnect() {
-        if (channel != null) {
-            channel.close();
-        }
-
-        try {
-            eventLoopGroup.shutdownGracefully().await(10, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public void tryConnect(final NetDispatcher netDispatcher, final Auth auth) {
         tryConnect(netDispatcher, auth, null);
     }

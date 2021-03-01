@@ -108,7 +108,7 @@ public class CloudConfig {
     private String groupColor = "§8";
     private boolean aliases;
 
-    public CloudConfig() throws IOException {
+    public CloudConfig() {
 
         for (Path path : MASTER_PATHS) {
             try {
@@ -163,15 +163,11 @@ public class CloudConfig {
         if (Files.exists(servicePath)) {
             return;
         }
-
         new Document("wrapper", new ArrayList<>())
             .append("proxyGroups", Collections.singletonList(new BungeeGroup())).saveAsConfig(servicePath);
 
-            new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
+        new Document("group", new LobbyGroup()).saveAsConfig(Paths.get("groups/Lobby.json"));
 
-        } catch (UnknownHostException e) {
-            CloudNet.getLogger().log(Level.SEVERE, "Error saving default group configuration files", e);
-        }
     }
 
     private void defaultInitUsers() {
@@ -202,6 +198,7 @@ public class CloudConfig {
             }
 
             InetAddress hostInet = InetAddress.getByName(host);
+
 
             Collection<ConnectableAddress> addresses = new ArrayList<>();
             for (int value : configuration.getIntList("server.ports")) {

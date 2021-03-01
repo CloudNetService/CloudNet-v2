@@ -23,15 +23,12 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.*;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CloudNetWrapperConfig {
-
-    private static final InetAddressValidator IP_VALIDATOR = new InetAddressValidator();
 
     private final Path configPath = Paths.get("config.yml");
 
@@ -53,7 +50,7 @@ public class CloudNetWrapperConfig {
     private double percentOfCPUForANewServer;
     private double percentOfCPUForANewProxy;
 
-    public CloudNetWrapperConfig() {
+    public CloudNetWrapperConfig() throws Exception {
 
         for (final Path path : new Path[] {
             Paths.get("local", "servers"),

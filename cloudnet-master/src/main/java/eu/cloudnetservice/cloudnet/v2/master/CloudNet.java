@@ -193,7 +193,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
     private WebServer webServer;
     private DatabaseBasicHandlers dbHandlers;
     private Collection<User> users;
-    private CloudModuleManager moduleManager;
     private ConsoleRegistry consoleRegistry;
     private SignalManager signalManager;
     private ConsoleManager consoleManager;

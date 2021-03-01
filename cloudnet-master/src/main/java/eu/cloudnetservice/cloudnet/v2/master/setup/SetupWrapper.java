@@ -24,6 +24,11 @@ import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.cloudnet.v2.setup.Setup;
 import eu.cloudnetservice.cloudnet.v2.setup.SetupRequest;
 import eu.cloudnetservice.cloudnet.v2.setup.responsetype.StringResponseType;
+import org.apache.commons.validator.routines.InetAddressValidator;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
 
 /**
  * Created by Tareko on 21.10.2017.
@@ -44,14 +49,28 @@ public class SetupWrapper extends Setup {
             .setupComplete(data -> {
                 String host = data.getString("address");
                 String user = data.getString("user");
+                try {
+                    InetAddressValidator validator = new InetAddressValidator();
+                    if (!validator.isValid(host)) {
+                        throw new UnknownHostException("No valid InetAddress found!");
+                    }
+                    InetAddress hostInet = InetAddress.getByName(host);
+                    WrapperMeta wrapperMeta = new WrapperMeta(name, hostInet, user);
+                    CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
+                    commandSender.sendMessage(String.format("Wrapper [%s] was registered on CloudNet",
+                                                            wrapperMeta.getId()));
 
-                WrapperMeta wrapperMeta = new WrapperMeta(name, host, user);
-                CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
-                commandSender.sendMessage(String.format("Wrapper [%s] was registered on CloudNet",
-                                                        wrapperMeta.getId()));
+                    CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+                    CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupWrapper.class);
+                } catch (UnknownHostException e) {
+                    CloudNet.getLogger().log(Level.SEVERE, "Error create a new wrapper", e);
+                }
 
-                CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
-                CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupWrapper.class);
+
+
+
+
+
             })
             .request(new SetupRequest("address",
                                       "What is the IP address of this wrapper?",

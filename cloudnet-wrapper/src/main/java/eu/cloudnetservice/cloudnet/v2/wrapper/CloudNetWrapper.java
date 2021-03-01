@@ -164,7 +164,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
                       .registerCommand(new CommandStop())
                       .registerCommand(new CommandReload())
                       .registerCommand(new CommandSetup(this));
-        if (!Files.exists(wrapperConfig.getPath())) {
+        if (!Files.exists(wrapperConfig.getConfigPath())) {
             System.err.println("config.yml missing close wrapper");
             System.exit(-1);
         }
@@ -180,8 +180,8 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         }
         this.networkConnection = new NetworkConnection(
             new ConnectableAddress(
-                wrapperConfig.getCloudnetHost(),
-                wrapperConfig.getCloudnetPort()),
+                wrapperConfig.getCloudNetHost(),
+                wrapperConfig.getCloudNetPort()),
             new ConnectableAddress(wrapperConfig.getInternalIP(), 0),
             () -> {
                 try {

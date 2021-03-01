@@ -100,7 +100,12 @@ public class CloudBootstrap {
         }
 
         NetworkUtils.header();
-        CloudNetWrapperConfig cloudNetWrapperConfig = new CloudNetWrapperConfig();
+        CloudNetWrapperConfig cloudNetWrapperConfig = null;
+        try {
+            cloudNetWrapperConfig = new CloudNetWrapperConfig();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging);
 
         if (optionSet.has("systemTimer")) {

@@ -12,12 +12,16 @@ import eu.cloudnetservice.cloudnet.v2.setup.responsetype.StringResponseType;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 public class SetupCreateWrapper extends Setup {
     public SetupCreateWrapper(CommandSender sender) {
@@ -33,44 +37,53 @@ public class SetupCreateWrapper extends Setup {
                 Integer queue = data.getInt("queue");
                 String wrapperId = data.getString("wrapperId");
                 String user = data.getString("user");
-
-                WrapperMeta wrapperMeta = new WrapperMeta(wrapperId, host, user);
-                CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
-                sender.sendMessage(String.format("Wrapper [%s] was registered on CloudNet",
-                                                        wrapperMeta.getId()));
-                Configuration configuration = new Configuration();
-                configuration.set("connection.cloudnet-host", CloudNet.getInstance().getConfig().getAddresses().toArray(new ConnectableAddress[0])[0].getHostName());
-                configuration.set("connection.cloudnet-port", 1410);
-                configuration.set("connection.cloudnet-web", 1420);
-                configuration.set("general.wrapperId", wrapperId);
-                configuration.set("general.internalIp", host);
-                configuration.set("general.proxy-config-host",host);
-                configuration.set("general.max-memory", memory);
-                configuration.set("general.startPort", 41570);
-                configuration.set("general.auto-update", false);
-                configuration.set("general.saving-records", false);
-                configuration.set("general.maintenance-copyFileToDirectory", false);
-                configuration.set("general.processQueueSize", queue);
-                configuration.set("general.percentOfCPUForANewServer", 100D);
-                configuration.set("general.percentOfCPUForANewProxy", 100D);
                 try {
-                    Files.createDirectories(Paths.get("local","wrapper",wrapperId));
-                    Files.copy(Paths.get("WRAPPER_KEY.cnd"), Paths.get("local","wrapper",wrapperId,"WRAPPER_KEY.cnd"));
-                } catch (IOException e) {
-                    throw new RuntimeException("Wrapper Key path " + Paths.get("local","wrapper",wrapperId,"WRAPPER_KEY.cnd").toAbsolutePath().toString() + " could not be created", e);
-                }
-                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(Paths.get("local","wrapper",wrapperId,"config.yml")), StandardCharsets.UTF_8)) {
+                    InetAddressValidator validator = new InetAddressValidator();
+                    if (!validator.isValid(host)) {
+                        throw new UnknownHostException("No valid InetAddress found!");
+                    }
+                    InetAddress hostInet = InetAddress.getByName(host);
+                    WrapperMeta wrapperMeta = new WrapperMeta(wrapperId, hostInet, user);
+                    CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
+                    sender.sendMessage(String.format("Wrapper [%s] was registered on CloudNet",
+                                                     wrapperMeta.getId()));
+                    Configuration configuration = new Configuration();
+                    configuration.set("connection.cloudnet-host", CloudNet.getInstance().getConfig().getAddresses().toArray(new ConnectableAddress[0])[0].getHostName());
+                    configuration.set("connection.cloudnet-port", 1410);
+                    configuration.set("connection.cloudnet-web", 1420);
+                    configuration.set("general.wrapperId", wrapperId);
+                    configuration.set("general.internalIp", host);
+                    configuration.set("general.proxy-config-host",host);
+                    configuration.set("general.max-memory", memory);
+                    configuration.set("general.startPort", 41570);
+                    configuration.set("general.auto-update", false);
+                    configuration.set("general.saving-records", false);
+                    configuration.set("general.maintenance-copyFileToDirectory", false);
+                    configuration.set("general.processQueueSize", queue);
+                    configuration.set("general.percentOfCPUForANewServer", 100D);
+                    configuration.set("general.percentOfCPUForANewProxy", 100D);
+                    try {
+                        Files.createDirectories(Paths.get("local","wrapper",wrapperId));
+                        Files.copy(Paths.get("WRAPPER_KEY.cnd"), Paths.get("local","wrapper",wrapperId,"WRAPPER_KEY.cnd"));
+                    } catch (IOException e) {
+                        throw new RuntimeException("Wrapper Key path " + Paths.get("local","wrapper",wrapperId,"WRAPPER_KEY.cnd").toAbsolutePath().toString() + " could not be created", e);
+                    }
+                    try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(Paths.get("local","wrapper",wrapperId,"config.yml")), StandardCharsets.UTF_8)) {
 
-                    ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
-                } catch (IOException e) {
-                    throw new RuntimeException("Wrapper config path " + Paths.get("local","wrapper",wrapperId,"config.yml").toAbsolutePath().toString() + " could not be saved", e);
-                }
-                sender.sendMessage(String.format("Wrapper [%s] config is generated under -> %s",
-                                                 wrapperMeta.getId(), "local/wrapper/"+wrapperId));
+                        ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Wrapper config path " + Paths.get("local","wrapper",wrapperId,"config.yml").toAbsolutePath().toString() + " could not be saved", e);
+                    }
+                    sender.sendMessage(String.format("Wrapper [%s] config is generated under -> %s",
+                                                     wrapperMeta.getId(), "local/wrapper/"+wrapperId));
 
-                sender.sendMessage("WRAPPER_KEY.cnd is also copied to local/wrapper/"+wrapperId );
-                CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
-                CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupWrapper.class);
+                    sender.sendMessage("WRAPPER_KEY.cnd is also copied to local/wrapper/"+wrapperId );
+                    CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+                    CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupWrapper.class);
+                } catch (UnknownHostException e) {
+                    CloudNet.getLogger().log(Level.SEVERE, "Error create a new wrapper", e);
+                }
+
             })
 
             .request(new SetupRequest("wrapperId",
