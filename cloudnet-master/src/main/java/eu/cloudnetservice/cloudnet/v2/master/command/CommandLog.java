@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
+import eu.cloudnetservice.cloudnet.v2.command.TabCompletable;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ProxyGroup;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerGroup;
@@ -13,6 +14,7 @@ import eu.cloudnetservice.cloudnet.v2.lib.server.info.ServerInfo;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
+import org.jline.reader.Candidate;
 import org.jline.reader.ParsedLine;
 
 import java.io.IOException;
@@ -23,14 +25,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * Created by Tareko on 04.10.2017.
- */
-public final class CommandLog extends Command {
+public final class CommandLog extends Command implements TabCompletable {
 
     private final Gson g = new GsonBuilder().setPrettyPrinting().create();
 
@@ -39,7 +39,7 @@ public final class CommandLog extends Command {
     public CommandLog() {
         super("log", "cloudnet.command.log");
 
-        description = "Creates a web server log";
+        description = "Creates a server log on a paste server";
 
     }
 
@@ -84,10 +84,11 @@ public final class CommandLog extends Command {
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         if (parsedLine.words().size() == 2) {
-            if (CloudNet.getInstance().getServers().containsKey(parsedLine.words().get(01))) {
-                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(1));
+            String commandArgument = parsedLine.words().get(1);
+            if (CloudNet.getInstance().getServers().containsKey(commandArgument)) {
+                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(commandArgument);
                 if (minecraftServer == null) {
-                    sender.sendMessage("The given server does not exist.");
+                    sender.sendMessage("§cThe given server does not exist.");
                     return;
                 }
                 String rndm = NetworkUtils.randomString(10);
@@ -96,17 +97,10 @@ public final class CommandLog extends Command {
                                                    .filter(this::checkUrl)
                                                    .collect(Collectors.toList());
                 sendMinecraftServerPaste(sender, rndm, hasteServer, minecraftServer);
-                String x = String.format("http://%s:%d/cloudnet/log?server=%s",
-                                         CloudNet.getInstance().getConfig().getWebServerConfig().getAddress(),
-                                         CloudNet.getInstance().getConfig().getWebServerConfig().getPort(),
-                                         rndm);
-                sender.sendMessage("You can see the log at: " + x);
-
-                sender.sendMessage("The log is dynamic and will be deleted in 10 minutes");
-            } else if (CloudNet.getInstance().getProxys().containsKey(parsedLine.words().get(1))) {
-                ProxyServer proxyServer = CloudNet.getInstance().getProxy(parsedLine.words().get(1));
+            } else if (CloudNet.getInstance().getProxys().containsKey(commandArgument)) {
+                ProxyServer proxyServer = CloudNet.getInstance().getProxy(commandArgument);
                 if (proxyServer == null) {
-                    sender.sendMessage("The given proxy does not exist.");
+                    sender.sendMessage("§cThe given proxy does not exist.");
                     return;
                 }
                 String rndm = NetworkUtils.randomString(10);
@@ -115,13 +109,8 @@ public final class CommandLog extends Command {
                                                    .filter(this::checkUrl)
                                                    .collect(Collectors.toList());
                 sendProxyServerPaste(sender, rndm, hasteServer, proxyServer);
-                String x = String.format("http://%s:%d/cloudnet/log?server=%s",
-                                         CloudNet.getInstance().getConfig().getWebServerConfig().getAddress(),
-                                         CloudNet.getInstance().getConfig().getWebServerConfig().getPort(),
-                                         rndm);
-                sender.sendMessage("You can see the log at: " + x);
             } else {
-                sender.sendMessage("The server/proxy doesn't exist!");
+                sender.sendMessage("§cThe server/proxy doesn't exist!");
             }
         } else {
             sender.sendMessage("log <server/proxy> | Creates a web server log");
@@ -241,7 +230,7 @@ public final class CommandLog extends Command {
                 JsonObject object = g.fromJson(new InputStreamReader(inputStream), JsonObject.class);
                 int responseCode = connection.getResponseCode();
                 if (responseCode == 200) {
-                    sender.sendMessage("You can see the log at: " + String.format(url + "/%s", object.get("key").getAsString()));
+                    sender.sendMessage("§aYou can see the log at: " + String.format(url + "/%s", object.get("key").getAsString()));
                     return true;
                 } else {
                     return false;
@@ -254,5 +243,21 @@ public final class CommandLog extends Command {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public List<Candidate> onTab(ParsedLine parsedLine) {
+        List<Candidate> strings = new ArrayList<>();
+        if (parsedLine.words().size() == 1) {
+            if (parsedLine.words().get(0).equalsIgnoreCase("log")) {
+                strings.addAll(CloudNet.getInstance().getServers().values().stream().map(minecraftServer -> new Candidate(minecraftServer.getName(), minecraftServer.getName(), minecraftServer.getGroup().getName(), "A simple minecraft server", null, null, true)).collect(
+                    Collectors.toList()));
+                strings.addAll(CloudNet.getInstance().getProxys().values().stream().map(proxyServer -> new Candidate(proxyServer.getName(), proxyServer.getName(), proxyServer.getProcessMeta().getProxyGroupName(), "A simple proxy", null, null, true)).collect(
+                    Collectors.toList()));
+                return strings;
+            }
+
+        }
+        return strings;
     }
 }
