@@ -5,9 +5,6 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import org.jline.reader.ParsedLine;
 
-/**
- * Created by Tareko on 19.01.2018.
- */
 public final class CommandVersion extends Command {
 
     public CommandVersion() {
@@ -20,6 +17,6 @@ public final class CommandVersion extends Command {
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         sender.sendMessage("CloudNet " + NetworkUtils.class.getPackage().getSpecificationVersion() + " #" + NetworkUtils.class.getPackage()
-                                                                                                                              .getImplementationVersion() + " by Dytanic");
+                                                                                                                              .getImplementationVersion() + " by Cloud§9Net §rCommunity");
     }
 }
