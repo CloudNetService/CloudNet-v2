@@ -17,7 +17,12 @@
 
 package eu.cloudnetservice.cloudnet.v2.master.util.defaults;
 
-import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.*;
+import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.AutoSlot;
+import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.DynamicFallback;
+import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.Motd;
+import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.ProxyConfig;
+import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.ServerFallback;
+import eu.cloudnetservice.cloudnet.v2.lib.proxylayout.TabList;
 
 import java.util.ArrayList;
 import java.util.Arrays;

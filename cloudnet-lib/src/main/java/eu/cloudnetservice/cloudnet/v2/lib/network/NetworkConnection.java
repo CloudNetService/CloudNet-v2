@@ -34,6 +34,9 @@ import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Created by Tareko on 22.07.2017.
+ */
 public final class NetworkConnection implements PacketSender {
 
     private final PacketManager packetManager = new PacketManager();
