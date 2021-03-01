@@ -128,7 +128,7 @@ public final class CloudBootstrap {
         }
 
         if (!optionSet.has("noconsole")) {
-            System.out.println("Use the command \"help\" for further information!");
+            System.out.println("Use the command \"§ehelp§r\" for further information!");
 
             cloudNetCore.getConsoleRegistry().registerInput(cloudNetCore.getCommandManager());
             cloudNetCore.getConsoleManager().setRunning(true);

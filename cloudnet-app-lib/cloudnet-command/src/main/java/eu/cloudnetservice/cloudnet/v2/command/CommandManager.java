@@ -156,7 +156,7 @@ public final class CommandManager implements ConsoleInputDispatch, ConsoleChange
                     ex.printStackTrace();
                 }
             } else {
-                System.out.println("Command not found. Use the command \"help\" for further information!");
+                System.out.println("Command not found. Use the command \"§ehelp§r\" for further information!");
             }
         }
 
