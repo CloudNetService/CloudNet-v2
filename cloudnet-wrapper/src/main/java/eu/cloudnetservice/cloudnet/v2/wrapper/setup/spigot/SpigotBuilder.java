@@ -1,6 +1,8 @@
 package eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot;
 
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
@@ -21,21 +23,17 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class SpigotBuilder implements ConsoleInputDispatch {
+public final class SpigotBuilder implements ConsoleInputDispatch, ConsoleChangeInputPromote {
 
     private final static String buildToolsUrl = "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar";
     private final static String versionsUrl = "https://hub.spigotmc.org/versions/";
     private static Process exec;
-    private final LinkedList<String> versions;
+    private LinkedList<String> versions;
+    private final ConsoleManager consoleManager;
 
-    public SpigotBuilder() {
-        System.out.println("Fetching Spigot versions");
-        this.versions = loadVersions();
-        System.out.println("Available Spigot versions:");
-        System.out.println("-----------------------------------------------------------------------------");
-        versions.forEach(System.out::println);
-        System.out.println("-----------------------------------------------------------------------------");
-        System.out.println("Please select a version to continue the install process");
+    public SpigotBuilder(final ConsoleManager consoleManager) {
+        this.consoleManager = consoleManager;
+
     }
 
     /**
@@ -179,11 +177,23 @@ public final class SpigotBuilder implements ConsoleInputDispatch {
         return exec;
     }
 
+    private void printVersions() {
+        System.out.println("Fetching Spigot versions");
+        this.versions = loadVersions();
+        System.out.println("Available Spigot versions:");
+        System.out.println("-----------------------------------------------------------------------------");
+        versions.forEach(System.out::println);
+        System.out.println("-----------------------------------------------------------------------------");
+        System.out.println("Please select a version to continue the install process");
+    }
+
     @Override
     public void dispatch(final String line, final LineReader lineReader) {
         if(line.length() > 0){
             if (versions.stream().anyMatch(e -> e.equalsIgnoreCase(line.toLowerCase()))) {
-                buildSpigot(line.toLowerCase(), Paths.get("local/spigot.jar"));
+                if (buildSpigot(line.toLowerCase(), Paths.get("local/spigot.jar"))) {
+                    CloudNetWrapper.getInstance().getServerProcessQueue().setRunning(true);
+                }
             } else if (versions.stream().noneMatch(e -> e.equalsIgnoreCase(line.toLowerCase()))) {
                 System.out.println("This version does not exist!");
             }
@@ -195,5 +205,13 @@ public final class SpigotBuilder implements ConsoleInputDispatch {
     public Collection<Candidate> get() {
         return this.versions.stream().map(s -> new Candidate(s,s,"buildtools","A version to build with the md_5 build tools", null, null, true)).collect(
             Collectors.toList());
+    }
+
+    @Override
+    public void changePromote(String oldPromote) {
+        if (!this.consoleManager.getPrompt().equals("buildtools>")) {
+            this.consoleManager.setPrompt("buildtools>");
+            printVersions();
+        }
     }
 }
