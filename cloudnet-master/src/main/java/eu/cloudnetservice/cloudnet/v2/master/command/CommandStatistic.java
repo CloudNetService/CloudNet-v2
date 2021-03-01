@@ -9,9 +9,6 @@ import org.jline.reader.ParsedLine;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Tareko on 21.08.2017.
- */
 public final class CommandStatistic extends Command {
 
     public CommandStatistic() {
@@ -26,18 +23,18 @@ public final class CommandStatistic extends Command {
         DatabaseDocument document = StatisticManager.getInstance().getStatistics();
         sender.sendMessage("CloudNet2 Statistics:",
                            " ",
-                           "CloudStartups: " + StatisticManager.getInstance().getStatistics().getInt("cloudStartup"),
-                           "Cloud online time: " + TimeUnit.MILLISECONDS.toMinutes(document.getInt("cloudOnlineTime")) + "min",
-                           "Wrapper connections: " + document.getInt("wrapperConnections"),
-                           "Highest server online count: " + document.getInt("highestServerOnlineCount"),
-                           "Started servers: " + document.getLong("startedServers"),
+                           "  CloudStartups: " + StatisticManager.getInstance().getStatistics().getInt("cloudStartup"),
+                           "  Cloud online time: §e" + TimeUnit.MILLISECONDS.toMinutes(document.getInt("cloudOnlineTime")) + "min",
+                           "  Wrapper connections: " + document.getInt("wrapperConnections"),
+                           "  Highest server online count: §e" + document.getInt("highestServerOnlineCount"),
+                           "  Started servers: " + document.getLong("startedServers"),
                            " ",
-                           "Player Statistics:",
+                           "  Player Statistics:",
                            " ",
-                           "Registered: " + CloudNet.getInstance().getDbHandlers().getPlayerDatabase().getDatabase().size(),
-                           "Highest online count: " + document.getInt("highestPlayerOnline"),
-                           "Logins: " + document.getInt("playerLogin"),
-                           "Command executions: " + document.getInt("playerCommandExecutions"),
+                           "  Registered: " + CloudNet.getInstance().getDbHandlers().getPlayerDatabase().getDatabase().size(),
+                           "  Highest online count: " + document.getInt("highestPlayerOnline"),
+                           "  Logins: " + document.getInt("playerLogin"),
+                           "  Command executions: " + document.getInt("playerCommandExecutions"),
                            " ");
     }
 }
