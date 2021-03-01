@@ -7,6 +7,8 @@ import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
 import eu.cloudnetservice.cloudnet.v2.wrapper.server.BungeeCord;
 import eu.cloudnetservice.cloudnet.v2.wrapper.server.GameServer;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -47,7 +49,10 @@ public class ServerProcessQueue implements Runnable {
 
     @Override
     public void run() {
-
+        if (!Files.exists(Paths.get("local/spigot.jar"))) {
+            setRunning(false);
+            return;
+        }
         if (!running) {
             return;
         }
