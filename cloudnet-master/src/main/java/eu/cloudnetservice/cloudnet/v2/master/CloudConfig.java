@@ -137,7 +137,7 @@ public class CloudConfig {
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Config path " + configPath.toAbsolutePath().toString() + " could not be created", e);
         }
     }
 
