@@ -37,7 +37,7 @@ public class CommandHelp extends Command {
             for (int i = 0; i < spaces; i++) {
                 stringBuilder.append(" ");
             }
-            stringBuilder.append(" | ");
+            stringBuilder.append(" | §8");
             stringBuilder.append(CloudNet.getInstance().getCommandManager().getCommand(command).getDescription());
             messages.add(stringBuilder.toString());
 
