@@ -214,7 +214,9 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         this.consoleRegistry = new ConsoleRegistry();
         this.signalManager = new SignalManager();
         this.consoleManager = new ConsoleManager(this.consoleRegistry, this.signalManager, cloudNetLogging);
-        this.commandManager = new CommandManager(consoleManager);
+        this.commandManager = new CommandManager(consoleManager, commandManager1 -> {
+            this.consoleManager.setPrompt(String.format("%s@Master $ ", System.getProperty("user.name")));
+        });
         this.moduleManager = new CloudModuleManager();
     }
 
