@@ -41,7 +41,7 @@ public class CommandWrapper extends Command implements TabCompletable {
                     if (CloudNet.getInstance().getWrappers().containsKey(wrapperName)
                         && CloudNet.getInstance().getWrappers().get(wrapperName).getChannel() != null ) {
                         Wrapper wrapper = CloudNet.getInstance().getWrappers().get(wrapperName);
-                        sender.sendMessage(String.format("- §a%s§7(Servers: %d, Proxies: %d, Memory: %d/%dM, CPU: %f%%)",
+                        sender.sendMessage(String.format("- §a%s§7(Servers: %d, Proxies: %d, Memory: %d/%dM, CPU: %.2f%%)",
                                                          wrapperName,
                                                          wrapper.getServers().size(),
                                                          wrapper.getProxies().size(),
