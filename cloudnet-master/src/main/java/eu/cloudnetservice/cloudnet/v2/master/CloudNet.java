@@ -137,7 +137,6 @@ import eu.cloudnetservice.cloudnet.v2.master.web.api.v1.WebsiteDeployment;
 import eu.cloudnetservice.cloudnet.v2.master.web.api.v1.WebsiteDocumentation;
 import eu.cloudnetservice.cloudnet.v2.master.web.api.v1.WebsiteDownloadService;
 import eu.cloudnetservice.cloudnet.v2.master.web.api.v1.WebsiteUtils;
-import eu.cloudnetservice.cloudnet.v2.master.web.log.WebsiteLog;
 import eu.cloudnetservice.cloudnet.v2.web.client.WebClient;
 import eu.cloudnetservice.cloudnet.v2.web.server.WebServer;
 import joptsimple.OptionSet;
@@ -413,8 +412,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         webServer.getWebServerProvider().registerHandler(new WebsiteAuthorization());
         webServer.getWebServerProvider().registerHandler(new WebsiteDeployment());
         webServer.getWebServerProvider().registerHandler(new WebsiteDownloadService());
-
-        webServer.getWebServerProvider().registerHandler(new WebsiteLog());
     }
 
     private void initPacketHandlers() {
