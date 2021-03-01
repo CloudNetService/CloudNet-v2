@@ -17,31 +17,27 @@
 
 package eu.cloudnetservice.cloudnet.v2.setup.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 
 public final class StreamThread implements Runnable {
 
     private final CountDownLatch countDownLatch;
-    private final Reader reader;
+    private final BufferedReader reader;
 
     public StreamThread(CountDownLatch countDownLatch, InputStream inputStream) {
         this.countDownLatch = countDownLatch;
-        this.reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        this.reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     }
 
     @Override
     public void run() {
-        try (Reader reader = this.reader) {
-            char[] buffer = new char[1024];
-            int length = 0;
-            while ((length = reader.read(buffer)) != -1) {
-                System.out.print(String.copyValueOf(buffer, 0, length));
+        try (BufferedReader reader = this.reader) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
