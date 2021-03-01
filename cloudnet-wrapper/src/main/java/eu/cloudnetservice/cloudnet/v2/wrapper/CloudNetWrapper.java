@@ -92,7 +92,9 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         final ConsoleRegistry consoleRegistry = new ConsoleRegistry();
         final SignalManager signalManager = new SignalManager();
         this.consoleManager = new ConsoleManager(consoleRegistry, signalManager, cloudNetLogging);
-        this.commandManager = new CommandManager(consoleManager);
+        this.commandManager = new CommandManager(consoleManager, commandManager1 -> {
+            getConsoleManager().setPrompt(System.getProperty("user.name") + "@Wrapper-X $ ");
+        });
         this.optionSet = optionSet;
     }
 
@@ -228,7 +230,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 14, PacketInCopyDirectory.class);
         networkConnection.getPacketManager().registerHandler(PacketRC.CN_CORE + 15, PacketInConsoleSettings.class);
 
-        System.out.println(String.format("Trying to connect %s:%d%n",
+        System.out.println(String.format("Trying to connect %s:%d",
                           networkConnection.getConnectableAddress().getHostName(),
                           networkConnection.getConnectableAddress().getPort()));
 
