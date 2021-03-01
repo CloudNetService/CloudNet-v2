@@ -5,9 +5,6 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import org.jline.reader.ParsedLine;
 
-/**
- * Created by Tareko on 30.07.2017.
- */
 public final class CommandStop extends Command {
 
     public CommandStop() {
