@@ -116,7 +116,6 @@ public final class CommandCreate extends Command implements TabCompletable {
                                    "create SERVER <serverGroup> <count> <wrapper> | Creates a game server of a server group. <count> is not mandatory",
                                    "create PROXYGROUP <name> | Creates a completely new proxy group for BungeeCord with its own configurations, etc.",
                                    "create SERVERGROUP <name> | Creates a completely new server group for Minecraft servers with its own configurations, etc.",
-                                   "create DISPATCHCOMMAND <main-command> <command> | Creates a simple command alias",
                                    "create TEMPLATE <name> <group> LOCAL | Creates a new locale (Wrapper locales) template for a server group",
                                    "create TEMPLATE <name> <group> MASTER | Creates a new master backend (Master locales) template for a server group",
                                    "create TEMPLATE <name> <group> URL <url> | Creates a new template of a server group via url");
@@ -239,6 +238,22 @@ public final class CommandCreate extends Command implements TabCompletable {
                     for (String group : CloudNet.getInstance().getServerGroups().keySet()) {
                         candidates.add(new Candidate(group, group, null,"Crates a server based on they group",null,null, false));
                     }
+                    return candidates;
+                }
+            }
+            case 3: {
+                if (parsedLine.words().get(1).equalsIgnoreCase("template")) {
+                    for (String group : CloudNet.getInstance().getServerGroups().keySet()) {
+                        candidates.add(new Candidate(group, group, null,"A server group",null,null, false));
+                    }
+                    return candidates;
+                }
+            }
+            case 4: {
+                if (parsedLine.words().get(1).equalsIgnoreCase("template") && CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(3))) {
+                    candidates.add(new Candidate("LOCAL", "LOCAL", null,"Local Backend",null,null, false));
+                    candidates.add(new Candidate("Master", "Master", null,"Master Backend",null,null, false));
+                    candidates.add(new Candidate("URL", "URL", null,"URL Backend",null,null, false));
                     return candidates;
                 }
             }
