@@ -26,56 +26,58 @@ public final class CommandShutdown extends Command implements TabCompletable {
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         if (parsedLine.words().size() == 3) {
-            if (parsedLine.words().get(1).equalsIgnoreCase("wrapper")) {
-                if (CloudNet.getInstance().getWrappers().containsKey(parsedLine.words().get(2))) {
-                    Wrapper wrapper = CloudNet.getInstance().getWrappers().get(parsedLine.words().get(2));
+            String commandArgument = parsedLine.words().get(1);
+            String secondCommandArgument = parsedLine.words().get(2);
+            if (commandArgument.equalsIgnoreCase("wrapper")) {
+                if (CloudNet.getInstance().getWrappers().containsKey(secondCommandArgument)) {
+                    Wrapper wrapper = CloudNet.getInstance().getWrappers().get(secondCommandArgument);
                     if (wrapper.getChannel() != null) {
                         wrapper.writeCommand("stop");
                     }
-                    sender.sendMessage("Wrapper " + parsedLine.words().get(2) + " was stopped");
+                    sender.sendMessage("§aWrapper " + secondCommandArgument + " was stopped");
                 } else {
-                    sender.sendMessage("Wrapper doesn't exist");
+                    sender.sendMessage("§cWrapper doesn't exist");
                 }
                 return;
             }
-            if (parsedLine.words().get(1).equalsIgnoreCase("group")) {
-                if (CloudNet.getInstance().getServerGroups().containsKey(parsedLine.words().get(2))) {
-                    System.out.println("All servers of the server group " + parsedLine.words().get(2) + " will be stopped...");
-                    CloudNet.getInstance().getServers(parsedLine.words().get(2)).forEach(server -> {
+            if (commandArgument.equalsIgnoreCase("group")) {
+                if (CloudNet.getInstance().getServerGroups().containsKey(secondCommandArgument)) {
+                    System.out.println("§aAll servers of the server group " + secondCommandArgument + " will be stopped...");
+                    CloudNet.getInstance().getServers(secondCommandArgument).forEach(server -> {
                         server.getWrapper().stopServer(server);
                         NetworkUtils.sleepUninterruptedly(1000);
                     });
                     return;
                 }
-                if (CloudNet.getInstance().getProxyGroups().containsKey(parsedLine.words().get(2))) {
-                    System.out.println("All proxies of the proxy group " + parsedLine.words().get(2) + " will be stopped");
-                    CloudNet.getInstance().getProxys(parsedLine.words().get(2)).forEach(proxy -> {
+                if (CloudNet.getInstance().getProxyGroups().containsKey(secondCommandArgument)) {
+                    System.out.println("§aAll proxies of the proxy group " + secondCommandArgument + " will be stopped");
+                    CloudNet.getInstance().getProxys(secondCommandArgument).forEach(proxy -> {
                         proxy.getWrapper().stopProxy(proxy);
                         NetworkUtils.sleepUninterruptedly(1000);
                     });
                     return;
                 }
 
-                sender.sendMessage("Group doesn't exist");
+                sender.sendMessage("§cGroup doesn't exist");
                 return;
             }
-            if (parsedLine.words().get(1).equalsIgnoreCase("server") || parsedLine.words().get(1).equalsIgnoreCase("-s")) {
-                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(2));
+            if (commandArgument.equalsIgnoreCase("server") || commandArgument.equalsIgnoreCase("-s")) {
+                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(secondCommandArgument);
                 if (minecraftServer != null) {
                     minecraftServer.getWrapper().stopServer(minecraftServer);
-                    sender.sendMessage("Server " + parsedLine.words().get(2) + " was stopped!");
+                    sender.sendMessage("§aServer " + secondCommandArgument + " was stopped!");
                 } else {
-                    sender.sendMessage("The server doesn't exist");
+                    sender.sendMessage("§cThe server doesn't exist");
                 }
                 return;
             }
-            if (parsedLine.words().get(1).equalsIgnoreCase("proxy") || parsedLine.words().get(1).equalsIgnoreCase("-p")) {
-                ProxyServer proxyServer = CloudNet.getInstance().getProxy(parsedLine.words().get(2));
+            if (commandArgument.equalsIgnoreCase("proxy") || commandArgument.equalsIgnoreCase("-p")) {
+                ProxyServer proxyServer = CloudNet.getInstance().getProxy(secondCommandArgument);
                 if (proxyServer != null) {
                     proxyServer.getWrapper().stopProxy(proxyServer);
-                    sender.sendMessage("Proxy server " + parsedLine.words().get(2) + " was stopped!");
+                    sender.sendMessage("§aProxy server " + secondCommandArgument + " was stopped!");
                 } else {
-                    sender.sendMessage("The proxy doesn't exist");
+                    sender.sendMessage("§cThe proxy doesn't exist");
                 }
             }
         } else {
