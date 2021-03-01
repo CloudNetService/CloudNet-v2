@@ -69,7 +69,7 @@ public final class CloudNetServer extends ChannelInitializer<Channel> {
                                        CloudNet.getInstance().getCloudServers().add(this);
 
                                    } else {
-                                       System.out.println(String.format("Failed to bind @%s:%d%n",
+                                       System.out.println(String.format("Failed to bind @%s:%d",
                                                          connectableAddress.getHostName(),
                                                          connectableAddress.getPort()));
                                    }
