@@ -52,9 +52,9 @@ public class CommandUser extends Command implements TabCompletable {
                 if (commandArgument.equalsIgnoreCase("list")) {
                     sender.sendMessage("Users:");
                     for (User user : CloudNet.getInstance().getUsers()) {
-                        sender.sendMessage(" - " + user.getName() + '/' + user.getUniqueId() + ':',
-                                           "  API-Token: " + user.getApiToken(),
-                                           "  Permissions: ");
+                        sender.sendMessage(" - §e" + user.getName() + "§r/" + user.getUniqueId() + ':',
+                                           "   API-Token: §9" + user.getApiToken(),
+                                           "   Permissions: ");
                         for (String permission : user.getPermissions()) {
                             sender.sendMessage("   - " + permission);
                         }
@@ -166,7 +166,7 @@ public class CommandUser extends Command implements TabCompletable {
                         String secondCommandArgument = parsedLine.words().get(2);
                         if (secondCommandArgument.equalsIgnoreCase("add") || secondCommandArgument.equalsIgnoreCase("remove")) {
                             if (secondCommandArgument.equalsIgnoreCase("remove")) {
-                                String thirdCommandArgument = parsedLine.words().get(2);
+                                String thirdCommandArgument = parsedLine.words().get(3);
                                 User user = CloudNet.getInstance().getUser(thirdCommandArgument);
                                 if (user != null) {
                                     for (String userPermission : user.getPermissions()) {
