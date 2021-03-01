@@ -22,12 +22,26 @@ public class CommandHelp extends Command {
 
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
-        List<String> messages = new ArrayList<>(CloudNet.getInstance().getCommandManager().getCommands().size() + 9);
-
+        List<String> messages = new ArrayList<>(CloudNet.getInstance().getCommandManager().getCommands().size());
+        int maxLength = 0;
         for (String command : CloudNet.getInstance().getCommandManager().getCommands()) {
-            messages.add(command + " | " + CloudNet.getInstance().getCommandManager().getCommand(command).getDescription());
+            if (command.length() > maxLength) {
+                maxLength = command.length();
+            }
         }
 
+        for (String command : CloudNet.getInstance().getCommandManager().getCommands()) {
+            StringBuilder stringBuilder = new StringBuilder();
+            int spaces = maxLength - command.length();
+            stringBuilder.append(command);
+            for (int i = 0; i < spaces; i++) {
+                stringBuilder.append(" ");
+            }
+            stringBuilder.append(" | ");
+            stringBuilder.append(CloudNet.getInstance().getCommandManager().getCommand(command).getDescription());
+            messages.add(stringBuilder.toString());
+
+        }
         sender.sendMessage(messages.toArray(EMPTY_STRING_ARRAY));
     }
 }
