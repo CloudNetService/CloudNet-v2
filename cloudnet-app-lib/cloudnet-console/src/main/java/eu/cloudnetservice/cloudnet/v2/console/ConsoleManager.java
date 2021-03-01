@@ -7,6 +7,7 @@ import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
 import org.fusesource.jansi.AnsiOutputStream;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import org.jline.reader.impl.DefaultExpander;
 import org.jline.reader.impl.DefaultHighlighter;
 import org.jline.reader.impl.DefaultParser;
@@ -103,10 +104,15 @@ public final class ConsoleManager {
     public void startConsole() {
         while (this.running) {
             if (this.consoleInputDispatch != null) {
-                if (!this.password) {
-                    this.consoleInputDispatch.dispatch(this.lineReader.readLine(this.prompt), this.lineReader);
-                } else {
-                    this.consoleInputDispatch.dispatch(this.lineReader.readLine(this.prompt, this.passwordMask), this.lineReader);
+                try {
+                    if (!this.password) {
+                        this.consoleInputDispatch.dispatch(this.lineReader.readLine(this.prompt), this.lineReader);
+                    } else {
+                        this.consoleInputDispatch.dispatch(this.lineReader.readLine(this.prompt, this.passwordMask), this.lineReader);
+                    }
+                } catch (UserInterruptException e) {
+                    System.out.println("User interrupt detected!");
+                    System.exit(1);
                 }
             }
         }
