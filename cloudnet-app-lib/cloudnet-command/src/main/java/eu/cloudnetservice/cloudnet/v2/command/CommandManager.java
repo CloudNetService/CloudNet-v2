@@ -1,8 +1,8 @@
 package eu.cloudnetservice.cloudnet.v2.command;
 
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
-import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import org.jline.reader.Candidate;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
@@ -15,18 +15,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
  * Class that manages commands for the interfaces of CloudNet.
  */
-public final class CommandManager implements ConsoleInputDispatch {
+public final class CommandManager implements ConsoleInputDispatch, ConsoleChangeInputPromote {
 
     private final Map<String, Command> commands = new ConcurrentHashMap<>();
     private final ConsoleCommandSender consoleSender = new ConsoleCommandSender();
     private final ConsoleManager consoleManager;
     private boolean showDescription = true;
     private boolean aliases = true;
+    private final Consumer<CommandManager> defaultCommandPromote;
 
     /**
      * Constructs a new command manager with a {@link ConsoleCommandSender} and
@@ -34,8 +36,9 @@ public final class CommandManager implements ConsoleInputDispatch {
      *
      * @param consoleManager for tab completion
      */
-    public CommandManager(final ConsoleManager consoleManager) {
+    public CommandManager(ConsoleManager consoleManager, Consumer<CommandManager> defaultCommandPromote) {
         this.consoleManager = consoleManager;
+        this.defaultCommandPromote = defaultCommandPromote;
     }
 
     /**
@@ -236,5 +239,10 @@ public final class CommandManager implements ConsoleInputDispatch {
 
     public void setAliases(final boolean aliases) {
         this.aliases = aliases;
+    }
+
+    @Override
+    public void changePromote(String oldPromote) {
+        this.defaultCommandPromote.accept(this);
     }
 }
