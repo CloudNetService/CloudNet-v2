@@ -1,7 +1,4 @@
 package eu.cloudnetservice.cloudnet.v2.master.command;
-/*
- * Created by derrop on 04.06.2019
- */
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
@@ -18,7 +15,7 @@ import org.jline.reader.ParsedLine;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandUser extends Command implements TabCompletable {
+public final class CommandUser extends Command implements TabCompletable {
     public CommandUser() {
         super("user", "cloudnet.command.user");
 

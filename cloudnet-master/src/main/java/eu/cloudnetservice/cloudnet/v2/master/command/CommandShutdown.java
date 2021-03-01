@@ -2,14 +2,19 @@ package eu.cloudnetservice.cloudnet.v2.master.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
+import eu.cloudnetservice.cloudnet.v2.command.TabCompletable;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.Candidate;
 import org.jline.reader.ParsedLine;
 
-public final class CommandShutdown extends Command {
+import java.util.ArrayList;
+import java.util.List;
+
+public final class CommandShutdown extends Command implements TabCompletable {
 
     public CommandShutdown() {
         super("shutdown", "cloudnet.command.shutdown");
@@ -20,7 +25,6 @@ public final class CommandShutdown extends Command {
 
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
-
         if (parsedLine.words().size() == 3) {
             if (parsedLine.words().get(1).equalsIgnoreCase("wrapper")) {
                 if (CloudNet.getInstance().getWrappers().containsKey(parsedLine.words().get(2))) {
@@ -82,5 +86,46 @@ public final class CommandShutdown extends Command {
                                "shutdown SERVER <server-id> | Stops a Minecraft server service and after preconfiguring the group, a new one is started",
                                NetworkUtils.SPACE_STRING);
         }
+    }
+
+    @Override
+    public List<Candidate> onTab(ParsedLine parsedLine) {
+        List<Candidate> strings = new ArrayList<>();
+        if (parsedLine.words().size() == 1) {
+            if (parsedLine.words().get(0).equalsIgnoreCase("shutdown")) {
+                strings.add(new Candidate("WRAPPER", "WRAPPER", null, "Shutdown a wrapper", null, null, true));
+                strings.add(new Candidate("GROUP", "GROUP", null, "Shutdown a group", null, null, true));
+                strings.add(new Candidate("PROXY", "PROXY", null, "Shutdown a proxy", null, null, true));
+                strings.add(new Candidate("SERVER", "SERVER", null, "Shutdown a SERVER", null, null, true));
+            }
+        }
+        if (parsedLine.words().size() == 2) {
+            if (parsedLine.words().get(0).equalsIgnoreCase("shutdown")) {
+                if (parsedLine.words().get(1).equalsIgnoreCase("wrapper")) {
+                    for (String wrapperId : CloudNet.getInstance().getWrappers().keySet()) {
+                        strings.add(new Candidate(wrapperId, wrapperId, null, "Shutdown a wrapper", null, null, true));
+                    }
+                }
+                if (parsedLine.words().get(1).equalsIgnoreCase("GROUP")) {
+                    for (String serverGroup : CloudNet.getInstance().getServerGroups().keySet()) {
+                        strings.add(new Candidate(serverGroup, serverGroup, "ServerGroups", "Shutdown a group", null, null, true));
+                    }
+                    for (String proxyGroup : CloudNet.getInstance().getProxyGroups().keySet()) {
+                        strings.add(new Candidate(proxyGroup, proxyGroup, "ProxyGroups", "Shutdown a group", null, null, true));
+                    }
+                }
+                if (parsedLine.words().get(1).equalsIgnoreCase("PROXY")) {
+                    for (String proxyId : CloudNet.getInstance().getProxys().keySet()) {
+                        strings.add(new Candidate(proxyId, proxyId, null, "Shutdown a proxy", null, null, true));
+                    }
+                }
+                if (parsedLine.words().get(1).equalsIgnoreCase("SERVER")) {
+                    for (String serverId : CloudNet.getInstance().getServers().keySet()) {
+                        strings.add(new Candidate(serverId, serverId, null, "Shutdown a server", null, null, true));
+                    }
+                }
+            }
+        }
+        return strings;
     }
 }
