@@ -52,7 +52,6 @@ import eu.cloudnetservice.cloudnet.v2.master.command.CommandDebug;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandDelete;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandHelp;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandInfo;
-import eu.cloudnetservice.cloudnet.v2.master.command.CommandInstallPlugin;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandList;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandLog;
 import eu.cloudnetservice.cloudnet.v2.master.command.CommandModules;
@@ -247,7 +246,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         }
 
         for (WrapperMeta wrapperMeta : config.getWrappers()) {
-            System.out.println("Loading Wrapper " + wrapperMeta.getId() + " @ " + wrapperMeta.getHostName());
+            System.out.println("Loading Wrapper " + wrapperMeta.getId() + "@" + wrapperMeta.getHostName());
             this.wrappers.put(wrapperMeta.getId(), new Wrapper(wrapperMeta));
         }
 
@@ -393,7 +392,6 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
                            .registerCommand(new CommandCmd())
                            .registerCommand(new CommandStatistic())
                            .registerCommand(new CommandDelete())
-                           .registerCommand(new CommandInstallPlugin())
                            .registerCommand(new CommandCopy())
                            .registerCommand(new CommandLog())
                            .registerCommand(new CommandCreate())
