@@ -2,21 +2,22 @@ package eu.cloudnetservice.cloudnet.v2.master.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
+import eu.cloudnetservice.cloudnet.v2.command.TabCompletable;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerGroup;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.Candidate;
 import org.jline.reader.ParsedLine;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by Tareko on 19.01.2018.
- */
-public final class CommandInfo extends Command {
+public final class CommandInfo extends Command implements TabCompletable {
 
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -130,5 +131,37 @@ public final class CommandInfo extends Command {
                                "info WRAPPER <wrapper-id> | show all wrapper properties and stats",
                                "info SG <serverGroup> | show all properties which you set in the group");
         }
+    }
+
+    @Override
+    public List<Candidate> onTab(ParsedLine parsedLine) {
+        List<Candidate> candidates = new ArrayList<>();
+        if (parsedLine.words().size() == 1 && parsedLine.words().get(0).equalsIgnoreCase("info")) {
+            candidates.add(new Candidate("server", "Server", null, "show all server informations about one Minecraft server", null,null, true));
+            candidates.add(new Candidate("proxy", "Proxy", null, "show all proxy stats from a current BungeeCord", null,null, true));
+            candidates.add(new Candidate("wrapper", "Wrapper", null, "show all wrapper properties and stats", null,null, true));
+            candidates.add(new Candidate("sg", "Server Group", null, "show all properties which you set in the group", null,null, true));
+        }
+        if (parsedLine.words().size() == 2 && parsedLine.words().get(1).equalsIgnoreCase("SERVER")) {
+            for (MinecraftServer server : CloudNet.getInstance().getServers().values()) {
+                candidates.add(new Candidate(server.getName(), server.getName(), server.getGroup().getName(), "A server", null, null,true));
+            }
+        }
+        if (parsedLine.words().size() == 2 && parsedLine.words().get(1).equalsIgnoreCase("proxy")) {
+            for (ProxyServer server : CloudNet.getInstance().getProxys().values()) {
+                candidates.add(new Candidate(server.getName(), server.getName(), server.getProcessMeta().getProxyGroupName(), "A server", null, null,true));
+            }
+        }
+        if (parsedLine.words().size() == 2 && parsedLine.words().get(1).equalsIgnoreCase("wrapper")) {
+            for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
+                candidates.add(new Candidate(wrapper.getName(), wrapper.getName(), null, "A wrapper", null, null,true));
+            }
+        }
+        if (parsedLine.words().size() == 2 && parsedLine.words().get(1).equalsIgnoreCase("sg")) {
+            for (String group : CloudNet.getInstance().getServerGroups().keySet()) {
+                candidates.add(new Candidate(group, group, null, "A server group", null, null,true));
+            }
+        }
+        return candidates;
     }
 }
