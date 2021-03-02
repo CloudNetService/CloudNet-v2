@@ -62,4 +62,13 @@ public abstract class Command implements CommandExecutor, Nameable {
     public String[] getAliases() {
         return aliases;
     }
+
+    protected boolean containsAlias(String command) {
+        for (String alias : aliases) {
+            if (command.equalsIgnoreCase(alias)) {
+                return true;
+            }
+        }
+        return true;
+    }
 }
