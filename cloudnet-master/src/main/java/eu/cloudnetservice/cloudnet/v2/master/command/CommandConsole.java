@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class CommandConsole extends Command implements TabCompletable {
 
     public CommandConsole() {
-        super("console", "cloudnet.command.master.console", "c");
+        super("console", "cloudnet.command.master.console");
         description = "Allows to customize some console options";
     }
 
@@ -135,99 +135,90 @@ public class CommandConsole extends Command implements TabCompletable {
     public List<Candidate> onTab(final ParsedLine parsedLine) {
         List<Candidate> candidates = new ArrayList<>();
 
-        if (parsedLine.words().size() >= 1 && (parsedLine.words().get(0).equalsIgnoreCase("c") || parsedLine.words()
-                                                                                                            .get(0)
-                                                                                                            .equalsIgnoreCase("console"))) {
-            if (parsedLine.words().size() >= 2 && (parsedLine.words().get(1).equalsIgnoreCase("showdescription") || parsedLine.words()
-                                                                                                                              .get(1)
-                                                                                                                              .equalsIgnoreCase(
-                                                                                                                                  "showmenu") || parsedLine
-                .words()
-                .get(1)
-                .equalsIgnoreCase("showgroup") || parsedLine.words().get(1).equalsIgnoreCase("autolist") || parsedLine.words()
-                                                                                                                      .get(1)
-                                                                                                                      .equalsIgnoreCase(
-                                                                                                                          "elof") || parsedLine
-                .words()
-                .get(1)
-                .equalsIgnoreCase(
-                    "aliases"))) {
-                candidates.add(new Candidate("true", "§9True", "Value", "Enable option", null, null, true));
-                candidates.add(new Candidate("false", "§9False", "Value", "Disable option", null, null, true));
-                return candidates;
+        if (parsedLine.words().size() == 1 && containsAlias(parsedLine.words().get(0)) || name.equalsIgnoreCase(parsedLine.words().get(0))) {
+            if (parsedLine.words().size() >= 2) {
+                switch (parsedLine.words().get(1).toLowerCase()) {
+                    case"showdescription":
+                    case"showmenu":
+                    case"showgroup":
+                    case"autolist":
+                    case"elof":
+                        candidates.add(new Candidate("true", "§9True", "Value", "Enable option", null, null, true));
+                        candidates.add(new Candidate("false", "§9False", "Value", "Disable option", null, null, true));
+                    break;
+                    case "groupcolor":
+                    case "color":
+                        candidates.addAll(Arrays.stream(ChatColor.values())
+                                                .map(chatColor -> new Candidate(chatColor.toString(),
+                                                                                chatColor.toString() + chatColor.getName(),
+                                                                                "Color",
+                                                                                "Color to choose",
+                                                                                null,
+                                                                                null,
+                                                                                true))
+                                                .collect(
+                                                    Collectors.toList()));
+                        break;
+                }
+            } else {
+                candidates.add(new Candidate("showdescription",
+                                             "§aShow description",
+                                             "Option",
+                                             "Allows to disable or enable description for tab completion",
+                                             null,
+                                             null,
+                                             true));
+                candidates.add(new Candidate("showmenu",
+                                             "§aShow menu",
+                                             "Option",
+                                             "Allows to disable or enable a selection menu for tab completion",
+                                             null,
+                                             null,
+                                             true));
+                candidates.add(new Candidate("showgroup",
+                                             "§aShow group",
+                                             "Option",
+                                             "Allows to disable or enable grouping for tab completion",
+                                             null,
+                                             null,
+                                             true));
+                candidates.add(new Candidate("autolist",
+                                             "§aAutolist",
+                                             "Option",
+                                             "Allows to disable or enable auto list for tab completion",
+                                             null,
+                                             null,
+                                             true));
+                candidates.add(new Candidate("elof",
+                                             "§aErasing line on finish",
+                                             "Option",
+                                             "Allows to disable or enable erasing line on finish",
+                                             null,
+                                             null,
+                                             true));
+                candidates.add(new Candidate("color",
+                                             "§aColor",
+                                             "Option",
+                                             "Allows to change the color of the default tab completion",
+                                             null,
+                                             null,
+                                             true));
+                candidates.add(new Candidate("groupcolor",
+                                             "§aGroup color",
+                                             "Option",
+                                             "Allows to change the grouping color of the default tab completion",
+                                             null,
+                                             null,
+                                             true));
+                candidates.add(new Candidate("aliases",
+                                             "§aAliases",
+                                             "Option",
+                                             "Allows to disable or enable aliases tab completion",
+                                             null,
+                                             null,
+                                             true));
             }
-            if (parsedLine.words().size() >= 2 && (parsedLine.words().get(1).equalsIgnoreCase("groupcolor") || parsedLine.words()
-                                                                                                                         .get(1)
-                                                                                                                         .equalsIgnoreCase(
-                                                                                                                             "color"))) {
-                candidates.addAll(Arrays.stream(ChatColor.values())
-                                        .map(chatColor -> new Candidate(chatColor.toString(),
-                                                                        chatColor.toString() + chatColor.getName(),
-                                                                        "Color",
-                                                                        "Color to choose",
-                                                                        null,
-                                                                        null,
-                                                                        true))
-                                        .collect(
-                                            Collectors.toList()));
-                return candidates;
-            }
-            candidates.add(new Candidate("showdescription",
-                                         "§aShow description",
-                                         "Option",
-                                         "Allows to disable or enable description for tab completion",
-                                         null,
-                                         null,
-                                         true));
-            candidates.add(new Candidate("showmenu",
-                                         "§aShow menu",
-                                         "Option",
-                                         "Allows to disable or enable a selection menu for tab completion",
-                                         null,
-                                         null,
-                                         true));
-            candidates.add(new Candidate("showgroup",
-                                         "§aShow group",
-                                         "Option",
-                                         "Allows to disable or enable grouping for tab completion",
-                                         null,
-                                         null,
-                                         true));
-            candidates.add(new Candidate("autolist",
-                                         "§aAutolist",
-                                         "Option",
-                                         "Allows to disable or enable auto list for tab completion",
-                                         null,
-                                         null,
-                                         true));
-            candidates.add(new Candidate("elof",
-                                         "§aErasing line on finish",
-                                         "Option",
-                                         "Allows to disable or enable erasing line on finish",
-                                         null,
-                                         null,
-                                         true));
-            candidates.add(new Candidate("color",
-                                         "§aColor",
-                                         "Option",
-                                         "Allows to change the color of the default tab completion",
-                                         null,
-                                         null,
-                                         true));
-            candidates.add(new Candidate("groupcolor",
-                                         "§aGroup color",
-                                         "Option",
-                                         "Allows to change the grouping color of the default tab completion",
-                                         null,
-                                         null,
-                                         true));
-            candidates.add(new Candidate("aliases",
-                                         "§aAliases",
-                                         "Option",
-                                         "Allows to disable or enable aliases tab completion",
-                                         null,
-                                         null,
-                                         true));
+
             return candidates;
         }
 
