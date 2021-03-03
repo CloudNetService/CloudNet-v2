@@ -35,7 +35,7 @@ public final class ChangePasswordSetup extends Setup {
                                  "What should be the password?",
                                  "",
                                  StringResponseType.getInstance(),
-                                 username -> true));
+                                 password -> true));
         request(new SetupRequest("passwordrepeat",
                                  "Repeat the password?",
                                  "",
