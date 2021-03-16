@@ -57,8 +57,8 @@
         <!-- Dependencies -->
         <dependency.netty.version>4.1.51.Final</dependency.netty.version>
         <dependency.nitrite.version>3.4.2</dependency.nitrite.version>
-        <dependency.jline3.version>3.16.0</dependency.jline3.version>
-        <dependency.ansi.version>1.18</dependency.ansi.version>
+        <dependency.jline3.version>3.19.0</dependency.jline3.version>
+        <dependency.ansi.version>2.3.1</dependency.ansi.version>
         <!-- Should be kept in sync with minecraft -->
         <dependency.gson.version>2.8.6</dependency.gson.version>
         <dependency.jopt-simple.version>5.0.4</dependency.jopt-simple.version>

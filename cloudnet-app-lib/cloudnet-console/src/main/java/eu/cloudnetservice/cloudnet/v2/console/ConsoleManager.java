@@ -4,7 +4,7 @@ import eu.cloudnetservice.cloudnet.v2.console.completer.CloudNetCompleter;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
-import org.fusesource.jansi.AnsiOutputStream;
+import org.fusesource.jansi.AnsiConsole;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
@@ -44,12 +44,10 @@ public final class ConsoleManager {
 
 
     public void useDefaultConsole() {
-        //Attributes attributes = new Attributes();
-        //AnsiConsole.systemInstall();
         Terminal terminal = null;
         try {
             terminal = TerminalBuilder.builder()
-                                           .streams(System.in, new PrintStream(new AnsiOutputStream(System.out), true, "UTF-8"))
+                                           .streams(System.in, AnsiConsole.out())
                                            .jansi(true)
                                            .jna(true)
                                            .encoding(StandardCharsets.UTF_8)
