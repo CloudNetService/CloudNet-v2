@@ -48,14 +48,15 @@ public class AnsiColorReplacer {
 
 
     public static String replaceAnsi(String string) {
-        if (string == null) {
+        String input = string;
+        if (input == null) {
             return null;
         }
         for (ReplacementSpecification replacement : REPLACEMENTS) {
-            string = replacement.pattern.matcher(string).replaceAll(replacement.replacement);
+            input = replacement.pattern.matcher(input).replaceAll(replacement.replacement);
         }
-        string = string + Ansi.ansi().a(Ansi.Attribute.RESET).toString();
-        return string;
+        input = input + Ansi.ansi().a(Ansi.Attribute.RESET).toString();
+        return input;
     }
     public static String replaceAnsiWithoutReset(String string) {
         if (string == null) {
