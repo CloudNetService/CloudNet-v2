@@ -124,7 +124,6 @@ public final class CommandManager implements ConsoleInputDispatch, ConsoleChange
         String[] a = command.split(" ");
         if (this.commands.containsKey(a[0].toLowerCase())) {
             ParsedLine parse = this.consoleManager.getLineReader().getParser().parse(command, 0, Parser.ParseContext.SPLIT_LINE);
-            System.out.println(parse.words().size());
             this.commands.get(a[0].toLowerCase()).onExecuteCommand(sender, parse);
             return true;
         } else {
@@ -193,10 +192,8 @@ public final class CommandManager implements ConsoleInputDispatch, ConsoleChange
                                 candidate.value(), candidate.displ(), candidate.group(), this.showDescription ? candidate.descr() : null,
                                 candidate.suffix(), candidate.key(), candidate.complete())).collect(Collectors.toList());
                             for (Candidate argument : onTab) {
-                                if (argument != null) {
-                                    if (argument.value().toLowerCase().startsWith(lastWord.toLowerCase())) {
-                                        strings.add(argument);
-                                    }
+                                if (argument != null && argument.value().toLowerCase().startsWith(lastWord.toLowerCase())) {
+                                    strings.add(argument);
                                 }
                             }
                         } else {
