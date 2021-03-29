@@ -26,9 +26,8 @@ public class GetBukkitVersion {
 
             InputStream input = connection.getInputStream();
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
-                while (true) {
-                    String line = reader.readLine();
-                    if (line == null) break;
+                String line;
+                while ((line = reader.readLine()) != null) {
                     if (!line.contains("href=\"https://cdn.getbukkit.org/spigot")) continue;
 
                     int linkStart = line.indexOf("\"");

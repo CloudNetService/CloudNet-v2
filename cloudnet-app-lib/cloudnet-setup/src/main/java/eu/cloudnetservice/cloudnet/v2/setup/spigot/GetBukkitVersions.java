@@ -36,10 +36,8 @@ public class GetBukkitVersions {
                 boolean exitAfter = false; //Is true when minimum version is reached
                 short searchFor = 0; //0 -> "Version" Text; 1 -> Actual Version; 2 -> Download Link
 
-                while (true) {
-                    String line = reader.readLine();
-                    if (line == null) break;
-
+                String line;
+                while ((line = reader.readLine()) != null) {
                     if (line.contains("Version")) {
                         searchFor = 1;
                         continue;
