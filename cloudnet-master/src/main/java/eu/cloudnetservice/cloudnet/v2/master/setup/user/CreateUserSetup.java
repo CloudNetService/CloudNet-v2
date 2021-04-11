@@ -31,7 +31,7 @@ public final class CreateUserSetup extends Setup {
                                  "What should the username be?",
                                  "§aThis user is already registerd!",
                                  StringResponseType.getInstance(),
-                                 username -> true));
+                                 username -> CloudNet.getInstance().getUser(username) != null));
         request(new SetupRequest("password",
                                  "What should be the password?",
                                  "",
