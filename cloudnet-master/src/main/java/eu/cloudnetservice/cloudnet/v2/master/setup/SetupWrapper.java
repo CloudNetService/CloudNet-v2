@@ -19,6 +19,7 @@ package eu.cloudnetservice.cloudnet.v2.master.setup;
 
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
+import eu.cloudnetservice.cloudnet.v2.lib.utility.Constants;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.cloudnet.v2.setup.Setup;
@@ -76,7 +77,9 @@ public class SetupWrapper extends Setup {
                                       "What is the IP address of this wrapper?",
                                       "The specified IP address is invalid!",
                                       StringResponseType.getInstance(),
-                                      key -> key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1")))
+                                      key -> Constants.IPV4_PATTERN.matcher(key).matches()
+                                          || Constants.IPV6_STD_PATTERN.matcher(key).matches()
+                                          || Constants.IPV6_HEX_COMPRESSED_PATTERN.matcher(key).matches()))
             .request(new SetupRequest("user",
                                       "What is the user of the wrapper?",
                                       "The specified user does not exist!",

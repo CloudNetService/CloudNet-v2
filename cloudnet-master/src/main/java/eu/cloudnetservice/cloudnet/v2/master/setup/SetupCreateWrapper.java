@@ -3,6 +3,7 @@ package eu.cloudnetservice.cloudnet.v2.master.setup;
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.ConnectableAddress;
+import eu.cloudnetservice.cloudnet.v2.lib.utility.Constants;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.WrapperMeta;
 import eu.cloudnetservice.cloudnet.v2.setup.Setup;
@@ -14,6 +15,7 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
+import java.io.Console;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
@@ -27,12 +29,6 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class SetupCreateWrapper extends Setup {
-
-    private static final Pattern IPV4_PATTERN = Pattern.compile("(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
-
-    private static final Pattern IPV6_STD_PATTERN = Pattern.compile("^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
-
-    private static final Pattern IPV6_HEX_COMPRESSED_PATTERN = Pattern.compile("^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$");
 
 
     public SetupCreateWrapper(CommandSender sender) {
@@ -118,9 +114,9 @@ public class SetupCreateWrapper extends Setup {
                                       "What is the listing address of the wrapper for proxies and servers?",
                                       "The specified IP address is invalid!",
                                       StringResponseType.getInstance(),
-                                      key -> IPV4_PATTERN.matcher(key).matches()
-                                          || IPV6_STD_PATTERN.matcher(key).matches()
-                                          || IPV6_HEX_COMPRESSED_PATTERN.matcher(key).matches()))
+                                      key -> Constants.IPV4_PATTERN.matcher(key).matches()
+                                          || Constants.IPV6_STD_PATTERN.matcher(key).matches()
+                                          || Constants.IPV6_HEX_COMPRESSED_PATTERN.matcher(key).matches()))
             .request(new SetupRequest("user",
                                       "What is the user of the wrapper?",
                                       "The specified user does not exist!",
