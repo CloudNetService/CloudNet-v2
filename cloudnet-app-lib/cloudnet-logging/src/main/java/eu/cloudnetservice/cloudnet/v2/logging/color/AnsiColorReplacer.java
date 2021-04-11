@@ -2,6 +2,8 @@ package eu.cloudnetservice.cloudnet.v2.logging.color;
 
 import org.fusesource.jansi.Ansi;
 
+import java.awt.Color;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AnsiColorReplacer {
@@ -43,9 +45,11 @@ public class AnsiColorReplacer {
             compile(ChatColor.STRIKETHROUGH, Ansi.ansi().a(Ansi.Attribute.STRIKETHROUGH_ON).toString()),
             compile(ChatColor.UNDERLINE, Ansi.ansi().a(Ansi.Attribute.UNDERLINE).toString()),
             compile(ChatColor.ITALIC, Ansi.ansi().a(Ansi.Attribute.ITALIC).toString()),
-            compile(ChatColor.RESET, Ansi.ansi().a(Ansi.Attribute.RESET).toString()),
+            compile(ChatColor.RESET, Ansi.ansi().fgRgb(ChatColor.RESET.getColor().getRGB()).toString()),
         };
 
+    private static final Pattern HEX_REPLACE = Pattern.compile("§#[a-fA-F\\d]{6}");
+    private static final Pattern BG_HEX_REPLACE = Pattern.compile("B#[a-fA-F\\d]{6}");
 
     public static String replaceAnsi(String string) {
         String input = string;
@@ -54,6 +58,14 @@ public class AnsiColorReplacer {
         }
         for (ReplacementSpecification replacement : REPLACEMENTS) {
             input = replacement.pattern.matcher(input).replaceAll(replacement.replacement);
+        }
+        Matcher matcher = BG_HEX_REPLACE.matcher(input);
+        while (matcher.find()) {
+            input = input.replace(matcher.group(), Ansi.ansi().bgRgb(Integer.parseInt(matcher.group().substring(2), 16)).toString());
+        }
+        matcher = HEX_REPLACE.matcher(input);
+        while (matcher.find()) {
+            input = input.replace(matcher.group(), Ansi.ansi().fgRgb(Integer.parseInt(matcher.group().substring(2), 16)).toString());
         }
         input = input + Ansi.ansi().a(Ansi.Attribute.RESET).toString();
         return input;
@@ -64,6 +76,14 @@ public class AnsiColorReplacer {
         }
         for (ReplacementSpecification replacement : REPLACEMENTS) {
             string = replacement.pattern.matcher(string).replaceAll(replacement.replacement);
+        }
+        Matcher matcher = BG_HEX_REPLACE.matcher(string);
+        while (matcher.find()) {
+            string = string.replace(matcher.group(), Ansi.ansi().bgRgb(Integer.parseInt(matcher.group().substring(2), 16)).toString());
+        }
+        matcher = HEX_REPLACE.matcher(string);
+        while (matcher.find()) {
+            string = string.replace(matcher.group(), Ansi.ansi().fgRgb(Integer.parseInt(matcher.group().substring(2), 16)).toString());
         }
         return string;
     }
