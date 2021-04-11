@@ -15,8 +15,8 @@ import org.jline.reader.impl.completer.ArgumentCompleter;
 import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -53,7 +53,6 @@ public final class ConsoleManager {
                                            .encoding(StandardCharsets.UTF_8)
                                            .name(
                                                "CloudNet-Terminal")
-                                           //.attributes(attributes)
                                            .system(true)
                                            .dumb(true)
                                            .signalHandler(this.signalManager)
@@ -84,7 +83,7 @@ public final class ConsoleManager {
             lineReader.setAutosuggestion(LineReader.SuggestionType.COMPLETER);
         } else {
             System.exit(-1);
-            throw new NullPointerException("Console input dispatcher is empty");
+            throw new IllegalStateException("Console input dispatcher is empty");
         }
     }
 
