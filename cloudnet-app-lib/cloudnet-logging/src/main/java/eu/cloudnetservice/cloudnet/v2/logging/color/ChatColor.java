@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Based on https://github.com/SpigotMC/BungeeCord/blob/master/chat/src/main/java/net/md_5/bungee/api/ChatColor.java
+ */
 public enum ChatColor {
     BLACK('0', "black"),
     DARK_BLUE('1', "dark_blue"),
