@@ -15,7 +15,6 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
-import java.io.Console;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
@@ -23,10 +22,7 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
 
 public class SetupCreateWrapper extends Setup {
 
@@ -54,25 +50,19 @@ public class SetupCreateWrapper extends Setup {
                     CloudNet.getInstance().getConfig().createWrapper(wrapperMeta);
                     sender.sendMessage(String.format("Wrapper [%s] was registered on CloudNet",
                                                      wrapperMeta.getId()));
-                    Configuration configuration = new Configuration();
+                    Configuration configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(getClass().getResourceAsStream(
+                        "files/example-wrapper-config.yml"));
+
                     configuration.set("connection.cloudnet-host",
                                       CloudNet.getInstance()
                                               .getConfig()
                                               .getAddresses()
                                               .toArray(new ConnectableAddress[0])[0].getHostName());
-                    configuration.set("connection.cloudnet-port", 1410);
-                    configuration.set("connection.cloudnet-web", 1420);
                     configuration.set("general.wrapperId", wrapperId);
                     configuration.set("general.internalIp", host);
                     configuration.set("general.proxy-config-host", host);
                     configuration.set("general.max-memory", memory);
-                    configuration.set("general.startPort", 41570);
-                    configuration.set("general.auto-update", false);
-                    configuration.set("general.saving-records", false);
-                    configuration.set("general.maintenance-copyFileToDirectory", false);
                     configuration.set("general.processQueueSize", queue);
-                    configuration.set("general.percentOfCPUForANewServer", 100D);
-                    configuration.set("general.percentOfCPUForANewProxy", 100D);
                     try {
                         Files.createDirectories(Paths.get("local", "wrapper", wrapperId));
                         Files.copy(Paths.get("WRAPPER_KEY.cnd"), Paths.get("local", "wrapper", wrapperId, "WRAPPER_KEY.cnd"));
