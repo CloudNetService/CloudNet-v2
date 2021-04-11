@@ -271,12 +271,6 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
                 () -> networkConnection.sendPacket(new PacketOutUpdateCPUUsage(NetworkUtils.cpuUsage())), 0, 5, TimeUnit.SECONDS);
         }
 
-        /*cloudNetLogging.getHandler().add(input -> {
-            if (networkConnection.isConnected()) {
-                networkConnection.sendPacket(new PacketOutWrapperScreen(input));
-            }
-        });*/
-
         RUNNING = true;
 
         return true;
