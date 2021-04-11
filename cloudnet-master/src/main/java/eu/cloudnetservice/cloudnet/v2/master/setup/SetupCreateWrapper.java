@@ -108,8 +108,8 @@ public class SetupCreateWrapper extends Setup {
                                   key ->  Integer.parseInt(key) > 1024))
             .request(new SetupRequest("queue",
                                   "How large should the server queue be?",
-                                  "Not allowed under 2",
+                                  "No negative numbers or zero allowed",
                                   IntegerResponseType.getInstance(),
-                                  key ->  Integer.parseInt(key) <= 2));
+                                  key ->  Integer.parseInt(key) <= 0));
     }
 }
