@@ -2,7 +2,6 @@ package eu.cloudnetservice.cloudnet.v2.logging.color;
 
 import org.fusesource.jansi.Ansi;
 
-import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
