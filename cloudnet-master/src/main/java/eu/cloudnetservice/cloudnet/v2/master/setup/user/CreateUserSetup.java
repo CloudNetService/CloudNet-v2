@@ -41,7 +41,7 @@ public final class CreateUserSetup extends Setup {
                                  "Repeat the password?",
                                  "",
                                  StringResponseType.getInstance(),
-                                 username -> true));
+                                 password  -> true));
     }
 
 
