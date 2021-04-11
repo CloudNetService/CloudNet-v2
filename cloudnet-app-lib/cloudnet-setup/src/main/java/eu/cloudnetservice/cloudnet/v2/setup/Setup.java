@@ -3,7 +3,6 @@ package eu.cloudnetservice.cloudnet.v2.setup;
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
-import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
 import org.jline.reader.Candidate;
 import org.jline.reader.LineReader;

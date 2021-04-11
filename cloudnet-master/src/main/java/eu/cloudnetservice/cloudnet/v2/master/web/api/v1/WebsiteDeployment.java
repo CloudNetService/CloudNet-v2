@@ -24,17 +24,9 @@ import eu.cloudnetservice.cloudnet.v2.web.server.handler.MethodWebHandlerAdapter
 import eu.cloudnetservice.cloudnet.v2.web.server.util.PathProvider;
 import eu.cloudnetservice.cloudnet.v2.web.server.util.QueryDecoder;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;

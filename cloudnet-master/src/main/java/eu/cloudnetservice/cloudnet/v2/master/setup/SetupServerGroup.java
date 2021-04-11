@@ -32,11 +32,7 @@ import eu.cloudnetservice.cloudnet.v2.setup.SetupRequest;
 import eu.cloudnetservice.cloudnet.v2.setup.responsetype.IntegerResponseType;
 import eu.cloudnetservice.cloudnet.v2.setup.responsetype.StringResponseType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
