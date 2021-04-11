@@ -19,9 +19,6 @@ package eu.cloudnetservice.cloudnet.v2.command;
 
 import eu.cloudnetservice.cloudnet.v2.lib.interfaces.Nameable;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 /**
  * Abstract class to define a command with an executor and a name
  */

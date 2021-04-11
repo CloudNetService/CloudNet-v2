@@ -2,8 +2,8 @@ package eu.cloudnetservice.cloudnet.v2.wrapper.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
-import eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot.SetupSpigotVersion;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
+import eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot.SetupSpigotVersion;
 import org.jline.reader.ParsedLine;
 
 public class CommandSetup extends Command {

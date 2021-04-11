@@ -8,7 +8,6 @@ import eu.cloudnetservice.cloudnet.v2.lib.server.template.Template;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
-import org.checkerframework.checker.units.qual.C;
 import org.jline.reader.Candidate;
 import org.jline.reader.ParsedLine;
 
