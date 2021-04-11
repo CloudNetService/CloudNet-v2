@@ -45,7 +45,7 @@ public class AnsiColorReplacer {
             compile(ChatColor.STRIKETHROUGH, Ansi.ansi().a(Ansi.Attribute.STRIKETHROUGH_ON).toString()),
             compile(ChatColor.UNDERLINE, Ansi.ansi().a(Ansi.Attribute.UNDERLINE).toString()),
             compile(ChatColor.ITALIC, Ansi.ansi().a(Ansi.Attribute.ITALIC).toString()),
-            compile(ChatColor.RESET, Ansi.ansi().fgRgb(ChatColor.RESET.getColor().getRGB()).toString()),
+            compile(ChatColor.RESET, Ansi.ansi().a(Ansi.Attribute.RESET).toString()),
         };
 
     private static final Pattern HEX_REPLACE = Pattern.compile("§#[a-fA-F\\d]{6}");
@@ -60,12 +60,15 @@ public class AnsiColorReplacer {
             input = replacement.pattern.matcher(input).replaceAll(replacement.replacement);
         }
         Matcher matcher = BG_HEX_REPLACE.matcher(input);
+
         while (matcher.find()) {
-            input = input.replace(matcher.group(), Ansi.ansi().bgRgb(Integer.parseInt(matcher.group().substring(2), 16)).toString());
+            String group = matcher.group();
+            input = input.replace(group, Ansi.ansi().bgRgb(Integer.parseInt(group.substring(2), 16)).toString());
         }
         matcher = HEX_REPLACE.matcher(input);
         while (matcher.find()) {
-            input = input.replace(matcher.group(), Ansi.ansi().fgRgb(Integer.parseInt(matcher.group().substring(2), 16)).toString());
+            String group = matcher.group();
+            input = input.replace(group, Ansi.ansi().fgRgb(Integer.parseInt(group.substring(2), 16)).toString());
         }
         input = input + Ansi.ansi().a(Ansi.Attribute.RESET).toString();
         return input;
