@@ -103,9 +103,9 @@ public class SetupCreateWrapper extends Setup {
                                       key -> CloudNet.getInstance().getUser(key) != null))
             .request(new SetupRequest("memory",
                                       "How many memory is allowed to use for the wrapper services?",
-                                      "Not allowed under 1Gb",
+                                      "No negative numbers or zero allowed",
                                       IntegerResponseType.getInstance(),
-                                  key ->  Integer.parseInt(key) > 1024))
+                                  key ->  Integer.parseInt(key) <= 0))
             .request(new SetupRequest("queue",
                                   "How large should the server queue be?",
                                   "No negative numbers or zero allowed",
