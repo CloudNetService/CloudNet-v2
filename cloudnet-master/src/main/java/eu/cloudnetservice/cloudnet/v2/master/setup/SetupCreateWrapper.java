@@ -68,8 +68,7 @@ public class SetupCreateWrapper extends Setup {
                         Files.copy(Paths.get("WRAPPER_KEY.cnd"), Paths.get("local", "wrapper", wrapperId, "WRAPPER_KEY.cnd"));
                     } catch (IOException e) {
                         throw new RuntimeException("Wrapper Key path " + Paths.get("local", "wrapper", wrapperId, "WRAPPER_KEY.cnd")
-                                                                              .toAbsolutePath()
-                                                                              .toString() + " could not be created", e);
+                                                                              .toAbsolutePath() + " could not be created", e);
                     }
                     try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(Paths.get("local",
                                                                                                                         "wrapper",
@@ -80,8 +79,7 @@ public class SetupCreateWrapper extends Setup {
                         ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
                     } catch (IOException e) {
                         throw new RuntimeException("Wrapper config path " + Paths.get("local", "wrapper", wrapperId, "config.yml")
-                                                                                 .toAbsolutePath()
-                                                                                 .toString() + " could not be saved", e);
+                                                                                 .toAbsolutePath() + " could not be saved", e);
                     }
                     sender.sendMessage(String.format("Wrapper [%s] config is generated under -> %s",
                                                      wrapperMeta.getId(), "local/wrapper/" + wrapperId));

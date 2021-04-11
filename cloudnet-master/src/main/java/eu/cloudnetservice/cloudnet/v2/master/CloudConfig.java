@@ -103,7 +103,7 @@ public class CloudConfig {
             try {
                 Files.createDirectories(path);
             } catch (IOException e) {
-                throw new RuntimeException("Folder path " + path.toAbsolutePath().toString() + " could not be created", e);
+                throw new RuntimeException("Folder path " + path.toAbsolutePath() + " could not be created", e);
             }
         }
 

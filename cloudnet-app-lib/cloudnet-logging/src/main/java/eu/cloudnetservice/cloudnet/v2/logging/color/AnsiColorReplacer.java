@@ -48,8 +48,8 @@ public class AnsiColorReplacer {
             compile(ChatColor.RESET, Ansi.ansi().a(Ansi.Attribute.RESET).toString()),
         };
 
-    private static final Pattern HEX_REPLACE = Pattern.compile("§#[a-fA-F\\d]{6}");
-    private static final Pattern BG_HEX_REPLACE = Pattern.compile("B#[a-fA-F\\d]{6}");
+    private static final Pattern HEX_REPLACE = Pattern.compile("(§#)([a-fA-F\\d]{6})");
+    private static final Pattern BG_HEX_REPLACE = Pattern.compile("(B#)([a-fA-F\\d]{6})");
 
     public static String replaceAnsi(String string) {
         String input = string;
@@ -62,13 +62,11 @@ public class AnsiColorReplacer {
         Matcher matcher = BG_HEX_REPLACE.matcher(input);
 
         while (matcher.find()) {
-            String group = matcher.group();
-            input = input.replace(group, Ansi.ansi().bgRgb(Integer.parseInt(group.substring(2), 16)).toString());
+            input = input.replace(matcher.group(0), Ansi.ansi().bgRgb(Integer.parseInt(matcher.group(2), 16)).toString());
         }
         matcher = HEX_REPLACE.matcher(input);
         while (matcher.find()) {
-            String group = matcher.group();
-            input = input.replace(group, Ansi.ansi().fgRgb(Integer.parseInt(group.substring(2), 16)).toString());
+            input = input.replace(matcher.group(0), Ansi.ansi().fgRgb(Integer.parseInt(matcher.group(2), 16)).toString());
         }
         input = input + Ansi.ansi().a(Ansi.Attribute.RESET).toString();
         return input;
