@@ -1,8 +1,6 @@
 package eu.cloudnetservice.cloudnet.v2.master.setup.user;
 
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
-import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
-import eu.cloudnetservice.cloudnet.v2.lib.user.BasicUser;
 import eu.cloudnetservice.cloudnet.v2.lib.user.User;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.setup.Setup;
