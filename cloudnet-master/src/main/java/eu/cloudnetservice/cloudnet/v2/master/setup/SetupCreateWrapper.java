@@ -21,9 +21,20 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 public class SetupCreateWrapper extends Setup {
+
+    private static final Pattern IPV4_PATTERN = Pattern.compile("(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
+
+    private static final Pattern IPV6_STD_PATTERN = Pattern.compile("^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
+
+    private static final Pattern IPV6_HEX_COMPRESSED_PATTERN = Pattern.compile("^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$");
+
+
     public SetupCreateWrapper(CommandSender sender) {
         super(CloudNet.getInstance().getConsoleManager());
         this.setupCancel(() -> {
@@ -48,12 +59,16 @@ public class SetupCreateWrapper extends Setup {
                     sender.sendMessage(String.format("Wrapper [%s] was registered on CloudNet",
                                                      wrapperMeta.getId()));
                     Configuration configuration = new Configuration();
-                    configuration.set("connection.cloudnet-host", CloudNet.getInstance().getConfig().getAddresses().toArray(new ConnectableAddress[0])[0].getHostName());
+                    configuration.set("connection.cloudnet-host",
+                                      CloudNet.getInstance()
+                                              .getConfig()
+                                              .getAddresses()
+                                              .toArray(new ConnectableAddress[0])[0].getHostName());
                     configuration.set("connection.cloudnet-port", 1410);
                     configuration.set("connection.cloudnet-web", 1420);
                     configuration.set("general.wrapperId", wrapperId);
                     configuration.set("general.internalIp", host);
-                    configuration.set("general.proxy-config-host",host);
+                    configuration.set("general.proxy-config-host", host);
                     configuration.set("general.max-memory", memory);
                     configuration.set("general.startPort", 41570);
                     configuration.set("general.auto-update", false);
@@ -63,21 +78,29 @@ public class SetupCreateWrapper extends Setup {
                     configuration.set("general.percentOfCPUForANewServer", 100D);
                     configuration.set("general.percentOfCPUForANewProxy", 100D);
                     try {
-                        Files.createDirectories(Paths.get("local","wrapper",wrapperId));
-                        Files.copy(Paths.get("WRAPPER_KEY.cnd"), Paths.get("local","wrapper",wrapperId,"WRAPPER_KEY.cnd"));
+                        Files.createDirectories(Paths.get("local", "wrapper", wrapperId));
+                        Files.copy(Paths.get("WRAPPER_KEY.cnd"), Paths.get("local", "wrapper", wrapperId, "WRAPPER_KEY.cnd"));
                     } catch (IOException e) {
-                        throw new RuntimeException("Wrapper Key path " + Paths.get("local","wrapper",wrapperId,"WRAPPER_KEY.cnd").toAbsolutePath().toString() + " could not be created", e);
+                        throw new RuntimeException("Wrapper Key path " + Paths.get("local", "wrapper", wrapperId, "WRAPPER_KEY.cnd")
+                                                                              .toAbsolutePath()
+                                                                              .toString() + " could not be created", e);
                     }
-                    try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(Paths.get("local","wrapper",wrapperId,"config.yml")), StandardCharsets.UTF_8)) {
+                    try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(Paths.get("local",
+                                                                                                                        "wrapper",
+                                                                                                                        wrapperId,
+                                                                                                                        "config.yml")),
+                                                                                        StandardCharsets.UTF_8)) {
 
                         ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, outputStreamWriter);
                     } catch (IOException e) {
-                        throw new RuntimeException("Wrapper config path " + Paths.get("local","wrapper",wrapperId,"config.yml").toAbsolutePath().toString() + " could not be saved", e);
+                        throw new RuntimeException("Wrapper config path " + Paths.get("local", "wrapper", wrapperId, "config.yml")
+                                                                                 .toAbsolutePath()
+                                                                                 .toString() + " could not be saved", e);
                     }
                     sender.sendMessage(String.format("Wrapper [%s] config is generated under -> %s",
-                                                     wrapperMeta.getId(), "local/wrapper/"+wrapperId));
+                                                     wrapperMeta.getId(), "local/wrapper/" + wrapperId));
 
-                    sender.sendMessage("WRAPPER_KEY.cnd is also copied to local/wrapper/"+wrapperId );
+                    sender.sendMessage("WRAPPER_KEY.cnd is also copied to local/wrapper/" + wrapperId);
                     CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
                     CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupWrapper.class);
                 } catch (UnknownHostException e) {
@@ -95,7 +118,9 @@ public class SetupCreateWrapper extends Setup {
                                       "What is the listing address of the wrapper for proxies and servers?",
                                       "The specified IP address is invalid!",
                                       StringResponseType.getInstance(),
-                                      key -> key.split("\\.").length == 4 && !key.equalsIgnoreCase("127.0.0.1")))
+                                      key -> IPV4_PATTERN.matcher(key).matches()
+                                          || IPV6_STD_PATTERN.matcher(key).matches()
+                                          || IPV6_HEX_COMPRESSED_PATTERN.matcher(key).matches()))
             .request(new SetupRequest("user",
                                       "What is the user of the wrapper?",
                                       "The specified user does not exist!",
@@ -105,11 +130,11 @@ public class SetupCreateWrapper extends Setup {
                                       "How many memory is allowed to use for the wrapper services?",
                                       "No negative numbers or zero allowed",
                                       IntegerResponseType.getInstance(),
-                                  key ->  Integer.parseInt(key) <= 0))
+                                      key -> Integer.parseInt(key) <= 0))
             .request(new SetupRequest("queue",
-                                  "How large should the server queue be?",
-                                  "No negative numbers or zero allowed",
-                                  IntegerResponseType.getInstance(),
-                                  key ->  Integer.parseInt(key) <= 0));
+                                      "How large should the server queue be?",
+                                      "No negative numbers or zero allowed",
+                                      IntegerResponseType.getInstance(),
+                                      key -> Integer.parseInt(key) <= 0));
     }
 }
