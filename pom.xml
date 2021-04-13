@@ -55,8 +55,8 @@
         <service.version>2.2.0</service.version>
         <service.type>RELEASE</service.type>
         <!-- Dependencies -->
-        <dependency.netty.version>4.1.51.Final</dependency.netty.version>
-        <dependency.nitrite.version>3.4.2</dependency.nitrite.version>
+        <dependency.netty.version>4.1.63.Final</dependency.netty.version>
+        <dependency.nitrite.version>3.4.3</dependency.nitrite.version>
         <dependency.jline3.version>3.19.0</dependency.jline3.version>
         <dependency.ansi.version>2.3.1</dependency.ansi.version>
         <!-- Should be kept in sync with minecraft -->
