@@ -222,7 +222,7 @@ public final class ChatColor {
     }
 
     public static ChatColor of(Color color) {
-        return of("#" + String.format("%08x", color.getRGB()).substring(2));
+        return of(String.format("#%06x", color.getRGB()));
     }
 
     public static ChatColor of(String string) {
