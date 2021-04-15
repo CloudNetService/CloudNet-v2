@@ -135,10 +135,11 @@ public final class CloudBootstrap {
             if (!cloudNetCore.bootstrap()) {
                 System.exit(0);
             }
+            System.out.println("Use the command \"§ehelp§r\" for further information!");
         });
 
         if (!optionSet.has("noconsole")) {
-            System.out.println("Use the command \"§ehelp§r\" for further information!");
+
 
 
             final LineReader lineReader = cloudNetCore.getConsoleManager().getLineReader();
