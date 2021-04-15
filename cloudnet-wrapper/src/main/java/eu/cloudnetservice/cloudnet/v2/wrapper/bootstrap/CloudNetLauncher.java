@@ -26,7 +26,6 @@ public class CloudNetLauncher {
             System.out.println("This application needs Java 8 or 10.0.1");
             return;
         }
-        AnsiConsole.systemInstall();
         CloudBootstrap.main(args);
 
     }

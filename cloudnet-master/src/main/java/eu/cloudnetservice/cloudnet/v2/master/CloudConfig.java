@@ -338,7 +338,7 @@ public class CloudConfig {
                             Document entry = Document.loadDocument(file);
                             ServerGroup serverGroup = entry.getObject("group", ServerGroup.TYPE);
                             groups.put(serverGroup.getName(), serverGroup);
-                        } catch (Throwable ex) {
+                        } catch (Exception ex) {
                             CloudNet.getLogger().log(Level.SEVERE,
                                                      String.format("Error loading group configuration file %s", file.getName()),
                                                      ex);
@@ -439,7 +439,7 @@ public class CloudConfig {
         try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(this.config, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update console description into file", e);
         }
 
     }
@@ -454,7 +454,7 @@ public class CloudConfig {
         try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(this.config, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"showMenu\" in file", e);
         }
     }
 
@@ -468,7 +468,7 @@ public class CloudConfig {
         try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(this.config, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"showGroup\" in file", e);
         }
     }
 
@@ -482,7 +482,7 @@ public class CloudConfig {
         try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(this.config, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"autoList\" in file", e);
         }
     }
 
@@ -496,7 +496,7 @@ public class CloudConfig {
         try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(this.config, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"elof\" in file", e);
         }
     }
 
@@ -514,7 +514,7 @@ public class CloudConfig {
         try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(this.config, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"color\" in file", e);
         }
     }
 
@@ -524,7 +524,7 @@ public class CloudConfig {
         try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(this.config, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"groupColor\" in file", e);
         }
     }
 
@@ -538,7 +538,7 @@ public class CloudConfig {
         try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
             CONFIGURATION_PROVIDER.save(this.config, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"aliases\" in file", e);
         }
     }
 }

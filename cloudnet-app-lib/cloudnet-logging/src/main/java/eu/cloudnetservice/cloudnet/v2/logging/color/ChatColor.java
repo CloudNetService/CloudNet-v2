@@ -141,10 +141,7 @@ public final class ChatColor {
 
     private ChatColor(char code, String name, Color color) {
         this.name = name;
-        this.toString = new String(new char[]
-                                       {
-                                           COLOR_CHAR, code
-                                       });
+        this.toString = String.valueOf(new char[]{COLOR_CHAR,code});
         this.ordinal = count++;
         this.color = color;
 

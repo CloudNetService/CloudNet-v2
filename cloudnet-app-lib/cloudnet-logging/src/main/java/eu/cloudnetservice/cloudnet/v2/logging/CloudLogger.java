@@ -37,7 +37,7 @@ public class CloudLogger extends Logger {
             System.setOut(new PrintStream(new LoggingOutputStream(this, Level.INFO), true, StandardCharsets.UTF_8.name()));
             System.setErr(new PrintStream(new LoggingOutputStream(this, Level.SEVERE), true, StandardCharsets.UTF_8.name()));
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getGlobal().log(Level.SEVERE,"Something goes wrong on logger creation", e);
         }
     }
 

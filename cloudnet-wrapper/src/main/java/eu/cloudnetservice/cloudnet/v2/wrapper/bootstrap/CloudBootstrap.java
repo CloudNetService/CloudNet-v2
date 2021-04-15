@@ -17,6 +17,9 @@
 
 package eu.cloudnetservice.cloudnet.v2.wrapper.bootstrap;
 
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleRegistry;
+import eu.cloudnetservice.cloudnet.v2.console.SignalManager;
 import eu.cloudnetservice.cloudnet.v2.help.HelpService;
 import eu.cloudnetservice.cloudnet.v2.help.ServiceDescription;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
@@ -93,7 +96,7 @@ public class CloudBootstrap {
             FileUtility.deleteDirectory(new File("local/cache"));
         }
         /*==============================================*/
-
+        ConsoleManager consoleManager = new ConsoleManager(new ConsoleRegistry(), new SignalManager());
         CloudLogger cloudNetLogging = new CloudLogger();
         if (optionSet.has("debug")) {
             cloudNetLogging.setDebugging(true);
@@ -106,7 +109,7 @@ public class CloudBootstrap {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging);
+        CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging, consoleManager);
 
         if (optionSet.has("systemTimer")) {
             NetworkUtils.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);

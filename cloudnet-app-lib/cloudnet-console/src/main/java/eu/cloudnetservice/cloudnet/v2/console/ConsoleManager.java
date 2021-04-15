@@ -1,10 +1,15 @@
 package eu.cloudnetservice.cloudnet.v2.console;
 
 import eu.cloudnetservice.cloudnet.v2.console.completer.CloudNetCompleter;
+import eu.cloudnetservice.cloudnet.v2.console.logging.JlineColoredConsoleHandler;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
+import eu.cloudnetservice.cloudnet.v2.logging.LoggingFormatter;
+import eu.cloudnetservice.cloudnet.v2.logging.handler.ColoredConsoleHandler;
+import eu.cloudnetservice.cloudnet.v2.logging.stream.LoggingOutputStream;
 import org.fusesource.jansi.AnsiConsole;
+import org.fusesource.jansi.AnsiPrintStream;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
@@ -16,11 +21,13 @@ import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class ConsoleManager {
 
@@ -33,33 +40,35 @@ public final class ConsoleManager {
     private ConsoleInputDispatch consoleInputDispatch;
     private final SignalManager signalManager;
     private boolean running;
-    private CloudLogger cloudLogger;
+    private Terminal terminal;
 
-    public ConsoleManager(ConsoleRegistry consoleRegistry, SignalManager signalManager, CloudLogger logger) {
+    public ConsoleManager(ConsoleRegistry consoleRegistry, SignalManager signalManager) {
         this.consoleRegistry = consoleRegistry;
         this.signalManager = signalManager;
         this.prompt = String.format("%s@Master $ ", System.getProperty("user.name"));
-        this.cloudLogger = logger;
+        useDefaultTerminal();
+    }
+
+    public void useDefaultTerminal() {
+        try {
+            terminal = TerminalBuilder.builder()
+                                      .streams(System.in, System.out)
+                                      .jansi(true)
+                                      .jna(false)
+                                      .encoding(StandardCharsets.UTF_8)
+                                      .name("CloudNet-Terminal")
+                                      .system(true)
+                                      .dumb(false)
+                                      .signalHandler(this.signalManager)
+                                      .build();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
     public void useDefaultConsole() {
-        Terminal terminal = null;
-        try {
-            terminal = TerminalBuilder.builder()
-                                           .streams(System.in, AnsiConsole.out())
-                                           .jansi(true)
-                                           .jna(true)
-                                           .encoding(StandardCharsets.UTF_8)
-                                           .name(
-                                               "CloudNet-Terminal")
-                                           .system(true)
-                                           .dumb(true)
-                                           .signalHandler(this.signalManager)
-                                           .build();
-        } catch (IOException e) {
-            this.cloudLogger.log(Level.SEVERE, "Something went wrong on creating a virtual terminal", e);
-        }
+
         if (this.consoleInputDispatch != null && terminal != null) {
             final ArgumentCompleter argumentCompleter = new ArgumentCompleter(new CloudNetCompleter(this.consoleInputDispatch));
             argumentCompleter.setStrict(false);
@@ -68,10 +77,13 @@ public final class ConsoleManager {
             defaultParser.setEofOnUnclosedBracket(DefaultParser.Bracket.ANGLE, DefaultParser.Bracket.CURLY, DefaultParser.Bracket.ROUND, DefaultParser.Bracket.SQUARE);
             this.lineReader = LineReaderBuilder.builder()
                                                .appName("CloudNet-Console")
-                                               .option(LineReader.Option.ERASE_LINE_ON_FINISH, true)
                                                .option(LineReader.Option.INSERT_BRACKET, true)
                                                .option(LineReader.Option.GROUP, true)
+                                               .option(LineReader.Option.AUTO_FRESH_LINE, true)
                                                .option(LineReader.Option.LIST_PACKED, true)
+                                               .option(LineReader.Option.HISTORY_IGNORE_SPACE, true)
+                                               .option(LineReader.Option.AUTO_REMOVE_SLASH, true)
+                                               .option(LineReader.Option.DISABLE_EVENT_EXPANSION, true)
                                                .highlighter(new DefaultHighlighter())
                                                .expander(new DefaultExpander())
                                                .history(new DefaultHistory())
@@ -81,9 +93,26 @@ public final class ConsoleManager {
                                                .completer(argumentCompleter)
                                                .build();
             lineReader.setAutosuggestion(LineReader.SuggestionType.COMPLETER);
+
         } else {
             System.exit(-1);
             throw new IllegalStateException("Console input dispatcher is empty");
+        }
+        Logger logger = Logger.getLogger("CloudLogger");
+        for (final Handler handler : logger.getHandlers()) {
+            if (handler instanceof ColoredConsoleHandler) {
+                logger.removeHandler(handler);
+            }
+        }
+        JlineColoredConsoleHandler consoleHandler = new JlineColoredConsoleHandler(this.lineReader);
+        consoleHandler.setLevel(Level.INFO);
+        consoleHandler.setFormatter(new LoggingFormatter());
+        try {
+            consoleHandler.setEncoding(StandardCharsets.UTF_8.name());
+            logger.addHandler(consoleHandler);
+        } catch (UnsupportedEncodingException e) {
+            System.exit(-1);
+            throw new IllegalStateException("Something goes wrong to set the console encoding");
         }
     }
 
@@ -99,7 +128,8 @@ public final class ConsoleManager {
     }
 
     public void startConsole() {
-        while (this.running) {
+
+        while (this.running && !Thread.interrupted()) {
             if (this.consoleInputDispatch != null) {
                 try {
                     if (!this.password) {
@@ -145,5 +175,9 @@ public final class ConsoleManager {
 
     public ConsoleRegistry getConsoleRegistry() {
         return consoleRegistry;
+    }
+
+    public SignalManager getSignalManager() {
+        return signalManager;
     }
 }

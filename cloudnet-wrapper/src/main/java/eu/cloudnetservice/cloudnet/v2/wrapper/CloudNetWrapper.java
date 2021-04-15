@@ -81,7 +81,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
     private SimpledUser simpledUser;
     private int maxMemory;
 
-    public CloudNetWrapper(OptionSet optionSet, CloudNetWrapperConfig cloudNetWrapperConfig, CloudLogger cloudNetLogging) {
+    public CloudNetWrapper(OptionSet optionSet, CloudNetWrapperConfig cloudNetWrapperConfig, CloudLogger cloudNetLogging, ConsoleManager consoleManager) {
 
         if (instance == null) {
             instance = this;
@@ -89,9 +89,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
         this.wrapperConfig = cloudNetWrapperConfig;
         this.cloudNetLogging = cloudNetLogging;
-        final ConsoleRegistry consoleRegistry = new ConsoleRegistry();
-        final SignalManager signalManager = new SignalManager();
-        this.consoleManager = new ConsoleManager(consoleRegistry, signalManager, cloudNetLogging);
+        this.consoleManager = consoleManager;
         this.commandManager = new CommandManager(consoleManager, commandManager1 -> {
             getConsoleManager().setPrompt(System.getProperty("user.name") + "@Wrapper-X $ ");
         });

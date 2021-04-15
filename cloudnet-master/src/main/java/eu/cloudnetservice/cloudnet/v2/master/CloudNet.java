@@ -108,7 +108,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
     private SignalManager signalManager;
     private ConsoleManager consoleManager;
 
-    public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args) {
+    public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args, ConsoleManager consoleManager) {
         if (instance != null) {
             throw new IllegalStateException("CloudNet already initialized!");
         }
@@ -120,9 +120,9 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         this.optionSet = optionSet;
         this.arguments = args;
 
-        this.consoleRegistry = new ConsoleRegistry();
-        this.signalManager = new SignalManager();
-        this.consoleManager = new ConsoleManager(this.consoleRegistry, this.signalManager, cloudNetLogging);
+        this.consoleRegistry = consoleManager.getConsoleRegistry();
+        this.signalManager = consoleManager.getSignalManager();
+        this.consoleManager = consoleManager;
         this.commandManager = new CommandManager(consoleManager, commandManager1 -> {
             this.consoleManager.setPrompt(String.format("%s@Master $ ", System.getProperty("user.name")));
         });
@@ -153,12 +153,12 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         this.eventManager.registerListener(this, processStartListener);
 
         if (!optionSet.has("disable-modules")) {
-            System.out.println("Loading Modules...");
+            getLogger().info("Loading Modules...");
             this.moduleManager.detectModules();
         }
 
         for (WrapperMeta wrapperMeta : config.getWrappers()) {
-            System.out.println("Loading Wrapper " + wrapperMeta.getId() + "@" + wrapperMeta.getHostName());
+            getLogger().info("Loading Wrapper " + wrapperMeta.getId() + "@" + wrapperMeta.getHostName());
             this.wrappers.put(wrapperMeta.getId(), new Wrapper(wrapperMeta));
         }
 
@@ -207,7 +207,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         }
 
         if (!optionSet.has("disable-modules")) {
-            System.out.println("Enabling Modules...");
+            getLogger().info("Enabling Modules...");
             this.moduleManager.getModules().values().forEach(this.moduleManager::enableModule);
         }
 
@@ -225,12 +225,12 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
         getExecutor().shutdownNow();
 
         for (Wrapper wrapper : wrappers.values()) {
-            System.out.println("Disconnecting wrapper " + wrapper.getServerId());
+            getLogger().info("Disconnecting wrapper " + wrapper.getServerId());
             wrapper.disconnect();
         }
 
         if (!optionSet.has("disable-modules")) {
-            System.out.println("Disabling Modules...");
+            getLogger().info("Disabling Modules...");
             this.moduleManager.getModules().values().forEach(this.moduleManager::disableModule);
         }
         dbHandlers.getStatisticManager().cloudOnlineTime(startupTime);
@@ -240,14 +240,14 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
             cloudNetServer.close();
         }
 
-        System.out.println("\n    _  _     _______   _                       _          \n" + "  _| || |_  |__   __| | |                     | |         \n" + " |_  __  _|    | |    | |__     __ _   _ __   | | __  ___ \n" + "  _| || |_     | |    | '_ \\   / _` | | '_ \\  | |/ / / __|\n" + " |_  __  _|    | |    | | | | | (_| | | | | | |   <  \\__ \\\n" + "   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/\n" + "                                                          \n" + "                                                          ");
+        getLogger().info("\n    _  _     _______   _                       _          \n" + "  _| || |_  |__   __| | |                     | |         \n" + " |_  __  _|    | |    | |__     __ _   _ __   | | __  ___ \n" + "  _| || |_     | |    | '_ \\   / _` | | '_ \\  | |/ / / __|\n" + " |_  __  _|    | |    | | | | | (_| | | | | | |   <  \\__ \\\n" + "   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/\n" + "                                                          \n" + "                                                          ");
 
         RUNNING = false;
         this.logger.shutdownAll();
         try {
             boolean terminated = getExecutor().awaitTermination(10, TimeUnit.SECONDS);
             if (!terminated) {
-                System.err.println("Executor service couldn't be terminated! At least one task seems to still run!");
+                getLogger().info("Executor service couldn't be terminated! At least one task seems to still run!");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -265,15 +265,15 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
         if (version != null) {
             if (!version.equals(CloudNet.class.getPackage().getImplementationVersion())) {
-                System.out.println("Preparing update...");
+                getLogger().info("Preparing update...");
                 webClient.update(version);
                 shutdown();
 
             } else {
-                System.out.println("No updates were found!");
+                getLogger().info("No updates were found!");
             }
         } else {
-            System.out.println("Failed to check for updates");
+            getLogger().info("Failed to check for updates");
         }
     }
 

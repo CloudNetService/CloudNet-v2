@@ -18,6 +18,9 @@
 package eu.cloudnetservice.cloudnet.v2.master.bootstrap;
 
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleRegistry;
+import eu.cloudnetservice.cloudnet.v2.console.SignalManager;
 import eu.cloudnetservice.cloudnet.v2.console.completer.CloudNetCompleter;
 import eu.cloudnetservice.cloudnet.v2.help.HelpService;
 import eu.cloudnetservice.cloudnet.v2.help.ServiceDescription;
@@ -36,6 +39,7 @@ import org.jline.reader.impl.LineReaderImpl;
 import org.jline.reader.impl.completer.ArgumentCompleter;
 
 import java.util.Arrays;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public final class CloudBootstrap {
@@ -109,31 +113,34 @@ public final class CloudBootstrap {
                               CloudBootstrap.class.getPackage().getSpecificationVersion());
             return;
         }
-
+        ConsoleManager consoleManager = new ConsoleManager(new ConsoleRegistry(), new SignalManager());
         CloudLogger cloudNetLogging = new CloudLogger();
         if (optionSet.has("debug")) {
             cloudNetLogging.setDebugging(true);
         }
 
-        NetworkUtils.header();
         CloudConfig coreConfig = new CloudConfig();
-        CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args));
+        CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args), consoleManager);
+
+        cloudNetCore.getConsoleRegistry().registerInput(cloudNetCore.getCommandManager());
+        cloudNetCore.getConsoleManager().setRunning(true);
+        cloudNetCore.getConsoleManager().changeConsoleInput(CommandManager.class);
+        cloudNetCore.getConsoleManager().useDefaultConsole();
 
         if (optionSet.has("systemTimer")) {
             CloudNet.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);
         }
-
-        if (!cloudNetCore.bootstrap()) {
-            System.exit(0);
-        }
+        NetworkUtils.getExecutor().execute(() -> {
+            NetworkUtils.header();
+            if (!cloudNetCore.bootstrap()) {
+                System.exit(0);
+            }
+        });
 
         if (!optionSet.has("noconsole")) {
             System.out.println("Use the command \"§ehelp§r\" for further information!");
 
-            cloudNetCore.getConsoleRegistry().registerInput(cloudNetCore.getCommandManager());
-            cloudNetCore.getConsoleManager().setRunning(true);
-            cloudNetCore.getConsoleManager().changeConsoleInput(CommandManager.class);
-            cloudNetCore.getConsoleManager().useDefaultConsole();
+
             final LineReader lineReader = cloudNetCore.getConsoleManager().getLineReader();
             lineReader.option(LineReader.Option.GROUP, coreConfig.isShowGroup());
             lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, coreConfig.isElof());
@@ -158,6 +165,8 @@ public final class CloudBootstrap {
                 NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
             }
         }
+
         cloudNetLogging.info("Shutting down now!");
+
     }
 }
