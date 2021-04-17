@@ -6,7 +6,7 @@ import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
 import eu.cloudnetservice.cloudnet.v2.wrapper.setup.spigot.SetupSpigotVersion;
 import org.jline.reader.ParsedLine;
 
-public class CommandSetup extends Command {
+public final class CommandSetup extends Command {
 
     private final CloudNetWrapper cloudNetWrapper;
 

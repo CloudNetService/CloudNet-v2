@@ -33,6 +33,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * Created by Tareko on 22.07.2017.
@@ -45,6 +46,8 @@ public final class NetworkConnection implements PacketSender {
     private final ConnectableAddress connectableAddress;
     private Channel channel;
     private long connectionTries = 0;
+
+    private final Logger logger = Logger.getLogger("CloudLogger");
 
     public NetworkConnection(ConnectableAddress connectableAddress, final ConnectableAddress localAddress) {
         this.connectableAddress = connectableAddress;
@@ -172,11 +175,11 @@ public final class NetworkConnection implements PacketSender {
             return true;
         } catch (Exception ex) {
             connectionTries++;
-            System.out.println(String.format("Failed to connect... [%d] (%s)", connectionTries, ex.getMessage()));
+            logger.info(String.format("Failed to connect... [%d] (%s)", connectionTries, ex.getMessage()));
             //            ex.printStackTrace();
 
             if (this.channel != null) {
-                this.channel.close();
+                this.channel.close().syncUninterruptibly().addListener(ChannelFutureListener.CLOSE);
                 this.channel = null;
             }
 

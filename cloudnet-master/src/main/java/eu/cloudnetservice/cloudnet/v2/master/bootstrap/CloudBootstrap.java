@@ -23,11 +23,14 @@ import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleRegistry;
 import eu.cloudnetservice.cloudnet.v2.console.SignalManager;
 import eu.cloudnetservice.cloudnet.v2.console.completer.CloudNetCompleter;
+import eu.cloudnetservice.cloudnet.v2.console.logging.JlineColoredConsoleHandler;
 import eu.cloudnetservice.cloudnet.v2.help.HelpService;
 import eu.cloudnetservice.cloudnet.v2.help.ServiceDescription;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.SystemTimer;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
+import eu.cloudnetservice.cloudnet.v2.logging.LoggingFormatter;
+import eu.cloudnetservice.cloudnet.v2.logging.handler.ColoredConsoleHandler;
 import eu.cloudnetservice.cloudnet.v2.master.CloudConfig;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -39,9 +42,14 @@ import org.jline.reader.LineReader;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.reader.impl.completer.ArgumentCompleter;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class CloudBootstrap {
 
@@ -152,8 +160,6 @@ public final class CloudBootstrap {
             CloudNet.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);
         }
         CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args), consoleManager);
-
-
         if (!cloudNetCore.bootstrap()) {
             System.exit(0);
         }

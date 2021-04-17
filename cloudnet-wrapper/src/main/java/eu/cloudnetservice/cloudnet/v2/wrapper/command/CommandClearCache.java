@@ -9,10 +9,11 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class CommandClearCache extends Command {
+public final class CommandClearCache extends Command {
 
     public CommandClearCache() {
         super("clearcache", "cloudnet.command.clearcache");
+        description = "Clears the cache of the wrapper";
     }
 
     @Override

@@ -216,23 +216,25 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
                           networkConnection.getConnectableAddress().getHostName(),
                           networkConnection.getConnectableAddress().getPort()));
 
-        while (networkConnection.getConnectionTries() < 5 && networkConnection.getChannel() == null) {
-            networkConnection.tryConnect(new NetDispatcher(networkConnection, false), auth);
-            if (networkConnection.getChannel() != null) {
-                networkConnection.sendPacketSynchronized(new PacketOutUpdateWrapperInfo());
-                break;
-            }
-            try {
-                wait(2000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                e.printStackTrace();
-            }
+        NetworkUtils.getExecutor().execute(() -> {
+            while (networkConnection.getConnectionTries() < 5 && networkConnection.getChannel() == null) {
+                networkConnection.tryConnect(new NetDispatcher(networkConnection, false), auth);
+                if (networkConnection.getChannel() != null) {
+                    networkConnection.sendPacketSynchronized(new PacketOutUpdateWrapperInfo());
+                    break;
+                }
+                try {
+                    wait(2000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    e.printStackTrace();
+                }
 
-            if (networkConnection.getConnectionTries() == 5) {
-                System.exit(0);
+                if (networkConnection.getConnectionTries() == 5) {
+                    System.exit(0);
+                }
             }
-        }
+        });
         if (!Files.exists(Paths.get("local/server-icon.png"))) {
             FileUtility.insertData("files/server-icon.png", "local/server-icon.png");
         }

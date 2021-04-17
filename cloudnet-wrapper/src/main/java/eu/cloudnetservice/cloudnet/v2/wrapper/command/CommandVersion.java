@@ -5,10 +5,12 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import org.jline.reader.ParsedLine;
 
-public class CommandVersion extends Command {
+public final class CommandVersion extends Command {
 
     public CommandVersion() {
         super("version", "cloudnet.command.version");
+        description = "Shows the version of this instance";
+
     }
 
     @Override

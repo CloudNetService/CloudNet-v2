@@ -5,10 +5,11 @@ import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
 import org.jline.reader.ParsedLine;
 
-public class CommandClear extends Command {
+public final class CommandClear extends Command {
 
     public CommandClear() {
         super("clear", "cloudnet.command.clear");
+        description = "Clears the console";
     }
 
     @Override
