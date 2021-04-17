@@ -110,17 +110,17 @@ public class SetupServerGroup extends Setup{
                                                      "How much memory should each server of this server group have?",
                                                      "The specified amount of memory is invalid",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) >= 64))
+                                                     key -> Integer.parseInt(key) >= 64, null))
                            .request(new SetupRequest("startup",
                                                      "How many servers should always be online?",
                                                      "The specified amount of servers is invalid",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) >= 0))
+                                                     key -> Integer.parseInt(key) >= 0, null))
                            .request(new SetupRequest("percent",
                                                      "How full does the server have to be to start a new server? (in percent)",
                                                      "The specified percentage is invalid",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) >= 0 && Integer.parseInt(key) <= 100))
+                                                     key -> Integer.parseInt(key) >= 0 && Integer.parseInt(key) <= 100, null))
                            .request(new SetupRequest("mode",
                                                      "Which server group mode should be used for this server group? [STATIC, STATIC_LOBBY, LOBBY, DYNAMIC]",
                                                      "The specified server group mode is invalid",
@@ -128,27 +128,29 @@ public class SetupServerGroup extends Setup{
                                                      key -> key.equalsIgnoreCase("STATIC") ||
                                                          key.equalsIgnoreCase("STATIC_LOBBY") ||
                                                          key.equalsIgnoreCase("LOBBY") ||
-                                                         key.equalsIgnoreCase("DYNAMIC")))
+                                                         key.equalsIgnoreCase("DYNAMIC"),
+                                                     null))
                            .request(new SetupRequest("type",
                                                      "Which server group type should be used? [BUKKIT, GLOWSTONE]",
                                                      "The specified group type is invalid",
                                                      StringResponseType.getInstance(),
-                                                     key -> key.equals("BUKKIT") || key.equals("GLOWSTONE")))
+                                                     key -> key.equals("BUKKIT") || key.equals("GLOWSTONE"), null))
                            .request(new SetupRequest("template",
                                                      "What backend should be used for the group's default template? [\"LOCAL\" for a wrapper local backend | \"MASTER\" for the master backend]",
                                                      "The specified backend is invalid",
                                                      StringResponseType.getInstance(),
-                                                     key -> key.equals("MASTER") || key.equals("LOCAL")))
+                                                     key -> key.equals("MASTER") || key.equals("LOCAL"),
+                                                     null))
                            .request(new SetupRequest("onlineGroup",
                                                      "How many servers should be online, if 100 players are online in the group?",
                                                      "The specified amount is invalid",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) > 0))
+                                                     key -> Integer.parseInt(key) > 0, null))
                            .request(new SetupRequest("onlineGlobal",
                                                      "How many servers should be online, if 100 global players are online?",
                                                      "The specified amount is invalid",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) > 0))
+                                                     key -> Integer.parseInt(key) > 0, null))
                            .request(
                                new SetupRequest("wrapper",
                                                 "Which wrappers should be used for this group? (comma-separated list)",
@@ -164,7 +166,7 @@ public class SetupServerGroup extends Setup{
                                                     Set<String> cloudWrappers = CloudNet.getInstance().getWrappers().keySet();
                                                     wrappers.removeIf(wrapper -> !cloudWrappers.contains(wrapper));
                                                     return wrappers.size() != 0;
-                                                }));
+                                                }, null));
     }
 
     public String getName() {

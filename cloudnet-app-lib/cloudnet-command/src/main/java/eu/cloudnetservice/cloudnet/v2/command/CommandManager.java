@@ -157,6 +157,11 @@ public final class CommandManager implements ConsoleInputDispatch, ConsoleChange
     }
 
     @Override
+    public boolean history() {
+        return true;
+    }
+
+    @Override
     public Collection<Candidate> get() {
         Collection<Candidate> strings = new ArrayList<>();
         if (this.consoleManager != null && this.consoleManager.getLineReader() != null) {

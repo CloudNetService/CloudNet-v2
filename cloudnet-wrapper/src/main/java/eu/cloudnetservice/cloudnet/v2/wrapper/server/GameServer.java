@@ -652,7 +652,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
         CloudNetWrapper.getInstance().getServers().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveServer(serverInfo));
-        logger.info(String.format("Server %s was stopped", this));
+        logger.info(String.format("Server %s was stopped", this.getServiceId()));
         return true;
     }
 

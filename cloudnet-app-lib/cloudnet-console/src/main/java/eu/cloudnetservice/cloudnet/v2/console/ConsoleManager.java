@@ -10,12 +10,14 @@ import eu.cloudnetservice.cloudnet.v2.logging.handler.ColoredConsoleHandler;
 import eu.cloudnetservice.cloudnet.v2.logging.stream.LoggingOutputStream;
 import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.AnsiPrintStream;
+import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.reader.impl.DefaultExpander;
 import org.jline.reader.impl.DefaultHighlighter;
 import org.jline.reader.impl.DefaultParser;
+import org.jline.reader.impl.LineReaderImpl;
 import org.jline.reader.impl.completer.ArgumentCompleter;
 import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
@@ -23,6 +25,7 @@ import org.jline.terminal.TerminalBuilder;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.logging.Handler;
@@ -39,6 +42,8 @@ public final class ConsoleManager {
     private final ConsoleRegistry consoleRegistry;
     private ConsoleInputDispatch consoleInputDispatch;
     private final SignalManager signalManager;
+    private final History history;
+    private final Path historyPath = Paths.get(".cn_history");
     private boolean running;
     private Terminal terminal;
 
@@ -47,6 +52,7 @@ public final class ConsoleManager {
         this.signalManager = signalManager;
         this.prompt = String.format("%s@Master $ ", System.getProperty("user.name"));
         useDefaultTerminal();
+        history = new DefaultHistory();
     }
 
     public void useDefaultTerminal() {
@@ -69,10 +75,7 @@ public final class ConsoleManager {
 
     public void useDefaultConsole() {
 
-        if (this.consoleInputDispatch != null && terminal != null) {
-            final ArgumentCompleter argumentCompleter = new ArgumentCompleter(new CloudNetCompleter(this.consoleInputDispatch));
-            argumentCompleter.setStrict(false);
-            argumentCompleter.setStrictCommand(false);
+        if (terminal != null) {
             final DefaultParser defaultParser = new DefaultParser();
             defaultParser.setEofOnUnclosedBracket(DefaultParser.Bracket.ANGLE, DefaultParser.Bracket.CURLY, DefaultParser.Bracket.ROUND, DefaultParser.Bracket.SQUARE);
             this.lineReader = LineReaderBuilder.builder()
@@ -86,11 +89,8 @@ public final class ConsoleManager {
                                                .option(LineReader.Option.DISABLE_EVENT_EXPANSION, true)
                                                .highlighter(new DefaultHighlighter())
                                                .expander(new DefaultExpander())
-                                               .history(new DefaultHistory())
-                                               .variable(LineReader.HISTORY_FILE, Paths.get(".cn_history"))
                                                .terminal(terminal)
                                                .parser(defaultParser)
-                                               .completer(argumentCompleter)
                                                .build();
             lineReader.setAutosuggestion(LineReader.SuggestionType.COMPLETER);
 
@@ -121,21 +121,37 @@ public final class ConsoleManager {
         console.ifPresent(inputDispatch -> this.consoleInputDispatch = inputDispatch);
         if (this.consoleInputDispatch != null) {
             if (this.consoleInputDispatch instanceof ConsoleChangeInputPromote) {
-                ((ConsoleChangeInputPromote) this.consoleInputDispatch).changePromote(this.prompt);
-            }
 
+                ((ConsoleChangeInputPromote) this.consoleInputDispatch).changePromote(this.prompt);
+
+            }
+            if (this.lineReader != null) {
+                LineReaderImpl lineReader = (LineReaderImpl) this.lineReader;
+                final ArgumentCompleter argumentCompleter = new ArgumentCompleter(new CloudNetCompleter(this.consoleInputDispatch));
+                argumentCompleter.setStrict(false);
+                argumentCompleter.setStrictCommand(false);
+
+                lineReader.setCompleter(argumentCompleter);
+                if (this.consoleInputDispatch.history()) {
+
+                    lineReader.variable(LineReader.HISTORY_FILE, historyPath);
+                    lineReader.setHistory(this.history);
+                } else {
+                    lineReader.variable(LineReader.HISTORY_FILE, null);
+                    lineReader.setHistory(new DefaultHistory());
+                }
+            }
         }
     }
 
     public void startConsole() {
-
         while (this.running && !Thread.interrupted()) {
             if (this.consoleInputDispatch != null) {
                 try {
                     if (!this.password) {
-                        this.consoleInputDispatch.dispatch(this.lineReader.readLine(this.prompt), this.lineReader);
+                        this.consoleInputDispatch.dispatch(this.lineReader.readLine(this.prompt).trim(), this.lineReader);
                     } else {
-                        this.consoleInputDispatch.dispatch(this.lineReader.readLine(this.prompt, this.passwordMask), this.lineReader);
+                        this.consoleInputDispatch.dispatch(this.lineReader.readLine(this.prompt, this.passwordMask).trim(), this.lineReader);
                     }
                 } catch (UserInterruptException e) {
                     System.out.println("User interrupt detected!");

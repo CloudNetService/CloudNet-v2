@@ -17,6 +17,7 @@ public final class CommandStop extends Command {
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
         sender.sendMessage("CloudNetV2 will be stopped...");
+        CloudNet.getInstance().getConsoleManager().setRunning(false);
         CloudNet.getInstance().shutdown();
     }
 }

@@ -17,6 +17,7 @@
 
 package eu.cloudnetservice.cloudnet.v2.master.bootstrap;
 
+import com.google.gson.stream.JsonToken;
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleRegistry;
@@ -114,60 +115,53 @@ public final class CloudBootstrap {
             return;
         }
         ConsoleManager consoleManager = new ConsoleManager(new ConsoleRegistry(), new SignalManager());
+        CloudConfig coreConfig = new CloudConfig();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            if (!optionSet.has("noconsole")) {
+                consoleManager.useDefaultConsole();
+                consoleManager.setRunning(true);
+                final LineReader lineReader = consoleManager.getLineReader();
+                lineReader.option(LineReader.Option.GROUP, coreConfig.isShowGroup());
+                lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, coreConfig.isElof());
+                lineReader.option(LineReader.Option.AUTO_GROUP, coreConfig.isShowGroup());
+                lineReader.option(LineReader.Option.MENU_COMPLETE, coreConfig.isShowMenu());
+                lineReader.option(LineReader.Option.AUTO_MENU, coreConfig.isShowMenu());
+                lineReader.option(LineReader.Option.AUTO_LIST, coreConfig.isAutoList());
+                if (lineReader instanceof LineReaderImpl) {
+                    Completer completer = ((LineReaderImpl) lineReader).getCompleter();
+                    if (completer instanceof ArgumentCompleter) {
+                        ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setGroupColor(coreConfig.getGroupColor());
+                        ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setShowDescription(coreConfig.isShowDescription());
+                        ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setColor(coreConfig.getColor());
+                    }
+                }
+                consoleManager.startConsole();
+            } else {
+                while (!Thread.currentThread().isInterrupted()) {
+                    NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
+                }
+            }
+
+            System.out.println("Shutting down now!");
+        });
         CloudLogger cloudNetLogging = new CloudLogger();
         if (optionSet.has("debug")) {
             cloudNetLogging.setDebugging(true);
         }
-
-        CloudConfig coreConfig = new CloudConfig();
-        CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args), consoleManager);
-
-        cloudNetCore.getConsoleRegistry().registerInput(cloudNetCore.getCommandManager());
-        cloudNetCore.getConsoleManager().setRunning(true);
-        cloudNetCore.getConsoleManager().changeConsoleInput(CommandManager.class);
-        cloudNetCore.getConsoleManager().useDefaultConsole();
-
         if (optionSet.has("systemTimer")) {
             CloudNet.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);
         }
-        NetworkUtils.getExecutor().execute(() -> {
-            NetworkUtils.header();
-            if (!cloudNetCore.bootstrap()) {
-                System.exit(0);
-            }
-            System.out.println("Use the command \"§ehelp§r\" for further information!");
-        });
-
-        if (!optionSet.has("noconsole")) {
+        CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args), consoleManager);
 
 
-
-            final LineReader lineReader = cloudNetCore.getConsoleManager().getLineReader();
-            lineReader.option(LineReader.Option.GROUP, coreConfig.isShowGroup());
-            lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, coreConfig.isElof());
-            lineReader.option(LineReader.Option.AUTO_GROUP, coreConfig.isShowGroup());
-            lineReader.option(LineReader.Option.MENU_COMPLETE, coreConfig.isShowMenu());
-            lineReader.option(LineReader.Option.AUTO_MENU, coreConfig.isShowMenu());
-            lineReader.option(LineReader.Option.AUTO_LIST, coreConfig.isAutoList());
-            if (lineReader instanceof LineReaderImpl) {
-                Completer completer = ((LineReaderImpl) lineReader).getCompleter();
-                if (completer instanceof ArgumentCompleter) {
-                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setGroupColor(coreConfig.getGroupColor());
-                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setShowDescription(coreConfig.isShowDescription());
-                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setColor(coreConfig.getColor());
-                }
-
-            }
-            cloudNetCore.getCommandManager().setShowDescription(coreConfig.isShowDescription());
-            cloudNetCore.getCommandManager().setAliases(coreConfig.isAliases());
-            cloudNetCore.getConsoleManager().startConsole();
-        } else {
-            while (!Thread.currentThread().isInterrupted()) {
-                NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
-            }
+        if (!cloudNetCore.bootstrap()) {
+            System.exit(0);
         }
-
-        cloudNetLogging.info("Shutting down now!");
-
+        cloudNetCore.getConsoleRegistry().registerInput(cloudNetCore.getCommandManager());
+        cloudNetCore.getConsoleManager().changeConsoleInput(CommandManager.class);
+        NetworkUtils.header();
+        cloudNetCore.getCommandManager().setShowDescription(coreConfig.isShowDescription());
+        cloudNetCore.getCommandManager().setAliases(coreConfig.isAliases());
+        System.out.println("Use the command \"§ehelp§r\" for further information!");
     }
 }

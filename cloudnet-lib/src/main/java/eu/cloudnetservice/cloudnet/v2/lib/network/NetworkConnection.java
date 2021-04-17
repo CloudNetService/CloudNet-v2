@@ -45,19 +45,10 @@ public final class NetworkConnection implements PacketSender {
     private final ConnectableAddress connectableAddress;
     private Channel channel;
     private long connectionTries = 0;
-    private Runnable task;
 
     public NetworkConnection(ConnectableAddress connectableAddress, final ConnectableAddress localAddress) {
         this.connectableAddress = connectableAddress;
         this.localAddress = localAddress;
-    }
-
-    public NetworkConnection(ConnectableAddress connectableAddress,
-                             final ConnectableAddress localAddress,
-                             Runnable task) {
-        this.connectableAddress = connectableAddress;
-        this.localAddress = localAddress;
-        this.task = task;
     }
 
     public PacketManager getPacketManager() {
@@ -78,10 +69,6 @@ public final class NetworkConnection implements PacketSender {
 
     public long getConnectionTries() {
         return connectionTries;
-    }
-
-    public Runnable getTask() {
-        return task;
     }
 
     @Override
@@ -111,12 +98,7 @@ public final class NetworkConnection implements PacketSender {
 
     public boolean tryDisconnect() {
         if (channel != null) {
-            try {
-                channel.closeFuture().sync();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                e.printStackTrace();
-            }
+            channel.close().syncUninterruptibly().addListener(ChannelFutureListener.CLOSE);
         }
         try {
             eventLoopGroup.shutdownGracefully().await(10, TimeUnit.SECONDS);

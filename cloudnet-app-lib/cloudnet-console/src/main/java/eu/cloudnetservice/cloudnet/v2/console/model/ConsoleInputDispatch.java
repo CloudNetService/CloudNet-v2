@@ -10,4 +10,6 @@ public interface ConsoleInputDispatch extends Supplier<Collection<Candidate>> {
 
     void dispatch(String line, LineReader lineReader);
 
+    boolean history();
+
 }

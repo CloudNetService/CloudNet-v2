@@ -79,12 +79,14 @@ public class SetupWrapper extends Setup {
                                       StringResponseType.getInstance(),
                                       key -> Constants.IPV4_PATTERN.matcher(key).matches()
                                           || Constants.IPV6_STD_PATTERN.matcher(key).matches()
-                                          || Constants.IPV6_HEX_COMPRESSED_PATTERN.matcher(key).matches()))
+                                          || Constants.IPV6_HEX_COMPRESSED_PATTERN.matcher(key).matches(), null
+            ))
             .request(new SetupRequest("user",
                                       "What is the user of the wrapper?",
                                       "The specified user does not exist!",
                                       StringResponseType.getInstance(),
-                                      key -> CloudNet.getInstance().getUser(key) != null));
+                                      key -> CloudNet.getInstance().getUser(key) != null, null
+            ));
     }
 
     public String getName() {

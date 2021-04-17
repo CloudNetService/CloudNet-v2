@@ -107,6 +107,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
     private ConsoleRegistry consoleRegistry;
     private SignalManager signalManager;
     private ConsoleManager consoleManager;
+    private Thread mainThread;
 
     public CloudNet(CloudConfig config, CloudLogger cloudNetLogging, OptionSet optionSet, List<String> args, ConsoleManager consoleManager) {
         if (instance != null) {
@@ -127,6 +128,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
             this.consoleManager.setPrompt(String.format("%s@Master $ ", System.getProperty("user.name")));
         });
         this.moduleManager = new CloudModuleManager();
+        this.mainThread = Thread.currentThread();
     }
 
     public static CloudLogger getLogger() {
@@ -222,6 +224,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
             return false;
         }
 
+        dbHandlers.getStatisticManager().cloudOnlineTime(startupTime);
         getExecutor().shutdownNow();
 
         for (Wrapper wrapper : wrappers.values()) {
@@ -233,7 +236,7 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
             getLogger().info("Disabling Modules...");
             this.moduleManager.getModules().values().forEach(this.moduleManager::disableModule);
         }
-        dbHandlers.getStatisticManager().cloudOnlineTime(startupTime);
+
         this.databaseManager.save().clear();
 
         for (CloudNetServer cloudNetServer : this.cloudServers) {
@@ -877,5 +880,9 @@ public final class CloudNet extends EventKey implements Executable, Reloadable {
 
     public SignalManager getSignalManager() {
         return signalManager;
+    }
+
+    public Thread getMainThread() {
+        return mainThread;
     }
 }

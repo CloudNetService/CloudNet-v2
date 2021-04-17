@@ -202,6 +202,11 @@ public final class SpigotBuilder implements ConsoleInputDispatch, ConsoleChangeI
     }
 
     @Override
+    public boolean history() {
+        return false;
+    }
+
+    @Override
     public Collection<Candidate> get() {
         return this.versions.stream().map(s -> new Candidate(s,s,"buildtools","A version to build with the md_5 build tools", null, null, true)).collect(
             Collectors.toList());

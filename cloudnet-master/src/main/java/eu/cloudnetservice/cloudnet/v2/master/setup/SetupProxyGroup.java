@@ -103,29 +103,35 @@ public class SetupProxyGroup extends Setup {
                                                        "How much memory should each proxy of this proxy group have (in mb)?",
                                                        "Specified amount of memory is invalid",
                                                        IntegerResponseType.getInstance(),
-                                                       key -> Integer.parseInt(key) > 64))
+                                                       key -> Integer.parseInt(key) > 64, null
+        ))
                            .request(new SetupRequest("startport",
                                                      "What should be the starting port of the proxy group?",
                                                      "Specified starting port is invalid",
                                                      IntegerResponseType.getInstance(),
                                                      key -> Integer.parseInt(key) > 128 &&
-                                                         Integer.parseInt(key) < 65536))
+                                                         Integer.parseInt(key) < 65536, null
+                           ))
                            .request(new SetupRequest("startup",
                                                      "How many proxy instances should always be online?",
                                                      "Please enter a positive number",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) >= 0))
+                                                     key -> Integer.parseInt(key) >= 0, null
+                           ))
                            .request(new SetupRequest("mode",
                                                      "Should the group be STATIC or DYNAMIC?",
                                                      "The specified proxy group mode is invalid",
                                                      StringResponseType.getInstance(),
                                                      key -> key.equalsIgnoreCase("STATIC") ||
-                                                         key.equalsIgnoreCase("DYNAMIC")))
+                                                         key.equalsIgnoreCase("DYNAMIC"), null
+                           ))
                            .request(new SetupRequest("template",
                                                      "What should be the backend of the group's default template? [\"LOCAL\" for a wrapper local backend | \"MASTER\" for the master backend]",
                                                      "The specified backend is invalid",
                                                      StringResponseType.getInstance(),
-                                                     key -> key.equals("MASTER") || key.equals("LOCAL")))
+                                                     key -> key.equals("MASTER") || key.equals("LOCAL"),
+                                                     null
+                           ))
                            .request(new SetupRequest("wrapper",
                                                      "Which wrappers should be used for this group?",
                                                      "The specified list of wrappers is invalid",
@@ -139,7 +145,8 @@ public class SetupProxyGroup extends Setup {
                                                          Set<String> cloudWrappers = CloudNet.getInstance().getWrappers().keySet();
                                                          wrappers.removeIf(wrapper -> !cloudWrappers.contains(wrapper));
                                                          return wrappers.size() != 0;
-                                                     }));
+                                                     }, null
+                           ));
     }
 
     public String getName() {

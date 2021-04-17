@@ -182,6 +182,11 @@ public final class PaperBuilder implements ConsoleInputDispatch, ConsoleChangeIn
     }
 
     @Override
+    public boolean history() {
+        return false;
+    }
+
+    @Override
     public Collection<Candidate> get() {
         return Arrays.stream(paperMCProject.getVersions()).map(s -> new Candidate(s,s,paperMCProject.getProject(),"A paper version",null,null,true)).collect(
             Collectors.toList());

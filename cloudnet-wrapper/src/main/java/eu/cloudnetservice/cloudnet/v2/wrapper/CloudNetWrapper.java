@@ -91,7 +91,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         this.cloudNetLogging = cloudNetLogging;
         this.consoleManager = consoleManager;
         this.commandManager = new CommandManager(consoleManager, commandManager1 -> {
-            getConsoleManager().setPrompt(System.getProperty("user.name") + "@Wrapper-X $ ");
+            getConsoleManager().setPrompt(System.getProperty("user.name") + "@" + wrapperConfig.getWrapperId() + " $ ");
         });
         this.optionSet = optionSet;
     }
@@ -152,9 +152,9 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
 
     @Override
     public boolean bootstrap() {
-        getConsoleManager().setPrompt(System.getProperty("user.name") + "@Wrapper-X $ ");
 
-        getConsoleManager().getConsoleRegistry().registerInput(this.commandManager);
+
+
         commandManager.registerCommand(new CommandHelp())
                       .registerCommand(new CommandClear())
                       .registerCommand(new CommandVersion())
@@ -162,16 +162,9 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
                       .registerCommand(new CommandStop())
                       .registerCommand(new CommandReload())
                       .registerCommand(new CommandSetup(this));
-        if (!Files.exists(wrapperConfig.getConfigPath())) {
-            System.err.println("config.yml missing close wrapper");
-            System.exit(-1);
-        }
-        System.out.println("Use the command \"help\" for further information!");
 
 
-        this.wrapperConfig.load();
-        getConsoleManager().setPrompt(System.getProperty("user.name") + '@' + getWrapperConfig().getWrapperId() + " $ ");
-        getConsoleManager().changeConsoleInput(CommandManager.class);
+
         if (!optionSet.has("disallow_bukkit_download") && !Files.exists(Paths.get("local/spigot.jar"))) {
             System.out.println("No spigot.jar has been found!");
             this.cloudNetLogging.log(Level.INFO, "Please use the command \"setup\" to install the spigot.jar");
@@ -180,14 +173,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
             new ConnectableAddress(
                 wrapperConfig.getCloudNetHost(),
                 wrapperConfig.getCloudNetPort()),
-            new ConnectableAddress(wrapperConfig.getInternalIP(), 0),
-            () -> {
-                try {
-                    onShutdownCentral();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+            new ConnectableAddress(wrapperConfig.getInternalIP(), 0));
 
         String key = NetworkUtils.readWrapperKey();
 
@@ -201,9 +187,7 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         this.auth = new Auth(key, wrapperConfig.getWrapperId());
         this.serverProcessQueue = new ServerProcessQueue(wrapperConfig.getProcessQueueSize());
         this.maxMemory = wrapperConfig.getMaxMemory();
-        final Thread hook = new Thread(new ShutdownHook(this));
-        hook.setDaemon(true);
-        Runtime.getRuntime().addShutdownHook(hook);
+        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHook(this)));
         if (!optionSet.has("disable-autoupdate")) {
             checkForUpdates();
         }
@@ -232,42 +216,37 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
                           networkConnection.getConnectableAddress().getHostName(),
                           networkConnection.getConnectableAddress().getPort()));
 
-        NetworkUtils.getExecutor().execute(() -> {
-            while (networkConnection.getConnectionTries() < 5 && networkConnection.getChannel() == null) {
-                networkConnection.tryConnect(new NetDispatcher(networkConnection, false), auth);
-                if (networkConnection.getChannel() != null) {
-                    networkConnection.sendPacketSynchronized(new PacketOutUpdateWrapperInfo());
-                    break;
-                }
-                try {
-                    wait(2000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    e.printStackTrace();
-                }
-
-                if (networkConnection.getConnectionTries() == 5) {
-                    System.exit(0);
-                }
+        while (networkConnection.getConnectionTries() < 5 && networkConnection.getChannel() == null) {
+            networkConnection.tryConnect(new NetDispatcher(networkConnection, false), auth);
+            if (networkConnection.getChannel() != null) {
+                networkConnection.sendPacketSynchronized(new PacketOutUpdateWrapperInfo());
+                break;
             }
-        });
+            try {
+                wait(2000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
+            }
 
+            if (networkConnection.getConnectionTries() == 5) {
+                System.exit(0);
+            }
+        }
         if (!Files.exists(Paths.get("local/server-icon.png"))) {
             FileUtility.insertData("files/server-icon.png", "local/server-icon.png");
         }
 
         //Server Handlers
-        {
-            networkConnection.sendPacket(new PacketOutSetReadyWrapper(true));
-            IWrapperHandler iWrapperHandler = new StopTimeHandler();
-            IWrapperHandler readConsoleLogWrapperHandler = new ReadConsoleLogHandler();
+        networkConnection.sendPacket(new PacketOutSetReadyWrapper(true));
+        IWrapperHandler iWrapperHandler = new StopTimeHandler();
+        IWrapperHandler readConsoleLogWrapperHandler = new ReadConsoleLogHandler();
 
-            NetworkUtils.getExecutor().scheduleWithFixedDelay(iWrapperHandler.toExecutor(), 0, 250, TimeUnit.MILLISECONDS);
-            NetworkUtils.getExecutor().scheduleWithFixedDelay(readConsoleLogWrapperHandler.toExecutor(), 0, 1, TimeUnit.SECONDS);
+        NetworkUtils.getExecutor().scheduleWithFixedDelay(iWrapperHandler.toExecutor(), 0, 250, TimeUnit.MILLISECONDS);
+        NetworkUtils.getExecutor().scheduleWithFixedDelay(readConsoleLogWrapperHandler.toExecutor(), 0, 1, TimeUnit.SECONDS);
 
-            NetworkUtils.getExecutor().scheduleWithFixedDelay(
-                () -> networkConnection.sendPacket(new PacketOutUpdateCPUUsage(NetworkUtils.cpuUsage())), 0, 5, TimeUnit.SECONDS);
-        }
+        NetworkUtils.getExecutor().scheduleWithFixedDelay(
+            () -> networkConnection.sendPacket(new PacketOutUpdateCPUUsage(NetworkUtils.cpuUsage())), 0, 5, TimeUnit.SECONDS);
 
         RUNNING = true;
 
@@ -303,17 +282,13 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         } else {
             RUNNING = false;
         }
-        this.getConsoleManager().setRunning(false);
         System.out.println("Wrapper shutdown...");
 
+        networkConnection.tryDisconnect();
+        shutdownProcesses();
         NetworkUtils.getExecutor().shutdownNow();
 
-        shutdownProcesses();
-
-        networkConnection.tryDisconnect();
-
         FileUtility.deleteDirectory(new File("temp"));
-
         this.cloudNetLogging.info("    _  _     _______   _                       _          ");
         this.cloudNetLogging.info("  _| || |_  |__   __| | |                     | |         ");
         this.cloudNetLogging.info(" |_  __  _|    | |    | |__     __ _   _ __   | | __  ___ ");
@@ -321,13 +296,14 @@ public final class CloudNetWrapper implements Executable, ShutdownOnCentral {
         this.cloudNetLogging.info(" |_  __  _|    | |    | | | | | (_| | | | | | |   <  \\__ \\");
         this.cloudNetLogging.info("   |_||_|      |_|    |_| |_|  \\__,_| |_| |_| |_|\\_\\ |___/");
 
+        this.cloudNetLogging.shutdownAll();
         try {
             NetworkUtils.getExecutor().awaitTermination(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             e.printStackTrace();
         }
-        this.cloudNetLogging.shutdownAll();
+        System.exit(1);
         return true;
     }
 

@@ -13,6 +13,7 @@ public class CommandStop extends Command {
 
     @Override
     public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
+        CloudNetWrapper.getInstance().getConsoleManager().setRunning(false);
         CloudNetWrapper.getInstance().shutdown();
     }
 }

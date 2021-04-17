@@ -17,6 +17,7 @@
 
 package eu.cloudnetservice.cloudnet.v2.wrapper.bootstrap;
 
+import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleRegistry;
 import eu.cloudnetservice.cloudnet.v2.console.SignalManager;
@@ -35,6 +36,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class CloudBootstrap {
@@ -89,6 +91,34 @@ public class CloudBootstrap {
             return;
         }
 
+        CloudNetWrapperConfig cloudNetWrapperConfig = null;
+        try {
+            cloudNetWrapperConfig = new CloudNetWrapperConfig();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        if (!Files.exists(cloudNetWrapperConfig.getConfigPath())) {
+            System.err.println("config.yml missing close wrapper");
+            System.exit(-1);
+        }
+        cloudNetWrapperConfig = cloudNetWrapperConfig.load();
+
+        ConsoleManager consoleManager = new ConsoleManager(new ConsoleRegistry(), new SignalManager());
+        Executors.newSingleThreadExecutor().execute(() -> {
+            if (!optionSet.has("noconsole")) {
+                consoleManager.useDefaultConsole();
+                consoleManager.setRunning(true);
+                consoleManager.startConsole();
+            } else {
+                while (!Thread.currentThread().isInterrupted()) {
+                    NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
+                }
+            }
+
+
+            System.out.println("Shutting down now!");
+        });
         /*==============================================*/
         FileUtility.deleteDirectory(new File("temp"));
 
@@ -96,19 +126,13 @@ public class CloudBootstrap {
             FileUtility.deleteDirectory(new File("local/cache"));
         }
         /*==============================================*/
-        ConsoleManager consoleManager = new ConsoleManager(new ConsoleRegistry(), new SignalManager());
+
         CloudLogger cloudNetLogging = new CloudLogger();
         if (optionSet.has("debug")) {
             cloudNetLogging.setDebugging(true);
         }
 
         NetworkUtils.header();
-        CloudNetWrapperConfig cloudNetWrapperConfig = null;
-        try {
-            cloudNetWrapperConfig = new CloudNetWrapperConfig();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging, consoleManager);
 
         if (optionSet.has("systemTimer")) {
@@ -118,17 +142,8 @@ public class CloudBootstrap {
         if (!cloudNetWrapper.bootstrap()) {
             System.exit(0);
         }
-        if (optionSet.has("noconsole")) {
-            while (!Thread.currentThread().isInterrupted()) {
-                NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
-            }
-        } else {
-            cloudNetWrapper.getConsoleManager().setRunning(true);
-            cloudNetWrapper.getConsoleManager().useDefaultConsole();
-            cloudNetWrapper.getConsoleManager().startConsole();
-        }
-
-
-        cloudNetLogging.info("Shutting down now!");
+        cloudNetWrapper.getConsoleManager().getConsoleRegistry().registerInput(cloudNetWrapper.getCommandManager());
+        cloudNetWrapper.getConsoleManager().changeConsoleInput(CommandManager.class);
+        System.out.println("Use the command \"§ehelp§r\" for further information!");
     }
 }

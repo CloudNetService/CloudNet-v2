@@ -87,7 +87,7 @@ public class ServerProcessQueue implements Runnable {
                             serverProcessMeta,
                             CloudNetWrapper.getInstance().getServerGroups().get(serverProcessMeta.getServiceId().getGroup()));
 
-                        System.out.println("Fetching entry [" + gameServer.getServiceId() + ']');
+                        CloudNetWrapper.getInstance().getCloudNetLogging().info("Fetching entry [" + gameServer.getServiceId() + ']');
 
                         if (!gameServer.bootstrap()) {
                             this.servers.add(serverProcessMeta);

@@ -28,16 +28,19 @@ public final class ChangePasswordSetup extends Setup {
                                  "What should the username be?",
                                  "§aThis user is already registerd!",
                                  StringResponseType.getInstance(),
-                                 username -> CloudNet.getInstance().getUser(username) != null));
+                                 username -> CloudNet.getInstance().getUser(username) != null, null
+        ));
         request(new SetupRequest("password",
                                  "What should be the password?",
                                  "",
                                  StringResponseType.getInstance(),
-                                 password -> true));
+                                 password -> true, null
+        ));
         request(new SetupRequest("passwordrepeat",
                                  "Repeat the password?",
                                  "",
                                  StringResponseType.getInstance(),
-                                 username -> true));
+                                 username -> true, null
+        ));
     }
 }

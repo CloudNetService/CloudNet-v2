@@ -125,6 +125,11 @@ public class SetupSpigotVersion implements ConsoleInputDispatch, ConsoleChangeIn
     }
 
     @Override
+    public boolean history() {
+        return false;
+    }
+
+    @Override
     public Collection<Candidate> get() {
         List<Candidate> candidateList = new ArrayList<>();
         if (!spigot && !buildtools && !paper) {

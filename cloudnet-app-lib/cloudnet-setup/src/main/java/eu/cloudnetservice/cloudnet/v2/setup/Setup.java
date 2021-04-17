@@ -9,6 +9,7 @@ import org.jline.reader.LineReader;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
@@ -30,6 +31,7 @@ public class Setup implements ConsoleInputDispatch, ConsoleChangeInputPromote {
      * Builds the sequence.
      */
     private final Queue<SetupRequest> requests = new LinkedBlockingQueue<>();
+    private final Queue<SetupRequest> oldRequests = new LinkedBlockingQueue<>();
 
     /**
      * Document containing the valid answers of the user.
@@ -102,25 +104,37 @@ public class Setup implements ConsoleInputDispatch, ConsoleChangeInputPromote {
                 }
                 return;
             }
+
             if (responseType != null && responseType.isValidInput(line)) {
                 if (setupRequest.hasValidator() && setupRequest.getValidator().test(line)) {
                     responseType.appendDocument(document, setupRequest.getName(), line);
                     setupRequest = null;
                     printQuestion(lineReader);
-                    if (requests.isEmpty() && setupComplete != null) {
-                        setupComplete.accept(document);
+                    if (requests.isEmpty() && setupComplete != null && setupRequest == null) {
                         this.consoleManager.setPrompt(oldPrompt);
+                        setupComplete.accept(document);
+                        this.requests.addAll(this.oldRequests);
                     }
                 } else {
                     System.out.println(setupRequest.getInvalidMessage());
                 }
             }
+        } else if(requests.isEmpty() && setupComplete != null && setupRequest == null){
+            this.consoleManager.setPrompt(oldPrompt);
+            setupComplete.accept(document);
+            this.requests.addAll(this.oldRequests);
         }
+    }
+
+    @Override
+    public boolean history() {
+        return false;
     }
 
     private void printQuestion(LineReader lineReader) {
         if (!requests.isEmpty() && setupRequest == null) {
             setupRequest = requests.poll();
+            this.oldRequests.offer(setupRequest);
             responseType = setupRequest.getResponseType();
             lineReader.printAbove(String.format("%s | %s%n", setupRequest.getQuestion(), responseType.userFriendlyString()));
         }
@@ -128,13 +142,19 @@ public class Setup implements ConsoleInputDispatch, ConsoleChangeInputPromote {
 
     @Override
     public Collection<Candidate> get() {
+        if (this.setupRequest != null && this.setupRequest.getAutoValues() != null) {
+            List<Candidate> candidates = new ArrayList<>(this.setupRequest.getAutoValues().get());
+            candidates.add(new Candidate("cancel"));
+            return candidates;
+        }
         return new ArrayList<>();
     }
 
     @Override
-    public void changePromote(final String oldPromote) {
+    public void changePromote(String oldPromote) {
         if (!requests.isEmpty() && setupRequest == null) {
             setupRequest = requests.poll();
+            this.oldRequests.offer(setupRequest);
             responseType = setupRequest.getResponseType();
             this.consoleManager.getLineReader().printAbove(String.format("%s | %s%n", setupRequest.getQuestion(), responseType.userFriendlyString()));
         }
