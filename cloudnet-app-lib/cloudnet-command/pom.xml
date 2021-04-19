@@ -33,7 +33,7 @@
     <dependencies>
         <dependency>
             <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
-            <artifactId>cloudnet-setup</artifactId>
+            <artifactId>cloudnet-console</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

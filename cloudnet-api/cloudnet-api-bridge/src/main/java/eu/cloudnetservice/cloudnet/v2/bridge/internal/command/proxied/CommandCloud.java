@@ -405,7 +405,7 @@ public final class CommandCloud extends Command implements TabExecutor {
                     return;
                 }
                 if (args[0].equalsIgnoreCase("toggle")) {
-                    if (args[1].toLowerCase().equals("maintenance")) {
+                    if (args[1].equalsIgnoreCase("maintenance")) {
                         if (commandSender.hasPermission("cloudnet.command.cloud.maintenance")) {
                             if (!NetworkUtils.checkIsNumber(args[2])) {
                                 return;

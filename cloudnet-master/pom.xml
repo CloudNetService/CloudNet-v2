@@ -47,6 +47,12 @@
         </dependency>
         <dependency>
             <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
+            <artifactId>cloudnet-setup</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
             <artifactId>cloudnet-event</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

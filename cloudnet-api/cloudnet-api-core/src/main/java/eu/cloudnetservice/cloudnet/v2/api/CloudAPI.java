@@ -89,8 +89,7 @@ public final class CloudAPI {
         this.cloudConfigLoader = loader;
         this.logger = logger;
         this.config = loader.loadConfig();
-        this.networkConnection = new NetworkConnection(loader.loadConnection(),
-                                                       new ConnectableAddress(InetAddress.getByName("0.0.0.0"), 0));
+        this.networkConnection = new NetworkConnection(loader.loadConnection(), new ConnectableAddress(InetAddress.getByName("0.0.0.0"), 0));
         this.serviceId = config.getObject("serviceId", ServiceId.TYPE);
         this.memory = config.getInt("memory");
 

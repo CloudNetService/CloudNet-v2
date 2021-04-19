@@ -18,9 +18,12 @@
 package eu.cloudnetservice.cloudnet.v2.setup;
 
 import eu.cloudnetservice.cloudnet.v2.lib.interfaces.Nameable;
+import org.jline.reader.Candidate;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Class that represents a request for setup data.
@@ -46,17 +49,20 @@ public class SetupRequest implements Nameable {
      * The validation function that determines whether the input is valid or not.
      */
     private final Predicate<String> validator;
+    private final Supplier<Collection<Candidate>> autoValues;
 
     public SetupRequest(String name,
                         String question,
                         String invalidMessage,
                         SetupResponseType<?> responseType,
-                        Predicate<String> validator) {
+                        Predicate<String> validator,
+                        Supplier<Collection<Candidate>> autoValues) {
         this.name = name;
         this.question = question;
         this.invalidMessage = invalidMessage;
         this.responseType = responseType;
         this.validator = validator;
+        this.autoValues = autoValues;
     }
 
     @Override
@@ -129,5 +135,9 @@ public class SetupRequest implements Nameable {
 
     public String getQuestion() {
         return question;
+    }
+
+    public Supplier<Collection<Candidate>> getAutoValues() {
+        return autoValues;
     }
 }

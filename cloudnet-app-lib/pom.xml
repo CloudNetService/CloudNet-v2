@@ -34,11 +34,12 @@
     <modules>
         <module>cloudnet-event</module>
         <module>cloudnet-command</module>
-        <module>cloudnet-log</module>
         <module>cloudnet-web</module>
         <module>cloudnet-database</module>
         <module>cloudnet-help</module>
         <module>cloudnet-setup</module>
+        <module>cloudnet-console</module>
+        <module>cloudnet-logging</module>
     </modules>
 
     <dependencies>

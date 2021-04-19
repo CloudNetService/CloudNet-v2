@@ -39,18 +39,11 @@ public class NetDispatcher extends SimpleChannelInboundHandler<Packet> {
         return networkConnection;
     }
 
-    public boolean isShutdownOnInactive() {
-        return shutdownOnInactive;
-    }
-
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if ((!ctx.channel().isActive() || !ctx.channel().isOpen() || !ctx.channel().isWritable())) {
             networkConnection.setChannel(null);
             ctx.channel().close().syncUninterruptibly();
-            if (networkConnection.getTask() != null) {
-                networkConnection.getTask().run();
-            }
             if (shutdownOnInactive) {
                 System.exit(0);
             }

@@ -1,34 +1,19 @@
-/*
- * Copyright 2017 Tarek Hosni El Alaoui
- * Copyright 2020 CloudNetService
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package eu.cloudnetservice.cloudnet.v2.master.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.command.TabCompletable;
-import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.service.ServiceId;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.Candidate;
+import org.jline.reader.ParsedLine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class CommandScreen extends Command implements TabCompletable {
 
@@ -40,15 +25,19 @@ public final class CommandScreen extends Command implements TabCompletable {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
-
-        if (CloudNet.getInstance().getScreenProvider().getMainServiceId() != null && args.length > 1 && args[0].equalsIgnoreCase("write")) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
+        if (parsedLine.words().size() <= 1) {
+            sender.sendMessage(
+                "screen server (-s) | proxy (-p) <name> | The output of the console of the service is transferred to the console of this instance",
+                "screen <name> | The output of the console of the service is transferred to the console of this instance",
+                "screen leave | The console output closes",
+                "screen write <command> | You write a command directly into the console of the service");
+            return;
+        }
+        String commandArgument = parsedLine.words().get(1);
+        if (parsedLine.words().size() >= 3 && commandArgument.equalsIgnoreCase("write") && CloudNet.getInstance().getScreenProvider().getMainServiceId() != null) {
             ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
-            StringBuilder stringBuilder = new StringBuilder();
-            for (short i = 1; i < args.length; i++) {
-                stringBuilder.append(args[i]).append(NetworkUtils.SPACE_STRING);
-            }
-            String commandLine = stringBuilder.substring(0, stringBuilder.length() - 1);
+            String commandLine = String.join(" ", parsedLine.words().subList(2,parsedLine.words().size()));
             Wrapper wrapper = CloudNet.getInstance().getWrappers().get(serviceId.getWrapperId());
             if (wrapper != null) {
                 if (wrapper.getServers().containsKey(serviceId.getServerId())) {
@@ -57,25 +46,20 @@ public final class CommandScreen extends Command implements TabCompletable {
                 if (wrapper.getProxies().containsKey(serviceId.getServerId())) {
                     wrapper.writeProxyCommand(commandLine, wrapper.getProxies().get(serviceId.getServerId()).getProxyInfo());
                 }
+                return;
             }
-            return;
         }
-
-        switch (args.length) {
-            case 1:
-                if (args[0].equalsIgnoreCase("leave") && CloudNet.getInstance().getScreenProvider().getMainServiceId() != null) {
+        switch (parsedLine.words().size()) {
+            case 2:
+                if (commandArgument.equalsIgnoreCase("leave") && CloudNet.getInstance().getScreenProvider().getMainServiceId() != null) {
 
                     ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
                     CloudNet.getInstance().getScreenProvider().disableScreen(serviceId.getServerId());
                     CloudNet.getInstance().getScreenProvider().setMainServiceId(null);
-                    sender.sendMessage("You left the screen session");
+                    sender.sendMessage("§aYou left the screen session");
                     return;
-                }
-                break;
-            case 2:
-                if (args[0].equalsIgnoreCase("-s") || args[0].equalsIgnoreCase("server")) {
-
-                    MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[1]);
+                } else {
+                    MinecraftServer minecraftServer = CloudNet.getInstance().getServer(commandArgument);
                     if (minecraftServer != null) {
 
                         ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
@@ -85,24 +69,57 @@ public final class CommandScreen extends Command implements TabCompletable {
                         }
 
                         minecraftServer.getWrapper().enableScreen(minecraftServer.getServerInfo());
-                        sender.sendMessage("You joined the screen session of " + minecraftServer.getServerId());
+                        sender.sendMessage("§aYou joined the screen session of " + minecraftServer.getServerId());
                         CloudNet.getInstance().getScreenProvider().setMainServiceId(minecraftServer.getServiceId());
-                    }
-                    return;
-                }
-                if (args[0].equalsIgnoreCase("-p") || args[0].equalsIgnoreCase("proxy")) {
+                    } else {
+                        ProxyServer proxyServer = CloudNet.getInstance().getProxy(commandArgument);
+                        if (proxyServer != null) {
+                            ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
+                            if (serviceId != null) {
+                                CloudNet.getInstance().getScreenProvider().disableScreen(serviceId.getServerId());
+                                CloudNet.getInstance().getScreenProvider().setMainServiceId(null);
+                            }
 
-                    ProxyServer minecraftServer = CloudNet.getInstance().getProxy(args[1]);
+                            proxyServer.getWrapper().enableScreen(proxyServer.getProxyInfo());
+                            sender.sendMessage("§aYou joined the screen session of " + proxyServer.getServerId());
+                            CloudNet.getInstance().getScreenProvider().setMainServiceId(proxyServer.getServiceId());
+                        }
+                    }
+                }
+
+                break;
+            case 3:
+                String secondCommandArgument = parsedLine.words().get(2);
+                if (commandArgument.equalsIgnoreCase("-s") || commandArgument.equalsIgnoreCase("server")) {
+
+                    MinecraftServer minecraftServer = CloudNet.getInstance().getServer(secondCommandArgument);
                     if (minecraftServer != null) {
+
                         ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
                         if (serviceId != null) {
                             CloudNet.getInstance().getScreenProvider().disableScreen(serviceId.getServerId());
                             CloudNet.getInstance().getScreenProvider().setMainServiceId(null);
                         }
 
-                        minecraftServer.getWrapper().enableScreen(minecraftServer.getProxyInfo());
-                        sender.sendMessage("You joined the screen session of " + minecraftServer.getServerId());
+                        minecraftServer.getWrapper().enableScreen(minecraftServer.getServerInfo());
+                        sender.sendMessage("§aYou joined the screen session of " + minecraftServer.getServerId());
                         CloudNet.getInstance().getScreenProvider().setMainServiceId(minecraftServer.getServiceId());
+                    }
+                    return;
+                } else
+                if (commandArgument.equalsIgnoreCase("-p") || commandArgument.equalsIgnoreCase("proxy")) {
+
+                    ProxyServer proxyServer = CloudNet.getInstance().getProxy(secondCommandArgument);
+                    if (proxyServer != null) {
+                        ServiceId serviceId = CloudNet.getInstance().getScreenProvider().getMainServiceId();
+                        if (serviceId != null) {
+                            CloudNet.getInstance().getScreenProvider().disableScreen(serviceId.getServerId());
+                            CloudNet.getInstance().getScreenProvider().setMainServiceId(null);
+                        }
+
+                        proxyServer.getWrapper().enableScreen(proxyServer.getProxyInfo());
+                        sender.sendMessage("§aYou joined the screen session of " + proxyServer.getServerId());
+                        CloudNet.getInstance().getScreenProvider().setMainServiceId(proxyServer.getServiceId());
                     }
                     return;
                 }
@@ -110,6 +127,7 @@ public final class CommandScreen extends Command implements TabCompletable {
             default:
                 sender.sendMessage(
                     "screen server (-s) | proxy (-p) <name> | The output of the console of the service is transferred to the console of this instance",
+                    "screen <name> | The output of the console of the service is transferred to the console of this instance",
                     "screen leave | The console output closes",
                     "screen write <command> | You write a command directly into the console of the service");
                 break;
@@ -117,12 +135,38 @@ public final class CommandScreen extends Command implements TabCompletable {
     }
 
     @Override
-    public List<String> onTab(long argsLength, String lastWord) {
-        List<String> list = new ArrayList<>(CloudNet.getInstance().getServers().size() + CloudNet.getInstance().getProxys().size());
+    public List<Candidate> onTab(ParsedLine parsedLine) {
+        List<Candidate> strings = new ArrayList<>();
+        if (parsedLine.words().size() >= 1) {
+            if (parsedLine.words().get(0).equalsIgnoreCase("screen")) {
+                if (parsedLine.wordIndex() >= 2) {
+                    String commandArgument = parsedLine.words().get(1);
+                    if (commandArgument.equalsIgnoreCase("server")  || commandArgument.equalsIgnoreCase("-s")) {
+                        strings.addAll(CloudNet.getInstance().getServers().values().stream().map(minecraftServer -> new Candidate(minecraftServer.getName(), minecraftServer.getName(), minecraftServer.getGroup().getName(), "A simple minecraft server", null, null, true)).collect(
+                            Collectors.toList()));
+                        return strings;
+                    }
+                    if (commandArgument.equalsIgnoreCase("proxy")  || commandArgument.equalsIgnoreCase("-p")) {
+                        strings.addAll(CloudNet.getInstance().getProxys().values().stream().map(proxyServer -> new Candidate(proxyServer.getName(), proxyServer.getName(), proxyServer.getProcessMeta().getProxyGroupName(), "A simple proxy", null, null, true)).collect(
+                            Collectors.toList()));
+                        return strings;
 
-        list.addAll(CloudNet.getInstance().getServers().keySet());
-        list.addAll(CloudNet.getInstance().getProxys().keySet());
+                    }
+                }
+                strings.add(new Candidate("write", "write", null, "Write a command into the open screen", null, null, true));
+                strings.add(new Candidate("server", "server", "screen-server", "Open a server screen", null, null,true));
+                strings.add(new Candidate("-s", "-s", "screen-server", "Open a server screen", null, null,true));
+                strings.add(new Candidate("proxy", "proxy", "screen-proxy", "Open a proxy screen", null, null,true));
+                strings.add(new Candidate("-p", "-p", "screen-proxy", "Open a proxy screen", null, null,true));
+                strings.add(new Candidate("leave", "leave", null, "Close/leave the current screen", null, null,true));
+                strings.addAll(CloudNet.getInstance().getServers().values().stream().map(minecraftServer -> new Candidate(minecraftServer.getName(), minecraftServer.getName(), minecraftServer.getGroup().getName(), "A simple minecraft server", null, null, true)).collect(
+                    Collectors.toList()));
+                strings.addAll(CloudNet.getInstance().getProxys().values().stream().map(proxyServer -> new Candidate(proxyServer.getName(), proxyServer.getName(), proxyServer.getProcessMeta().getProxyGroupName(), "A simple proxy", null, null, true)).collect(
+                    Collectors.toList()));
+                return strings;
+            }
 
-        return list;
+        }
+        return strings;
     }
 }

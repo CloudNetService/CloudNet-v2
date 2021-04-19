@@ -59,13 +59,15 @@ public final class CloudNetServer extends ChannelInitializer<Channel> {
                            .addListener(
                                (ChannelFutureListener) channelFuture -> {
                                    if (channelFuture.isSuccess()) {
-                                       System.out.printf("CloudNet is listening @%s:%d%n",
+                                       System.out.println(String.format("CloudNet is listening @%s:%d",
                                                          connectableAddress.getHostName(),
-                                                         connectableAddress.getPort());
+                                                         connectableAddress.getPort()));
+                                       CloudNet.getInstance().getCloudServers().add(this);
+
                                    } else {
-                                       System.out.printf("Failed to bind @%s:%d%n",
+                                       System.out.println(String.format("Failed to bind @%s:%d",
                                                          connectableAddress.getHostName(),
-                                                         connectableAddress.getPort());
+                                                         connectableAddress.getPort()));
                                    }
                                })
                            .addListener(ChannelFutureListener.CLOSE_ON_FAILURE)

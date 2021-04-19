@@ -1,35 +1,23 @@
-/*
- * Copyright 2017 Tarek Hosni El Alaoui
- * Copyright 2020 CloudNetService
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package eu.cloudnetservice.cloudnet.v2.master.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
+import eu.cloudnetservice.cloudnet.v2.command.TabCompletable;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerGroup;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.ProxyServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.Candidate;
+import org.jline.reader.ParsedLine;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public final class CommandInfo extends Command {
+public final class CommandInfo extends Command implements TabCompletable {
 
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -41,11 +29,11 @@ public final class CommandInfo extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
-        if (args.length == 2) {
-            switch (args[0].toLowerCase()) {
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
+        if (parsedLine.words().size() == 3) {
+            switch (parsedLine.words().get(1).toLowerCase()) {
                 case "server": {
-                    MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[1]);
+                    MinecraftServer minecraftServer = CloudNet.getInstance().getServer(parsedLine.words().get(2));
                     if (minecraftServer == null) {
                         return;
                     }
@@ -71,7 +59,7 @@ public final class CommandInfo extends Command {
                 }
                 break;
                 case "proxy": {
-                    ProxyServer proxyServer = CloudNet.getInstance().getProxy(args[1]);
+                    ProxyServer proxyServer = CloudNet.getInstance().getProxy(parsedLine.words().get(2));
                     if (proxyServer == null) {
                         return;
                     }
@@ -92,7 +80,7 @@ public final class CommandInfo extends Command {
                 }
                 break;
                 case "wrapper": {
-                    Wrapper wrapper = CloudNet.getInstance().getWrappers().get(args[1]);
+                    Wrapper wrapper = CloudNet.getInstance().getWrappers().get(parsedLine.words().get(2));
                     if (wrapper == null) {
                         return;
                     }
@@ -116,7 +104,7 @@ public final class CommandInfo extends Command {
                 }
                 break;
                 case "sg": {
-                    ServerGroup group = CloudNet.getInstance().getServerGroup(args[1]);
+                    ServerGroup group = CloudNet.getInstance().getServerGroup(parsedLine.words().get(2));
                     if (group == null) {
                         return;
                     }
@@ -143,5 +131,37 @@ public final class CommandInfo extends Command {
                                "info WRAPPER <wrapper-id> | show all wrapper properties and stats",
                                "info SG <serverGroup> | show all properties which you set in the group");
         }
+    }
+
+    @Override
+    public List<Candidate> onTab(ParsedLine parsedLine) {
+        List<Candidate> candidates = new ArrayList<>();
+        if (parsedLine.words().size() == 1 && parsedLine.words().get(0).equalsIgnoreCase("info")) {
+            candidates.add(new Candidate("server", "Server", null, "show all server informations about one Minecraft server", null,null, true));
+            candidates.add(new Candidate("proxy", "Proxy", null, "show all proxy stats from a current BungeeCord", null,null, true));
+            candidates.add(new Candidate("wrapper", "Wrapper", null, "show all wrapper properties and stats", null,null, true));
+            candidates.add(new Candidate("sg", "Server Group", null, "show all properties which you set in the group", null,null, true));
+        }
+        if (parsedLine.words().size() == 2 && parsedLine.words().get(1).equalsIgnoreCase("SERVER")) {
+            for (MinecraftServer server : CloudNet.getInstance().getServers().values()) {
+                candidates.add(new Candidate(server.getName(), server.getName(), server.getGroup().getName(), "A server", null, null,true));
+            }
+        }
+        if (parsedLine.words().size() == 2 && parsedLine.words().get(1).equalsIgnoreCase("proxy")) {
+            for (ProxyServer server : CloudNet.getInstance().getProxys().values()) {
+                candidates.add(new Candidate(server.getName(), server.getName(), server.getProcessMeta().getProxyGroupName(), "A server", null, null,true));
+            }
+        }
+        if (parsedLine.words().size() == 2 && parsedLine.words().get(1).equalsIgnoreCase("wrapper")) {
+            for (Wrapper wrapper : CloudNet.getInstance().getWrappers().values()) {
+                candidates.add(new Candidate(wrapper.getName(), wrapper.getName(), null, "A wrapper", null, null,true));
+            }
+        }
+        if (parsedLine.words().size() == 2 && parsedLine.words().get(1).equalsIgnoreCase("sg")) {
+            for (String group : CloudNet.getInstance().getServerGroups().keySet()) {
+                candidates.add(new Candidate(group, group, null, "A server group", null, null,true));
+            }
+        }
+        return candidates;
     }
 }

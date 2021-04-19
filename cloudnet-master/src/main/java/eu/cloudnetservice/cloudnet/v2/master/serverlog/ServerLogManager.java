@@ -72,20 +72,6 @@ public final class ServerLogManager implements Runnable {
         }
     }
 
-    public String dispatch(String rnd) {
-        if (!this.screenInfos.contains(rnd)) {
-            return null;
-        }
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (ScreenInfo screenInfo : this.screenInfos.getS(rnd)) {
-            stringBuilder.append("<p>").append(screenInfo.getLine()).append("</p>");
-        }
-
-        return stringBuilder.toString();
-    }
-
     @Deprecated
     @Override
     public void run() {

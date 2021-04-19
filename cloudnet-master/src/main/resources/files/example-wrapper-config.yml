@@ -1,0 +1,16 @@
+connection:
+  cloudnet-host: 0.0.0.0
+  cloudnet-port: 1410
+  cloudnet-web: 1420
+general:
+  wrapperId: 'Wrapper-1'
+  internalIp: 0.0.0.0
+  proxy-config-host: 0.0.0.0
+  max-memory: 1024
+  startPort: 41570
+  auto-update: false
+  saving-records: false
+  maintenance-copyFileToDirectory: false
+  processQueueSize: 2
+  percentOfCPUForANewServer: 100
+  percentOfCPUForANewProxy: 100

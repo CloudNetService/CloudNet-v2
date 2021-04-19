@@ -33,7 +33,11 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
+/**
+ * Created by Tareko on 22.07.2017.
+ */
 public final class NetworkConnection implements PacketSender {
 
     private final PacketManager packetManager = new PacketManager();
@@ -42,19 +46,12 @@ public final class NetworkConnection implements PacketSender {
     private final ConnectableAddress connectableAddress;
     private Channel channel;
     private long connectionTries = 0;
-    private Runnable task;
+
+    private final Logger logger = Logger.getLogger("CloudLogger");
 
     public NetworkConnection(ConnectableAddress connectableAddress, final ConnectableAddress localAddress) {
         this.connectableAddress = connectableAddress;
         this.localAddress = localAddress;
-    }
-
-    public NetworkConnection(ConnectableAddress connectableAddress,
-                             final ConnectableAddress localAddress,
-                             Runnable task) {
-        this.connectableAddress = connectableAddress;
-        this.localAddress = localAddress;
-        this.task = task;
     }
 
     public PacketManager getPacketManager() {
@@ -75,10 +72,6 @@ public final class NetworkConnection implements PacketSender {
 
     public long getConnectionTries() {
         return connectionTries;
-    }
-
-    public Runnable getTask() {
-        return task;
     }
 
     @Override
@@ -106,6 +99,22 @@ public final class NetworkConnection implements PacketSender {
         }
     }
 
+    public boolean tryDisconnect() {
+        if (channel != null) {
+            channel.close().syncUninterruptibly().addListener(ChannelFutureListener.CLOSE);
+        }
+        try {
+            eventLoopGroup.shutdownGracefully().await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
+
+
+
+        return false;
+    }
+
     @Override
     public void sendPacket(Packet packet) {
         if (channel == null) {
@@ -131,22 +140,10 @@ public final class NetworkConnection implements PacketSender {
             try {
                 channel.eventLoop().invokeAll(Collections.singletonList(() -> channel.writeAndFlush(packet).syncUninterruptibly()));
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
         }
-    }
-
-    public boolean tryDisconnect() {
-        if (channel != null) {
-            channel.close();
-        }
-
-        try {
-            eventLoopGroup.shutdownGracefully().await(10, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public void tryConnect(final NetDispatcher netDispatcher, final Auth auth) {
@@ -178,11 +175,11 @@ public final class NetworkConnection implements PacketSender {
             return true;
         } catch (Exception ex) {
             connectionTries++;
-            System.out.printf("Failed to connect... [%d] (%s)%n", connectionTries, ex.getMessage());
+            logger.info(String.format("Failed to connect... [%d] (%s)", connectionTries, ex.getMessage()));
             //            ex.printStackTrace();
 
             if (this.channel != null) {
-                this.channel.close();
+                this.channel.close().syncUninterruptibly().addListener(ChannelFutureListener.CLOSE);
                 this.channel = null;
             }
 

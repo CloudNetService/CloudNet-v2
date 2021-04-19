@@ -1,33 +1,21 @@
-/*
- * Copyright 2017 Tarek Hosni El Alaoui
- * Copyright 2020 CloudNetService
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package eu.cloudnetservice.cloudnet.v2.master.command;
 
 import eu.cloudnetservice.cloudnet.v2.command.Command;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
+import eu.cloudnetservice.cloudnet.v2.command.TabCompletable;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerGroup;
 import eu.cloudnetservice.cloudnet.v2.lib.server.template.Template;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.MinecraftServer;
 import eu.cloudnetservice.cloudnet.v2.master.network.components.Wrapper;
+import org.jline.reader.Candidate;
+import org.jline.reader.ParsedLine;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
-public final class CommandCopy extends Command {
+public final class CommandCopy extends Command implements TabCompletable {
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -39,30 +27,33 @@ public final class CommandCopy extends Command {
     }
 
     @Override
-    public void onExecuteCommand(CommandSender sender, String[] args) {
-        switch (args.length) {
-            case 1: {
-                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);
+    public void onExecuteCommand(CommandSender sender, ParsedLine parsedLine) {
+        switch (parsedLine.words().size()) {
+            case 2: {
+                String commandArgument = parsedLine.words().get(1);
+                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(commandArgument);
                 if (minecraftServer != null) {
                     minecraftServer.getWrapper().copyServer(minecraftServer.getServerInfo());
-                    sender.sendMessage("The server " + args[0] + " was copied");
+                    sender.sendMessage("§aThe server " + commandArgument + " was copied");
                 } else {
-                    sender.sendMessage("The specified server doesn't exist");
+                    sender.sendMessage("§cThe specified server doesn't exist");
                 }
                 break;
             }
-            case 2: {
-                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(args[0]);
+            case 3: {
+                String commandArgument = parsedLine.words().get(1);
+                String secondCommandArgument = parsedLine.words().get(1);
+                MinecraftServer minecraftServer = CloudNet.getInstance().getServer(commandArgument);
                 if (minecraftServer != null) {
                     ServerGroup serverGroup = minecraftServer.getGroup();
                     if (serverGroup != null) {
                         Template template = serverGroup.getTemplates().stream()
-                                                       .filter(t -> t.getName().equalsIgnoreCase(args[1]))
+                                                       .filter(t -> t.getName().equalsIgnoreCase(secondCommandArgument))
                                                        .findFirst()
                                                        .orElse(null);
 
                         if (template == null) {
-                            template = new Template(args[1],
+                            template = new Template(commandArgument,
                                                     minecraftServer.getProcessMeta().getTemplate().getBackend(),
                                                     minecraftServer.getProcessMeta().getTemplate().getUrl(),
                                                     EMPTY_STRING_ARRAY,
@@ -75,11 +66,11 @@ public final class CommandCopy extends Command {
                             }
                         }
                         minecraftServer.getWrapper().copyServer(minecraftServer.getServerInfo());
-                        sender.sendMessage("Creating Template \"" + template.getName() + "\" for " + serverGroup.getName() + " and copying server " + minecraftServer
+                        sender.sendMessage("§aCreating Template \"" + template.getName() + "\" for " + serverGroup.getName() + " and copying server " + minecraftServer
                             .getServiceId()
                             .getServerId() + "...");
                     } else {
-                        sender.sendMessage("The group doesn't exist");
+                        sender.sendMessage("§cThe group doesn't exist");
                     }
                     return;
                 }
@@ -92,5 +83,16 @@ public final class CommandCopy extends Command {
                 break;
             }
         }
+    }
+
+    @Override
+    public List<Candidate> onTab(ParsedLine parsedLine) {
+        List<Candidate> candidates = new ArrayList<>();
+        if (parsedLine.words().size() == 1 && parsedLine.words().get(0).equalsIgnoreCase("copy")) {
+            for (MinecraftServer server : CloudNet.getInstance().getServers().values()) {
+                candidates.add(new Candidate(server.getName(), server.getName(), server.getGroup().getName(), "A server", null, null,true));
+            }
+        }
+        return candidates;
     }
 }

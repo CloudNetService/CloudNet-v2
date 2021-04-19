@@ -208,7 +208,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutAddServer(this.serverInfo,
                                                                                                this.serverProcessMeta));
         logger.info(String.format("Server %s started in [%d] milliseconds",
-                                  this,
+                                  this.getServiceId(),
                                   (System.currentTimeMillis() - startupTime)));
         this.startupTimeStamp = System.currentTimeMillis();
 
@@ -652,7 +652,7 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
 
         CloudNetWrapper.getInstance().getServers().remove(getServiceId().getServerId());
         CloudNetWrapper.getInstance().getNetworkConnection().sendPacket(new PacketOutRemoveServer(serverInfo));
-        logger.info(String.format("Server %s was stopped", this));
+        logger.info(String.format("Server %s was stopped", this.getServiceId()));
         return true;
     }
 
@@ -752,11 +752,11 @@ public class GameServer extends AbstractScreenService implements ServerDispatche
     public void restart() {
 
         kill();
-        logger.log(Level.INFO, String.format("Server %s was killed and restart...", this));
+        logger.log(Level.INFO, String.format("Server %s was killed and restart...", this.getServiceId()));
         try {
             startProcess();
             startupTimeStamp = System.currentTimeMillis();
-            logger.log(Level.INFO, String.format("Server %s restarted now!", this));
+            logger.log(Level.INFO, String.format("Server %s restarted now!", this.getServiceId()));
         } catch (Exception e) {
             e.printStackTrace();
         }

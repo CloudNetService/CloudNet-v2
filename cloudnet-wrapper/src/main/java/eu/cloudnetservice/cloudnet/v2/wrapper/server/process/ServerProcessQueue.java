@@ -24,6 +24,8 @@ import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
 import eu.cloudnetservice.cloudnet.v2.wrapper.server.BungeeCord;
 import eu.cloudnetservice.cloudnet.v2.wrapper.server.GameServer;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -64,7 +66,10 @@ public class ServerProcessQueue implements Runnable {
 
     @Override
     public void run() {
-
+        if (!Files.exists(Paths.get("local/spigot.jar"))) {
+            setRunning(false);
+            return;
+        }
         if (!running) {
             return;
         }
@@ -82,7 +87,7 @@ public class ServerProcessQueue implements Runnable {
                             serverProcessMeta,
                             CloudNetWrapper.getInstance().getServerGroups().get(serverProcessMeta.getServiceId().getGroup()));
 
-                        System.out.println("Fetching entry [" + gameServer.getServiceId() + ']');
+                        CloudNetWrapper.getInstance().getCloudNetLogging().info("Fetching entry [" + gameServer.getServiceId() + ']');
 
                         if (!gameServer.bootstrap()) {
                             this.servers.add(serverProcessMeta);

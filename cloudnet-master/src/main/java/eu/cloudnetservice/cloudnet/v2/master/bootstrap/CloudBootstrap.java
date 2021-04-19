@@ -17,27 +17,43 @@
 
 package eu.cloudnetservice.cloudnet.v2.master.bootstrap;
 
+import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleRegistry;
+import eu.cloudnetservice.cloudnet.v2.console.SignalManager;
+import eu.cloudnetservice.cloudnet.v2.console.completer.CloudNetCompleter;
+import eu.cloudnetservice.cloudnet.v2.console.logging.JlineColoredConsoleHandler;
 import eu.cloudnetservice.cloudnet.v2.help.HelpService;
 import eu.cloudnetservice.cloudnet.v2.help.ServiceDescription;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.SystemTimer;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
+import eu.cloudnetservice.cloudnet.v2.logging.LoggingFormatter;
 import eu.cloudnetservice.cloudnet.v2.master.CloudConfig;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.JdkLoggerFactory;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.impl.LineReaderImpl;
+import org.jline.reader.impl.completer.ArgumentCompleter;
 
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class CloudBootstrap {
 
     private static final InternalLoggerFactory INTERNAL_LOGGER_FACTORY = InternalLoggerFactory.getDefaultFactory();
 
-    public static synchronized void main(String[] args) throws IOException {
+    public static synchronized void main(String[] args) {
         System.setProperty("file.encoding", "UTF-8");
 
         InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
@@ -99,59 +115,74 @@ public final class CloudBootstrap {
         }
 
         if (optionSet.has("version")) {
-            System.out.println(String.format("CloudNet-Core RezSyM Version %s-%s%n",
-                                             CloudBootstrap.class.getPackage().getImplementationVersion(),
-                                             CloudBootstrap.class.getPackage().getSpecificationVersion()));
+            System.out.printf("CloudNet-Core RezSyM Version %s-%s%n",
+                              CloudBootstrap.class.getPackage().getImplementationVersion(),
+                              CloudBootstrap.class.getPackage().getSpecificationVersion());
             return;
         }
+        CloudConfig coreConfig = new CloudConfig();
+        ConsoleManager consoleManager = new ConsoleManager(new ConsoleRegistry(), new SignalManager());
+        if (!optionSet.has("noconsole")) {
+            consoleManager.useDefaultConsole();
+            consoleManager.setRunning(true);
 
+            Executors.newSingleThreadExecutor().execute(() -> {
+                consoleManager.startConsole();
+                System.out.println("Shutting down now!");
+            });
+        } else {
+            Executors.newSingleThreadExecutor().execute(() -> {
+                while (!Thread.currentThread().isInterrupted()) {
+                    NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
+                }
+                System.out.println("Shutting down now!");
+            });
+
+        }
         CloudLogger cloudNetLogging = new CloudLogger();
+        JlineColoredConsoleHandler consoleHandler = new JlineColoredConsoleHandler(consoleManager.getLineReader());
+        consoleHandler.setLevel(Level.INFO);
+        consoleHandler.setFormatter(new LoggingFormatter());
+        try {
+            consoleHandler.setEncoding(StandardCharsets.UTF_8.name());
+            cloudNetLogging.addHandler(consoleHandler);
+        } catch (UnsupportedEncodingException e) {
+            System.exit(-1);
+            throw new IllegalStateException("Something goes wrong to set the console encoding");
+        }
         if (optionSet.has("debug")) {
             cloudNetLogging.setDebugging(true);
         }
-
-        NetworkUtils.header();
-        CloudConfig coreConfig = new CloudConfig();
-        CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args));
-
         if (optionSet.has("systemTimer")) {
             CloudNet.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);
         }
-
+        CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args), consoleManager);
+        cloudNetCore.getCommandManager().setShowDescription(coreConfig.isShowDescription());
+        cloudNetCore.getCommandManager().setAliases(coreConfig.isAliases());
+        cloudNetCore.getConsoleRegistry().registerInput(cloudNetCore.getCommandManager());
+        cloudNetCore.getConsoleManager().changeConsoleInput(CommandManager.class);
         if (!cloudNetCore.bootstrap()) {
             System.exit(0);
         }
-
-        if (!optionSet.has("noconsole")) {
-            System.out.println("Use the command \"help\" for further information!");
-
-
-            String user = System.getProperty("user.name");
-            String commandLine;
-            final String prompt = user + "@Master $ ";
-            try {
-                while ((commandLine = cloudNetLogging.readLine(prompt)) != null && CloudNet.RUNNING) {
-                    // Aliases
-                    String dispatcher = cloudNetCore.getDbHandlers().getCommandDispatcherDatabase().findDispatcher(commandLine);
-                    if (dispatcher != null) {
-                        try {
-                            cloudNetCore.getCommandManager().dispatchCommand(dispatcher);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                        // Normal commands
-                    } else if (!cloudNetCore.getCommandManager().dispatchCommand(commandLine)) {
-                        System.out.println("Command not found. Use the command \"help\" for further information!");
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } else {
-            while (!Thread.currentThread().isInterrupted()) {
-                NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
+        NetworkUtils.header();
+        final LineReader lineReader = consoleManager.getLineReader();
+        lineReader.option(LineReader.Option.GROUP, coreConfig.isShowGroup());
+        lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, coreConfig.isElof());
+        lineReader.option(LineReader.Option.AUTO_GROUP, coreConfig.isShowGroup());
+        lineReader.option(LineReader.Option.MENU_COMPLETE, coreConfig.isShowMenu());
+        lineReader.option(LineReader.Option.AUTO_MENU, coreConfig.isShowMenu());
+        lineReader.option(LineReader.Option.AUTO_LIST, coreConfig.isAutoList());
+        if (lineReader instanceof LineReaderImpl) {
+            Completer completer = ((LineReaderImpl) lineReader).getCompleter();
+            if (completer instanceof ArgumentCompleter) {
+                ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setGroupColor(coreConfig.getGroupColor());
+                ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setShowDescription(coreConfig.isShowDescription());
+                ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setColor(coreConfig.getColor());
             }
         }
-        cloudNetLogging.info("Shutting down now!");
+        System.out.println("Use the command \"§ehelp§r\" for further information!");
+
+
+
     }
 }

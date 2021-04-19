@@ -19,9 +19,6 @@ package eu.cloudnetservice.cloudnet.v2.command;
 
 import eu.cloudnetservice.cloudnet.v2.lib.interfaces.Nameable;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 /**
  * Abstract class to define a command with an executor and a name
  */
@@ -32,8 +29,6 @@ public abstract class Command implements CommandExecutor, Nameable {
     protected String[] aliases;
 
     protected String description = "Default command description";
-
-    private final Collection<CommandArgument> commandArguments = new HashSet<>();
 
     /**
      * Constructs a new command with a name, a needed permission and variable aliases.
@@ -48,25 +43,9 @@ public abstract class Command implements CommandExecutor, Nameable {
         this.aliases = aliases;
     }
 
-    /**
-     * Appends a new argument to this command
-     *
-     * @param commandArgument the argument to append
-     *
-     * @return the command for chaining
-     */
-    protected Command appendArgument(CommandArgument commandArgument) {
-        this.commandArguments.add(commandArgument);
-        return this;
-    }
-
     @Override
     public String getName() {
         return name;
-    }
-
-    public Collection<CommandArgument> getCommandArguments() {
-        return commandArguments;
     }
 
     public String getDescription() {
@@ -79,5 +58,14 @@ public abstract class Command implements CommandExecutor, Nameable {
 
     public String[] getAliases() {
         return aliases;
+    }
+
+    protected boolean containsAlias(String command) {
+        for (String alias : aliases) {
+            if (command.equalsIgnoreCase(alias)) {
+                return true;
+            }
+        }
+        return true;
     }
 }

@@ -17,6 +17,7 @@
 
 package eu.cloudnetservice.cloudnet.v2.master.setup;
 
+import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.command.CommandSender;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerGroup;
 import eu.cloudnetservice.cloudnet.v2.lib.server.ServerGroupMode;
@@ -34,18 +35,24 @@ import eu.cloudnetservice.cloudnet.v2.setup.responsetype.StringResponseType;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class SetupServerGroup {
+/**
+ * Created by Tareko on 21.10.2017.
+ */
+public class SetupServerGroup extends Setup{
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final Pattern WRAPPER_SPLITTER = Pattern.compile("\\s?+,\\s?+");
     private final String name;
-    private final Setup setup;
-
     public SetupServerGroup(CommandSender commandSender, String name) {
+        super(CloudNet.getInstance().getConsoleManager());
         this.name = name;
 
-        setup = new Setup().setupCancel(() -> System.out.println("Setup cancelled!"))
-                           .setupComplete(data -> {
+        this.setupCancel(() -> {
+            System.out.println("Setup was cancelled");
+            CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+            CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupWrapper.class);
+        }).setupComplete(data -> {
+                               if (data == null) return;
                                // Make sure there is at least one valid wrapper
                                List<String> wrappers = new ArrayList<>(Arrays.asList(WRAPPER_SPLITTER.split(data.getString("wrapper"))));
                                if (wrappers.size() == 0) {
@@ -96,22 +103,24 @@ public class SetupServerGroup {
                                CloudNet.getInstance().setupGroup(serverGroup);
                                CloudNet.getInstance().toWrapperInstances(wrappers).forEach(Wrapper::updateWrapper);
                                commandSender.sendMessage(String.format("The server group %s is now created!", serverGroup.getName()));
+                               CloudNet.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
+                               CloudNet.getInstance().getConsoleRegistry().unregisterInput(SetupServerGroup.class);
                            })
                            .request(new SetupRequest("memory",
                                                      "How much memory should each server of this server group have?",
                                                      "The specified amount of memory is invalid",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) >= 64))
+                                                     key -> Integer.parseInt(key) >= 64, null))
                            .request(new SetupRequest("startup",
                                                      "How many servers should always be online?",
                                                      "The specified amount of servers is invalid",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) >= 0))
+                                                     key -> Integer.parseInt(key) >= 0, null))
                            .request(new SetupRequest("percent",
                                                      "How full does the server have to be to start a new server? (in percent)",
                                                      "The specified percentage is invalid",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) >= 0 && Integer.parseInt(key) <= 100))
+                                                     key -> Integer.parseInt(key) >= 0 && Integer.parseInt(key) <= 100, null))
                            .request(new SetupRequest("mode",
                                                      "Which server group mode should be used for this server group? [STATIC, STATIC_LOBBY, LOBBY, DYNAMIC]",
                                                      "The specified server group mode is invalid",
@@ -119,27 +128,29 @@ public class SetupServerGroup {
                                                      key -> key.equalsIgnoreCase("STATIC") ||
                                                          key.equalsIgnoreCase("STATIC_LOBBY") ||
                                                          key.equalsIgnoreCase("LOBBY") ||
-                                                         key.equalsIgnoreCase("DYNAMIC")))
+                                                         key.equalsIgnoreCase("DYNAMIC"),
+                                                     null))
                            .request(new SetupRequest("type",
                                                      "Which server group type should be used? [BUKKIT, GLOWSTONE]",
                                                      "The specified group type is invalid",
                                                      StringResponseType.getInstance(),
-                                                     key -> key.equals("BUKKIT") || key.equals("GLOWSTONE")))
+                                                     key -> key.equals("BUKKIT") || key.equals("GLOWSTONE"), null))
                            .request(new SetupRequest("template",
                                                      "What backend should be used for the group's default template? [\"LOCAL\" for a wrapper local backend | \"MASTER\" for the master backend]",
                                                      "The specified backend is invalid",
                                                      StringResponseType.getInstance(),
-                                                     key -> key.equals("MASTER") || key.equals("LOCAL")))
+                                                     key -> key.equals("MASTER") || key.equals("LOCAL"),
+                                                     null))
                            .request(new SetupRequest("onlineGroup",
                                                      "How many servers should be online, if 100 players are online in the group?",
                                                      "The specified amount is invalid",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) > 0))
+                                                     key -> Integer.parseInt(key) > 0, null))
                            .request(new SetupRequest("onlineGlobal",
                                                      "How many servers should be online, if 100 global players are online?",
                                                      "The specified amount is invalid",
                                                      IntegerResponseType.getInstance(),
-                                                     key -> Integer.parseInt(key) > 0))
+                                                     key -> Integer.parseInt(key) > 0, null))
                            .request(
                                new SetupRequest("wrapper",
                                                 "Which wrappers should be used for this group? (comma-separated list)",
@@ -155,14 +166,11 @@ public class SetupServerGroup {
                                                     Set<String> cloudWrappers = CloudNet.getInstance().getWrappers().keySet();
                                                     wrappers.removeIf(wrapper -> !cloudWrappers.contains(wrapper));
                                                     return wrappers.size() != 0;
-                                                }));
+                                                }, null));
     }
 
     public String getName() {
         return name;
     }
 
-    public void startSetup() {
-        setup.start(CloudNet.getLogger().getReader());
-    }
 }

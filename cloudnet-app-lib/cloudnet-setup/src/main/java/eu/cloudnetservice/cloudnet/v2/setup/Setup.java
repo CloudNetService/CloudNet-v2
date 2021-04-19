@@ -1,26 +1,15 @@
-/*
- * Copyright 2017 Tarek Hosni El Alaoui
- * Copyright 2020 CloudNetService
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package eu.cloudnetservice.cloudnet.v2.setup;
 
-import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
+import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
+import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.utility.document.Document;
-import jline.console.ConsoleReader;
+import org.jline.reader.Candidate;
+import org.jline.reader.LineReader;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
@@ -28,7 +17,12 @@ import java.util.function.Consumer;
 /**
  * Builder class for setup sequences.
  */
-public class Setup implements ISetup {
+public class Setup implements ConsoleInputDispatch, ConsoleChangeInputPromote {
+
+    private String oldPrompt;
+    private final ConsoleManager consoleManager;
+    private SetupResponseType<?> responseType;
+
 
     private static final String CANCEL = "cancel";
 
@@ -37,6 +31,7 @@ public class Setup implements ISetup {
      * Builds the sequence.
      */
     private final Queue<SetupRequest> requests = new LinkedBlockingQueue<>();
+    private final Queue<SetupRequest> oldRequests = new LinkedBlockingQueue<>();
 
     /**
      * Document containing the valid answers of the user.
@@ -52,61 +47,10 @@ public class Setup implements ISetup {
      * Method that called when this setup sequence is cancelled.
      */
     private Runnable setupCancel = null;
+    private SetupRequest setupRequest;
 
-    @Override
-    public void start(ConsoleReader consoleReader) {
-        boolean successful = true;
-        while (!requests.isEmpty()) {
-            SetupRequest setupRequest = null;
-            if (successful) {
-                setupRequest = requests.poll();
-            }
-            if (setupRequest == null) {
-                return;
-            }
-            SetupResponseType<?> responseType = setupRequest.getResponseType();
-            System.out.println(String.format("%s | %s", setupRequest.getQuestion(), responseType.userFriendlyString()));
-
-            String input;
-
-            try {
-                input = consoleReader.readLine();
-            } catch (Exception ex) {
-                System.out.println("Error while reading input: " + ex.getLocalizedMessage());
-                if (setupCancel != null) {
-                    setupCancel.run();
-                }
-                return;
-            }
-
-            if (input.equalsIgnoreCase(CANCEL)) {
-                if (setupCancel != null) {
-                    setupCancel.run();
-                }
-                return;
-            }
-
-            if (!input.isEmpty() && !input.equals(NetworkUtils.SPACE_STRING)) {
-                if (responseType.isValidInput(input)) {
-                    if ((setupRequest.hasValidator() &&
-                        setupRequest.getValidator().test(input)) ||
-                        !setupRequest.hasValidator()) {
-                        successful = true;
-                        responseType.appendDocument(document, setupRequest.getName(), input);
-                    } else {
-                        successful = false;
-                        System.out.println(setupRequest.getInvalidMessage());
-                    }
-                }
-            } else {
-                successful = false;
-                System.out.println(setupRequest.getInvalidMessage());
-            }
-        }
-
-        if (setupComplete != null) {
-            setupComplete.accept(document);
-        }
+    public Setup(ConsoleManager consoleManager) {
+        this.consoleManager = consoleManager;
 
     }
 
@@ -149,4 +93,74 @@ public class Setup implements ISetup {
         return this;
     }
 
+    @Override
+    public void dispatch(String line, LineReader lineReader) {
+        printQuestion(lineReader);
+        if (!line.isEmpty()) {
+            if (line.equalsIgnoreCase(CANCEL)) {
+                if (setupCancel != null) {
+                    this.consoleManager.setPrompt(oldPrompt);
+                    setupCancel.run();
+                }
+                return;
+            }
+
+            if (responseType != null && responseType.isValidInput(line)) {
+                if (setupRequest.hasValidator() && setupRequest.getValidator().test(line)) {
+                    responseType.appendDocument(document, setupRequest.getName(), line);
+                    setupRequest = null;
+                    printQuestion(lineReader);
+                    if (requests.isEmpty() && setupComplete != null && setupRequest == null) {
+                        this.consoleManager.setPrompt(oldPrompt);
+                        setupComplete.accept(document);
+                        this.requests.addAll(this.oldRequests);
+                    }
+                } else {
+                    System.out.println(setupRequest.getInvalidMessage());
+                }
+            }
+        } else if(requests.isEmpty() && setupComplete != null && setupRequest == null){
+            this.consoleManager.setPrompt(oldPrompt);
+            setupComplete.accept(document);
+            this.requests.addAll(this.oldRequests);
+        }
+    }
+
+    @Override
+    public boolean history() {
+        return false;
+    }
+
+    private void printQuestion(LineReader lineReader) {
+        if (!requests.isEmpty() && setupRequest == null) {
+            setupRequest = requests.poll();
+            this.oldRequests.offer(setupRequest);
+            responseType = setupRequest.getResponseType();
+            lineReader.printAbove(String.format("%s | %s%n", setupRequest.getQuestion(), responseType.userFriendlyString()));
+        }
+    }
+
+    @Override
+    public Collection<Candidate> get() {
+        if (this.setupRequest != null && this.setupRequest.getAutoValues() != null) {
+            List<Candidate> candidates = new ArrayList<>(this.setupRequest.getAutoValues().get());
+            candidates.add(new Candidate("cancel"));
+            return candidates;
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void changePromote(String oldPromote) {
+        if (!requests.isEmpty() && setupRequest == null) {
+            setupRequest = requests.poll();
+            this.oldRequests.offer(setupRequest);
+            responseType = setupRequest.getResponseType();
+            this.consoleManager.getLineReader().printAbove(String.format("%s | %s%n", setupRequest.getQuestion(), responseType.userFriendlyString()));
+        }
+        if (!this.consoleManager.getPrompt().equals(">")) {
+            this.oldPrompt = oldPromote;
+            this.consoleManager.setPrompt(">");
+        }
+    }
 }
