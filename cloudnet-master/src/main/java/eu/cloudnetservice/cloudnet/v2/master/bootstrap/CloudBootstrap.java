@@ -120,26 +120,12 @@ public final class CloudBootstrap {
                               CloudBootstrap.class.getPackage().getSpecificationVersion());
             return;
         }
-        ConsoleManager consoleManager = new ConsoleManager(new ConsoleRegistry(), new SignalManager());
         CloudConfig coreConfig = new CloudConfig();
+        ConsoleManager consoleManager = new ConsoleManager(new ConsoleRegistry(), new SignalManager());
         if (!optionSet.has("noconsole")) {
             consoleManager.useDefaultConsole();
             consoleManager.setRunning(true);
-            final LineReader lineReader = consoleManager.getLineReader();
-            lineReader.option(LineReader.Option.GROUP, coreConfig.isShowGroup());
-            lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, coreConfig.isElof());
-            lineReader.option(LineReader.Option.AUTO_GROUP, coreConfig.isShowGroup());
-            lineReader.option(LineReader.Option.MENU_COMPLETE, coreConfig.isShowMenu());
-            lineReader.option(LineReader.Option.AUTO_MENU, coreConfig.isShowMenu());
-            lineReader.option(LineReader.Option.AUTO_LIST, coreConfig.isAutoList());
-            if (lineReader instanceof LineReaderImpl) {
-                Completer completer = ((LineReaderImpl) lineReader).getCompleter();
-                if (completer instanceof ArgumentCompleter) {
-                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setGroupColor(coreConfig.getGroupColor());
-                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setShowDescription(coreConfig.isShowDescription());
-                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setColor(coreConfig.getColor());
-                }
-            }
+
             Executors.newSingleThreadExecutor().execute(() -> {
                 consoleManager.startConsole();
                 System.out.println("Shutting down now!");
@@ -171,15 +157,29 @@ public final class CloudBootstrap {
             CloudNet.getExecutor().scheduleWithFixedDelay(SystemTimer::run, 0, 1, TimeUnit.SECONDS);
         }
         CloudNet cloudNetCore = new CloudNet(coreConfig, cloudNetLogging, optionSet, Arrays.asList(args), consoleManager);
+        cloudNetCore.getCommandManager().setShowDescription(coreConfig.isShowDescription());
+        cloudNetCore.getCommandManager().setAliases(coreConfig.isAliases());
+        cloudNetCore.getConsoleRegistry().registerInput(cloudNetCore.getCommandManager());
+        cloudNetCore.getConsoleManager().changeConsoleInput(CommandManager.class);
         if (!cloudNetCore.bootstrap()) {
             System.exit(0);
         }
-
-        cloudNetCore.getConsoleRegistry().registerInput(cloudNetCore.getCommandManager());
-        cloudNetCore.getConsoleManager().changeConsoleInput(CommandManager.class);
         NetworkUtils.header();
-        cloudNetCore.getCommandManager().setShowDescription(coreConfig.isShowDescription());
-        cloudNetCore.getCommandManager().setAliases(coreConfig.isAliases());
+        final LineReader lineReader = consoleManager.getLineReader();
+        lineReader.option(LineReader.Option.GROUP, coreConfig.isShowGroup());
+        lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, coreConfig.isElof());
+        lineReader.option(LineReader.Option.AUTO_GROUP, coreConfig.isShowGroup());
+        lineReader.option(LineReader.Option.MENU_COMPLETE, coreConfig.isShowMenu());
+        lineReader.option(LineReader.Option.AUTO_MENU, coreConfig.isShowMenu());
+        lineReader.option(LineReader.Option.AUTO_LIST, coreConfig.isAutoList());
+        if (lineReader instanceof LineReaderImpl) {
+            Completer completer = ((LineReaderImpl) lineReader).getCompleter();
+            if (completer instanceof ArgumentCompleter) {
+                ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setGroupColor(coreConfig.getGroupColor());
+                ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setShowDescription(coreConfig.isShowDescription());
+                ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setColor(coreConfig.getColor());
+            }
+        }
         System.out.println("Use the command \"§ehelp§r\" for further information!");
 
 

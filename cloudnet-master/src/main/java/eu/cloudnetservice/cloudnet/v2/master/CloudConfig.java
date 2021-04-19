@@ -175,7 +175,7 @@ public class CloudConfig {
 
     public CloudConfig load() {
 
-        try (Reader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
+        try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(configPath), StandardCharsets.UTF_8)) {
             Configuration configuration = CONFIGURATION_PROVIDER.load(reader);
             this.config = configuration;
 
@@ -206,8 +206,8 @@ public class CloudConfig {
             if (!configuration.getSection("general").contains("disabled-modules")) {
                 configuration.set("general.disabled-modules", new ArrayList<>());
 
-                try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-                    CONFIGURATION_PROVIDER.save(configuration, writer);
+                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+                    CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
                 }
             }
             if (!configuration.getSection("general").contains("haste")) {
@@ -215,8 +215,8 @@ public class CloudConfig {
                                                                         "https://hasteb.in",
                                                                         "https://just-paste.it"));
 
-                try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-                    CONFIGURATION_PROVIDER.save(configuration, writer);
+                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+                    CONFIGURATION_PROVIDER.save(configuration, outputStreamWriter);
                 }
             }
             if (!configuration.contains("console")) {
@@ -226,8 +226,8 @@ public class CloudConfig {
                 configuration.set("console.autoList", true);
                 configuration.set("console.elof", false);
                 configuration.set("console.aliases", false);
-                configuration.set("console.color", "§3");
-                configuration.set("console.groupColor", "§8");
+                configuration.set("console.color", "&3");
+                configuration.set("console.groupColor", "&8");
 
                 try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
                     CONFIGURATION_PROVIDER.save(configuration, writer);
@@ -240,8 +240,8 @@ public class CloudConfig {
             this.autoList = configuration.getBoolean("console.autoList");
             this.aliases = configuration.getBoolean("console.aliases");
             this.elof = configuration.getBoolean("console.elof");
-            this.color = configuration.getString("console.color");
-            this.groupColor = configuration.getString("console.groupColor");
+            this.color = configuration.getString("console.color").replace('&', '§');
+            this.groupColor = configuration.getString("console.groupColor").replace('&', '§');
 
             this.disabledModules = configuration.getStringList("general.disabled-modules");
         } catch (IOException e) {
@@ -436,8 +436,8 @@ public class CloudConfig {
         this.showDescription = showDescription;
         this.config.set("console.showDescription", showDescription);
 
-        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-            CONFIGURATION_PROVIDER.save(this.config, writer);
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, outputStreamWriter);
         } catch (IOException e) {
             CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update console description into file", e);
         }
@@ -451,8 +451,8 @@ public class CloudConfig {
     public void setShowMenu(final boolean showMenu) {
         this.showMenu = showMenu;
         this.config.set("console.showMenu", showMenu);
-        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-            CONFIGURATION_PROVIDER.save(this.config, writer);
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, outputStreamWriter);
         } catch (IOException e) {
             CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"showMenu\" in file", e);
         }
@@ -465,8 +465,8 @@ public class CloudConfig {
     public void setShowGroup(final boolean showGroup) {
         this.showGroup = showGroup;
         this.config.set("console.showGroup", showGroup);
-        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-            CONFIGURATION_PROVIDER.save(this.config, writer);
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, outputStreamWriter);
         } catch (IOException e) {
             CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"showGroup\" in file", e);
         }
@@ -479,8 +479,8 @@ public class CloudConfig {
     public void setAutoList(final boolean autoList) {
         this.autoList = autoList;
         this.config.set("console.autoList", autoList);
-        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-            CONFIGURATION_PROVIDER.save(this.config, writer);
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, outputStreamWriter);
         } catch (IOException e) {
             CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"autoList\" in file", e);
         }
@@ -493,8 +493,8 @@ public class CloudConfig {
     public void setElof(final boolean elof) {
         this.elof = elof;
         this.config.set("console.elof", elof);
-        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-            CONFIGURATION_PROVIDER.save(this.config, writer);
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, outputStreamWriter);
         } catch (IOException e) {
             CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"elof\" in file", e);
         }
@@ -510,9 +510,9 @@ public class CloudConfig {
 
     public void setColor(final String color) {
         this.color = color;
-        this.config.set("console.color", color);
-        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-            CONFIGURATION_PROVIDER.save(this.config, writer);
+        this.config.set("console.color", color.replace('§', '&'));
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, outputStreamWriter);
         } catch (IOException e) {
             CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"color\" in file", e);
         }
@@ -520,9 +520,9 @@ public class CloudConfig {
 
     public void setGroupColor(final String groupColor) {
         this.groupColor = groupColor;
-        this.config.set("console.groupColor", groupColor);
-        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-            CONFIGURATION_PROVIDER.save(this.config, writer);
+        this.config.set("console.groupColor", groupColor.replace('§', '&'));
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, outputStreamWriter);
         } catch (IOException e) {
             CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"groupColor\" in file", e);
         }
@@ -535,8 +535,8 @@ public class CloudConfig {
     public void setAliases(final boolean aliases) {
         this.aliases = aliases;
         this.config.set("console.aliases", aliases);
-        try (Writer writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8)) {
-            CONFIGURATION_PROVIDER.save(this.config, writer);
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(Files.newOutputStream(configPath), StandardCharsets.UTF_8)) {
+            CONFIGURATION_PROVIDER.save(this.config, outputStreamWriter);
         } catch (IOException e) {
             CloudNet.getLogger().log(Level.SEVERE, "Cannot bet update property \"aliases\" in file", e);
         }
