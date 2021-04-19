@@ -28,7 +28,6 @@ import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.SystemTimer;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
 import eu.cloudnetservice.cloudnet.v2.logging.LoggingFormatter;
-import eu.cloudnetservice.cloudnet.v2.logging.handler.ColoredConsoleHandler;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapperConfig;
 import eu.cloudnetservice.cloudnet.v2.wrapper.util.FileUtility;
@@ -112,20 +111,39 @@ public class CloudBootstrap {
         cloudNetWrapperConfig = cloudNetWrapperConfig.load();
 
         ConsoleManager consoleManager = new ConsoleManager(new ConsoleRegistry(), new SignalManager());
-        Executors.newSingleThreadExecutor().execute(() -> {
-            if (!optionSet.has("noconsole")) {
-                consoleManager.useDefaultConsole();
-                consoleManager.setRunning(true);
+
+        if (!optionSet.has("noconsole")) {
+            consoleManager.useDefaultConsole();
+            consoleManager.setRunning(true);
+            Executors.newSingleThreadExecutor().execute(() -> {
                 consoleManager.startConsole();
-            } else {
+            });
+        } else {
+            Executors.newSingleThreadExecutor().execute(() -> {
                 while (!Thread.currentThread().isInterrupted()) {
                     NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
                 }
-            }
-
-
+            });
             System.out.println("Shutting down now!");
-        });
+
+        }
+        CloudLogger cloudNetLogging = new CloudLogger();
+        JlineColoredConsoleHandler consoleHandler = new JlineColoredConsoleHandler(consoleManager.getLineReader());
+        consoleHandler.setLevel(Level.INFO);
+        consoleHandler.setFormatter(new LoggingFormatter());
+        try {
+            consoleHandler.setEncoding(StandardCharsets.UTF_8.name());
+            cloudNetLogging.addHandler(consoleHandler);
+        } catch (UnsupportedEncodingException e) {
+            System.exit(-1);
+            throw new IllegalStateException("Something goes wrong to set the console encoding");
+        }
+        if (optionSet.has("debug")) {
+            cloudNetLogging.setDebugging(true);
+        }
+
+
+
         /*==============================================*/
         FileUtility.deleteDirectory(new File("temp"));
 
@@ -134,10 +152,7 @@ public class CloudBootstrap {
         }
         /*==============================================*/
 
-        CloudLogger cloudNetLogging = new CloudLogger();
-        if (optionSet.has("debug")) {
-            cloudNetLogging.setDebugging(true);
-        }
+
 
         NetworkUtils.header();
         CloudNetWrapper cloudNetWrapper = new CloudNetWrapper(optionSet, cloudNetWrapperConfig, cloudNetLogging, consoleManager);

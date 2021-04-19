@@ -17,7 +17,6 @@
 
 package eu.cloudnetservice.cloudnet.v2.master.bootstrap;
 
-import com.google.gson.stream.JsonToken;
 import eu.cloudnetservice.cloudnet.v2.command.CommandManager;
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
 import eu.cloudnetservice.cloudnet.v2.console.ConsoleRegistry;
@@ -30,7 +29,6 @@ import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
 import eu.cloudnetservice.cloudnet.v2.lib.SystemTimer;
 import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
 import eu.cloudnetservice.cloudnet.v2.logging.LoggingFormatter;
-import eu.cloudnetservice.cloudnet.v2.logging.handler.ColoredConsoleHandler;
 import eu.cloudnetservice.cloudnet.v2.master.CloudConfig;
 import eu.cloudnetservice.cloudnet.v2.master.CloudNet;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -124,35 +122,48 @@ public final class CloudBootstrap {
         }
         ConsoleManager consoleManager = new ConsoleManager(new ConsoleRegistry(), new SignalManager());
         CloudConfig coreConfig = new CloudConfig();
-        Executors.newSingleThreadExecutor().execute(() -> {
-            if (!optionSet.has("noconsole")) {
-                consoleManager.useDefaultConsole();
-                consoleManager.setRunning(true);
-                final LineReader lineReader = consoleManager.getLineReader();
-                lineReader.option(LineReader.Option.GROUP, coreConfig.isShowGroup());
-                lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, coreConfig.isElof());
-                lineReader.option(LineReader.Option.AUTO_GROUP, coreConfig.isShowGroup());
-                lineReader.option(LineReader.Option.MENU_COMPLETE, coreConfig.isShowMenu());
-                lineReader.option(LineReader.Option.AUTO_MENU, coreConfig.isShowMenu());
-                lineReader.option(LineReader.Option.AUTO_LIST, coreConfig.isAutoList());
-                if (lineReader instanceof LineReaderImpl) {
-                    Completer completer = ((LineReaderImpl) lineReader).getCompleter();
-                    if (completer instanceof ArgumentCompleter) {
-                        ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setGroupColor(coreConfig.getGroupColor());
-                        ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setShowDescription(coreConfig.isShowDescription());
-                        ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setColor(coreConfig.getColor());
-                    }
+        if (!optionSet.has("noconsole")) {
+            consoleManager.useDefaultConsole();
+            consoleManager.setRunning(true);
+            final LineReader lineReader = consoleManager.getLineReader();
+            lineReader.option(LineReader.Option.GROUP, coreConfig.isShowGroup());
+            lineReader.option(LineReader.Option.ERASE_LINE_ON_FINISH, coreConfig.isElof());
+            lineReader.option(LineReader.Option.AUTO_GROUP, coreConfig.isShowGroup());
+            lineReader.option(LineReader.Option.MENU_COMPLETE, coreConfig.isShowMenu());
+            lineReader.option(LineReader.Option.AUTO_MENU, coreConfig.isShowMenu());
+            lineReader.option(LineReader.Option.AUTO_LIST, coreConfig.isAutoList());
+            if (lineReader instanceof LineReaderImpl) {
+                Completer completer = ((LineReaderImpl) lineReader).getCompleter();
+                if (completer instanceof ArgumentCompleter) {
+                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setGroupColor(coreConfig.getGroupColor());
+                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setShowDescription(coreConfig.isShowDescription());
+                    ((CloudNetCompleter) ((ArgumentCompleter) completer).getCompleters().get(0)).setColor(coreConfig.getColor());
                 }
+            }
+            Executors.newSingleThreadExecutor().execute(() -> {
                 consoleManager.startConsole();
-            } else {
+                System.out.println("Shutting down now!");
+            });
+        } else {
+            Executors.newSingleThreadExecutor().execute(() -> {
                 while (!Thread.currentThread().isInterrupted()) {
                     NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
                 }
-            }
+                System.out.println("Shutting down now!");
+            });
 
-            System.out.println("Shutting down now!");
-        });
+        }
         CloudLogger cloudNetLogging = new CloudLogger();
+        JlineColoredConsoleHandler consoleHandler = new JlineColoredConsoleHandler(consoleManager.getLineReader());
+        consoleHandler.setLevel(Level.INFO);
+        consoleHandler.setFormatter(new LoggingFormatter());
+        try {
+            consoleHandler.setEncoding(StandardCharsets.UTF_8.name());
+            cloudNetLogging.addHandler(consoleHandler);
+        } catch (UnsupportedEncodingException e) {
+            System.exit(-1);
+            throw new IllegalStateException("Something goes wrong to set the console encoding");
+        }
         if (optionSet.has("debug")) {
             cloudNetLogging.setDebugging(true);
         }
@@ -163,11 +174,15 @@ public final class CloudBootstrap {
         if (!cloudNetCore.bootstrap()) {
             System.exit(0);
         }
+
         cloudNetCore.getConsoleRegistry().registerInput(cloudNetCore.getCommandManager());
         cloudNetCore.getConsoleManager().changeConsoleInput(CommandManager.class);
         NetworkUtils.header();
         cloudNetCore.getCommandManager().setShowDescription(coreConfig.isShowDescription());
         cloudNetCore.getCommandManager().setAliases(coreConfig.isAliases());
         System.out.println("Use the command \"§ehelp§r\" for further information!");
+
+
+
     }
 }

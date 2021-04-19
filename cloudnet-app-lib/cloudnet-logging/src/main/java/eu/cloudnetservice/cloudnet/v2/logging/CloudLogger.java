@@ -1,6 +1,5 @@
 package eu.cloudnetservice.cloudnet.v2.logging;
 
-import eu.cloudnetservice.cloudnet.v2.logging.handler.ColoredConsoleHandler;
 import eu.cloudnetservice.cloudnet.v2.logging.stream.LoggingOutputStream;
 
 import java.io.IOException;
@@ -29,11 +28,6 @@ public class CloudLogger extends Logger {
             fh.setEncoding(StandardCharsets.UTF_8.name());
             fh.setLevel(Level.ALL);
             addHandler(fh);
-            ColoredConsoleHandler consoleHandler = new ColoredConsoleHandler();
-            consoleHandler.setLevel(Level.INFO);
-            consoleHandler.setFormatter(new LoggingFormatter());
-            consoleHandler.setEncoding(StandardCharsets.UTF_8.name());
-            addHandler(consoleHandler);
             System.setOut(new PrintStream(new LoggingOutputStream(this, Level.INFO), true, StandardCharsets.UTF_8.name()));
             System.setErr(new PrintStream(new LoggingOutputStream(this, Level.SEVERE), true, StandardCharsets.UTF_8.name()));
         } catch (IOException e) {

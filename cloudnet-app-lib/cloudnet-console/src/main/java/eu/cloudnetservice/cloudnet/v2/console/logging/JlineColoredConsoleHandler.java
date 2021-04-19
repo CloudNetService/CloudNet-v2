@@ -1,13 +1,13 @@
 package eu.cloudnetservice.cloudnet.v2.console.logging;
 
 import eu.cloudnetservice.cloudnet.v2.logging.color.AnsiColorReplacer;
-import eu.cloudnetservice.cloudnet.v2.logging.handler.ColoredConsoleHandler;
 import org.jline.reader.LineReader;
 import org.jline.utils.InfoCmp;
 
+import java.util.logging.ConsoleHandler;
 import java.util.logging.LogRecord;
 
-public class JlineColoredConsoleHandler extends ColoredConsoleHandler {
+public class JlineColoredConsoleHandler extends ConsoleHandler {
 
     private final LineReader lineReader;
 
@@ -20,8 +20,7 @@ public class JlineColoredConsoleHandler extends ColoredConsoleHandler {
         record.setMessage(AnsiColorReplacer.replaceAnsi(record.getMessage()));
         this.lineReader.getTerminal().puts(InfoCmp.Capability.carriage_return);
         this.lineReader.getTerminal().puts(InfoCmp.Capability.clr_eol);
-        this.lineReader.getTerminal().writer().print(getFormatter().format(record));
-        this.lineReader.getTerminal().writer().flush();
+        this.lineReader.printAbove(getFormatter().format(record));
         if (!this.lineReader.isReading()) {
             return;
         }

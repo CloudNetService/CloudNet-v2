@@ -4,12 +4,7 @@ import eu.cloudnetservice.cloudnet.v2.console.completer.CloudNetCompleter;
 import eu.cloudnetservice.cloudnet.v2.console.logging.JlineColoredConsoleHandler;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
-import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
 import eu.cloudnetservice.cloudnet.v2.logging.LoggingFormatter;
-import eu.cloudnetservice.cloudnet.v2.logging.handler.ColoredConsoleHandler;
-import eu.cloudnetservice.cloudnet.v2.logging.stream.LoggingOutputStream;
-import org.fusesource.jansi.AnsiConsole;
-import org.fusesource.jansi.AnsiPrintStream;
 import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -28,9 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class ConsoleManager {
 
@@ -98,22 +91,7 @@ public final class ConsoleManager {
             System.exit(-1);
             throw new IllegalStateException("Console input dispatcher is empty");
         }
-        Logger logger = Logger.getLogger("CloudLogger");
-        for (final Handler handler : logger.getHandlers()) {
-            if (handler instanceof ColoredConsoleHandler) {
-                logger.removeHandler(handler);
-            }
-        }
-        JlineColoredConsoleHandler consoleHandler = new JlineColoredConsoleHandler(this.lineReader);
-        consoleHandler.setLevel(Level.INFO);
-        consoleHandler.setFormatter(new LoggingFormatter());
-        try {
-            consoleHandler.setEncoding(StandardCharsets.UTF_8.name());
-            logger.addHandler(consoleHandler);
-        } catch (UnsupportedEncodingException e) {
-            System.exit(-1);
-            throw new IllegalStateException("Something goes wrong to set the console encoding");
-        }
+
     }
 
     public void changeConsoleInput(Class<? extends ConsoleInputDispatch> clazz) {

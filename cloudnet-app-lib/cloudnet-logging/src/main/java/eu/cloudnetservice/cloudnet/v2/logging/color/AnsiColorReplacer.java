@@ -67,7 +67,12 @@ public class AnsiColorReplacer {
         while (matcher.find()) {
             input = input.replace(matcher.group(0), Ansi.ansi().fgRgb(Integer.parseInt(matcher.group(2), 16)).toString());
         }
-        input = input + Ansi.ansi().a(Ansi.Attribute.RESET).toString();
+        if (input.endsWith(System.lineSeparator())) {
+            String beforeNewLine = input.substring(0, input.lastIndexOf(System.lineSeparator()));
+            input = beforeNewLine + Ansi.ansi().a(Ansi.Attribute.RESET).toString() + System.lineSeparator();
+        } else {
+            input = input + Ansi.ansi().a(Ansi.Attribute.RESET).toString();
+        }
         return input;
     }
     public static String replaceAnsiWithoutReset(String string) {
