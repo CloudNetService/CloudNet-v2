@@ -5,6 +5,7 @@ import eu.cloudnetservice.cloudnet.v2.console.ConsoleManager;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleChangeInputPromote;
 import eu.cloudnetservice.cloudnet.v2.console.model.ConsoleInputDispatch;
 import eu.cloudnetservice.cloudnet.v2.lib.NetworkUtils;
+import eu.cloudnetservice.cloudnet.v2.logging.CloudLogger;
 import eu.cloudnetservice.cloudnet.v2.wrapper.CloudNetWrapper;
 import eu.cloudnetservice.cloudnet.v2.wrapper.setup.GetBukkitVersion;
 import org.jline.reader.Candidate;
@@ -19,6 +20,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class SetupSpigotVersion implements ConsoleInputDispatch, ConsoleChangeInputPromote {
@@ -40,15 +42,59 @@ public class SetupSpigotVersion implements ConsoleInputDispatch, ConsoleChangeIn
             CloudNetWrapper.getInstance().getConsoleManager().changeConsoleInput(CommandManager.class);
             CloudNetWrapper.getInstance().getConsoleManager().getConsoleRegistry().unregisterInput(SetupSpigotVersion.class);
             return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            CloudLogger.getLogger("CloudLogger").log(Level.SEVERE, "An error occurred when building spigot", exception);
             return false;
         }
     };
-    private boolean spigot, paper, buildtools;
+
+    private boolean spigot;
+    private boolean paper;
+    private boolean buildtools;
 
     public SetupSpigotVersion(final ConsoleManager consoleManager) {
         this.consoleManager = consoleManager;
+    }
+
+    public Path getTarget() {
+        return this.target != null ? this.target : Paths.get("local/spigot.jar");
+    }
+
+    public void setTarget(Path target) {
+        this.target = target;
+    }
+
+    @Override
+    public void dispatch(String line, LineReader lineReader) {
+        if (paper) {
+            this.consoleManager.changeConsoleInput(PaperBuilder.class);
+            return;
+        } else if (buildtools) {
+            this.consoleManager.changeConsoleInput(SpigotBuilder.class);
+            return;
+        }
+        if (line.length() > 0) {
+            if (spigot) {
+                this.installSpigot(line);
+            } else {
+                this.install(line);
+            }
+        }
+    }
+
+    private void installSpigot(String input) {
+        if (Arrays.stream(GetBukkitVersion.values())
+                  .map(GetBukkitVersion::getVersion)
+                  .anyMatch(version -> version.equals(input.toLowerCase()))) {
+            final Optional<GetBukkitVersion> bukkitVersion = Arrays.stream(GetBukkitVersion.values())
+                                                                   .filter(getBukkitVersion -> getBukkitVersion.getVersion()
+                                                                                                               .equals(input.toLowerCase()))
+                                                                   .findFirst();
+            bukkitVersion.ifPresent(getBukkitVersion -> this.download.test(String.format(getBukkitVersion.getUrl(),
+                                                                                         getBukkitVersion.getVersion())));
+        } else {
+            System.out.println("This version is not supported!");
+        }
     }
 
     private void install(String spigotType) {
@@ -76,51 +122,10 @@ public class SetupSpigotVersion implements ConsoleInputDispatch, ConsoleChangeIn
                 System.out.println("This option is not available!");
                 break;
         }
-        if (paper){
+        if (paper) {
             this.consoleManager.changeConsoleInput(PaperBuilder.class);
         } else if (buildtools) {
             this.consoleManager.changeConsoleInput(SpigotBuilder.class);
-        }
-    }
-
-    private void installSpigot(String input) {
-        if (Arrays.stream(GetBukkitVersion.values())
-                  .map(GetBukkitVersion::getVersion)
-                  .anyMatch(version -> version.equals(input.toLowerCase()))) {
-            final Optional<GetBukkitVersion> bukkitVersion = Arrays.stream(GetBukkitVersion.values())
-                                                                   .filter(getBukkitVersion -> getBukkitVersion.getVersion()
-                                                                                                               .equals(input.toLowerCase()))
-                                                                   .findFirst();
-            bukkitVersion.ifPresent(getBukkitVersion -> this.download.test(String.format(getBukkitVersion.getUrl(),
-                                                                                         getBukkitVersion.getVersion())));
-        } else {
-            System.out.println("This version is not supported!");
-        }
-    }
-
-    public Path getTarget() {
-        return this.target != null ? this.target : Paths.get("local/spigot.jar");
-    }
-
-    public void setTarget(Path target) {
-        this.target = target;
-    }
-
-    @Override
-    public void dispatch(String line, LineReader lineReader) {
-        if (paper){
-            this.consoleManager.changeConsoleInput(PaperBuilder.class);
-            return;
-        } else if (buildtools) {
-            this.consoleManager.changeConsoleInput(SpigotBuilder.class);
-            return;
-        }
-        if (line.length() > 0) {
-            if (spigot) {
-                this.installSpigot(line);
-            } else {
-                this.install(line);
-            }
         }
     }
 

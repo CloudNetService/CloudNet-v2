@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Document {
 
@@ -234,8 +236,8 @@ public class Document {
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             this.dataCatcher = JsonParser.parseReader(reader).getAsJsonObject();
             return this;
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception exception) {
+            Logger.getLogger("CloudLogger").log(Level.SEVERE, "Error when loading an existing document: ", exception);
         }
         return new Document();
     }
@@ -248,8 +250,8 @@ public class Document {
         try (OutputStreamWriter writer = new FileWriter(backend, false)) {
             GSON.toJson(dataCatcher, writer);
             return true;
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException exception) {
+            Logger.getLogger("CloudLogger").log(Level.SEVERE, "Error when saving a document: ", exception);
         }
         return false;
     }
