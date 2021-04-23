@@ -33,7 +33,7 @@ public enum ProxyVersion {
                     "https://papermc.io/ci/job/Travertine/lastSuccessfulBuild/artifact/Travertine-Proxy/bootstrap/target/Travertine.jar",
                     "Travertine.jar");
             case HEXACORD:
-                return new MultiValue<>("https://github.com/HexagonMC/BungeeCord/releases/download/v258/BungeeCord.jar",
+                return new MultiValue<>("https://github.com/HexagonMC/BungeeCord/releases/download/v272/BungeeCord.jar",
                                         "HexaCord.jar");
             case WATERFALL:
                 return new MultiValue<>(
