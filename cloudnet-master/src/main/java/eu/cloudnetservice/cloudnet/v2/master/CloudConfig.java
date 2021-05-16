@@ -129,7 +129,7 @@ public class CloudConfig {
         configuration.set("general.notify-service", true);
         configuration.set("general.disabled-modules", new ArrayList<>());
 
-        configuration.set("general.haste.server", Arrays.asList("just-paste.it",
+        configuration.set("general.haste.server", Arrays.asList("https://just-paste.it",
                                                                 "https://hastebin.com",
                                                                 "https://paste.the-systems.eu"));
 
@@ -211,7 +211,7 @@ public class CloudConfig {
                 }
             }
             if (!configuration.getSection("general").contains("haste")) {
-                configuration.set("general.haste.server", Arrays.asList("just-paste.it",
+                configuration.set("general.haste.server", Arrays.asList("https://just-paste.it",
                                                                         "https://hastebin.com",
                                                                         "https://paste.the-systems.eu"));
 
