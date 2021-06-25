@@ -52,7 +52,7 @@ Maven:
     <repositories>
         <repository>
             <id>cloudnet-repo</id>
-            <url>https://cloudnetservice.eu/repositories</url>
+            <url>https://repo.cloudnetservice.eu/repository/releases/</url>
         </repository>
     </repositories>
 
@@ -61,14 +61,14 @@ Maven:
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-api-bridge</artifactId>
-            <version>2.1.17</version>
+            <version>2.1.18</version>
             <scope>provided</scope>
         </dependency>
          <!-- CloudNet Core -->
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
             <artifactId>cloudnet-core</artifactId>
-            <version>2.1.17</version>
+            <version>2.1.18</version>
             <scope>provided</scope>
         </dependency>
      </dependencies>
