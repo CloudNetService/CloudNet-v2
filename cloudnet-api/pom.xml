@@ -21,20 +21,32 @@
 
     <repositories>
         <repository>
-            <id>cloudnet-repo</id>
-            <url>https://cloudnetservice.eu/repositories</url>
+            <id>cloudnet</id>
+            <name>CloudNet Snapshot Repository</name>
+            <url>https://repo.cloudnetservice.eu/repository/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
         <!-- SpigotMC repository -->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <!-- BungeeCord repository -->
+        <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-bootstrap</artifactId>
+            <artifactId>bungeecord-api</artifactId>
             <version>${dependency.bungeecord.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -49,6 +61,10 @@
                 <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.md-5</groupId>
+                    <artifactId>bungeecord-chat</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

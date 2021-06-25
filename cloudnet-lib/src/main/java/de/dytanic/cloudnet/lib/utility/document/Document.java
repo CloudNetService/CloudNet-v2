@@ -20,7 +20,6 @@ public class Document implements DocumentAbstract {
     public static Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
     protected String name;
     protected JsonObject dataCatcher;
-    private File file;
 
     public Document(String name) {
         this.name = name;
@@ -30,11 +29,6 @@ public class Document implements DocumentAbstract {
     public Document(String name, JsonObject source) {
         this.name = name;
         this.dataCatcher = source;
-    }
-
-    public Document(File file, JsonObject jsonObject) {
-        this.file = file;
-        this.dataCatcher = jsonObject;
     }
 
     public Document(String key, String value) {
@@ -287,14 +281,6 @@ public class Document implements DocumentAbstract {
         this.name = name;
     }
 
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
     public JsonObject obj() {
         return dataCatcher;
     }
@@ -387,7 +373,6 @@ public class Document implements DocumentAbstract {
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(backend), "UTF-8")) {
 
             this.dataCatcher = PARSER.parse(reader).getAsJsonObject();
-            this.file = backend;
             return this;
         } catch (Exception ex) {
             ex.getStackTrace();
