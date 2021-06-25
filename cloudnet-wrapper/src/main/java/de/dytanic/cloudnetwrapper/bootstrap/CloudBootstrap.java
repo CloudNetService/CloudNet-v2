@@ -118,7 +118,7 @@ public class CloudBootstrap {
 
             String user = System.getProperty("user.name");
 
-            while (true) {
+            while (!Thread.interrupted()) {
                 try {
                     while ((commandLine = cloudNetLogging.readLine(user + '@' + cloudNetWrapper.getWrapperConfig()
                                                                                                .getWrapperId() + " $ ")) != null) {
@@ -132,11 +132,11 @@ public class CloudBootstrap {
                         }
                     }
                 } catch (Exception ex) {
-
+                    ex.printStackTrace();
                 }
             }
         } else {
-            while (true) {
+            while (!Thread.interrupted()) {
                 NetworkUtils.sleepUninterruptedly(Long.MAX_VALUE);
             }
         }
