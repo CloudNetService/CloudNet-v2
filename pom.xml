@@ -65,7 +65,7 @@
         <dependecy.snakeyaml.version>1.29</dependecy.snakeyaml.version>
         <dependency.bungeecord.version>1.16-R0.4</dependency.bungeecord.version>
         <dependency.spigot.version>1.8.8-R0.1-SNAPSHOT</dependency.spigot.version>
-        <dependency.vaultapi.version>1.7</dependency.vaultapi.version>
+        <dependency.vaultapi.version>1.7.1</dependency.vaultapi.version>
         <dependency.typetools.version>0.6.3</dependency.typetools.version>
         <dependency.semver4j.version>3.1.0</dependency.semver4j.version>
         <dependency.guava.version>30.1.1-jre</dependency.guava.version>
