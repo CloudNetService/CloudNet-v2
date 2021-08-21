@@ -100,7 +100,7 @@ public interface NetworkHandler {
     /**
      * Called if a Player Disconnect to the network from cloudnet
      *
-     * @param cloudPlayer
+     * @param uniqueId
      */
     void onPlayerDisconnectNetwork(UUID uniqueId);
 

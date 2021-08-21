@@ -172,19 +172,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-project-info-reports-plugin</artifactId>
-                        <version>${plugin.projectinfo.version}</version>
-                        <dependencies>
-                            <!-- https://mvnrepository.com/artifact/org.apache.maven.doxia/doxia-site-renderer -->
-                            <dependency>
-                                <groupId>org.apache.maven.doxia</groupId>
-                                <artifactId>doxia-site-renderer</artifactId>
-                                <version>1.9.2</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
