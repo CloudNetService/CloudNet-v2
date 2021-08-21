@@ -35,10 +35,6 @@ pipeline {
       }
     }
     stage('Re-package') {
-      tools {
-            maven 'Maven3'
-            jdk 'Java11'
-      }
       steps {
         sh 'mvn package javadoc:aggregate-jar'
       }
