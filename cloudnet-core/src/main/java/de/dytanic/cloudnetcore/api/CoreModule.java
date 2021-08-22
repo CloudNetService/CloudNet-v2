@@ -16,18 +16,15 @@ import de.dytanic.cloudnetcore.CloudNet;
 public class CoreModule extends Module<CloudNet> {
 
     /**
-     * Registered a IEventListener objective to a Event Class
+     * Registered a IEventListener objective to an Event Class
      *
-     * @param eventListener
-     * @param <T>
+     * @param eventListener the event listener that should be registered
+     * @param <T> the type of the event
      */
     public <T extends Event> void registerListener(IEventListener<T> eventListener) {
         CloudNet.getInstance().getEventManager().registerListener(this, eventListener);
     }
 
-    /**
-     *
-     */
     public void appendModuleProperty(String key, Object value) {
         CloudNet.getInstance().getNetworkManager().getModuleProperties().append(key, value);
     }
@@ -35,7 +32,7 @@ public class CoreModule extends Module<CloudNet> {
     /**
      * Registered a command
      *
-     * @param command
+     * @param command the command to register
      */
     public void registerCommand(Command command) {
         CloudNet.getInstance().getCommandManager().registerCommand(command);

@@ -235,7 +235,7 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns the network server manager from cloudnet
      *
-     * @return
+     * @return the provider for network handlers
      */
     public NetworkHandlerProvider getNetworkHandlerProvider() {
         return networkHandlerProvider;
@@ -244,7 +244,7 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns the internal network connection to the cloudnet root
      *
-     * @return
+     * @return the network connection to the cloudnet core
      */
     public NetworkConnection getNetworkConnection() {
         return networkConnection;
@@ -323,7 +323,7 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns the Id (Lobby-1 -> "1")
+     * Returns the Id (Lobby-1 -&gt; "1")
      *
      * @return the numerical id of this running instance
      */
@@ -343,7 +343,7 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns the SimpleServerGroup of the parameter
      *
-     * @param group
+     * @param group the name of the server group
      *
      * @return the server group with the given name, if available
      */
@@ -354,7 +354,7 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns the ProxyGroup of the parameter
      *
-     * @param group
+     * @param group the name of the proxy group
      *
      * @return the proxy group with the given name, if available
      */
@@ -383,7 +383,7 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns all the module properties
      *
-     * @return
+     * @return a document with all module properties
      */
     public Document getModuleProperties() {
         return cloudNetwork.getModules();
@@ -424,7 +424,7 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns one of the wrapper infos
      *
-     * @param wrapperId
+     * @param wrapperId the id/name of the wrapper
      *
      * @return the wrapper with the given name
      */
@@ -597,6 +597,8 @@ public final class CloudAPI implements MetaObj {
      * Creates a custom server log url for a service screen.
      *
      * @param serverId the id of the service.
+     *
+     * @return the generated url
      */
     public String createServerLogUrl(String serverId) {
         this.logger.logp(Level.FINEST,
@@ -744,9 +746,10 @@ public final class CloudAPI implements MetaObj {
      * @param proxyGroup        the proxy group
      * @param memory            the amount of heap memory
      * @param processParameters the parameters for the process
+     * @param properties        additional properties
      */
-    public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters, Document document) {
-        startProxy(wrapperInfo, proxyGroup, memory, processParameters, null, new ArrayList<>(), document);
+    public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters, Document properties) {
+        startProxy(wrapperInfo, proxyGroup, memory, processParameters, null, new ArrayList<>(), properties);
     }
 
     /**
@@ -1111,6 +1114,7 @@ public final class CloudAPI implements MetaObj {
      * @param serverConfig      the custom server configuration
      * @param template          the template to start
      * @param priorityStop      whether priority stop is enabled
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,

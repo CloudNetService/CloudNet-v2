@@ -20,7 +20,7 @@ public class NetworkHandlerProvider {
     /**
      * Registerd a network Handler
      *
-     * @param networkHandler
+     * @param networkHandler the handler to register
      */
     public void registerHandler(NetworkHandler networkHandler) {
         this.handlers.add(networkHandler);
@@ -29,7 +29,7 @@ public class NetworkHandlerProvider {
     /**
      * Iteration of all registed Handlers
      *
-     * @param handlerTask
+     * @param handlerTask the task to run on every network handler
      */
     public void iterator(Runnabled<NetworkHandler> handlerTask) {
         CollectionWrapper.iterator(handlers, handlerTask);

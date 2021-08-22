@@ -175,6 +175,8 @@ public class WebClient {
 
     /**
      * Update the local wrapper (only on the master)
+     *
+     * @param outputPath the path to write the wrapper file to
      */
     public void updateLocalCloudWrapper(Path outputPath) {
         try {

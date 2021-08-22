@@ -106,7 +106,7 @@ public class CloudServer implements ICloudService {
     /**
      * Returns the instance from the CloudServer
      *
-     * @return
+     * @return the cloud server instance
      */
     public static CloudServer getInstance() {
         return instance;
@@ -188,7 +188,7 @@ public class CloudServer implements ICloudService {
     /**
      * Checks if this instance can starting game servers auto
      *
-     * @return
+     * @return whether this server automatically starts servers
      */
     public boolean isAllowAutoStart() {
         return allowAutoStart;
@@ -221,7 +221,7 @@ public class CloudServer implements ICloudService {
     /**
      * You can disable the Autostart funtction from this server
      *
-     * @param allowAutoStart
+     * @param allowAutoStart whether this server automatically starts servers
      */
     public void setAllowAutoStart(boolean allowAutoStart) {
         this.allowAutoStart = allowAutoStart;
@@ -252,7 +252,7 @@ public class CloudServer implements ICloudService {
     /**
      * Returns the serverConfig from this instance
      *
-     * @return
+     * @return the current server configuration
      */
     public ServerConfig getServerConfig() {
         return serverConfig;
@@ -261,7 +261,7 @@ public class CloudServer implements ICloudService {
     /**
      * Sets the serverConfig in a new default style
      *
-     * @param serverConfig
+     * @param serverConfig the new server configuration
      */
     public void setServerConfig(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
@@ -270,7 +270,7 @@ public class CloudServer implements ICloudService {
     /**
      * Returns the ServerState from this instance
      *
-     * @return
+     * @return the current server state
      */
     public ServerState getServerState() {
         return serverState;
@@ -279,7 +279,7 @@ public class CloudServer implements ICloudService {
     /**
      * Set the serverState INGAME, LOBBY, OFFLINE for switching Signs or your API thinks
      *
-     * @param serverState
+     * @param serverState the new server state
      */
     public void setServerState(ServerState serverState) {
         this.serverState = serverState;
@@ -288,7 +288,7 @@ public class CloudServer implements ICloudService {
     /**
      * Returns the max players from the acceptings
      *
-     * @return
+     * @return the maximum amount of players allowed
      */
     public int getMaxPlayers() {
         return maxPlayers;
@@ -297,7 +297,7 @@ public class CloudServer implements ICloudService {
     /**
      * Set the maxPlayers from this instance
      *
-     * @param maxPlayers
+     * @param maxPlayers the maximum amount of players allowed
      */
     public void setMaxPlayers(int maxPlayers) {
         this.maxPlayers = maxPlayers;
@@ -316,7 +316,7 @@ public class CloudServer implements ICloudService {
     /**
      * Returns the motd from the server marks for the cloud
      *
-     * @return
+     * @return the motd
      */
     public String getMotd() {
         return motd;
@@ -325,7 +325,7 @@ public class CloudServer implements ICloudService {
     /**
      * Sets the Motd for the ServerInfo
      *
-     * @param motd
+     * @param motd the motd
      */
     public void setMotd(String motd) {
         this.motd = motd;
@@ -341,7 +341,7 @@ public class CloudServer implements ICloudService {
     /**
      * Registerd one command
      *
-     * @param command
+     * @param command the command to register
      */
     public void registerCommand(Command command) {
         try {
@@ -361,7 +361,7 @@ public class CloudServer implements ICloudService {
     /**
      * Returns the SimpleServerGroup of the instance
      *
-     * @return
+     * @return the group data of this servers group
      */
     public SimpleServerGroup getGroupData() {
         return CloudAPI.getInstance().getCloudNetwork().getServerGroups().get(CloudAPI.getInstance().getGroup());
@@ -374,7 +374,7 @@ public class CloudServer implements ICloudService {
     /**
      * Returns the Plugin instance from this CLoud-System
      *
-     * @return
+     * @return this server's bootstrap plugin
      */
     public JavaPlugin getPlugin() {
         return bukkitBootstrap;
@@ -383,14 +383,14 @@ public class CloudServer implements ICloudService {
     /**
      * Returns the ServerProcessMeta for the bootstrap of the software
      *
-     * @return
+     * @return this server's process metadata
      */
     public ServerProcessMeta getServerProcessMeta() {
         return CloudAPI.getInstance().getConfig().getObject("serverProcess", new TypeToken<ServerProcessMeta>() {}.getType());
     }
 
     /**
-     * @param player
+     * @param player the player
      */
     public void updateNameTags(Player player) {
         this.updateNameTags(player, null);
@@ -440,7 +440,7 @@ public class CloudServer implements ICloudService {
     /**
      * Returns the cached CloudPlayer Objectives
      *
-     * @return
+     * @return a map containing  all cloud players
      */
     public Map<UUID, CloudPlayer> getCloudPlayers() {
         return cloudPlayers;
