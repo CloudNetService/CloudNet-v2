@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.util.*;
 
 /**
@@ -17,7 +18,11 @@ import java.util.*;
 public class Document implements DocumentAbstract {
 
     protected static final JsonParser PARSER = new JsonParser();
-    public static Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
+    public static Gson GSON = new GsonBuilder().serializeNulls()
+                                               .setPrettyPrinting()
+                                               .disableHtmlEscaping()
+                                               .setDateFormat(DateFormat.MEDIUM)
+                                               .create();
     protected String name;
     protected JsonObject dataCatcher;
 

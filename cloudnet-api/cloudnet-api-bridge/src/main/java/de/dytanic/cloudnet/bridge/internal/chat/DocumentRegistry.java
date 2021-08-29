@@ -9,18 +9,21 @@ import net.md_5.bungee.chat.ComponentSerializer;
 import net.md_5.bungee.chat.TextComponentSerializer;
 import net.md_5.bungee.chat.TranslatableComponentSerializer;
 
+import java.text.DateFormat;
+
 public final class DocumentRegistry {
 
     private DocumentRegistry() {
     }
 
     public static void fire() {
-        Document.GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping()
-                                         //
-                                         .registerTypeAdapter(BaseComponent.class, new ComponentSerializer()).registerTypeAdapter(
-                TextComponent.class,
-                new TextComponentSerializer()).registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer())
-                                         //
+        Document.GSON = new GsonBuilder().serializeNulls()
+                                         .setPrettyPrinting()
+                                         .disableHtmlEscaping()
+                                         .registerTypeAdapter(BaseComponent.class, new ComponentSerializer())
+                                         .registerTypeAdapter(TextComponent.class, new TextComponentSerializer())
+                                         .registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer())
+                                         .setDateFormat(DateFormat.MEDIUM)
                                          .create();
     }
 
