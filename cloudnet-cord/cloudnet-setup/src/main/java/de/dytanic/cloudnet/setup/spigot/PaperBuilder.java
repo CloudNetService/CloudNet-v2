@@ -29,6 +29,7 @@ public final class PaperBuilder {
      * Start the process of choice the paper version And build after choice
      *
      * @param reader Read the answer from console
+     * @param outputPath the path to write to
      */
     public static boolean start(ConsoleReader reader, Path outputPath) {
         try {

@@ -18,27 +18,29 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
-        <service.version>2.1.17</service.version>
+        <service.version>2.1.18</service.version>
         <service.type>RELEASE</service.type>
         <!-- Dependencies -->
-        <dependency.netty.version>4.1.42.Final</dependency.netty.version>
-        <dependency.gson.version>2.8.6</dependency.gson.version>
+        <dependency.netty.version>4.1.65.Final</dependency.netty.version>
+        <dependency.gson.version>2.8.7</dependency.gson.version>
         <dependency.jline.version>2.14.6</dependency.jline.version>
         <dependency.jopt-simple.version>5.0.4</dependency.jopt-simple.version>
-        <dependecy.snakeyaml.version>1.25</dependecy.snakeyaml.version>
-        <dependency.bungeecord.version>1.8-1.12</dependency.bungeecord.version>
+        <dependecy.snakeyaml.version>1.29</dependecy.snakeyaml.version>
+        <dependency.bungeecord.version>1.17-R0.1-SNAPSHOT</dependency.bungeecord.version>
         <dependency.spigot.version>1.8.8-R0.1-SNAPSHOT</dependency.spigot.version>
         <dependency.vaultapi.version>1.7</dependency.vaultapi.version>
-        <dependency.typetools.version>0.6.1</dependency.typetools.version>
+        <dependency.typetools.version>0.6.3</dependency.typetools.version>
         <!-- test dependencies -->
-        <test.junit.version>4.12</test.junit.version>
+        <test.junit.version>4.13.2</test.junit.version>
         <!-- Plugins -->
-        <plugin.shade.version>3.2.1</plugin.shade.version>
-        <plugin.javadoc.version>3.1.1</plugin.javadoc.version>
-        <plugin.jar.version>3.1.2</plugin.jar.version>
-        <plugin.resources.version>3.1.0</plugin.resources.version>
-        <plugin.antrun.version>1.8</plugin.antrun.version>
-        <plugin.source.version>3.1.0</plugin.source.version>
+        <plugin.shade.version>3.2.4</plugin.shade.version>
+        <plugin.javadoc.version>3.3.0</plugin.javadoc.version>
+        <plugin.site.version>3.9.1</plugin.site.version>
+        <plugin.jar.version>3.2.0</plugin.jar.version>
+        <plugin.resources.version>3.2.0</plugin.resources.version>
+        <plugin.antrun.version>3.0.0</plugin.antrun.version>
+        <plugin.source.version>3.2.1</plugin.source.version>
+        <plugin.projectinfo.version>3.1.2</plugin.projectinfo.version>
     </properties>
 
     <developers>
@@ -46,6 +48,35 @@
             <id>main</id>
             <name>Tarek H.</name>
             <url>https://dytanic.de</url>
+        </developer>
+        <developer>
+            <id>GiantTreeLP</id>
+            <name>GiantTree</name>
+            <organization>CloudNetService</organization>
+        </developer>
+        <developer>
+            <id>TheMeinerLP</id>
+            <name>TheMeinerLP</name>
+        </developer>
+        <developer>
+            <id>byRoadrunner</id>
+            <name>byRoadrunner</name>
+            <organization>CloudNetService</organization>
+        </developer>
+        <developer>
+            <id>derrop</id>
+            <name>derrop</name>
+            <organization>CloudNetService</organization>
+        </developer>
+        <developer>
+            <id>Sarsum</id>
+            <name>Sarsum</name>
+            <organization>CloudNetService</organization>
+        </developer>
+        <developer>
+            <id>derklaro</id>
+            <name>derklaro</name>
+            <organization>CloudNetService</organization>
         </developer>
     </developers>
 
@@ -59,50 +90,90 @@
         <module>cloudnet-modules</module>
     </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${plugin.javadoc.version}</version>
-                <configuration>
-                    <show>private</show>
-                    <additionalJOption>-Xdoclint:none</additionalJOption>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>aggregate</id>
-                        <goals>
-                            <goal>aggregate-jar</goal>
-                        </goals>
-                        <phase>site</phase>
+    <distributionManagement>
+        <repository>
+            <id>cloudnet</id>
+            <url>https://repo.cloudnetservice.eu/repository/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>cloudnet</id>
+            <url>https://repo.cloudnetservice.eu/repository/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>deployment</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <version>${plugin.site.version}</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${plugin.javadoc.version}</version>
                         <configuration>
                             <show>private</show>
-                            <additionalJOption>-Xdoclint:none
-                            </additionalJOption>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${plugin.source.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>aggregate</id>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                                <phase>site</phase>
+                                <configuration>
+                                    <show>private</show>
+                                    <additionalJOption>-Xdoclint:none
+                                    </additionalJOption>
+                                    <additionalOptions>-html5</additionalOptions>
+                                    <detectLinks>true</detectLinks>
+                                    <linksource>true</linksource>
+                                    <dependencyLinks>
+                                        <dependencyLink>
+                                            <groupId>org.spigotmc</groupId>
+                                            <artifactId>spigot-api</artifactId>
+                                            <url>https://hub.spigotmc.org/javadocs/bukkit</url>
+                                        </dependencyLink>
+                                        <dependencyLink>
+                                            <groupId>com.google.code.gson</groupId>
+                                            <artifactId>gson</artifactId>
+                                            <url>https://static.javadoc.io/com.google.code.gson/gson/2.8.7/</url>
+                                        </dependencyLink>
+                                        <dependencyLink>
+                                            <groupId>io.netty</groupId>
+                                            <url>https://netty.io/4.1/api</url>
+                                        </dependencyLink>
+                                    </dependencyLinks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${plugin.source.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

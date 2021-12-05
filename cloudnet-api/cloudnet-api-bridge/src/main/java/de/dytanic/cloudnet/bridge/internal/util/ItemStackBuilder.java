@@ -32,6 +32,8 @@ public class ItemStackBuilder {
 
     /**
      * @deprecated will only work in versions lower than 1.13
+     *
+     * @param material the id of the material
      */
     @Deprecated
     public ItemStackBuilder(int material) {
@@ -46,6 +48,9 @@ public class ItemStackBuilder {
 
     /**
      * @deprecated will only work in versions lower than 1.13
+     *
+     * @param material the id of the material
+     * @param amount the amount
      */
     @Deprecated
     public ItemStackBuilder(int material, int amount) {
@@ -60,6 +65,10 @@ public class ItemStackBuilder {
 
     /**
      * @deprecated will only work in versions lower than 1.13
+     *
+     * @param material the id of the material
+     * @param amount the amount
+     * @param sub the damage value
      */
     @Deprecated
     public ItemStackBuilder(int material, int amount, int sub) {
@@ -107,6 +116,8 @@ public class ItemStackBuilder {
 
     /**
      * @deprecated will only work in versions lower than 1.13
+     *
+     * @param material the id of the material
      */
     @Deprecated
     public static ItemStackBuilder builder(int material) {
@@ -115,6 +126,9 @@ public class ItemStackBuilder {
 
     /**
      * @deprecated will only work in versions lower than 1.13
+     *
+     * @param material the id of the material
+     * @param amount the amount
      */
     @Deprecated
     public static ItemStackBuilder builder(int material, int amount) {
@@ -123,6 +137,10 @@ public class ItemStackBuilder {
 
     /**
      * @deprecated will only work in versions lower than 1.13
+     *
+     * @param material the id of the material
+     * @param amount the amount
+     * @param sub the damage value
      */
     @Deprecated
     public static ItemStackBuilder builder(int material, int amount, int sub) {

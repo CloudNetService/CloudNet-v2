@@ -49,9 +49,6 @@ public class CloudLogger extends Logger {
      */
     public CloudLogger() throws IOException, NoSuchFieldException, IllegalAccessException {
         super("CloudNetServerLogger", null);
-        Field field = Charset.class.getDeclaredField("defaultCharset");
-        field.setAccessible(true);
-        field.set(null, StandardCharsets.UTF_8);
 
         if (!Files.exists(Paths.get("local"))) {
             Files.createDirectory(Paths.get("local"));

@@ -115,8 +115,7 @@ public class CloudFlareService {
 
         try {
             HttpURLConnection delete = (HttpURLConnection) new URL(PREFIX_URL + "zones/" + postResponse.getCloudFlareConfig()
-                                                                                                       .getZoneId() + "/dns_records/" + postResponse
-                .getId()).openConnection();
+                                                                                                       .getZoneId() + "/dns_records/" + postResponse.getId()).openConnection();
 
             delete.setRequestMethod("DELETE");
             delete.setRequestProperty("X-Auth-Email", postResponse.getCloudFlareConfig().getEmail());
@@ -143,7 +142,8 @@ public class CloudFlareService {
     /**
      * Creates a new DNS record in the configured zone.
      *
-     * @param dnsRecord the record to create
+     * @param cloudFlareConfig the configuration of the module
+     * @param dnsRecord        the record to create
      *
      * @return the response from CloudFlare or null on failure
      */
@@ -236,8 +236,7 @@ public class CloudFlareService {
                     if (cloudFlareProxyGroup.getSub().startsWith("@")) {
                         srvRecord = new SRVRecord("_minecraft._tcp." + cloudFlareConfig.getDomainName(),
                                                   "SRV 1 1 " + proxyServer.getPort() + ' ' + proxyServer.getServiceId()
-                                                                                                        .getWrapperId() + '.' + cloudFlareConfig
-                                                      .getDomainName(),
+                                                                                                        .getWrapperId() + '.' + cloudFlareConfig.getDomainName(),
                                                   "_minecraft",
                                                   "_tcp",
                                                   cloudFlareConfig.getDomainName(),
@@ -248,8 +247,7 @@ public class CloudFlareService {
                     } else {
                         srvRecord = new SRVRecord("_minecraft._tcp." + cloudFlareConfig.getDomainName(),
                                                   "SRV 1 1 " + proxyServer.getPort() + ' ' + proxyServer.getServiceId()
-                                                                                                        .getWrapperId() + '.' + cloudFlareConfig
-                                                      .getDomainName(),
+                                                                                                        .getWrapperId() + '.' + cloudFlareConfig.getDomainName(),
                                                   "_minecraft",
                                                   "_tcp",
                                                   cloudFlareProxyGroup.getSub(),
@@ -271,7 +269,8 @@ public class CloudFlareService {
     /**
      * Returns the first {@link CloudFlareProxyGroup} for a given {@code group} name.
      *
-     * @param group the CloudFlare Proxy Group to search for
+     * @param cloudFlareConfig the configuration of this module
+     * @param group            the CloudFlare Proxy Group to search for
      *
      * @return the CloudFlareProxyGroup with the given group or null
      */
@@ -292,10 +291,10 @@ public class CloudFlareService {
                                                                                                   new Acceptable<MultiValue<PostResponse, String>>() {
                                                                                                       @Override
                                                                                                       public boolean isAccepted(MultiValue<PostResponse, String> postResponseStringMultiValue) {
-                                                                                                          return postResponseStringMultiValue
-                                                                                                              .getSecond()
-                                                                                                              .equalsIgnoreCase(proxyServer.getServiceId()
-                                                                                                                                           .getServerId());
+                                                                                                          return postResponseStringMultiValue.getSecond()
+                                                                                                                                             .equalsIgnoreCase(
+                                                                                                                                                 proxyServer.getServiceId()
+                                                                                                                                                            .getServerId());
                                                                                                       }
                                                                                                   });
 

@@ -26,7 +26,8 @@ public final class SpigotBuilder {
     /**
      * Start the process to choice the Spigot version And build after choice
      *
-     * @param reader to read the answer
+     * @param reader     to read the answer
+     * @param outputPath the path to write to
      */
     public static boolean start(final ConsoleReader reader, Path outputPath) {
         System.out.println("Fetching Spigot versions");

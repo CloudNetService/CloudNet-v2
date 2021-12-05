@@ -107,6 +107,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the instance of the CloudAPI
+     *
+     * @return the instance of the CloudAPI
      */
     public static CloudAPI getInstance() {
         return instance;
@@ -147,6 +149,10 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns synchronized the OnlineCount from the group
+     *
+     * @param group the name of the server group
+     *
+     * @return the amount of players currently online on the given server group
      */
     public int getOnlineCount(String group) {
         AtomicInteger integer = new AtomicInteger(0);
@@ -162,7 +168,9 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns all serverInfos from group #group
      *
-     * @param group
+     * @param group the name of the server group
+     *
+     * @return a collection containing all servers of the given server group
      */
     public Collection<ServerInfo> getServers(String group) {
         if (cloudService != null && cloudService.isProxyInstance()) {
@@ -190,13 +198,17 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the Configuration Loader from this Plugin
+     *
+     * @return the loader for the configuration of this cloud instance
      */
     public CloudConfigLoader getCloudConfigLoader() {
         return cloudConfigLoader;
     }
 
     /**
-     * Returns the wingui Config
+     * Returns the configuration
+     *
+     * @return A document containing the current configuration
      */
     public Document getConfig() {
         return config;
@@ -204,6 +216,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns a simple cloudnetwork information base
+     *
+     * @return An instance of the current cloud network state
      */
     public CloudNetwork getCloudNetwork() {
         return cloudNetwork;
@@ -212,7 +226,7 @@ public final class CloudAPI implements MetaObj {
     /**
      * Internal CloudNetwork update set
      *
-     * @param cloudNetwork
+     * @param cloudNetwork the new cloud network state instance
      */
     public void setCloudNetwork(CloudNetwork cloudNetwork) {
         this.cloudNetwork = cloudNetwork;
@@ -220,6 +234,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the network server manager from cloudnet
+     *
+     * @return the provider for network handlers
      */
     public NetworkHandlerProvider getNetworkHandlerProvider() {
         return networkHandlerProvider;
@@ -227,6 +243,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the internal network connection to the cloudnet root
+     *
+     * @return the network connection to the cloudnet core
      */
     public NetworkConnection getNetworkConnection() {
         return networkConnection;
@@ -234,6 +252,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the cloud prefix
+     *
+     * @return The prefix for messages from the cloudnet process
      */
     public String getPrefix() {
         return cloudNetwork.getMessages().getString("prefix");
@@ -241,6 +261,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the memory from this instance calc by Wrapper
+     *
+     * @return the configured maximum heap memory in mb
      */
     public int getMemory() {
         return memory;
@@ -248,6 +270,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the shutdownTask which is default init
+     *
+     * @return the task to run, when this cloud instance is shut down
      */
     public Runnable getShutdownTask() {
         return shutdownTask;
@@ -255,6 +279,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the ServiceId from this instance
+     *
+     * @return the service id of this instance
      */
     public ServiceId getServiceId() {
         return serviceId;
@@ -262,6 +288,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the Database Manager for the CloudNetDB functions
+     *
+     * @return the database manager
      */
     public DatabaseManager getDatabaseManager() {
         return databaseManager;
@@ -269,6 +297,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the group name from this instance
+     *
+     * @return the name of the group of this running instance
      */
     public String getGroup() {
         return serviceId.getGroup();
@@ -276,6 +306,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the UUID from this instance
+     *
+     * @return the UUID of this running instance
      */
     public UUID getUniqueId() {
         return serviceId.getUniqueId();
@@ -283,13 +315,17 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the serverId (Lobby-1)
+     *
+     * @return the server id of this running instance
      */
     public String getServerId() {
         return serviceId.getServerId();
     }
 
     /**
-     * Returns the Id (Lobby-1 -> "1")
+     * Returns the Id (Lobby-1 -&gt; "1")
+     *
+     * @return the numerical id of this running instance
      */
     public int getGroupInitId() {
         return serviceId.getId();
@@ -297,6 +333,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the wrapperid from this instance
+     *
+     * @return the wrapper id of this running instance
      */
     public String getWrapperId() {
         return serviceId.getWrapperId();
@@ -305,7 +343,9 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns the SimpleServerGroup of the parameter
      *
-     * @param group
+     * @param group the name of the server group
+     *
+     * @return the server group with the given name, if available
      */
     public SimpleServerGroup getServerGroupData(String group) {
         return cloudNetwork.getServerGroups().get(group);
@@ -314,7 +354,9 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns the ProxyGroup of the parameter
      *
-     * @param group
+     * @param group the name of the proxy group
+     *
+     * @return the proxy group with the given name, if available
      */
     public ProxyGroup getProxyGroupData(String group) {
         return cloudNetwork.getProxyGroups().get(group);
@@ -322,6 +364,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the global onlineCount
+     *
+     * @return the amount of players online
      */
     public int getOnlineCount() {
         return cloudNetwork.getOnlineCount();
@@ -329,6 +373,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the amount of players that are registered in the Cloud
+     *
+     * @return the total number of players registered on the cloud network
      */
     public int getRegisteredPlayerCount() {
         return cloudNetwork.getRegisteredPlayerCount();
@@ -337,7 +383,7 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns all the module properties
      *
-     * @return
+     * @return a document with all module properties
      */
     public Document getModuleProperties() {
         return cloudNetwork.getModules();
@@ -345,6 +391,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the permissionPool of the cloudnetwork
+     *
+     * @return the permission pool
      */
     public PermissionPool getPermissionPool() {
         return cloudNetwork.getModules().getObject("permissionPool", PermissionPool.TYPE);
@@ -352,6 +400,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns all active wrappers on cloudnet
+     *
+     * @return a collection of all wrappers
      */
     public Collection<WrapperInfo> getWrappers() {
         return cloudNetwork.getWrappers();
@@ -359,6 +409,10 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the permission group from the permissions-system
+     *
+     * @param group the name of the permission group
+     *
+     * @return the permission group with the given name, if available
      */
     public PermissionGroup getPermissionGroup(String group) {
         if (cloudNetwork.getModules().contains("permissionPool")) {
@@ -370,7 +424,9 @@ public final class CloudAPI implements MetaObj {
     /**
      * Returns one of the wrapper infos
      *
-     * @param wrapperId
+     * @param wrapperId the id/name of the wrapper
+     *
+     * @return the wrapper with the given name
      */
     public WrapperInfo getWrapper(String wrapperId) {
         return CollectionWrapper.filter(cloudNetwork.getWrappers(), new Acceptable<WrapperInfo>() {
@@ -382,37 +438,55 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Sends the data of the custom channel message to all proxys
+     * Sends the  custom channel message to all proxy instances.
+     *
+     * @param channel the channel to send the message on.
+     * @param message the message to send.
+     * @param value   the document attached to the message.
      */
     public void sendCustomSubProxyMessage(String channel, String message, Document value) {
         networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUNGEE_CORD, channel, message, value));
     }
 
     /**
-     * Sends the data of the custom channel message to all server
+     * Sends the custom channel message to all server instances.
+     *
+     * @param channel the channel to send the message on.
+     * @param message the message to send.
+     * @param value   the document attached to the message.
      */
     public void sendCustomSubServerMessage(String channel, String message, Document value) {
         networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUKKIT, channel, message, value));
     }
 
     /**
-     * Sends the data of the custom channel message to one server
+     * Sends the custom channel message to the specified server.
+     *
+     * @param channel    the channel to send the message on.
+     * @param message    the message to send.
+     * @param value      the document attached to the message.
+     * @param serverName the name of the server that this message is going to be sent to.
      */
     public void sendCustomSubServerMessage(String channel, String message, Document value, String serverName) {
         networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUKKIT, serverName, channel, message, value));
     }
 
     /**
-     * Sends the data of the custom channel message to proxy server
+     * Sends the custom channel message to the specified server.
+     *
+     * @param channel   the channel to send the message on.
+     * @param message   the message to send.
+     * @param value     the document attached to the message.
+     * @param proxyName the name of the proxy that this message is going to be sent to.
      */
-    public void sendCustomSubProxyMessage(String channel, String message, Document value, String serverName) {
-        networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUNGEE_CORD, serverName, channel, message, value));
+    public void sendCustomSubProxyMessage(String channel, String message, Document value, String proxyName) {
+        networkConnection.sendPacket(new PacketOutCustomSubChannelMessage(DefaultType.BUNGEE_CORD, proxyName, channel, message, value));
     }
 
     /**
-     * Update the server group
+     * Updates the given server group across the network.
      *
-     * @param serverGroup
+     * @param serverGroup the server group to update.
      */
     public void updateServerGroup(ServerGroup serverGroup) {
         networkConnection.sendPacket(new PacketOutUpdateServerGroup(serverGroup));
@@ -420,6 +494,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Update the permission group
+     *
+     * @param permissionGroup the permission group to update
      */
     public void updatePermissionGroup(PermissionGroup permissionGroup) {
         this.logger.logp(Level.FINEST,
@@ -430,87 +506,99 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Update the proxy group
+     * Updates the given proxy group across the network.
      *
-     * @param proxyGroup
+     * @param proxyGroup the proxy group to update.
      */
     public void updateProxyGroup(ProxyGroup proxyGroup) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updateProxyGroup",
-                         String.format("Updating proxy group: %s", proxyGroup));
+                         String.format("Updating proxy group: %s%n", proxyGroup));
         networkConnection.sendPacket(new PacketOutUpdateProxyGroup(proxyGroup));
     }
 
     /**
-     * Dispatch a command on cloudnet-core
+     * Dispatch a command on the CloudNet master.
+     *
+     * @param commandLine the entire command line with space-separated arguments.
      */
     public void sendCloudCommand(String commandLine) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "sendCloudCommand",
-                         String.format("Sending cloud command: %s", commandLine));
+                         String.format("Sending cloud command: %s%n", commandLine));
         networkConnection.sendPacket(new PacketOutExecuteCommand(commandLine));
     }
 
     /**
-     * Dispatch a console message
+     * Dispatches a console message to the CloudNet master.
      *
-     * @param output
+     * @param message the message to dispatch.
      */
-    public void dispatchConsoleMessage(String output) {
+    public void dispatchConsoleMessage(String message) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "dispatchConsoleMessage",
-                         String.format("Dispatching console message: %s", output));
-        networkConnection.sendPacket(new PacketOutDispatchConsoleMessage(output));
+                         String.format("Dispatching console message: %s%n", message));
+        networkConnection.sendPacket(new PacketOutDispatchConsoleMessage(message));
     }
 
     /**
-     * Writes into the console of the server/proxy the command line
+     * Sends the given command line to the console of the given server or proxy.
      *
-     * @param defaultType
-     * @param serverId
-     * @param commandLine
+     * @param defaultType the type of service (server or proxy) to send the command line to.
+     * @param serverId    the server id of the service.
+     * @param commandLine the command line to send.
      */
     public void sendConsoleMessage(DefaultType defaultType, String serverId, String commandLine) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "sendConsoleMessage",
-                         String.format("Sending console message: %s %s %s", defaultType, serverId, commandLine));
+                         String.format("Sending console message: %s %s %s%n", defaultType, serverId, commandLine));
         networkConnection.sendPacket(new PacketOutServerDispatchCommand(defaultType, serverId, commandLine));
     }
 
+    /**
+     * @return a map containing all server groups mapped to their names.
+     */
     public Map<String, SimpleServerGroup> getServerGroupMap() {
         return cloudNetwork.getServerGroups();
     }
 
+    /**
+     * @return a map containing all proxy groups mapped to their names.
+     */
     public Map<String, ProxyGroup> getProxyGroupMap() {
         return cloudNetwork.getProxyGroups();
     }
 
     /**
-     * Stop a game server with the parameter of the serverId
+     * Stops a game server with the given server id
      *
-     * @param serverId the server-id to stop
+     * @param serverId the server id of the server to stop.
      */
     public void stopServer(String serverId) {
-        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopServer", String.format("Stopping server: %s", serverId));
+        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopServer", String.format("Stopping server: %s%n", serverId));
         networkConnection.sendPacket(new PacketOutStopServer(serverId));
     }
 
-    /*=====================================================================================*/
-
     /**
-     * Stop a BungeeCord proxy server with the id @proxyId
+     * Stops the proxy server with the given proxy id.
+     *
+     * @param proxyId the proxy id of the proxy server to stop.
      */
     public void stopProxy(String proxyId) {
-        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopProxy", String.format("Stopping proxy: %s", proxyId));
+        this.logger.logp(Level.FINEST, this.getClass().getSimpleName(), "stopProxy", String.format("Stopping proxy: %s%n", proxyId));
         networkConnection.sendPacket(new PacketOutStopProxy(proxyId));
     }
 
     /**
-     * Creates a custom server log url for one server screen
+     * Creates a custom server log url for a service screen.
+     *
+     * @param serverId the id of the service.
+     *
+     * @return the generated url
      */
     public String createServerLogUrl(String serverId) {
         this.logger.logp(Level.FINEST,
@@ -531,7 +619,7 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a proxy server with a group
      *
-     * @param proxyGroup
+     * @param proxyGroup the proxy group
      */
     public void startProxy(ProxyGroup proxyGroup) {
         startProxy(proxyGroup, proxyGroup.getMemory(), new String[] {});
@@ -540,7 +628,9 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a proxy server with a group
      *
-     * @param proxyGroup
+     * @param proxyGroup        the proxy group
+     * @param memory            the amount of heap memory
+     * @param processParameters the parameters for the process
      */
     public void startProxy(ProxyGroup proxyGroup, int memory, String[] processParameters) {
         startProxy(proxyGroup, memory, processParameters, null, new ArrayList<>(), new Document());
@@ -549,7 +639,12 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a proxy server with a group
      *
-     * @param proxyGroup
+     * @param proxyGroup        the proxy group
+     * @param memory            the amount of heap memory
+     * @param processParameters the parameters for the process
+     * @param url               the url to download the template from
+     * @param plugins           a collection of plugins that should be installed
+     * @param properties        additional properties
      */
     public void startProxy(ProxyGroup proxyGroup,
                            int memory,
@@ -573,16 +668,20 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a proxy server with a group
      *
-     * @param proxyGroup
+     * @param proxyGroup        the proxy group
+     * @param memory            the amount of heap memory
+     * @param processParameters the parameters for the process
+     * @param properties        additional properties
      */
-    public void startProxy(ProxyGroup proxyGroup, int memory, String[] processParameters, Document document) {
-        startProxy(proxyGroup, memory, processParameters, null, new ArrayList<>(), document);
+    public void startProxy(ProxyGroup proxyGroup, int memory, String[] processParameters, Document properties) {
+        startProxy(proxyGroup, memory, processParameters, null, new ArrayList<>(), properties);
     }
 
     /**
      * Start a proxy server with a group
      *
-     * @param proxyGroup
+     * @param wrapperInfo the wrapper to start the proxy on
+     * @param proxyGroup  the proxy group
      */
     public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup) {
         startProxy(wrapperInfo, proxyGroup, proxyGroup.getMemory(), new String[] {});
@@ -593,7 +692,10 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a proxy server with a group
      *
-     * @param proxyGroup
+     * @param wrapperInfo       the wrapper to start the proxy on
+     * @param proxyGroup        the proxy group
+     * @param memory            the amount of heap memory
+     * @param processParameters the parameters for the process
      */
     public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters) {
         startProxy(wrapperInfo, proxyGroup, memory, processParameters, null, new ArrayList<>(), new Document());
@@ -602,7 +704,13 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a proxy server with a group
      *
-     * @param proxyGroup
+     * @param wrapperInfo       the wrapper to start the proxy on
+     * @param proxyGroup        the proxy group
+     * @param memory            the amount of heap memory
+     * @param processParameters the parameters for the process
+     * @param url               the url to download the template from
+     * @param plugins           a collection of plugins that should be installed
+     * @param properties        additional properties
      */
     public void startProxy(WrapperInfo wrapperInfo,
                            ProxyGroup proxyGroup,
@@ -634,52 +742,66 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a proxy server with a group
      *
-     * @param proxyGroup
+     * @param wrapperInfo       the wrapper to start the proxy on
+     * @param proxyGroup        the proxy group
+     * @param memory            the amount of heap memory
+     * @param processParameters the parameters for the process
+     * @param properties        additional properties
      */
-    public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters, Document document) {
-        startProxy(wrapperInfo, proxyGroup, memory, processParameters, null, new ArrayList<>(), document);
+    public void startProxy(WrapperInfo wrapperInfo, ProxyGroup proxyGroup, int memory, String[] processParameters, Document properties) {
+        startProxy(wrapperInfo, proxyGroup, memory, processParameters, null, new ArrayList<>(), properties);
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup) {
         startGameServer(simpleServerGroup, new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()));
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig) {
         startGameServer(simpleServerGroup, serverConfig, false);
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param priorityStop      whether priority stop is enabled
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, boolean priorityStop) {
         startGameServer(simpleServerGroup, serverConfig, simpleServerGroup.getMemory(), priorityStop);
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param priorityStop      whether priority stop is enabled
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, int memory, boolean priorityStop) {
         startGameServer(simpleServerGroup, serverConfig, memory, priorityStop, new Properties());
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param priorityStop      whether priority stop is enabled
+     * @param properties        additional properties
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,
@@ -702,16 +824,17 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
-     * @param serverConfig
-     * @param memory
-     * @param processParameters
-     * @param template
-     * @param onlineMode
-     * @param priorityStop
-     * @param properties
-     * @param url
-     * @param plugins
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param processParameters the parameters for the process
+     * @param template          the template to start
+     * @param customServerName  the name of the server, null if default
+     * @param onlineMode        whether online mode is enabled
+     * @param priorityStop      whether priority stop is enabled
+     * @param url               the url to download the template from
+     * @param plugins           a collection of plugins that should be installed
+     * @param properties        additional properties
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,
@@ -753,36 +876,46 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup, String serverId) {
         startGameServer(simpleServerGroup, new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()), serverId);
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, String serverId) {
         startGameServer(simpleServerGroup, serverConfig, false, serverId);
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param priorityStop      whether priority stop is enabled
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, boolean priorityStop, String serverId) {
         startGameServer(simpleServerGroup, serverConfig, simpleServerGroup.getMemory(), priorityStop, serverId);
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param priorityStop      whether priority stop is enabled
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,
@@ -793,9 +926,14 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param priorityStop      whether priority stop is enabled
+     * @param properties        additional properties
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,
@@ -822,16 +960,18 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
-     * @param serverConfig
-     * @param memory
-     * @param processParameters
-     * @param template
-     * @param onlineMode
-     * @param priorityStop
-     * @param properties
-     * @param url
-     * @param plugins
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param processParameters the parameters for the process
+     * @param template          the template to start
+     * @param customServerName  the name of the server, null if default
+     * @param onlineMode        whether online mode is enabled
+     * @param priorityStop      whether priority stop is enabled
+     * @param url               the url to download the template from
+     * @param plugins           a collection of plugins that should be installed
+     * @param properties        additional properties
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,
@@ -875,36 +1015,46 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param template          the template to start
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup, Template template) {
         startGameServer(simpleServerGroup, new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()), template);
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param template          the template to start
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, Template template) {
         startGameServer(simpleServerGroup, serverConfig, false, template);
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param template          the template to start
+     * @param priorityStop      whether priority stop is enabled
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, boolean priorityStop, Template template) {
         startGameServer(simpleServerGroup, serverConfig, simpleServerGroup.getMemory(), priorityStop, template);
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param template          the template to start
+     * @param priorityStop      whether priority stop is enabled
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,
@@ -915,9 +1065,14 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param template          the template to start
+     * @param priorityStop      whether priority stop is enabled
+     * @param properties        additional properties
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,
@@ -939,9 +1094,12 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param template          the template to start
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup, ServerConfig serverConfig, Template template, String serverId) {
         startGameServer(simpleServerGroup, serverConfig, false, template, serverId);
@@ -950,9 +1108,13 @@ public final class CloudAPI implements MetaObj {
     /*==================================================================*/
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param template          the template to start
+     * @param priorityStop      whether priority stop is enabled
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,
@@ -963,9 +1125,14 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param template          the template to start
+     * @param priorityStop      whether priority stop is enabled
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,
@@ -977,9 +1144,15 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param template          the template to start
+     * @param priorityStop      whether priority stop is enabled
+     * @param properties        additional properties
+     * @param serverId          a custom server id for this server
      */
     public void startGameServer(SimpleServerGroup simpleServerGroup,
                                 ServerConfig serverConfig,
@@ -1003,27 +1176,33 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param wrapperInfo       the wrapper to start this server on
+     * @param simpleServerGroup the server group to start
      */
     public void startGameServer(WrapperInfo wrapperInfo, SimpleServerGroup simpleServerGroup) {
         startGameServer(wrapperInfo, simpleServerGroup, new ServerConfig(false, "extra", new Document(), System.currentTimeMillis()));
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param wrapperInfo       the wrapper to start this server on
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
      */
     public void startGameServer(WrapperInfo wrapperInfo, SimpleServerGroup simpleServerGroup, ServerConfig serverConfig) {
         startGameServer(wrapperInfo, simpleServerGroup, serverConfig, false);
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param wrapperInfo       the wrapper to start this server on
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param priorityStop      whether priority stop is enabled
      */
     public void startGameServer(WrapperInfo wrapperInfo,
                                 SimpleServerGroup simpleServerGroup,
@@ -1033,9 +1212,13 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param wrapperInfo       the wrapper to start this server on
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param priorityStop      whether priority stop is enabled
      */
     public void startGameServer(WrapperInfo wrapperInfo,
                                 SimpleServerGroup simpleServerGroup,
@@ -1046,9 +1229,14 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param wrapperInfo       the wrapper to start this server on
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param priorityStop      whether priority stop is enabled
+     * @param properties        additional properties
      */
     public void startGameServer(WrapperInfo wrapperInfo,
                                 SimpleServerGroup simpleServerGroup,
@@ -1073,16 +1261,18 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
-     * @param serverConfig
-     * @param memory
-     * @param processParameters
-     * @param template
-     * @param onlineMode
-     * @param priorityStop
-     * @param properties
-     * @param url
-     * @param plugins
+     * @param wrapperInfo       the wrapper to start this server on
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param processParameters the parameters for the process
+     * @param template          the template to start
+     * @param customServerName  the name of the server, null if default
+     * @param onlineMode        whether online mode is enabled
+     * @param priorityStop      whether priority stop is enabled
+     * @param url               the url to download the template from
+     * @param plugins           a collection of plugins that should be installed
+     * @param properties        additional properties
      */
     public void startGameServer(WrapperInfo wrapperInfo,
                                 SimpleServerGroup simpleServerGroup,
@@ -1127,9 +1317,15 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a game server
+     * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
+     * @param wrapperInfo       the wrapper to start this server on
+     * @param simpleServerGroup the server group to start
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param template          the template to start
+     * @param priorityStop      whether priority stop is enabled
+     * @param properties        additional properties
      */
     public void startGameServer(WrapperInfo wrapperInfo,
                                 SimpleServerGroup simpleServerGroup,
@@ -1155,16 +1351,19 @@ public final class CloudAPI implements MetaObj {
     /**
      * Start a new game server with full parameters
      *
-     * @param simpleServerGroup
-     * @param serverConfig
-     * @param memory
-     * @param processParameters
-     * @param template
-     * @param onlineMode
-     * @param priorityStop
-     * @param properties
-     * @param url
-     * @param plugins
+     * @param wrapperInfo       the wrapper to start this server on
+     * @param simpleServerGroup the server group to start
+     * @param serverId          the custom server id for this server
+     * @param serverConfig      the custom server configuration
+     * @param memory            the amount of heap memory
+     * @param processParameters the parameters for the process
+     * @param template          the template to start
+     * @param customServerName  the name of the server, null if default
+     * @param onlineMode        whether online mode is enabled
+     * @param priorityStop      whether priority stop is enabled
+     * @param url               the url to download the template from
+     * @param plugins           a collection of plugins that should be installed
+     * @param properties        additional properties
      */
     public void startGameServer(WrapperInfo wrapperInfo,
                                 SimpleServerGroup simpleServerGroup,
@@ -1212,14 +1411,25 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a Cloud-Server with those Properties
+     * Start a new cloud server with full parameters
+     *
+     * @param wrapperInfo          the wrapper to start this server on
+     * @param serverName           the name of this server
+     * @param memory               the amount of heap memory
+     * @param priorityStop         whether priority stop is enabled
      */
     public void startCloudServer(WrapperInfo wrapperInfo, String serverName, int memory, boolean priorityStop) {
         startCloudServer(wrapperInfo, serverName, new BasicServerConfig(), memory, priorityStop);
     }
 
     /**
-     * Start a Cloud-Server with those Properties
+     * Start a new cloud server with full parameters
+     *
+     * @param wrapperInfo          the wrapper to start this server on
+     * @param serverName           the name of this server
+     * @param serverConfig         the custom server configuration
+     * @param memory               the amount of heap memory
+     * @param priorityStop         whether priority stop is enabled
      */
     public void startCloudServer(WrapperInfo wrapperInfo, String serverName, ServerConfig serverConfig, int memory, boolean priorityStop) {
         startCloudServer(wrapperInfo,
@@ -1234,7 +1444,17 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a Cloud-Server with those Properties
+     * Start a new cloud server with full parameters
+     *
+     * @param wrapperInfo          the wrapper to start this server on
+     * @param serverName           the name of this server
+     * @param serverConfig         the custom server configuration
+     * @param memory               the amount of heap memory
+     * @param priorityStop         whether priority stop is enabled
+     * @param processPreParameters parameters for the java process
+     * @param plugins              a collection of plugins that should be installed
+     * @param properties           additional properties
+     * @param serverGroupType      the type of server group to start
      */
     public void startCloudServer(WrapperInfo wrapperInfo,
                                  String serverName,
@@ -1270,14 +1490,23 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Start a Cloud-Server with those Properties
+     * Start a new cloud server with full parameters
+     *
+     * @param serverName           the name of this server
+     * @param memory               the amount of heap memory
+     * @param priorityStop         whether priority stop is enabled
      */
     public void startCloudServer(String serverName, int memory, boolean priorityStop) {
         startCloudServer(serverName, new BasicServerConfig(), memory, priorityStop);
     }
 
     /**
-     * Start a Cloud-Server with those Properties
+     * Start a new cloud server with full parameters
+     *
+     * @param serverName           the name of this server
+     * @param serverConfig         the custom server configuration
+     * @param memory               the amount of heap memory
+     * @param priorityStop         whether priority stop is enabled
      */
     public void startCloudServer(String serverName, ServerConfig serverConfig, int memory, boolean priorityStop) {
         startCloudServer(serverName,
@@ -1293,7 +1522,16 @@ public final class CloudAPI implements MetaObj {
     /*==========================================================================*/
 
     /**
-     * Start a Cloud-Server with those Properties
+     * Start a new cloud server with full parameters
+     *
+     * @param serverName           the name of this server
+     * @param serverConfig         the custom server configuration
+     * @param memory               the amount of heap memory
+     * @param priorityStop         whether priority stop is enabled
+     * @param processPreParameters parameters for the java process
+     * @param plugins              a collection of plugins that should be installed
+     * @param properties           additional properties
+     * @param serverGroupType      the type of server group to start
      */
     public void startCloudServer(String serverName,
                                  ServerConfig serverConfig,
@@ -1326,37 +1564,41 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Update the CloudPlayer objective
+     * Updates a player on the master.
      *
-     * @param cloudPlayer
+     * @param cloudPlayer the player to update.
      */
     public void updatePlayer(CloudPlayer cloudPlayer) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updatePlayer",
-                         String.format(String.format("Updating cloud player: %s", cloudPlayer)));
+                         String.format("Updating cloud player: %s%n", cloudPlayer));
         networkConnection.sendPacket(new PacketOutUpdatePlayer(CloudPlayer.newOfflinePlayer(cloudPlayer)));
     }
 
     /**
-     * Updates a offlinePlayer Objective on the database
+     * Updates an offline player on the master.
      *
-     * @param offlinePlayer
+     * @param offlinePlayer the offline player to update.
      */
     public void updatePlayer(OfflinePlayer offlinePlayer) {
         this.logger.logp(Level.FINEST,
                          this.getClass().getSimpleName(),
                          "updatePlayer",
-                         String.format("Updating offline player: %s", offlinePlayer));
+                         String.format("Updating offline player: %s%n", offlinePlayer));
         networkConnection.sendPacket(new PacketOutUpdatePlayer(offlinePlayer));
     }
 
     /**
-     * Returns all servers on network
+     * Collects and returns all currently running servers on the network.
+     * When calling this function on a proxy, the cache is used.
+     * On servers this queries the master.
+     *
+     * @return a collection containing all currently running servers.
      */
     public Collection<ServerInfo> getServers() {
         if (cloudService != null && cloudService.isProxyInstance()) {
-            return new LinkedList<>(cloudService.getServers().values());
+            return new ArrayList<>(cloudService.getServers().values());
         }
 
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServers(), networkConnection);
@@ -1365,6 +1607,8 @@ public final class CloudAPI implements MetaObj {
 
     /**
      * Returns the ServerInfo from all CloudGameServers
+     *
+     * @return a collection containing all currently running cloud servers.
      */
     public Collection<ServerInfo> getCloudServers() {
         if (cloudService != null && cloudService.isProxyInstance()) {
@@ -1381,7 +1625,9 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns all proxyInfos on network
+     * Queries the master for all running proxies.
+     *
+     * @return a collection containing all running proxies.
      */
     public Collection<ProxyInfo> getProxys() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(), networkConnection);
@@ -1389,9 +1635,11 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns the ProxyInfos from all proxys in the group #group
+     * Queries the master for all running proxies in the given group.
      *
-     * @param group
+     * @param group the name of the proxy group to get the proxies for.
+     *
+     * @return a collection containing all running proxies of the given proxy group.
      */
     public Collection<ProxyInfo> getProxys(String group) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetProxys(group), networkConnection);
@@ -1399,7 +1647,10 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns all OnlinePlayers on Network
+     * Returns all players currently online on the network.
+     * This methods queries the master so it may take a short moment.
+     *
+     * @return all players currently online.
      */
     public Collection<CloudPlayer> getOnlinePlayers() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetPlayers(), networkConnection);
@@ -1418,7 +1669,12 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Retuns a online CloudPlayer on network or null if the player isn't online
+     * Returns an online player by their UUID.
+     * If the player is not cached, the master is queried.
+     *
+     * @param uniqueId the UUID of the player.
+     *
+     * @return the online player or null, if the player is not currently online on the network.
      */
     public CloudPlayer getOnlinePlayer(UUID uniqueId) {
         CloudPlayer instance = checkAndGet(uniqueId);
@@ -1440,9 +1696,12 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns a offline player which registerd or null
+     * Returns an online player by their UUID.
+     * If the player is not cached, the master is queried.
      *
-     * @param uniqueId
+     * @param uniqueId the UUID of the player.
+     *
+     * @return the online player or null, if the player is not currently online on the network.
      */
     public OfflinePlayer getOfflinePlayer(UUID uniqueId) {
         CloudPlayer cloudPlayer = checkAndGet(uniqueId);
@@ -1455,9 +1714,12 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns a offline player which registerd or null
+     * Returns an offline player by their exact name.
+     * If the player is not cached, the master is queried.
      *
-     * @param name
+     * @param name the exact name of the player.
+     *
+     * @return the offline player or null, if the player is not registered on the network.
      */
     public OfflinePlayer getOfflinePlayer(String name) {
         CloudPlayer cloudPlayer = checkAndGet(name);
@@ -1474,9 +1736,11 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns the ServerGroup from the name or null
+     * Queries the master for a server group based on the given name.
      *
-     * @param name
+     * @param name the name of the server group.
+     *
+     * @return the server group object or null, if it doesn't exist.
      */
     public ServerGroup getServerGroup(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServerGroup(name), networkConnection);
@@ -1484,7 +1748,12 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns from a registerd Player the uniqueId or null if the player doesn't exists
+     * Queries the unique id of the player with the given name.
+     *
+     * @param name the name of the player; case-insensitive.
+     *
+     * @return the unique id of the player with the given name or {@code null},
+     * if the player is not registered on the network.
      */
     public UUID getPlayerUniqueId(String name) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutNameUUID(name), networkConnection);
@@ -1492,7 +1761,12 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns from a registerd Player the name or null if the player doesn't exists
+     * Queries the name of the player with the given unique id.
+     *
+     * @param uniqueId the unique id of the player.
+     *
+     * @return the name of the player with the given unique id or {@code null},
+     * if the player is not registered on the network.
      */
     public String getPlayerName(UUID uniqueId) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutNameUUID(uniqueId), networkConnection);
@@ -1500,7 +1774,11 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns the ServerInfo from one gameServer where serverName = serverId
+     * Queries the master for the server information about a specific server.
+     *
+     * @param serverName the server id to query for.
+     *
+     * @return the server information of the server with the given sever id.
      */
     public ServerInfo getServerInfo(String serverName) {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetServer(serverName), networkConnection);
@@ -1508,9 +1786,10 @@ public final class CloudAPI implements MetaObj {
     }
 
     /**
-     * Returns a Document with all collected statistics
+     * Returns a document with all collected statistics.
+     * This method queries the master.
      *
-     * @return
+     * @return a document with collected statistics.
      */
     public Document getStatistics() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetStatistic(), networkConnection);
@@ -1520,7 +1799,11 @@ public final class CloudAPI implements MetaObj {
     /*================================================================================*/
 
     /**
+     * Copies the given directory from the currently running server to its template.
+     * This is done by requesting the master to handle the instructions for the wrapper.
      *
+     * @param serverInfo the information about the currently running server.
+     * @param directory  the directory which will be copied to the running server's template.
      */
     public void copyDirectory(ServerInfo serverInfo, String directory) {
         if (serverInfo == null || directory == null) {
@@ -1530,9 +1813,7 @@ public final class CloudAPI implements MetaObj {
         networkConnection.sendPacket(new PacketOutCopyDirectory(serverInfo, directory));
     }
 
-    /**
-     * Unsafe Method
-     */
+
     @Deprecated
     private Map<UUID, OfflinePlayer> getRegisteredPlayers() {
         Result result = networkConnection.getPacketManager().sendQuery(new PacketAPIOutGetRegisteredPlayers(), networkConnection);

@@ -71,7 +71,7 @@ public class CloudNetWrapperConfig {
                 wrapperId = reader.readLine().replace(NetworkUtils.SPACE_STRING, NetworkUtils.EMPTY_STRING);
 
                 if (wrapperId.isEmpty()) {
-                    wrapperId = "Wrapper-" + NetworkUtils.RANDOM.nextInt();
+                    wrapperId = "Wrapper-1";
                 }
             }
 

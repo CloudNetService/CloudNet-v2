@@ -24,7 +24,7 @@ public abstract class BukkitCloudEvent extends Event {
     /**
      * Returns the CloudAPI instance
      *
-     * @return
+     * @return the current cloud api instance
      */
     public CloudAPI getCloud() {
         return CloudAPI.getInstance();
@@ -32,6 +32,8 @@ public abstract class BukkitCloudEvent extends Event {
 
     /**
      * Returns the CloudServer instance
+     *
+     * @return the current cloud server instance
      */
     public CloudServer getCloudServer() {
         return CloudServer.getInstance();

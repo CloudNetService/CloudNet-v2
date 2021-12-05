@@ -20,10 +20,6 @@
     </modules>
 
     <repositories>
-        <repository>
-            <id>cloudnet-repo</id>
-            <url>https://cloudnetservice.eu/repositories</url>
-        </repository>
         <!-- SpigotMC repository -->
         <repository>
             <id>spigot-repo</id>
