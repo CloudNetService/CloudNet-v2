@@ -1,10 +1,9 @@
-[![Build Status](https://ci.cloudnetservice.eu/buildStatus/icon?job=CloudNetService/CloudNet/master)](https://ci.cloudnetservice.eu/job/CloudNetService/job/CloudNet/master)
+# This project is archived! Please consider using [CloudNet v3](https://github.com/CloudNetService/CloudNet-v3). The modules have been moved to a separate [organization](https://github.com/CloudNet-v2).
+
 [![star this repo](http://githubbadges.com/star.svg?user=CloudNetService&repo=CloudNet)](https://github.com/CloudNetService/CloudNet)
 [![fork this repo](http://githubbadges.com/fork.svg?user=CloudNetService&repo=CloudNet)](https://github.com/CloudNetService/CloudNet/fork)
 [![GitHub license](https://img.shields.io/github/license/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/blob/master/LICENSE)
 
-[![DepShield Badge](https://depshield.sonatype.org/badges/CloudNetService/CloudNet/depshield.svg)](https://depshield.github.io)
-[![GitHub issues](https://img.shields.io/github/issues/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/issues)
 [![GitHub contributors](https://img.shields.io/github/contributors/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/graphs/contributors)
 [![Github All Releases](https://img.shields.io/github/downloads/CloudNetService/CloudNet/total.svg)](https://github.com/CloudNetService/CloudNet/releases)
 [![GitHub release](https://img.shields.io/github/release/CloudNetService/CloudNet.svg)](https://github.com/CloudNetService/CloudNet/releases)
